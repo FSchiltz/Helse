@@ -1,0 +1,9 @@
+targets:
+  $default:
+    builders:
+      swagger_dart_code_generator:
+        options:
+          input_folder: "lib/swagger/"
+          output_folder: "lib/swagger_generated_code/"
+          input_urls:
+            - http://localhost:5059/swagger/v1/swagger.json

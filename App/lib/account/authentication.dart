@@ -1,4 +1,6 @@
 import 'dart:async';
+import '../services/service.dart';
+import '../swagger_generated_code/swagger.swagger.dart';
 import 'account.dart';
 
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
@@ -19,11 +21,13 @@ class Authentication {
   }
 
   Future<void> logIn({required String url, required String username, required String password}) async {
-    // TODO get token
-
     await _account.setUrl(url);
-    await _account.setToken("test");
-    await Future.delayed(const Duration(milliseconds: 300), () => _controller.add(AuthenticationStatus.authenticated));
+    var token = await Service(url).login(username, password);
+    if (token != null) {
+      var cleaned = token.replaceAll('"', "");
+      await _account.setToken(cleaned);
+      _controller.add(AuthenticationStatus.authenticated);
+    }
   }
 
   void logOut() {

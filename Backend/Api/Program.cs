@@ -2,12 +2,14 @@ using System.Text;
 using Api.Data;
 using Api.Helpers;
 using Api.Logic;
+using System.Net;
 using LinqToDB;
 using LinqToDB.AspNet;
 using LinqToDB.AspNet.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Api.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +47,11 @@ builder.Services.AddSwaggerGen(c =>
   });
 });
 
+//services cors
+builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
+{
+  builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+}));
 
 var connection = builder.Configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("Database configuration missing");
 
@@ -95,29 +102,61 @@ if (app.Environment.IsDevelopment())
   app.UseSwaggerUI();
 }
 
+app.UseCors("corsapp");
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapPost("/auth", AuthLogic.AuthAsync)
 .AllowAnonymous()
+.WithDescription("Get a connection token")
+.Produces<string>((int)HttpStatusCode.OK)
+.Produces((int)HttpStatusCode.Unauthorized)
 .WithOpenApi();
 
-var person = app.MapGroup("/person").WithOpenApi();
+var person = app.MapGroup("/person");
 
 person.MapPost("/", PersonLogic.CreateAsync)
-.AllowAnonymous();
+.AllowAnonymous()
+.Produces((int)HttpStatusCode.NoContent)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();
 
-var metrics = app.MapGroup("/metrics").WithOpenApi();
-metrics.MapGet("/", MetricsLogic.GetAsync);
-metrics.MapPost("/", MetricsLogic.CreateAsync);
-metrics.MapDelete("/{id}", MetricsLogic.DeleteAsync);
+var metrics = app.MapGroup("/metrics");
+metrics.MapGet("/", MetricsLogic.GetAsync)
+.Produces<List<Metric>>((int)HttpStatusCode.OK)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();
+
+metrics.MapPost("/", MetricsLogic.CreateAsync)
+.Produces((int)HttpStatusCode.NoContent)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();
+
+metrics.MapDelete("/{id}", MetricsLogic.DeleteAsync)
+.Produces((int)HttpStatusCode.NoContent)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();
 
 var metricsType = metrics.MapGroup("/type").RequireAuthorization();
-metricsType.MapPost("/", MetricsLogic.CreateTypeAsync);
-metricsType.MapPut("/", MetricsLogic.UpdateTypeAsync);
-metricsType.MapDelete("/", MetricsLogic.DeleteTypeAsync);
-metricsType.MapGet("/", MetricsLogic.GetTypeAsync);
+metricsType.MapPost("/", MetricsLogic.CreateTypeAsync)
+.Produces((int)HttpStatusCode.NoContent)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();
 
+metricsType.MapPut("/", MetricsLogic.UpdateTypeAsync)
+.Produces((int)HttpStatusCode.NoContent)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();
+
+metricsType.MapDelete("/", MetricsLogic.DeleteTypeAsync)
+.Produces((int)HttpStatusCode.NoContent)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();
+
+metricsType.MapGet("/", MetricsLogic.GetTypeAsync)
+.Produces<List<Api.Data.Models.MetricType>>((int)HttpStatusCode.OK)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();
 
 AppDataConnection.Init(connection, app.Logger);
 

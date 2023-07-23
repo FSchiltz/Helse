@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../account/account.dart';
 import '../account/authentication.dart';
 import '../account/login_bloc.dart';
 
@@ -19,6 +20,15 @@ class LoginPage extends StatefulWidget {
 
 class _LoginState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
+  final textController = new TextEditingController();
+
+  Future<void> _initUrl(LoginBloc bloc) async {
+    var url = await Account().getUrl();
+    if (url != null && url.isNotEmpty) {
+      textController.text = url;    
+      bloc.add(LoginUrlChanged(url));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +38,7 @@ class _LoginState extends State<LoginPage> {
         create: (context) {
           var bloc = LoginBloc(authenticationRepository: RepositoryProvider.of<Authentication>(context));
           bloc.checkLogin();
+          _initUrl(bloc);
           return bloc;
         },
         child: BlocListener<LoginBloc, LoginState>(
@@ -51,7 +62,7 @@ class _LoginState extends State<LoginPage> {
                     const SizedBox(height: 10),
                     Text("Login to your account", style: Theme.of(context).textTheme.bodyMedium),
                     const SizedBox(height: 60),
-                    _UrlInput(),
+                    _UrlInput(textController),
                     const SizedBox(height: 60),
                     _UsernameInput(),
                     const SizedBox(height: 10),
@@ -68,12 +79,17 @@ class _LoginState extends State<LoginPage> {
 }
 
 class _UrlInput extends StatelessWidget {
+  final TextEditingController _textController;
+
+  const _UrlInput(TextEditingController textController) : _textController = textController;
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
       buildWhen: (previous, current) => previous.url != current.url,
       builder: (context, state) {
         return TextField(
+          controller: _textController,
           key: const Key('loginForm_urlInput_textField'),
           onChanged: (url) => context.read<LoginBloc>().add(LoginUrlChanged(url)),
           decoration: InputDecoration(

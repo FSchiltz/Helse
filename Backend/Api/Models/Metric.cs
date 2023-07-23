@@ -14,5 +14,5 @@ public class Metric
 
     public string? Unit { get; set; }
 
-    public int Type {get;set;}
+    public long Type {get;set;}
 }

@@ -28,7 +28,15 @@ public static class MetricsLogic
                 && x.Date <= end && x.Date >= start)
             .ToListAsync();
 
-        return TypedResults.Ok(metrics);
+        return TypedResults.Ok(metrics.Select( x => new Metric{
+            Value = x.Value,
+            Date = x.Date,
+            Id = x.Id,
+            PersonId = user.PersonId,
+            Type = x.Type,
+            Unit = x.Unit,
+            User = x.UserId,
+        }));
     }
 
     public static async Task<IResult> CreateAsync(Metric metric, long? personId, AppDataConnection db, HttpContext context)
