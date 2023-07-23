@@ -1,3 +1,4 @@
+using Api.Models;
 using LinqToDB.Mapping;
 
 namespace Api.Data.Models;
@@ -28,4 +29,10 @@ public class Metric
 
     [Column]
     public string? Unit { get; set; }
+
+    [Column]
+    public long Type {get;set;}
+
+    [Association(ThisKey = nameof(Type), OtherKey = nameof(Data.Models.MetricType.Id))]
+    public MetricType? MetricType { get; set; }
 }

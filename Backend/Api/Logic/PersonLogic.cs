@@ -12,7 +12,7 @@ public static class PersonLogic
     /// Only admin role unless no user exists (App setup)
     /// </summary>
     /// <returns></returns>
-    public static async Task<IResult> Create(Models.Person newUser, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> CreateAsync(Models.Person newUser, AppDataConnection db, HttpContext context)
     {
         // check if no user
         var userName = context.User.GetUser();
@@ -25,7 +25,7 @@ public static class PersonLogic
         else
         {
             // else check if user is admin
-            var user = await db.GetTable<User>().Where(x => x.Identifier == userName).FirstOrDefaultAsync();
+            var user = await db.GetTable<User>().FirstOrDefaultAsync(x => x.Identifier == userName);
             userHasRole = user?.Type == (int)Models.UserType.Admin;
         }
 

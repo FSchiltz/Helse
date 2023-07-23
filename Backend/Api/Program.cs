@@ -98,14 +98,19 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 app.UseAuthentication();
 
-app.MapPost("/auth", AuthLogic.Auth)
+app.MapPost("/auth", AuthLogic.AuthAsync)
 .AllowAnonymous()
 .WithOpenApi();
 
 var person = app.MapGroup("/person").WithOpenApi();
 
-person.MapPost("/", PersonLogic.Create)
+person.MapPost("/", PersonLogic.CreateAsync)
 .AllowAnonymous();
+
+var metrics = app.MapGroup("/metrics").WithOpenApi();
+metrics.MapGet("/", MetricsLogic.GetAsync);
+metrics.MapPost("/", MetricsLogic.CreateAsync);
+metrics.MapDelete("/{id}", MetricsLogic.DeleteAsync);
 
 AppDataConnection.Init(connection, app.Logger);
 
