@@ -20,7 +20,7 @@ builder.Services.AddSwaggerGen(c =>
   // Configure swagger to use the jwt
   c.SwaggerDoc("v1", new OpenApiInfo
   {
-    Title = "JWTToken_Auth_API",
+    Title = "Helse Api",
     Version = "v1"
   });
   c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()

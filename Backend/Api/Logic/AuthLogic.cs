@@ -3,6 +3,7 @@ using Api.Data.Models;
 using Api.Helpers;
 using Api.Models;
 using LinqToDB;
+using Microsoft.AspNetCore.Identity;
 
 namespace Api.Logic;
 
@@ -30,19 +31,30 @@ public static class AuthLogic
         if (fromDb is null)
             return TypedResults.Unauthorized();
 
-        // hash the password
-        var hash = TokenService.Hash(user.Password);
-
         // generate the token
-        if (hash == fromDb.Password)
+        switch (TokenService.Verify(user.Password, fromDb.Password))
         {
-            return TypedResults.Ok(token.GetToken(fromDb));
+            case PasswordVerificationResult.Success:
+                // Success, nothing to do
+                break;
+            case PasswordVerificationResult.SuccessRehashNeeded:
+                // Sucess but the password needs an update
+                await UpdatePasswordAsync(fromDb.Id, user.Password, db);
+                break;
+            case PasswordVerificationResult.Failed:
+            default:
+                logger.CreateLogger("Auth").LogWarning("Unauthorized access to getToken");
+                return TypedResults.Unauthorized();
         }
-        else
-        {
-            logger.CreateLogger("Auth").LogWarning("Unauthorized access to getToken");
-            return TypedResults.Unauthorized();
-        }
+
+        return TypedResults.Ok(token.GetToken(fromDb));
+    }
+
+    public async static Task UpdatePasswordAsync(long user, string password, AppDataConnection db)
+    {
+        var hash = TokenService.Hash(password);
+
+        await db.GetTable<User>().Where(x => x.Id == user).Set(x => x.Password, password).UpdateAsync();
     }
 
     /// <summary>
