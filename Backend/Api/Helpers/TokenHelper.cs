@@ -9,8 +9,8 @@ public static class TokenHelper {
 
     public static string? GetUser(this ClaimsPrincipal claims)
     {
-        return claims.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)?.Value;
-    }
+        var claim = claims.Claims.FirstOrDefault(x => x.Type.EndsWith("nameidentifier", StringComparison.OrdinalIgnoreCase));
 
-    public static bool IsAdmin(this User user) => user.Type == (int)UserType.User;
+        return claim?.Value;
+    }
 }

@@ -26,7 +26,7 @@ public static class PersonLogic
         {
             // else check if user is admin
             var user = await db.GetTable<User>().Where(x => x.Identifier == userName).FirstOrDefaultAsync();
-            userHasRole = user?.IsAdmin() == true;
+            userHasRole = user?.Type == (int)Models.UserType.Admin;
         }
 
         if (!userHasRole)

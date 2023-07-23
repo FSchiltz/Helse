@@ -19,7 +19,7 @@ public static class AuthLogic
         var fromDb = await db.GetTable<User>().Where(x => x.Identifier == user.User).FirstOrDefaultAsync();
 
         if (fromDb is null)
-            return Results.Unauthorized();
+            return TypedResults.Unauthorized();
 
         // hash the password
         var hash = TokenService.Hash(user.Password);

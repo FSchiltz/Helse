@@ -28,7 +28,7 @@ public class TokenService
         {
             Subject = new ClaimsIdentity(new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Identifier),
+                new Claim(JwtRegisteredClaimNames.NameId, user.Identifier),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email)
              }),
             Expires = DateTime.UtcNow.AddMinutes(5),
