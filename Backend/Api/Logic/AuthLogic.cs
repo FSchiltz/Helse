@@ -74,4 +74,29 @@ public static class AuthLogic
             && x.Start <= time
             && (x.End == null || x.End >= time))
         .FirstOrDefaultAsync();
+
+    /// <summary>
+    /// Validate that the user is a caregiver with the correct right
+    /// </summary>
+    /// <param name="db"></param>
+    /// <param name="user"></param>
+    /// <param name="personId"></param>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    internal static async Task<bool> ValidateCaregiverAsync(this AppDataConnection db, Data.Models.User user, long? personId, RightType type)
+    {
+        // only caregiver can get for other user
+        if (user.Type != (int)UserType.Caregiver)
+        {
+            var now = DateTime.UtcNow;
+            // check if the user has the right 
+            var right = await HasRightAsync(user.Id, personId.Value, type, now, db);
+            if (right is null)
+                return false;
+        }
+        else
+            return false;
+
+        return true;
+    }
 }

@@ -2,7 +2,6 @@ using Api.Data;
 using Api.Helpers;
 using Api.Models;
 using LinqToDB;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Api.Logic;
 
@@ -11,6 +10,27 @@ namespace Api.Logic;
 /// </summary>
 public static class MetricsLogic
 {
+    public async static Task<IResult> GetAsync(long type, DateTime start, DateTime end, long? personId, AppDataConnection db, HttpContext context)
+    {
+        // get the connected user
+        var userName = context.User.GetUser();
+
+        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
+        if (user is null)
+            return TypedResults.Unauthorized();
+
+        if (personId is not null && !await db.ValidateCaregiverAsync(user, personId, RightType.View))
+            return TypedResults.Unauthorized();
+
+        var metrics = await db.GetTable<Data.Models.Metric>()
+            .Where(x => x.PersonId == user.PersonId
+                && x.Type == type
+                && x.Date <= end && x.Date >= start)
+            .ToListAsync();
+
+        return TypedResults.Ok(metrics);
+    }
+
     public static async Task<IResult> CreateAsync(Metric metric, long? personId, AppDataConnection db, HttpContext context)
     {
         // get the connected user
@@ -20,18 +40,8 @@ public static class MetricsLogic
         if (user is null)
             return TypedResults.Unauthorized();
 
-        if (personId is not null)
-        {
-            // only caregiver can add to other user
-            if (user.Type != (int)UserType.Caregiver)
-            {
-                var now = DateTime.UtcNow;
-                // check if the user has the right 
-                var right = await AuthLogic.HasRightAsync(user.Id, personId.Value, RightType.Edit, now, db);
-            }
-            else
-                return TypedResults.Unauthorized();
-        }
+        if (personId is not null && !await db.ValidateCaregiverAsync(user, personId, RightType.Edit))
+            return TypedResults.Unauthorized();
 
         await db.GetTable<Data.Models.Metric>().InsertAsync(() => new Data.Models.Metric
         {
@@ -40,6 +50,7 @@ public static class MetricsLogic
             Date = metric.Date,
             Unit = metric.Unit,
             UserId = user.Id,
+            Type = metric.Type,
         });
 
         return TypedResults.NoContent();
@@ -60,18 +71,8 @@ public static class MetricsLogic
         if (existing is null)
             return TypedResults.NoContent();
 
-        if (user.PersonId != existing.PersonId)
-        {
-            // only caregiver can delete for other user
-            if (user.Type != (int)UserType.Caregiver)
-            {
-                var now = DateTime.UtcNow;
-                // check if the user has the right 
-                var right = await AuthLogic.HasRightAsync(user.Id, existing.PersonId, RightType.Edit, now, db);
-            }
-            else
-                return TypedResults.Unauthorized();
-        }
+        if (user.PersonId != existing.PersonId && !await db.ValidateCaregiverAsync(user, existing.PersonId, RightType.Edit))
+            return TypedResults.Unauthorized();
 
         await db.GetTable<Data.Models.Metric>().DeleteAsync(x => x.Id == id);
 
@@ -80,7 +81,10 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    internal async static Task<IResult> GetAsync(long type, DateTime start, DateTime end, long? personId, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> GetTypeAsync(AppDataConnection db)
+        => TypedResults.Ok(await db.GetTable<Data.Models.MetricType>().ToListAsync());
+
+    public static async Task<IResult> CreateTypeAsync(Data.Models.MetricType metric, AppDataConnection db, HttpContext context)
     {
         // get the connected user
         var userName = context.User.GetUser();
@@ -89,25 +93,61 @@ public static class MetricsLogic
         if (user is null)
             return TypedResults.Unauthorized();
 
-        if (personId is not null)
+        if (user.Type != (int)UserType.Admin)
         {
-            // only caregiver can get for other user
-            if (user.Type != (int)UserType.Caregiver)
-            {
-                var now = DateTime.UtcNow;
-                // check if the user has the right 
-                var right = await AuthLogic.HasRightAsync(user.Id, personId.Value, RightType.View, now, db);
-            }
-            else
-                return TypedResults.Unauthorized();
+            return TypedResults.Unauthorized();
         }
 
-        var metrics = await db.GetTable<Data.Models.Metric>()
-            .Where(x => x.PersonId == user.PersonId
-                && x.Type == type
-                && x.Date <= end && x.Date >= start)
-            .ToListAsync();
-            
-        return TypedResults.Ok(metrics);
+        await db.GetTable<Data.Models.MetricType>().InsertAsync(() => new Data.Models.MetricType
+        {
+            Name = metric.Name,
+            Description = metric.Description,
+            Unit = metric.Unit,
+        });
+
+        return TypedResults.NoContent();
+    }
+
+    public static async Task<IResult> UpdateTypeAsync(Data.Models.MetricType metric, AppDataConnection db, HttpContext context)
+    {
+        // get the connected user
+        var userName = context.User.GetUser();
+
+        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
+        if (user is null)
+            return TypedResults.Unauthorized();
+
+        if (user.Type != (int)UserType.Admin)
+        {
+            return TypedResults.Unauthorized();
+        }
+
+        await db.GetTable<Data.Models.MetricType>()
+            .Where(x => x.Id == metric.Id)
+            .Set(x => x.Name, metric.Name)
+            .Set(x => x.Description, metric.Description)
+            .Set(x => x.Unit, metric.Unit)
+            .UpdateAsync();
+
+        return TypedResults.NoContent();
+    }
+
+    public async static Task<IResult> DeleteTypeAsync(long id, AppDataConnection db, HttpContext context)
+    {
+        // get the connected user
+        var userName = context.User.GetUser();
+
+        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
+        if (user is null)
+            return TypedResults.Unauthorized();
+
+        if (user.Type != (int)UserType.Admin)
+        {
+            return TypedResults.Unauthorized();
+        }
+
+        await db.GetTable<Data.Models.MetricType>().DeleteAsync(x => x.Id == id);
+
+        return TypedResults.NoContent();
     }
 }

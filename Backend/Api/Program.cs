@@ -80,7 +80,7 @@ builder.Services.AddAuthentication(options =>
       ValidateIssuer = true,
       ValidateAudience = true,
       ValidateLifetime = true,
-      ValidateIssuerSigningKey = true
+      ValidateIssuerSigningKey = false
     };
   });
 
@@ -95,8 +95,8 @@ if (app.Environment.IsDevelopment())
   app.UseSwaggerUI();
 }
 
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapPost("/auth", AuthLogic.AuthAsync)
 .AllowAnonymous()
@@ -111,6 +111,13 @@ var metrics = app.MapGroup("/metrics").WithOpenApi();
 metrics.MapGet("/", MetricsLogic.GetAsync);
 metrics.MapPost("/", MetricsLogic.CreateAsync);
 metrics.MapDelete("/{id}", MetricsLogic.DeleteAsync);
+
+var metricsType = metrics.MapGroup("/type").RequireAuthorization();
+metricsType.MapPost("/", MetricsLogic.CreateTypeAsync);
+metricsType.MapPut("/", MetricsLogic.UpdateTypeAsync);
+metricsType.MapDelete("/", MetricsLogic.DeleteTypeAsync);
+metricsType.MapGet("/", MetricsLogic.GetTypeAsync);
+
 
 AppDataConnection.Init(connection, app.Logger);
 

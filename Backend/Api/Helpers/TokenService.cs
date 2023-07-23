@@ -37,7 +37,7 @@ public class TokenService
                 new Claim(JwtRegisteredClaimNames.NameId, user.Identifier),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email)
              }),
-            Expires = DateTime.UtcNow.AddMinutes(5),
+            Expires = DateTime.UtcNow.AddMinutes(30),
             Issuer = _issuer,
             Audience = _audience,
             SigningCredentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature)

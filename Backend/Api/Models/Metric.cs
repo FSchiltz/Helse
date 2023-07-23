@@ -13,4 +13,6 @@ public class Metric
     public required string Value { get; set; }
 
     public string? Unit { get; set; }
+
+    public int Type {get;set;}
 }
