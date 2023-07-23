@@ -2,6 +2,7 @@ using LinqToDB.Mapping;
 
 namespace Api.Data.Models;
 
+[Table(Schema = "health")]
 public class Prescription
 {
     [PrimaryKey]

@@ -2,6 +2,7 @@ using LinqToDB.Mapping;
 
 namespace Api.Data.Models;
 
+[Table(Schema = "person")]
 public class Person
 {
     [PrimaryKey, Identity]

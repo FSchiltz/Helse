@@ -2,6 +2,7 @@ using LinqToDB.Mapping;
 
 namespace Api.Data.Models;
 
+[Table(Schema = "person")]
 public class Right
 {
     [PrimaryKey, Identity]
@@ -13,7 +14,7 @@ public class Right
     [Association(ThisKey = nameof(PersonId), OtherKey = nameof(Data.Models.Person.Id))]
     public required Person Person { get; set; }
 
-    [Column,NotNull]
+    [Column, NotNull]
     public long UserId { get; set; }
 
     [Association(ThisKey = nameof(UserId), OtherKey = nameof(Data.Models.User.Id))]
