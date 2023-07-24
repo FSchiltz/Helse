@@ -1,6 +1,5 @@
 import 'dart:async';
 import '../services/service.dart';
-import '../swagger_generated_code/swagger.swagger.dart';
 import 'account.dart';
 
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }

@@ -20,7 +20,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  final textController = new TextEditingController();
+  final textController = TextEditingController();
 
   Future<void> _initUrl(LoginBloc bloc) async {
     var url = await Account().getUrl();
