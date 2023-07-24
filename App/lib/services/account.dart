@@ -1,5 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+/// Token storage abstraction
 class Account {
   final storage = const FlutterSecureStorage();
 

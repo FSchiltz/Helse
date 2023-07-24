@@ -55,7 +55,7 @@ class _$Swagger extends Swagger {
   @override
   Future<Response<dynamic>> _metricsPost({
     int? personId,
-    required Metric? body,
+    required CreateMetric? body,
   }) {
     final Uri $url = Uri.parse('/metrics');
     final Map<String, dynamic> $params = <String, dynamic>{

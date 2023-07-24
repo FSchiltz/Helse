@@ -1,11 +1,11 @@
 import 'package:bloc/bloc.dart';
-import 'authentication.dart';
+import 'authentication_logic.dart';
 
 enum SubmissionStatus { initial, success, failure, inProgress }
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc({
-    required Authentication authenticationRepository,
+    required AuthenticationLogic authenticationRepository,
   })  : _authenticationRepository = authenticationRepository,
         super(const LoginState()) {
     on<LoginUsernameChanged>(_onUsernameChanged);
@@ -15,7 +15,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<LoginSubmitted>(_onSubmitted);
   }
 
-  final Authentication _authenticationRepository;
+  final AuthenticationLogic _authenticationRepository;
 
   bool _hasError(String? text) {
     return text == null || text.isEmpty;

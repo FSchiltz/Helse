@@ -16,3 +16,15 @@ public class Metric
 
     public long Type {get;set;}
 }
+
+public class CreateMetric
+{
+    public DateTime Date { get; set; }
+
+    public required string Value { get; set; }
+
+    public string? Unit { get; set; }
+
+    public long Type {get;set;}
+}
+

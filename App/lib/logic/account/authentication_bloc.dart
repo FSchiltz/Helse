@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'authentication.dart';
+import 'authentication_logic.dart';
 
 sealed class AuthenticationEvent {
   const AuthenticationEvent();
@@ -33,7 +33,7 @@ class AuthenticationState {
 
 class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
   AuthenticationBloc({
-    required Authentication authenticationRepository,
+    required AuthenticationLogic authenticationRepository,
   })  : _authenticationRepository = authenticationRepository,
         super(const AuthenticationState.unknown()) {
     on<_AuthenticationStatusChanged>(_onAuthenticationStatusChanged);
@@ -41,7 +41,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     _authenticationStatusSubscription = _authenticationRepository.status.listen((status) => add(_AuthenticationStatusChanged(status)));
   }
 
-  final Authentication _authenticationRepository;
+  final AuthenticationLogic _authenticationRepository;
   late StreamSubscription<AuthenticationStatus> _authenticationStatusSubscription;
 
   @override

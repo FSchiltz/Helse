@@ -39,7 +39,7 @@ public static class MetricsLogic
         }));
     }
 
-    public static async Task<IResult> CreateAsync(Metric metric, long? personId, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> CreateAsync(CreateMetric metric, long? personId, AppDataConnection db, HttpContext context)
     {
         // get the connected user
         var userName = context.User.GetUser();

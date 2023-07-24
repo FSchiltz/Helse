@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../account/account.dart';
-import '../account/authentication.dart';
-import '../account/login_bloc.dart';
+import '../services/account.dart';
+import '../logic/account/authentication_logic.dart';
+import '../logic/account/login_bloc.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({
@@ -36,7 +36,7 @@ class _LoginState extends State<LoginPage> {
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       body: BlocProvider(
         create: (context) {
-          var bloc = LoginBloc(authenticationRepository: RepositoryProvider.of<Authentication>(context));
+          var bloc = LoginBloc(authenticationRepository: RepositoryProvider.of<AuthenticationLogic>(context));
           bloc.checkLogin();
           _initUrl(bloc);
           return bloc;

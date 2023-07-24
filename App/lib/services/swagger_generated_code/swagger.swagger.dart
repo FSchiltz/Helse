@@ -90,7 +90,7 @@ abstract class Swagger extends ChopperService {
   ///@param personId
   Future<chopper.Response> metricsPost({
     int? personId,
-    required Metric? body,
+    required CreateMetric? body,
   }) {
     return _metricsPost(personId: personId, body: body);
   }
@@ -103,7 +103,7 @@ abstract class Swagger extends ChopperService {
   )
   Future<chopper.Response> _metricsPost({
     @Query('personId') int? personId,
-    @Body() required Metric? body,
+    @Body() required CreateMetric? body,
   });
 
   ///
@@ -228,6 +228,80 @@ extension $ConnectionExtension on Connection {
     return Connection(
         user: (user != null ? user.value : this.user),
         password: (password != null ? password.value : this.password));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class CreateMetric {
+  CreateMetric({
+    this.date,
+    this.value,
+    this.unit,
+    this.type,
+  });
+
+  factory CreateMetric.fromJson(Map<String, dynamic> json) =>
+      _$CreateMetricFromJson(json);
+
+  static const toJsonFactory = _$CreateMetricToJson;
+  Map<String, dynamic> toJson() => _$CreateMetricToJson(this);
+
+  @JsonKey(name: 'date')
+  final DateTime? date;
+  @JsonKey(name: 'value')
+  final String? value;
+  @JsonKey(name: 'unit')
+  final String? unit;
+  @JsonKey(name: 'type')
+  final int? type;
+  static const fromJsonFactory = _$CreateMetricFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is CreateMetric &&
+            (identical(other.date, date) ||
+                const DeepCollectionEquality().equals(other.date, date)) &&
+            (identical(other.value, value) ||
+                const DeepCollectionEquality().equals(other.value, value)) &&
+            (identical(other.unit, unit) ||
+                const DeepCollectionEquality().equals(other.unit, unit)) &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(date) ^
+      const DeepCollectionEquality().hash(value) ^
+      const DeepCollectionEquality().hash(unit) ^
+      const DeepCollectionEquality().hash(type) ^
+      runtimeType.hashCode;
+}
+
+extension $CreateMetricExtension on CreateMetric {
+  CreateMetric copyWith(
+      {DateTime? date, String? value, String? unit, int? type}) {
+    return CreateMetric(
+        date: date ?? this.date,
+        value: value ?? this.value,
+        unit: unit ?? this.unit,
+        type: type ?? this.type);
+  }
+
+  CreateMetric copyWithWrapped(
+      {Wrapped<DateTime?>? date,
+      Wrapped<String?>? value,
+      Wrapped<String?>? unit,
+      Wrapped<int?>? type}) {
+    return CreateMetric(
+        date: (date != null ? date.value : this.date),
+        value: (value != null ? value.value : this.value),
+        unit: (unit != null ? unit.value : this.unit),
+        type: (type != null ? type.value : this.type));
   }
 }
 

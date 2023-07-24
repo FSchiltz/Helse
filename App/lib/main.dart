@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:helse/logic/metrics/metrics_logic.dart';
 import 'package:helse/ui/home.dart';
 import 'package:helse/ui/login.dart';
 import 'package:helse/ui/splash.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'account/authentication.dart';
-import 'account/authentication_bloc.dart';
+import 'logic/account/authentication_logic.dart';
+import 'logic/account/authentication_bloc.dart';
 
 void main() => runApp(const App());
 
@@ -17,26 +18,26 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  late final Authentication _authenticationRepository;
+  late final AuthenticationLogic _authenticationLogic;
 
   @override
   void initState() {
     super.initState();
-    _authenticationRepository = Authentication();
+    _authenticationLogic = AuthenticationLogic();
   }
 
   @override
   void dispose() {
-    _authenticationRepository.dispose();
+    _authenticationLogic.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
-      value: _authenticationRepository,
+      value: _authenticationLogic,
       child: BlocProvider(
-        create: (_) => AuthenticationBloc(authenticationRepository: _authenticationRepository),
+        create: (_) => AuthenticationBloc(authenticationRepository: _authenticationLogic),
         child: const AppView(),
       ),
     );

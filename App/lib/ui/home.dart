@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'dashboard.dart';
 import 'settings.dart';
 
 class Home extends StatefulWidget {
@@ -21,7 +22,7 @@ class _HomeState extends State<Home> {
     Widget page;
     switch (selectedIndex) {
       case 0:
-        page = const Placeholder();
+        page = const Dashboard();
         break;
       case 1:
         page = const SettingsPage();

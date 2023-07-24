@@ -17,6 +17,22 @@ Map<String, dynamic> _$ConnectionToJson(Connection instance) =>
       'password': instance.password,
     };
 
+CreateMetric _$CreateMetricFromJson(Map<String, dynamic> json) => CreateMetric(
+      date:
+          json['date'] == null ? null : DateTime.parse(json['date'] as String),
+      value: json['value'] as String?,
+      unit: json['unit'] as String?,
+      type: json['type'] as int?,
+    );
+
+Map<String, dynamic> _$CreateMetricToJson(CreateMetric instance) =>
+    <String, dynamic>{
+      'date': instance.date?.toIso8601String(),
+      'value': instance.value,
+      'unit': instance.unit,
+      'type': instance.type,
+    };
+
 Metric _$MetricFromJson(Map<String, dynamic> json) => Metric(
       id: json['id'] as int?,
       personId: json['personId'] as int?,
