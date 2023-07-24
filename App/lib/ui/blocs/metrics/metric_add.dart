@@ -3,11 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/logic/event.dart';
 import 'package:helse/logic/metrics/metric_bloc.dart';
 import 'package:helse/logic/metrics/metrics_logic.dart';
+import 'package:helse/services/swagger_generated_code/swagger.swagger.dart';
 
 import '../text_input.dart';
 
 class MetricAdd extends StatelessWidget {
-  const MetricAdd({super.key});
+  final List<MetricType> types;
+  const MetricAdd(this.types, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +38,8 @@ class MetricAdd extends StatelessWidget {
                 child: Column(
                   children: [
                     Text("Add manual metric", style: Theme.of(context).textTheme.bodyMedium),
+                    const SizedBox(height: 10),
+                    _TypeInput(types),
                     const SizedBox(height: 10),
                     _ValueInput(),
                     const SizedBox(height: 10),
@@ -79,6 +83,34 @@ class _UnitInput extends StatelessWidget {
   }
 }
 
+class _TypeInput extends StatelessWidget {
+  final List<MetricType> types;
+  const _TypeInput(this.types);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<MetricBloc, MetricState>(
+      buildWhen: (previous, current) => previous.value != current.value,
+      builder: (context, state) {
+        return DropdownButtonFormField(
+          onChanged: (value) => context.read<MetricBloc>().add(IntChangedEvent(value ?? 0, MetricBloc.unitEvent)),
+          items: types.map((type) => DropdownMenuItem(value: type.id, child: Text(type.name ?? ""))).toList(),
+          decoration: InputDecoration(
+            labelText: 'Type',
+            prefixIcon: const Icon(Icons.list),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
 class _DateInput extends StatelessWidget {
   final TextEditingController _textController = TextEditingController();
 
@@ -92,11 +124,30 @@ class _DateInput extends StatelessWidget {
   }
 
   Future<DateTime?> _pick(BuildContext context) async {
-    return await showDatePicker(
+    final DateTime? selectedDate = await showDatePicker(
         context: context,
         initialDate: DateTime.now(), //get today's date
         firstDate: DateTime(1000),
         lastDate: DateTime(3000));
+
+    if (selectedDate == null) return null;
+
+    if (!context.mounted) return selectedDate;
+
+    final TimeOfDay? selectedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(selectedDate),
+    );
+
+    return selectedTime == null
+        ? selectedDate
+        : DateTime(
+            selectedDate.year,
+            selectedDate.month,
+            selectedDate.day,
+            selectedTime.hour,
+            selectedTime.minute,
+          );
   }
 
   @override

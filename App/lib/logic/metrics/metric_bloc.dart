@@ -40,7 +40,7 @@ class MetricBloc extends Bloc<ChangedEvent, MetricState> {
         break;
       case unitEvent:
         emit(
-          state.copyWith(value: event.value),
+          state.copyWith(unit: event.value),
         );
         break;
     }
@@ -64,7 +64,7 @@ class MetricBloc extends Bloc<ChangedEvent, MetricState> {
     var hasError = _hasError(value);
     var valid = _validateAll(value, state.date);
     emit(
-      state.copyWith(unit: value, valueError: hasError, isValid: valid),
+      state.copyWith(value: value, valueError: hasError, isValid: valid),
     );
   }
 

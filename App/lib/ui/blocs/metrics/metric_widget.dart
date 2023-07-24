@@ -26,7 +26,9 @@ class _MetricWidgetState extends State<MetricWidget> {
 
   void _getData() async {
     var now = DateTime.now().toUtc();
-    var model = await MetricsLogic().getMetric(_id, now.add(const Duration(days: -1)), now.add(const Duration(days: 1)));
+    var start = now.add(const Duration(days: -1));
+    var end = now.add(const Duration(days: 1));
+    var model = await MetricsLogic().getMetric(_id, start, end);
     setState(() {
       metrics = model;
     });

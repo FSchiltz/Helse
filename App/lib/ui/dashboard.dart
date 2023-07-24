@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../logic/metrics/metrics_logic.dart';
 import '../services/swagger_generated_code/swagger.swagger.dart';
 import 'blocs/metrics/metric_add.dart';
+import 'blocs/metrics/metric_import.dart';
 import 'blocs/metrics/metric_widget.dart';
 
 class Dashboard extends StatefulWidget {
@@ -30,23 +31,43 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text('Metrics', style: Theme.of(context).textTheme.displayMedium), actions: <Widget>[
-          Padding(
-              padding: const EdgeInsets.only(right: 20.0),
-              child: GestureDetector(
-                onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return MetricAdd();
-                      });
-                },
-                child: const Icon(
-                  Icons.add,
-                  size: 32.0,
-                ),
-              )),
-        ]),
+        appBar: AppBar(
+          title: Text('Metrics', style: Theme.of(context).textTheme.displayMedium),
+          actions: <Widget>[
+            Padding(
+                padding: const EdgeInsets.only(right: 20.0),
+                child: GestureDetector(
+                  onTap: () {
+                    if (types.isNotEmpty) {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return MetricAdd(types);
+                          });
+                    }
+                  },
+                  child: const Icon(
+                    Icons.add,
+                    size: 32.0,
+                  ),
+                )),
+            Padding(
+                padding: const EdgeInsets.only(right: 20.0),
+                child: GestureDetector(
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const MetricImport();
+                        });
+                  },
+                  child: const Icon(
+                    Icons.upload_file,
+                    size: 32.0,
+                  ),
+                )),
+          ],
+        ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Center(
