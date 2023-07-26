@@ -75,7 +75,7 @@ class _UnitInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MetricBloc, MetricState>(
-      buildWhen: (previous, current) => previous.value != current.value,
+      buildWhen: (previous, current) => previous.unit != current.unit,
       builder: (context, state) {
         return TextInput((value) => context.read<MetricBloc>().add(TextChangedEvent(value, MetricBloc.unitEvent)), Icons.design_services_outlined, "Unit");
       },
@@ -90,7 +90,7 @@ class _TypeInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MetricBloc, MetricState>(
-      buildWhen: (previous, current) => previous.value != current.value,
+      buildWhen: (previous, current) => previous.type != current.type,
       builder: (context, state) {
         return DropdownButtonFormField(
           onChanged: (value) => context.read<MetricBloc>().add(IntChangedEvent(value ?? 0, MetricBloc.unitEvent)),
@@ -153,7 +153,7 @@ class _DateInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MetricBloc, MetricState>(
-      buildWhen: (previous, current) => previous.value != current.value,
+      buildWhen: (previous, current) => previous.date != current.date,
       builder: (context, state) {
         return TextField(
           controller: _textController,

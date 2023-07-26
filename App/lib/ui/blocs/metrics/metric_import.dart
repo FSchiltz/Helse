@@ -4,7 +4,6 @@ import 'package:helse/logic/event.dart';
 import 'package:helse/logic/metrics/metric_bloc.dart';
 import 'package:helse/logic/metrics/metrics_logic.dart';
 
-import '../text_input.dart';
 
 class MetricImport extends StatelessWidget {
   const MetricImport({super.key});

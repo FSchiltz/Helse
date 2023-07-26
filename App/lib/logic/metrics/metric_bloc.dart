@@ -89,7 +89,7 @@ final class MetricState {
     this.unit = "",
     this.type = 1,
     this.isValid = false,
-    this.date = null,
+    this.date,
     this.valueError = false,
   });
 

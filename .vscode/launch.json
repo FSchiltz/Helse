@@ -5,6 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Flutter desktop",
+            "type": "dart",
+            "request": "launch",
+            "program": "App/lib/main.dart",
+        },
+        {
             "name": "Flutter web",
             "type": "dart",
             "request": "launch",

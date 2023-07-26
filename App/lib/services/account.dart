@@ -1,30 +1,29 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Token storage abstraction
 class Account {
-  final storage = const FlutterSecureStorage();
+  final storage = SharedPreferences.getInstance();
 
   final _url = "urlPath";
   final _token = "sessionToken";
 
-  Future<String?> getUrl() {
-    return storage.read(key: _url);
+  Future<String?> getUrl() async {
+    return (await storage).getString(_url);
   }
 
   Future<void> setUrl(String url) async {
-    await storage.write(key: _url, value: url);
+    await (await storage).setString(_url, url);
   }
 
-  Future<String?> getToken() {
-    return storage.read(key: _token);
+  Future<String?> getToken() async {
+    return (await storage).getString(_token);
   }
 
   Future<void> setToken(String token) async {
-    await storage.write(key: _token, value: token);
+    await (await storage).setString(_token, token);
   }
 
   Future<void> removeToken() async {
-    await storage.delete(key: _token);
+    await (await storage).remove(_token);
   }
-
 }

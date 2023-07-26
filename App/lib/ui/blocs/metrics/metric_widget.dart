@@ -5,8 +5,11 @@ import '../../../logic/metrics/metrics_logic.dart';
 
 class MetricWidget extends StatefulWidget {
   final MetricType _type;
+  final DateTime _date;
 
-  const MetricWidget(MetricType type, {super.key}) : _type = type;
+  const MetricWidget(MetricType type, DateTime date, {super.key})
+      : _type = type,
+        _date = date;
 
   @override
   State<MetricWidget> createState() => _MetricWidgetState(_type.id);
@@ -17,6 +20,7 @@ class _MetricWidgetState extends State<MetricWidget> {
   final int _id;
 
   _MetricWidgetState(int? id) : _id = id ?? -1;
+
   @override
   void initState() {
     metrics = null;
@@ -24,14 +28,11 @@ class _MetricWidgetState extends State<MetricWidget> {
     _getData();
   }
 
-  void _getData() async {
-    var now = DateTime.now().toUtc();
-    var start = now.add(const Duration(days: -1));
-    var end = now.add(const Duration(days: 1));
-    var model = await MetricsLogic().getMetric(_id, start, end);
-    setState(() {
-      metrics = model;
-    });
+  Future<List<Metric>> _getData() async {
+    var utc = widget._date.toUtc();
+    var date = DateTime(utc.year, utc.month, utc.day);
+    var end = date.add(const Duration(days: 1));
+    return await MetricsLogic().getMetric(_id, date, end);
   }
 
   @override
@@ -45,8 +46,32 @@ class _MetricWidgetState extends State<MetricWidget> {
             Center(
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [metrics == null ? const CircularProgressIndicator() : MetricGraph(metrics!)],
-            ))
+              children: [
+                FutureBuilder(
+                    future: _getData(),
+                    builder: (ctx, snapshot) {
+                      // Checking if future is resolved
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        // If we got an error
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Text(
+                              '${snapshot.error} occurred',
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                          );
+
+                          // if we got our data
+                        } else if (snapshot.hasData) {
+                          // Extracting data from snapshot object
+                          final metrics = snapshot.data as List<Metric>;
+                          return MetricGraph(metrics);
+                        }
+                      }
+                      return const CircularProgressIndicator();
+                    })
+              ],
+            )),
           ],
         ),
       ),

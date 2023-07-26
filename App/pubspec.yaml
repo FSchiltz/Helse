@@ -39,9 +39,10 @@ dependencies:
   hive_flutter: ^1.1.0
   bloc: ^8.1.2
   flutter_bloc: ^8.1.3
-  flutter_secure_storage: ^8.0.0
   chopper: ^6.1.1
   json_annotation: ^4.8.0
+  intl: ^0.18.1
+  shared_preferences: ^2.2.0
 
 dev_dependencies:
   flutter_test:

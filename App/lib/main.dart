@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/metrics/metrics_logic.dart';
 import 'package:helse/ui/home.dart';
 import 'package:helse/ui/login.dart';
 import 'package:helse/ui/splash.dart';
