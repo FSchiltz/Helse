@@ -30,7 +30,7 @@ CREATE TABLE health.Metric
   UserId   BIGINT   NOT NULL,
   Date     TIMESTAMP NOT NULL,
   Value    VARCHAR  NOT NULL,
-  Unit     VARCHAR  NULL    ,
+  Tag     VARCHAR  NULL    ,
   Type  BIGINT NOT NULL
 );
 

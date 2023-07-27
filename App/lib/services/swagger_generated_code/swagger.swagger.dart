@@ -236,7 +236,7 @@ class CreateMetric {
   CreateMetric({
     this.date,
     this.value,
-    this.unit,
+    this.tag,
     this.type,
   });
 
@@ -250,8 +250,8 @@ class CreateMetric {
   final DateTime? date;
   @JsonKey(name: 'value')
   final String? value;
-  @JsonKey(name: 'unit')
-  final String? unit;
+  @JsonKey(name: 'tag')
+  final String? tag;
   @JsonKey(name: 'type')
   final int? type;
   static const fromJsonFactory = _$CreateMetricFromJson;
@@ -264,8 +264,8 @@ class CreateMetric {
                 const DeepCollectionEquality().equals(other.date, date)) &&
             (identical(other.value, value) ||
                 const DeepCollectionEquality().equals(other.value, value)) &&
-            (identical(other.unit, unit) ||
-                const DeepCollectionEquality().equals(other.unit, unit)) &&
+            (identical(other.tag, tag) ||
+                const DeepCollectionEquality().equals(other.tag, tag)) &&
             (identical(other.type, type) ||
                 const DeepCollectionEquality().equals(other.type, type)));
   }
@@ -277,30 +277,30 @@ class CreateMetric {
   int get hashCode =>
       const DeepCollectionEquality().hash(date) ^
       const DeepCollectionEquality().hash(value) ^
-      const DeepCollectionEquality().hash(unit) ^
+      const DeepCollectionEquality().hash(tag) ^
       const DeepCollectionEquality().hash(type) ^
       runtimeType.hashCode;
 }
 
 extension $CreateMetricExtension on CreateMetric {
   CreateMetric copyWith(
-      {DateTime? date, String? value, String? unit, int? type}) {
+      {DateTime? date, String? value, String? tag, int? type}) {
     return CreateMetric(
         date: date ?? this.date,
         value: value ?? this.value,
-        unit: unit ?? this.unit,
+        tag: tag ?? this.tag,
         type: type ?? this.type);
   }
 
   CreateMetric copyWithWrapped(
       {Wrapped<DateTime?>? date,
       Wrapped<String?>? value,
-      Wrapped<String?>? unit,
+      Wrapped<String?>? tag,
       Wrapped<int?>? type}) {
     return CreateMetric(
         date: (date != null ? date.value : this.date),
         value: (value != null ? value.value : this.value),
-        unit: (unit != null ? unit.value : this.unit),
+        tag: (tag != null ? tag.value : this.tag),
         type: (type != null ? type.value : this.type));
   }
 }
@@ -313,7 +313,7 @@ class Metric {
     this.user,
     this.date,
     this.value,
-    this.unit,
+    this.tag,
     this.type,
   });
 
@@ -332,8 +332,8 @@ class Metric {
   final DateTime? date;
   @JsonKey(name: 'value')
   final String? value;
-  @JsonKey(name: 'unit')
-  final String? unit;
+  @JsonKey(name: 'tag')
+  final String? tag;
   @JsonKey(name: 'type')
   final int? type;
   static const fromJsonFactory = _$MetricFromJson;
@@ -353,8 +353,8 @@ class Metric {
                 const DeepCollectionEquality().equals(other.date, date)) &&
             (identical(other.value, value) ||
                 const DeepCollectionEquality().equals(other.value, value)) &&
-            (identical(other.unit, unit) ||
-                const DeepCollectionEquality().equals(other.unit, unit)) &&
+            (identical(other.tag, tag) ||
+                const DeepCollectionEquality().equals(other.tag, tag)) &&
             (identical(other.type, type) ||
                 const DeepCollectionEquality().equals(other.type, type)));
   }
@@ -369,7 +369,7 @@ class Metric {
       const DeepCollectionEquality().hash(user) ^
       const DeepCollectionEquality().hash(date) ^
       const DeepCollectionEquality().hash(value) ^
-      const DeepCollectionEquality().hash(unit) ^
+      const DeepCollectionEquality().hash(tag) ^
       const DeepCollectionEquality().hash(type) ^
       runtimeType.hashCode;
 }
@@ -381,7 +381,7 @@ extension $MetricExtension on Metric {
       int? user,
       DateTime? date,
       String? value,
-      String? unit,
+      String? tag,
       int? type}) {
     return Metric(
         id: id ?? this.id,
@@ -389,7 +389,7 @@ extension $MetricExtension on Metric {
         user: user ?? this.user,
         date: date ?? this.date,
         value: value ?? this.value,
-        unit: unit ?? this.unit,
+        tag: tag ?? this.tag,
         type: type ?? this.type);
   }
 
@@ -399,7 +399,7 @@ extension $MetricExtension on Metric {
       Wrapped<int?>? user,
       Wrapped<DateTime?>? date,
       Wrapped<String?>? value,
-      Wrapped<String?>? unit,
+      Wrapped<String?>? tag,
       Wrapped<int?>? type}) {
     return Metric(
         id: (id != null ? id.value : this.id),
@@ -407,7 +407,7 @@ extension $MetricExtension on Metric {
         user: (user != null ? user.value : this.user),
         date: (date != null ? date.value : this.date),
         value: (value != null ? value.value : this.value),
-        unit: (unit != null ? unit.value : this.unit),
+        tag: (tag != null ? tag.value : this.tag),
         type: (type != null ? type.value : this.type));
   }
 }

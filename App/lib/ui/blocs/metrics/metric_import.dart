@@ -4,9 +4,12 @@ import 'package:helse/logic/event.dart';
 import 'package:helse/logic/metrics/metric_bloc.dart';
 import 'package:helse/logic/metrics/metrics_logic.dart';
 
+import '../../../services/swagger_generated_code/swagger.swagger.dart';
+
 
 class MetricImport extends StatelessWidget {
-  const MetricImport({super.key});
+  final List<MetricType> types;
+  const MetricImport(this.types, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +20,7 @@ class MetricImport extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: BlocProvider(
           create: (context) {
-            return MetricBloc(metricsLogic: MetricsLogic());
+            return MetricBloc(metricsLogic: MetricsLogic(), types: types);
           },
           child: BlocListener<MetricBloc, MetricState>(
             listener: (context, state) {

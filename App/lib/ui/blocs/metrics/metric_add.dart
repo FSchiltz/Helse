@@ -20,7 +20,7 @@ class MetricAdd extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: BlocProvider(
           create: (context) {
-            return MetricBloc(metricsLogic: MetricsLogic());
+            return MetricBloc(metricsLogic: MetricsLogic(), types: types);
           },
           child: BlocListener<MetricBloc, MetricState>(
             listener: (context, state) {
@@ -43,7 +43,7 @@ class MetricAdd extends StatelessWidget {
                     const SizedBox(height: 10),
                     _ValueInput(),
                     const SizedBox(height: 10),
-                    _UnitInput(),
+                    _TagInput(),
                     const SizedBox(height: 10),
                     _DateInput(),
                     const SizedBox(height: 10),
@@ -71,13 +71,13 @@ class _ValueInput extends StatelessWidget {
   }
 }
 
-class _UnitInput extends StatelessWidget {
+class _TagInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MetricBloc, MetricState>(
-      buildWhen: (previous, current) => previous.unit != current.unit,
+      buildWhen: (previous, current) => previous.tag != current.tag,
       builder: (context, state) {
-        return TextInput((value) => context.read<MetricBloc>().add(TextChangedEvent(value, MetricBloc.unitEvent)), Icons.design_services_outlined, "Unit");
+        return TextInput((value) => context.read<MetricBloc>().add(TextChangedEvent(value, MetricBloc.tagEvent)), Icons.design_services_outlined, "Tag");
       },
     );
   }
@@ -93,7 +93,7 @@ class _TypeInput extends StatelessWidget {
       buildWhen: (previous, current) => previous.type != current.type,
       builder: (context, state) {
         return DropdownButtonFormField(
-          onChanged: (value) => context.read<MetricBloc>().add(IntChangedEvent(value ?? 0, MetricBloc.unitEvent)),
+          onChanged: (value) => context.read<MetricBloc>().add(IntChangedEvent(value ?? 0, MetricBloc.typeEvent)),
           items: types.map((type) => DropdownMenuItem(value: type.id, child: Text(type.name ?? ""))).toList(),
           decoration: InputDecoration(
             labelText: 'Type',

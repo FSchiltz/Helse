@@ -21,7 +21,7 @@ CreateMetric _$CreateMetricFromJson(Map<String, dynamic> json) => CreateMetric(
       date:
           json['date'] == null ? null : DateTime.parse(json['date'] as String),
       value: json['value'] as String?,
-      unit: json['unit'] as String?,
+      tag: json['tag'] as String?,
       type: json['type'] as int?,
     );
 
@@ -29,7 +29,7 @@ Map<String, dynamic> _$CreateMetricToJson(CreateMetric instance) =>
     <String, dynamic>{
       'date': instance.date?.toIso8601String(),
       'value': instance.value,
-      'unit': instance.unit,
+      'tag': instance.tag,
       'type': instance.type,
     };
 
@@ -40,7 +40,7 @@ Metric _$MetricFromJson(Map<String, dynamic> json) => Metric(
       date:
           json['date'] == null ? null : DateTime.parse(json['date'] as String),
       value: json['value'] as String?,
-      unit: json['unit'] as String?,
+      tag: json['tag'] as String?,
       type: json['type'] as int?,
     );
 
@@ -50,7 +50,7 @@ Map<String, dynamic> _$MetricToJson(Metric instance) => <String, dynamic>{
       'user': instance.user,
       'date': instance.date?.toIso8601String(),
       'value': instance.value,
-      'unit': instance.unit,
+      'tag': instance.tag,
       'type': instance.type,
     };
 

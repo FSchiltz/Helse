@@ -12,14 +12,15 @@ class MetricWidget extends StatefulWidget {
         _date = date;
 
   @override
-  State<MetricWidget> createState() => _MetricWidgetState(_type.id);
+  State<MetricWidget> createState() => _MetricWidgetState(_type.id, _type.unit);
 }
 
 class _MetricWidgetState extends State<MetricWidget> {
   late List<Metric>? metrics;
   final int _id;
+  final String? _unit;
 
-  _MetricWidgetState(int? id) : _id = id ?? -1;
+  _MetricWidgetState(int? id, String? unit) : _id = id ?? -1, _unit = unit;
 
   @override
   void initState() {
@@ -65,7 +66,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                         } else if (snapshot.hasData) {
                           // Extracting data from snapshot object
                           final metrics = snapshot.data as List<Metric>;
-                          return MetricGraph(metrics);
+                          return MetricGraph(metrics, _unit);
                         }
                       }
                       return const CircularProgressIndicator();
@@ -81,7 +82,9 @@ class _MetricWidgetState extends State<MetricWidget> {
 
 class MetricGraph extends StatelessWidget {
   final List<Metric> _metrics;
-  const MetricGraph(List<Metric> metrics, {super.key}) : _metrics = metrics;
+  final String? _unit;
+
+  const MetricGraph(List<Metric> metrics, String? unit, {super.key}) : _metrics = metrics , _unit = unit;
 
   @override
   Widget build(BuildContext context) {

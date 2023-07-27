@@ -34,7 +34,7 @@ public static class MetricsLogic
             Id = x.Id,
             PersonId = user.PersonId,
             Type = x.Type,
-            Unit = x.Unit,
+            Tag = x.Tag,
             User = x.UserId,
         }));
     }
@@ -56,7 +56,7 @@ public static class MetricsLogic
             PersonId = personId ?? user.PersonId,
             Value = metric.Value,
             Date = metric.Date,
-            Unit = metric.Unit,
+            Tag = metric.Tag,
             UserId = user.Id,
             Type = metric.Type,
         });

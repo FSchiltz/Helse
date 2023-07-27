@@ -12,7 +12,7 @@ public class Metric
 
     public required string Value { get; set; }
 
-    public string? Unit { get; set; }
+    public string? Tag { get; set; }
 
     public long Type {get;set;}
 }
@@ -23,7 +23,7 @@ public class CreateMetric
 
     public required string Value { get; set; }
 
-    public string? Unit { get; set; }
+    public string? Tag { get; set; }
 
     public long Type {get;set;}
 }

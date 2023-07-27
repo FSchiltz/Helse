@@ -72,7 +72,7 @@ class _DashboardState extends State<Dashboard> {
                     showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return const MetricImport();
+                          return MetricImport(types);
                         });
                   },
                   child: const Icon(

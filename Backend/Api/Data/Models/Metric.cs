@@ -28,7 +28,7 @@ public class Metric
     public required string Value { get; set; }
 
     [Column]
-    public string? Unit { get; set; }
+    public string? Tag { get; set; }
 
     [Column]
     public long Type {get;set;}
