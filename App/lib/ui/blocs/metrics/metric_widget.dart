@@ -9,9 +9,9 @@ import '../../../services/swagger_generated_code/swagger.swagger.dart';
 
 class MetricWidget extends StatefulWidget {
   final MetricType _type;
-  final DateTime _date;
+  final DateTimeRange _date;
 
-  const MetricWidget(MetricType type, DateTime date, {super.key})
+  const MetricWidget(MetricType type, DateTimeRange date, {super.key})
       : _type = type,
         _date = date;
 
@@ -50,11 +50,13 @@ class _MetricWidgetState extends State<MetricWidget> {
   }
 
   Future<List<Metric>?> _getData() async {
-    var utc = widget._date.toUtc();
-    var date = DateTime(utc.year, utc.month, utc.day);
-    var end = date.add(const Duration(days: 1));
-    var metrics = await AppState.metricsLogic?.getMetric(_id, date, end);
+    var startUtc = widget._date.start.toUtc();
+    var start = DateTime(startUtc.year, startUtc.month, startUtc.day);
 
+    var endUtc = widget._date.end.toUtc();
+    var end = DateTime(endUtc.year, endUtc.month, endUtc.day).add(const Duration(days: 1));
+
+    var metrics = await AppState.metricsLogic?.getMetric(_id, start, end);
     metrics?.sort(_sort);
     return metrics;
   }
@@ -93,7 +95,9 @@ class _MetricWidgetState extends State<MetricWidget> {
                           Text((last?.value ?? "") + (_unit ?? ""), style: Theme.of(context).textTheme.labelMedium),
                         ],
                       ),
-                      SizedBox(height: 130, child: MetricGraph(metrics, _unit))
+                      Expanded(
+                        child: MetricGraph(metrics, _unit),
+                      )
                     ],
                   ),
                 );
@@ -186,33 +190,37 @@ class _Graph extends StatelessWidget {
   Widget build(BuildContext context) {
     return metrics.isEmpty
         ? const Text("No data")
-        : LineChart(
-            LineChartData(
-              titlesData: const FlTitlesData(
-                leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              ),
-              borderData: FlBorderData(
-                show: false,
-              ),
-              gridData: const FlGridData(
-                show: true,
-                drawVerticalLine: false,
-                horizontalInterval: 0.5,
-              ),
-              lineBarsData: [
-                LineChartBarData(
-                  spots: _getSpot(metrics),
-                  isCurved: true,
-                  color: Colors.greenAccent,
-                  barWidth: 4,
-                  isStrokeCapRound: true,
-                  dotData: const FlDotData(show: false),
-                  belowBarData: BarAreaData(show: false),
+        : FractionallySizedBox(
+            widthFactor: 0.9,
+            heightFactor: 0.9,
+            child: LineChart(
+              LineChartData(
+                titlesData: const FlTitlesData(
+                  leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 ),
-              ],
+                borderData: FlBorderData(
+                  show: false,
+                ),
+                gridData: const FlGridData(
+                  show: true,
+                  drawVerticalLine: false,
+                  horizontalInterval: 0.5,
+                ),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: _getSpot(metrics),
+                    isCurved: true,
+                    color: Colors.greenAccent,
+                    barWidth: 4,
+                    isStrokeCapRound: true,
+                    dotData: const FlDotData(show: false),
+                    belowBarData: BarAreaData(show: false),
+                  ),
+                ],
+              ),
             ),
           );
   }

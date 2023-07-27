@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../helpers/date.dart';
 import '../main.dart';
 import '../services/swagger_generated_code/swagger.swagger.dart';
 import 'blocs/metrics/metric_add.dart';
@@ -16,7 +17,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   List<MetricType> types = [];
-  DateTime date = DateTime.now();
+  DateTimeRange date = DateHelper.now();
 
   @override
   void initState() {
@@ -33,7 +34,7 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
-  void _setDate(DateTime value) {
+  void _setDate(DateTimeRange value) {
     setState(() {
       date = value;
     });
@@ -41,7 +42,6 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    var filterDate = date;
     return Scaffold(
         appBar: AppBar(
           title: Text('Metrics', style: Theme.of(context).textTheme.displayMedium),
@@ -93,7 +93,7 @@ class _DashboardState extends State<Dashboard> {
                     itemCount: types.length,
                     itemBuilder: (context, index) {
                       var type = types[index];
-                      return MetricWidget(type, filterDate, key: Key(type.id?.toString() ?? ""));
+                      return MetricWidget(type, date, key: Key(type.id?.toString() ?? ""));
                     },
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: (MediaQuery.of(context).size.width ~/ 200).toInt(),
@@ -109,20 +109,19 @@ class _DashboardState extends State<Dashboard> {
 
 class _DateInput extends StatelessWidget {
   final TextEditingController _textController = TextEditingController();
-  final void Function(DateTime date) _setDateCallback;
-  final DateFormat formatter = DateFormat('dd-MM-yyyy');
-  final DateTime initial;
+  final void Function(DateTimeRange date) _setDateCallback;
+  final DateFormat formatter = DateFormat('dd/MM/yyyy');
+  final DateTimeRange initial;
 
-  _DateInput(void Function(DateTime date) setDate, this.initial) : _setDateCallback = setDate {
+  _DateInput(void Function(DateTimeRange date) setDate, this.initial) : _setDateCallback = setDate {
     _displayDate(initial);
   }
 
-  void _displayDate(DateTime date) {
-    final String formatted = formatter.format(date);
-    _textController.text = formatted;
+  void _displayDate(DateTimeRange date) {
+    _textController.text = "${formatter.format(date.start)} - ${formatter.format(date.end)}";
   }
 
-  Future<void> _setDate(BuildContext context, DateTime initial) async {
+  Future<void> _setDate(BuildContext context, DateTimeRange initial) async {
     var date = await _pick(context, initial);
     if (date != null) {
       _displayDate(date);
@@ -130,10 +129,10 @@ class _DateInput extends StatelessWidget {
     }
   }
 
-  Future<DateTime?> _pick(BuildContext context, DateTime initial) async {
-    final DateTime? selectedDate = await showDatePicker(
+  Future<DateTimeRange?> _pick(BuildContext context, DateTimeRange initial) async {
+    var selectedDate = await showDateRangePicker(
         context: context,
-        initialDate: initial, //get today's date
+        initialDateRange: initial, //get today's date
         firstDate: DateTime(1000),
         lastDate: DateTime(3000));
     return selectedDate;
@@ -142,15 +141,15 @@ class _DateInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 200,
-      height: 40,
+      width: 220,
+      height: 50,
       child: TextField(
         controller: _textController,
         onTap: () {
           _setDate(context, initial);
         },
+        style: Theme.of(context).textTheme.bodyMedium,
         decoration: InputDecoration(
-          labelText: 'date',
           prefixIcon: const Icon(Icons.edit_calendar_outlined),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
