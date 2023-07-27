@@ -1,18 +1,16 @@
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 
+import '../../main.dart';
 import '../../services/swagger_generated_code/swagger.swagger.dart';
 import '../event.dart';
-import 'metrics_logic.dart';
 
 enum SubmissionStatus { initial, success, failure, inProgress }
 
 class MetricBloc extends Bloc<ChangedEvent, MetricState> {
   MetricBloc({
-    required MetricsLogic metricsLogic,
     required List<MetricType> types,
-  })  : _metricsLogic = metricsLogic,
-        _types = types,
+  })  : _types = types,
         super(const MetricState()) {
     on<TextChangedEvent>(_onTextChanged);
     on<DateChangedEvent>(_onDateChanged);
@@ -20,7 +18,6 @@ class MetricBloc extends Bloc<ChangedEvent, MetricState> {
     on<SubmittedEvent>(_onSubmitted);
   }
 
-  final MetricsLogic _metricsLogic;
   final List<MetricType> _types;
 
   // Event constants
@@ -78,11 +75,14 @@ class MetricBloc extends Bloc<ChangedEvent, MetricState> {
   }
 
   Future<void> _onSubmitted(SubmittedEvent event, Emitter<MetricState> emit) async {
-    if (state.isValid) {
+    if (state.isValid && AppState.metricsLogic != null) {
       emit(state.copyWith(status: SubmissionStatus.inProgress));
       try {
         var metric = CreateMetric(date: state.date, type: state.type, tag: state.tag, value: state.value);
-        await _metricsLogic.addMetric(metric);
+        await AppState.metricsLogic?.addMetric(metric);
+
+        event.callback?.call();
+        
         emit(state.copyWith(status: SubmissionStatus.success));
       } catch (_) {
         emit(state.copyWith(status: SubmissionStatus.failure));

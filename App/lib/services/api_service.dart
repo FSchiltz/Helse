@@ -8,6 +8,26 @@ class ApiService {
 
   ApiService(Account account) : _account = account;
 
+  Future<T?> _call<T>(Future<Response<T>> Function() call) async {
+    var response = await call();
+    T? result;
+
+    if (!response.isSuccessful) {
+      switch (response.statusCode) {
+        case 401:
+          // no auth, we remove the token and return null;
+          _account.removeToken();
+          result = null;
+          break;
+        default:
+          throw Exception(response.error);
+      }
+    } else {
+      result = response.body;
+    }
+    return result;
+  }
+
   Future<Swagger> _getService() async {
     var url = await _account.getUrl();
     if (url == null) throw Exception("Url missing");
@@ -27,23 +47,16 @@ class ApiService {
 
   Future<List<MetricType>?> metricsType() async {
     var api = await _getService();
-    var response = await api.metricsTypeGet();
-    var list = response.isSuccessful ? response.body : null;
-    return list;
+    return await _call(api.metricsTypeGet);
   }
 
   Future<List<Metric>?> metrics(int type, String start, String end) async {
     var api = await _getService();
-    var response = await api.metricsGet(type: type, start: start, end: end);
-    var list = response.isSuccessful ? response.body : null;
-    return list;
+    return await _call(() => api.metricsGet(type: type, start: start, end: end));
   }
 
   Future<void> addMetrics(CreateMetric metric) async {
     var api = await _getService();
-    var response = await api.metricsPost(body: metric);
-    if (!response.isSuccessful) {
-      throw Exception("Error");
-    }
+    await _call(() => api.metricsPost(body: metric));
   }
 }

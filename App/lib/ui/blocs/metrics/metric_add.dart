@@ -20,7 +20,7 @@ class MetricAdd extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: BlocProvider(
           create: (context) {
-            return MetricBloc(metricsLogic: MetricsLogic(), types: types);
+            return MetricBloc(types: types);
           },
           child: BlocListener<MetricBloc, MetricState>(
             listener: (context, state) {
@@ -193,7 +193,7 @@ class _SubmitButton extends StatelessWidget {
                 key: const Key('loginForm_continue_raisedButton'),
                 onPressed: state.isValid
                     ? () {
-                        context.read<MetricBloc>().add(const SubmittedEvent(""));
+                        context.read<MetricBloc>().add(SubmittedEvent("", callback: () => Navigator.of(context).pop()));
                       }
                     : null,
                 child: const Text('Submit'),

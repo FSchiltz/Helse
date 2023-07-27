@@ -3,7 +3,9 @@ import '../../services/api_service.dart';
 import '../../services/swagger_generated_code/swagger.swagger.dart';
 
 class MetricsLogic {
-  final Account _account = Account();
+  final Account _account;
+
+  MetricsLogic(Account account): _account = account;
 
   Future<List<MetricType>> getType() async {
     return (await ApiService(_account).metricsType()) ?? List<MetricType>.empty();

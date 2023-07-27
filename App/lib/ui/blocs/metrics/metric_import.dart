@@ -6,7 +6,6 @@ import 'package:helse/logic/metrics/metrics_logic.dart';
 
 import '../../../services/swagger_generated_code/swagger.swagger.dart';
 
-
 class MetricImport extends StatelessWidget {
   final List<MetricType> types;
   const MetricImport(this.types, {super.key});
@@ -20,7 +19,7 @@ class MetricImport extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: BlocProvider(
           create: (context) {
-            return MetricBloc(metricsLogic: MetricsLogic(), types: types);
+            return MetricBloc(types: types);
           },
           child: BlocListener<MetricBloc, MetricState>(
             listener: (context, state) {
@@ -39,7 +38,6 @@ class MetricImport extends StatelessWidget {
                   children: [
                     Text("Import external metric", style: Theme.of(context).textTheme.bodyMedium),
                     const SizedBox(height: 10),
-                    
                     _SubmitButton(),
                   ],
                 ),
@@ -51,8 +49,6 @@ class MetricImport extends StatelessWidget {
     );
   }
 }
-
-
 
 class _SubmitButton extends StatelessWidget {
   @override
@@ -70,7 +66,7 @@ class _SubmitButton extends StatelessWidget {
                 ),
                 onPressed: state.isValid
                     ? () {
-                        context.read<MetricBloc>().add(const SubmittedEvent(""));
+                        context.read<MetricBloc>().add(SubmittedEvent("", callback: () => Navigator.of(context).pop()));
                       }
                     : null,
                 child: const Text('Submit'),

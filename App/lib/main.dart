@@ -1,42 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/home.dart';
-import 'package:helse/ui/login.dart';
-import 'package:helse/ui/splash.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'logic/account/authentication_logic.dart';
 import 'logic/account/authentication_bloc.dart';
+import 'logic/metrics/metrics_logic.dart';
+import 'services/account.dart';
+import 'ui/common/restart.dart';
+import 'ui/home.dart';
+import 'ui/login.dart';
+import 'ui/splash.dart';
 
-void main() => runApp(const App());
+void main() => runApp(const RestartWidget(child: App()));
 
 class App extends StatefulWidget {
   const App({super.key});
 
   @override
-  State<App> createState() => _AppState();
+  State<App> createState() => AppState();
 }
 
-class _AppState extends State<App> {
-  late final AuthenticationLogic _authenticationLogic;
+class AppState extends State<App> {
+  static AuthenticationLogic? authenticationLogic;
+  static MetricsLogic? metricsLogic;
+  static final Account account = Account();
 
   @override
   void initState() {
     super.initState();
-    _authenticationLogic = AuthenticationLogic();
+    authenticationLogic = AuthenticationLogic(account);
+    metricsLogic = MetricsLogic(account);
   }
 
   @override
   void dispose() {
-    _authenticationLogic.dispose();
+    authenticationLogic?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if(authenticationLogic == null) {
+      throw Exception("Init Error");
+    }
+
     return RepositoryProvider.value(
-      value: _authenticationLogic,
+      value: authenticationLogic,
       child: BlocProvider(
-        create: (_) => AuthenticationBloc(authenticationRepository: _authenticationLogic),
+        create: (_) => AuthenticationBloc(authenticationRepository: authenticationLogic!),
         child: const AppView(),
       ),
     );

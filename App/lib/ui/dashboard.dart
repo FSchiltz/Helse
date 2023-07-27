@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../logic/metrics/metrics_logic.dart';
+import '../main.dart';
 import '../services/swagger_generated_code/swagger.swagger.dart';
 import 'blocs/metrics/metric_add.dart';
 import 'blocs/metrics/metric_import.dart';
@@ -25,10 +25,12 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _getData() async {
-    var model = await MetricsLogic().getType();
-    setState(() {
-      types = model;
-    });
+    var model = await AppState.metricsLogic?.getType();
+    if (model != null) {
+      setState(() {
+        types = model;
+      });
+    }
   }
 
   void _setDate(DateTime value) {

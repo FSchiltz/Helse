@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/services/swagger_generated_code/swagger.swagger.dart';
 
-import '../../../logic/metrics/metrics_logic.dart';
+import '../../../main.dart';
 
 class MetricWidget extends StatefulWidget {
   final MetricType _type;
@@ -29,11 +29,11 @@ class _MetricWidgetState extends State<MetricWidget> {
     _getData();
   }
 
-  Future<List<Metric>> _getData() async {
+  Future<List<Metric>?> _getData() async {
     var utc = widget._date.toUtc();
     var date = DateTime(utc.year, utc.month, utc.day);
     var end = date.add(const Duration(days: 1));
-    return await MetricsLogic().getMetric(_id, date, end);
+    return await AppState.metricsLogic?.getMetric(_id, date, end);
   }
 
   @override

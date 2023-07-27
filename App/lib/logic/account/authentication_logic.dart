@@ -8,7 +8,9 @@ enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 /// TODO Add refresh token support
 class AuthenticationLogic {
   final _controller = StreamController<AuthenticationStatus>();
-  final _account = Account();
+  final Account _account;
+
+  AuthenticationLogic(Account account) : _account = account;
 
   Stream<AuthenticationStatus> get status async* {
     await Future<void>.delayed(const Duration(seconds: 1));

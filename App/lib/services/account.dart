@@ -25,5 +25,6 @@ class Account {
 
   Future<void> removeToken() async {
     await (await storage).remove(_token);
+    // TODO use event
   }
 }
