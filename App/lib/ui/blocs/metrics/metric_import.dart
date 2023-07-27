@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/logic/event.dart';
 import 'package:helse/logic/metrics/metric_bloc.dart';
-import 'package:helse/logic/metrics/metrics_logic.dart';
 
 import '../../../services/swagger_generated_code/swagger.swagger.dart';
 

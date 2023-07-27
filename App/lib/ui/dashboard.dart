@@ -96,7 +96,7 @@ class _DashboardState extends State<Dashboard> {
                       return MetricWidget(type, filterDate, key: Key(type.id?.toString() ?? ""));
                     },
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: (MediaQuery.of(context).size.width ~/ 250).toInt(),
+                      crossAxisCount: (MediaQuery.of(context).size.width ~/ 200).toInt(),
                       childAspectRatio: 1.0,
                       crossAxisSpacing: 5.0,
                       mainAxisSpacing: 5,

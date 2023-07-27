@@ -5,13 +5,18 @@ namespace Api.Data.Models;
 [Table(Schema = "person")]
 public class User
 {
+    public static User Empty => new (){
+        Identifier = string.Empty,
+        Password = string.Empty,
+    };
+
     [PrimaryKey, Identity]
     public long Id { get; set; }
 
     [Column, NotNull]
     public long PersonId { get; set; }
 
-    [Association(ThisKey = nameof(PersonId), OtherKey = nameof(Data.Models.Person.Id))]
+    [Association(ThisKey = nameof(PersonId), OtherKey = nameof(Models.Person.Id))]
     public Person? Person { get; set; }
 
     [Column, NotNull]

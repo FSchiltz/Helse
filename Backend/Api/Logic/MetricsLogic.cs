@@ -19,7 +19,7 @@ public static class MetricsLogic
         if (user is null)
             return TypedResults.Unauthorized();
 
-        if (personId is not null && !await db.ValidateCaregiverAsync(user, personId, RightType.View))
+        if (personId is not null && !await db.ValidateCaregiverAsync(user, personId.Value, RightType.View))
             return TypedResults.Unauthorized();
 
         var metrics = await db.GetTable<Data.Models.Metric>()
@@ -48,7 +48,7 @@ public static class MetricsLogic
         if (user is null)
             return TypedResults.Unauthorized();
 
-        if (personId is not null && !await db.ValidateCaregiverAsync(user, personId, RightType.Edit))
+        if (personId is not null && !await db.ValidateCaregiverAsync(user, personId.Value, RightType.Edit))
             return TypedResults.Unauthorized();
 
         await db.GetTable<Data.Models.Metric>().InsertAsync(() => new Data.Models.Metric

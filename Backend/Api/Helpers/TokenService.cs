@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Identity;
+using Api.Data.Models;
 
 namespace Api.Helpers;
 
@@ -20,15 +21,15 @@ public class TokenService
 
     public static string Hash(string password)
     {
-        return new PasswordHasher<Data.Models.User>().HashPassword(default, password);
+        return new PasswordHasher<User>().HashPassword(User.Empty, password);
     }
 
     public static PasswordVerificationResult Verify(string password, string hash)
     {
-        return new PasswordHasher<Data.Models.User>().VerifyHashedPassword(default, hash, password);
+        return new PasswordHasher<User>().VerifyHashedPassword(User.Empty, hash, password);
     }
 
-    public string GetToken(Api.Data.Models.User user)
+    public string GetToken(User user)
     {
         var tokenDescriptor = new SecurityTokenDescriptor
         {
