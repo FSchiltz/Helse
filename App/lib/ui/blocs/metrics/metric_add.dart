@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:helse/logic/event.dart';
-import 'package:helse/logic/metrics/metric_bloc.dart';
-import 'package:helse/services/swagger_generated_code/swagger.swagger.dart';
 
+import '../../../logic/event.dart';
+import '../../../logic/metrics/metric_bloc.dart';
+import '../../../services/swagger_generated_code/swagger.swagger.dart';
 import '../text_input.dart';
 
 class MetricAdd extends StatelessWidget {
   final List<MetricType> types;
-  const MetricAdd(this.types, {super.key});
+  final void Function() callback;
+
+  const MetricAdd(this.types, this.callback, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +48,7 @@ class MetricAdd extends StatelessWidget {
                     const SizedBox(height: 10),
                     _DateInput(),
                     const SizedBox(height: 10),
-                    _SubmitButton(),
+                    _SubmitButton(callback),
                   ],
                 ),
               ),
@@ -176,6 +178,10 @@ class _DateInput extends StatelessWidget {
 }
 
 class _SubmitButton extends StatelessWidget {
+  final void Function() callback;
+
+  const _SubmitButton(this.callback);
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MetricBloc, MetricState>(
@@ -192,7 +198,10 @@ class _SubmitButton extends StatelessWidget {
                 key: const Key('loginForm_continue_raisedButton'),
                 onPressed: state.isValid
                     ? () {
-                        context.read<MetricBloc>().add(SubmittedEvent("", callback: () => Navigator.of(context).pop()));
+                        context.read<MetricBloc>().add(SubmittedEvent("", callback: () {
+                              Navigator.of(context).pop();
+                              callback();
+                            }));
                       }
                     : null,
                 child: const Text('Submit'),

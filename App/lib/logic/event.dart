@@ -29,7 +29,7 @@ final class DateChangedEvent extends ChangedEvent {
 }
 
 final class SubmittedEvent extends ChangedEvent {
-  final Function()? callback;
+  final void Function()? callback;
 
   const SubmittedEvent(String field, {this.callback}) : super(field);
 }

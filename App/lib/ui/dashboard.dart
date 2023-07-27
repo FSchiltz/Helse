@@ -7,6 +7,7 @@ import '../services/swagger_generated_code/swagger.swagger.dart';
 import 'blocs/metrics/metric_add.dart';
 import 'blocs/metrics/metric_import.dart';
 import 'blocs/metrics/metric_widget.dart';
+import 'blocs/metrics/metrics_grid.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -40,70 +41,58 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+  void _reset() {
+    setState(() {
+      date = date;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Metrics', style: Theme.of(context).textTheme.displayMedium),
-          actions: <Widget>[
-            Padding(
+      appBar: AppBar(
+        title: Text('Welcome', style: Theme.of(context).textTheme.displayMedium),
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: _DateInput(_setDate, date),
+          ),
+          Padding(
               padding: const EdgeInsets.only(right: 20.0),
-              child: _DateInput(_setDate, date),
-            ),
-            Padding(
-                padding: const EdgeInsets.only(right: 20.0),
-                child: GestureDetector(
-                  onTap: () {
-                    if (types.isNotEmpty) {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return MetricAdd(types);
-                          });
-                    }
-                  },
-                  child: const Icon(
-                    Icons.add,
-                    size: 32.0,
-                  ),
-                )),
-            Padding(
-                padding: const EdgeInsets.only(right: 20.0),
-                child: GestureDetector(
-                  onTap: () {
+              child: GestureDetector(
+                onTap: () {
+                  if (types.isNotEmpty) {
                     showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return MetricImport(types);
+                          return MetricAdd(types, _reset);
                         });
-                  },
-                  child: const Icon(
-                    Icons.upload_file,
-                    size: 32.0,
-                  ),
-                )),
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Center(
-            child: types.isEmpty
-                ? const CircularProgressIndicator()
-                : GridView.builder(
-                    itemCount: types.length,
-                    itemBuilder: (context, index) {
-                      var type = types[index];
-                      return MetricWidget(type, date, key: Key(type.id?.toString() ?? ""));
-                    },
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: (MediaQuery.of(context).size.width ~/ 200).toInt(),
-                      childAspectRatio: 1.0,
-                      crossAxisSpacing: 5.0,
-                      mainAxisSpacing: 5,
-                    ),
-                  ),
-          ),
-        ));
+                  }
+                },
+                child: const Icon(
+                  Icons.add,
+                  size: 32.0,
+                ),
+              )),
+          Padding(
+              padding: const EdgeInsets.only(right: 20.0),
+              child: GestureDetector(
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return MetricImport(types);
+                      });
+                },
+                child: const Icon(
+                  Icons.upload_file,
+                  size: 32.0,
+                ),
+              )),
+        ],
+      ),
+      body: MetricsGrid(types: types, date: date),
+    );
   }
 }
 
@@ -135,7 +124,12 @@ class _DateInput extends StatelessWidget {
         initialDateRange: initial, //get today's date
         firstDate: DateTime(1000),
         lastDate: DateTime(3000));
-    return selectedDate;
+    if (selectedDate == null) return null;
+
+    var start = selectedDate.start;
+    var end = selectedDate.end;
+
+    return DateTimeRange(start: start, end: DateTime(end.year, end.month, end.day, 23, 59, 59));
   }
 
   @override
