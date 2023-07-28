@@ -15,13 +15,15 @@ class MetricWidget extends StatefulWidget {
 }
 
 class _MetricWidgetState extends State<MetricWidget> {
-  late List<Metric>? metrics;
+  late List<Metric>? _metrics;
+  late DateTimeRange? _date;
 
   _MetricWidgetState();
 
   @override
   void initState() {
-    metrics = null;
+    _metrics = null;
+    _date = null;
     super.initState();
     _getData(widget.type.id);
   }
@@ -41,17 +43,27 @@ class _MetricWidgetState extends State<MetricWidget> {
   }
 
   Future<List<Metric>?> _getData(int? id) async {
-    if (id == null) return List<Metric>.empty();
+    if (id == null) {
+      _metrics = List<Metric>.empty();
+      return _metrics;
+    }
 
-    var startUtc = widget.date.start.toUtc();
+    // if the date has not changer, no call to the backend
+    var date = _date;
+    if (date != null && widget.date.start.compareTo(date.start) == 0 && widget.date.end.compareTo(date.end) == 0) return _metrics;
+
+    date = widget.date;
+    _date = date;
+
+    var startUtc = date.start.toUtc();
     var start = DateTime(startUtc.year, startUtc.month, startUtc.day);
 
-    var endUtc = widget.date.end.toUtc();
+    var endUtc = date.end.toUtc();
     var end = DateTime(endUtc.year, endUtc.month, endUtc.day).add(const Duration(days: 1));
 
-    var metrics = await AppState.metricsLogic?.getMetric(id, start, end);
-    metrics?.sort(_sort);
-    return metrics;
+    _metrics = await AppState.metricsLogic?.getMetric(id, start, end);
+    _metrics?.sort(_sort);
+    return _metrics;
   }
 
   @override
