@@ -55,11 +55,8 @@ class _MetricWidgetState extends State<MetricWidget> {
     date = widget.date;
     _date = date;
 
-    var startUtc = date.start.toUtc();
-    var start = DateTime(startUtc.year, startUtc.month, startUtc.day);
-
-    var endUtc = date.end.toUtc();
-    var end = DateTime(endUtc.year, endUtc.month, endUtc.day).add(const Duration(days: 1));
+    var start = DateTime(date.start.year, date.start.month, date.start.day);
+    var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
     _metrics = await AppState.metricsLogic?.getMetric(id, start, end);
     _metrics?.sort(_sort);

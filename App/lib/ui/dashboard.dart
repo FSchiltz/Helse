@@ -90,7 +90,10 @@ class _DashboardState extends State<Dashboard> {
               )),
         ],
       ),
-      body: MetricsGrid(types: types, date: date),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: MetricsGrid(types: types, date: date),
+      ),
     );
   }
 }

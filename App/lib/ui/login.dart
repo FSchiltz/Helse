@@ -25,7 +25,7 @@ class _LoginState extends State<LoginPage> {
   Future<void> _initUrl(LoginBloc bloc) async {
     var url = await Account().getUrl();
     if (url != null && url.isNotEmpty) {
-      textController.text = url;    
+      textController.text = url;
       bloc.add(LoginUrlChanged(url));
     }
   }
@@ -54,22 +54,26 @@ class _LoginState extends State<LoginPage> {
             child: Form(
               key: _formKey,
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(30.0),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 150),
-                    Text("Welcome back", style: Theme.of(context).textTheme.headlineLarge),
-                    const SizedBox(height: 10),
-                    Text("Login to your account", style: Theme.of(context).textTheme.bodyMedium),
-                    const SizedBox(height: 60),
-                    _UrlInput(textController),
-                    const SizedBox(height: 60),
-                    _UsernameInput(),
-                    const SizedBox(height: 10),
-                    _PasswordInput(),
-                    const SizedBox(height: 60),
-                    _LoginButton(),
-                  ],
+                child: Align(
+                  child: Container(
+                    constraints: const BoxConstraints(maxWidth: 500),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 150),
+                        Text("Welcome back", style: Theme.of(context).textTheme.headlineLarge),
+                        const SizedBox(height: 10),
+                        Text("Login to your account", style: Theme.of(context).textTheme.bodyMedium),
+                        const SizedBox(height: 60),
+                        _UrlInput(textController),
+                        const SizedBox(height: 60),
+                        _UsernameInput(),
+                        const SizedBox(height: 10),
+                        _PasswordInput(),
+                        const SizedBox(height: 60),
+                        _LoginButton(),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             )),

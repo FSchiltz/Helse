@@ -35,7 +35,7 @@ internal class SpoRecord : Record
 }
 
 internal class HeartRecord : Record {
-    public string? Bpm { get;}
+    public string? Bpm { get; set;}
 }
 
 internal class StepRecord : Record {

@@ -34,10 +34,16 @@ CREATE TABLE health.Metric
   Type  BIGINT NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS "Metric_person"
+CREATE INDEX IF NOT EXISTS metric_date_type_personid_idx
     ON health.metric USING btree
-    (personid ASC NULLS LAST)
-    INCLUDE(date, tag, Type);
+    (date ASC NULLS LAST)
+    INCLUDE(type, personid)
+
+CREATE INDEX IF NOT EXISTS metric_tag_personid_idx
+    ON health.metric USING btree
+    (tag COLLATE pg_catalog."default" ASC NULLS LAST)
+    INCLUDE(personid)
+    TABLESPACE pg_default;
 
 CREATE TABLE health.Prescription
 (
