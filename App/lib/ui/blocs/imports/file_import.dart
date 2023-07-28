@@ -81,7 +81,11 @@ class _FileInput extends StatelessWidget {
     return BlocBuilder<ImportBloc, ImportState>(
       buildWhen: (previous, current) => previous.file?.name != current.file?.name,
       builder: (context, state) {
-        return FileInput((value) => context.read<ImportBloc>().add(FileChangedEvent(value, ImportBloc.fileEvent)));
+        return FileInput(
+          (value) => context.read<ImportBloc>().add(FileChangedEvent(value, ImportBloc.fileEvent)),
+          "File",
+          Icons.upload_file,
+        );
       },
     );
   }

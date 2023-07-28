@@ -5,12 +5,14 @@ class TextInput extends StatelessWidget {
   final String label;
   final Function()? onTap;
   final Function(String)? onChanged;
+  final TextEditingController _textController;
 
-  const TextInput(this.icon, this.label, {super.key, this.onTap, this.onChanged});
+  TextInput(this.icon, this.label, {super.key, this.onTap, this.onChanged, TextEditingController? textController}) : _textController = textController ?? TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: _textController,
       onChanged: onChanged,
       onTap: onTap,
       decoration: InputDecoration(
