@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 
 class TextInput extends StatelessWidget {
-  final Function(String)? _onChanged;
-  final IconData _icon;
-  final String _label;
+  final IconData icon;
+  final String label;
+  final Function()? onTap;
+  final Function(String)? onChanged;
 
-  const TextInput(Function(String)? onChanged, IconData icon,  String label, {super.key})
-      : _onChanged = onChanged,
-        _icon = icon,
-        _label = label;
+  const TextInput(this.icon, this.label, {super.key, this.onTap, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
     return TextField(
-      onChanged: _onChanged,
+      onChanged: onChanged,
+      onTap: onTap,
       decoration: InputDecoration(
-        labelText: _label,
-        prefixIcon: Icon(_icon),
+        labelText: label,
+        prefixIcon: Icon(icon),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
         ),

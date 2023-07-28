@@ -30,6 +30,33 @@ class _$Swagger extends Swagger {
   }
 
   @override
+  Future<Response<List<FileType>>> _importTypesGet() {
+    final Uri $url = Uri.parse('/import/types');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<List<FileType>, FileType>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _importTypesTypePost({
+    required int? type,
+    required String? body,
+  }) {
+    final Uri $url = Uri.parse('/import/types/${type}');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
   Future<Response<List<Metric>>> _metricsGet({
     required int? type,
     required String? start,

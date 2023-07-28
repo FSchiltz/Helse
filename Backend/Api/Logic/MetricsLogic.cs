@@ -64,6 +64,8 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
+    
+
     public async static Task<IResult> DeleteAsync(long id, AppDataConnection db, HttpContext context)
     {
         // get the connected user

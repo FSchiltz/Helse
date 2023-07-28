@@ -33,6 +33,16 @@ Map<String, dynamic> _$CreateMetricToJson(CreateMetric instance) =>
       'type': instance.type,
     };
 
+FileType _$FileTypeFromJson(Map<String, dynamic> json) => FileType(
+      type: json['type'] as int?,
+      name: json['name'] as String?,
+    );
+
+Map<String, dynamic> _$FileTypeToJson(FileType instance) => <String, dynamic>{
+      'type': instance.type,
+      'name': instance.name,
+    };
+
 Metric _$MetricFromJson(Map<String, dynamic> json) => Metric(
       id: json['id'] as int?,
       personId: json['personId'] as int?,

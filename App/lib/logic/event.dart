@@ -1,7 +1,18 @@
+
+import 'package:file_selector/file_selector.dart';
+
+enum SubmissionStatus { initial, success, failure, inProgress }
+
 sealed class ChangedEvent {
   const ChangedEvent(this.field);
 
   final String field;
+}
+
+final class FileChangedEvent extends ChangedEvent {
+    const FileChangedEvent(this.value, String field) : super(field);
+
+  final XFile? value;
 }
 
 final class TextChangedEvent extends ChangedEvent {

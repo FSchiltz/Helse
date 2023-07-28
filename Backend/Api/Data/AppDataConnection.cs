@@ -32,7 +32,7 @@ public class AppDataConnection : DataConnection
         }
         else
         {
-            logger.LogError("Migration error : {error}", result.Error);
+            throw new Exception("Migration error");
         }
 
     }

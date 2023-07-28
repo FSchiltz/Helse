@@ -58,6 +58,37 @@ abstract class Swagger extends ChopperService {
       {@Body() required Connection? body});
 
   ///
+  Future<chopper.Response<List<FileType>>> importTypesGet() {
+    generatedMapping.putIfAbsent(FileType, () => FileType.fromJsonFactory);
+
+    return _importTypesGet();
+  }
+
+  ///
+  @Get(path: '/import/types')
+  Future<chopper.Response<List<FileType>>> _importTypesGet();
+
+  ///
+  ///@param type
+  Future<chopper.Response> importTypesTypePost({
+    required int? type,
+    required String? body,
+  }) {
+    return _importTypesTypePost(type: type, body: body);
+  }
+
+  ///
+  ///@param type
+  @Post(
+    path: '/import/types/{type}',
+    optionalBody: true,
+  )
+  Future<chopper.Response> _importTypesTypePost({
+    @Path('type') required int? type,
+    @Body() required String? body,
+  });
+
+  ///
   ///@param type
   ///@param start
   ///@param end
@@ -302,6 +333,57 @@ extension $CreateMetricExtension on CreateMetric {
         value: (value != null ? value.value : this.value),
         tag: (tag != null ? tag.value : this.tag),
         type: (type != null ? type.value : this.type));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class FileType {
+  FileType({
+    this.type,
+    this.name,
+  });
+
+  factory FileType.fromJson(Map<String, dynamic> json) =>
+      _$FileTypeFromJson(json);
+
+  static const toJsonFactory = _$FileTypeToJson;
+  Map<String, dynamic> toJson() => _$FileTypeToJson(this);
+
+  @JsonKey(name: 'type')
+  final int? type;
+  @JsonKey(name: 'name')
+  final String? name;
+  static const fromJsonFactory = _$FileTypeFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is FileType &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(name) ^
+      runtimeType.hashCode;
+}
+
+extension $FileTypeExtension on FileType {
+  FileType copyWith({int? type, String? name}) {
+    return FileType(type: type ?? this.type, name: name ?? this.name);
+  }
+
+  FileType copyWithWrapped({Wrapped<int?>? type, Wrapped<String?>? name}) {
+    return FileType(
+        type: (type != null ? type.value : this.type),
+        name: (name != null ? name.value : this.name));
   }
 }
 

@@ -5,8 +5,6 @@ import '../../main.dart';
 import '../../services/swagger_generated_code/swagger.swagger.dart';
 import '../event.dart';
 
-enum SubmissionStatus { initial, success, failure, inProgress }
-
 class MetricBloc extends Bloc<ChangedEvent, MetricState> {
   MetricBloc({
     required List<MetricType> types,

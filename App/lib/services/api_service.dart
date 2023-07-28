@@ -59,4 +59,14 @@ class ApiService {
     var api = await _getService();
     await _call(() => api.metricsPost(body: metric));
   }
+
+  Future<List<FileType>?> fileType() async {
+    var api = await _getService();
+    return await _call(api.importTypesGet);
+  }
+
+   Future<void> import(String? file, int type) async {
+    var api = await _getService();
+    await _call(() => api.importTypesTypePost(body: file, type: type));
+  }
 }

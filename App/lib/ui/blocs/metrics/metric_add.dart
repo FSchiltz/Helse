@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../logic/event.dart';
 import '../../../logic/metrics/metric_bloc.dart';
 import '../../../services/swagger_generated_code/swagger.swagger.dart';
-import '../text_input.dart';
+import '../common/text_input.dart';
 
 class MetricAdd extends StatelessWidget {
   final List<MetricType> types;
@@ -66,7 +66,7 @@ class _ValueInput extends StatelessWidget {
     return BlocBuilder<MetricBloc, MetricState>(
       buildWhen: (previous, current) => previous.value != current.value,
       builder: (context, state) {
-        return TextInput((value) => context.read<MetricBloc>().add(TextChangedEvent(value, MetricBloc.valueEvent)), Icons.add, "Value");
+        return TextInput(Icons.add, "Value", onChanged: (value) => context.read<MetricBloc>().add(TextChangedEvent(value, MetricBloc.valueEvent)));
       },
     );
   }
@@ -78,7 +78,7 @@ class _TagInput extends StatelessWidget {
     return BlocBuilder<MetricBloc, MetricState>(
       buildWhen: (previous, current) => previous.tag != current.tag,
       builder: (context, state) {
-        return TextInput((value) => context.read<MetricBloc>().add(TextChangedEvent(value, MetricBloc.tagEvent)), Icons.design_services_outlined, "Tag");
+        return TextInput(Icons.design_services_outlined, "Tag", onChanged: (value) => context.read<MetricBloc>().add(TextChangedEvent(value, MetricBloc.tagEvent)));
       },
     );
   }

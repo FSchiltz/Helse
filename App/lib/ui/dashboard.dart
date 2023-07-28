@@ -4,9 +4,8 @@ import 'package:intl/intl.dart';
 import '../helpers/date.dart';
 import '../main.dart';
 import '../services/swagger_generated_code/swagger.swagger.dart';
+import 'blocs/imports/file_import.dart';
 import 'blocs/metrics/metric_add.dart';
-import 'blocs/metrics/metric_import.dart';
-import 'blocs/metrics/metric_widget.dart';
 import 'blocs/metrics/metrics_grid.dart';
 
 class Dashboard extends StatefulWidget {
@@ -81,7 +80,7 @@ class _DashboardState extends State<Dashboard> {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return MetricImport(types);
+                        return const FileImport();
                       });
                 },
                 child: const Icon(

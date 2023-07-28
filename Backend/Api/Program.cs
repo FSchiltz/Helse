@@ -158,6 +158,17 @@ metricsType.MapGet("/", MetricsLogic.GetTypeAsync)
 .Produces((int)HttpStatusCode.Unauthorized)
 .WithOpenApi();
 
+var import = app.MapGroup("/import");
+import.MapGet("/types", ImportLogic.GetTypeAsync)
+.Produces<List<FileType>>((int)HttpStatusCode.OK)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();
+
+import.MapPost("/types/{type}", ImportLogic.PostFileAsync)
+.Produces((int)HttpStatusCode.NoContent)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();
+
 AppDataConnection.Init(connection, app.Logger);
 
 app.Run();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:helse/logic/import/import_logic.dart';
 
 import 'logic/account/authentication_logic.dart';
 import 'logic/account/authentication_bloc.dart';
@@ -22,6 +23,7 @@ class App extends StatefulWidget {
 class AppState extends State<App> {
   static AuthenticationLogic? authenticationLogic;
   static MetricsLogic? metricsLogic;
+  static ImportLogic? importLogic;
   static final Account account = Account();
 
   @override
@@ -29,6 +31,7 @@ class AppState extends State<App> {
     super.initState();
     authenticationLogic = AuthenticationLogic(account);
     metricsLogic = MetricsLogic(account);
+    importLogic = ImportLogic(account);
   }
 
   @override
