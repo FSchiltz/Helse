@@ -17,6 +17,24 @@ Map<String, dynamic> _$ConnectionToJson(Connection instance) =>
       'password': instance.password,
     };
 
+CreateEvent _$CreateEventFromJson(Map<String, dynamic> json) => CreateEvent(
+      type: json['type'] as int?,
+      description: json['description'] as String?,
+      start: json['start'] == null
+          ? null
+          : DateTime.parse(json['start'] as String),
+      stop:
+          json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
+    );
+
+Map<String, dynamic> _$CreateEventToJson(CreateEvent instance) =>
+    <String, dynamic>{
+      'type': instance.type,
+      'description': instance.description,
+      'start': instance.start?.toIso8601String(),
+      'stop': instance.stop?.toIso8601String(),
+    };
+
 CreateMetric _$CreateMetricFromJson(Map<String, dynamic> json) => CreateMetric(
       date:
           json['date'] == null ? null : DateTime.parse(json['date'] as String),
@@ -33,6 +51,49 @@ Map<String, dynamic> _$CreateMetricToJson(CreateMetric instance) =>
       'type': instance.type,
     };
 
+Event _$EventFromJson(Map<String, dynamic> json) => Event(
+      id: json['id'] as int?,
+      person: json['person'] as int?,
+      user: json['user'] as int?,
+      file: json['file'] as int?,
+      treatment: json['treatment'] as int?,
+      type: json['type'] as int?,
+      description: json['description'] as String?,
+      start: json['start'] == null
+          ? null
+          : DateTime.parse(json['start'] as String),
+      stop:
+          json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
+      valid: json['valid'] as bool?,
+      address: json['address'] as int?,
+    );
+
+Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
+      'id': instance.id,
+      'person': instance.person,
+      'user': instance.user,
+      'file': instance.file,
+      'treatment': instance.treatment,
+      'type': instance.type,
+      'description': instance.description,
+      'start': instance.start?.toIso8601String(),
+      'stop': instance.stop?.toIso8601String(),
+      'valid': instance.valid,
+      'address': instance.address,
+    };
+
+EventType _$EventTypeFromJson(Map<String, dynamic> json) => EventType(
+      id: json['id'] as int?,
+      name: json['name'] as String?,
+      description: json['description'] as String?,
+    );
+
+Map<String, dynamic> _$EventTypeToJson(EventType instance) => <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'description': instance.description,
+    };
+
 FileType _$FileTypeFromJson(Map<String, dynamic> json) => FileType(
       type: json['type'] as int?,
       name: json['name'] as String?,
@@ -45,7 +106,7 @@ Map<String, dynamic> _$FileTypeToJson(FileType instance) => <String, dynamic>{
 
 Metric _$MetricFromJson(Map<String, dynamic> json) => Metric(
       id: json['id'] as int?,
-      personId: json['personId'] as int?,
+      person: json['person'] as int?,
       user: json['user'] as int?,
       date:
           json['date'] == null ? null : DateTime.parse(json['date'] as String),
@@ -56,7 +117,7 @@ Metric _$MetricFromJson(Map<String, dynamic> json) => Metric(
 
 Map<String, dynamic> _$MetricToJson(Metric instance) => <String, dynamic>{
       'id': instance.id,
-      'personId': instance.personId,
+      'person': instance.person,
       'user': instance.user,
       'date': instance.date?.toIso8601String(),
       'value': instance.value,

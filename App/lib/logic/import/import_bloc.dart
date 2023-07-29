@@ -2,20 +2,14 @@ import 'package:bloc/bloc.dart';
 import 'package:file_selector/file_selector.dart';
 
 import '../../main.dart';
-import '../../services/swagger_generated_code/swagger.swagger.dart';
 import '../event.dart';
 
 class ImportBloc extends Bloc<ChangedEvent, ImportState> {
-  ImportBloc({
-    required List<FileType> types,
-  })  : _types = types,
-        super(const ImportState()) {
+  ImportBloc() : super(const ImportState()) {
     on<IntChangedEvent>(_onIntChanged);
     on<FileChangedEvent>(_onFileChanged);
     on<SubmittedEvent>(_onSubmitted);
   }
-
-  final List<FileType> _types;
 
   // Event constants
   static const String fileEvent = "file";
@@ -28,7 +22,7 @@ class ImportBloc extends Bloc<ChangedEvent, ImportState> {
     );
   }
 
-    void _onFileChanged(FileChangedEvent event, Emitter<ImportState> emit) {
+  void _onFileChanged(FileChangedEvent event, Emitter<ImportState> emit) {
     var file = event.value;
     emit(
       state.copyWith(file: file, isValid: file != null && state.type > 0),
@@ -70,7 +64,7 @@ final class ImportState {
     SubmissionStatus? status,
     XFile? file,
     int? type,
-    bool? isValid, 
+    bool? isValid,
   }) {
     return ImportState(
       status: status ?? this.status,

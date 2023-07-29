@@ -9,7 +9,6 @@ using LinqToDB.AspNet.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Api.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -106,6 +105,7 @@ app.UseCors("corsapp");
 app.UseAuthentication();
 app.UseAuthorization();
 
+/* User endpoints */
 app.MapPost("/auth", AuthLogic.AuthAsync)
 .AllowAnonymous()
 .WithDescription("Get a connection token")
@@ -121,9 +121,10 @@ person.MapPost("/", PersonLogic.CreateAsync)
 .Produces((int)HttpStatusCode.Unauthorized)
 .WithOpenApi();
 
+/* Metrics endpoints*/
 var metrics = app.MapGroup("/metrics");
 metrics.MapGet("/", MetricsLogic.GetAsync)
-.Produces<List<Metric>>((int)HttpStatusCode.OK)
+.Produces<List<Api.Models.Metric>>((int)HttpStatusCode.OK)
 .Produces((int)HttpStatusCode.Unauthorized)
 .WithOpenApi();
 
@@ -148,7 +149,7 @@ metricsType.MapPut("/", MetricsLogic.UpdateTypeAsync)
 .Produces((int)HttpStatusCode.Unauthorized)
 .WithOpenApi();
 
-metricsType.MapDelete("/", MetricsLogic.DeleteTypeAsync)
+metricsType.MapDelete("/{id}", MetricsLogic.DeleteTypeAsync)
 .Produces((int)HttpStatusCode.NoContent)
 .Produces((int)HttpStatusCode.Unauthorized)
 .WithOpenApi();
@@ -158,13 +159,54 @@ metricsType.MapGet("/", MetricsLogic.GetTypeAsync)
 .Produces((int)HttpStatusCode.Unauthorized)
 .WithOpenApi();
 
+
+/* Events endpoints*/
+var events = app.MapGroup("/events");
+events.MapGet("/", EventsLogic.GetAsync)
+.Produces<List<Api.Models.Event>>((int)HttpStatusCode.OK)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();
+
+events.MapPost("/", EventsLogic.CreateAsync)
+.Produces((int)HttpStatusCode.NoContent)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();
+
+events.MapDelete("/{id}", EventsLogic.DeleteAsync)
+.Produces((int)HttpStatusCode.NoContent)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();
+
+var eventsType = events.MapGroup("/type").RequireAuthorization();
+eventsType.MapPost("/", EventsLogic.CreateTypeAsync)
+.Produces((int)HttpStatusCode.NoContent)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();
+
+eventsType.MapPut("/", EventsLogic.UpdateTypeAsync)
+.Produces((int)HttpStatusCode.NoContent)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();
+
+eventsType.MapDelete("/{id}", EventsLogic.DeleteTypeAsync)
+.Produces((int)HttpStatusCode.NoContent)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();
+
+eventsType.MapGet("/", EventsLogic.GetTypeAsync)
+.Produces<List<Api.Data.Models.EventType>>((int)HttpStatusCode.OK)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();
+
+
+/* Importer endpoint */
 var import = app.MapGroup("/import");
 import.MapGet("/types", ImportLogic.GetTypeAsync)
 .Produces<List<FileType>>((int)HttpStatusCode.OK)
 .Produces((int)HttpStatusCode.Unauthorized)
 .WithOpenApi();
 
-import.MapPost("/types/{type}", ImportLogic.PostFileAsync)
+import.MapPost("/{type}", ImportLogic.PostFileAsync)
 .Produces((int)HttpStatusCode.NoContent)
 .Produces((int)HttpStatusCode.Unauthorized)
 .WithOpenApi();

@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 
 import '../../main.dart';
-import '../../services/swagger_generated_code/swagger.swagger.dart';
+import '../../services/swagger/generated_code/swagger.swagger.dart';
 import '../event.dart';
 
 class MetricBloc extends Bloc<ChangedEvent, MetricState> {

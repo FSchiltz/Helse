@@ -10,9 +10,9 @@ class DataModel {
 }
 
 enum DeviceType {
-  Mobile,
-  Tablet,
-  Desktop,
+  mobile,
+  tablet,
+  desktop,
 }
 
 class Home extends StatefulWidget {
@@ -31,16 +31,16 @@ class _HomeState extends State<Home> {
   List<DataModel> dataList = [
     const DataModel(
       label: "Home",
-      icon: Icons.home,
+      icon: Icons.home_sharp,
     ),
     const DataModel(
       label: "Settings",
-      icon: Icons.settings,
+      icon: Icons.settings_sharp,
     )
   ];
 
   DeviceType getDevice() {
-    return MediaQuery.of(context).size.width <= 800 ? DeviceType.Mobile : DeviceType.Desktop;
+    return MediaQuery.of(context).size.width <= 800 ? DeviceType.mobile : DeviceType.desktop;
   }
 
   @override
@@ -59,7 +59,7 @@ class _HomeState extends State<Home> {
 
     return LayoutBuilder(builder: (context, constraints) {
       return Scaffold(
-        bottomNavigationBar: getDevice() == DeviceType.Mobile
+        bottomNavigationBar: getDevice() == DeviceType.mobile
             ? BottomNavigationBar(
                 onTap: (value) {
                   setState(() {
@@ -71,7 +71,7 @@ class _HomeState extends State<Home> {
             : null,
         body: Row(
           children: [
-            if (getDevice() == DeviceType.Desktop)
+            if (getDevice() == DeviceType.desktop)
               SafeArea(
                 child: NavigationRail(
                   extended: constraints.maxWidth >= 1080,

@@ -8,9 +8,9 @@ namespace Api.Logic;
 /// <summary>
 /// Logic over the management of the metrics
 /// </summary>
-public static class MetricsLogic
+public static class EventsLogic
 {
-    public async static Task<IResult> GetAsync(long type, DateTime start, DateTime end, long? personId, AppDataConnection db, HttpContext context)
+    public async static Task<IResult> GetAsync(long? type, DateTime start, DateTime end, long? personId, AppDataConnection db, HttpContext context)
     {
         // get the connected user
         var userName = context.User.GetUser();
@@ -22,24 +22,25 @@ public static class MetricsLogic
         if (personId is not null && !await db.ValidateCaregiverAsync(user, personId.Value, RightType.View))
             return TypedResults.Unauthorized();
 
-        var metrics = await db.GetTable<Data.Models.Metric>()
+        var events = await db.GetTable<Data.Models.Event>()
             .Where(x => x.PersonId == user.PersonId
-                && x.Type == type
-                && x.Date <= end && x.Date >= start)
+                && x.Type == type 
+                && ((x.Stop >= end && x.Start <= end) || (x.Start <= start && x.Stop >= start) || (x.Start >= start && x.Stop <= start)))
             .ToListAsync();
 
-        return TypedResults.Ok(metrics.Select( x => new Metric{
-            Value = x.Value,
-            Date = x.Date,
+        return TypedResults.Ok(events.Select(x => new Event
+        {
             Id = x.Id,
-            Person = user.PersonId,
             Type = x.Type,
-            Tag = x.Tag,
-            User = x.UserId,
+            Description = x.Description,
+            Stop = x.Stop,
+            File = x.FileId,
+            Start = x.Start,
+            Valid = x.Valid,
         }));
     }
 
-    public static async Task<IResult> CreateAsync(CreateMetric metric, long? personId, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> CreateAsync(CreateEvent e, long? personId, AppDataConnection db, HttpContext context)
     {
         // get the connected user
         var userName = context.User.GetUser();
@@ -51,14 +52,14 @@ public static class MetricsLogic
         if (personId is not null && !await db.ValidateCaregiverAsync(user, personId.Value, RightType.Edit))
             return TypedResults.Unauthorized();
 
-        await db.GetTable<Data.Models.Metric>().InsertAsync(() => new Data.Models.Metric
+        await db.GetTable<Data.Models.Event>().InsertAsync(() => new Data.Models.Event
         {
             PersonId = personId ?? user.PersonId,
-            Value = metric.Value,
-            Date = metric.Date,
-            Tag = metric.Tag,
             UserId = user.Id,
-            Type = metric.Type,
+            Type = e.Type,
+            Description = e.Description,
+            Stop = e.Stop,
+            Start = e.Start,
         });
 
         return TypedResults.NoContent();
@@ -75,14 +76,14 @@ public static class MetricsLogic
 
         using var transaction = db.BeginTransaction();
 
-        var existing = await db.GetTable<Data.Models.Metric>().FirstOrDefaultAsync(x => x.Id == id);
+        var existing = await db.GetTable<Data.Models.Event>().FirstOrDefaultAsync(x => x.Id == id);
         if (existing is null)
             return TypedResults.NoContent();
 
         if (user.PersonId != existing.PersonId && !await db.ValidateCaregiverAsync(user, existing.PersonId, RightType.Edit))
             return TypedResults.Unauthorized();
 
-        await db.GetTable<Data.Models.Metric>().DeleteAsync(x => x.Id == id);
+        await db.GetTable<Data.Models.Event>().DeleteAsync(x => x.Id == id);
 
         transaction.Commit();
 
@@ -90,9 +91,9 @@ public static class MetricsLogic
     }
 
     public static async Task<IResult> GetTypeAsync(AppDataConnection db)
-        => TypedResults.Ok(await db.GetTable<Data.Models.MetricType>().ToListAsync());
+        => TypedResults.Ok(await db.GetTable<Data.Models.EventType>().ToListAsync());
 
-    public static async Task<IResult> CreateTypeAsync(Data.Models.MetricType metric, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> CreateTypeAsync(Data.Models.EventType metric, AppDataConnection db, HttpContext context)
     {
         // get the connected user
         var userName = context.User.GetUser();
@@ -110,7 +111,6 @@ public static class MetricsLogic
         {
             Name = metric.Name,
             Description = metric.Description,
-            Unit = metric.Unit,
         });
 
         return TypedResults.NoContent();
@@ -130,11 +130,10 @@ public static class MetricsLogic
             return TypedResults.Unauthorized();
         }
 
-        await db.GetTable<Data.Models.MetricType>()
+        await db.GetTable<Data.Models.EventType>()
             .Where(x => x.Id == metric.Id)
             .Set(x => x.Name, metric.Name)
             .Set(x => x.Description, metric.Description)
-            .Set(x => x.Unit, metric.Unit)
             .UpdateAsync();
 
         return TypedResults.NoContent();
@@ -154,7 +153,7 @@ public static class MetricsLogic
             return TypedResults.Unauthorized();
         }
 
-        await db.GetTable<Data.Models.MetricType>().DeleteAsync(x => x.Id == id);
+        await db.GetTable<Data.Models.EventType>().DeleteAsync(x => x.Id == id);
 
         return TypedResults.NoContent();
     }

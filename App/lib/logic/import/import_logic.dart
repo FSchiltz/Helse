@@ -1,7 +1,6 @@
-import 'package:helse/services/swagger_generated_code/swagger.swagger.dart';
-
 import '../../services/account.dart';
 import '../../services/api_service.dart';
+import '../../services/swagger/generated_code/swagger.swagger.dart';
 
 class ImportLogic {
   final Account _account;

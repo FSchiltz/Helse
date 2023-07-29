@@ -14,13 +14,13 @@ CREATE TABLE health.Event
   PersonId    BIGINT   NOT NULL,
   UserId      BIGINT   NOT NULL,
   FileId      BIGINT   NULL    ,
-  TreatmentId BIGINT   NOT NULL,
+  TreatmentId BIGINT   NULL,
   Type        INT      NOT NULL,
   Description VARCHAR  NULL    ,
-  Start       TIMESTAMP NULL    ,
+  Start       TIMESTAMP NOT NULL    ,
   Stop         TIMESTAMP NOT NULL,
   Valid       BOOL     NOT NULL DEFAULT False,
-  Address     BIGINT   NOT NULL
+  AddressId     BIGINT   NULL
 );
 
 CREATE TABLE health.Metric
@@ -37,7 +37,7 @@ CREATE TABLE health.Metric
 CREATE INDEX IF NOT EXISTS metric_date_type_personid_idx
     ON health.metric USING btree
     (date ASC NULLS LAST)
-    INCLUDE(type, personid)
+    INCLUDE(type, personid);
 
 CREATE INDEX IF NOT EXISTS metric_tag_personid_idx
     ON health.metric USING btree
@@ -117,7 +117,7 @@ ALTER TABLE health.Event
 
 ALTER TABLE health.Event
   ADD CONSTRAINT FK_Address_TO_Event
-    FOREIGN KEY (Address)
+    FOREIGN KEY (AddressId)
     REFERENCES person.Address (Id);      
 
 ALTER TABLE health.Prescription

@@ -4,7 +4,7 @@ public class Metric
 {
     public long Id { get; set; }
 
-    public long PersonId { get; set; }
+    public long Person { get; set; }
 
     public long User { get; set; }
 

@@ -98,7 +98,7 @@ class _UrlInput extends StatelessWidget {
           onChanged: (url) => context.read<LoginBloc>().add(LoginUrlChanged(url)),
           decoration: InputDecoration(
             labelText: 'Server url',
-            prefixIcon: const Icon(Icons.home),
+            prefixIcon: const Icon(Icons.home_sharp),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -124,7 +124,7 @@ class _UsernameInput extends StatelessWidget {
           onChanged: (username) => context.read<LoginBloc>().add(LoginUsernameChanged(username)),
           decoration: InputDecoration(
             labelText: 'username',
-            prefixIcon: const Icon(Icons.person_outline),
+            prefixIcon: const Icon(Icons.person_sharp),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -152,12 +152,12 @@ class _PasswordInput extends StatelessWidget {
           keyboardType: TextInputType.visiblePassword,
           decoration: InputDecoration(
             labelText: 'password',
-            prefixIcon: const Icon(Icons.password_outlined),
+            prefixIcon: const Icon(Icons.password_sharp),
             suffixIcon: IconButton(
                 onPressed: () {
                   context.read<LoginBloc>().add(LoginPasswordVisibilityChanged(!state.obscurePassword));
                 },
-                icon: state.obscurePassword ? const Icon(Icons.visibility_outlined) : const Icon(Icons.visibility_off_outlined)),
+                icon: state.obscurePassword ? const Icon(Icons.visibility_sharp) : const Icon(Icons.visibility_off_sharp)),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
             ),

@@ -46,7 +46,7 @@ class _SignupState extends State<Signup> {
                 keyboardType: TextInputType.name,
                 decoration: InputDecoration(
                   labelText: "Username",
-                  prefixIcon: const Icon(Icons.person_outline),
+                  prefixIcon: const Icon(Icons.person_sharp),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -70,7 +70,7 @@ class _SignupState extends State<Signup> {
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   labelText: "Email",
-                  prefixIcon: const Icon(Icons.email_outlined),
+                  prefixIcon: const Icon(Icons.email_sharp),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -96,14 +96,14 @@ class _SignupState extends State<Signup> {
                 keyboardType: TextInputType.visiblePassword,
                 decoration: InputDecoration(
                   labelText: "Password",
-                  prefixIcon: const Icon(Icons.password_outlined),
+                  prefixIcon: const Icon(Icons.password_sharp),
                   suffixIcon: IconButton(
                       onPressed: () {
                         setState(() {
                           _obscurePassword = !_obscurePassword;
                         });
                       },
-                      icon: _obscurePassword ? const Icon(Icons.visibility_outlined) : const Icon(Icons.visibility_off_outlined)),
+                      icon: _obscurePassword ? const Icon(Icons.visibility_sharp) : const Icon(Icons.visibility_off_sharp)),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -129,14 +129,14 @@ class _SignupState extends State<Signup> {
                 keyboardType: TextInputType.visiblePassword,
                 decoration: InputDecoration(
                   labelText: "Confirm Password",
-                  prefixIcon: const Icon(Icons.password_outlined),
+                  prefixIcon: const Icon(Icons.password_sharp),
                   suffixIcon: IconButton(
                       onPressed: () {
                         setState(() {
                           _obscurePassword = !_obscurePassword;
                         });
                       },
-                      icon: _obscurePassword ? const Icon(Icons.visibility_outlined) : const Icon(Icons.visibility_off_outlined)),
+                      icon: _obscurePassword ? const Icon(Icons.visibility_sharp) : const Icon(Icons.visibility_off_sharp)),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

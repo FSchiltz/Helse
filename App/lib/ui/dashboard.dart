@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../helpers/date.dart';
 import '../main.dart';
-import '../services/swagger_generated_code/swagger.swagger.dart';
+import '../services/swagger/generated_code/swagger.swagger.dart';
+import 'blocs/common/date_range_input.dart';
+import 'blocs/events/events_add.dart';
+import 'blocs/events/events_grid.dart';
 import 'blocs/imports/file_import.dart';
 import 'blocs/metrics/metric_add.dart';
 import 'blocs/metrics/metrics_grid.dart';
@@ -16,20 +18,31 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  List<MetricType> types = [];
+  List<MetricType> metricTypes = [];
+  List<EventType> eventTypes = [];
   DateTimeRange date = DateHelper.now();
 
   @override
   void initState() {
     super.initState();
-    _getData();
+    _getEventData();
+    _getMetricData();
   }
 
-  void _getData() async {
+  void _getMetricData() async {
     var model = await AppState.metricsLogic?.getType();
     if (model != null) {
       setState(() {
-        types = model;
+        metricTypes = model;
+      });
+    }
+  }
+
+  void _getEventData() async {
+    var model = await AppState.eventLogic?.getType();
+    if (model != null) {
+      setState(() {
+        eventTypes = model;
       });
     }
   }
@@ -40,10 +53,18 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
-  void _reset() {
+  void _resetMetric() {
     setState(() {
-      date = date;
+      metricTypes = [];
     });
+    _getMetricData();
+  }
+
+  void _resetEvents() {
+    setState(() {
+      eventTypes = [];
+    });
+    _getEventData();
   }
 
   @override
@@ -54,25 +75,8 @@ class _DashboardState extends State<Dashboard> {
         actions: <Widget>[
           Padding(
             padding: const EdgeInsets.only(right: 20.0),
-            child: _DateInput(_setDate, date),
+            child: DateRangeInput(_setDate, date),
           ),
-          Padding(
-              padding: const EdgeInsets.only(right: 20.0),
-              child: GestureDetector(
-                onTap: () {
-                  if (types.isNotEmpty) {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return MetricAdd(types, _reset);
-                        });
-                  }
-                },
-                child: const Icon(
-                  Icons.add,
-                  size: 32.0,
-                ),
-              )),
           Padding(
               padding: const EdgeInsets.only(right: 20.0),
               child: GestureDetector(
@@ -84,74 +88,67 @@ class _DashboardState extends State<Dashboard> {
                       });
                 },
                 child: const Icon(
-                  Icons.upload_file,
+                  Icons.upload_file_sharp,
                   size: 32.0,
                 ),
               )),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: MetricsGrid(types: types, date: date),
-      ),
-    );
-  }
-}
-
-class _DateInput extends StatelessWidget {
-  final TextEditingController _textController = TextEditingController();
-  final void Function(DateTimeRange date) _setDateCallback;
-  final DateFormat formatter = DateFormat('dd/MM/yyyy');
-  final DateTimeRange initial;
-
-  _DateInput(void Function(DateTimeRange date) setDate, this.initial) : _setDateCallback = setDate {
-    _displayDate(initial);
-  }
-
-  void _displayDate(DateTimeRange date) {
-    _textController.text = "${formatter.format(date.start)} - ${formatter.format(date.end)}";
-  }
-
-  Future<void> _setDate(BuildContext context, DateTimeRange initial) async {
-    var date = await _pick(context, initial);
-    if (date != null) {
-      _displayDate(date);
-      _setDateCallback(date);
-    }
-  }
-
-  Future<DateTimeRange?> _pick(BuildContext context, DateTimeRange initial) async {
-    var selectedDate = await showDateRangePicker(
-        context: context,
-        initialDateRange: initial, //get today's date
-        firstDate: DateTime(1000),
-        lastDate: DateTime(3000));
-    if (selectedDate == null) return null;
-
-    var start = selectedDate.start;
-    var end = selectedDate.end;
-
-    return DateTimeRange(start: start, end: DateTime(end.year, end.month, end.day, 23, 59, 59));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 220,
-      height: 50,
-      child: TextField(
-        controller: _textController,
-        onTap: () {
-          _setDate(context, initial);
-        },
-        style: Theme.of(context).textTheme.bodyMedium,
-        decoration: InputDecoration(
-          prefixIcon: const Icon(Icons.edit_calendar_outlined),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Text("Metrics", style: Theme.of(context).textTheme.displaySmall),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          if (metricTypes.isNotEmpty) {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return MetricAdd(metricTypes, _resetMetric);
+                                });
+                          }
+                        },
+                        icon: const Icon(Icons.add_sharp)),
+                  ],
+                ),
+              ),
+              MetricsGrid(types: metricTypes, date: date),
+              const SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Text("Events", style: Theme.of(context).textTheme.displaySmall),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          if (eventTypes.isNotEmpty) {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return EventAdd(_resetEvents, eventTypes);
+                                });
+                          }
+                        },
+                        icon: const Icon(Icons.add_sharp)),
+                  ],
+                ),
+              ),
+              EventsGrid(date: date, types: eventTypes),
+            ],
           ),
         ),
       ),

@@ -30,6 +30,108 @@ class _$Swagger extends Swagger {
   }
 
   @override
+  Future<Response<List<Event>>> _eventsGet({
+    required int? type,
+    required String? start,
+    required String? end,
+    int? personId,
+  }) {
+    final Uri $url = Uri.parse('/events');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'type': type,
+      'start': start,
+      'end': end,
+      'personId': personId,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<List<Event>, Event>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _eventsPost({
+    int? personId,
+    required CreateEvent? body,
+  }) {
+    final Uri $url = Uri.parse('/events');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId
+    };
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      parameters: $params,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _eventsIdDelete({required int? id}) {
+    final Uri $url = Uri.parse('/events/${id}');
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _eventsTypePost({required EventType? body}) {
+    final Uri $url = Uri.parse('/events/type');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _eventsTypePut({required MetricType? body}) {
+    final Uri $url = Uri.parse('/events/type');
+    final $body = body;
+    final Request $request = Request(
+      'PUT',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<List<EventType>>> _eventsTypeGet() {
+    final Uri $url = Uri.parse('/events/type');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<List<EventType>, EventType>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _eventsTypeIdDelete({required int? id}) {
+    final Uri $url = Uri.parse('/events/type/${id}');
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
   Future<Response<List<FileType>>> _importTypesGet() {
     final Uri $url = Uri.parse('/import/types');
     final Request $request = Request(
@@ -41,11 +143,11 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _importTypesTypePost({
+  Future<Response<dynamic>> _importTypePost({
     required int? type,
     required String? body,
   }) {
-    final Uri $url = Uri.parse('/import/types/${type}');
+    final Uri $url = Uri.parse('/import/${type}');
     final $body = body;
     final Request $request = Request(
       'POST',
@@ -137,19 +239,6 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _metricsTypeDelete({required int? id}) {
-    final Uri $url = Uri.parse('/metrics/type');
-    final Map<String, dynamic> $params = <String, dynamic>{'id': id};
-    final Request $request = Request(
-      'DELETE',
-      $url,
-      client.baseUrl,
-      parameters: $params,
-    );
-    return client.send<dynamic, dynamic>($request);
-  }
-
-  @override
   Future<Response<List<MetricType>>> _metricsTypeGet() {
     final Uri $url = Uri.parse('/metrics/type');
     final Request $request = Request(
@@ -158,6 +247,17 @@ class _$Swagger extends Swagger {
       client.baseUrl,
     );
     return client.send<List<MetricType>, MetricType>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _metricsTypeIdDelete({required int? id}) {
+    final Uri $url = Uri.parse('/metrics/type/${id}');
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<dynamic, dynamic>($request);
   }
 
   @override

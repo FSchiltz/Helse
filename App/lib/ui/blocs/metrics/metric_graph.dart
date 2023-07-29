@@ -4,7 +4,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 
-import '../../../services/swagger_generated_code/swagger.swagger.dart';
+import '../../../services/swagger/generated_code/swagger.swagger.dart';
+
 
 class MetricGraph extends StatelessWidget {
   final List<Metric> metrics;

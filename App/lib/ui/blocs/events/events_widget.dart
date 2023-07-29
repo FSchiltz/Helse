@@ -2,34 +2,34 @@ import 'package:flutter/material.dart';
 
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
-import 'metric_graph.dart';
+import 'events_graph.dart';
 
-class MetricWidget extends StatefulWidget {
-  final MetricType type;
+class EventWidget extends StatefulWidget {
+  final EventType type;
   final DateTimeRange date;
 
-  const MetricWidget(this.type, this.date, {super.key});
+  const EventWidget(this.type, this.date, {super.key});
 
   @override
-  State<MetricWidget> createState() => _MetricWidgetState();
+  State<EventWidget> createState() => _EventWidgetState();
 }
 
-class _MetricWidgetState extends State<MetricWidget> {
-  late List<Metric>? _metrics;
+class _EventWidgetState extends State<EventWidget> {
+  late List<Event>? _events;
   late DateTimeRange? _date;
 
-  _MetricWidgetState();
+  _EventWidgetState();
 
   @override
   void initState() {
-    _metrics = null;
+    _events = null;
     _date = null;
     super.initState();
   }
 
-  int _sort(Metric m1, Metric m2) {
-    var a = m1.date;
-    var b = m2.date;
+  int _sort(Event m1, Event m2) {
+    var a = m1.stop;
+    var b = m2.stop;
     if (a == null && b == null) {
       return 0;
     } else if (a == null) {
@@ -41,15 +41,15 @@ class _MetricWidgetState extends State<MetricWidget> {
     }
   }
 
-  Future<List<Metric>?> _getData(int? id) async {
+  Future<List<Event>?> _getData(int? id) async {
     if (id == null) {
-      _metrics = List<Metric>.empty();
-      return _metrics;
+      _events = List<Event>.empty();
+      return _events;
     }
 
     // if the date has not changed, no call to the backend
     var date = _date;
-    if (date != null && widget.date.start.compareTo(date.start) == 0 && widget.date.end.compareTo(date.end) == 0) return _metrics;
+    if (date != null && widget.date.start.compareTo(date.start) == 0 && widget.date.end.compareTo(date.end) == 0) return _events;
 
     date = widget.date;
     _date = date;
@@ -57,9 +57,9 @@ class _MetricWidgetState extends State<MetricWidget> {
     var start = DateTime(date.start.year, date.start.month, date.start.day);
     var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-    _metrics = await AppState.metricsLogic?.getMetric(id, start, end);
-    _metrics?.sort(_sort);
-    return _metrics;
+    _events = await AppState.eventLogic?.getEvent(id, start, end);
+    _events?.sort(_sort);
+    return _events;
   }
 
   @override
@@ -82,22 +82,15 @@ class _MetricWidgetState extends State<MetricWidget> {
                 // if we got our data
               } else if (snapshot.hasData) {
                 // Extracting data from snapshot object
-                final metrics = snapshot.data as List<Metric>;
-                final last = metrics.isNotEmpty ? metrics.last : null;
+                final events = snapshot.data as List<Event>;
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(widget.type.name ?? "", style: Theme.of(context).textTheme.titleMedium),
-                          Text((last?.value ?? "") + (widget.type.unit ?? ""), style: Theme.of(context).textTheme.labelMedium),
-                        ],
-                      ),
+                      Text(widget.type.name ?? "", style: Theme.of(context).textTheme.titleMedium),
                       Expanded(
-                        child: MetricGraph(metrics, widget.type.unit, widget.date),
+                        child: EventGraph(events, widget.date),
                       )
                     ],
                   ),

@@ -58,6 +58,112 @@ abstract class Swagger extends ChopperService {
       {@Body() required Connection? body});
 
   ///
+  ///@param type
+  ///@param start
+  ///@param end
+  ///@param personId
+  Future<chopper.Response<List<Event>>> eventsGet({
+    required int? type,
+    required String? start,
+    required String? end,
+    int? personId,
+  }) {
+    generatedMapping.putIfAbsent(Event, () => Event.fromJsonFactory);
+
+    return _eventsGet(type: type, start: start, end: end, personId: personId);
+  }
+
+  ///
+  ///@param type
+  ///@param start
+  ///@param end
+  ///@param personId
+  @Get(path: '/events')
+  Future<chopper.Response<List<Event>>> _eventsGet({
+    @Query('type') required int? type,
+    @Query('start') required String? start,
+    @Query('end') required String? end,
+    @Query('personId') int? personId,
+  });
+
+  ///
+  ///@param personId
+  Future<chopper.Response> eventsPost({
+    int? personId,
+    required CreateEvent? body,
+  }) {
+    return _eventsPost(personId: personId, body: body);
+  }
+
+  ///
+  ///@param personId
+  @Post(
+    path: '/events',
+    optionalBody: true,
+  )
+  Future<chopper.Response> _eventsPost({
+    @Query('personId') int? personId,
+    @Body() required CreateEvent? body,
+  });
+
+  ///
+  ///@param id
+  Future<chopper.Response> eventsIdDelete({required int? id}) {
+    return _eventsIdDelete(id: id);
+  }
+
+  ///
+  ///@param id
+  @Delete(path: '/events/{id}')
+  Future<chopper.Response> _eventsIdDelete({@Path('id') required int? id});
+
+  ///
+  Future<chopper.Response> eventsTypePost({required EventType? body}) {
+    return _eventsTypePost(body: body);
+  }
+
+  ///
+  @Post(
+    path: '/events/type',
+    optionalBody: true,
+  )
+  Future<chopper.Response> _eventsTypePost({@Body() required EventType? body});
+
+  ///
+  Future<chopper.Response> eventsTypePut({required MetricType? body}) {
+    return _eventsTypePut(body: body);
+  }
+
+  ///
+  @Put(
+    path: '/events/type',
+    optionalBody: true,
+  )
+  Future<chopper.Response> _eventsTypePut({@Body() required MetricType? body});
+
+  ///
+  Future<chopper.Response<List<EventType>>> eventsTypeGet() {
+    generatedMapping.putIfAbsent(EventType, () => EventType.fromJsonFactory);
+
+    return _eventsTypeGet();
+  }
+
+  ///
+  @Get(path: '/events/type')
+  Future<chopper.Response<List<EventType>>> _eventsTypeGet();
+
+  ///
+  ///@param id
+  Future<chopper.Response> eventsTypeIdDelete({required int? id}) {
+    return _eventsTypeIdDelete(id: id);
+  }
+
+  ///
+  ///@param id
+  @Delete(path: '/events/type/{id}')
+  Future<chopper.Response> _eventsTypeIdDelete({@Path('id') required int? id});
+
+  ///
   Future<chopper.Response<List<FileType>>> importTypesGet() {
     generatedMapping.putIfAbsent(FileType, () => FileType.fromJsonFactory);
 
@@ -70,20 +176,20 @@ abstract class Swagger extends ChopperService {
 
   ///
   ///@param type
-  Future<chopper.Response> importTypesTypePost({
+  Future<chopper.Response> importTypePost({
     required int? type,
     required String? body,
   }) {
-    return _importTypesTypePost(type: type, body: body);
+    return _importTypePost(type: type, body: body);
   }
 
   ///
   ///@param type
   @Post(
-    path: '/import/types/{type}',
+    path: '/import/{type}',
     optionalBody: true,
   )
-  Future<chopper.Response> _importTypesTypePost({
+  Future<chopper.Response> _importTypePost({
     @Path('type') required int? type,
     @Body() required String? body,
   });
@@ -174,17 +280,6 @@ abstract class Swagger extends ChopperService {
   Future<chopper.Response> _metricsTypePut({@Body() required MetricType? body});
 
   ///
-  ///@param id
-  Future<chopper.Response> metricsTypeDelete({required int? id}) {
-    return _metricsTypeDelete(id: id);
-  }
-
-  ///
-  ///@param id
-  @Delete(path: '/metrics/type')
-  Future<chopper.Response> _metricsTypeDelete({@Query('id') required int? id});
-
-  ///
   Future<chopper.Response<List<MetricType>>> metricsTypeGet() {
     generatedMapping.putIfAbsent(MetricType, () => MetricType.fromJsonFactory);
 
@@ -194,6 +289,17 @@ abstract class Swagger extends ChopperService {
   ///
   @Get(path: '/metrics/type')
   Future<chopper.Response<List<MetricType>>> _metricsTypeGet();
+
+  ///
+  ///@param id
+  Future<chopper.Response> metricsTypeIdDelete({required int? id}) {
+    return _metricsTypeIdDelete(id: id);
+  }
+
+  ///
+  ///@param id
+  @Delete(path: '/metrics/type/{id}')
+  Future<chopper.Response> _metricsTypeIdDelete({@Path('id') required int? id});
 
   ///
   Future<chopper.Response> personPost({required Person? body}) {
@@ -259,6 +365,82 @@ extension $ConnectionExtension on Connection {
     return Connection(
         user: (user != null ? user.value : this.user),
         password: (password != null ? password.value : this.password));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class CreateEvent {
+  CreateEvent({
+    this.type,
+    this.description,
+    this.start,
+    this.stop,
+  });
+
+  factory CreateEvent.fromJson(Map<String, dynamic> json) =>
+      _$CreateEventFromJson(json);
+
+  static const toJsonFactory = _$CreateEventToJson;
+  Map<String, dynamic> toJson() => _$CreateEventToJson(this);
+
+  @JsonKey(name: 'type')
+  final int? type;
+  @JsonKey(name: 'description')
+  final String? description;
+  @JsonKey(name: 'start')
+  final DateTime? start;
+  @JsonKey(name: 'stop')
+  final DateTime? stop;
+  static const fromJsonFactory = _$CreateEventFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is CreateEvent &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality()
+                    .equals(other.description, description)) &&
+            (identical(other.start, start) ||
+                const DeepCollectionEquality().equals(other.start, start)) &&
+            (identical(other.stop, stop) ||
+                const DeepCollectionEquality().equals(other.stop, stop)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(start) ^
+      const DeepCollectionEquality().hash(stop) ^
+      runtimeType.hashCode;
+}
+
+extension $CreateEventExtension on CreateEvent {
+  CreateEvent copyWith(
+      {int? type, String? description, DateTime? start, DateTime? stop}) {
+    return CreateEvent(
+        type: type ?? this.type,
+        description: description ?? this.description,
+        start: start ?? this.start,
+        stop: stop ?? this.stop);
+  }
+
+  CreateEvent copyWithWrapped(
+      {Wrapped<int?>? type,
+      Wrapped<String?>? description,
+      Wrapped<DateTime?>? start,
+      Wrapped<DateTime?>? stop}) {
+    return CreateEvent(
+        type: (type != null ? type.value : this.type),
+        description:
+            (description != null ? description.value : this.description),
+        start: (start != null ? start.value : this.start),
+        stop: (stop != null ? stop.value : this.stop));
   }
 }
 
@@ -337,6 +519,221 @@ extension $CreateMetricExtension on CreateMetric {
 }
 
 @JsonSerializable(explicitToJson: true)
+class Event {
+  Event({
+    this.id,
+    this.person,
+    this.user,
+    this.file,
+    this.treatment,
+    this.type,
+    this.description,
+    this.start,
+    this.stop,
+    this.valid,
+    this.address,
+  });
+
+  factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
+
+  static const toJsonFactory = _$EventToJson;
+  Map<String, dynamic> toJson() => _$EventToJson(this);
+
+  @JsonKey(name: 'id')
+  final int? id;
+  @JsonKey(name: 'person')
+  final int? person;
+  @JsonKey(name: 'user')
+  final int? user;
+  @JsonKey(name: 'file')
+  final int? file;
+  @JsonKey(name: 'treatment')
+  final int? treatment;
+  @JsonKey(name: 'type')
+  final int? type;
+  @JsonKey(name: 'description')
+  final String? description;
+  @JsonKey(name: 'start')
+  final DateTime? start;
+  @JsonKey(name: 'stop')
+  final DateTime? stop;
+  @JsonKey(name: 'valid')
+  final bool? valid;
+  @JsonKey(name: 'address')
+  final int? address;
+  static const fromJsonFactory = _$EventFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is Event &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.person, person) ||
+                const DeepCollectionEquality().equals(other.person, person)) &&
+            (identical(other.user, user) ||
+                const DeepCollectionEquality().equals(other.user, user)) &&
+            (identical(other.file, file) ||
+                const DeepCollectionEquality().equals(other.file, file)) &&
+            (identical(other.treatment, treatment) ||
+                const DeepCollectionEquality()
+                    .equals(other.treatment, treatment)) &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality()
+                    .equals(other.description, description)) &&
+            (identical(other.start, start) ||
+                const DeepCollectionEquality().equals(other.start, start)) &&
+            (identical(other.stop, stop) ||
+                const DeepCollectionEquality().equals(other.stop, stop)) &&
+            (identical(other.valid, valid) ||
+                const DeepCollectionEquality().equals(other.valid, valid)) &&
+            (identical(other.address, address) ||
+                const DeepCollectionEquality().equals(other.address, address)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(person) ^
+      const DeepCollectionEquality().hash(user) ^
+      const DeepCollectionEquality().hash(file) ^
+      const DeepCollectionEquality().hash(treatment) ^
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(start) ^
+      const DeepCollectionEquality().hash(stop) ^
+      const DeepCollectionEquality().hash(valid) ^
+      const DeepCollectionEquality().hash(address) ^
+      runtimeType.hashCode;
+}
+
+extension $EventExtension on Event {
+  Event copyWith(
+      {int? id,
+      int? person,
+      int? user,
+      int? file,
+      int? treatment,
+      int? type,
+      String? description,
+      DateTime? start,
+      DateTime? stop,
+      bool? valid,
+      int? address}) {
+    return Event(
+        id: id ?? this.id,
+        person: person ?? this.person,
+        user: user ?? this.user,
+        file: file ?? this.file,
+        treatment: treatment ?? this.treatment,
+        type: type ?? this.type,
+        description: description ?? this.description,
+        start: start ?? this.start,
+        stop: stop ?? this.stop,
+        valid: valid ?? this.valid,
+        address: address ?? this.address);
+  }
+
+  Event copyWithWrapped(
+      {Wrapped<int?>? id,
+      Wrapped<int?>? person,
+      Wrapped<int?>? user,
+      Wrapped<int?>? file,
+      Wrapped<int?>? treatment,
+      Wrapped<int?>? type,
+      Wrapped<String?>? description,
+      Wrapped<DateTime?>? start,
+      Wrapped<DateTime?>? stop,
+      Wrapped<bool?>? valid,
+      Wrapped<int?>? address}) {
+    return Event(
+        id: (id != null ? id.value : this.id),
+        person: (person != null ? person.value : this.person),
+        user: (user != null ? user.value : this.user),
+        file: (file != null ? file.value : this.file),
+        treatment: (treatment != null ? treatment.value : this.treatment),
+        type: (type != null ? type.value : this.type),
+        description:
+            (description != null ? description.value : this.description),
+        start: (start != null ? start.value : this.start),
+        stop: (stop != null ? stop.value : this.stop),
+        valid: (valid != null ? valid.value : this.valid),
+        address: (address != null ? address.value : this.address));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class EventType {
+  EventType({
+    this.id,
+    this.name,
+    this.description,
+  });
+
+  factory EventType.fromJson(Map<String, dynamic> json) =>
+      _$EventTypeFromJson(json);
+
+  static const toJsonFactory = _$EventTypeToJson;
+  Map<String, dynamic> toJson() => _$EventTypeToJson(this);
+
+  @JsonKey(name: 'id')
+  final int? id;
+  @JsonKey(name: 'name')
+  final String? name;
+  @JsonKey(name: 'description')
+  final String? description;
+  static const fromJsonFactory = _$EventTypeFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is EventType &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality()
+                    .equals(other.description, description)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(description) ^
+      runtimeType.hashCode;
+}
+
+extension $EventTypeExtension on EventType {
+  EventType copyWith({int? id, String? name, String? description}) {
+    return EventType(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        description: description ?? this.description);
+  }
+
+  EventType copyWithWrapped(
+      {Wrapped<int?>? id,
+      Wrapped<String?>? name,
+      Wrapped<String?>? description}) {
+    return EventType(
+        id: (id != null ? id.value : this.id),
+        name: (name != null ? name.value : this.name),
+        description:
+            (description != null ? description.value : this.description));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class FileType {
   FileType({
     this.type,
@@ -391,7 +788,7 @@ extension $FileTypeExtension on FileType {
 class Metric {
   Metric({
     this.id,
-    this.personId,
+    this.person,
     this.user,
     this.date,
     this.value,
@@ -406,8 +803,8 @@ class Metric {
 
   @JsonKey(name: 'id')
   final int? id;
-  @JsonKey(name: 'personId')
-  final int? personId;
+  @JsonKey(name: 'person')
+  final int? person;
   @JsonKey(name: 'user')
   final int? user;
   @JsonKey(name: 'date')
@@ -426,9 +823,8 @@ class Metric {
         (other is Metric &&
             (identical(other.id, id) ||
                 const DeepCollectionEquality().equals(other.id, id)) &&
-            (identical(other.personId, personId) ||
-                const DeepCollectionEquality()
-                    .equals(other.personId, personId)) &&
+            (identical(other.person, person) ||
+                const DeepCollectionEquality().equals(other.person, person)) &&
             (identical(other.user, user) ||
                 const DeepCollectionEquality().equals(other.user, user)) &&
             (identical(other.date, date) ||
@@ -447,7 +843,7 @@ class Metric {
   @override
   int get hashCode =>
       const DeepCollectionEquality().hash(id) ^
-      const DeepCollectionEquality().hash(personId) ^
+      const DeepCollectionEquality().hash(person) ^
       const DeepCollectionEquality().hash(user) ^
       const DeepCollectionEquality().hash(date) ^
       const DeepCollectionEquality().hash(value) ^
@@ -459,7 +855,7 @@ class Metric {
 extension $MetricExtension on Metric {
   Metric copyWith(
       {int? id,
-      int? personId,
+      int? person,
       int? user,
       DateTime? date,
       String? value,
@@ -467,7 +863,7 @@ extension $MetricExtension on Metric {
       int? type}) {
     return Metric(
         id: id ?? this.id,
-        personId: personId ?? this.personId,
+        person: person ?? this.person,
         user: user ?? this.user,
         date: date ?? this.date,
         value: value ?? this.value,
@@ -477,7 +873,7 @@ extension $MetricExtension on Metric {
 
   Metric copyWithWrapped(
       {Wrapped<int?>? id,
-      Wrapped<int?>? personId,
+      Wrapped<int?>? person,
       Wrapped<int?>? user,
       Wrapped<DateTime?>? date,
       Wrapped<String?>? value,
@@ -485,7 +881,7 @@ extension $MetricExtension on Metric {
       Wrapped<int?>? type}) {
     return Metric(
         id: (id != null ? id.value : this.id),
-        personId: (personId != null ? personId.value : this.personId),
+        person: (person != null ? person.value : this.person),
         user: (user != null ? user.value : this.user),
         date: (date != null ? date.value : this.date),
         value: (value != null ? value.value : this.value),

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:chopper/chopper.dart';
+import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
 import 'account.dart';
-import 'swagger_generated_code/swagger.swagger.dart';
 
 class ApiService {
   final Account _account;
@@ -50,7 +50,7 @@ class ApiService {
     return await _call(api.metricsTypeGet);
   }
 
-  Future<List<Metric>?> metrics(int type, String start, String end) async {
+  Future<List<Metric>?> metrics(int? type, String? start, String? end) async {
     var api = await _getService();
     return await _call(() => api.metricsGet(type: type, start: start, end: end));
   }
@@ -60,6 +60,21 @@ class ApiService {
     await _call(() => api.metricsPost(body: metric));
   }
 
+Future<List<EventType>?> eventsType() async {
+    var api = await _getService();
+    return await _call(api.eventsTypeGet);
+  }
+
+  Future<List<Event>?> events(int? type, String? start, String? end) async {
+    var api = await _getService();
+    return await _call(() => api.eventsGet(type: type, start: start, end: end));
+  }
+
+  Future<void> addEvents(CreateEvent event) async {
+    var api = await _getService();
+    await _call(() => api.eventsPost(body: event));
+  }
+
   Future<List<FileType>?> fileType() async {
     var api = await _getService();
     return await _call(api.importTypesGet);
@@ -67,6 +82,6 @@ class ApiService {
 
    Future<void> import(String? file, int type) async {
     var api = await _getService();
-    await _call(() => api.importTypesTypePost(body: file, type: type));
+    await _call(() => api.importTypePost(body: file, type: type));
   }
 }

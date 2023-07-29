@@ -4,9 +4,10 @@ import 'package:helse/logic/import/import_logic.dart';
 
 import 'logic/account/authentication_logic.dart';
 import 'logic/account/authentication_bloc.dart';
+import 'logic/events/events_logic.dart';
 import 'logic/metrics/metrics_logic.dart';
 import 'services/account.dart';
-import 'ui/common/restart.dart';
+import 'ui/blocs/common/restart.dart';
 import 'ui/home.dart';
 import 'ui/login.dart';
 import 'ui/splash.dart';
@@ -24,6 +25,7 @@ class AppState extends State<App> {
   static AuthenticationLogic? authenticationLogic;
   static MetricsLogic? metricsLogic;
   static ImportLogic? importLogic;
+  static EventsLogic? eventLogic;
   static final Account account = Account();
 
   @override
@@ -32,6 +34,7 @@ class AppState extends State<App> {
     authenticationLogic = AuthenticationLogic(account);
     metricsLogic = MetricsLogic(account);
     importLogic = ImportLogic(account);
+    eventLogic = EventsLogic(account);
   }
 
   @override
