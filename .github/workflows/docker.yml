@@ -22,11 +22,11 @@ jobs:
       matrix:
         include:
           - dockerfile: ./Proxy
-            image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-proxy
+            image: ghcr.io/fschiltz/helse-proxy
           - dockerfile: ./App
-            image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-web
+            image: ghcr.io/fschiltz/helse-web
           - dockerfile: ./Backend
-            image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-api
+            image: ghcr.io/fschiltz/helse-api
 
     steps:
     - uses: actions/checkout@v3
