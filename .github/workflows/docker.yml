@@ -21,11 +21,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - dockerfile: ./Proxy/Dockerfile
+          - dockerfile: ./Proxy
             platform: multi
-          - dockerfile: ./App/Dockerfile
+          - dockerfile: ./App
             platform: multi
-          - dockerfile: ./Backend/Dockerfile
+          - dockerfile: ./Backend
             platform: multi
 
     steps:
@@ -47,8 +47,7 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
       with:
-        context: .
+        context: ${{ matrix.dockerfile }}
         push: true
-        file: ${{ matrix.dockerfile }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
