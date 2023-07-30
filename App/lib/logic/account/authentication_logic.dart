@@ -36,7 +36,8 @@ class AuthenticationLogic {
     }
   }
 
-  Future<void> createAccount(Person person) async {
+  Future<void> createAccount({required String url, required Person person}) async {
+    await _account.setUrl(url);
     await ApiService(_account).createAccount(person);
   }
 

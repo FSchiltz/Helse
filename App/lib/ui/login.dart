@@ -57,7 +57,7 @@ class _LoginState extends State<LoginPage> {
                 ScaffoldMessenger.of(context)
                   ..hideCurrentSnackBar()
                   ..showSnackBar(
-                    const SnackBar(content: Text('Failure')),
+                    SnackBar(content: Text('Failure: ${state.error}')),
                   );
               } else if (state.status == SubmissionStatus.success && !state.isInit) {
                 ScaffoldMessenger.of(context)

@@ -101,15 +101,15 @@ class LoginBloc extends Bloc<ChangedEvent, LoginState> {
           await _authenticationRepository.logIn(url: state.url, username: state.username, password: state.password);
         } else {
           var person = Person(type: UserType.value_2, userName: state.username, password: state.password);
-          await _authenticationRepository.createAccount(person);
+          await _authenticationRepository.createAccount(url: state.url, person: person);
 
           // after a succes, we auto login
           await _authenticationRepository.logIn(url: state.url, username: state.username, password: state.password);
         }
 
         emit(state.copyWith(status: SubmissionStatus.success));
-      } catch (_) {
-        emit(state.copyWith(status: SubmissionStatus.failure));
+      } catch (ex) {
+        emit(state.copyWith(status: SubmissionStatus.failure, error: ex.toString()));
       }
     }
   }
@@ -128,9 +128,11 @@ final class LoginState {
     this.urlError = false,
     this.isInit = false,
     this.loaded = SubmissionStatus.initial,
+    this.error = "",
   });
 
   final SubmissionStatus status;
+  final String error;
   final String username;
   final String password;
   final String url;
@@ -145,6 +147,7 @@ final class LoginState {
 
   LoginState copyWith({
     SubmissionStatus? status,
+    String? error,
     String? url,
     String? username,
     String? password,
@@ -168,6 +171,7 @@ final class LoginState {
       url: url ?? this.url,
       isInit: isInit ?? this.isInit,
       loaded: loaded ?? this.loaded,
+      error: error ?? this.error,
     );
   }
 }
