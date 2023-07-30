@@ -36,6 +36,6 @@
                 "${workspaceFolder}/Backend/API.sln"
             ],
             "problemMatcher": "$msCompile"
-        }
+        },
     ]
 }
