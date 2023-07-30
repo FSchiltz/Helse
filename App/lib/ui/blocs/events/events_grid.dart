@@ -17,11 +17,8 @@ class EventsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return types.isEmpty
         ? const CircularProgressIndicator()
-        : GridView.extent(
+        : ListView(
             shrinkWrap: true,
-            crossAxisSpacing: 4,
-            mainAxisSpacing: 4,
-            maxCrossAxisExtent: 800.0,
             children: types.map((type) => EventWidget(type, date, key: Key(type.id?.toString() ?? ""))).toList(),
           );
   }

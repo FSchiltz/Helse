@@ -87,11 +87,14 @@ class _EventWidgetState extends State<EventWidget> {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    
                     children: [
-                      Text(widget.type.name ?? "", style: Theme.of(context).textTheme.titleMedium),
-                      Expanded(
-                        child: EventGraph(events, widget.date),
-                      )
+                      Row(
+                        children: [
+                          Text(widget.type.name ?? "", style: Theme.of(context).textTheme.titleLarge),
+                        ],
+                      ),
+                      EventGraph(events, widget.date)
                     ],
                   ),
                 );
