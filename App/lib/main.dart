@@ -26,11 +26,11 @@ class AppState extends State<App> {
   static MetricsLogic? metricsLogic;
   static ImportLogic? importLogic;
   static EventsLogic? eventLogic;
-  static final Account account = Account();
 
   @override
   void initState() {
     super.initState();
+    var account = Account(callback: () => RestartWidget.restartApp(context));
     authenticationLogic = AuthenticationLogic(account);
     metricsLogic = MetricsLogic(account);
     importLogic = ImportLogic(account);
@@ -45,7 +45,7 @@ class AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    if(authenticationLogic == null) {
+    if (authenticationLogic == null) {
       throw Exception("Init Error");
     }
 
@@ -78,13 +78,13 @@ class _AppViewState extends State<AppView> {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-      ), 
+      ),
       darkTheme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green, brightness: Brightness.dark),
         /* dark theme settings */
       ),
-      themeMode: ThemeMode.system, 
+      themeMode: ThemeMode.system,
       /* ThemeMode.system to follow system theme, 
          ThemeMode.light for light theme, 
          ThemeMode.dark for dark theme

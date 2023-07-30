@@ -1,46 +1,36 @@
-
 import 'package:file_selector/file_selector.dart';
 
 enum SubmissionStatus { initial, success, failure, inProgress }
 
-sealed class ChangedEvent {
-  const ChangedEvent(this.field);
+sealed class ChangedEvent<T> {
+  const ChangedEvent(this.value, this.field);
 
   final String field;
+  final T? value;
 }
 
-final class FileChangedEvent extends ChangedEvent {
-    const FileChangedEvent(this.value, String field) : super(field);
-
-  final XFile? value;
+final class FileChangedEvent extends ChangedEvent<XFile> {
+  const FileChangedEvent(XFile value, String field) : super(value, field);
 }
 
-final class TextChangedEvent extends ChangedEvent {
-  const TextChangedEvent(this.value, String field) : super(field);
-
-  final String value;
+final class TextChangedEvent extends ChangedEvent<String> {
+  const TextChangedEvent(String value, String field) : super(value, field);
 }
 
-final class IntChangedEvent extends ChangedEvent {
-  const IntChangedEvent(this.value, String field) : super(field);
-
-  final int value;
+final class IntChangedEvent extends ChangedEvent<int> {
+  const IntChangedEvent(int value, String field) : super(value, field);
 }
 
-final class BoolChangedEvent extends ChangedEvent {
-  const BoolChangedEvent(this.value, String field) : super(field);
-
-  final bool value;
+final class BoolChangedEvent extends ChangedEvent<bool> {
+  const BoolChangedEvent(bool value, String field) : super(value, field);
 }
 
-final class DateChangedEvent extends ChangedEvent {
-  const DateChangedEvent(this.value, String field) : super(field);
-
-  final DateTime value;
+final class DateChangedEvent extends ChangedEvent<DateTime> {
+  const DateChangedEvent(DateTime value, String field) : super(value, field);
 }
 
 final class SubmittedEvent extends ChangedEvent {
   final void Function()? callback;
 
-  const SubmittedEvent(String field, {this.callback}) : super(field);
+  const SubmittedEvent(String field, {this.callback}) : super(null, field);
 }

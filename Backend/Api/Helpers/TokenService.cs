@@ -31,13 +31,20 @@ public class TokenService
 
     public string GetToken(User user)
     {
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(new[]
+        var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.NameId, user.Identifier),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email)
-             }),
+             };
+
+        if (user.Email != null)
+        {
+            claims.Add(
+            new Claim(JwtRegisteredClaimNames.Email, user.Email));
+        }
+
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddMinutes(30),
             Issuer = _issuer,
             Audience = _audience,

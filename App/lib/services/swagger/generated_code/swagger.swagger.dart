@@ -58,12 +58,23 @@ abstract class Swagger extends ChopperService {
       {@Body() required Connection? body});
 
   ///
+  Future<chopper.Response<Status>> statusGet() {
+    generatedMapping.putIfAbsent(Status, () => Status.fromJsonFactory);
+
+    return _statusGet();
+  }
+
+  ///
+  @Get(path: '/status')
+  Future<chopper.Response<Status>> _statusGet();
+
+  ///
   ///@param type
   ///@param start
   ///@param end
   ///@param personId
   Future<chopper.Response<List<Event>>> eventsGet({
-    required int? type,
+    int? type,
     required String? start,
     required String? end,
     int? personId,
@@ -80,7 +91,7 @@ abstract class Swagger extends ChopperService {
   ///@param personId
   @Get(path: '/events')
   Future<chopper.Response<List<Event>>> _eventsGet({
-    @Query('type') required int? type,
+    @Query('type') int? type,
     @Query('start') required String? start,
     @Query('end') required String? end,
     @Query('personId') int? personId,
@@ -1097,6 +1108,56 @@ extension $PersonExtension on Person {
         type: (type != null ? type.value : this.type),
         email: (email != null ? email.value : this.email),
         phone: (phone != null ? phone.value : this.phone));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class Status {
+  Status({
+    this.init,
+    this.error,
+  });
+
+  factory Status.fromJson(Map<String, dynamic> json) => _$StatusFromJson(json);
+
+  static const toJsonFactory = _$StatusToJson;
+  Map<String, dynamic> toJson() => _$StatusToJson(this);
+
+  @JsonKey(name: 'init')
+  final bool? init;
+  @JsonKey(name: 'error')
+  final String? error;
+  static const fromJsonFactory = _$StatusFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is Status &&
+            (identical(other.init, init) ||
+                const DeepCollectionEquality().equals(other.init, init)) &&
+            (identical(other.error, error) ||
+                const DeepCollectionEquality().equals(other.error, error)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(init) ^
+      const DeepCollectionEquality().hash(error) ^
+      runtimeType.hashCode;
+}
+
+extension $StatusExtension on Status {
+  Status copyWith({bool? init, String? error}) {
+    return Status(init: init ?? this.init, error: error ?? this.error);
+  }
+
+  Status copyWithWrapped({Wrapped<bool?>? init, Wrapped<String?>? error}) {
+    return Status(
+        init: (init != null ? init.value : this.init),
+        error: (error != null ? error.value : this.error));
   }
 }
 

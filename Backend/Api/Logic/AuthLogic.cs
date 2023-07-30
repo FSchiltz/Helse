@@ -14,11 +14,28 @@ namespace Api.Logic;
 /// <param name="Password"></param>
 public record Connection(string User, string Password);
 
+public record Status(bool Init, string? Error);
+
 /// <summary>
 /// Logic over user authentication and right
 /// </summary>
 public static class AuthLogic
 {
+    /// <summary>
+    /// Return true if the server is correctly installed
+    /// If false, some steps are missing:
+    ///     - Missing first user
+    /// </summary>
+    /// <param name="db"></param>
+    /// <param name="token"></param>
+    /// <param name="logger"></param>
+    /// <returns></returns>
+    public static async Task<IResult> StatusAsync(AppDataConnection db, TokenService token, ILoggerFactory logger)
+    {
+        var count = await db.GetTable<User>().CountAsync();
+        return TypedResults.Ok(new Status(count > 0, null));
+    }
+
     /// <summary>
     /// Connect and get a token
     /// </summary>

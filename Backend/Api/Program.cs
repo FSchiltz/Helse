@@ -113,6 +113,12 @@ app.MapPost("/auth", AuthLogic.AuthAsync)
 .Produces((int)HttpStatusCode.Unauthorized)
 .WithOpenApi();
 
+app.MapGet("/status", AuthLogic.StatusAsync)
+.AllowAnonymous()
+.WithDescription("Check if the server install is ready")
+.Produces<Status>((int)HttpStatusCode.OK)
+.WithOpenApi();
+
 var person = app.MapGroup("/person");
 
 person.MapPost("/", PersonLogic.CreateAsync)

@@ -30,8 +30,19 @@ class _$Swagger extends Swagger {
   }
 
   @override
+  Future<Response<Status>> _statusGet() {
+    final Uri $url = Uri.parse('/status');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Status, Status>($request);
+  }
+
+  @override
   Future<Response<List<Event>>> _eventsGet({
-    required int? type,
+    int? type,
     required String? start,
     required String? end,
     int? personId,

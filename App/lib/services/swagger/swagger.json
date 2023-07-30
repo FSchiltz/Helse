@@ -38,6 +38,26 @@
         }
       }
     },
+    "/status": {
+      "get": {
+        "tags": [
+          "AuthLogic"
+        ],
+        "description": "Check if the server install is ready",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/events": {
       "get": {
         "tags": [
@@ -47,7 +67,6 @@
           {
             "name": "type",
             "in": "query",
-            "required": true,
             "style": "form",
             "schema": {
               "type": "integer",
@@ -649,11 +668,13 @@
           },
           "file": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "nullable": true
           },
           "treatment": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "nullable": true
           },
           "type": {
             "type": "integer",
@@ -676,7 +697,8 @@
           },
           "address": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -805,6 +827,19 @@
             "nullable": true
           },
           "phone": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Status": {
+        "type": "object",
+        "properties": {
+          "init": {
+            "type": "boolean"
+          },
+          "error": {
             "type": "string",
             "nullable": true
           }

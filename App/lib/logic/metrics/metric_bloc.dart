@@ -28,7 +28,7 @@ class MetricBloc extends Bloc<ChangedEvent, MetricState> {
     return text == null || text.isEmpty;
   }
 
-  bool _validateAll(String? value, DateTime? date, int typeId) {
+  bool _validateAll(String? value, DateTime? date, int? typeId) {
     // Metric with unit must be numeric
     var type = _types.firstWhereOrNull((element) => element.id == typeId);
 
@@ -64,7 +64,7 @@ class MetricBloc extends Bloc<ChangedEvent, MetricState> {
     );
   }
 
-  void _valueChanged(String value, Emitter<MetricState> emit) {
+  void _valueChanged(String? value, Emitter<MetricState> emit) {
     var hasError = _hasError(value);
     var valid = _validateAll(value, state.date, state.type);
     emit(

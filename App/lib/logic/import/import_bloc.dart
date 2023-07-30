@@ -18,7 +18,7 @@ class ImportBloc extends Bloc<ChangedEvent, ImportState> {
   void _onIntChanged(IntChangedEvent event, Emitter<ImportState> emit) {
     var type = event.value;
     emit(
-      state.copyWith(type: type, isValid: state.file != null && type > 0),
+      state.copyWith(type: type, isValid: state.file != null && (type ?? 0) > 0),
     );
   }
 

@@ -60,7 +60,7 @@ class EventBloc extends Bloc<ChangedEvent, EventState> {
     );
   }
 
-  void _valueChanged(String value, Emitter<EventState> emit) {
+  void _valueChanged(String? value, Emitter<EventState> emit) {
     var hasError = _hasError(value);
     var valid = _validateAll(value, state.start, state.stop);
     emit(

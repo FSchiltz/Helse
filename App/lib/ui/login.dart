@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:helse/logic/event.dart';
 
 import '../services/account.dart';
 import '../logic/account/authentication_logic.dart';
@@ -22,11 +24,19 @@ class _LoginState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final textController = TextEditingController();
 
+  /// Prefill the url from storage or other
   Future<void> _initUrl(LoginBloc bloc) async {
+    // We first try to get it from storage
     var url = await Account().getUrl();
+
+    // if not in storage, we can try to get it from the current url on the web
+    if (url == null && kIsWeb) {
+      url = "${Uri.base.scheme}://${Uri.base.host}${Uri.base.port > 0 ? ":${Uri.base.port}" : ""}";
+    }
+
     if (url != null && url.isNotEmpty) {
       textController.text = url;
-      bloc.add(LoginUrlChanged(url));
+      bloc.add(TextChangedEvent(url, LoginBloc.urlField));
     }
   }
 
@@ -47,7 +57,13 @@ class _LoginState extends State<LoginPage> {
                 ScaffoldMessenger.of(context)
                   ..hideCurrentSnackBar()
                   ..showSnackBar(
-                    const SnackBar(content: Text('Authentication Failure')),
+                    const SnackBar(content: Text('Failure')),
+                  );
+              } else if (state.status == SubmissionStatus.success && !state.isInit) {
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    const SnackBar(content: Text('User created, welcome')),
                   );
               }
             },
@@ -66,11 +82,7 @@ class _LoginState extends State<LoginPage> {
                         const SizedBox(height: 60),
                         _UrlInput(textController),
                         const SizedBox(height: 60),
-                        _UsernameInput(),
-                        const SizedBox(height: 10),
-                        _PasswordInput(),
-                        const SizedBox(height: 60),
-                        _LoginButton(),
+                        _LoginInput(),
                       ],
                     ),
                   ),
@@ -82,6 +94,44 @@ class _LoginState extends State<LoginPage> {
   }
 }
 
+class _LoginInput extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<LoginBloc, LoginState>(
+        buildWhen: (previous, current) => previous.loaded != current.loaded,
+        builder: (context, state) {
+          if (state.loaded == SubmissionStatus.inProgress) {
+            return const CircularProgressIndicator();
+          } else if (state.loaded == SubmissionStatus.success) {
+            if (state.isInit) {
+              return Column(
+                children: [
+                  _UsernameInput(),
+                  const SizedBox(height: 10),
+                  _PasswordInput(),
+                  const SizedBox(height: 60),
+                  _LoginButton(),
+                ],
+              );
+            } else {
+              return Column(
+                children: [
+                  Text("Create your account", style: Theme.of(context).textTheme.headlineLarge),
+                  const SizedBox(height: 60),
+                  _UsernameInput(),
+                  const SizedBox(height: 10),
+                  _PasswordInput(),
+                  const SizedBox(height: 60),
+                  _LoginButton(),
+                ],
+              );
+            }
+          }
+          return Container();
+        });
+  }
+}
+
 class _UrlInput extends StatelessWidget {
   final TextEditingController _textController;
 
@@ -90,12 +140,12 @@ class _UrlInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
-      buildWhen: (previous, current) => previous.url != current.url,
+      buildWhen: (previous, current) => previous.url != current.url || previous.urlError != current.urlError,
       builder: (context, state) {
         return TextField(
           controller: _textController,
+          onChanged: (url) => context.read<LoginBloc>().add(TextChangedEvent(url, LoginBloc.urlField)),
           key: const Key('loginForm_urlInput_textField'),
-          onChanged: (url) => context.read<LoginBloc>().add(LoginUrlChanged(url)),
           decoration: InputDecoration(
             labelText: 'Server url',
             prefixIcon: const Icon(Icons.home_sharp),
@@ -117,11 +167,11 @@ class _UsernameInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
-      buildWhen: (previous, current) => previous.username != current.username,
+      buildWhen: (previous, current) => previous.username != current.username || previous.usernameError != current.usernameError,
       builder: (context, state) {
         return TextField(
           key: const Key('loginForm_usernameInput_textField'),
-          onChanged: (username) => context.read<LoginBloc>().add(LoginUsernameChanged(username)),
+          onChanged: (username) => context.read<LoginBloc>().add(TextChangedEvent(username, LoginBloc.userNameField)),
           decoration: InputDecoration(
             labelText: 'username',
             prefixIcon: const Icon(Icons.person_sharp),
@@ -147,7 +197,7 @@ class _PasswordInput extends StatelessWidget {
       builder: (context, state) {
         return TextField(
           key: const Key('loginForm_passwordInput_textField'),
-          onChanged: (password) => context.read<LoginBloc>().add(LoginPasswordChanged(password)),
+          onChanged: (password) => context.read<LoginBloc>().add(TextChangedEvent(password, LoginBloc.passwordField)),
           obscureText: !state.obscurePassword,
           keyboardType: TextInputType.visiblePassword,
           decoration: InputDecoration(
@@ -155,7 +205,7 @@ class _PasswordInput extends StatelessWidget {
             prefixIcon: const Icon(Icons.password_sharp),
             suffixIcon: IconButton(
                 onPressed: () {
-                  context.read<LoginBloc>().add(LoginPasswordVisibilityChanged(!state.obscurePassword));
+                  context.read<LoginBloc>().add(BoolChangedEvent(!state.obscurePassword, "visible"));
                 },
                 icon: state.obscurePassword ? const Icon(Icons.visibility_sharp) : const Icon(Icons.visibility_off_sharp)),
             border: OutlineInputBorder(
@@ -189,7 +239,7 @@ class _LoginButton extends StatelessWidget {
                 key: const Key('loginForm_continue_raisedButton'),
                 onPressed: state.isValid
                     ? () {
-                        context.read<LoginBloc>().add(const LoginSubmitted());
+                        context.read<LoginBloc>().add(const SubmittedEvent(""));
                       }
                     : null,
                 child: const Text('Login'),

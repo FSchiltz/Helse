@@ -28,8 +28,8 @@ class ApiService {
     return result;
   }
 
-  Future<Swagger> _getService() async {
-    var url = await _account.getUrl();
+  Future<Swagger> _getService({String? override}) async {
+    var url =  override ?? await _account.getUrl();
     if (url == null) throw Exception("Url missing");
 
     var token = await _account.getToken();
@@ -43,6 +43,26 @@ class ApiService {
     var response = await api.authPost(body: Connection(user: username, password: password));
 
     return response.isSuccessful ? response.bodyString : null;
+  }
+
+   Future<void> createAccount(Person person) async {
+    var api = await _getService();
+
+    await _call(() => api.personPost(body: person));
+  }
+
+  Future<bool?> isInit(String url) async {
+    try {
+    var api = await _getService(override: url);
+    var response = await api.statusGet();
+
+    if (!response.isSuccessful) return null;
+
+    return response.body?.init;}
+    catch(_) {
+      // don't crash on this call, the user may have entered a wrong url 
+      return null;
+    }
   }
 
   Future<List<MetricType>?> metricsType() async {
@@ -60,7 +80,7 @@ class ApiService {
     await _call(() => api.metricsPost(body: metric));
   }
 
-Future<List<EventType>?> eventsType() async {
+  Future<List<EventType>?> eventsType() async {
     var api = await _getService();
     return await _call(api.eventsTypeGet);
   }
@@ -80,7 +100,7 @@ Future<List<EventType>?> eventsType() async {
     return await _call(api.importTypesGet);
   }
 
-   Future<void> import(String? file, int type) async {
+  Future<void> import(String? file, int type) async {
     var api = await _getService();
     await _call(() => api.importTypePost(body: file, type: type));
   }

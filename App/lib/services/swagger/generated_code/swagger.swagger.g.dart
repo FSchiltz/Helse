@@ -165,3 +165,13 @@ Map<String, dynamic> _$PersonToJson(Person instance) => <String, dynamic>{
       'email': instance.email,
       'phone': instance.phone,
     };
+
+Status _$StatusFromJson(Map<String, dynamic> json) => Status(
+      init: json['init'] as bool?,
+      error: json['error'] as String?,
+    );
+
+Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
+      'init': instance.init,
+      'error': instance.error,
+    };

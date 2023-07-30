@@ -1,6 +1,7 @@
 import 'dart:async';
 import '../../services/api_service.dart';
 import '../../services/account.dart';
+import '../../services/swagger/generated_code/swagger.swagger.dart';
 
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
@@ -33,6 +34,14 @@ class AuthenticationLogic {
       await _account.setToken(cleaned);
       _controller.add(AuthenticationStatus.authenticated);
     }
+  }
+
+  Future<void> createAccount(Person person) async {
+    await ApiService(_account).createAccount(person);
+  }
+
+  Future<bool?> isInit(String url) async {
+    return await ApiService(_account).isInit(url);
   }
 
   /// Call the logout service

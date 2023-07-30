@@ -3,9 +3,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Token storage abstraction
 class Account {
   final storage = SharedPreferences.getInstance();
+  final void Function()? callback;
 
   final _url = "urlPath";
   final _token = "sessionToken";
+
+  Account({this.callback});
 
   Future<String?> getUrl() async {
     return (await storage).getString(_url);
@@ -25,6 +28,7 @@ class Account {
 
   Future<void> removeToken() async {
     await (await storage).remove(_token);
-    // TODO use event
+    
+    callback?.call();
   }
 }
