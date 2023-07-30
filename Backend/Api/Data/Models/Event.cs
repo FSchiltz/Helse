@@ -53,5 +53,6 @@ public class Event
     [Association(ThisKey = nameof(AddressId), OtherKey = nameof(Data.Models.Address.Id))]
     public Treatment? Address { get; set; }
 
-    
+    [Column]
+    public string? Tag { get; set; }    
 }

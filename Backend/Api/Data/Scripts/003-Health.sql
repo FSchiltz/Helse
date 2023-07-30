@@ -20,7 +20,8 @@ CREATE TABLE health.Event
   Start       TIMESTAMP NOT NULL    ,
   Stop         TIMESTAMP NOT NULL,
   Valid       BOOL     NOT NULL DEFAULT False,
-  AddressId     BIGINT   NULL
+  AddressId     BIGINT   NULL,
+  Tag     VARCHAR  NULL    
 );
 
 CREATE TABLE health.Metric

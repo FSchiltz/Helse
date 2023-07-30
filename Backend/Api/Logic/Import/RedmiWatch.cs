@@ -22,6 +22,45 @@ internal class RedmiRecord
     }
 }
 
+public class SleepTime
+{
+    public int End_time { get; set; }
+    public int State { get; set; }
+    public int Start_time { get; set; }
+
+    public string GetKey() => +Start_time + "_" + End_time;
+}
+
+public class SleepRecord
+{
+    public int avg_hr { get; set; }
+    public int bedtime { get; set; }
+    public int sleep_deep_duration { get; set; }
+    public int device_bedtime { get; set; }
+    public int device_wake_up_time { get; set; }
+    public int sleep_light_duration { get; set; }
+    public int max_hr { get; set; }
+    public int min_hr { get; set; }
+    public int protoTime { get; set; }
+    public int sleep_rem_duration { get; set; }
+    public int Duration { get; set; }
+    public List<SleepTime> Items { get; set; }
+    public int timezone { get; set; }
+    public int version { get; set; }
+    public int awake_count { get; set; }
+    public int sleep_awake_duration { get; set; }
+    public int wake_up_time { get; set; }
+}
+
+internal enum SleepType
+{
+    None,
+    State1,
+    State2,
+    State3,
+    State4,
+}
+
 internal class Record
 {
     public int? Date_time { get; set; }
@@ -34,21 +73,25 @@ internal class SpoRecord : Record
     public string? Spo2 { get; set; }
 }
 
-internal class HeartRecord : Record {
-    public string? Bpm { get; set;}
+internal class HeartRecord : Record
+{
+    public string? Bpm { get; set; }
 }
 
-internal class StepRecord : Record {
-    public string? Steps { get; set; }   
-    public string? Distance {get;set;}
+internal class StepRecord : Record
+{
+    public string? Steps { get; set; }
+    public string? Distance { get; set; }
 }
 
-internal class CalorieRecord: Record{
-    public string? Calories { get; set;}
+internal class CalorieRecord : Record
+{
+    public string? Calories { get; set; }
 }
 
-internal class WeightRecord: Record {
-    public string? Weight { get; set; } 
+internal class WeightRecord : Record
+{
+    public string? Weight { get; set; }
 }
 
 public class RedmiWatch : FileImporter
@@ -86,9 +129,29 @@ public class RedmiWatch : FileImporter
         {
             switch (record.Key)
             {
-                case Sleep: // TODO, sleep is an event not a metric
-                break;
-                  case Weight:
+                case Sleep:
+                    if (record.Value == null)
+                        continue;
+
+                    var sleep = JsonConvert.DeserializeObject<SleepRecord>(record.Value);
+                    if (sleep?.Items == null)
+                        continue;
+
+                    foreach (var item in sleep.Items)
+                    {
+                        await ImportEvent(new Data.Models.Event()
+                        {
+                            PersonId = User.PersonId,
+                            UserId = User.Id,
+                            Start = DateTimeOffset.FromUnixTimeSeconds(item.Start_time).DateTime,
+                            Stop = DateTimeOffset.FromUnixTimeSeconds(item.End_time).DateTime,
+                            Tag = item.GetKey(),
+                            Type = (int)EventTypes.Sleep,
+                            Description = ((SleepType)item.State).ToString(),
+                        });
+                    }
+                    break;
+                case Weight:
                     if (record.Value == null)
                         continue;
 
@@ -123,7 +186,7 @@ public class RedmiWatch : FileImporter
                         Date = DateTimeOffset.FromUnixTimeSeconds(steps.Time ?? steps.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Steps,
                     });
-                break;
+                    break;
                 case Calories:
                     if (record.Value == null)
                         continue;
@@ -141,7 +204,7 @@ public class RedmiWatch : FileImporter
                         Date = DateTimeOffset.FromUnixTimeSeconds(calorie.Time ?? calorie.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Calories,
                     });
-                break;
+                    break;
                 case MaxHeart:
                 case MinHeart:
                 case RestingHeart:
@@ -185,10 +248,36 @@ public class RedmiWatch : FileImporter
                         Type = (long)MetricTypes.Oxygen,
                     });
                     break;
-                    default:
+                default:
                     break;
             }
         }
+    }
+
+    private async Task ImportEvent(Data.Models.Event metric)
+    {
+        using var transaction = await DataConnection.BeginTransactionAsync();
+
+        // check if the metric exists
+        var fromDb = await DataConnection.GetTable<Api.Data.Models.Event>().FirstOrDefaultAsync(x => x.PersonId == metric.PersonId && x.Tag == metric.Tag);
+
+        if (fromDb == null)
+        {
+            await DataConnection.GetTable<Data.Models.Event>().InsertAsync(() => new Data.Models.Event
+            {
+                PersonId = metric.PersonId,
+                Description = metric.Description,
+                Start = metric.Start,
+                Stop = metric.Stop,
+                Tag = metric.Tag,
+                UserId = metric.UserId,
+                Type = metric.Type,
+            });
+        }
+
+        // else import if
+
+        await transaction.CommitAsync();
     }
 
     private async Task ImportMetric(Data.Models.Metric metric)
