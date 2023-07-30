@@ -45,35 +45,35 @@ abstract class Swagger extends ChopperService {
   }
 
   ///
-  Future<chopper.Response<String>> authPost({required Connection? body}) {
-    return _authPost(body: body);
+  Future<chopper.Response<String>> apiAuthPost({required Connection? body}) {
+    return _apiAuthPost(body: body);
   }
 
   ///
   @Post(
-    path: '/auth',
+    path: '/api/auth',
     optionalBody: true,
   )
-  Future<chopper.Response<String>> _authPost(
+  Future<chopper.Response<String>> _apiAuthPost(
       {@Body() required Connection? body});
 
   ///
-  Future<chopper.Response<Status>> statusGet() {
+  Future<chopper.Response<Status>> apiStatusGet() {
     generatedMapping.putIfAbsent(Status, () => Status.fromJsonFactory);
 
-    return _statusGet();
+    return _apiStatusGet();
   }
 
   ///
-  @Get(path: '/status')
-  Future<chopper.Response<Status>> _statusGet();
+  @Get(path: '/api/status')
+  Future<chopper.Response<Status>> _apiStatusGet();
 
   ///
   ///@param type
   ///@param start
   ///@param end
   ///@param personId
-  Future<chopper.Response<List<Event>>> eventsGet({
+  Future<chopper.Response<List<Event>>> apiEventsGet({
     int? type,
     required String? start,
     required String? end,
@@ -81,7 +81,8 @@ abstract class Swagger extends ChopperService {
   }) {
     generatedMapping.putIfAbsent(Event, () => Event.fromJsonFactory);
 
-    return _eventsGet(type: type, start: start, end: end, personId: personId);
+    return _apiEventsGet(
+        type: type, start: start, end: end, personId: personId);
   }
 
   ///
@@ -89,8 +90,8 @@ abstract class Swagger extends ChopperService {
   ///@param start
   ///@param end
   ///@param personId
-  @Get(path: '/events')
-  Future<chopper.Response<List<Event>>> _eventsGet({
+  @Get(path: '/api/events')
+  Future<chopper.Response<List<Event>>> _apiEventsGet({
     @Query('type') int? type,
     @Query('start') required String? start,
     @Query('end') required String? end,
@@ -99,108 +100,111 @@ abstract class Swagger extends ChopperService {
 
   ///
   ///@param personId
-  Future<chopper.Response> eventsPost({
+  Future<chopper.Response> apiEventsPost({
     int? personId,
     required CreateEvent? body,
   }) {
-    return _eventsPost(personId: personId, body: body);
+    return _apiEventsPost(personId: personId, body: body);
   }
 
   ///
   ///@param personId
   @Post(
-    path: '/events',
+    path: '/api/events',
     optionalBody: true,
   )
-  Future<chopper.Response> _eventsPost({
+  Future<chopper.Response> _apiEventsPost({
     @Query('personId') int? personId,
     @Body() required CreateEvent? body,
   });
 
   ///
   ///@param id
-  Future<chopper.Response> eventsIdDelete({required int? id}) {
-    return _eventsIdDelete(id: id);
+  Future<chopper.Response> apiEventsIdDelete({required int? id}) {
+    return _apiEventsIdDelete(id: id);
   }
 
   ///
   ///@param id
-  @Delete(path: '/events/{id}')
-  Future<chopper.Response> _eventsIdDelete({@Path('id') required int? id});
+  @Delete(path: '/api/events/{id}')
+  Future<chopper.Response> _apiEventsIdDelete({@Path('id') required int? id});
 
   ///
-  Future<chopper.Response> eventsTypePost({required EventType? body}) {
-    return _eventsTypePost(body: body);
+  Future<chopper.Response> apiEventsTypePost({required EventType? body}) {
+    return _apiEventsTypePost(body: body);
   }
 
   ///
   @Post(
-    path: '/events/type',
+    path: '/api/events/type',
     optionalBody: true,
   )
-  Future<chopper.Response> _eventsTypePost({@Body() required EventType? body});
+  Future<chopper.Response> _apiEventsTypePost(
+      {@Body() required EventType? body});
 
   ///
-  Future<chopper.Response> eventsTypePut({required MetricType? body}) {
-    return _eventsTypePut(body: body);
+  Future<chopper.Response> apiEventsTypePut({required MetricType? body}) {
+    return _apiEventsTypePut(body: body);
   }
 
   ///
   @Put(
-    path: '/events/type',
+    path: '/api/events/type',
     optionalBody: true,
   )
-  Future<chopper.Response> _eventsTypePut({@Body() required MetricType? body});
+  Future<chopper.Response> _apiEventsTypePut(
+      {@Body() required MetricType? body});
 
   ///
-  Future<chopper.Response<List<EventType>>> eventsTypeGet() {
+  Future<chopper.Response<List<EventType>>> apiEventsTypeGet() {
     generatedMapping.putIfAbsent(EventType, () => EventType.fromJsonFactory);
 
-    return _eventsTypeGet();
+    return _apiEventsTypeGet();
   }
 
   ///
-  @Get(path: '/events/type')
-  Future<chopper.Response<List<EventType>>> _eventsTypeGet();
+  @Get(path: '/api/events/type')
+  Future<chopper.Response<List<EventType>>> _apiEventsTypeGet();
 
   ///
   ///@param id
-  Future<chopper.Response> eventsTypeIdDelete({required int? id}) {
-    return _eventsTypeIdDelete(id: id);
+  Future<chopper.Response> apiEventsTypeIdDelete({required int? id}) {
+    return _apiEventsTypeIdDelete(id: id);
   }
 
   ///
   ///@param id
-  @Delete(path: '/events/type/{id}')
-  Future<chopper.Response> _eventsTypeIdDelete({@Path('id') required int? id});
+  @Delete(path: '/api/events/type/{id}')
+  Future<chopper.Response> _apiEventsTypeIdDelete(
+      {@Path('id') required int? id});
 
   ///
-  Future<chopper.Response<List<FileType>>> importTypesGet() {
+  Future<chopper.Response<List<FileType>>> apiImportTypesGet() {
     generatedMapping.putIfAbsent(FileType, () => FileType.fromJsonFactory);
 
-    return _importTypesGet();
+    return _apiImportTypesGet();
   }
 
   ///
-  @Get(path: '/import/types')
-  Future<chopper.Response<List<FileType>>> _importTypesGet();
+  @Get(path: '/api/import/types')
+  Future<chopper.Response<List<FileType>>> _apiImportTypesGet();
 
   ///
   ///@param type
-  Future<chopper.Response> importTypePost({
+  Future<chopper.Response> apiImportTypePost({
     required int? type,
     required String? body,
   }) {
-    return _importTypePost(type: type, body: body);
+    return _apiImportTypePost(type: type, body: body);
   }
 
   ///
   ///@param type
   @Post(
-    path: '/import/{type}',
+    path: '/api/import/{type}',
     optionalBody: true,
   )
-  Future<chopper.Response> _importTypePost({
+  Future<chopper.Response> _apiImportTypePost({
     @Path('type') required int? type,
     @Body() required String? body,
   });
@@ -210,7 +214,7 @@ abstract class Swagger extends ChopperService {
   ///@param start
   ///@param end
   ///@param personId
-  Future<chopper.Response<List<Metric>>> metricsGet({
+  Future<chopper.Response<List<Metric>>> apiMetricsGet({
     required int? type,
     required String? start,
     required String? end,
@@ -218,7 +222,8 @@ abstract class Swagger extends ChopperService {
   }) {
     generatedMapping.putIfAbsent(Metric, () => Metric.fromJsonFactory);
 
-    return _metricsGet(type: type, start: start, end: end, personId: personId);
+    return _apiMetricsGet(
+        type: type, start: start, end: end, personId: personId);
   }
 
   ///
@@ -226,8 +231,8 @@ abstract class Swagger extends ChopperService {
   ///@param start
   ///@param end
   ///@param personId
-  @Get(path: '/metrics')
-  Future<chopper.Response<List<Metric>>> _metricsGet({
+  @Get(path: '/api/metrics')
+  Future<chopper.Response<List<Metric>>> _apiMetricsGet({
     @Query('type') required int? type,
     @Query('start') required String? start,
     @Query('end') required String? end,
@@ -236,93 +241,95 @@ abstract class Swagger extends ChopperService {
 
   ///
   ///@param personId
-  Future<chopper.Response> metricsPost({
+  Future<chopper.Response> apiMetricsPost({
     int? personId,
     required CreateMetric? body,
   }) {
-    return _metricsPost(personId: personId, body: body);
+    return _apiMetricsPost(personId: personId, body: body);
   }
 
   ///
   ///@param personId
   @Post(
-    path: '/metrics',
+    path: '/api/metrics',
     optionalBody: true,
   )
-  Future<chopper.Response> _metricsPost({
+  Future<chopper.Response> _apiMetricsPost({
     @Query('personId') int? personId,
     @Body() required CreateMetric? body,
   });
 
   ///
   ///@param id
-  Future<chopper.Response> metricsIdDelete({required int? id}) {
-    return _metricsIdDelete(id: id);
+  Future<chopper.Response> apiMetricsIdDelete({required int? id}) {
+    return _apiMetricsIdDelete(id: id);
   }
 
   ///
   ///@param id
-  @Delete(path: '/metrics/{id}')
-  Future<chopper.Response> _metricsIdDelete({@Path('id') required int? id});
+  @Delete(path: '/api/metrics/{id}')
+  Future<chopper.Response> _apiMetricsIdDelete({@Path('id') required int? id});
 
   ///
-  Future<chopper.Response> metricsTypePost({required MetricType? body}) {
-    return _metricsTypePost(body: body);
+  Future<chopper.Response> apiMetricsTypePost({required MetricType? body}) {
+    return _apiMetricsTypePost(body: body);
   }
 
   ///
   @Post(
-    path: '/metrics/type',
+    path: '/api/metrics/type',
     optionalBody: true,
   )
-  Future<chopper.Response> _metricsTypePost(
+  Future<chopper.Response> _apiMetricsTypePost(
       {@Body() required MetricType? body});
 
   ///
-  Future<chopper.Response> metricsTypePut({required MetricType? body}) {
-    return _metricsTypePut(body: body);
+  Future<chopper.Response> apiMetricsTypePut({required MetricType? body}) {
+    return _apiMetricsTypePut(body: body);
   }
 
   ///
   @Put(
-    path: '/metrics/type',
+    path: '/api/metrics/type',
     optionalBody: true,
   )
-  Future<chopper.Response> _metricsTypePut({@Body() required MetricType? body});
+  Future<chopper.Response> _apiMetricsTypePut(
+      {@Body() required MetricType? body});
 
   ///
-  Future<chopper.Response<List<MetricType>>> metricsTypeGet() {
+  Future<chopper.Response<List<MetricType>>> apiMetricsTypeGet() {
     generatedMapping.putIfAbsent(MetricType, () => MetricType.fromJsonFactory);
 
-    return _metricsTypeGet();
+    return _apiMetricsTypeGet();
   }
 
   ///
-  @Get(path: '/metrics/type')
-  Future<chopper.Response<List<MetricType>>> _metricsTypeGet();
+  @Get(path: '/api/metrics/type')
+  Future<chopper.Response<List<MetricType>>> _apiMetricsTypeGet();
 
   ///
   ///@param id
-  Future<chopper.Response> metricsTypeIdDelete({required int? id}) {
-    return _metricsTypeIdDelete(id: id);
+  Future<chopper.Response> apiMetricsTypeIdDelete({required int? id}) {
+    return _apiMetricsTypeIdDelete(id: id);
   }
 
   ///
   ///@param id
-  @Delete(path: '/metrics/type/{id}')
-  Future<chopper.Response> _metricsTypeIdDelete({@Path('id') required int? id});
+  @Delete(path: '/api/metrics/type/{id}')
+  Future<chopper.Response> _apiMetricsTypeIdDelete(
+      {@Path('id') required int? id});
 
   ///
-  Future<chopper.Response> personPost({required Person? body}) {
-    return _personPost(body: body);
+  Future<chopper.Response> apiPersonPost({required Person? body}) {
+    return _apiPersonPost(body: body);
   }
 
   ///
   @Post(
-    path: '/person',
+    path: '/api/person',
     optionalBody: true,
   )
-  Future<chopper.Response> _personPost({@Body() required Person? body});
+  Future<chopper.Response> _apiPersonPost({@Body() required Person? body});
 }
 
 @JsonSerializable(explicitToJson: true)

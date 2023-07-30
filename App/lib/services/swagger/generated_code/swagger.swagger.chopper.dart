@@ -17,8 +17,8 @@ class _$Swagger extends Swagger {
   final definitionType = Swagger;
 
   @override
-  Future<Response<String>> _authPost({required Connection? body}) {
-    final Uri $url = Uri.parse('/auth');
+  Future<Response<String>> _apiAuthPost({required Connection? body}) {
+    final Uri $url = Uri.parse('/api/auth');
     final $body = body;
     final Request $request = Request(
       'POST',
@@ -30,8 +30,8 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<Status>> _statusGet() {
-    final Uri $url = Uri.parse('/status');
+  Future<Response<Status>> _apiStatusGet() {
+    final Uri $url = Uri.parse('/api/status');
     final Request $request = Request(
       'GET',
       $url,
@@ -41,13 +41,13 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<List<Event>>> _eventsGet({
+  Future<Response<List<Event>>> _apiEventsGet({
     int? type,
     required String? start,
     required String? end,
     int? personId,
   }) {
-    final Uri $url = Uri.parse('/events');
+    final Uri $url = Uri.parse('/api/events');
     final Map<String, dynamic> $params = <String, dynamic>{
       'type': type,
       'start': start,
@@ -64,11 +64,11 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _eventsPost({
+  Future<Response<dynamic>> _apiEventsPost({
     int? personId,
     required CreateEvent? body,
   }) {
-    final Uri $url = Uri.parse('/events');
+    final Uri $url = Uri.parse('/api/events');
     final Map<String, dynamic> $params = <String, dynamic>{
       'personId': personId
     };
@@ -84,8 +84,8 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _eventsIdDelete({required int? id}) {
-    final Uri $url = Uri.parse('/events/${id}');
+  Future<Response<dynamic>> _apiEventsIdDelete({required int? id}) {
+    final Uri $url = Uri.parse('/api/events/${id}');
     final Request $request = Request(
       'DELETE',
       $url,
@@ -95,8 +95,8 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _eventsTypePost({required EventType? body}) {
-    final Uri $url = Uri.parse('/events/type');
+  Future<Response<dynamic>> _apiEventsTypePost({required EventType? body}) {
+    final Uri $url = Uri.parse('/api/events/type');
     final $body = body;
     final Request $request = Request(
       'POST',
@@ -108,8 +108,8 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _eventsTypePut({required MetricType? body}) {
-    final Uri $url = Uri.parse('/events/type');
+  Future<Response<dynamic>> _apiEventsTypePut({required MetricType? body}) {
+    final Uri $url = Uri.parse('/api/events/type');
     final $body = body;
     final Request $request = Request(
       'PUT',
@@ -121,8 +121,8 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<List<EventType>>> _eventsTypeGet() {
-    final Uri $url = Uri.parse('/events/type');
+  Future<Response<List<EventType>>> _apiEventsTypeGet() {
+    final Uri $url = Uri.parse('/api/events/type');
     final Request $request = Request(
       'GET',
       $url,
@@ -132,8 +132,8 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _eventsTypeIdDelete({required int? id}) {
-    final Uri $url = Uri.parse('/events/type/${id}');
+  Future<Response<dynamic>> _apiEventsTypeIdDelete({required int? id}) {
+    final Uri $url = Uri.parse('/api/events/type/${id}');
     final Request $request = Request(
       'DELETE',
       $url,
@@ -143,8 +143,8 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<List<FileType>>> _importTypesGet() {
-    final Uri $url = Uri.parse('/import/types');
+  Future<Response<List<FileType>>> _apiImportTypesGet() {
+    final Uri $url = Uri.parse('/api/import/types');
     final Request $request = Request(
       'GET',
       $url,
@@ -154,11 +154,11 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _importTypePost({
+  Future<Response<dynamic>> _apiImportTypePost({
     required int? type,
     required String? body,
   }) {
-    final Uri $url = Uri.parse('/import/${type}');
+    final Uri $url = Uri.parse('/api/import/${type}');
     final $body = body;
     final Request $request = Request(
       'POST',
@@ -170,13 +170,13 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<List<Metric>>> _metricsGet({
+  Future<Response<List<Metric>>> _apiMetricsGet({
     required int? type,
     required String? start,
     required String? end,
     int? personId,
   }) {
-    final Uri $url = Uri.parse('/metrics');
+    final Uri $url = Uri.parse('/api/metrics');
     final Map<String, dynamic> $params = <String, dynamic>{
       'type': type,
       'start': start,
@@ -193,11 +193,11 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _metricsPost({
+  Future<Response<dynamic>> _apiMetricsPost({
     int? personId,
     required CreateMetric? body,
   }) {
-    final Uri $url = Uri.parse('/metrics');
+    final Uri $url = Uri.parse('/api/metrics');
     final Map<String, dynamic> $params = <String, dynamic>{
       'personId': personId
     };
@@ -213,8 +213,8 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _metricsIdDelete({required int? id}) {
-    final Uri $url = Uri.parse('/metrics/${id}');
+  Future<Response<dynamic>> _apiMetricsIdDelete({required int? id}) {
+    final Uri $url = Uri.parse('/api/metrics/${id}');
     final Request $request = Request(
       'DELETE',
       $url,
@@ -224,8 +224,8 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _metricsTypePost({required MetricType? body}) {
-    final Uri $url = Uri.parse('/metrics/type');
+  Future<Response<dynamic>> _apiMetricsTypePost({required MetricType? body}) {
+    final Uri $url = Uri.parse('/api/metrics/type');
     final $body = body;
     final Request $request = Request(
       'POST',
@@ -237,8 +237,8 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _metricsTypePut({required MetricType? body}) {
-    final Uri $url = Uri.parse('/metrics/type');
+  Future<Response<dynamic>> _apiMetricsTypePut({required MetricType? body}) {
+    final Uri $url = Uri.parse('/api/metrics/type');
     final $body = body;
     final Request $request = Request(
       'PUT',
@@ -250,8 +250,8 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<List<MetricType>>> _metricsTypeGet() {
-    final Uri $url = Uri.parse('/metrics/type');
+  Future<Response<List<MetricType>>> _apiMetricsTypeGet() {
+    final Uri $url = Uri.parse('/api/metrics/type');
     final Request $request = Request(
       'GET',
       $url,
@@ -261,8 +261,8 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _metricsTypeIdDelete({required int? id}) {
-    final Uri $url = Uri.parse('/metrics/type/${id}');
+  Future<Response<dynamic>> _apiMetricsTypeIdDelete({required int? id}) {
+    final Uri $url = Uri.parse('/api/metrics/type/${id}');
     final Request $request = Request(
       'DELETE',
       $url,
@@ -272,8 +272,8 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _personPost({required Person? body}) {
-    final Uri $url = Uri.parse('/person');
+  Future<Response<dynamic>> _apiPersonPost({required Person? body}) {
+    final Uri $url = Uri.parse('/api/person');
     final $body = body;
     final Request $request = Request(
       'POST',

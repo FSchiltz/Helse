@@ -95,31 +95,30 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-  app.UseSwagger();
-  app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors("corsapp");
 app.UseAuthentication();
 app.UseAuthorization();
 
+
+var api = app.MapGroup("/api");
 /* User endpoints */
-app.MapPost("/auth", AuthLogic.AuthAsync)
+api.MapPost("/auth", AuthLogic.AuthAsync)
 .AllowAnonymous()
 .WithDescription("Get a connection token")
 .Produces<string>((int)HttpStatusCode.OK)
 .Produces((int)HttpStatusCode.Unauthorized)
 .WithOpenApi();
 
-app.MapGet("/status", AuthLogic.StatusAsync)
+api.MapGet("/status", AuthLogic.StatusAsync)
 .AllowAnonymous()
 .WithDescription("Check if the server install is ready")
 .Produces<Status>((int)HttpStatusCode.OK)
 .WithOpenApi();
 
-var person = app.MapGroup("/person");
+var person = api.MapGroup("/person");
 
 person.MapPost("/", PersonLogic.CreateAsync)
 .AllowAnonymous()
@@ -128,7 +127,7 @@ person.MapPost("/", PersonLogic.CreateAsync)
 .WithOpenApi();
 
 /* Metrics endpoints*/
-var metrics = app.MapGroup("/metrics");
+var metrics = api.MapGroup("/metrics");
 metrics.MapGet("/", MetricsLogic.GetAsync)
 .Produces<List<Api.Models.Metric>>((int)HttpStatusCode.OK)
 .Produces((int)HttpStatusCode.Unauthorized)
@@ -167,7 +166,7 @@ metricsType.MapGet("/", MetricsLogic.GetTypeAsync)
 
 
 /* Events endpoints*/
-var events = app.MapGroup("/events");
+var events = api.MapGroup("/events");
 events.MapGet("/", EventsLogic.GetAsync)
 .Produces<List<Api.Models.Event>>((int)HttpStatusCode.OK)
 .Produces((int)HttpStatusCode.Unauthorized)
@@ -206,7 +205,7 @@ eventsType.MapGet("/", EventsLogic.GetTypeAsync)
 
 
 /* Importer endpoint */
-var import = app.MapGroup("/import");
+var import = api.MapGroup("/import");
 import.MapGet("/types", ImportLogic.GetTypeAsync)
 .Produces<List<FileType>>((int)HttpStatusCode.OK)
 .Produces((int)HttpStatusCode.Unauthorized)

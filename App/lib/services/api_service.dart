@@ -40,7 +40,7 @@ class ApiService {
 
   Future<String?> login(String username, String password) async {
     var api = await _getService();
-    var response = await api.authPost(body: Connection(user: username, password: password));
+    var response = await api.apiAuthPost(body: Connection(user: username, password: password));
 
     return response.isSuccessful ? response.bodyString : null;
   }
@@ -48,13 +48,13 @@ class ApiService {
    Future<void> createAccount(Person person) async {
     var api = await _getService();
 
-    await _call(() => api.personPost(body: person));
+    await _call(() => api.apiPersonPost(body: person));
   }
 
   Future<bool?> isInit(String url) async {
     try {
     var api = await _getService(override: url);
-    var response = await api.statusGet();
+    var response = await api.apiStatusGet();
 
     if (!response.isSuccessful) return null;
 
@@ -67,41 +67,41 @@ class ApiService {
 
   Future<List<MetricType>?> metricsType() async {
     var api = await _getService();
-    return await _call(api.metricsTypeGet);
+    return await _call(api.apiMetricsTypeGet);
   }
 
   Future<List<Metric>?> metrics(int? type, String? start, String? end) async {
     var api = await _getService();
-    return await _call(() => api.metricsGet(type: type, start: start, end: end));
+    return await _call(() => api.apiMetricsGet(type: type, start: start, end: end));
   }
 
   Future<void> addMetrics(CreateMetric metric) async {
     var api = await _getService();
-    await _call(() => api.metricsPost(body: metric));
+    await _call(() => api.apiMetricsPost(body: metric));
   }
 
   Future<List<EventType>?> eventsType() async {
     var api = await _getService();
-    return await _call(api.eventsTypeGet);
+    return await _call(api.apiEventsTypeGet);
   }
 
   Future<List<Event>?> events(int? type, String? start, String? end) async {
     var api = await _getService();
-    return await _call(() => api.eventsGet(type: type, start: start, end: end));
+    return await _call(() => api.apiEventsGet(type: type, start: start, end: end));
   }
 
   Future<void> addEvents(CreateEvent event) async {
     var api = await _getService();
-    await _call(() => api.eventsPost(body: event));
+    await _call(() => api.apiEventsPost(body: event));
   }
 
   Future<List<FileType>?> fileType() async {
     var api = await _getService();
-    return await _call(api.importTypesGet);
+    return await _call(api.apiImportTypesGet);
   }
 
   Future<void> import(String? file, int type) async {
     var api = await _getService();
-    await _call(() => api.importTypePost(body: file, type: type));
+    await _call(() => api.apiImportTypePost(body: file, type: type));
   }
 }

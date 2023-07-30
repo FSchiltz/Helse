@@ -5,7 +5,7 @@
     "version": "v1"
   },
   "paths": {
-    "/auth": {
+    "/api/auth": {
       "post": {
         "tags": [
           "AuthLogic"
@@ -38,7 +38,7 @@
         }
       }
     },
-    "/status": {
+    "/api/status": {
       "get": {
         "tags": [
           "AuthLogic"
@@ -58,7 +58,7 @@
         }
       }
     },
-    "/events": {
+    "/api/events": {
       "get": {
         "tags": [
           "EventsLogic"
@@ -155,7 +155,7 @@
         }
       }
     },
-    "/events/{id}": {
+    "/api/events/{id}": {
       "delete": {
         "tags": [
           "EventsLogic"
@@ -182,7 +182,7 @@
         }
       }
     },
-    "/events/type": {
+    "/api/events/type": {
       "post": {
         "tags": [
           "EventsLogic"
@@ -253,7 +253,7 @@
         }
       }
     },
-    "/events/type/{id}": {
+    "/api/events/type/{id}": {
       "delete": {
         "tags": [
           "EventsLogic"
@@ -280,7 +280,7 @@
         }
       }
     },
-    "/import/types": {
+    "/api/import/types": {
       "get": {
         "tags": [
           "ImportLogic"
@@ -305,7 +305,7 @@
         }
       }
     },
-    "/import/{type}": {
+    "/api/import/{type}": {
       "post": {
         "tags": [
           "ImportLogic"
@@ -342,7 +342,7 @@
         }
       }
     },
-    "/metrics": {
+    "/api/metrics": {
       "get": {
         "tags": [
           "MetricsLogic"
@@ -440,7 +440,7 @@
         }
       }
     },
-    "/metrics/{id}": {
+    "/api/metrics/{id}": {
       "delete": {
         "tags": [
           "MetricsLogic"
@@ -467,7 +467,7 @@
         }
       }
     },
-    "/metrics/type": {
+    "/api/metrics/type": {
       "post": {
         "tags": [
           "MetricsLogic"
@@ -538,7 +538,7 @@
         }
       }
     },
-    "/metrics/type/{id}": {
+    "/api/metrics/type/{id}": {
       "delete": {
         "tags": [
           "MetricsLogic"
@@ -565,7 +565,7 @@
         }
       }
     },
-    "/person": {
+    "/api/person": {
       "post": {
         "tags": [
           "PersonLogic"
