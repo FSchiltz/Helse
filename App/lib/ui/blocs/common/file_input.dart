@@ -6,7 +6,7 @@ class FileInput extends StatelessWidget {
   final String label;
   final IconData icone;
 
-  FileInput(this.callback, this.label, this.icone, {super.key});
+  const FileInput(this.callback, this.label, this.icone, {super.key});
 
   Future<void> _pickFile() async {
     final XFile? file = await openFile();

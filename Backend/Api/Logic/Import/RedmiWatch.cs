@@ -44,7 +44,7 @@ public class SleepRecord
     public int protoTime { get; set; }
     public int sleep_rem_duration { get; set; }
     public int Duration { get; set; }
-    public List<SleepTime> Items { get; set; }
+    public List<SleepTime>? Items { get; set; }
     public int timezone { get; set; }
     public int version { get; set; }
     public int awake_count { get; set; }

@@ -6,7 +6,7 @@ class TextInput extends StatelessWidget {
   final Function()? onTap;
   final Function(String)? onChanged;
 
-  TextInput(this.icon, this.label, {super.key, this.onTap, this.onChanged });
+  const TextInput(this.icon, this.label, {super.key, this.onTap, this.onChanged });
 
   @override
   Widget build(BuildContext context) {

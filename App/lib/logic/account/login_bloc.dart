@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
 import '../../services/swagger/generated_code/swagger.swagger.dart';
 import '../event.dart';
 import 'authentication_logic.dart';

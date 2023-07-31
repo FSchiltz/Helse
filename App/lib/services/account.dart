@@ -15,7 +15,6 @@ class Account {
   }
 
   Future<void> setUrl(String url) async {
-    print("setting url :$url");
     await (await storage).setString(_url, url);
   }
 
