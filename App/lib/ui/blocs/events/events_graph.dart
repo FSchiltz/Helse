@@ -17,11 +17,11 @@ class EventGraph extends StatelessWidget {
             padding: const EdgeInsets.only(top: 16.0),
             child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
           )
-        : LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) => buildChart(events, constraints.maxWidth)));
+        : buildChart(events));
   }
 
-  Widget buildChart(List<Event> userData, double chartViewWidth) {
-    var chartBars = buildChartBars(userData, chartViewWidth);
+  Widget buildChart(List<Event> userData) {
+    var chartBars = buildChartBars(userData);
     return SizedBox(
       height: chartBars.length * 29.0 + 25.0 + 4.0,
       child: ListView(
@@ -29,8 +29,8 @@ class EventGraph extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         children: <Widget>[
           Stack(fit: StackFit.loose, children: <Widget>[
-            buildGrid(chartViewWidth),
-            buildHeader(chartViewWidth),
+            buildGrid(),
+            buildHeader(),
             Container(
                 margin: const EdgeInsets.only(top: 25.0),
                 child: Column(
@@ -51,21 +51,24 @@ class EventGraph extends StatelessWidget {
     );
   }
 
-  Widget buildHeader(double chartViewWidth) {
+  Widget buildHeader() {
     List<Widget> headerItems = [];
 
     DateTime tempDate = date.start;
 
-    var viewRange = _secondsBetween(date.start, date.end) / (60 * 60 );
+    var viewRange = _minutesBetween(date.start, date.end) / (60);
 
     for (int i = 0; i < viewRange; i++) {
       headerItems.add(SizedBox(
-        width: chartViewWidth / viewRange,
-        child: Text(
-          '${tempDate.hour}:${tempDate.second}',
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 10.0,
+        width: 60,
+        child: Tooltip(
+          message: tempDate.toString(),
+          child: Text(
+            '${tempDate.hour.toString().padLeft(2, '0')}:${tempDate.second.toString().padLeft(2, '0')}',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 10.0,
+            ),
           ),
         ),
       ));
@@ -80,14 +83,11 @@ class EventGraph extends StatelessWidget {
     );
   }
 
-  List<Widget> buildChartBars(List<Event> data, double chartViewWidth) {
+  List<Widget> buildChartBars(List<Event> data) {
     List<Widget> chartBars = [];
     Map<String, Color> colors = {};
-
-    var viewRange = _secondsBetween(date.start, date.end);
-    var chartFactor = chartViewWidth / viewRange;
-
     Map<String?, List<Event>> orderedData = {};
+
     for (var n in data) {
       var list = orderedData[n.description];
       if (list == null) {
@@ -106,22 +106,25 @@ class EventGraph extends StatelessWidget {
         var start = n.start ?? date.start;
         var end = n.stop ?? date.end;
 
-        var remainingWidth = _distanceInSeconds(start, end);
+        var remainingWidth = _distanceInMinutes(start, end);
         var color = _stateColor(colors, n.description);
         if (remainingWidth > 0) {
           chartGroup.add(Container(
             decoration: BoxDecoration(color: color.withAlpha(100), borderRadius: BorderRadius.circular(10.0)),
             height: 25.0,
-            width: remainingWidth * chartFactor,
-            margin: EdgeInsets.only(left: _distanceToLeftBorder(start) * chartFactor, top: 2.0, bottom: 2.0),
+            width: remainingWidth.toDouble(),
+            margin: EdgeInsets.only(left: _distanceToLeftBorder(start).toDouble(), top: 2.0, bottom: 2.0),
             alignment: Alignment.centerLeft,
             child: Padding(
               padding: const EdgeInsets.only(left: 8.0),
-              child: Text(
-                n.description ?? "",
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 10.0),
+              child: Tooltip(
+                message: n.description ?? "",
+                child: Text(
+                  n.description ?? "",
+                  maxLines: 1,
+                  overflow: TextOverflow.fade,
+                  style: const TextStyle(fontSize: 10.0),
+                ),
               ),
             ),
           ));
@@ -136,15 +139,15 @@ class EventGraph extends StatelessWidget {
     return chartBars;
   }
 
-  Widget buildGrid(double chartViewWidth) {
+  Widget buildGrid() {
     List<Widget> gridColumns = [];
 
-    var viewRange = _secondsBetween(date.start, date.end) / (60 * 60);
+    var viewRange = _minutesBetween(date.start, date.end) / (60);
 
     for (int i = 0; i <= viewRange; i++) {
       gridColumns.add(Container(
         decoration: BoxDecoration(border: Border(right: BorderSide(color: Colors.white.withAlpha(75), width: 0.5))),
-        width: chartViewWidth / viewRange,
+        width: 60,
       ));
     }
 
@@ -166,33 +169,33 @@ class EventGraph extends StatelessWidget {
     }
   }
 
-  int _secondsBetween(DateTime from, DateTime to) {
-    return to.difference(from).inSeconds;
+  int _minutesBetween(DateTime from, DateTime to) {
+    return to.difference(from).inMinutes;
   }
 
   int _distanceToLeftBorder(DateTime projectStartedAt) {
     if (projectStartedAt.compareTo(date.start) <= 0) {
       return 0;
     } else {
-      return _secondsBetween(date.start, projectStartedAt) - 1;
+      return _minutesBetween(date.start, projectStartedAt) - 1;
     }
   }
 
-  int _distanceInSeconds(DateTime start, DateTime end) {
-    var seconds = _secondsBetween(start, end);
-    var viewRange = _secondsBetween(date.start, date.end);
+  int _distanceInMinutes(DateTime start, DateTime end) {
+    var seconds = _minutesBetween(start, end);
+    var viewRange = _minutesBetween(date.start, date.end);
 
     if (start.compareTo(date.start) >= 0 && start.compareTo(date.end) <= 0) {
       // The date is between the bond
       if (seconds <= viewRange) {
         return seconds;
       } else {
-        return viewRange - _secondsBetween(date.start, start);
+        return viewRange - _minutesBetween(date.start, start);
       }
     } else if (start.isBefore(date.start) && end.isBefore(date.start)) {
       return 0;
     } else if (start.isBefore(date.start) && end.isBefore(date.end)) {
-      return seconds - _secondsBetween(start, date.start);
+      return seconds - _minutesBetween(start, date.start);
     } else if (start.isBefore(date.start) && end.isAfter(date.end)) {
       return viewRange;
     }

@@ -94,7 +94,10 @@ class _EventWidgetState extends State<EventWidget> {
                           Text(widget.type.name ?? "", style: Theme.of(context).textTheme.titleLarge),
                         ],
                       ),
-                      EventGraph(events, widget.date)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: EventGraph(events, widget.date),
+                      )
                     ],
                   ),
                 );
