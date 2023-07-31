@@ -28,28 +28,28 @@ public class SleepTime
     public int State { get; set; }
     public int Start_time { get; set; }
 
-    public string GetKey() => +Start_time + "_" + End_time;
+    public string GetKey() => Start_time + "_" + End_time;
 }
 
 public class SleepRecord
 {
-    public int avg_hr { get; set; }
-    public int bedtime { get; set; }
-    public int sleep_deep_duration { get; set; }
-    public int device_bedtime { get; set; }
-    public int device_wake_up_time { get; set; }
-    public int sleep_light_duration { get; set; }
-    public int max_hr { get; set; }
-    public int min_hr { get; set; }
-    public int protoTime { get; set; }
-    public int sleep_rem_duration { get; set; }
+    public int Avg_hr { get; set; }
+    public int Bpmedtime { get; set; }
+    public int Sleep_deep_duration { get; set; }
+    public int Device_bedtime { get; set; }
+    public int Device_wake_up_time { get; set; }
+    public int Sleep_light_duration { get; set; }
+    public int Max_hr { get; set; }
+    public int Min_hr { get; set; }
+    public int ProtoTime { get; set; }
+    public int Sleep_rem_duration { get; set; }
     public int Duration { get; set; }
     public List<SleepTime>? Items { get; set; }
-    public int timezone { get; set; }
-    public int version { get; set; }
-    public int awake_count { get; set; }
-    public int sleep_awake_duration { get; set; }
-    public int wake_up_time { get; set; }
+    public int Timezone { get; set; }
+    public int Version { get; set; }
+    public int Awake_count { get; set; }
+    public int Sleep_awake_duration { get; set; }
+    public int Wake_up_time { get; set; }
 }
 
 internal enum SleepType
@@ -147,7 +147,7 @@ public class RedmiWatch : FileImporter
                             Stop = DateTimeOffset.FromUnixTimeSeconds(item.End_time).DateTime,
                             Tag = item.GetKey(),
                             Type = (int)EventTypes.Sleep,
-                            Description = ((SleepType)item.State).ToString(),
+                            Description = item.State.ToString(), 
                         });
                     }
                     break;
@@ -258,7 +258,7 @@ public class RedmiWatch : FileImporter
     {
         using var transaction = await DataConnection.BeginTransactionAsync();
 
-        // check if the metric exists
+        // check if the event exists
         var fromDb = await DataConnection.GetTable<Api.Data.Models.Event>().FirstOrDefaultAsync(x => x.PersonId == metric.PersonId && x.Tag == metric.Tag);
 
         if (fromDb == null)
@@ -274,8 +274,6 @@ public class RedmiWatch : FileImporter
                 Type = metric.Type,
             });
         }
-
-        // else import if
 
         await transaction.CommitAsync();
     }
@@ -299,8 +297,6 @@ public class RedmiWatch : FileImporter
                 Type = metric.Type,
             });
         }
-
-        // else import if
 
         await transaction.CommitAsync();
     }

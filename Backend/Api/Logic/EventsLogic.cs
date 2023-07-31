@@ -24,8 +24,8 @@ public static class EventsLogic
 
         var events = await db.GetTable<Data.Models.Event>()
             .Where(x => x.PersonId == user.PersonId
-                && x.Type == type 
-                && ((x.Stop >= end && x.Start <= end) || (x.Start <= start && x.Stop >= start) || (x.Start >= start && x.Stop <= start)))
+                && x.Type == type
+                && x.Start <= end && start <= x.Stop)
             .ToListAsync();
 
         return TypedResults.Ok(events.Select(x => new Event
