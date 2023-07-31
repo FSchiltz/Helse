@@ -30,6 +30,7 @@ class EventGraph extends StatelessWidget {
         children: <Widget>[
           Stack(fit: StackFit.loose, children: <Widget>[
             buildGrid(chartViewWidth),
+            buildHeader(chartViewWidth),
             Container(
                 margin: const EdgeInsets.only(top: 25.0),
                 child: Column(
@@ -50,6 +51,35 @@ class EventGraph extends StatelessWidget {
     );
   }
 
+  Widget buildHeader(double chartViewWidth) {
+    List<Widget> headerItems = [];
+
+    DateTime tempDate = date.start;
+
+    var viewRange = _secondsBetween(date.start, date.end) / (60 * 60 );
+
+    for (int i = 0; i < viewRange; i++) {
+      headerItems.add(SizedBox(
+        width: chartViewWidth / viewRange,
+        child: Text(
+          '${tempDate.hour}:${tempDate.second}',
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 10.0,
+          ),
+        ),
+      ));
+      tempDate = tempDate.add(const Duration(hours: 1));
+    }
+
+    return SizedBox(
+      height: 25.0,
+      child: Row(
+        children: headerItems,
+      ),
+    );
+  }
+
   List<Widget> buildChartBars(List<Event> data, double chartViewWidth) {
     List<Widget> chartBars = [];
     Map<String, Color> colors = {};
@@ -57,31 +87,50 @@ class EventGraph extends StatelessWidget {
     var viewRange = _secondsBetween(date.start, date.end);
     var chartFactor = chartViewWidth / viewRange;
 
+    Map<String?, List<Event>> orderedData = {};
     for (var n in data) {
-      // if the event has no start or end, we clamp to the filtered value
-      var start = n.start ?? date.start;
-      var end = n.stop ?? date.end;
-
-      var remainingWidth = _distanceInSeconds(start, end);
-      var color = _stateColor(colors, n.description);
-      if (remainingWidth > 0) {
-        chartBars.add(Container(
-          decoration: BoxDecoration(color: color.withAlpha(100), borderRadius: BorderRadius.circular(10.0)),
-          height: 25.0,
-          width: remainingWidth * chartFactor,
-          margin: EdgeInsets.only(left: _distanceToLeftBorder(start) * chartFactor, top: 2.0, bottom: 2.0),
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Text(
-              n.description ?? "",
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 10.0),
-            ),
-          ),
-        ));
+      var list = orderedData[n.description];
+      if (list == null) {
+        list = [];
+        list.add(n);
+        orderedData[n.description] = list;
+      } else {
+        list.add(n);
       }
+    }
+
+    for (var group in orderedData.entries) {
+      List<Widget> chartGroup = [];
+      for (var n in group.value) {
+        // if the event has no start or end, we clamp to the filtered value
+        var start = n.start ?? date.start;
+        var end = n.stop ?? date.end;
+
+        var remainingWidth = _distanceInSeconds(start, end);
+        var color = _stateColor(colors, n.description);
+        if (remainingWidth > 0) {
+          chartGroup.add(Container(
+            decoration: BoxDecoration(color: color.withAlpha(100), borderRadius: BorderRadius.circular(10.0)),
+            height: 25.0,
+            width: remainingWidth * chartFactor,
+            margin: EdgeInsets.only(left: _distanceToLeftBorder(start) * chartFactor, top: 2.0, bottom: 2.0),
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                n.description ?? "",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 10.0),
+              ),
+            ),
+          ));
+        }
+      }
+      chartBars.add(Stack(
+        fit: StackFit.loose,
+        children: chartGroup,
+      ));
     }
 
     return chartBars;
