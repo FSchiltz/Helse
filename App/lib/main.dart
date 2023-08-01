@@ -39,7 +39,6 @@ class AppState extends State<App> {
 
   @override
   void dispose() {
-    authenticationLogic?.dispose();
     super.dispose();
   }
 

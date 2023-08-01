@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
+class AdministrationPage extends StatelessWidget {
+  const AdministrationPage({super.key});
 
   static Route<void> route() {
-    return MaterialPageRoute<void>(builder: (_) => const SettingsPage());
+    return MaterialPageRoute<void>(builder: (_) => const AdministrationPage());
   }
 
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: const Text('Administrations'),
       ),
       body: const Center(
         child: Placeholder(),

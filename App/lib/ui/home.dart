@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'dashboard.dart';
-import 'settings.dart';
 
 class DataModel {
   final String label;
@@ -28,16 +27,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   var selectedIndex = 0;
-  List<DataModel> dataList = [
-    const DataModel(
-      label: "Home",
-      icon: Icons.home_sharp,
-    ),
-    const DataModel(
-      label: "Settings",
-      icon: Icons.settings_sharp,
-    )
-  ];
 
   DeviceType getDevice() {
     return MediaQuery.of(context).size.width <= 800 ? DeviceType.mobile : DeviceType.desktop;
@@ -50,40 +39,14 @@ class _HomeState extends State<Home> {
       case 0:
         page = const Dashboard();
         break;
-      case 1:
-        page = const SettingsPage();
-        break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
 
     return LayoutBuilder(builder: (context, constraints) {
-      return Scaffold(
-        bottomNavigationBar: getDevice() == DeviceType.mobile
-            ? BottomNavigationBar(
-                onTap: (value) {
-                  setState(() {
-                    selectedIndex = value;
-                  });
-                },
-                items: dataList.map((e) => BottomNavigationBarItem(backgroundColor: Colors.black, icon: Icon(e.icon), label: e.label)).toList(),
-              )
-            : null,
+      return Scaffold(        
         body: Row(
-          children: [
-            if (getDevice() == DeviceType.desktop)
-              SafeArea(
-                child: NavigationRail(
-                  extended: constraints.maxWidth >= 1080,
-                  destinations: dataList.map((e) => NavigationRailDestination(icon: Icon(e.icon), label: Text(e.label))).toList(),
-                  selectedIndex: selectedIndex,
-                  onDestinationSelected: (value) {
-                    setState(() {
-                      selectedIndex = value;
-                    });
-                  },
-                ),
-              ),
+          children: [            
             Expanded(
               child: Container(
                 color: Theme.of(context).colorScheme.primaryContainer,

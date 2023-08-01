@@ -32,6 +32,7 @@ class AuthenticationLogic {
     if (token != null) {
       var cleaned = token.replaceAll('"', "");
       await _account.setToken(cleaned);
+
       _controller.add(AuthenticationStatus.authenticated);
     }
   }
