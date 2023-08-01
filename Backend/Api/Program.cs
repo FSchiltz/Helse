@@ -9,6 +9,7 @@ using LinqToDB.AspNet.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
+  c.AddEnumsWithValuesFixFilters();
   // Configure swagger to use the jwt
   c.SwaggerDoc("v1", new OpenApiInfo
   {
@@ -91,7 +93,6 @@ builder.Services.AddAuthentication(options =>
   });
 
 builder.Services.AddAuthorization();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

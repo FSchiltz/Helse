@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/administration.dart';
 import 'package:helse/ui/settings.dart';
 
 import '../helpers/date.dart';
 import '../main.dart';
+import '../model/user.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';
 import 'blocs/common/date_range_input.dart';
-import 'blocs/common/restart.dart';
 import 'blocs/events/events_add.dart';
 import 'blocs/events/events_grid.dart';
 import 'blocs/imports/file_import.dart';
@@ -22,6 +23,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   List<MetricType> metricTypes = [];
   List<EventType> eventTypes = [];
+  User? user;
   DateTimeRange date = DateHelper.now();
 
   @override
@@ -29,6 +31,16 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
     _getEventData();
     _getMetricData();
+    _getUser();
+  }
+
+  void _getUser() async {
+    var model = await AppState.authenticationLogic?.getUser();
+    if (model != null) {
+      setState(() {
+        user = model;
+      });
+    }
   }
 
   void _getMetricData() async {
@@ -99,8 +111,16 @@ class _DashboardState extends State<Dashboard> {
                         title: Text("Settings"),
                       ),
                     ),
+                    if (user?.type == UserType.admin)
+                      const PopupMenuItem<int>(
+                        value: 2,
+                        child: ListTile(
+                          leading: Icon(Icons.admin_panel_settings_sharp),
+                          title: Text("Administration"),
+                        ),
+                      ),
                     const PopupMenuItem<int>(
-                      value: 2,
+                      value: 3,
                       child: ListTile(
                         leading: Icon(Icons.logout_sharp),
                         title: Text("Logout"),
@@ -109,19 +129,29 @@ class _DashboardState extends State<Dashboard> {
                   ];
                 },
                 onSelected: (value) {
-                  if (value == 0) {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return const FileImport();
-                        });
-                  } else if (value == 1) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const SettingsPage()),
-                    );
-                  } else if (value == 2) {
-                    AppState.authenticationLogic?.logOut();
+                  switch (value) {
+                    case 0:
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const FileImport();
+                          });
+                      break;
+                    case 1:
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SettingsPage()),
+                      );
+                      break;
+                    case 2:
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const AdministrationPage()),
+                      );
+                      break;
+                    case 3:
+                      AppState.authenticationLogic?.logOut();
+                      break;
                   }
                 }),
           ),

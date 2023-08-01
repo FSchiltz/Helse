@@ -853,7 +853,13 @@
           3
         ],
         "type": "integer",
-        "format": "int32"
+        "description": "\n\n1 = User\n\n2 = Admin\n\n3 = Caregiver",
+        "format": "int32",
+        "x-enumNames": [
+          "User",
+          "Admin",
+          "Caregiver"
+        ]
       }
     },
     "securitySchemes": {

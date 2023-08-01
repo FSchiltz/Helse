@@ -34,6 +34,7 @@ public class TokenService
         var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.NameId, user.Identifier),
+                new Claim("roles", user.Type.ToString()),
              };
 
         if (user.Email != null)

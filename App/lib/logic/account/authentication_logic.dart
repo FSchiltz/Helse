@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'package:jwt_decoder/jwt_decoder.dart';
+
+import '../../model/user.dart';
 import '../../services/api_service.dart';
 import '../../services/account.dart';
 import '../../services/swagger/generated_code/swagger.swagger.dart';
@@ -35,6 +38,18 @@ class AuthenticationLogic {
 
       _controller.add(AuthenticationStatus.authenticated);
     }
+  }
+
+  Future<User> getUser() async {
+    var token = await getToken();
+    if (token == null) throw Exception("Not connected");
+
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+    var data = decodedToken["roles"];
+    if (data == null) return User(type: UserType.swaggerGeneratedUnknown);
+
+    UserType role = UserType.values[int.parse(data)];
+    return User(type: role);
   }
 
   Future<void> createAccount({required String url, required Person person}) async {

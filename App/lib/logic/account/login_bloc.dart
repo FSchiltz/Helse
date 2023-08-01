@@ -99,7 +99,7 @@ class LoginBloc extends Bloc<ChangedEvent, LoginState> {
         if (state.isInit) {
           await _authenticationRepository.logIn(url: state.url, username: state.username, password: state.password);
         } else {
-          var person = Person(type: UserType.value_2, userName: state.username, password: state.password);
+          var person = Person(type: UserType.admin, userName: state.username, password: state.password);
           await _authenticationRepository.createAccount(url: state.url, person: person);
 
           // after a succes, we auto login
