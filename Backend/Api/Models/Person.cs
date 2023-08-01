@@ -12,7 +12,7 @@ public class Person
 
     public required string UserName { get; set; }
 
-    public required string Password { get; set; }
+    public string? Password { get; set; }
 
     public UserType Type { get; set; }
 

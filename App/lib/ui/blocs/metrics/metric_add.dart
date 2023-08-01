@@ -29,6 +29,7 @@ class MetricAdd extends StatelessWidget {
               }
             },
             child: AlertDialog(
+              backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
               scrollable: true,
               title: const Text("Add"),
               actions: [

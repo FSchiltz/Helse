@@ -85,7 +85,10 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Welcome', style: Theme.of(context).textTheme.displayMedium),
+        title: Padding(
+          padding: const EdgeInsets.only(top: 8.0, left: 32),
+          child: Text('Welcome', style: Theme.of(context).textTheme.displayMedium),
+        ),
         actions: <Widget>[
           Padding(
             padding: const EdgeInsets.only(right: 20.0),
@@ -159,7 +162,7 @@ class _DashboardState extends State<Dashboard> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(32.0),
           child: Column(
             children: [
               Padding(

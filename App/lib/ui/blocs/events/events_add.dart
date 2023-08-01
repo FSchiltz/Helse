@@ -15,6 +15,7 @@ class EventAdd extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
       scrollable: true,
       title: const Text("New Event"),
       content: Padding(

@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:helse/main.dart';
+import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
 
-class Signup extends StatefulWidget {
-  const Signup({super.key});
+class UserAdd extends StatefulWidget {
+  final void Function()? callback;
+  const UserAdd(this.callback, {super.key});
 
   @override
-  State<Signup> createState() => _SignupState();
+  State<UserAdd> createState() => _SignupState();
 }
 
-class _SignupState extends State<Signup> {
+class _SignupState extends State<UserAdd> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   final FocusNode _focusNodeEmail = FocusNode();
@@ -22,25 +25,16 @@ class _SignupState extends State<Signup> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      body: Form(
+    return AlertDialog(
+      backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
+      scrollable: true,
+      title: const Text("Add a new user"),
+      content: Form(
         key: _formKey,
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
             children: [
-              const SizedBox(height: 100),
-              Text(
-                "Register",
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-              const SizedBox(height: 10),
-              Text(
-                "Create your account",
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 35),
               TextFormField(
                 controller: _controllerUsername,
                 keyboardType: TextInputType.name,
@@ -114,9 +108,7 @@ class _SignupState extends State<Signup> {
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
                     return "Please enter password.";
-                  } else if (value.length < 8) {
-                    return "Password must be at least 8 character.";
-                  }
+                  } 
                   return null;
                 },
                 onEditingComplete: () => _focusNodeConfirmPassword.requestFocus(),
@@ -163,9 +155,15 @@ class _SignupState extends State<Signup> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState?.validate() ?? false) {
                         // save the user
+                        await AppState.authenticationLogic?.createAccount(
+                            person: Person(
+                          userName: _controllerUsername.text,
+                          password: _controllerPassword.text,
+                          email: _controllerEmail.text,
+                        ));
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -175,26 +173,16 @@ class _SignupState extends State<Signup> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             behavior: SnackBarBehavior.floating,
-                            content: const Text("Registered Successfully"),
+                            content: const Text("Added Successfully"),
                           ),
                         );
 
                         _formKey.currentState?.reset();
-
-                        Navigator.pop(context);
+                        widget.callback?.call();
+                        Navigator.of(context).pop();
                       }
                     },
                     child: const Text("Register"),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("Already have an account?"),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text("Login"),
-                      ),
-                    ],
                   ),
                 ],
               ),

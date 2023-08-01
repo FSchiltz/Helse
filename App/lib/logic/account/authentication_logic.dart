@@ -40,6 +40,10 @@ class AuthenticationLogic {
     }
   }
 
+  Future<List<Person>> getUsers() async {
+    return (await ApiService(_account).getUsers()) ?? [];
+  }
+
   Future<User> getUser() async {
     var token = await getToken();
     if (token == null) throw Exception("Not connected");
@@ -52,9 +56,14 @@ class AuthenticationLogic {
     return User(type: role);
   }
 
-  Future<void> createAccount({required String url, required Person person}) async {
+  /// Init the account for a first connection
+  Future<void> initAccount({required String url, required Person person}) async {
     await _account.setUrl(url);
     await ApiService(_account).createAccount(person);
+  }
+
+   Future<void> createAccount({required Person person}) {
+    return ApiService(_account).createAccount(person);
   }
 
   Future<bool?> isInit(String url) async {

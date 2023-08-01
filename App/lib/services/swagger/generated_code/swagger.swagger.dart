@@ -330,6 +330,17 @@ abstract class Swagger extends ChopperService {
     optionalBody: true,
   )
   Future<chopper.Response> _apiPersonPost({@Body() required Person? body});
+
+  ///
+  Future<chopper.Response<List<Person>>> apiPersonGet() {
+    generatedMapping.putIfAbsent(Person, () => Person.fromJsonFactory);
+
+    return _apiPersonGet();
+  }
+
+  ///
+  @Get(path: '/api/person')
+  Future<chopper.Response<List<Person>>> _apiPersonGet();
 }
 
 @JsonSerializable(explicitToJson: true)

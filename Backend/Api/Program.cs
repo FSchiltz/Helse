@@ -127,6 +127,12 @@ person.MapPost("/", PersonLogic.CreateAsync)
 .Produces((int)HttpStatusCode.Unauthorized)
 .WithOpenApi();
 
+person.MapGet("/", PersonLogic.GetAsync)
+.AllowAnonymous()
+.Produces<List<Api.Models.Person>>((int)HttpStatusCode.OK)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();
+
 /* Metrics endpoints*/
 var metrics = api.MapGroup("/metrics");
 metrics.MapGet("/", MetricsLogic.GetAsync)

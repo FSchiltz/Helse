@@ -7,6 +7,39 @@ namespace Api.Logic;
 
 public static class PersonLogic
 {
+
+    public static async Task<IResult> GetAsync(AppDataConnection db, HttpContext context)
+    {
+        // get the connected user
+        var userName = context.User.GetUser();
+
+        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
+        if (user is null)
+            return TypedResults.Unauthorized();
+
+        if (user.Type != (int)Models.UserType.Admin)
+            return TypedResults.Unauthorized();
+
+        var users = await db.GetTable<Data.Models.User>().Join(db.GetTable<Data.Models.Person>(), x => x.PersonId, x => x.Id, (u, p) => new
+        {
+            u,
+            p
+        }).ToListAsync();
+
+        return TypedResults.Ok(users.Select(x => new Models.Person
+        {
+            Birth = x.p.Birth,
+            Name = x.p.Name,
+            Surname = x.p.Surname,
+            Identifier = x.p.Identifier,
+            UserName = x.u.Identifier,
+            Email = x.u.Email,
+            Phone = x.u.Phone,
+            Type = (Api.Models.UserType)x.u.Type,
+
+
+        }));
+    }
     /// <summary>
     /// Create a User 
     /// Only admin role unless no user exists (App setup)
@@ -14,6 +47,9 @@ public static class PersonLogic
     /// <returns></returns>
     public static async Task<IResult> CreateAsync(Models.Person newUser, AppDataConnection db, HttpContext context)
     {
+        if (newUser.Password == null)
+            throw new ArgumentException("Missing password", nameof(newUser));
+
         // check if no user
         var userName = context.User.GetUser();
 

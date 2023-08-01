@@ -65,6 +65,11 @@ class ApiService {
     }
   }
 
+  Future<List<Person>?> getUsers() async {
+    var api = await _getService();
+    return await _call(api.apiPersonGet);
+  }
+
   Future<List<MetricType>?> metricsType() async {
     var api = await _getService();
     return await _call(api.apiMetricsTypeGet);
