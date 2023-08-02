@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:helse/main.dart';
-import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
+
+import '../../../main.dart';
+import '../../../services/swagger/generated_code/swagger.swagger.dart';
 
 class UserAdd extends StatefulWidget {
   final void Function()? callback;
@@ -25,6 +26,14 @@ class _SignupState extends State<UserAdd> {
 
   @override
   Widget build(BuildContext context) {
+    var iconButton = IconButton(
+        onPressed: () {
+          setState(() {
+            _obscurePassword = !_obscurePassword;
+          });
+        },
+        icon: _obscurePassword ? const Icon(Icons.visibility_sharp) : const Icon(Icons.visibility_off_sharp));
+
     return AlertDialog(
       backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
       scrollable: true,
@@ -48,13 +57,7 @@ class _SignupState extends State<UserAdd> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter username.";
-                  }
-
-                  return null;
-                },
+                validator: validadateUser,
                 onEditingComplete: () => _focusNodeEmail.requestFocus(),
               ),
               const SizedBox(height: 10),
@@ -72,14 +75,7 @@ class _SignupState extends State<UserAdd> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter email.";
-                  } else if (!(value.contains('@') && value.contains('.'))) {
-                    return "Invalid email";
-                  }
-                  return null;
-                },
+                validator: validateEmail,
                 onEditingComplete: () => _focusNodePassword.requestFocus(),
               ),
               const SizedBox(height: 10),
@@ -91,13 +87,7 @@ class _SignupState extends State<UserAdd> {
                 decoration: InputDecoration(
                   labelText: "Password",
                   prefixIcon: const Icon(Icons.password_sharp),
-                  suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                      icon: _obscurePassword ? const Icon(Icons.visibility_sharp) : const Icon(Icons.visibility_off_sharp)),
+                  suffixIcon: iconButton,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -105,12 +95,7 @@ class _SignupState extends State<UserAdd> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter password.";
-                  } 
-                  return null;
-                },
+                validator: validatePassword,
                 onEditingComplete: () => _focusNodeConfirmPassword.requestFocus(),
               ),
               const SizedBox(height: 10),
@@ -122,13 +107,7 @@ class _SignupState extends State<UserAdd> {
                 decoration: InputDecoration(
                   labelText: "Confirm Password",
                   prefixIcon: const Icon(Icons.password_sharp),
-                  suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                      icon: _obscurePassword ? const Icon(Icons.visibility_sharp) : const Icon(Icons.visibility_off_sharp)),
+                  suffixIcon: iconButton,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -136,14 +115,7 @@ class _SignupState extends State<UserAdd> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter password.";
-                  } else if (value != _controllerPassword.text) {
-                    return "Password doesn't match.";
-                  }
-                  return null;
-                },
+                validator: validateConfirmPassword,
               ),
               const SizedBox(height: 50),
               Column(
@@ -155,33 +127,7 @@ class _SignupState extends State<UserAdd> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
-                    onPressed: () async {
-                      if (_formKey.currentState?.validate() ?? false) {
-                        // save the user
-                        await AppState.authenticationLogic?.createAccount(
-                            person: Person(
-                          userName: _controllerUsername.text,
-                          password: _controllerPassword.text,
-                          email: _controllerEmail.text,
-                        ));
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            width: 200,
-                            backgroundColor: Theme.of(context).colorScheme.secondary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            behavior: SnackBarBehavior.floating,
-                            content: const Text("Added Successfully"),
-                          ),
-                        );
-
-                        _formKey.currentState?.reset();
-                        widget.callback?.call();
-                        Navigator.of(context).pop();
-                      }
-                    },
+                    onPressed: submit,
                     child: const Text("Register"),
                   ),
                 ],
@@ -191,6 +137,67 @@ class _SignupState extends State<UserAdd> {
         ),
       ),
     );
+  }
+
+  void submit() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      // save the user
+      await AppState.authenticationLogic?.createAccount(
+          person: Person(
+        userName: _controllerUsername.text,
+        password: _controllerPassword.text,
+        email: _controllerEmail.text,
+      ));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          width: 200,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          behavior: SnackBarBehavior.floating,
+          content: const Text("Added Successfully"),
+        ),
+      );
+
+      _formKey.currentState?.reset();
+      widget.callback?.call();
+      Navigator.of(context).pop();
+    }
+  }
+
+  String? validateConfirmPassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Please enter password.";
+    } else if (value != _controllerPassword.text) {
+      return "Password doesn't match.";
+    }
+    return null;
+  }
+
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Please enter password.";
+    }
+    return null;
+  }
+
+  String? validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Please enter email.";
+    } else if (!(value.contains('@') && value.contains('.'))) {
+      return "Invalid email";
+    }
+    return null;
+  }
+
+  String? validadateUser(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Please enter username.";
+    }
+
+    return null;
   }
 
   @override
