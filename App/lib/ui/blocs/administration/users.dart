@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../main.dart';
-import '../../../model/user.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import 'user_add.dart';
 
@@ -19,7 +18,6 @@ class _UsersViewState extends State<UsersView> {
     setState(() {
       _users = [];
     });
-    _getData();
   }
 
   Future<List<Person>?> _getData() async {

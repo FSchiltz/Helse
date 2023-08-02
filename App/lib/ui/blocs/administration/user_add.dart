@@ -23,6 +23,7 @@ class _SignupState extends State<UserAdd> {
   final TextEditingController _controllerConFirmPassword = TextEditingController();
 
   bool _obscurePassword = true;
+  UserType? _type;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +57,12 @@ class _SignupState extends State<UserAdd> {
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
             children: [
+              _TypeInput(
+                  UserType.values,
+                  (value) => setState(() {
+                        _type = value;
+                      })),
+              const SizedBox(height: 10),
               TextFormField(
                 controller: _controllerUsername,
                 keyboardType: TextInputType.name,
@@ -144,6 +151,7 @@ class _SignupState extends State<UserAdd> {
         userName: _controllerUsername.text,
         password: _controllerPassword.text,
         email: _controllerEmail.text,
+        type: _type,
       ));
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -207,5 +215,30 @@ class _SignupState extends State<UserAdd> {
     _controllerPassword.dispose();
     _controllerConFirmPassword.dispose();
     super.dispose();
+  }
+}
+
+class _TypeInput extends StatelessWidget {
+  final List<UserType> types;
+  final void Function(UserType?) callback;
+
+  const _TypeInput(this.types, this.callback);
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField(
+      onChanged: callback,
+      items: types.map((type) => DropdownMenuItem(value: type, child: Text(type.name))).toList(),
+      decoration: InputDecoration(
+        labelText: 'Type',
+        prefixIcon: const Icon(Icons.list_sharp),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    );
   }
 }

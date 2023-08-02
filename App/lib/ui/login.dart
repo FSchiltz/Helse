@@ -129,10 +129,13 @@ class _LoginState extends State<LoginPage> {
     _checkState();
 
     // If the server is init or not
-    setState(() {
-      _isInit = isInit;
-      _loaded = status;
-    });
+    // Todo use stream
+    if (mounted) {
+      setState(() {
+        _isInit = isInit;
+        _loaded = status;
+      });
+    }
   }
 
   /// Prefill the url from storage or other
@@ -151,7 +154,7 @@ class _LoginState extends State<LoginPage> {
       setState(() {
         _url = url;
       });
-      
+
       _urlChanged(url);
     }
   }
