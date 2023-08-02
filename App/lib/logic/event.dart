@@ -1,5 +1,3 @@
-import 'package:file_selector/file_selector.dart';
-
 enum SubmissionStatus { initial, success, failure, inProgress }
 
 sealed class ChangedEvent<T> {
