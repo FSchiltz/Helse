@@ -3,18 +3,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'authentication_logic.dart';
 
-sealed class AuthenticationEvent {
-  const AuthenticationEvent();
-}
-
-final class _AuthenticationStatusChanged extends AuthenticationEvent {
-  const _AuthenticationStatusChanged(this.status);
-
-  final AuthenticationStatus status;
-}
-
-final class AuthenticationLogoutRequested extends AuthenticationEvent {}
-
 class AuthenticationState {
   const AuthenticationState._({
     this.status = AuthenticationStatus.unknown,
@@ -31,14 +19,12 @@ class AuthenticationState {
   final String token;
 }
 
-class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
+class AuthenticationBloc extends Cubit<AuthenticationState> {
   AuthenticationBloc({
     required AuthenticationLogic authenticationRepository,
   })  : _authenticationRepository = authenticationRepository,
         super(const AuthenticationState.unknown()) {
-    on<_AuthenticationStatusChanged>(_onAuthenticationStatusChanged);
-    on<AuthenticationLogoutRequested>(_onAuthenticationLogoutRequested);
-    _authenticationStatusSubscription = _authenticationRepository.status.listen((status) => add(_AuthenticationStatusChanged(status)));
+    _authenticationStatusSubscription = _authenticationRepository.status.listen((status) => _onAuthenticationStatusChanged(status));
   }
 
   final AuthenticationLogic _authenticationRepository;
@@ -50,8 +36,8 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     return super.close();
   }
 
-  Future<void> _onAuthenticationStatusChanged(_AuthenticationStatusChanged event, Emitter<AuthenticationState> emit) async {
-    switch (event.status) {
+  Future<void> _onAuthenticationStatusChanged(AuthenticationStatus status) async {
+    switch (status) {
       case AuthenticationStatus.unauthenticated:
         return emit(const AuthenticationState.unauthenticated());
       case AuthenticationStatus.authenticated:
@@ -62,9 +48,5 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       case AuthenticationStatus.unknown:
         return emit(const AuthenticationState.unknown());
     }
-  }
-
-  void _onAuthenticationLogoutRequested(AuthenticationLogoutRequested event, Emitter<AuthenticationState> emit) {
-    _authenticationRepository.logOut();
   }
 }
