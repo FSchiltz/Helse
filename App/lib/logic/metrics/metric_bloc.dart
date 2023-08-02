@@ -73,19 +73,7 @@ class MetricBloc extends Bloc<ChangedEvent, MetricState> {
   }
 
   Future<void> _onSubmitted(SubmittedEvent event, Emitter<MetricState> emit) async {
-    if (state.isValid && AppState.metricsLogic != null) {
-      emit(state.copyWith(status: SubmissionStatus.inProgress));
-      try {
-        var metric = CreateMetric(date: state.date, type: state.type, tag: state.tag, value: state.value);
-        await AppState.metricsLogic?.addMetric(metric);
-
-        event.callback?.call();
-        
-        emit(state.copyWith(status: SubmissionStatus.success));
-      } catch (_) {
-        emit(state.copyWith(status: SubmissionStatus.failure));
-      }
-    }
+   
   }
 }
 

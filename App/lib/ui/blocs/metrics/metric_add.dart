@@ -1,129 +1,158 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../logic/event.dart';
-import '../../../logic/metrics/metric_bloc.dart';
+import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../common/text_input.dart';
 
-class MetricAdd extends StatelessWidget {
+class MetricAdd extends StatefulWidget {
   final List<MetricType> types;
   final void Function() callback;
 
   const MetricAdd(this.types, this.callback, {super.key});
 
   @override
+  State<MetricAdd> createState() => _MetricAddState();
+}
+
+class _MetricAddState extends State<MetricAdd> {
+  SubmissionStatus _status = SubmissionStatus.initial;
+
+  DateTime? _date;
+  String? _value;
+  String? _tag;
+  int? _type;
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        create: (context) {
-          return MetricBloc(types: types);
-        },
-        child: BlocListener<MetricBloc, MetricState>(
-            listener: (context, state) {
-              if (state.status == SubmissionStatus.failure) {
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    const SnackBar(content: Text('Authentication Failure')),
-                  );
-              }
-            },
-            child: AlertDialog(
-              backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-              scrollable: true,
-              title: const Text("Add"),
-              actions: [
-                SizedBox(width: 200, child: _SubmitButton(callback)),
-              ],
-              content: SizedBox(
-                width: 500,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Form(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(30.0),
-                      child: Column(
-                        children: [
-                          Text("Add manual metric", style: Theme.of(context).textTheme.bodyMedium),
-                          const SizedBox(height: 10),
-                          _TypeInput(types),
-                          const SizedBox(height: 10),
-                          _ValueInput(),
-                          const SizedBox(height: 10),
-                          _TagInput(),
-                          const SizedBox(height: 10),
-                          _DateInput(),
-                        ],
-                      ),
+    return AlertDialog(
+      backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
+      scrollable: true,
+      title: const Text("Add"),
+      actions: [
+        SizedBox(
+          width: 200,
+          child: _status == SubmissionStatus.inProgress
+              ? const CircularProgressIndicator()
+              : ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
+                  key: const Key('loginForm_continue_raisedButton'),
+                  onPressed: _submit,
+                  child: const Text('Submit'),
                 ),
+        ),
+      ],
+      content: SizedBox(
+        width: 500,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Form(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(30.0),
+              child: Column(
+                children: [
+                  Text("Add manual metric", style: Theme.of(context).textTheme.bodyMedium),
+                  const SizedBox(height: 10),
+                  _TypeInput(
+                      widget.types,
+                      (value) => setState(() {
+                            _type = value;
+                          })),
+                  const SizedBox(height: 10),
+                  TextInput(Icons.add, "Value",
+                      onChanged: (value) => setState(
+                            () {
+                              _value = value;
+                            },
+                          )),
+                  const SizedBox(height: 10),
+                  TextInput(Icons.design_services_outlined, "Tag",
+                      onChanged: (value) => setState(() {
+                            _tag = value;
+                          })),
+                  const SizedBox(height: 10),
+                  _DateInput(
+                      _date,
+                      (value) => setState(() {
+                            _date = value;
+                          })),
+                ],
               ),
-            )));
-  }
-}
-
-class _ValueInput extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<MetricBloc, MetricState>(
-      buildWhen: (previous, current) => previous.value != current.value,
-      builder: (context, state) {
-        return TextInput(Icons.add, "Value", onChanged: (value) => context.read<MetricBloc>().add(TextChangedEvent(value, MetricBloc.valueEvent)));
-      },
+            ),
+          ),
+        ),
+      ),
     );
   }
-}
 
-class _TagInput extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<MetricBloc, MetricState>(
-      buildWhen: (previous, current) => previous.tag != current.tag,
-      builder: (context, state) {
-        return TextInput(Icons.design_services_outlined, "Tag", onChanged: (value) => context.read<MetricBloc>().add(TextChangedEvent(value, MetricBloc.tagEvent)));
-      },
-    );
+  void _submit() async {
+    if (AppState.metricsLogic != null) {
+      setState(() {
+        _status = SubmissionStatus.inProgress;
+      });
+
+      try {
+        var metric = CreateMetric(date: _date, type: _type, tag: _tag, value: _value);
+        await AppState.metricsLogic?.addMetric(metric);
+
+        Navigator.of(context).pop();
+        widget.callback();
+        setState(() {
+          _status = SubmissionStatus.success;
+        });
+      } catch (_) {
+        setState(() {
+          _status = SubmissionStatus.failure;
+        });
+      }
+    }
   }
 }
 
 class _TypeInput extends StatelessWidget {
   final List<MetricType> types;
-  const _TypeInput(this.types);
+  final void Function(int?) callback;
+
+  const _TypeInput(this.types, this.callback);
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MetricBloc, MetricState>(
-      buildWhen: (previous, current) => previous.type != current.type,
-      builder: (context, state) {
-        return DropdownButtonFormField(
-          onChanged: (value) => context.read<MetricBloc>().add(IntChangedEvent(value ?? 0, MetricBloc.typeEvent)),
-          items: types.map((type) => DropdownMenuItem(value: type.id, child: Text(type.name ?? ""))).toList(),
-          decoration: InputDecoration(
-            labelText: 'Type',
-            prefixIcon: const Icon(Icons.list),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        );
-      },
+    return DropdownButtonFormField(
+      onChanged: callback,
+      items: types.map((type) => DropdownMenuItem(value: type.id, child: Text(type.name ?? ""))).toList(),
+      decoration: InputDecoration(
+        labelText: 'Type',
+        prefixIcon: const Icon(Icons.list),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
     );
   }
 }
 
 class _DateInput extends StatelessWidget {
   final TextEditingController _textController = TextEditingController();
+  final void Function(DateTime?) callback;
+  final DateTime? date;
 
-  Future<void> _setDate(MetricBloc read, BuildContext context) async {
+  _DateInput(this.date, this.callback) {
+    _textController.text = date.toString();
+  }
+
+  Future<void> _setDate(BuildContext context) async {
     var date = await _pick(context);
     if (date != null) {
-      String formattedDate = date.toString();
-      read.add(DateChangedEvent(date, MetricBloc.dateEvent));
-      _textController.text = formattedDate;
+      _textController.text = date.toString();
+      callback(date);
     }
   }
 
@@ -156,60 +185,21 @@ class _DateInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MetricBloc, MetricState>(
-      buildWhen: (previous, current) => previous.date != current.date,
-      builder: (context, state) {
-        return TextField(
-          controller: _textController,
-          onTap: () {
-            _setDate(context.read<MetricBloc>(), context);
-          },
-          decoration: InputDecoration(
-            labelText: 'date',
-            prefixIcon: const Icon(Icons.edit_calendar_outlined),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        );
+    return TextField(
+      controller: _textController,
+      onTap: () {
+        _setDate(context);
       },
-    );
-  }
-}
-
-class _SubmitButton extends StatelessWidget {
-  final void Function() callback;
-
-  const _SubmitButton(this.callback);
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<MetricBloc, MetricState>(
-      builder: (context, state) {
-        return state.status == SubmissionStatus.inProgress
-            ? const CircularProgressIndicator()
-            : ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                key: const Key('loginForm_continue_raisedButton'),
-                onPressed: state.isValid
-                    ? () {
-                        context.read<MetricBloc>().add(SubmittedEvent("", callback: () {
-                              Navigator.of(context).pop();
-                              callback();
-                            }));
-                      }
-                    : null,
-                child: const Text('Submit'),
-              );
-      },
+      decoration: InputDecoration(
+        labelText: 'date',
+        prefixIcon: const Icon(Icons.edit_calendar_outlined),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
     );
   }
 }
