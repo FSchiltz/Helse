@@ -69,19 +69,7 @@ class EventBloc extends Bloc<ChangedEvent, EventState> {
   }
 
   Future<void> _onSubmitted(SubmittedEvent event, Emitter<EventState> emit) async {
-    if (state.isValid && AppState.metricsLogic != null) {
-      emit(state.copyWith(status: SubmissionStatus.inProgress));
-      try {
-        var metric = CreateEvent(start: state.start, stop: state.stop, type: state.type, description: state.description);
-        await AppState.eventLogic?.addEvent(metric);
-
-        event.callback?.call();
-
-        emit(state.copyWith(status: SubmissionStatus.success));
-      } catch (_) {
-        emit(state.copyWith(status: SubmissionStatus.failure));
-      }
-    }
+   
   }
 }
 
