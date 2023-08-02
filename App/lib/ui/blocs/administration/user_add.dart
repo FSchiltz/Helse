@@ -38,6 +38,18 @@ class _SignupState extends State<UserAdd> {
       backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
       scrollable: true,
       title: const Text("Add a new user"),
+      actions: [
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size.fromHeight(50),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+          onPressed: submit,
+          child: const Text("Register"),
+        ),
+      ],
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -116,21 +128,6 @@ class _SignupState extends State<UserAdd> {
                   ),
                 ),
                 validator: validateConfirmPassword,
-              ),
-              const SizedBox(height: 50),
-              Column(
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    onPressed: submit,
-                    child: const Text("Register"),
-                  ),
-                ],
               ),
             ],
           ),
