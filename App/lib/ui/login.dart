@@ -1,11 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/logic/event.dart';
 
+import '../main.dart';
 import '../services/account.dart';
-import '../logic/account/authentication_logic.dart';
-import '../logic/account/login_bloc.dart';
+import '../services/swagger/generated_code/swagger.swagger.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({
@@ -24,8 +23,121 @@ class _LoginState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final textController = TextEditingController();
 
+  String? _url;
+  String? _user;
+  String? _password;
+  SubmissionStatus _status = SubmissionStatus.initial;
+  SubmissionStatus _loaded = SubmissionStatus.initial;
+  bool? _isInit;
+  bool _obscurePassword = false;
+  String? _error;
+
+  @override
+  initState() {
+    super.initState();
+    _initUrl();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        body: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Align(
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 500),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 150),
+                    Text("Welcome back", style: Theme.of(context).textTheme.headlineLarge),
+                    const SizedBox(height: 10),
+                    Text("Login to your account", style: Theme.of(context).textTheme.bodyMedium),
+                    const SizedBox(height: 60),
+                    TextField(
+                      controller: textController,
+                      onChanged: _urlChanged,
+                      key: const Key('loginForm_urlInput_textField'),
+                      decoration: InputDecoration(
+                        labelText: 'Server url',
+                        prefixIcon: const Icon(Icons.home_sharp),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        errorText: _status == SubmissionStatus.failure ? 'invalid url' : null,
+                      ),
+                    ),
+                    const SizedBox(height: 60),
+                    (_loaded == SubmissionStatus.inProgress)
+                        ? const CircularProgressIndicator()
+                        : (_loaded == SubmissionStatus.success)
+                            ? Column(children: [
+                                (_isInit == true)
+                                    ? Column(
+                                        children: [
+                                          _UsernameInput(setUser),
+                                          const SizedBox(height: 10),
+                                          _PasswordInput(setPassword, togglePasswordVisibility, _obscurePassword),
+                                        ],
+                                      )
+                                    : Column(
+                                        children: [
+                                          Text("Create your account", style: Theme.of(context).textTheme.headlineLarge),
+                                          const SizedBox(height: 60),
+                                          _UsernameInput(setUser),
+                                          const SizedBox(height: 10),
+                                          _PasswordInput(setPassword, togglePasswordVisibility, _obscurePassword),
+                                        ],
+                                      ),
+                                const SizedBox(height: 60),
+                                _status == SubmissionStatus.inProgress
+                                    ? const CircularProgressIndicator()
+                                    : ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          minimumSize: const Size.fromHeight(50),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                        ),
+                                        key: const Key('loginForm_continue_raisedButton'),
+                                        onPressed: _submit,
+                                        child: const Text('Login'),
+                                      )
+                              ])
+                            : Container(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ));
+  }
+
+  void _urlChanged(url) async {
+    setState(() {
+      _url = url;
+      _loaded = SubmissionStatus.inProgress;
+    });
+
+    var isInit = await AppState.authenticationLogic?.isInit(_url ?? "");
+    var status = ((isInit == null) ? SubmissionStatus.failure : SubmissionStatus.success);
+
+    _checkState();
+
+    // If the server is init or not
+    setState(() {
+      _isInit = isInit;
+      _loaded = status;
+    });
+  }
+
   /// Prefill the url from storage or other
-  Future<void> _initUrl(LoginBloc bloc) async {
+  Future<void> _initUrl() async {
+    AppState.authenticationLogic?.checkLogin();
     // We first try to get it from storage
     var url = await Account().getUrl();
 
@@ -36,215 +148,141 @@ class _LoginState extends State<LoginPage> {
 
     if (url != null && url.isNotEmpty) {
       textController.text = url;
-      bloc.add(TextChangedEvent(url, LoginBloc.urlField));
+      setState(() {
+        _url = url;
+      });
+      
+      _urlChanged(url);
     }
   }
 
+  void _submit() async {
+    var init = _isInit;
+    var url = _url;
+    if (init == null || url == null) return;
+
+    var user = _user;
+    var password = _password;
+    if (user == null || password == null) return;
+
+    setState(() {
+      _status = SubmissionStatus.inProgress;
+    });
+
+    try {
+      if (init) {
+        await AppState.authenticationLogic?.logIn(url: url, username: user, password: password);
+      } else {
+        var person = Person(type: UserType.admin, userName: _user, password: _password);
+        await AppState.authenticationLogic?.initAccount(url: url, person: person);
+
+        // after a succes, we auto login
+        await AppState.authenticationLogic?.logIn(url: url, username: user, password: password);
+      }
+
+      setState(() {
+        _status = SubmissionStatus.success;
+      });
+    } catch (ex) {
+      setState(() {
+        _status = SubmissionStatus.failure;
+        _error = ex.toString();
+      });
+    }
+  }
+
+  void togglePasswordVisibility() => setState(() {
+        _obscurePassword = !_obscurePassword;
+      });
+
+  void setPassword(String? password) => setState(() {
+        _password = password;
+      });
+
+  void setUser(String? value) => setState(() {
+        _user = value;
+      });
+
+  _checkState() {
+    if (_status == SubmissionStatus.failure) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(content: Text('Failure: $_error')),
+        );
+    } else if (_status == SubmissionStatus.success && _isInit == false) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(content: Text('User created, welcome')),
+        );
+    }
+  }
+}
+
+class _UsernameInput extends StatelessWidget {
+  final void Function(String? value) callback;
+
+  const _UsernameInput(this.callback);
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      body: BlocProvider(
-        create: (context) {
-          var bloc = LoginBloc(authenticationRepository: RepositoryProvider.of<AuthenticationLogic>(context));
-          bloc.checkLogin();
-          _initUrl(bloc);
-          return bloc;
-        },
-        child: BlocListener<LoginBloc, LoginState>(
-            listener: (context, state) {
-              if (state.status == SubmissionStatus.failure) {
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    SnackBar(content: Text('Failure: ${state.error}')),
-                  );
-              } else if (state.status == SubmissionStatus.success && !state.isInit) {
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    const SnackBar(content: Text('User created, welcome')),
-                  );
-              }
-            },
-            child: Form(
-              key: _formKey,
-              child: SingleChildScrollView(
-                child: Align(
-                  child: Container(
-                    constraints: const BoxConstraints(maxWidth: 500),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 150),
-                        Text("Welcome back", style: Theme.of(context).textTheme.headlineLarge),
-                        const SizedBox(height: 10),
-                        Text("Login to your account", style: Theme.of(context).textTheme.bodyMedium),
-                        const SizedBox(height: 60),
-                        _UrlInput(textController),
-                        const SizedBox(height: 60),
-                        _LoginInput(),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            )),
+    return TextFormField(
+      key: const Key('loginForm_usernameInput_textField'),
+      onChanged: callback,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Please enter a username.";
+        }
+
+        return null;
+      },
+      decoration: InputDecoration(
+        labelText: 'username',
+        prefixIcon: const Icon(Icons.person_sharp),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
       ),
     );
   }
 }
 
-class _LoginInput extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
-        buildWhen: (previous, current) => previous.loaded != current.loaded,
-        builder: (context, state) {
-          if (state.loaded == SubmissionStatus.inProgress) {
-            return const CircularProgressIndicator();
-          } else if (state.loaded == SubmissionStatus.success) {
-            if (state.isInit) {
-              return Column(
-                children: [
-                  _UsernameInput(),
-                  const SizedBox(height: 10),
-                  _PasswordInput(),
-                  const SizedBox(height: 60),
-                  _LoginButton(),
-                ],
-              );
-            } else {
-              return Column(
-                children: [
-                  Text("Create your account", style: Theme.of(context).textTheme.headlineLarge),
-                  const SizedBox(height: 60),
-                  _UsernameInput(),
-                  const SizedBox(height: 10),
-                  _PasswordInput(),
-                  const SizedBox(height: 60),
-                  _LoginButton(),
-                ],
-              );
-            }
-          }
-          return Container();
-        });
-  }
-}
-
-class _UrlInput extends StatelessWidget {
-  final TextEditingController _textController;
-
-  const _UrlInput(TextEditingController textController) : _textController = textController;
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
-      buildWhen: (previous, current) => previous.url != current.url || previous.urlError != current.urlError,
-      builder: (context, state) {
-        return TextField(
-          controller: _textController,
-          onChanged: (url) => context.read<LoginBloc>().add(TextChangedEvent(url, LoginBloc.urlField)),
-          key: const Key('loginForm_urlInput_textField'),
-          decoration: InputDecoration(
-            labelText: 'Server url',
-            prefixIcon: const Icon(Icons.home_sharp),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            errorText: state.urlError ? 'invalid url' : null,
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _UsernameInput extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
-      buildWhen: (previous, current) => previous.username != current.username || previous.usernameError != current.usernameError,
-      builder: (context, state) {
-        return TextField(
-          key: const Key('loginForm_usernameInput_textField'),
-          onChanged: (username) => context.read<LoginBloc>().add(TextChangedEvent(username, LoginBloc.userNameField)),
-          decoration: InputDecoration(
-            labelText: 'username',
-            prefixIcon: const Icon(Icons.person_sharp),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            errorText: state.usernameError ? 'invalid username' : null,
-          ),
-        );
-      },
-    );
-  }
-}
-
 class _PasswordInput extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
-      buildWhen: (previous, current) => previous.password != current.password,
-      builder: (context, state) {
-        return TextField(
-          key: const Key('loginForm_passwordInput_textField'),
-          onChanged: (password) => context.read<LoginBloc>().add(TextChangedEvent(password, LoginBloc.passwordField)),
-          obscureText: !state.obscurePassword,
-          keyboardType: TextInputType.visiblePassword,
-          decoration: InputDecoration(
-            labelText: 'password',
-            prefixIcon: const Icon(Icons.password_sharp),
-            suffixIcon: IconButton(
-                onPressed: () {
-                  context.read<LoginBloc>().add(BoolChangedEvent(!state.obscurePassword, "visible"));
-                },
-                icon: state.obscurePassword ? const Icon(Icons.visibility_sharp) : const Icon(Icons.visibility_off_sharp)),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            errorText: state.passwordError ? 'invalid password' : null,
-          ),
-        );
-      },
-    );
-  }
-}
+  final void Function(String?) callback;
+  final void Function() iconCallback;
+  final bool obscurePassword;
 
-class _LoginButton extends StatelessWidget {
+  const _PasswordInput(this.callback, this.iconCallback, this.obscurePassword);
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
-      builder: (context, state) {
-        return state.status == SubmissionStatus.inProgress
-            ? const CircularProgressIndicator()
-            : ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                key: const Key('loginForm_continue_raisedButton'),
-                onPressed: state.isValid
-                    ? () {
-                        context.read<LoginBloc>().add(const SubmittedEvent(""));
-                      }
-                    : null,
-                child: const Text('Login'),
-              );
+    return TextFormField(
+      key: const Key('loginForm_passwordInput_textField'),
+      onChanged: callback,
+      obscureText: !obscurePassword,
+      keyboardType: TextInputType.visiblePassword,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Please enter a username.";
+        }
+
+        return null;
       },
+      decoration: InputDecoration(
+        labelText: 'password',
+        prefixIcon: const Icon(Icons.password_sharp),
+        suffixIcon: IconButton(onPressed: iconCallback, icon: obscurePassword ? const Icon(Icons.visibility_sharp) : const Icon(Icons.visibility_off_sharp)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
     );
   }
 }
