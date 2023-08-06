@@ -190,7 +190,7 @@ class _SignupState extends State<UserAdd> {
 
   String? validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return "Please enter email.";
+      return null;
     } else if (!(value.contains('@') && value.contains('.'))) {
       return "Invalid email";
     }

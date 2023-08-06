@@ -152,6 +152,10 @@ Person _$PersonFromJson(Map<String, dynamic> json) => Person(
       type: userTypeFromJson(json['type']),
       email: json['email'] as String?,
       phone: json['phone'] as String?,
+      rights: (json['rights'] as List<dynamic>?)
+              ?.map((e) => Right.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
 
 Map<String, dynamic> _$PersonToJson(Person instance) => <String, dynamic>{
@@ -164,6 +168,26 @@ Map<String, dynamic> _$PersonToJson(Person instance) => <String, dynamic>{
       'type': userTypeToJson(instance.type),
       'email': instance.email,
       'phone': instance.phone,
+      'rights': instance.rights?.map((e) => e.toJson()).toList(),
+    };
+
+Right _$RightFromJson(Map<String, dynamic> json) => Right(
+      personId: json['personId'] as int?,
+      userId: json['userId'] as int?,
+      start: json['start'] == null
+          ? null
+          : DateTime.parse(json['start'] as String),
+      stop:
+          json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
+      type: rightTypeFromJson(json['type']),
+    );
+
+Map<String, dynamic> _$RightToJson(Right instance) => <String, dynamic>{
+      'personId': instance.personId,
+      'userId': instance.userId,
+      'start': instance.start?.toIso8601String(),
+      'stop': instance.stop?.toIso8601String(),
+      'type': rightTypeToJson(instance.type),
     };
 
 Status _$StatusFromJson(Map<String, dynamic> json) => Status(

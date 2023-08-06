@@ -30,7 +30,7 @@ public static class AuthLogic
     /// <param name="token"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
-    public static async Task<IResult> StatusAsync(AppDataConnection db, TokenService token, ILoggerFactory logger)
+    public static async Task<IResult> StatusAsync(AppDataConnection db)
     {
         var count = await db.GetTable<User>().CountAsync();
         return TypedResults.Ok(new Status(count > 0, null));
@@ -83,14 +83,14 @@ public static class AuthLogic
     /// <param name="time"></param>
     /// <param name="db"></param>
     /// <returns></returns>
-    public async static Task<Right?> HasRightAsync(long user, long person, RightType type, DateTime time, AppDataConnection db)
-     => await db.GetTable<Right>()
+    public async static Task<Api.Models.Right?> HasRightAsync(long user, long person, RightType type, DateTime time, AppDataConnection db)
+     => (await db.GetTable<Data.Models.Right>()
         .Where(x => x.UserId == user
             && x.PersonId == person
             && x.Type == (int)type
             && x.Start <= time
-            && (x.End == null || x.End >= time))
-        .FirstOrDefaultAsync();
+            && (x.Stop == null || x.Stop >= time))
+        .FirstOrDefaultAsync())?.FromDb();
 
     /// <summary>
     /// Validate that the user is a caregiver with the correct right

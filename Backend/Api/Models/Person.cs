@@ -1,3 +1,5 @@
+using Api.Data.Models;
+
 namespace Api.Models;
 
 public class Person
@@ -10,7 +12,7 @@ public class Person
 
     public DateTime? Birth { get; set; }
 
-    public required string UserName { get; set; }
+    public string? UserName { get; set; }
 
     public string? Password { get; set; }
 
@@ -19,4 +21,6 @@ public class Person
     public string? Email { get; set; }
 
     public string? Phone { get; set; }
+
+    public List<Right> Rights { get; set; } = new List<Right>();
 }

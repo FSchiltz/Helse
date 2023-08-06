@@ -78,6 +78,10 @@ class _UsersViewState extends State<UsersView> {
                           children: [
                             DataTable(
                               columns: const [
+                                 DataColumn(
+                                    label: Expanded(
+                                  child: Text("Type"),
+                                )),
                                 DataColumn(
                                     label: Expanded(
                                   child: Text("Username"),
@@ -94,13 +98,19 @@ class _UsersViewState extends State<UsersView> {
                                     label: Expanded(
                                   child: Text("Surname"),
                                 )),
+                                 DataColumn(
+                                    label: Expanded(
+                                  child: Text("Rights"),
+                                ))
                               ],
                               rows: users
                                   .map((user) => DataRow(cells: [
+                                        DataCell(Text((user.type ?? UserType.user).toString())),
                                         DataCell(Text(user.userName ?? "")),
                                         DataCell(Text(user.email ?? "")),
                                         DataCell(Text(user.name ?? "")),
                                         DataCell(Text(user.surname ?? "")),
+                                        DataCell(Text(user.rights.toString()))
                                       ]))
                                   .toList(),
                             ),

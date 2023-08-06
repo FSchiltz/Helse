@@ -52,7 +52,8 @@ class AuthenticationLogic {
     var data = decodedToken["roles"];
     if (data == null) return User(type: UserType.swaggerGeneratedUnknown);
 
-    UserType role = UserType.values[int.parse(data)];
+    // the enum start at 0 so we add 1
+    UserType role = UserType.values[int.parse(data) + 1];
     return User(type: role);
   }
 
@@ -62,7 +63,7 @@ class AuthenticationLogic {
     await ApiService(_account).createAccount(person);
   }
 
-   Future<void> createAccount({required Person person}) {
+  Future<void> createAccount({required Person person}) {
     return ApiService(_account).createAccount(person);
   }
 

@@ -612,6 +612,46 @@
           }
         }
       }
+    },
+    "/api/person/rights/{personId}": {
+      "post": {
+        "tags": [
+          "PersonLogic"
+        ],
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Right"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -852,9 +892,56 @@
           "phone": {
             "type": "string",
             "nullable": true
+          },
+          "rights": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Right"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
+      },
+      "Right": {
+        "type": "object",
+        "properties": {
+          "personId": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "stop": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/RightType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RightType": {
+        "enum": [
+          1,
+          2
+        ],
+        "type": "integer",
+        "description": "\n\n1 = View\n\n2 = Edit",
+        "format": "int32",
+        "x-enumNames": [
+          "View",
+          "Edit"
+        ]
       },
       "Status": {
         "type": "object",
@@ -871,14 +958,16 @@
       },
       "UserType": {
         "enum": [
+          0,
           1,
           2,
           3
         ],
         "type": "integer",
-        "description": "\n\n1 = User\n\n2 = Admin\n\n3 = Caregiver",
+        "description": "\n\n0 = Patient\n\n1 = User\n\n2 = Admin\n\n3 = Caregiver",
         "format": "int32",
         "x-enumNames": [
+          "Patient",
           "User",
           "Admin",
           "Caregiver"

@@ -133,6 +133,12 @@ person.MapGet("/", PersonLogic.GetAsync)
 .Produces((int)HttpStatusCode.Unauthorized)
 .WithOpenApi();
 
+var rights = person.MapGroup("/rights");
+rights.MapPost("/{personId}", PersonLogic.SetRight)
+.Produces((int)HttpStatusCode.NoContent)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();;
+
 /* Metrics endpoints*/
 var metrics = api.MapGroup("/metrics");
 metrics.MapGet("/", MetricsLogic.GetAsync)

@@ -76,11 +76,11 @@ class _AppViewState extends State<AppView> {
       title: 'Helse',
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 145, 166, 99)),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 145, 166, 99)),
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 145, 166, 99), brightness: Brightness.dark),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 145, 166, 99), brightness: Brightness.dark),
         /* dark theme settings */
       ),
       themeMode: ThemeMode.system,
