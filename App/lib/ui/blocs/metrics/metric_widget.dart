@@ -71,7 +71,7 @@ class _MetricWidgetState extends State<MetricWidget> {
           future: _getData(widget.type.id),
           builder: (ctx, snapshot) {
             // Checking if future is resolved
-            if (snapshot.connectionState == ConnectionState.done && false) {
+            if (snapshot.connectionState == ConnectionState.done) {
               // If we got an error
               if (snapshot.hasError) {
                 return Center(
