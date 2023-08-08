@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../loader.dart';
 import 'metric_graph.dart';
 
 class MetricWidget extends StatefulWidget {
@@ -105,7 +106,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                 );
               }
             }
-            return const Center(child: SizedBox(width: 50, height: 50, child: CircularProgressIndicator()));
+            return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
           }),
     );
   }

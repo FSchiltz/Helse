@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../loader.dart';
 import 'user_add.dart';
 
 class UsersView extends StatefulWidget {
@@ -126,7 +127,7 @@ class _UsersViewState extends State<UsersView> {
               );
             }
           }
-          return const Center(child: SizedBox(width: 50, height: 50, child: CircularProgressIndicator()));
+          return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
         });
   }
 }

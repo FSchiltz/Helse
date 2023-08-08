@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../loader.dart';
 import 'metric_widget.dart';
 
 class MetricsGrid extends StatelessWidget {
@@ -18,7 +19,7 @@ class MetricsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return types.isEmpty
-        ? const CircularProgressIndicator()
+        ? const HelseLoader()
         : GridView.extent(
             shrinkWrap: true,
             crossAxisSpacing: 4,

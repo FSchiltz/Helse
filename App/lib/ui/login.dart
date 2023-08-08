@@ -6,6 +6,7 @@ import '../main.dart';
 import '../services/account.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';
 import 'blocs/administration/user_form.dart';
+import 'blocs/loader.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({
@@ -80,7 +81,7 @@ class _LoginState extends State<LoginPage> {
                       ),
                       const SizedBox(height: 20),
                       (_loaded == SubmissionStatus.inProgress)
-                          ? const CircularProgressIndicator()
+                          ? const HelseLoader()
                           : (_loaded == SubmissionStatus.success)
                               ? Column(children: [
                                   (_isInit == true)
@@ -117,7 +118,7 @@ class _LoginState extends State<LoginPage> {
                                         ),
                                   const SizedBox(height: 60),
                                   _status == SubmissionStatus.inProgress
-                                      ? const CircularProgressIndicator()
+                                      ? const HelseLoader()
                                       : ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                             minimumSize: const Size.fromHeight(50),

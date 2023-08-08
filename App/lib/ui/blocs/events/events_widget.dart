@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../loader.dart';
 import 'events_graph.dart';
 
 class EventWidget extends StatefulWidget {
@@ -92,7 +93,7 @@ class _EventWidgetState extends State<EventWidget> {
                       child: EventGraph(events, widget.date),
                     );
                   }
-                  return const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator()));
+                  return const Center(child: SizedBox(width: 20, height: 20, child: HelseLoader()));
                 })
           ],
         ),

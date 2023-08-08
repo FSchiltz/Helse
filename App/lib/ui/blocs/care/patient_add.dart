@@ -4,6 +4,7 @@ import '../../../logic/event.dart';
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../administration/user_form.dart';
+import '../loader.dart';
 
 class PatientAdd extends StatefulWidget {
   final void Function() callback;
@@ -69,7 +70,7 @@ class _PatientAddState extends State<PatientAdd> {
         SizedBox(
           width: 200,
           child: _status == SubmissionStatus.inProgress
-              ? const CircularProgressIndicator()
+              ? const HelseLoader()
               : ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),

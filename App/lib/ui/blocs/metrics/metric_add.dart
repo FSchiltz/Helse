@@ -4,6 +4,7 @@ import '../../../logic/event.dart';
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../common/text_input.dart';
+import '../loader.dart';
 
 class MetricAdd extends StatefulWidget {
   final List<MetricType> types;
@@ -34,7 +35,7 @@ class _MetricAddState extends State<MetricAdd> {
         Container(
           constraints: const BoxConstraints(maxWidth: 200),
           child: _status == SubmissionStatus.inProgress
-              ? const CircularProgressIndicator()
+              ? const HelseLoader()
               : ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),

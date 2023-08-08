@@ -6,6 +6,7 @@ import '../services/swagger/generated_code/swagger.swagger.dart';
 import 'administration.dart';
 import 'blocs/common/date_range_input.dart';
 import 'blocs/imports/file_import.dart';
+import 'blocs/loader.dart';
 import 'care_dashboard.dart';
 import 'dashboard.dart';
 import 'settings.dart';
@@ -69,7 +70,7 @@ class _HomeState extends State<Home> {
     page = switch (user?.type) {
       UserType.user => Dashboard(date: date),
       UserType.caregiver => CareDashBoard(date: date),
-      _ => const Center(child: CircularProgressIndicator()),
+      _ => const Center(child: HelseLoader()),
     };
 
     return LayoutBuilder(builder: (context, constraints) {

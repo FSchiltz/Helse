@@ -4,6 +4,7 @@ import '../../../logic/event.dart';
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../common/text_input.dart';
+import '../loader.dart';
 
 class EventAdd extends StatefulWidget {
   final void Function() callback;
@@ -55,7 +56,7 @@ class _EventAddState extends State<EventAdd> {
       actions: [
         SizedBox(
           child: _status == SubmissionStatus.inProgress
-              ? const CircularProgressIndicator()
+              ? const HelseLoader()
               : ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),

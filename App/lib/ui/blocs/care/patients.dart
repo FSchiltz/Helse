@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../loader.dart';
 import 'patient_add.dart';
 import 'patient_dashboard.dart';
 
@@ -137,7 +138,7 @@ class _PatientsState extends State<Patients> {
               );
             }
           }
-          return const Center(child: SizedBox(width: 50, height: 50, child: CircularProgressIndicator()));
+          return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
         });
   }
 }
