@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import 'user_form.dart';
 
 class UserAdd extends StatefulWidget {
   final void Function()? callback;
@@ -14,27 +15,17 @@ class UserAdd extends StatefulWidget {
 class _SignupState extends State<UserAdd> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
-  final FocusNode _focusNodeEmail = FocusNode();
-  final FocusNode _focusNodePassword = FocusNode();
-  final FocusNode _focusNodeConfirmPassword = FocusNode();
+  UserType? _type;
+
   final TextEditingController _controllerUsername = TextEditingController();
+  final TextEditingController _controllerName = TextEditingController();
+  final TextEditingController _controllerSurname = TextEditingController();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
   final TextEditingController _controllerConFirmPassword = TextEditingController();
 
-  bool _obscurePassword = true;
-  UserType? _type;
-
   @override
   Widget build(BuildContext context) {
-    var iconButton = IconButton(
-        onPressed: () {
-          setState(() {
-            _obscurePassword = !_obscurePassword;
-          });
-        },
-        icon: _obscurePassword ? const Icon(Icons.visibility_sharp) : const Icon(Icons.visibility_off_sharp));
-
     return AlertDialog(
       backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
       scrollable: true,
@@ -63,78 +54,14 @@ class _SignupState extends State<UserAdd> {
                         _type = value;
                       })),
               const SizedBox(height: 10),
-              TextFormField(
-                controller: _controllerUsername,
-                keyboardType: TextInputType.name,
-                decoration: InputDecoration(
-                  labelText: "Username",
-                  prefixIcon: const Icon(Icons.person_sharp),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                validator: validadateUser,
-                onEditingComplete: () => _focusNodeEmail.requestFocus(),
-              ),
-              const SizedBox(height: 10),
-              TextFormField(
-                controller: _controllerEmail,
-                focusNode: _focusNodeEmail,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  labelText: "Email",
-                  prefixIcon: const Icon(Icons.email_sharp),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                validator: validateEmail,
-                onEditingComplete: () => _focusNodePassword.requestFocus(),
-              ),
-              const SizedBox(height: 10),
-              TextFormField(
-                controller: _controllerPassword,
-                obscureText: _obscurePassword,
-                focusNode: _focusNodePassword,
-                keyboardType: TextInputType.visiblePassword,
-                decoration: InputDecoration(
-                  labelText: "Password",
-                  prefixIcon: const Icon(Icons.password_sharp),
-                  suffixIcon: iconButton,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                validator: validatePassword,
-                onEditingComplete: () => _focusNodeConfirmPassword.requestFocus(),
-              ),
-              const SizedBox(height: 10),
-              TextFormField(
-                controller: _controllerConFirmPassword,
-                obscureText: _obscurePassword,
-                focusNode: _focusNodeConfirmPassword,
-                keyboardType: TextInputType.visiblePassword,
-                decoration: InputDecoration(
-                  labelText: "Confirm Password",
-                  prefixIcon: const Icon(Icons.password_sharp),
-                  suffixIcon: iconButton,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                validator: validateConfirmPassword,
+              UserForm(
+                _type,
+                controllerConFirmPassword: _controllerConFirmPassword,
+                controllerEmail: _controllerEmail,
+                controllerName: _controllerName,
+                controllerPassword: _controllerPassword,
+                controllerSurname: _controllerSurname,
+                controllerUsername: _controllerUsername,
               ),
             ],
           ),
@@ -149,6 +76,8 @@ class _SignupState extends State<UserAdd> {
       await AppState.authenticationLogic?.createAccount(
           person: Person(
         userName: _controllerUsername.text,
+        name: _controllerName.text,
+        surname: _controllerSurname.text,
         password: _controllerPassword.text,
         email: _controllerEmail.text,
         type: _type,
@@ -172,45 +101,11 @@ class _SignupState extends State<UserAdd> {
     }
   }
 
-  String? validateConfirmPassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return "Please enter password.";
-    } else if (value != _controllerPassword.text) {
-      return "Password doesn't match.";
-    }
-    return null;
-  }
-
-  String? validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return "Please enter password.";
-    }
-    return null;
-  }
-
-  String? validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return null;
-    } else if (!(value.contains('@') && value.contains('.'))) {
-      return "Invalid email";
-    }
-    return null;
-  }
-
-  String? validadateUser(String? value) {
-    if (value == null || value.isEmpty) {
-      return "Please enter username.";
-    }
-
-    return null;
-  }
-
   @override
   void dispose() {
-    _focusNodeEmail.dispose();
-    _focusNodePassword.dispose();
-    _focusNodeConfirmPassword.dispose();
     _controllerUsername.dispose();
+    _controllerName.dispose();
+    _controllerSurname.dispose();
     _controllerEmail.dispose();
     _controllerPassword.dispose();
     _controllerConFirmPassword.dispose();

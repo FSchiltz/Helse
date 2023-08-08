@@ -16,11 +16,14 @@ class _UsersViewState extends State<UsersView> {
 
   void _resetUsers() {
     setState(() {
-      _users = [];
+      _users = null;
+      _dummy = !_dummy;
     });
   }
 
-  Future<List<Person>?> _getData() async {
+  bool _dummy = false;
+
+  Future<List<Person>?> _getData(bool reset) async {
     // if the users has not changed, no call to the backend
     if (_users != null) return _users;
 
@@ -31,7 +34,7 @@ class _UsersViewState extends State<UsersView> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _getData(),
+        future: _getData(_dummy),
         builder: (context, snapshot) {
           // Checking if future is resolved
           if (snapshot.connectionState == ConnectionState.done) {
@@ -78,7 +81,7 @@ class _UsersViewState extends State<UsersView> {
                           children: [
                             DataTable(
                               columns: const [
-                                 DataColumn(
+                                DataColumn(
                                     label: Expanded(
                                   child: Text("Type"),
                                 )),
@@ -98,7 +101,7 @@ class _UsersViewState extends State<UsersView> {
                                     label: Expanded(
                                   child: Text("Surname"),
                                 )),
-                                 DataColumn(
+                                DataColumn(
                                     label: Expanded(
                                   child: Text("Rights"),
                                 ))

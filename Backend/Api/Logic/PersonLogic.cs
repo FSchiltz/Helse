@@ -121,6 +121,20 @@ public static class PersonLogic
         return TypedResults.NoContent();
     }
 
+    private static void ValidateUser(Models.Person user)
+    {
+        // validate Patient
+        if (user.Name == null)
+            throw new ArgumentException("Missing name", nameof(user));
+
+        // validate other user
+        if (user.Type == UserType.Patient)
+            return;
+
+        if (user.Password == null)
+            throw new ArgumentException("Missing password", nameof(user));
+    }
+
     /// <summary>
     /// Create a User 
     /// Only admin role unless no user exists (App setup) or caregiver if the new person is only a patient(no connection)
@@ -128,8 +142,7 @@ public static class PersonLogic
     /// <returns></returns>
     public static async Task<IResult> CreateAsync(Models.Person newUser, AppDataConnection db, HttpContext context)
     {
-        if (newUser.Password == null)
-            throw new ArgumentException("Missing password", nameof(newUser));
+        ValidateUser(newUser);
 
         // check if no user
         var userName = context.User.GetUser();
