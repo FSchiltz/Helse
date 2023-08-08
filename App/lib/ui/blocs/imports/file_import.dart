@@ -5,6 +5,7 @@ import '../../../logic/event.dart';
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../common/file_input.dart';
+import '../loader.dart';
 
 class FileImport extends StatefulWidget {
   const FileImport({super.key});
@@ -41,7 +42,7 @@ class _FileImportState extends State<FileImport> {
       title: const Text("Import"),
       actions: [
         status == SubmissionStatus.inProgress
-            ? const CircularProgressIndicator()
+            ? const HelseLoader()
             : ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size.fromHeight(50),

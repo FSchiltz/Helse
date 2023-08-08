@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../loader.dart';
 import 'metric_graph.dart';
 
 class MetricWidget extends StatefulWidget {
   final MetricType type;
   final DateTimeRange date;
+  final int? person;
 
-  const MetricWidget(this.type, this.date, {super.key});
+  const MetricWidget(this.type, this.date, {super.key, this.person});
 
   @override
   State<MetricWidget> createState() => _MetricWidgetState();
@@ -57,7 +59,7 @@ class _MetricWidgetState extends State<MetricWidget> {
     var start = DateTime(date.start.year, date.start.month, date.start.day);
     var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-    _metrics = await AppState.metricsLogic?.getMetric(id, start, end);
+    _metrics = await AppState.metricsLogic?.getMetric(id, start, end, person: widget.person);
     _metrics?.sort(_sort);
     return _metrics;
   }
@@ -93,7 +95,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text(widget.type.name ?? "", style: Theme.of(context).textTheme.titleMedium),
-                          Text((last?.value ?? "") + (widget.type.unit ?? ""), style: Theme.of(context).textTheme.labelMedium),
+                          if (last != null) Text((last.value ?? "") + (widget.type.unit ?? ""), style: Theme.of(context).textTheme.labelMedium),
                         ],
                       ),
                       Expanded(
@@ -104,7 +106,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                 );
               }
             }
-            return const Center(child: SizedBox(width: 50, height: 50, child: CircularProgressIndicator()));
+            return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
           }),
     );
   }

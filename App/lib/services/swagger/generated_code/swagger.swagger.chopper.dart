@@ -7,7 +7,7 @@ part of 'swagger.swagger.dart';
 // **************************************************************************
 
 // ignore_for_file: always_put_control_body_on_new_line, always_specify_types, prefer_const_declarations, unnecessary_brace_in_string_interps
-class _$Swagger extends Swagger {
+final class _$Swagger extends Swagger {
   _$Swagger([ChopperClient? client]) {
     if (client == null) return;
     this.client = client;
@@ -272,7 +272,7 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _apiPersonPost({required Person? body}) {
+  Future<Response<dynamic>> _apiPersonPost({required PersonCreation? body}) {
     final Uri $url = Uri.parse('/api/person');
     final $body = body;
     final Request $request = Request(
@@ -293,5 +293,32 @@ class _$Swagger extends Swagger {
       client.baseUrl,
     );
     return client.send<List<Person>, Person>($request);
+  }
+
+  @override
+  Future<Response<List<Person>>> _apiPersonPatientsGet() {
+    final Uri $url = Uri.parse('/api/person/patients');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<List<Person>, Person>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiPersonRightsPersonIdPost({
+    required int? personId,
+    required List<Right>? body,
+  }) {
+    final Uri $url = Uri.parse('/api/person/rights/${personId}');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<dynamic, dynamic>($request);
   }
 }

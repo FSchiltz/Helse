@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
-import '../../model/user.dart';
 import '../../services/api_service.dart';
 import '../../services/account.dart';
 import '../../services/swagger/generated_code/swagger.swagger.dart';
@@ -44,25 +43,33 @@ class AuthenticationLogic {
     return (await ApiService(_account).getUsers()) ?? [];
   }
 
-  Future<User> getUser() async {
+  Future<Person> getUser() async {
     var token = await getToken();
     if (token == null) throw Exception("Not connected");
 
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
     var data = decodedToken["roles"];
-    if (data == null) return User(type: UserType.swaggerGeneratedUnknown);
+    if (data == null) return Person(type: UserType.swaggerGeneratedUnknown);
 
-    UserType role = UserType.values[int.parse(data)];
-    return User(type: role);
+    var name = decodedToken["name"];
+    if(name.isEmpty) name = null;
+
+    var surname = decodedToken["surname"];
+
+    if(surname.isEmpty) surname = null;
+
+    // the enum start at 0 so we add 1
+    UserType role = UserType.values[int.parse(data) + 1];
+    return Person(type: role, name: name, surname: surname);
   }
 
   /// Init the account for a first connection
-  Future<void> initAccount({required String url, required Person person}) async {
+  Future<void> initAccount({required String url, required PersonCreation person}) async {
     await _account.setUrl(url);
     await ApiService(_account).createAccount(person);
   }
 
-   Future<void> createAccount({required Person person}) {
+  Future<void> createAccount({required PersonCreation person}) {
     return ApiService(_account).createAccount(person);
   }
 

@@ -29,12 +29,14 @@ public class TokenService
         return new PasswordHasher<User>().VerifyHashedPassword(User.Empty, hash, password);
     }
 
-    public string GetToken(User user)
+    public string GetToken(User user, Person person)
     {
         var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.NameId, user.Identifier),
                 new Claim("roles", user.Type.ToString()),
+                new Claim("surname", person.Surname ?? string.Empty),
+                new Claim("name", person.Name ?? string.Empty),
              };
 
         if (user.Email != null)

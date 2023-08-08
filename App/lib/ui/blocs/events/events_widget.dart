@@ -2,30 +2,25 @@ import 'package:flutter/material.dart';
 
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../loader.dart';
 import 'events_graph.dart';
 
 class EventWidget extends StatefulWidget {
   final EventType type;
   final DateTimeRange date;
+  final int? person;
 
-  const EventWidget(this.type, this.date, {super.key});
+  const EventWidget(this.type, this.date, {super.key, this.person});
 
   @override
   State<EventWidget> createState() => _EventWidgetState();
 }
 
 class _EventWidgetState extends State<EventWidget> {
-  late List<Event>? _events;
-  late DateTimeRange? _date;
+  List<Event>? _events = null;
+  DateTimeRange? _date = null;
 
   _EventWidgetState();
-
-  @override
-  void initState() {
-    _events = null;
-    _date = null;
-    super.initState();
-  }
 
   int _sort(Event m1, Event m2) {
     var a = m1.stop;
@@ -57,7 +52,7 @@ class _EventWidgetState extends State<EventWidget> {
     var start = DateTime(date.start.year, date.start.month, date.start.day);
     var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-    _events = await AppState.eventLogic?.getEvent(id, start, end);
+    _events = await AppState.eventLogic?.getEvent(id, start, end, person: widget.person);
     _events?.sort(_sort);
     return _events;
   }
@@ -65,46 +60,44 @@ class _EventWidgetState extends State<EventWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: FutureBuilder(
-          future: _getData(widget.type.id),
-          builder: (ctx, snapshot) {
-            // Checking if future is resolved
-            if (snapshot.connectionState == ConnectionState.done) {
-              // If we got an error
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    '${snapshot.error} occurred',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                );
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Text(widget.type.name ?? "", style: Theme.of(context).textTheme.titleLarge),
+              ],
+            ),
+            FutureBuilder(
+                future: _getData(widget.type.id),
+                builder: (ctx, snapshot) {
+                  // Checking if future is resolved
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    // If we got an error
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text(
+                          '${snapshot.error} occurred',
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      );
 
-                // if we got our data
-              } else if (snapshot.hasData) {
-                // Extracting data from snapshot object
-                final events = snapshot.data as List<Event>;
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    
-                    children: [
-                      Row(
-                        children: [
-                          Text(widget.type.name ?? "", style: Theme.of(context).textTheme.titleLarge),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: EventGraph(events, widget.date),
-                      )
-                    ],
-                  ),
-                );
-              }
-            }
-            return const Center(child: SizedBox(width: 50, height: 50, child: CircularProgressIndicator()));
-          }),
+                      // if we got our data
+                    }
+
+                    final events = (snapshot.hasData) ? snapshot.data as List<Event> : List<Event>.empty();
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: EventGraph(events, widget.date),
+                    );
+                  }
+                  return const HelseLoader();
+                })
+          ],
+        ),
+      ),
     );
   }
 }

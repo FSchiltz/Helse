@@ -30,7 +30,7 @@ public static class AuthLogic
     /// <param name="token"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
-    public static async Task<IResult> StatusAsync(AppDataConnection db, TokenService token, ILoggerFactory logger)
+    public static async Task<IResult> StatusAsync(AppDataConnection db)
     {
         var count = await db.GetTable<User>().CountAsync();
         return TypedResults.Ok(new Status(count > 0, null));
@@ -43,20 +43,24 @@ public static class AuthLogic
     public static async Task<IResult> AuthAsync(Connection user, AppDataConnection db, TokenService token, ILoggerFactory logger)
     {
         // auth
-        var fromDb = await db.GetTable<User>().FirstOrDefaultAsync(x => x.Identifier == user.User);
+        var fromDb = await (from u in db.GetTable<User>()
+                            join p in db.GetTable<Data.Models.Person>() on u.PersonId equals p.Id
+                            where u.Identifier == user.User
+                            select new {u, p})
+                            .FirstOrDefaultAsync();
 
         if (fromDb is null)
             return TypedResults.Unauthorized();
 
         // generate the token
-        switch (TokenService.Verify(user.Password, fromDb.Password))
+        switch (TokenService.Verify(user.Password, fromDb.u.Password))
         {
             case PasswordVerificationResult.Success:
                 // Success, nothing to do
                 break;
             case PasswordVerificationResult.SuccessRehashNeeded:
                 // Sucess but the password needs an update
-                await UpdatePasswordAsync(fromDb.Id, user.Password, db);
+                await UpdatePasswordAsync(fromDb.u.Id, user.Password, db);
                 break;
             case PasswordVerificationResult.Failed:
             default:
@@ -64,7 +68,7 @@ public static class AuthLogic
                 return TypedResults.Unauthorized();
         }
 
-        return TypedResults.Ok(token.GetToken(fromDb));
+        return TypedResults.Ok(token.GetToken(fromDb.u, fromDb.p));
     }
 
     public async static Task UpdatePasswordAsync(long user, string password, AppDataConnection db)
@@ -83,14 +87,14 @@ public static class AuthLogic
     /// <param name="time"></param>
     /// <param name="db"></param>
     /// <returns></returns>
-    public async static Task<Right?> HasRightAsync(long user, long person, RightType type, DateTime time, AppDataConnection db)
-     => await db.GetTable<Right>()
+    public async static Task<Api.Models.Right?> HasRightAsync(long user, long person, RightType type, DateTime time, AppDataConnection db)
+     => (await db.GetTable<Data.Models.Right>()
         .Where(x => x.UserId == user
             && x.PersonId == person
             && x.Type == (int)type
             && x.Start <= time
-            && (x.End == null || x.End >= time))
-        .FirstOrDefaultAsync();
+            && (x.Stop == null || x.Stop >= time))
+        .FirstOrDefaultAsync())?.FromDb();
 
     /// <summary>
     /// Validate that the user is a caregiver with the correct right
@@ -102,16 +106,10 @@ public static class AuthLogic
     /// <returns></returns>
     internal static async Task<bool> ValidateCaregiverAsync(this AppDataConnection db, Data.Models.User user, long personId, RightType type)
     {
-        // only caregiver can get for other user
-        if (user.Type != (int)UserType.Caregiver)
-        {
-            var now = DateTime.UtcNow;
-            // check if the user has the right 
-            var right = await HasRightAsync(user.Id, personId, type, now, db);
-            if (right is null)
-                return false;
-        }
-        else
+        var now = DateTime.UtcNow;
+        // check if the user has the right 
+        var right = await HasRightAsync(user.Id, personId, type, now, db);
+        if (right is null)
             return false;
 
         return true;

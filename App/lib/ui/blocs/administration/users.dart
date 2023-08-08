@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../loader.dart';
 import 'user_add.dart';
 
 class UsersView extends StatefulWidget {
@@ -16,11 +17,14 @@ class _UsersViewState extends State<UsersView> {
 
   void _resetUsers() {
     setState(() {
-      _users = [];
+      _users = null;
+      _dummy = !_dummy;
     });
   }
 
-  Future<List<Person>?> _getData() async {
+  bool _dummy = false;
+
+  Future<List<Person>?> _getData(bool reset) async {
     // if the users has not changed, no call to the backend
     if (_users != null) return _users;
 
@@ -31,7 +35,7 @@ class _UsersViewState extends State<UsersView> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _getData(),
+        future: _getData(_dummy),
         builder: (context, snapshot) {
           // Checking if future is resolved
           if (snapshot.connectionState == ConnectionState.done) {
@@ -80,6 +84,10 @@ class _UsersViewState extends State<UsersView> {
                               columns: const [
                                 DataColumn(
                                     label: Expanded(
+                                  child: Text("Type"),
+                                )),
+                                DataColumn(
+                                    label: Expanded(
                                   child: Text("Username"),
                                 )),
                                 DataColumn(
@@ -94,13 +102,19 @@ class _UsersViewState extends State<UsersView> {
                                     label: Expanded(
                                   child: Text("Surname"),
                                 )),
+                                DataColumn(
+                                    label: Expanded(
+                                  child: Text("Rights"),
+                                ))
                               ],
                               rows: users
                                   .map((user) => DataRow(cells: [
+                                        DataCell(Text((user.type ?? UserType.user).toString())),
                                         DataCell(Text(user.userName ?? "")),
                                         DataCell(Text(user.email ?? "")),
                                         DataCell(Text(user.name ?? "")),
                                         DataCell(Text(user.surname ?? "")),
+                                        DataCell(Text(user.rights.toString()))
                                       ]))
                                   .toList(),
                             ),
@@ -113,7 +127,7 @@ class _UsersViewState extends State<UsersView> {
               );
             }
           }
-          return const Center(child: SizedBox(width: 50, height: 50, child: CircularProgressIndicator()));
+          return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
         });
   }
 }

@@ -1,10 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:helse/logic/event.dart';
 
+import '../logic/event.dart';
 import '../main.dart';
 import '../services/account.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';
+import 'blocs/administration/user_form.dart';
+import 'blocs/loader.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({
@@ -23,14 +25,19 @@ class _LoginState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final textController = TextEditingController();
 
-  String? _url;
-  String? _user;
-  String? _password;
+  final TextEditingController _controllerUsername = TextEditingController();
+  final TextEditingController _controllerName = TextEditingController();
+  final TextEditingController _controllerSurname = TextEditingController();
+  final TextEditingController _controllerEmail = TextEditingController();
+  final TextEditingController _controllerPassword = TextEditingController();
+  final TextEditingController _controllerConFirmPassword = TextEditingController();
+
   SubmissionStatus _status = SubmissionStatus.initial;
   SubmissionStatus _loaded = SubmissionStatus.initial;
   bool? _isInit;
-  bool _obscurePassword = false;
+  bool _obscurePassword = true;
   String? _error;
+  String? _url;
 
   @override
   initState() {
@@ -40,81 +47,109 @@ class _LoginState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        body: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Align(
+        body: SingleChildScrollView(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
               child: Container(
                 constraints: const BoxConstraints(maxWidth: 500),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 150),
-                    Text("Welcome back", style: Theme.of(context).textTheme.headlineLarge),
-                    const SizedBox(height: 10),
-                    Text("Login to your account", style: Theme.of(context).textTheme.bodyMedium),
-                    const SizedBox(height: 60),
-                    TextField(
-                      controller: textController,
-                      onChanged: _urlChanged,
-                      key: const Key('loginForm_urlInput_textField'),
-                      decoration: InputDecoration(
-                        labelText: 'Server url',
-                        prefixIcon: const Icon(Icons.home_sharp),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Text("Welcome ${_isInit == true ? "Back" : ""}", style: Theme.of(context).textTheme.headlineLarge),
+                      const SizedBox(height: 20),
+                      TextField(
+                        controller: textController,
+                        onChanged: _urlChanged,
+                        key: const Key('loginForm_urlInput_textField'),
+                        decoration: InputDecoration(
+                          labelText: 'Server url',
+                          prefixIcon: const Icon(Icons.home_sharp),
+                          prefixIconColor: theme.primary,
+                          filled: true,
+                          fillColor: theme.background,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(color: theme.primary),
+                          ),
+                          errorText: _status == SubmissionStatus.failure ? 'invalid url' : null,
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        errorText: _status == SubmissionStatus.failure ? 'invalid url' : null,
                       ),
-                    ),
-                    const SizedBox(height: 60),
-                    (_loaded == SubmissionStatus.inProgress)
-                        ? const CircularProgressIndicator()
-                        : (_loaded == SubmissionStatus.success)
-                            ? Column(children: [
-                                (_isInit == true)
-                                    ? Column(
-                                        children: [
-                                          _UsernameInput(setUser),
-                                          const SizedBox(height: 10),
-                                          _PasswordInput(setPassword, togglePasswordVisibility, _obscurePassword),
-                                        ],
-                                      )
-                                    : Column(
-                                        children: [
-                                          Text("Create your account", style: Theme.of(context).textTheme.headlineLarge),
-                                          const SizedBox(height: 60),
-                                          _UsernameInput(setUser),
-                                          const SizedBox(height: 10),
-                                          _PasswordInput(setPassword, togglePasswordVisibility, _obscurePassword),
-                                        ],
-                                      ),
-                                const SizedBox(height: 60),
-                                _status == SubmissionStatus.inProgress
-                                    ? const CircularProgressIndicator()
-                                    : ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          minimumSize: const Size.fromHeight(50),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(20),
-                                          ),
+                      const SizedBox(height: 20),
+                      (_loaded == SubmissionStatus.inProgress)
+                          ? const HelseLoader()
+                          : (_loaded == SubmissionStatus.success)
+                              ? Column(children: [
+                                  (_isInit == true)
+                                      ? Column(
+                                          children: [
+                                            UserNameInput(
+                                              controller: _controllerUsername,
+                                              validate: validateUserName,
+                                            ),
+                                            const SizedBox(height: 10),
+                                            PasswordInput(
+                                              controller: _controllerPassword,
+                                              toggleCallback: togglePasswordVisibility,
+                                              obscurePassword: _obscurePassword,
+                                            ),
+                                          ],
+                                        )
+                                      : Column(
+                                          children: [
+                                            Text("Create your account", style: Theme.of(context).textTheme.headlineLarge),
+
+                                            Text("This is the admin account for the server", style: Theme.of(context).textTheme.bodyLarge),
+                                            const SizedBox(height: 20),
+                                            UserForm(
+                                              UserType.admin,
+                                              controllerUsername: _controllerUsername,
+                                              controllerEmail: _controllerEmail,
+                                              controllerPassword: _controllerPassword,
+                                              controllerConFirmPassword: _controllerConFirmPassword,
+                                              controllerName: _controllerName,
+                                              controllerSurname: _controllerSurname,
+                                            )
+                                          ],
                                         ),
-                                        key: const Key('loginForm_continue_raisedButton'),
-                                        onPressed: _submit,
-                                        child: const Text('Login'),
-                                      )
-                              ])
-                            : Container(),
-                  ],
+                                  const SizedBox(height: 60),
+                                  _status == SubmissionStatus.inProgress
+                                      ? const HelseLoader()
+                                      : ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            minimumSize: const Size.fromHeight(50),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                          key: const Key('loginForm_continue_raisedButton'),
+                                          onPressed: _submit,
+                                          child: Text(
+                                            _isInit == true ? 'Login' : 'Create',
+                                            style: Theme.of(context).textTheme.titleLarge,
+                                          ),
+                                        )
+                                ])
+                              : Container(),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         ));
+  }
+
+  String? validateUserName(value) {
+    if (value == null || value.isEmpty) {
+      return "Please enter a username.";
+    }
+
+    return null;
   }
 
   void _urlChanged(url) async {
@@ -164,9 +199,9 @@ class _LoginState extends State<LoginPage> {
     var url = _url;
     if (init == null || url == null) return;
 
-    var user = _user;
-    var password = _password;
-    if (user == null || password == null) return;
+    var user = _controllerUsername.text;
+    var password = _controllerPassword.text;
+    if (user.isEmpty || password.isEmpty) return;
 
     setState(() {
       _status = SubmissionStatus.inProgress;
@@ -176,7 +211,7 @@ class _LoginState extends State<LoginPage> {
       if (init) {
         await AppState.authenticationLogic?.logIn(url: url, username: user, password: password);
       } else {
-        var person = Person(type: UserType.admin, userName: _user, password: _password);
+        var person = PersonCreation(type: UserType.admin, userName: user, password: password, name: _controllerName.text, surname: _controllerSurname.text);
         await AppState.authenticationLogic?.initAccount(url: url, person: person);
 
         // after a succes, we auto login
@@ -198,14 +233,6 @@ class _LoginState extends State<LoginPage> {
         _obscurePassword = !_obscurePassword;
       });
 
-  void setPassword(String? password) => setState(() {
-        _password = password;
-      });
-
-  void setUser(String? value) => setState(() {
-        _user = value;
-      });
-
   _checkState() {
     if (_status == SubmissionStatus.failure) {
       ScaffoldMessenger.of(context)
@@ -220,72 +247,5 @@ class _LoginState extends State<LoginPage> {
           const SnackBar(content: Text('User created, welcome')),
         );
     }
-  }
-}
-
-class _UsernameInput extends StatelessWidget {
-  final void Function(String? value) callback;
-
-  const _UsernameInput(this.callback);
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      key: const Key('loginForm_usernameInput_textField'),
-      onChanged: callback,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return "Please enter a username.";
-        }
-
-        return null;
-      },
-      decoration: InputDecoration(
-        labelText: 'username',
-        prefixIcon: const Icon(Icons.person_sharp),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-    );
-  }
-}
-
-class _PasswordInput extends StatelessWidget {
-  final void Function(String?) callback;
-  final void Function() iconCallback;
-  final bool obscurePassword;
-
-  const _PasswordInput(this.callback, this.iconCallback, this.obscurePassword);
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      key: const Key('loginForm_passwordInput_textField'),
-      onChanged: callback,
-      obscureText: !obscurePassword,
-      keyboardType: TextInputType.visiblePassword,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return "Please enter a username.";
-        }
-
-        return null;
-      },
-      decoration: InputDecoration(
-        labelText: 'password',
-        prefixIcon: const Icon(Icons.password_sharp),
-        suffixIcon: IconButton(onPressed: iconCallback, icon: obscurePassword ? const Icon(Icons.visibility_sharp) : const Icon(Icons.visibility_off_sharp)),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-    );
   }
 }

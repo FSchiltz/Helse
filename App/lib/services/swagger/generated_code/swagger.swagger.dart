@@ -320,7 +320,7 @@ abstract class Swagger extends ChopperService {
       {@Path('id') required int? id});
 
   ///
-  Future<chopper.Response> apiPersonPost({required Person? body}) {
+  Future<chopper.Response> apiPersonPost({required PersonCreation? body}) {
     return _apiPersonPost(body: body);
   }
 
@@ -329,7 +329,8 @@ abstract class Swagger extends ChopperService {
     path: '/api/person',
     optionalBody: true,
   )
-  Future<chopper.Response> _apiPersonPost({@Body() required Person? body});
+  Future<chopper.Response> _apiPersonPost(
+      {@Body() required PersonCreation? body});
 
   ///
   Future<chopper.Response<List<Person>>> apiPersonGet() {
@@ -341,6 +342,37 @@ abstract class Swagger extends ChopperService {
   ///
   @Get(path: '/api/person')
   Future<chopper.Response<List<Person>>> _apiPersonGet();
+
+  ///
+  Future<chopper.Response<List<Person>>> apiPersonPatientsGet() {
+    generatedMapping.putIfAbsent(Person, () => Person.fromJsonFactory);
+
+    return _apiPersonPatientsGet();
+  }
+
+  ///
+  @Get(path: '/api/person/patients')
+  Future<chopper.Response<List<Person>>> _apiPersonPatientsGet();
+
+  ///
+  ///@param personId
+  Future<chopper.Response> apiPersonRightsPersonIdPost({
+    required int? personId,
+    required List<Right>? body,
+  }) {
+    return _apiPersonRightsPersonIdPost(personId: personId, body: body);
+  }
+
+  ///
+  ///@param personId
+  @Post(
+    path: '/api/person/rights/{personId}',
+    optionalBody: true,
+  )
+  Future<chopper.Response> _apiPersonRightsPersonIdPost({
+    @Path('personId') required int? personId,
+    @Body() required List<Right>? body,
+  });
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -1007,6 +1039,8 @@ class Person {
     this.type,
     this.email,
     this.phone,
+    this.rights,
+    this.id,
   });
 
   factory Person.fromJson(Map<String, dynamic> json) => _$PersonFromJson(json);
@@ -1036,6 +1070,10 @@ class Person {
   final String? email;
   @JsonKey(name: 'phone')
   final String? phone;
+  @JsonKey(name: 'rights', defaultValue: <Right>[])
+  final List<Right>? rights;
+  @JsonKey(name: 'id')
+  final int? id;
   static const fromJsonFactory = _$PersonFromJson;
 
   @override
@@ -1063,7 +1101,11 @@ class Person {
             (identical(other.email, email) ||
                 const DeepCollectionEquality().equals(other.email, email)) &&
             (identical(other.phone, phone) ||
-                const DeepCollectionEquality().equals(other.phone, phone)));
+                const DeepCollectionEquality().equals(other.phone, phone)) &&
+            (identical(other.rights, rights) ||
+                const DeepCollectionEquality().equals(other.rights, rights)) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)));
   }
 
   @override
@@ -1080,6 +1122,8 @@ class Person {
       const DeepCollectionEquality().hash(type) ^
       const DeepCollectionEquality().hash(email) ^
       const DeepCollectionEquality().hash(phone) ^
+      const DeepCollectionEquality().hash(rights) ^
+      const DeepCollectionEquality().hash(id) ^
       runtimeType.hashCode;
 }
 
@@ -1093,7 +1137,9 @@ extension $PersonExtension on Person {
       String? password,
       enums.UserType? type,
       String? email,
-      String? phone}) {
+      String? phone,
+      List<Right>? rights,
+      int? id}) {
     return Person(
         name: name ?? this.name,
         surname: surname ?? this.surname,
@@ -1103,7 +1149,9 @@ extension $PersonExtension on Person {
         password: password ?? this.password,
         type: type ?? this.type,
         email: email ?? this.email,
-        phone: phone ?? this.phone);
+        phone: phone ?? this.phone,
+        rights: rights ?? this.rights,
+        id: id ?? this.id);
   }
 
   Person copyWithWrapped(
@@ -1115,7 +1163,9 @@ extension $PersonExtension on Person {
       Wrapped<String?>? password,
       Wrapped<enums.UserType?>? type,
       Wrapped<String?>? email,
-      Wrapped<String?>? phone}) {
+      Wrapped<String?>? phone,
+      Wrapped<List<Right>?>? rights,
+      Wrapped<int?>? id}) {
     return Person(
         name: (name != null ? name.value : this.name),
         surname: (surname != null ? surname.value : this.surname),
@@ -1125,7 +1175,245 @@ extension $PersonExtension on Person {
         password: (password != null ? password.value : this.password),
         type: (type != null ? type.value : this.type),
         email: (email != null ? email.value : this.email),
-        phone: (phone != null ? phone.value : this.phone));
+        phone: (phone != null ? phone.value : this.phone),
+        rights: (rights != null ? rights.value : this.rights),
+        id: (id != null ? id.value : this.id));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class PersonCreation {
+  PersonCreation({
+    this.name,
+    this.surname,
+    this.identifier,
+    this.birth,
+    this.userName,
+    this.password,
+    this.type,
+    this.email,
+    this.phone,
+    this.rights,
+  });
+
+  factory PersonCreation.fromJson(Map<String, dynamic> json) =>
+      _$PersonCreationFromJson(json);
+
+  static const toJsonFactory = _$PersonCreationToJson;
+  Map<String, dynamic> toJson() => _$PersonCreationToJson(this);
+
+  @JsonKey(name: 'name')
+  final String? name;
+  @JsonKey(name: 'surname')
+  final String? surname;
+  @JsonKey(name: 'identifier')
+  final String? identifier;
+  @JsonKey(name: 'birth')
+  final DateTime? birth;
+  @JsonKey(name: 'userName')
+  final String? userName;
+  @JsonKey(name: 'password')
+  final String? password;
+  @JsonKey(
+    name: 'type',
+    toJson: userTypeToJson,
+    fromJson: userTypeFromJson,
+  )
+  final enums.UserType? type;
+  @JsonKey(name: 'email')
+  final String? email;
+  @JsonKey(name: 'phone')
+  final String? phone;
+  @JsonKey(name: 'rights', defaultValue: <Right>[])
+  final List<Right>? rights;
+  static const fromJsonFactory = _$PersonCreationFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is PersonCreation &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.surname, surname) ||
+                const DeepCollectionEquality()
+                    .equals(other.surname, surname)) &&
+            (identical(other.identifier, identifier) ||
+                const DeepCollectionEquality()
+                    .equals(other.identifier, identifier)) &&
+            (identical(other.birth, birth) ||
+                const DeepCollectionEquality().equals(other.birth, birth)) &&
+            (identical(other.userName, userName) ||
+                const DeepCollectionEquality()
+                    .equals(other.userName, userName)) &&
+            (identical(other.password, password) ||
+                const DeepCollectionEquality()
+                    .equals(other.password, password)) &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.email, email) ||
+                const DeepCollectionEquality().equals(other.email, email)) &&
+            (identical(other.phone, phone) ||
+                const DeepCollectionEquality().equals(other.phone, phone)) &&
+            (identical(other.rights, rights) ||
+                const DeepCollectionEquality().equals(other.rights, rights)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(surname) ^
+      const DeepCollectionEquality().hash(identifier) ^
+      const DeepCollectionEquality().hash(birth) ^
+      const DeepCollectionEquality().hash(userName) ^
+      const DeepCollectionEquality().hash(password) ^
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(email) ^
+      const DeepCollectionEquality().hash(phone) ^
+      const DeepCollectionEquality().hash(rights) ^
+      runtimeType.hashCode;
+}
+
+extension $PersonCreationExtension on PersonCreation {
+  PersonCreation copyWith(
+      {String? name,
+      String? surname,
+      String? identifier,
+      DateTime? birth,
+      String? userName,
+      String? password,
+      enums.UserType? type,
+      String? email,
+      String? phone,
+      List<Right>? rights}) {
+    return PersonCreation(
+        name: name ?? this.name,
+        surname: surname ?? this.surname,
+        identifier: identifier ?? this.identifier,
+        birth: birth ?? this.birth,
+        userName: userName ?? this.userName,
+        password: password ?? this.password,
+        type: type ?? this.type,
+        email: email ?? this.email,
+        phone: phone ?? this.phone,
+        rights: rights ?? this.rights);
+  }
+
+  PersonCreation copyWithWrapped(
+      {Wrapped<String?>? name,
+      Wrapped<String?>? surname,
+      Wrapped<String?>? identifier,
+      Wrapped<DateTime?>? birth,
+      Wrapped<String?>? userName,
+      Wrapped<String?>? password,
+      Wrapped<enums.UserType?>? type,
+      Wrapped<String?>? email,
+      Wrapped<String?>? phone,
+      Wrapped<List<Right>?>? rights}) {
+    return PersonCreation(
+        name: (name != null ? name.value : this.name),
+        surname: (surname != null ? surname.value : this.surname),
+        identifier: (identifier != null ? identifier.value : this.identifier),
+        birth: (birth != null ? birth.value : this.birth),
+        userName: (userName != null ? userName.value : this.userName),
+        password: (password != null ? password.value : this.password),
+        type: (type != null ? type.value : this.type),
+        email: (email != null ? email.value : this.email),
+        phone: (phone != null ? phone.value : this.phone),
+        rights: (rights != null ? rights.value : this.rights));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class Right {
+  Right({
+    this.personId,
+    this.userId,
+    this.start,
+    this.stop,
+    this.type,
+  });
+
+  factory Right.fromJson(Map<String, dynamic> json) => _$RightFromJson(json);
+
+  static const toJsonFactory = _$RightToJson;
+  Map<String, dynamic> toJson() => _$RightToJson(this);
+
+  @JsonKey(name: 'personId')
+  final int? personId;
+  @JsonKey(name: 'userId')
+  final int? userId;
+  @JsonKey(name: 'start')
+  final DateTime? start;
+  @JsonKey(name: 'stop')
+  final DateTime? stop;
+  @JsonKey(
+    name: 'type',
+    toJson: rightTypeToJson,
+    fromJson: rightTypeFromJson,
+  )
+  final enums.RightType? type;
+  static const fromJsonFactory = _$RightFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is Right &&
+            (identical(other.personId, personId) ||
+                const DeepCollectionEquality()
+                    .equals(other.personId, personId)) &&
+            (identical(other.userId, userId) ||
+                const DeepCollectionEquality().equals(other.userId, userId)) &&
+            (identical(other.start, start) ||
+                const DeepCollectionEquality().equals(other.start, start)) &&
+            (identical(other.stop, stop) ||
+                const DeepCollectionEquality().equals(other.stop, stop)) &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(personId) ^
+      const DeepCollectionEquality().hash(userId) ^
+      const DeepCollectionEquality().hash(start) ^
+      const DeepCollectionEquality().hash(stop) ^
+      const DeepCollectionEquality().hash(type) ^
+      runtimeType.hashCode;
+}
+
+extension $RightExtension on Right {
+  Right copyWith(
+      {int? personId,
+      int? userId,
+      DateTime? start,
+      DateTime? stop,
+      enums.RightType? type}) {
+    return Right(
+        personId: personId ?? this.personId,
+        userId: userId ?? this.userId,
+        start: start ?? this.start,
+        stop: stop ?? this.stop,
+        type: type ?? this.type);
+  }
+
+  Right copyWithWrapped(
+      {Wrapped<int?>? personId,
+      Wrapped<int?>? userId,
+      Wrapped<DateTime?>? start,
+      Wrapped<DateTime?>? stop,
+      Wrapped<enums.RightType?>? type}) {
+    return Right(
+        personId: (personId != null ? personId.value : this.personId),
+        userId: (userId != null ? userId.value : this.userId),
+        start: (start != null ? start.value : this.start),
+        stop: (stop != null ? stop.value : this.stop),
+        type: (type != null ? type.value : this.type));
   }
 }
 
@@ -1177,6 +1465,49 @@ extension $StatusExtension on Status {
         init: (init != null ? init.value : this.init),
         error: (error != null ? error.value : this.error));
   }
+}
+
+int? rightTypeToJson(enums.RightType? rightType) {
+  return rightType?.value;
+}
+
+enums.RightType rightTypeFromJson(
+  Object? rightType, [
+  enums.RightType? defaultValue,
+]) {
+  return enums.RightType.values.firstWhereOrNull((e) => e.value == rightType) ??
+      defaultValue ??
+      enums.RightType.swaggerGeneratedUnknown;
+}
+
+List<int> rightTypeListToJson(List<enums.RightType>? rightType) {
+  if (rightType == null) {
+    return [];
+  }
+
+  return rightType.map((e) => e.value!).toList();
+}
+
+List<enums.RightType> rightTypeListFromJson(
+  List? rightType, [
+  List<enums.RightType>? defaultValue,
+]) {
+  if (rightType == null) {
+    return defaultValue ?? [];
+  }
+
+  return rightType.map((e) => rightTypeFromJson(e.toString())).toList();
+}
+
+List<enums.RightType>? rightTypeNullableListFromJson(
+  List? rightType, [
+  List<enums.RightType>? defaultValue,
+]) {
+  if (rightType == null) {
+    return defaultValue;
+  }
+
+  return rightType.map((e) => rightTypeFromJson(e.toString())).toList();
 }
 
 int? userTypeToJson(enums.UserType? userType) {

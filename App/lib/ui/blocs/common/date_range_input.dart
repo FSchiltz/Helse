@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -40,6 +39,7 @@ class DateRangeInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     return SizedBox(
       width: 220,
       height: 50,
@@ -48,14 +48,17 @@ class DateRangeInput extends StatelessWidget {
         onTap: () {
           _setDate(context, initial);
         },
-        style: Theme.of(context).textTheme.bodyMedium,
+        style: theme.textTheme.bodyMedium,
         decoration: InputDecoration(
-          prefixIcon: const Icon(Icons.edit_calendar_sharp),
+          filled: true,
+          fillColor: theme.colorScheme.background,
+          prefixIcon: Icon(
+            Icons.edit_calendar_sharp,
+            color: theme.colorScheme.primary,
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: theme.colorScheme.primary),
           ),
         ),
       ),
