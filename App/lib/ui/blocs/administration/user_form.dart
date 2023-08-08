@@ -36,13 +36,7 @@ class _UserFormState extends State<UserForm> {
 
   @override
   Widget build(BuildContext context) {
-    var iconButton = IconButton(
-        onPressed: () {
-          setState(() {
-            _obscurePassword = !_obscurePassword;
-          });
-        },
-        icon: _obscurePassword ? const Icon(Icons.visibility_sharp) : const Icon(Icons.visibility_off_sharp));
+    var iconButton = IconButton(onPressed: togglePassword, icon: _obscurePassword ? const Icon(Icons.visibility_sharp) : const Icon(Icons.visibility_off_sharp));
 
     return Column(
       children: [
@@ -77,6 +71,7 @@ class _UserFormState extends State<UserForm> {
           ),
         ),
         if (widget.type != null && widget.type != UserType.patient) ...[
+          const SizedBox(height: 10),
           TextFormField(
             controller: widget.controllerEmail,
             focusNode: _focusNodeEmail,
@@ -95,41 +90,19 @@ class _UserFormState extends State<UserForm> {
             onEditingComplete: () => _focusNodePassword.requestFocus(),
           ),
           const SizedBox(height: 10),
-          TextFormField(
+          UserNameInput(
             controller: widget.controllerUsername,
-            keyboardType: TextInputType.name,
-            decoration: InputDecoration(
-              labelText: "Username",
-              prefixIcon: const Icon(Icons.person_sharp),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            validator: validateUser,
-            onEditingComplete: () => _focusNodeEmail.requestFocus(),
+            nextFocus: _focusNodePassword,
+            validate: validateUser,
           ),
           const SizedBox(height: 10),
-          TextFormField(
+          PasswordInput(
             controller: widget.controllerPassword,
-            obscureText: _obscurePassword,
-            focusNode: _focusNodePassword,
-            keyboardType: TextInputType.visiblePassword,
-            decoration: InputDecoration(
-              labelText: "Password",
-              prefixIcon: const Icon(Icons.password_sharp),
-              suffixIcon: iconButton,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            validator: validatePassword,
-            onEditingComplete: () => _focusNodeConfirmPassword.requestFocus(),
+            nextFocus: _focusNodeConfirmPassword,
+            validate: validatePassword,
+            focus: _focusNodePassword,
+            obscurePassword: _obscurePassword,
+            toggleCallback: togglePassword,
           ),
           const SizedBox(height: 10),
           TextFormField(
@@ -153,6 +126,12 @@ class _UserFormState extends State<UserForm> {
         ],
       ],
     );
+  }
+
+  void togglePassword() {
+    setState(() {
+      _obscurePassword = !_obscurePassword;
+    });
   }
 
   String? validateConfirmPassword(String? value) {
@@ -200,5 +179,85 @@ class _UserFormState extends State<UserForm> {
     _focusNodePassword.dispose();
     _focusNodeConfirmPassword.dispose();
     super.dispose();
+  }
+}
+
+class PasswordInput extends StatelessWidget {
+  final TextEditingController controller;
+  final String? Function(String? value)? validate;
+  final FocusNode? nextFocus;
+  final FocusNode? focus;
+  final bool obscurePassword;
+  final void Function()? toggleCallback;
+
+  const PasswordInput({
+    super.key,
+    required this.controller,
+    this.nextFocus,
+    this.validate,
+    this.focus,
+    required this.obscurePassword,
+    this.toggleCallback,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    var iconButton = IconButton(onPressed: toggleCallback, icon: obscurePassword ? const Icon(Icons.visibility_sharp) : const Icon(Icons.visibility_off_sharp));
+
+    return TextFormField(
+      controller: controller,
+      obscureText: obscurePassword,
+      focusNode: focus,
+      keyboardType: TextInputType.visiblePassword,
+      decoration: InputDecoration(
+        labelText: "Password",
+        prefixIcon: const Icon(Icons.password_sharp),
+        suffixIcon: iconButton,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      validator: validate,
+      onEditingComplete: () => nextFocus?.requestFocus(),
+    );
+  }
+}
+
+class UserNameInput extends StatelessWidget {
+  final TextEditingController controller;
+  final FocusNode? focus;
+  final FocusNode? nextFocus;
+  final String? Function(String? value) validate;
+
+  const UserNameInput({
+    super.key,
+    this.focus,
+    required this.controller,
+    this.nextFocus,
+    required this.validate,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: TextInputType.name,
+      focusNode: focus,
+      decoration: InputDecoration(
+        labelText: "Username",
+        prefixIcon: const Icon(Icons.person_sharp),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      validator: validate,
+      onEditingComplete: () => nextFocus?.requestFocus(),
+    );
   }
 }
