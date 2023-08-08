@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../helpers/date.dart';
+import '../main.dart';
+import '../model/user.dart';
+import '../services/swagger/generated_code/swagger.enums.swagger.dart';
+import 'administration.dart';
+import 'blocs/common/date_range_input.dart';
+import 'blocs/imports/file_import.dart';
+import 'care_dashboard.dart';
 import 'dashboard.dart';
+import 'settings.dart';
 
 class DataModel {
   final String label;
@@ -26,32 +35,126 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  User? user;
   var selectedIndex = 0;
+  DateTimeRange date = DateHelper.now();
+
+  @override
+  void initState() {
+    super.initState();
+    _getUser();
+  }
 
   DeviceType getDevice() {
     return MediaQuery.of(context).size.width <= 800 ? DeviceType.mobile : DeviceType.desktop;
   }
 
+  void _getUser() async {
+    var model = await AppState.authenticationLogic?.getUser();
+    if (model != null) {
+      setState(() {
+        user = model;
+      });
+    }
+  }
+
+  void _setDate(DateTimeRange value) {
+    setState(() {
+      date = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget page;
-    switch (selectedIndex) {
-      case 0:
-        page = const Dashboard();
-        break;
-      default:
-        throw UnimplementedError('no widget for $selectedIndex');
-    }
+    page = switch (user?.type) {
+      UserType.user => Dashboard(date: date),
+      UserType.caregiver => CareDashBoard(date: date),
+      _ => const Center(child: CircularProgressIndicator()),
+    };
 
     return LayoutBuilder(builder: (context, constraints) {
-      return Scaffold(        
+      return Scaffold(
+        appBar: AppBar(
+          title: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Welcome', style: Theme.of(context).textTheme.displayMedium),
+          ),
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right: 20.0),
+              child: DateRangeInput(_setDate, date),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 20.0),
+              child: PopupMenuButton(
+                  icon: const Icon(Icons.menu_sharp),
+                  itemBuilder: (context) {
+                    return [
+                      const PopupMenuItem<int>(
+                        value: 0,
+                        child: ListTile(
+                          leading: Icon(Icons.upload_file_sharp),
+                          title: Text("Import"),
+                        ),
+                      ),
+                      const PopupMenuItem<int>(
+                        value: 1,
+                        child: ListTile(
+                          leading: Icon(Icons.settings_sharp),
+                          title: Text("Settings"),
+                        ),
+                      ),
+                      if (user?.type == UserType.admin)
+                        const PopupMenuItem<int>(
+                          value: 2,
+                          child: ListTile(
+                            leading: Icon(Icons.admin_panel_settings_sharp),
+                            title: Text("Administration"),
+                          ),
+                        ),
+                      const PopupMenuItem<int>(
+                        value: 3,
+                        child: ListTile(
+                          leading: Icon(Icons.logout_sharp),
+                          title: Text("Logout"),
+                        ),
+                      ),
+                    ];
+                  },
+                  onSelected: (value) {
+                    switch (value) {
+                      case 0:
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const FileImport();
+                            });
+                        break;
+                      case 1:
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const SettingsPage()),
+                        );
+                        break;
+                      case 2:
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const AdministrationPage()),
+                        );
+                        break;
+                      case 3:
+                        AppState.authenticationLogic?.logOut();
+                        break;
+                    }
+                  }),
+            ),
+          ],
+        ),
         body: Row(
-          children: [            
+          children: [
             Expanded(
-              child: Container(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                child: page,
-              ),
+              child: page,
             ),
           ],
         ),

@@ -58,12 +58,12 @@ class AuthenticationLogic {
   }
 
   /// Init the account for a first connection
-  Future<void> initAccount({required String url, required Person person}) async {
+  Future<void> initAccount({required String url, required PersonCreation person}) async {
     await _account.setUrl(url);
     await ApiService(_account).createAccount(person);
   }
 
-  Future<void> createAccount({required Person person}) {
+  Future<void> createAccount({required PersonCreation person}) {
     return ApiService(_account).createAccount(person);
   }
 

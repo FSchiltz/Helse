@@ -13,6 +13,44 @@ namespace Api.Logic;
 public static class PersonLogic
 {
     /// <summary>
+    /// Get the list of person the caller can manage
+    /// </summary>
+    /// <param name="db"></param>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public static async Task<IResult> GetPatientsAsync(AppDataConnection db, HttpContext context)
+    {
+        // get the connected user
+        var userName = context.User.GetUser();
+
+        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
+        if (user is null)
+            return TypedResults.Unauthorized();
+
+        var now = DateTime.UtcNow;
+        var persons = await (from u in db.GetTable<Data.Models.Person>()
+                             join r in db.GetTable<Data.Models.Right>() on u.Id equals r.PersonId
+                             where r.Stop == null || r.Stop >= now && r.Start <= now
+                             where r.UserId == user.Id
+                             select u).ToListAsync();
+
+        var models = persons.Select(x =>
+        {
+            return new Models.Person
+            {
+                Id = x.Id,
+                Birth = x.Birth,
+                Name = x.Name,
+                Surname = x.Surname,
+                Identifier = x.Identifier,
+                Type = Api.Models.UserType.Patient,
+            };
+        });
+
+        return TypedResults.Ok(models);
+    }
+
+    /// <summary>
     /// Get the list of users/person with their rights
     /// The caller needs to be an admin
     /// </summary>
@@ -121,7 +159,7 @@ public static class PersonLogic
         return TypedResults.NoContent();
     }
 
-    private static void ValidateUser(Models.Person user)
+    private static void ValidateUser(Models.PersonCreation user)
     {
         // validate Patient
         if (user.Name == null)
@@ -140,7 +178,7 @@ public static class PersonLogic
     /// Only admin role unless no user exists (App setup) or caregiver if the new person is only a patient(no connection)
     /// </summary>
     /// <returns></returns>
-    public static async Task<IResult> CreateAsync(Models.Person newUser, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> CreateAsync(Models.PersonCreation newUser, AppDataConnection db, HttpContext context)
     {
         ValidateUser(newUser);
 

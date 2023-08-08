@@ -74,7 +74,7 @@ class _SignupState extends State<UserAdd> {
     if (_formKey.currentState?.validate() ?? false) {
       // save the user
       await AppState.authenticationLogic?.createAccount(
-          person: Person(
+          person: PersonCreation(
         userName: _controllerUsername.text,
         name: _controllerName.text,
         surname: _controllerSurname.text,

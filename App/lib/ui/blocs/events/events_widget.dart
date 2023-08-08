@@ -15,17 +15,10 @@ class EventWidget extends StatefulWidget {
 }
 
 class _EventWidgetState extends State<EventWidget> {
-  late List<Event>? _events;
-  late DateTimeRange? _date;
+  List<Event>? _events = null;
+  DateTimeRange? _date = null;
 
   _EventWidgetState();
-
-  @override
-  void initState() {
-    _events = null;
-    _date = null;
-    super.initState();
-  }
 
   int _sort(Event m1, Event m2) {
     var a = m1.stop;

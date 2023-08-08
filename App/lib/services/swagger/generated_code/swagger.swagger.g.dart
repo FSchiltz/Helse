@@ -156,9 +156,44 @@ Person _$PersonFromJson(Map<String, dynamic> json) => Person(
               ?.map((e) => Right.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
+      id: json['id'] as int?,
     );
 
 Map<String, dynamic> _$PersonToJson(Person instance) => <String, dynamic>{
+      'name': instance.name,
+      'surname': instance.surname,
+      'identifier': instance.identifier,
+      'birth': instance.birth?.toIso8601String(),
+      'userName': instance.userName,
+      'password': instance.password,
+      'type': userTypeToJson(instance.type),
+      'email': instance.email,
+      'phone': instance.phone,
+      'rights': instance.rights?.map((e) => e.toJson()).toList(),
+      'id': instance.id,
+    };
+
+PersonCreation _$PersonCreationFromJson(Map<String, dynamic> json) =>
+    PersonCreation(
+      name: json['name'] as String?,
+      surname: json['surname'] as String?,
+      identifier: json['identifier'] as String?,
+      birth: json['birth'] == null
+          ? null
+          : DateTime.parse(json['birth'] as String),
+      userName: json['userName'] as String?,
+      password: json['password'] as String?,
+      type: userTypeFromJson(json['type']),
+      email: json['email'] as String?,
+      phone: json['phone'] as String?,
+      rights: (json['rights'] as List<dynamic>?)
+              ?.map((e) => Right.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$PersonCreationToJson(PersonCreation instance) =>
+    <String, dynamic>{
       'name': instance.name,
       'surname': instance.surname,
       'identifier': instance.identifier,

@@ -203,7 +203,7 @@ class _LoginState extends State<LoginPage> {
       if (init) {
         await AppState.authenticationLogic?.logIn(url: url, username: user, password: password);
       } else {
-        var person = Person(type: UserType.admin, userName: user, password: password, name: _controllerName.text, surname: _controllerSurname.text);
+        var person = PersonCreation(type: UserType.admin, userName: user, password: password, name: _controllerName.text, surname: _controllerSurname.text);
         await AppState.authenticationLogic?.initAccount(url: url, person: person);
 
         // after a succes, we auto login

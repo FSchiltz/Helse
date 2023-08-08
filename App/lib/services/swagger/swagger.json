@@ -574,7 +574,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Person"
+                "$ref": "#/components/schemas/PersonCreation"
               }
             }
           },
@@ -589,6 +589,31 @@
           }
         }
       },
+      "get": {
+        "tags": [
+          "PersonLogic"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Person"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/person/patients": {
       "get": {
         "tags": [
           "PersonLogic"
@@ -855,6 +880,59 @@
         "additionalProperties": false
       },
       "Person": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "surname": {
+            "type": "string",
+            "nullable": true
+          },
+          "identifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "birth": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/UserType"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "rights": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Right"
+            },
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PersonCreation": {
         "type": "object",
         "properties": {
           "name": {

@@ -29,7 +29,7 @@ class ApiService {
   }
 
   Future<Swagger> _getService({String? override}) async {
-    var url =  override ?? await _account.getUrl();
+    var url = override ?? await _account.getUrl();
     if (url == null) throw Exception("Url missing");
 
     var token = await _account.getToken();
@@ -45,7 +45,7 @@ class ApiService {
     return response.isSuccessful ? response.bodyString : null;
   }
 
-   Future<void> createAccount(Person person) async {
+  Future<void> createAccount(PersonCreation person) async {
     var api = await _getService();
 
     await _call(() => api.apiPersonPost(body: person));
@@ -53,14 +53,14 @@ class ApiService {
 
   Future<bool?> isInit(String url) async {
     try {
-    var api = await _getService(override: url);
-    var response = await api.apiStatusGet();
+      var api = await _getService(override: url);
+      var response = await api.apiStatusGet();
 
-    if (!response.isSuccessful) return null;
+      if (!response.isSuccessful) return null;
 
-    return response.body?.init;}
-    catch(_) {
-      // don't crash on this call, the user may have entered a wrong url 
+      return response.body?.init;
+    } catch (_) {
+      // don't crash on this call, the user may have entered a wrong url
       return null;
     }
   }
@@ -108,5 +108,10 @@ class ApiService {
   Future<void> import(String? file, int type) async {
     var api = await _getService();
     await _call(() => api.apiImportTypePost(body: file, type: type));
+  }
+
+  Future<List<Person>?> getPatients() async {
+    var api = await _getService();
+    return await _call(api.apiPersonPatientsGet);
   }
 }

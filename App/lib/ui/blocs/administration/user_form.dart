@@ -5,20 +5,20 @@ import '../../../services/swagger/generated_code/swagger.enums.swagger.dart';
 class UserForm extends StatefulWidget {
   final UserType? type;
 
-  final TextEditingController controllerUsername;
-  final TextEditingController controllerEmail;
-  final TextEditingController controllerPassword;
-  final TextEditingController controllerConFirmPassword;
+  final TextEditingController? controllerUsername;
+  final TextEditingController? controllerEmail;
+  final TextEditingController? controllerPassword;
+  final TextEditingController? controllerConFirmPassword;
   final TextEditingController controllerName;
   final TextEditingController controllerSurname;
 
   const UserForm(
     this.type, {
     super.key,
-    required this.controllerUsername,
-    required this.controllerEmail,
-    required this.controllerPassword,
-    required this.controllerConFirmPassword,
+    this.controllerUsername,
+    this.controllerEmail,
+    this.controllerPassword,
+    this.controllerConFirmPassword,
     required this.controllerName,
     required this.controllerSurname,
   });
@@ -140,7 +140,7 @@ class _UserFormState extends State<UserForm> {
 
     if (value == null || value.isEmpty) {
       return "Please enter password.";
-    } else if (value != widget.controllerPassword.text) {
+    } else if (value != widget.controllerPassword?.text) {
       return "Password doesn't match.";
     }
     return null;
@@ -183,7 +183,7 @@ class _UserFormState extends State<UserForm> {
 }
 
 class PasswordInput extends StatelessWidget {
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String? Function(String? value)? validate;
   final FocusNode? nextFocus;
   final FocusNode? focus;
@@ -192,7 +192,7 @@ class PasswordInput extends StatelessWidget {
 
   const PasswordInput({
     super.key,
-    required this.controller,
+    this.controller,
     this.nextFocus,
     this.validate,
     this.focus,
@@ -227,7 +227,7 @@ class PasswordInput extends StatelessWidget {
 }
 
 class UserNameInput extends StatelessWidget {
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final FocusNode? focus;
   final FocusNode? nextFocus;
   final String? Function(String? value) validate;
@@ -235,7 +235,7 @@ class UserNameInput extends StatelessWidget {
   const UserNameInput({
     super.key,
     this.focus,
-    required this.controller,
+    this.controller,
     this.nextFocus,
     required this.validate,
   });

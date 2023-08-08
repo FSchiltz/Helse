@@ -272,7 +272,7 @@ final class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _apiPersonPost({required Person? body}) {
+  Future<Response<dynamic>> _apiPersonPost({required PersonCreation? body}) {
     final Uri $url = Uri.parse('/api/person');
     final $body = body;
     final Request $request = Request(
@@ -287,6 +287,17 @@ final class _$Swagger extends Swagger {
   @override
   Future<Response<List<Person>>> _apiPersonGet() {
     final Uri $url = Uri.parse('/api/person');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<List<Person>, Person>($request);
+  }
+
+  @override
+  Future<Response<List<Person>>> _apiPersonPatientsGet() {
+    final Uri $url = Uri.parse('/api/person/patients');
     final Request $request = Request(
       'GET',
       $url,
