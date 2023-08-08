@@ -43,7 +43,7 @@ class HelseLoaderState extends State<HelseLoader> with SingleTickerProviderState
           ]).animate(controller),
           
           child: IconButton(
-            color: theme.primary,
+            color: theme.secondary,
             icon: const Icon(Icons.favorite),
             iconSize: 40,
             onPressed: () {},
