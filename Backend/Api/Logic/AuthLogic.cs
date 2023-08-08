@@ -102,16 +102,10 @@ public static class AuthLogic
     /// <returns></returns>
     internal static async Task<bool> ValidateCaregiverAsync(this AppDataConnection db, Data.Models.User user, long personId, RightType type)
     {
-        // only caregiver can get for other user
-        if (user.Type != (int)UserType.Caregiver)
-        {
-            var now = DateTime.UtcNow;
-            // check if the user has the right 
-            var right = await HasRightAsync(user.Id, personId, type, now, db);
-            if (right is null)
-                return false;
-        }
-        else
+        var now = DateTime.UtcNow;
+        // check if the user has the right 
+        var right = await HasRightAsync(user.Id, personId, type, now, db);
+        if (right is null)
             return false;
 
         return true;

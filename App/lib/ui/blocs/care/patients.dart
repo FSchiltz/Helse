@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/blocs/care/patient_dashboard.dart';
+import 'package:helse/ui/dashboard.dart';
 
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
@@ -59,7 +61,16 @@ class _PatientsState extends State<Patients> {
               final cards = persons
                   .map((p) => Card(
                         child: Row(
-                          children: [Text(p.name ?? ""), Text(p.surname ?? ""), ElevatedButton(onPressed: () {}, child: Text("view"))],
+                          children: [
+                            Text(p.name ?? ""),
+                            Text(p.surname ?? ""),
+                            IconButton(
+                              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => PatientDashboard(p))),
+                              icon: const Icon(
+                                Icons.visibility_sharp,
+                              ),
+                            ),
+                          ],
                         ),
                       ))
                   .toList();

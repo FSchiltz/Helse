@@ -20,10 +20,11 @@ public static class EventsLogic
             return TypedResults.Unauthorized();
 
         if (personId is not null && !await db.ValidateCaregiverAsync(user, personId.Value, RightType.View))
-            return TypedResults.Unauthorized();
+            return TypedResults.Forbid();
 
+        var id = personId ?? user.PersonId;
         var events = await db.GetTable<Data.Models.Event>()
-            .Where(x => x.PersonId == user.PersonId
+            .Where(x => x.PersonId == id
                 && x.Type == type
                 && x.Start <= end && start <= x.Stop)
             .ToListAsync();
@@ -50,7 +51,7 @@ public static class EventsLogic
             return TypedResults.Unauthorized();
 
         if (personId is not null && !await db.ValidateCaregiverAsync(user, personId.Value, RightType.Edit))
-            return TypedResults.Unauthorized();
+            return TypedResults.Forbid();
 
         await db.GetTable<Data.Models.Event>().InsertAsync(() => new Data.Models.Event
         {
@@ -81,7 +82,7 @@ public static class EventsLogic
             return TypedResults.NoContent();
 
         if (user.PersonId != existing.PersonId && !await db.ValidateCaregiverAsync(user, existing.PersonId, RightType.Edit))
-            return TypedResults.Unauthorized();
+            return TypedResults.Forbid();
 
         await db.GetTable<Data.Models.Event>().DeleteAsync(x => x.Id == id);
 
@@ -104,7 +105,7 @@ public static class EventsLogic
 
         if (user.Type != (int)UserType.Admin)
         {
-            return TypedResults.Unauthorized();
+            return TypedResults.Forbid();
         }
 
         await db.GetTable<Data.Models.MetricType>().InsertAsync(() => new Data.Models.MetricType
@@ -127,7 +128,7 @@ public static class EventsLogic
 
         if (user.Type != (int)UserType.Admin)
         {
-            return TypedResults.Unauthorized();
+            return TypedResults.Forbid();
         }
 
         await db.GetTable<Data.Models.EventType>()
@@ -150,7 +151,7 @@ public static class EventsLogic
 
         if (user.Type != (int)UserType.Admin)
         {
-            return TypedResults.Unauthorized();
+            return TypedResults.Forbid();
         }
 
         await db.GetTable<Data.Models.EventType>().DeleteAsync(x => x.Id == id);

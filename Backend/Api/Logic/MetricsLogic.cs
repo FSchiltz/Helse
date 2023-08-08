@@ -20,15 +20,17 @@ public static class MetricsLogic
             return TypedResults.Unauthorized();
 
         if (personId is not null && !await db.ValidateCaregiverAsync(user, personId.Value, RightType.View))
-            return TypedResults.Unauthorized();
+            return TypedResults.Forbid();
 
+        var id = personId ?? user.PersonId;
         var metrics = await db.GetTable<Data.Models.Metric>()
-            .Where(x => x.PersonId == user.PersonId
+            .Where(x => x.PersonId == id
                 && x.Type == type
                 && x.Date <= end && x.Date >= start)
             .ToListAsync();
 
-        return TypedResults.Ok(metrics.Select( x => new Metric{
+        return TypedResults.Ok(metrics.Select(x => new Metric
+        {
             Value = x.Value,
             Date = x.Date,
             Id = x.Id,
@@ -49,7 +51,7 @@ public static class MetricsLogic
             return TypedResults.Unauthorized();
 
         if (personId is not null && !await db.ValidateCaregiverAsync(user, personId.Value, RightType.Edit))
-            return TypedResults.Unauthorized();
+            return TypedResults.Forbid();
 
         await db.GetTable<Data.Models.Metric>().InsertAsync(() => new Data.Models.Metric
         {
@@ -80,7 +82,7 @@ public static class MetricsLogic
             return TypedResults.NoContent();
 
         if (user.PersonId != existing.PersonId && !await db.ValidateCaregiverAsync(user, existing.PersonId, RightType.Edit))
-            return TypedResults.Unauthorized();
+            return TypedResults.Forbid();
 
         await db.GetTable<Data.Models.Metric>().DeleteAsync(x => x.Id == id);
 

@@ -32,7 +32,8 @@ public static class PersonLogic
                              join r in db.GetTable<Data.Models.Right>() on u.Id equals r.PersonId
                              where r.Stop == null || r.Stop >= now && r.Start <= now
                              where r.UserId == user.Id
-                             select u).ToListAsync();
+                             where r.Type == (int)RightType.View
+                             select u).Distinct().ToListAsync();
 
         var models = persons.Select(x =>
         {
@@ -247,6 +248,13 @@ public static class PersonLogic
                 Start = DateTime.UtcNow,
                 PersonId = id,
                 Type = (int)Models.RightType.Edit
+            });
+            await db.GetTable<Data.Models.Right>().InsertAsync(() => new Data.Models.Right
+            {
+                UserId = userId,
+                Start = DateTime.UtcNow,
+                PersonId = id,
+                Type = (int)Models.RightType.View
             });
         }
 

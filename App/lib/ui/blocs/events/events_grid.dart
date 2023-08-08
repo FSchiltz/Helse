@@ -8,10 +8,12 @@ class EventsGrid extends StatelessWidget {
     super.key,
     required this.types,
     required this.date,
+    this.person,
   });
 
   final List<EventType> types;
   final DateTimeRange date;
+  final int? person;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class EventsGrid extends StatelessWidget {
         ? const CircularProgressIndicator()
         : ListView(
             shrinkWrap: true,
-            children: types.map((type) => EventWidget(type, date, key: Key(type.id?.toString() ?? ""))).toList(),
+            children: types.map((type) => EventWidget(type, date, key: Key(type.id?.toString() ?? ""), person: person)).toList(),
           );
   }
 }

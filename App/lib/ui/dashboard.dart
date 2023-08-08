@@ -9,7 +9,8 @@ import 'blocs/metrics/metrics_grid.dart';
 
 class Dashboard extends StatefulWidget {
   final DateTimeRange date;
-  const Dashboard({Key? key, required this.date}) : super(key: key);
+  final int? person;
+  const Dashboard({Key? key, required this.date, this.person}) : super(key: key);
 
   @override
   State<Dashboard> createState() => _DashboardState();
@@ -79,7 +80,7 @@ class _DashboardState extends State<Dashboard> {
                           showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return MetricAdd(metricTypes, _resetMetric);
+                                return MetricAdd(metricTypes, _resetMetric, person: widget.person);
                               });
                         }
                       },
@@ -87,7 +88,7 @@ class _DashboardState extends State<Dashboard> {
                 ],
               ),
             ),
-            MetricsGrid(types: metricTypes, date: widget.date),
+            MetricsGrid(types: metricTypes, date: widget.date, person: widget.person),
             const SizedBox(
               height: 10,
             ),
@@ -105,7 +106,7 @@ class _DashboardState extends State<Dashboard> {
                           showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return EventAdd(_resetEvents, eventTypes);
+                                return EventAdd(_resetEvents, eventTypes, person: widget.person);
                               });
                         }
                       },
@@ -113,7 +114,7 @@ class _DashboardState extends State<Dashboard> {
                 ],
               ),
             ),
-            EventsGrid(date: widget.date, types: eventTypes),
+            EventsGrid(date: widget.date, types: eventTypes, person: widget.person),
           ],
         ),
       ),

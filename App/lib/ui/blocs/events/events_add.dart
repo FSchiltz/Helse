@@ -8,8 +8,9 @@ import '../common/text_input.dart';
 class EventAdd extends StatefulWidget {
   final void Function() callback;
   final List<EventType> types;
+  final int? person;
 
-  const EventAdd(this.callback, this.types, {super.key});
+  const EventAdd(this.callback, this.types, {super.key, this.person});
 
   @override
   State<EventAdd> createState() => _EventAddState();
@@ -21,6 +22,29 @@ class _EventAddState extends State<EventAdd> {
   DateTime? _stop;
   String? _description;
   int? _type;
+
+  void _submit() async {
+    if (AppState.metricsLogic != null) {
+      setState(() {
+        _status = SubmissionStatus.inProgress;
+      });
+      try {
+        var metric = CreateEvent(start: _start, stop: _stop, type: _type, description: _description);
+        await AppState.eventLogic?.addEvent(metric, person: widget.person);
+
+        widget.callback.call();
+        setState(() {
+          _status = SubmissionStatus.success;
+        });
+
+        Navigator.of(context).pop();
+      } catch (_) {
+        setState(() {
+          _status = SubmissionStatus.failure;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,28 +95,7 @@ class _EventAddState extends State<EventAdd> {
                             borderRadius: BorderRadius.circular(20),
                           ),
                         ),
-                        onPressed: () async {
-                          if (AppState.metricsLogic != null) {
-                            setState(() {
-                              _status = SubmissionStatus.inProgress;
-                            });
-                            try {
-                              var metric = CreateEvent(start: _start, stop: _stop, type: _type, description: _description);
-                              await AppState.eventLogic?.addEvent(metric);
-
-                              widget.callback.call();
-                              setState(() {
-                                _status = SubmissionStatus.success;
-                              });
-
-                              Navigator.of(context).pop();
-                            } catch (_) {
-                              setState(() {
-                                _status = SubmissionStatus.failure;
-                              });
-                            }
-                          }
-                        },
+                        onPressed: _submit,
                         child: const Text('Submit'),
                       )
               ],

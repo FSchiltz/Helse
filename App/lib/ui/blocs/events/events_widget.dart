@@ -7,8 +7,9 @@ import 'events_graph.dart';
 class EventWidget extends StatefulWidget {
   final EventType type;
   final DateTimeRange date;
+  final int? person;
 
-  const EventWidget(this.type, this.date, {super.key});
+  const EventWidget(this.type, this.date, {super.key, this.person});
 
   @override
   State<EventWidget> createState() => _EventWidgetState();
@@ -50,7 +51,7 @@ class _EventWidgetState extends State<EventWidget> {
     var start = DateTime(date.start.year, date.start.month, date.start.day);
     var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-    _events = await AppState.eventLogic?.getEvent(id, start, end);
+    _events = await AppState.eventLogic?.getEvent(id, start, end, person: widget.person);
     _events?.sort(_sort);
     return _events;
   }

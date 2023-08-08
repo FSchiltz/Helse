@@ -8,8 +8,9 @@ import '../common/text_input.dart';
 class MetricAdd extends StatefulWidget {
   final List<MetricType> types;
   final void Function() callback;
+  final int? person;
 
-  const MetricAdd(this.types, this.callback, {super.key});
+  const MetricAdd(this.types, this.callback, {super.key, this.person});
 
   @override
   State<MetricAdd> createState() => _MetricAddState();
@@ -98,7 +99,7 @@ class _MetricAddState extends State<MetricAdd> {
 
       try {
         var metric = CreateMetric(date: _date, type: _type, tag: _tag, value: _value);
-        await AppState.metricsLogic?.addMetric(metric);
+        await AppState.metricsLogic?.addMetric(metric, person: widget.person);
 
         Navigator.of(context).pop();
         widget.callback();
