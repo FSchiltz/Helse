@@ -37,13 +37,9 @@ class HelseLoaderState extends State<HelseLoader> with SingleTickerProviderState
         child: FadeTransition(
           opacity: TweenSequence([
             TweenSequenceItem<double>(
-              tween: Tween<double>(begin: 1, end: 0.3).chain(CurveTween(curve: Curves.easeInOut)),
+              tween: Tween<double>(begin: 0, end: 1).chain(CurveTween(curve: Curves.easeInOut)),
               weight: 1,
-            ),
-            TweenSequenceItem<double>(
-              tween: Tween<double>(begin: 0.3, end: 1).chain(CurveTween(curve: Curves.easeInOut)),
-              weight: 1,
-            ),
+            ),            
           ]).animate(controller),
           
           child: IconButton(

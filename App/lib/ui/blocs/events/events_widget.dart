@@ -93,7 +93,7 @@ class _EventWidgetState extends State<EventWidget> {
                       child: EventGraph(events, widget.date),
                     );
                   }
-                  return const Center(child: SizedBox(width: 20, height: 20, child: HelseLoader()));
+                  return const HelseLoader();
                 })
           ],
         ),
