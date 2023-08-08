@@ -70,7 +70,7 @@ class _DashboardState extends State<Dashboard> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Text("Metrics", style: Theme.of(context).textTheme.displaySmall),
+                  Text("Metrics", style: Theme.of(context).textTheme.headlineSmall),
                   const SizedBox(
                     width: 10,
                   ),
@@ -96,7 +96,7 @@ class _DashboardState extends State<Dashboard> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Text("Events", style: Theme.of(context).textTheme.displaySmall),
+                  Text("Events", style: Theme.of(context).textTheme.headlineSmall),
                   const SizedBox(
                     width: 10,
                   ),

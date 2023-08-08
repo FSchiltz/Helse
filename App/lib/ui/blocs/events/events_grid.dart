@@ -18,7 +18,7 @@ class EventsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return types.isEmpty
-        ? const CircularProgressIndicator()
+        ? const LinearProgressIndicator()
         : ListView(
             shrinkWrap: true,
             children: types.map((type) => EventWidget(type, date, key: Key(type.id?.toString() ?? ""), person: person)).toList(),

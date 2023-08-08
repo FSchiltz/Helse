@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/blocs/care/patient_dashboard.dart';
-import 'package:helse/ui/dashboard.dart';
 
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import 'patient_add.dart';
+import 'patient_dashboard.dart';
 
 class Patients extends StatefulWidget {
   const Patients({super.key});
@@ -40,6 +39,7 @@ class _PatientsState extends State<Patients> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
     return FutureBuilder(
         future: _getData(),
         builder: (ctx, snapshot) {
@@ -60,30 +60,54 @@ class _PatientsState extends State<Patients> {
               final persons = snapshot.data as List<Person>;
               final cards = persons
                   .map((p) => Card(
-                        child: Row(
-                          children: [
-                            Text(p.name ?? ""),
-                            Text(p.surname ?? ""),
-                            IconButton(
-                              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => PatientDashboard(p))),
-                              icon: const Icon(
-                                Icons.visibility_sharp,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                children: [
+                                  Text(p.name ?? "", maxLines: 1, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyMedium),
+                                  Text(p.surname ?? "", maxLines: 1, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyMedium),
+                                ],
                               ),
-                            ),
-                          ],
+                              Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => PatientDashboard(p))),
+                                    icon: Icon(
+                                      Icons.visibility_sharp,
+                                      color: theme.primary,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      Icons.edit_sharp,
+                                      color: theme.primary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ))
                   .toList();
               cards.add(Card(
                 child: IconButton(
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return PatientAdd(_resetPatients);
-                          });
-                    },
-                    icon: const Icon(Icons.add_sharp)),
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return PatientAdd(_resetPatients);
+                        });
+                  },
+                  icon: const Icon(Icons.add_sharp),
+                  iconSize: 50,
+                  color: theme.primary,
+                ),
               ));
 
               return Padding(
@@ -91,7 +115,14 @@ class _PatientsState extends State<Patients> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Patients", style: Theme.of(context).textTheme.displaySmall),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Text("Patients", style: Theme.of(context).textTheme.headlineSmall),
+                        ],
+                      ),
+                    ),
                     Expanded(
                       child: GridView.extent(
                         shrinkWrap: true,

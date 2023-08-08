@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:helse/logic/event.dart';
-import 'package:helse/ui/blocs/administration/user_form.dart';
 
+import '../logic/event.dart';
 import '../main.dart';
 import '../services/account.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';
+import 'blocs/administration/user_form.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({
@@ -34,7 +34,7 @@ class _LoginState extends State<LoginPage> {
   SubmissionStatus _status = SubmissionStatus.initial;
   SubmissionStatus _loaded = SubmissionStatus.initial;
   bool? _isInit;
-  bool _obscurePassword = false;
+  bool _obscurePassword = true;
   String? _error;
   String? _url;
 
@@ -46,89 +46,96 @@ class _LoginState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        body: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Align(
+        body: SingleChildScrollView(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
               child: Container(
                 constraints: const BoxConstraints(maxWidth: 500),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 150),
-                    Text("Welcome back", style: Theme.of(context).textTheme.headlineLarge),
-                    const SizedBox(height: 10),
-                    Text("Login to your account", style: Theme.of(context).textTheme.bodyMedium),
-                    const SizedBox(height: 60),
-                    TextField(
-                      controller: textController,
-                      onChanged: _urlChanged,
-                      key: const Key('loginForm_urlInput_textField'),
-                      decoration: InputDecoration(
-                        labelText: 'Server url',
-                        prefixIcon: const Icon(Icons.home_sharp),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Text("Welcome ${_isInit == true ? "Back" : ""}", style: Theme.of(context).textTheme.headlineLarge),
+                      const SizedBox(height: 20),
+                      TextField(
+                        controller: textController,
+                        onChanged: _urlChanged,
+                        key: const Key('loginForm_urlInput_textField'),
+                        decoration: InputDecoration(
+                          labelText: 'Server url',
+                          prefixIcon: const Icon(Icons.home_sharp),
+                          prefixIconColor: theme.primary,
+                          filled: true,
+                          fillColor: theme.background,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(color: theme.primary),
+                          ),
+                          errorText: _status == SubmissionStatus.failure ? 'invalid url' : null,
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        errorText: _status == SubmissionStatus.failure ? 'invalid url' : null,
                       ),
-                    ),
-                    const SizedBox(height: 60),
-                    (_loaded == SubmissionStatus.inProgress)
-                        ? const CircularProgressIndicator()
-                        : (_loaded == SubmissionStatus.success)
-                            ? Column(children: [
-                                (_isInit == true)
-                                    ? Column(
-                                        children: [
-                                          UserNameInput(
-                                            controller: _controllerUsername,
-                                            validate: validateUserName,
-                                          ),
-                                          const SizedBox(height: 10),
-                                          PasswordInput(
-                                            controller: _controllerPassword,
-                                            toggleCallback: togglePasswordVisibility,
-                                            obscurePassword: _obscurePassword,
-                                          ),
-                                        ],
-                                      )
-                                    : Column(
-                                        children: [
-                                          Text("Create your account", style: Theme.of(context).textTheme.headlineLarge),
-                                          const SizedBox(height: 60),
-                                          UserForm(
-                                            UserType.admin,
-                                            controllerUsername: _controllerUsername,
-                                            controllerEmail: _controllerEmail,
-                                            controllerPassword: _controllerPassword,
-                                            controllerConFirmPassword: _controllerConFirmPassword,
-                                            controllerName: _controllerName,
-                                            controllerSurname: _controllerSurname,
-                                          )
-                                        ],
-                                      ),
-                                const SizedBox(height: 60),
-                                _status == SubmissionStatus.inProgress
-                                    ? const CircularProgressIndicator()
-                                    : ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          minimumSize: const Size.fromHeight(50),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(20),
-                                          ),
+                      const SizedBox(height: 20),
+                      (_loaded == SubmissionStatus.inProgress)
+                          ? const CircularProgressIndicator()
+                          : (_loaded == SubmissionStatus.success)
+                              ? Column(children: [
+                                  (_isInit == true)
+                                      ? Column(
+                                          children: [
+                                            UserNameInput(
+                                              controller: _controllerUsername,
+                                              validate: validateUserName,
+                                            ),
+                                            const SizedBox(height: 10),
+                                            PasswordInput(
+                                              controller: _controllerPassword,
+                                              toggleCallback: togglePasswordVisibility,
+                                              obscurePassword: _obscurePassword,
+                                            ),
+                                          ],
+                                        )
+                                      : Column(
+                                          children: [
+                                            Text("Create your account", style: Theme.of(context).textTheme.headlineLarge),
+
+                                            Text("This is the admin account for the server", style: Theme.of(context).textTheme.bodyLarge),
+                                            const SizedBox(height: 20),
+                                            UserForm(
+                                              UserType.admin,
+                                              controllerUsername: _controllerUsername,
+                                              controllerEmail: _controllerEmail,
+                                              controllerPassword: _controllerPassword,
+                                              controllerConFirmPassword: _controllerConFirmPassword,
+                                              controllerName: _controllerName,
+                                              controllerSurname: _controllerSurname,
+                                            )
+                                          ],
                                         ),
-                                        key: const Key('loginForm_continue_raisedButton'),
-                                        onPressed: _submit,
-                                        child: const Text('Login'),
-                                      )
-                              ])
-                            : Container(),
-                  ],
+                                  const SizedBox(height: 60),
+                                  _status == SubmissionStatus.inProgress
+                                      ? const CircularProgressIndicator()
+                                      : ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            minimumSize: const Size.fromHeight(50),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                          key: const Key('loginForm_continue_raisedButton'),
+                                          onPressed: _submit,
+                                          child: Text(
+                                            _isInit == true ? 'Login' : 'Create',
+                                            style: Theme.of(context).textTheme.titleLarge,
+                                          ),
+                                        )
+                                ])
+                              : Container(),
+                    ],
+                  ),
                 ),
               ),
             ),

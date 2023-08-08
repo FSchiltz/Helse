@@ -39,7 +39,7 @@ class _SignupState extends State<UserAdd> {
             ),
           ),
           onPressed: submit,
-          child: const Text("Register"),
+          child: const Text("Create"),
         ),
       ],
       content: Form(
@@ -121,17 +121,20 @@ class _TypeInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
+
     return DropdownButtonFormField(
       onChanged: callback,
       items: types.map((type) => DropdownMenuItem(value: type, child: Text(type.name))).toList(),
       decoration: InputDecoration(
         labelText: 'Type',
         prefixIcon: const Icon(Icons.list_sharp),
+        prefixIconColor: theme.primary,
+        filled: true,
+        fillColor: theme.background,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: theme.primary),
         ),
       ),
     );

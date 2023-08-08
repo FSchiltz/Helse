@@ -37,6 +37,7 @@ class _UserFormState extends State<UserForm> {
   @override
   Widget build(BuildContext context) {
     var iconButton = IconButton(onPressed: togglePassword, icon: _obscurePassword ? const Icon(Icons.visibility_sharp) : const Icon(Icons.visibility_off_sharp));
+    var theme = Theme.of(context).colorScheme;
 
     return Column(
       children: [
@@ -46,11 +47,12 @@ class _UserFormState extends State<UserForm> {
           decoration: InputDecoration(
             labelText: "Name",
             prefixIcon: const Icon(Icons.person_sharp),
+            prefixIconColor: theme.primary,
+            filled: true,
+            fillColor: theme.background,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: theme.primary),
             ),
           ),
           validator: validateUser,
@@ -62,11 +64,12 @@ class _UserFormState extends State<UserForm> {
           decoration: InputDecoration(
             labelText: "Surname",
             prefixIcon: const Icon(Icons.person_sharp),
+            prefixIconColor: theme.primary,
+            filled: true,
+            fillColor: theme.background,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: theme.primary),
             ),
           ),
         ),
@@ -79,11 +82,12 @@ class _UserFormState extends State<UserForm> {
             decoration: InputDecoration(
               labelText: "Email",
               prefixIcon: const Icon(Icons.email_sharp),
+              prefixIconColor: theme.primary,
+              filled: true,
+              fillColor: theme.background,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: theme.primary),
               ),
             ),
             validator: validateEmail,
@@ -114,11 +118,13 @@ class _UserFormState extends State<UserForm> {
               labelText: "Confirm Password",
               prefixIcon: const Icon(Icons.password_sharp),
               suffixIcon: iconButton,
+              suffixIconColor: theme.primary,
+              prefixIconColor: theme.primary,
+              filled: true,
+              fillColor: theme.background,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: theme.primary),
               ),
             ),
             validator: validateConfirmPassword,
@@ -203,7 +209,7 @@ class PasswordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var iconButton = IconButton(onPressed: toggleCallback, icon: obscurePassword ? const Icon(Icons.visibility_sharp) : const Icon(Icons.visibility_off_sharp));
-
+    var theme = Theme.of(context).colorScheme;
     return TextFormField(
       controller: controller,
       obscureText: obscurePassword,
@@ -212,12 +218,14 @@ class PasswordInput extends StatelessWidget {
       decoration: InputDecoration(
         labelText: "Password",
         prefixIcon: const Icon(Icons.password_sharp),
+        prefixIconColor: theme.primary,
         suffixIcon: iconButton,
+        suffixIconColor: theme.primary,
+        filled: true,
+        fillColor: theme.background,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: theme.primary),
         ),
       ),
       validator: validate,
@@ -242,6 +250,7 @@ class UserNameInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
     return TextFormField(
       controller: controller,
       keyboardType: TextInputType.name,
@@ -249,11 +258,12 @@ class UserNameInput extends StatelessWidget {
       decoration: InputDecoration(
         labelText: "Username",
         prefixIcon: const Icon(Icons.person_sharp),
+        prefixIconColor: theme.primary,
+        filled: true,
+        fillColor: theme.background,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: theme.primary),
         ),
       ),
       validator: validate,

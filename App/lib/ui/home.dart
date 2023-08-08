@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../helpers/date.dart';
 import '../main.dart';
-import '../model/user.dart';
-import '../services/swagger/generated_code/swagger.enums.swagger.dart';
+import '../services/swagger/generated_code/swagger.swagger.dart';
 import 'administration.dart';
 import 'blocs/common/date_range_input.dart';
 import 'blocs/imports/file_import.dart';
@@ -35,7 +34,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  User? user;
+  Person? user;
   var selectedIndex = 0;
   DateTimeRange date = DateHelper.now();
 
@@ -74,91 +73,186 @@ class _HomeState extends State<Home> {
     };
 
     return LayoutBuilder(builder: (context, constraints) {
+      var theme = Theme.of(context);
       return Scaffold(
-        appBar: AppBar(
+        appBar: CustomAppBar(
           title: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text('Welcome', style: Theme.of(context).textTheme.displayMedium),
+            child: Text(
+              'Welcome ${user?.surname ?? user?.name ?? ""}',
+              style: theme.textTheme.headlineMedium?.copyWith(color: theme.colorScheme.onTertiary),
+            ),
           ),
-          actions: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(right: 20.0),
-              child: DateRangeInput(_setDate, date),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 20.0),
-              child: PopupMenuButton(
-                  icon: const Icon(Icons.menu_sharp),
-                  itemBuilder: (context) {
-                    return [
-                      const PopupMenuItem<int>(
-                        value: 0,
-                        child: ListTile(
-                          leading: Icon(Icons.upload_file_sharp),
-                          title: Text("Import"),
-                        ),
+          actions: PopupMenuButton(
+              icon: Icon(Icons.menu_sharp, color: theme.colorScheme.onTertiary),
+              itemBuilder: (context) {
+                return [
+                  const PopupMenuItem<int>(
+                    value: 0,
+                    child: ListTile(
+                      leading: Icon(Icons.upload_file_sharp),
+                      title: Text("Import"),
+                    ),
+                  ),
+                  const PopupMenuItem<int>(
+                    value: 1,
+                    child: ListTile(
+                      leading: Icon(Icons.settings_sharp),
+                      title: Text("Settings"),
+                    ),
+                  ),
+                  if (user?.type == UserType.admin)
+                    const PopupMenuItem<int>(
+                      value: 2,
+                      child: ListTile(
+                        leading: Icon(Icons.admin_panel_settings_sharp),
+                        title: Text("Administration"),
                       ),
-                      const PopupMenuItem<int>(
-                        value: 1,
-                        child: ListTile(
-                          leading: Icon(Icons.settings_sharp),
-                          title: Text("Settings"),
-                        ),
-                      ),
-                      if (user?.type == UserType.admin)
-                        const PopupMenuItem<int>(
-                          value: 2,
-                          child: ListTile(
-                            leading: Icon(Icons.admin_panel_settings_sharp),
-                            title: Text("Administration"),
-                          ),
-                        ),
-                      const PopupMenuItem<int>(
-                        value: 3,
-                        child: ListTile(
-                          leading: Icon(Icons.logout_sharp),
-                          title: Text("Logout"),
-                        ),
-                      ),
-                    ];
-                  },
-                  onSelected: (value) {
-                    switch (value) {
-                      case 0:
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return const FileImport();
-                            });
-                        break;
-                      case 1:
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const SettingsPage()),
-                        );
-                        break;
-                      case 2:
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const AdministrationPage()),
-                        );
-                        break;
-                      case 3:
-                        AppState.authenticationLogic?.logOut();
-                        break;
-                    }
-                  }),
-            ),
-          ],
+                    ),
+                  const PopupMenuItem<int>(
+                    value: 3,
+                    child: ListTile(
+                      leading: Icon(Icons.logout_sharp),
+                      title: Text("Logout"),
+                    ),
+                  ),
+                ];
+              },
+              onSelected: (value) {
+                switch (value) {
+                  case 0:
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const FileImport();
+                        });
+                    break;
+                  case 1:
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SettingsPage()),
+                    );
+                    break;
+                  case 2:
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const AdministrationPage()),
+                    );
+                    break;
+                  case 3:
+                    AppState.authenticationLogic?.logOut();
+                    break;
+                }
+              }),
+          child: DateRangeInput(_setDate, date),
         ),
-        body: Row(
-          children: [
-            Expanded(
-              child: page,
-            ),
-          ],
+        body: Padding(
+          padding: const EdgeInsets.only(top: 56.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: page,
+              ),
+            ],
+          ),
         ),
       );
     });
+  }
+}
+
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final double height = 80;
+  final PopupMenuButton<int> actions;
+  final Widget title;
+  final Widget child;
+
+  const CustomAppBar({super.key, required this.title, required this.actions, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        color: Colors.transparent,
+        child: Stack(fit: StackFit.loose, children: <Widget>[
+          Container(
+              color: Colors.transparent,
+              width: MediaQuery.of(context).size.width,
+              height: height,
+              child: CustomPaint(
+                painter: CustomToolbarShape(theme: Theme.of(context).colorScheme),
+              )),
+          Align(
+              alignment: const Alignment(0.0, 2.8),
+              child: Container(
+                padding: const EdgeInsets.only(left: 30, right: 30),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 20.0,
+                        // shadow
+                        spreadRadius: .5,
+                        // set effect of extending the shadow
+                        offset: Offset(
+                          0.0,
+                          5.0,
+                        ),
+                      )
+                    ],
+                  ),
+                  child: child,
+                ),
+              )),
+          Align(alignment: Alignment.topCenter, child: title),
+          Align(alignment: Alignment.topRight, child: actions),
+        ]));
+  }
+
+  @override
+  Size get preferredSize => Size.fromHeight(height);
+}
+
+class CustomToolbarShape extends CustomPainter {
+  final ColorScheme theme;
+
+  const CustomToolbarShape({required this.theme});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint();
+
+//First oval
+    Path path = Path();
+    Rect pathGradientRect = Rect.fromCircle(
+      center: Offset(size.width / 4, 0),
+      radius: size.width / 1.8,
+    );
+
+    Gradient gradient = LinearGradient(
+      colors: <Color>[
+        theme.tertiary.withOpacity(0.6),
+        theme.tertiary.withOpacity(1),
+      ],
+      stops: const [
+        0.5,
+        1.0,
+      ],
+    );
+
+    path.lineTo(-size.width / 1.4, 0);
+    path.quadraticBezierTo(size.width / 6, size.height * 2.5, size.width + size.width / 1.5, 0);
+
+    paint.color = theme.primary;
+    paint.shader = gradient.createShader(pathGradientRect);
+    paint.strokeWidth = 40;
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
   }
 }

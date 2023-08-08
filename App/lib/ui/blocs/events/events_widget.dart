@@ -59,46 +59,44 @@ class _EventWidgetState extends State<EventWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: FutureBuilder(
-          future: _getData(widget.type.id),
-          builder: (ctx, snapshot) {
-            // Checking if future is resolved
-            if (snapshot.connectionState == ConnectionState.done) {
-              // If we got an error
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    '${snapshot.error} occurred',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                );
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Text(widget.type.name ?? "", style: Theme.of(context).textTheme.titleLarge),
+              ],
+            ),
+            FutureBuilder(
+                future: _getData(widget.type.id),
+                builder: (ctx, snapshot) {
+                  // Checking if future is resolved
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    // If we got an error
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text(
+                          '${snapshot.error} occurred',
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      );
 
-                // if we got our data
-              } else if (snapshot.hasData) {
-                // Extracting data from snapshot object
-                final events = snapshot.data as List<Event>;
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    
-                    children: [
-                      Row(
-                        children: [
-                          Text(widget.type.name ?? "", style: Theme.of(context).textTheme.titleLarge),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: EventGraph(events, widget.date),
-                      )
-                    ],
-                  ),
-                );
-              }
-            }
-            return const Center(child: SizedBox(width: 50, height: 50, child: CircularProgressIndicator()));
-          }),
+                      // if we got our data
+                    }
+
+                    final events = (snapshot.hasData) ? snapshot.data as List<Event> : List<Event>.empty();
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: EventGraph(events, widget.date),
+                    );
+                  }
+                  return const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator()));
+                })
+          ],
+        ),
+      ),
     );
   }
 }

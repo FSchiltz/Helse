@@ -23,7 +23,7 @@ class CareDashBoard extends StatelessWidget {
             Flexible(
               child: TabBarView(
                 children: [
-                  Patients(),
+                  const Patients(),
                   Dashboard(date: date),
                 ],
               ),

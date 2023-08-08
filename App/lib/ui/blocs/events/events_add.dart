@@ -52,14 +52,29 @@ class _EventAddState extends State<EventAdd> {
       backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
       scrollable: true,
       title: const Text("New Event"),
+      actions: [
+        SizedBox(
+          child: _status == SubmissionStatus.inProgress
+              ? const CircularProgressIndicator()
+              : ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  onPressed: _submit,
+                  child: const Text('Submit'),
+                ),
+        )
+      ],
       content: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Form(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(30.0),
             child: Column(
               children: [
-                Text("mannually add a new event", style: Theme.of(context).textTheme.bodyMedium),
+                Text("Manually add a new event", style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: 10),
                 _TypeInput(
                     widget.types,
@@ -85,19 +100,6 @@ class _EventAddState extends State<EventAdd> {
                     (date) => setState(() {
                           _stop = date;
                         })),
-                const SizedBox(height: 10),
-                _status == SubmissionStatus.inProgress
-                    ? const CircularProgressIndicator()
-                    : ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size.fromHeight(50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        onPressed: _submit,
-                        child: const Text('Submit'),
-                      )
               ],
             ),
           ),
@@ -115,17 +117,19 @@ class _TypeInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
     return DropdownButtonFormField(
       onChanged: callback,
       items: types.map((type) => DropdownMenuItem(value: type.id, child: Text(type.name ?? ""))).toList(),
       decoration: InputDecoration(
         labelText: 'Type',
         prefixIcon: const Icon(Icons.list_sharp),
+        prefixIconColor: theme.primary,
+        filled: true,
+        fillColor: theme.background,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: theme.primary),
         ),
       ),
     );
@@ -183,6 +187,8 @@ class _DateInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
+
     return TextField(
       controller: _textController,
       onTap: () {
@@ -191,11 +197,12 @@ class _DateInput extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: const Icon(Icons.edit_calendar_sharp),
+        prefixIconColor: theme.primary,
+        filled: true,
+        fillColor: theme.background,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: theme.primary),
         ),
       ),
     );

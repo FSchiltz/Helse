@@ -43,20 +43,24 @@ public static class AuthLogic
     public static async Task<IResult> AuthAsync(Connection user, AppDataConnection db, TokenService token, ILoggerFactory logger)
     {
         // auth
-        var fromDb = await db.GetTable<User>().FirstOrDefaultAsync(x => x.Identifier == user.User);
+        var fromDb = await (from u in db.GetTable<User>()
+                            join p in db.GetTable<Data.Models.Person>() on u.PersonId equals p.Id
+                            where u.Identifier == user.User
+                            select new {u, p})
+                            .FirstOrDefaultAsync();
 
         if (fromDb is null)
             return TypedResults.Unauthorized();
 
         // generate the token
-        switch (TokenService.Verify(user.Password, fromDb.Password))
+        switch (TokenService.Verify(user.Password, fromDb.u.Password))
         {
             case PasswordVerificationResult.Success:
                 // Success, nothing to do
                 break;
             case PasswordVerificationResult.SuccessRehashNeeded:
                 // Sucess but the password needs an update
-                await UpdatePasswordAsync(fromDb.Id, user.Password, db);
+                await UpdatePasswordAsync(fromDb.u.Id, user.Password, db);
                 break;
             case PasswordVerificationResult.Failed:
             default:
@@ -64,7 +68,7 @@ public static class AuthLogic
                 return TypedResults.Unauthorized();
         }
 
-        return TypedResults.Ok(token.GetToken(fromDb));
+        return TypedResults.Ok(token.GetToken(fromDb.u, fromDb.p));
     }
 
     public async static Task UpdatePasswordAsync(long user, string password, AppDataConnection db)

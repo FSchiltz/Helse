@@ -31,8 +31,8 @@ class _MetricAddState extends State<MetricAdd> {
       scrollable: true,
       title: const Text("Add"),
       actions: [
-        SizedBox(
-          width: 200,
+        Container(
+          constraints: const BoxConstraints(maxWidth: 200),
           child: _status == SubmissionStatus.inProgress
               ? const CircularProgressIndicator()
               : ElevatedButton(
@@ -48,16 +48,15 @@ class _MetricAddState extends State<MetricAdd> {
                 ),
         ),
       ],
-      content: SizedBox(
-        width: 500,
+      content: Container(
+        constraints: const BoxConstraints(maxWidth: 500),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Form(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(30.0),
               child: Column(
                 children: [
-                  Text("Add manual metric", style: Theme.of(context).textTheme.bodyMedium),
+                  Text("Manually add a new metric", style: Theme.of(context).textTheme.bodyMedium),
                   const SizedBox(height: 10),
                   _TypeInput(
                       widget.types,
@@ -123,17 +122,19 @@ class _TypeInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
     return DropdownButtonFormField(
       onChanged: callback,
       items: types.map((type) => DropdownMenuItem(value: type.id, child: Text(type.name ?? ""))).toList(),
       decoration: InputDecoration(
         labelText: 'Type',
         prefixIcon: const Icon(Icons.list),
+        prefixIconColor: theme.primary,
+        filled: true,
+        fillColor: theme.background,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: theme.primary),
         ),
       ),
     );
@@ -146,7 +147,7 @@ class _DateInput extends StatelessWidget {
   final DateTime? date;
 
   _DateInput(this.date, this.callback) {
-    _textController.text = date.toString();
+    _textController.text = date?.toString() ?? "";
   }
 
   Future<void> _setDate(BuildContext context) async {
@@ -186,19 +187,21 @@ class _DateInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
     return TextField(
       controller: _textController,
       onTap: () {
         _setDate(context);
       },
       decoration: InputDecoration(
-        labelText: 'date',
+        labelText: 'Date',
         prefixIcon: const Icon(Icons.edit_calendar_outlined),
+        prefixIconColor: theme.primary,
+        filled: true,
+        fillColor: theme.background,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: theme.primary),
         ),
       ),
     );

@@ -83,13 +83,12 @@ class _PatientAddState extends State<PatientAdd> {
                 ),
         ),
       ],
-      content: SizedBox(
-        width: 500,
+      content: Container(
+        constraints: const BoxConstraints(maxWidth: 500),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Form(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(30.0),
               child: Column(
                 children: [
                   Text("Add a new patient", style: Theme.of(context).textTheme.bodyMedium),
