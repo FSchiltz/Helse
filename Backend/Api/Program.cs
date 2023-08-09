@@ -1,8 +1,7 @@
 using System.Text;
+using Api;
 using Api.Data;
 using Api.Helpers;
-using Api.Logic;
-using System.Net;
 using LinqToDB;
 using LinqToDB.AspNet;
 using LinqToDB.AspNet.Logging;
@@ -103,142 +102,8 @@ app.UseCors("corsapp");
 app.UseAuthentication();
 app.UseAuthorization();
 
-
 var api = app.MapGroup("/api");
-/* User endpoints */
-api.MapPost("/auth", AuthLogic.AuthAsync)
-.AllowAnonymous()
-.WithDescription("Get a connection token")
-.Produces<string>((int)HttpStatusCode.OK)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-api.MapGet("/status", AuthLogic.StatusAsync)
-.AllowAnonymous()
-.WithDescription("Check if the server install is ready")
-.Produces<Status>((int)HttpStatusCode.OK)
-.WithOpenApi();
-
-var person = api.MapGroup("/person");
-
-person.MapPost("/", PersonLogic.CreateAsync)
-.AllowAnonymous()
-.Produces((int)HttpStatusCode.NoContent)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-person.MapGet("/", PersonLogic.GetAsync)
-.AllowAnonymous()
-.Produces<List<Api.Models.Person>>((int)HttpStatusCode.OK)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-var patients = person.MapGroup("/patients");
-patients.MapGet("/", PersonLogic.GetPatientsAsync)
-.Produces<List<Api.Models.Person>>((int)HttpStatusCode.OK)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-patients.MapGet("/agenda", EventsLogic.GetAgendaAsync)
-.Produces<List<Api.Models.Event>>((int)HttpStatusCode.OK)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-var rights = person.MapGroup("/rights");
-rights.MapPost("/{personId}", PersonLogic.SetRight)
-.Produces((int)HttpStatusCode.NoContent)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();;
-
-/* Metrics endpoints*/
-var metrics = api.MapGroup("/metrics");
-metrics.MapGet("/", MetricsLogic.GetAsync)
-.Produces<List<Api.Models.Metric>>((int)HttpStatusCode.OK)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-metrics.MapPost("/", MetricsLogic.CreateAsync)
-.Produces((int)HttpStatusCode.NoContent)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-metrics.MapDelete("/{id}", MetricsLogic.DeleteAsync)
-.Produces((int)HttpStatusCode.NoContent)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-var metricsType = metrics.MapGroup("/type").RequireAuthorization();
-metricsType.MapPost("/", MetricsLogic.CreateTypeAsync)
-.Produces((int)HttpStatusCode.NoContent)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-metricsType.MapPut("/", MetricsLogic.UpdateTypeAsync)
-.Produces((int)HttpStatusCode.NoContent)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-metricsType.MapDelete("/{id}", MetricsLogic.DeleteTypeAsync)
-.Produces((int)HttpStatusCode.NoContent)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-metricsType.MapGet("/", MetricsLogic.GetTypeAsync)
-.Produces<List<Api.Data.Models.MetricType>>((int)HttpStatusCode.OK)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-
-/* Events endpoints*/
-var events = api.MapGroup("/events");
-events.MapGet("/", EventsLogic.GetAsync)
-.Produces<List<Api.Models.Event>>((int)HttpStatusCode.OK)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-events.MapPost("/", EventsLogic.CreateAsync)
-.Produces((int)HttpStatusCode.NoContent)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-events.MapDelete("/{id}", EventsLogic.DeleteAsync)
-.Produces((int)HttpStatusCode.NoContent)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-var eventsType = events.MapGroup("/type").RequireAuthorization();
-eventsType.MapPost("/", EventsLogic.CreateTypeAsync)
-.Produces((int)HttpStatusCode.NoContent)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-eventsType.MapPut("/", EventsLogic.UpdateTypeAsync)
-.Produces((int)HttpStatusCode.NoContent)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-eventsType.MapDelete("/{id}", EventsLogic.DeleteTypeAsync)
-.Produces((int)HttpStatusCode.NoContent)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-eventsType.MapGet("/", EventsLogic.GetTypeAsync)
-.Produces<List<Api.Data.Models.EventType>>((int)HttpStatusCode.OK)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-
-/* Importer endpoint */
-var import = api.MapGroup("/import");
-import.MapGet("/types", ImportLogic.GetTypeAsync)
-.Produces<List<FileType>>((int)HttpStatusCode.OK)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
-
-import.MapPost("/{type}", ImportLogic.PostFileAsync)
-.Produces((int)HttpStatusCode.NoContent)
-.Produces((int)HttpStatusCode.Unauthorized)
-.WithOpenApi();
+api.MapEnpoints();
 
 AppDataConnection.Init(connection, app.Logger);
 
