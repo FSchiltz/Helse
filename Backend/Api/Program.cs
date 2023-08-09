@@ -139,6 +139,11 @@ patients.MapGet("/", PersonLogic.GetPatientsAsync)
 .Produces((int)HttpStatusCode.Unauthorized)
 .WithOpenApi();
 
+patients.MapGet("/agenda", EventsLogic.GetAgendaAsync)
+.Produces<List<Api.Models.Event>>((int)HttpStatusCode.OK)
+.Produces((int)HttpStatusCode.Unauthorized)
+.WithOpenApi();
+
 var rights = person.MapGroup("/rights");
 rights.MapPost("/{personId}", PersonLogic.SetRight)
 .Produces((int)HttpStatusCode.NoContent)

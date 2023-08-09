@@ -69,6 +69,27 @@ abstract class Swagger extends ChopperService {
   Future<chopper.Response<Status>> _apiStatusGet();
 
   ///
+  ///@param start
+  ///@param end
+  Future<chopper.Response<List<Event>>> apiPersonPatientsAgendaGet({
+    required String? start,
+    required String? end,
+  }) {
+    generatedMapping.putIfAbsent(Event, () => Event.fromJsonFactory);
+
+    return _apiPersonPatientsAgendaGet(start: start, end: end);
+  }
+
+  ///
+  ///@param start
+  ///@param end
+  @Get(path: '/api/person/patients/agenda')
+  Future<chopper.Response<List<Event>>> _apiPersonPatientsAgendaGet({
+    @Query('start') required String? start,
+    @Query('end') required String? end,
+  });
+
+  ///
   ///@param type
   ///@param start
   ///@param end

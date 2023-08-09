@@ -41,6 +41,25 @@ final class _$Swagger extends Swagger {
   }
 
   @override
+  Future<Response<List<Event>>> _apiPersonPatientsAgendaGet({
+    required String? start,
+    required String? end,
+  }) {
+    final Uri $url = Uri.parse('/api/person/patients/agenda');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'start': start,
+      'end': end,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<List<Event>, Event>($request);
+  }
+
+  @override
   Future<Response<List<Event>>> _apiEventsGet({
     int? type,
     required String? start,
