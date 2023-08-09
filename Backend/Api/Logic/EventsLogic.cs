@@ -41,6 +41,35 @@ public static class EventsLogic
         }));
     }
 
+    public async static Task<IResult> GetAgendaAsync(DateTime start, DateTime end, AppDataConnection db, HttpContext context)
+    {
+        // get the connected user
+        var userName = context.User.GetUser();
+
+        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
+        if (user is null)
+            return TypedResults.Unauthorized();
+
+        var id = user.PersonId;
+        var events = await (from e in db.GetTable<Data.Models.Event>()
+                            join r in db.GetTable<Data.Models.Right>() on e.PersonId equals r.PersonId
+                            where e.Start <= end && start <= e.Stop
+                            where r.UserId == user.Id && r.Type == (int)RightType.View
+                            select e)
+            .ToListAsync();
+
+        return TypedResults.Ok(events.Select(x => new Event
+        {
+            Id = x.Id,
+            Type = x.Type,
+            Description = x.Description,
+            Stop = x.Stop,
+            File = x.FileId,
+            Start = x.Start,
+            Valid = x.Valid,
+        }));
+    }
+
     public static async Task<IResult> CreateAsync(CreateEvent e, long? personId, AppDataConnection db, HttpContext context)
     {
         // get the connected user

@@ -95,6 +95,11 @@ class ApiService {
     return await _call(() => api.apiEventsGet(type: type, start: start, end: end, personId: person));
   }
 
+  Future<List<Event>?> agenda(String? start, String? end) async {
+    var api = await _getService();
+    return await _call(() => api.apiPersonPatientsAgendaGet(start: start, end: end));
+  }
+
   Future<void> addEvents(CreateEvent event, {int? person}) async {
     var api = await _getService();
     await _call(() => api.apiEventsPost(body: event, personId: person));

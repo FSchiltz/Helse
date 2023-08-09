@@ -83,7 +83,7 @@ class _AppViewState extends State<AppView> {
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 123, 250, 123), brightness: Brightness.dark),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 0, 97, 0), brightness: Brightness.dark),
         /* dark theme settings */
       ),
       themeMode: ThemeMode.system,

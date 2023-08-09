@@ -7,12 +7,6 @@ public class Prescription
 {
     [PrimaryKey]
     public long Id { get; set; } 
-    
-    [Column, NotNull]
-    public long PersonId { get; set; }
-
-    [Association(ThisKey = nameof(PersonId), OtherKey = nameof(Data.Models.Person.Id))]
-    public Person? Person { get; set; }
 
     [Column, NotNull]
     public long UserId { get; set; }

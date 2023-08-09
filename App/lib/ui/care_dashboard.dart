@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'blocs/care/agenda.dart';
 import 'blocs/care/patients.dart';
 import 'dashboard.dart';
 
@@ -23,7 +24,14 @@ class CareDashBoard extends StatelessWidget {
             Flexible(
               child: TabBarView(
                 children: [
-                  const Patients(),
+                  Center(
+                    child: Column(
+                      children: [
+                        const Patients(),
+                        Agenda(date: date)
+                      ],
+                    ),
+                  ),
                   Dashboard(date: date),
                 ],
               ),

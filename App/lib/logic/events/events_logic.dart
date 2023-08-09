@@ -15,6 +15,10 @@ class EventsLogic {
     return (await ApiService(_account).events(type, start?.toUtc().toString(), end?.toUtc().toString(), person: person)) ?? List<Event>.empty();
   }
 
+   Future<List<Event>> agenda(DateTime? start, DateTime? end) async {
+    return (await ApiService(_account).agenda( start?.toUtc().toString(), end?.toUtc().toString()) )?? List<Event>.empty();
+  }
+
   Future<void> addEvent(CreateEvent event, {int? person}) {
     return ApiService(_account).addEvents(event, person: person);
   }

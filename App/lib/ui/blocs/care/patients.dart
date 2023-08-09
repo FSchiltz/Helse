@@ -124,14 +124,12 @@ class _PatientsState extends State<Patients> {
                         ],
                       ),
                     ),
-                    Expanded(
-                      child: GridView.extent(
-                        shrinkWrap: true,
-                        crossAxisSpacing: 4,
-                        mainAxisSpacing: 4,
-                        maxCrossAxisExtent: 180.0,
-                        children: cards,
-                      ),
+                    GridView.extent(
+                      shrinkWrap: true,
+                      crossAxisSpacing: 4,
+                      mainAxisSpacing: 4,
+                      maxCrossAxisExtent: 180.0,
+                      children: cards,
                     ),
                   ],
                 ),
