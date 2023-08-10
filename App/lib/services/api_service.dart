@@ -97,7 +97,7 @@ class ApiService {
 
   Future<List<Event>?> agenda(String? start, String? end) async {
     var api = await _getService();
-    return await _call(() => api.apiPersonPatientsAgendaGet(start: start, end: end));
+    return await _call(() => api.apiPatientsAgendaGet(start: start, end: end));
   }
 
   Future<void> addEvents(CreateEvent event, {int? person}) async {
@@ -117,6 +117,21 @@ class ApiService {
 
   Future<List<Person>?> getPatients() async {
     var api = await _getService();
-    return await _call(api.apiPersonPatientsGet);
+    return await _call(api.apiPatientsGet);
+  }
+
+  Future<List<Treatement>?> getTreatments(String? start, String? end, {int? person}) async {
+    var api = await _getService();
+    return await _call(() => api.apiTreatmentGet(start: start, end: end, personId: person));
+  }
+
+  Future<void> addTreatment(CreateTreatment treatment) async {
+    var api = await _getService();
+    await _call(() => api.apiTreatmentPost(body: treatment));
+  }
+
+  Future<List<EventType>?> treatmentType() async {
+    var api = await _getService();
+    return await _call(api.apiTreatmentTypeGet);
   }
 }

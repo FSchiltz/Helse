@@ -6,6 +6,8 @@ import 'blocs/events/events_add.dart';
 import 'blocs/events/events_grid.dart';
 import 'blocs/metrics/metric_add.dart';
 import 'blocs/metrics/metrics_grid.dart';
+import 'blocs/treatments/treatment_add.dart';
+import 'blocs/treatments/treatments_grid.dart';
 
 class Dashboard extends StatefulWidget {
   final DateTimeRange date;
@@ -61,9 +63,8 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+    return SingleChildScrollView(
+      child: Center(
         child: Column(
           children: [
             Padding(
@@ -115,6 +116,29 @@ class _DashboardState extends State<Dashboard> {
               ),
             ),
             EventsGrid(date: widget.date, types: eventTypes, person: widget.person),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Text("Treatments", style: Theme.of(context).textTheme.headlineSmall),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        if (metricTypes.isNotEmpty) {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return TreatmentAdd(person: widget.person);
+                              });
+                        }
+                      },
+                      icon: const Icon(Icons.add_sharp)),
+                ],
+              ),
+            ),
+            TreatmentsGrid(date: widget.date, person: widget.person),
           ],
         ),
       ),

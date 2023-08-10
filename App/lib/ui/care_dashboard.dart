@@ -12,32 +12,33 @@ class CareDashBoard extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
-      child: SizedBox(
-        child: Column(
-          children: [
-            const TabBar(
-              tabs: [
-                Tab(icon: Icon(Icons.personal_injury_sharp)),
-                Tab(icon: Icon(Icons.monitor_heart_sharp)),
-              ],
-            ),
-            Flexible(
-              child: TabBarView(
-                children: [
-                  Center(
+      child: Column(
+        children: [
+          const TabBar(
+            tabs: [
+              Tab(icon: Icon(Icons.personal_injury_sharp)),
+              Tab(icon: Icon(Icons.monitor_heart_sharp)),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              children: [
+                SingleChildScrollView(
+                  child: Center(
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         const Patients(),
-                        Agenda(date: date)
+                        Agenda(date: date),
                       ],
                     ),
                   ),
-                  Dashboard(date: date),
-                ],
-              ),
+                ),
+                Dashboard(date: date),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

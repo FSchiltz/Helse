@@ -7,23 +7,31 @@ import '../common/date_input.dart';
 import '../common/text_input.dart';
 import '../loader.dart';
 
-class EventAdd extends StatefulWidget {
-  final void Function() callback;
-  final List<EventType> types;
+class TreatmentAdd extends StatefulWidget {
   final int? person;
 
-  const EventAdd(this.callback, this.types, {super.key, this.person});
+  const TreatmentAdd({super.key, this.person});
 
   @override
-  State<EventAdd> createState() => _EventAddState();
+  State<TreatmentAdd> createState() => _TreatementState();
 }
 
-class _EventAddState extends State<EventAdd> {
+class _TreatementState extends State<TreatmentAdd> {
   SubmissionStatus _status = SubmissionStatus.initial;
   DateTime? _start;
   DateTime? _stop;
   String? _description;
   int? _type;
+  List<EventType>? _types;
+
+  Future<List<EventType>?> _getTypes() async {
+    if (_types != null) return _types;
+
+    var model = await AppState.treatementLogic?.getTypes();
+    _types = model;
+
+    return _types;
+  }
 
   void _submit() async {
     if (AppState.metricsLogic != null) {
@@ -31,10 +39,10 @@ class _EventAddState extends State<EventAdd> {
         _status = SubmissionStatus.inProgress;
       });
       try {
-        var metric = CreateEvent(start: _start, stop: _stop, type: _type, description: _description);
-        await AppState.eventLogic?.addEvent(metric, person: widget.person);
+        var event = CreateEvent(start: _start, stop: _stop, type: _type, description: _description);
+        var treatment = CreateTreatment(events: [event], personId: widget.person);
+        await AppState.treatementLogic?.add(treatment);
 
-        widget.callback.call();
         setState(() {
           _status = SubmissionStatus.success;
         });
@@ -78,11 +86,32 @@ class _EventAddState extends State<EventAdd> {
               children: [
                 Text("Manually add a new event", style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: 10),
-                _TypeInput(
-                    widget.types,
-                    (type) => setState(() {
-                          _type = type;
-                        })),
+                FutureBuilder(
+                    future: _getTypes(),
+                    builder: (ctx, snapshot) {
+                      // Checking if future is resolved
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        // If we got an error
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Text(
+                              '${snapshot.error} occurred',
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                          );
+
+                          // if we got our data
+                        } else if (snapshot.hasData) {
+                          var types = snapshot.data as List<EventType>;
+                          return _TypeInput(
+                              types,
+                              (type) => setState(() {
+                                    _type = type;
+                                  }));
+                        }
+                      }
+                      return const HelseLoader();
+                    }),
                 const SizedBox(height: 10),
                 TextInput(Icons.description_sharp, "Description",
                     onChanged: (value) => setState(() {

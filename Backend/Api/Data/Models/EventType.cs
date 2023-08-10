@@ -2,7 +2,7 @@ using LinqToDB.Mapping;
 
 namespace Api.Data.Models;
 
-[Table( Schema = "health")]
+[Table(Schema = "health")]
 public class EventType
 {
     [PrimaryKey, Identity]
@@ -13,4 +13,8 @@ public class EventType
 
     [Column]
     public string? Description { get; set; }
+
+    // If the event is standalone or part of a treatment
+    [Column, NotNull]
+    public bool StandAlone { get; set; }
 }

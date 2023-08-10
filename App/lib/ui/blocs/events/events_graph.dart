@@ -1,7 +1,7 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 
+import '../../../helpers/date.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 
 class EventGraph extends StatelessWidget {
@@ -17,10 +17,10 @@ class EventGraph extends StatelessWidget {
             padding: const EdgeInsets.only(top: 16.0),
             child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
           )
-        : buildChart(events));
+        : buildChart(events, context));
   }
 
-  Widget buildChart(List<Event> userData) {
+  Widget buildChart(List<Event> userData,BuildContext context) {
     var chartBars = buildChartBars(userData);
     return SizedBox(
       height: chartBars.length * 29.0 + 25.0 + 4.0,
@@ -62,7 +62,7 @@ class EventGraph extends StatelessWidget {
       headerItems.add(SizedBox(
         width: 60,
         child: Tooltip(
-          message: tempDate.toString(),
+          message: DateHelper.format(tempDate),
           child: Text(
             '${tempDate.hour.toString().padLeft(2, '0')}:${tempDate.second.toString().padLeft(2, '0')}',
             textAlign: TextAlign.center,

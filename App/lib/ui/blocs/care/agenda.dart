@@ -33,44 +33,42 @@ class _AgendaState extends State<Agenda> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Text("Agenda", style: Theme.of(context).textTheme.headlineSmall),
-              ],
-            ),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text("Agenda", style: Theme.of(context).textTheme.headlineSmall),
+            ],
           ),
-          FutureBuilder(
-              future: _getData(),
-              builder: (ctx, snapshot) {
-                // Checking if future is resolved
-                if (snapshot.connectionState == ConnectionState.done) {
-                  // If we got an error
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        '${snapshot.error} occurred',
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                    );
-
-                    // if we got our data
-                  }
-
-                  final events = (snapshot.hasData) ? snapshot.data as List<Event> : List<Event>.empty();
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: EventGraph(events, widget.date),
+        ),
+        FutureBuilder(
+            future: _getData(),
+            builder: (ctx, snapshot) {
+              // Checking if future is resolved
+              if (snapshot.connectionState == ConnectionState.done) {
+                // If we got an error
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      '${snapshot.error} occurred',
+                      style: const TextStyle(fontSize: 18),
+                    ),
                   );
+
+                  // if we got our data
                 }
-                return const HelseLoader();
-              }),
-        ],
-      ),
+
+                final events = (snapshot.hasData) ? snapshot.data as List<Event> : List<Event>.empty();
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: EventGraph(events, widget.date),
+                );
+              }
+              return const HelseLoader();
+            }),
+      ],
     );
   }
 }
