@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';

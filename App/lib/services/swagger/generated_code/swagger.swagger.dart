@@ -69,27 +69,6 @@ abstract class Swagger extends ChopperService {
   Future<chopper.Response<Status>> _apiStatusGet();
 
   ///
-  ///@param start
-  ///@param end
-  Future<chopper.Response<List<Event>>> apiPersonPatientsAgendaGet({
-    required String? start,
-    required String? end,
-  }) {
-    generatedMapping.putIfAbsent(Event, () => Event.fromJsonFactory);
-
-    return _apiPersonPatientsAgendaGet(start: start, end: end);
-  }
-
-  ///
-  ///@param start
-  ///@param end
-  @Get(path: '/api/person/patients/agenda')
-  Future<chopper.Response<List<Event>>> _apiPersonPatientsAgendaGet({
-    @Query('start') required String? start,
-    @Query('end') required String? end,
-  });
-
-  ///
   ///@param type
   ///@param start
   ///@param end
@@ -341,6 +320,38 @@ abstract class Swagger extends ChopperService {
       {@Path('id') required int? id});
 
   ///
+  Future<chopper.Response<List<Person>>> apiPatientsGet() {
+    generatedMapping.putIfAbsent(Person, () => Person.fromJsonFactory);
+
+    return _apiPatientsGet();
+  }
+
+  ///
+  @Get(path: '/api/patients')
+  Future<chopper.Response<List<Person>>> _apiPatientsGet();
+
+  ///
+  ///@param start
+  ///@param end
+  Future<chopper.Response<List<Event>>> apiPatientsAgendaGet({
+    required String? start,
+    required String? end,
+  }) {
+    generatedMapping.putIfAbsent(Event, () => Event.fromJsonFactory);
+
+    return _apiPatientsAgendaGet(start: start, end: end);
+  }
+
+  ///
+  ///@param start
+  ///@param end
+  @Get(path: '/api/patients/agenda')
+  Future<chopper.Response<List<Event>>> _apiPatientsAgendaGet({
+    @Query('start') required String? start,
+    @Query('end') required String? end,
+  });
+
+  ///
   Future<chopper.Response> apiPersonPost({required PersonCreation? body}) {
     return _apiPersonPost(body: body);
   }
@@ -365,17 +376,6 @@ abstract class Swagger extends ChopperService {
   Future<chopper.Response<List<Person>>> _apiPersonGet();
 
   ///
-  Future<chopper.Response<List<Person>>> apiPersonPatientsGet() {
-    generatedMapping.putIfAbsent(Person, () => Person.fromJsonFactory);
-
-    return _apiPersonPatientsGet();
-  }
-
-  ///
-  @Get(path: '/api/person/patients')
-  Future<chopper.Response<List<Person>>> _apiPersonPatientsGet();
-
-  ///
   ///@param personId
   Future<chopper.Response> apiPersonRightsPersonIdPost({
     required int? personId,
@@ -394,6 +394,55 @@ abstract class Swagger extends ChopperService {
     @Path('personId') required int? personId,
     @Body() required List<Right>? body,
   });
+
+  ///
+  Future<chopper.Response> apiTreatmentPost({required CreateTreatment? body}) {
+    return _apiTreatmentPost(body: body);
+  }
+
+  ///
+  @Post(
+    path: '/api/treatment',
+    optionalBody: true,
+  )
+  Future<chopper.Response> _apiTreatmentPost(
+      {@Body() required CreateTreatment? body});
+
+  ///
+  ///@param start
+  ///@param end
+  ///@param personId
+  Future<chopper.Response<List<Treatement>>> apiTreatmentGet({
+    required String? start,
+    required String? end,
+    int? personId,
+  }) {
+    generatedMapping.putIfAbsent(Treatement, () => Treatement.fromJsonFactory);
+
+    return _apiTreatmentGet(start: start, end: end, personId: personId);
+  }
+
+  ///
+  ///@param start
+  ///@param end
+  ///@param personId
+  @Get(path: '/api/treatment')
+  Future<chopper.Response<List<Treatement>>> _apiTreatmentGet({
+    @Query('start') required String? start,
+    @Query('end') required String? end,
+    @Query('personId') int? personId,
+  });
+
+  ///
+  Future<chopper.Response<List<EventType>>> apiTreatmentTypeGet() {
+    generatedMapping.putIfAbsent(EventType, () => EventType.fromJsonFactory);
+
+    return _apiTreatmentTypeGet();
+  }
+
+  ///
+  @Get(path: '/api/treatment/type')
+  Future<chopper.Response<List<EventType>>> _apiTreatmentTypeGet();
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -457,6 +506,7 @@ class CreateEvent {
     this.description,
     this.start,
     this.stop,
+    this.address,
   });
 
   factory CreateEvent.fromJson(Map<String, dynamic> json) =>
@@ -473,6 +523,8 @@ class CreateEvent {
   final DateTime? start;
   @JsonKey(name: 'stop')
   final DateTime? stop;
+  @JsonKey(name: 'address')
+  final int? address;
   static const fromJsonFactory = _$CreateEventFromJson;
 
   @override
@@ -487,7 +539,9 @@ class CreateEvent {
             (identical(other.start, start) ||
                 const DeepCollectionEquality().equals(other.start, start)) &&
             (identical(other.stop, stop) ||
-                const DeepCollectionEquality().equals(other.stop, stop)));
+                const DeepCollectionEquality().equals(other.stop, stop)) &&
+            (identical(other.address, address) ||
+                const DeepCollectionEquality().equals(other.address, address)));
   }
 
   @override
@@ -499,30 +553,38 @@ class CreateEvent {
       const DeepCollectionEquality().hash(description) ^
       const DeepCollectionEquality().hash(start) ^
       const DeepCollectionEquality().hash(stop) ^
+      const DeepCollectionEquality().hash(address) ^
       runtimeType.hashCode;
 }
 
 extension $CreateEventExtension on CreateEvent {
   CreateEvent copyWith(
-      {int? type, String? description, DateTime? start, DateTime? stop}) {
+      {int? type,
+      String? description,
+      DateTime? start,
+      DateTime? stop,
+      int? address}) {
     return CreateEvent(
         type: type ?? this.type,
         description: description ?? this.description,
         start: start ?? this.start,
-        stop: stop ?? this.stop);
+        stop: stop ?? this.stop,
+        address: address ?? this.address);
   }
 
   CreateEvent copyWithWrapped(
       {Wrapped<int?>? type,
       Wrapped<String?>? description,
       Wrapped<DateTime?>? start,
-      Wrapped<DateTime?>? stop}) {
+      Wrapped<DateTime?>? stop,
+      Wrapped<int?>? address}) {
     return CreateEvent(
         type: (type != null ? type.value : this.type),
         description:
             (description != null ? description.value : this.description),
         start: (start != null ? start.value : this.start),
-        stop: (stop != null ? stop.value : this.stop));
+        stop: (stop != null ? stop.value : this.stop),
+        address: (address != null ? address.value : this.address));
   }
 }
 
@@ -601,19 +663,73 @@ extension $CreateMetricExtension on CreateMetric {
 }
 
 @JsonSerializable(explicitToJson: true)
+class CreateTreatment {
+  CreateTreatment({
+    this.events,
+    this.personId,
+  });
+
+  factory CreateTreatment.fromJson(Map<String, dynamic> json) =>
+      _$CreateTreatmentFromJson(json);
+
+  static const toJsonFactory = _$CreateTreatmentToJson;
+  Map<String, dynamic> toJson() => _$CreateTreatmentToJson(this);
+
+  @JsonKey(name: 'events', defaultValue: <CreateEvent>[])
+  final List<CreateEvent>? events;
+  @JsonKey(name: 'personId')
+  final int? personId;
+  static const fromJsonFactory = _$CreateTreatmentFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is CreateTreatment &&
+            (identical(other.events, events) ||
+                const DeepCollectionEquality().equals(other.events, events)) &&
+            (identical(other.personId, personId) ||
+                const DeepCollectionEquality()
+                    .equals(other.personId, personId)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(events) ^
+      const DeepCollectionEquality().hash(personId) ^
+      runtimeType.hashCode;
+}
+
+extension $CreateTreatmentExtension on CreateTreatment {
+  CreateTreatment copyWith({List<CreateEvent>? events, int? personId}) {
+    return CreateTreatment(
+        events: events ?? this.events, personId: personId ?? this.personId);
+  }
+
+  CreateTreatment copyWithWrapped(
+      {Wrapped<List<CreateEvent>?>? events, Wrapped<int?>? personId}) {
+    return CreateTreatment(
+        events: (events != null ? events.value : this.events),
+        personId: (personId != null ? personId.value : this.personId));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class Event {
   Event({
-    this.id,
-    this.person,
-    this.user,
-    this.file,
-    this.treatment,
     this.type,
     this.description,
     this.start,
     this.stop,
-    this.valid,
     this.address,
+    this.user,
+    this.file,
+    this.treatment,
+    this.id,
+    this.person,
+    this.valid,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
@@ -621,16 +737,6 @@ class Event {
   static const toJsonFactory = _$EventToJson;
   Map<String, dynamic> toJson() => _$EventToJson(this);
 
-  @JsonKey(name: 'id')
-  final int? id;
-  @JsonKey(name: 'person')
-  final int? person;
-  @JsonKey(name: 'user')
-  final int? user;
-  @JsonKey(name: 'file')
-  final int? file;
-  @JsonKey(name: 'treatment')
-  final int? treatment;
   @JsonKey(name: 'type')
   final int? type;
   @JsonKey(name: 'description')
@@ -639,27 +745,26 @@ class Event {
   final DateTime? start;
   @JsonKey(name: 'stop')
   final DateTime? stop;
-  @JsonKey(name: 'valid')
-  final bool? valid;
   @JsonKey(name: 'address')
   final int? address;
+  @JsonKey(name: 'user')
+  final int? user;
+  @JsonKey(name: 'file')
+  final int? file;
+  @JsonKey(name: 'treatment')
+  final int? treatment;
+  @JsonKey(name: 'id')
+  final int? id;
+  @JsonKey(name: 'person')
+  final int? person;
+  @JsonKey(name: 'valid')
+  final bool? valid;
   static const fromJsonFactory = _$EventFromJson;
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is Event &&
-            (identical(other.id, id) ||
-                const DeepCollectionEquality().equals(other.id, id)) &&
-            (identical(other.person, person) ||
-                const DeepCollectionEquality().equals(other.person, person)) &&
-            (identical(other.user, user) ||
-                const DeepCollectionEquality().equals(other.user, user)) &&
-            (identical(other.file, file) ||
-                const DeepCollectionEquality().equals(other.file, file)) &&
-            (identical(other.treatment, treatment) ||
-                const DeepCollectionEquality()
-                    .equals(other.treatment, treatment)) &&
             (identical(other.type, type) ||
                 const DeepCollectionEquality().equals(other.type, type)) &&
             (identical(other.description, description) ||
@@ -669,10 +774,22 @@ class Event {
                 const DeepCollectionEquality().equals(other.start, start)) &&
             (identical(other.stop, stop) ||
                 const DeepCollectionEquality().equals(other.stop, stop)) &&
-            (identical(other.valid, valid) ||
-                const DeepCollectionEquality().equals(other.valid, valid)) &&
             (identical(other.address, address) ||
-                const DeepCollectionEquality().equals(other.address, address)));
+                const DeepCollectionEquality()
+                    .equals(other.address, address)) &&
+            (identical(other.user, user) ||
+                const DeepCollectionEquality().equals(other.user, user)) &&
+            (identical(other.file, file) ||
+                const DeepCollectionEquality().equals(other.file, file)) &&
+            (identical(other.treatment, treatment) ||
+                const DeepCollectionEquality()
+                    .equals(other.treatment, treatment)) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.person, person) ||
+                const DeepCollectionEquality().equals(other.person, person)) &&
+            (identical(other.valid, valid) ||
+                const DeepCollectionEquality().equals(other.valid, valid)));
   }
 
   @override
@@ -680,72 +797,72 @@ class Event {
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(id) ^
-      const DeepCollectionEquality().hash(person) ^
-      const DeepCollectionEquality().hash(user) ^
-      const DeepCollectionEquality().hash(file) ^
-      const DeepCollectionEquality().hash(treatment) ^
       const DeepCollectionEquality().hash(type) ^
       const DeepCollectionEquality().hash(description) ^
       const DeepCollectionEquality().hash(start) ^
       const DeepCollectionEquality().hash(stop) ^
-      const DeepCollectionEquality().hash(valid) ^
       const DeepCollectionEquality().hash(address) ^
+      const DeepCollectionEquality().hash(user) ^
+      const DeepCollectionEquality().hash(file) ^
+      const DeepCollectionEquality().hash(treatment) ^
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(person) ^
+      const DeepCollectionEquality().hash(valid) ^
       runtimeType.hashCode;
 }
 
 extension $EventExtension on Event {
   Event copyWith(
-      {int? id,
-      int? person,
-      int? user,
-      int? file,
-      int? treatment,
-      int? type,
+      {int? type,
       String? description,
       DateTime? start,
       DateTime? stop,
-      bool? valid,
-      int? address}) {
+      int? address,
+      int? user,
+      int? file,
+      int? treatment,
+      int? id,
+      int? person,
+      bool? valid}) {
     return Event(
-        id: id ?? this.id,
-        person: person ?? this.person,
-        user: user ?? this.user,
-        file: file ?? this.file,
-        treatment: treatment ?? this.treatment,
         type: type ?? this.type,
         description: description ?? this.description,
         start: start ?? this.start,
         stop: stop ?? this.stop,
-        valid: valid ?? this.valid,
-        address: address ?? this.address);
+        address: address ?? this.address,
+        user: user ?? this.user,
+        file: file ?? this.file,
+        treatment: treatment ?? this.treatment,
+        id: id ?? this.id,
+        person: person ?? this.person,
+        valid: valid ?? this.valid);
   }
 
   Event copyWithWrapped(
-      {Wrapped<int?>? id,
-      Wrapped<int?>? person,
-      Wrapped<int?>? user,
-      Wrapped<int?>? file,
-      Wrapped<int?>? treatment,
-      Wrapped<int?>? type,
+      {Wrapped<int?>? type,
       Wrapped<String?>? description,
       Wrapped<DateTime?>? start,
       Wrapped<DateTime?>? stop,
-      Wrapped<bool?>? valid,
-      Wrapped<int?>? address}) {
+      Wrapped<int?>? address,
+      Wrapped<int?>? user,
+      Wrapped<int?>? file,
+      Wrapped<int?>? treatment,
+      Wrapped<int?>? id,
+      Wrapped<int?>? person,
+      Wrapped<bool?>? valid}) {
     return Event(
-        id: (id != null ? id.value : this.id),
-        person: (person != null ? person.value : this.person),
-        user: (user != null ? user.value : this.user),
-        file: (file != null ? file.value : this.file),
-        treatment: (treatment != null ? treatment.value : this.treatment),
         type: (type != null ? type.value : this.type),
         description:
             (description != null ? description.value : this.description),
         start: (start != null ? start.value : this.start),
         stop: (stop != null ? stop.value : this.stop),
-        valid: (valid != null ? valid.value : this.valid),
-        address: (address != null ? address.value : this.address));
+        address: (address != null ? address.value : this.address),
+        user: (user != null ? user.value : this.user),
+        file: (file != null ? file.value : this.file),
+        treatment: (treatment != null ? treatment.value : this.treatment),
+        id: (id != null ? id.value : this.id),
+        person: (person != null ? person.value : this.person),
+        valid: (valid != null ? valid.value : this.valid));
   }
 }
 
@@ -755,6 +872,7 @@ class EventType {
     this.id,
     this.name,
     this.description,
+    this.standAlone,
   });
 
   factory EventType.fromJson(Map<String, dynamic> json) =>
@@ -769,6 +887,8 @@ class EventType {
   final String? name;
   @JsonKey(name: 'description')
   final String? description;
+  @JsonKey(name: 'standAlone')
+  final bool? standAlone;
   static const fromJsonFactory = _$EventTypeFromJson;
 
   @override
@@ -781,7 +901,10 @@ class EventType {
                 const DeepCollectionEquality().equals(other.name, name)) &&
             (identical(other.description, description) ||
                 const DeepCollectionEquality()
-                    .equals(other.description, description)));
+                    .equals(other.description, description)) &&
+            (identical(other.standAlone, standAlone) ||
+                const DeepCollectionEquality()
+                    .equals(other.standAlone, standAlone)));
   }
 
   @override
@@ -792,26 +915,31 @@ class EventType {
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(name) ^
       const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(standAlone) ^
       runtimeType.hashCode;
 }
 
 extension $EventTypeExtension on EventType {
-  EventType copyWith({int? id, String? name, String? description}) {
+  EventType copyWith(
+      {int? id, String? name, String? description, bool? standAlone}) {
     return EventType(
         id: id ?? this.id,
         name: name ?? this.name,
-        description: description ?? this.description);
+        description: description ?? this.description,
+        standAlone: standAlone ?? this.standAlone);
   }
 
   EventType copyWithWrapped(
       {Wrapped<int?>? id,
       Wrapped<String?>? name,
-      Wrapped<String?>? description}) {
+      Wrapped<String?>? description,
+      Wrapped<bool?>? standAlone}) {
     return EventType(
         id: (id != null ? id.value : this.id),
         name: (name != null ? name.value : this.name),
         description:
-            (description != null ? description.value : this.description));
+            (description != null ? description.value : this.description),
+        standAlone: (standAlone != null ? standAlone.value : this.standAlone));
   }
 }
 
@@ -1485,6 +1613,48 @@ extension $StatusExtension on Status {
     return Status(
         init: (init != null ? init.value : this.init),
         error: (error != null ? error.value : this.error));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class Treatement {
+  Treatement({
+    this.events,
+  });
+
+  factory Treatement.fromJson(Map<String, dynamic> json) =>
+      _$TreatementFromJson(json);
+
+  static const toJsonFactory = _$TreatementToJson;
+  Map<String, dynamic> toJson() => _$TreatementToJson(this);
+
+  @JsonKey(name: 'events', defaultValue: <Event>[])
+  final List<Event>? events;
+  static const fromJsonFactory = _$TreatementFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is Treatement &&
+            (identical(other.events, events) ||
+                const DeepCollectionEquality().equals(other.events, events)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(events) ^ runtimeType.hashCode;
+}
+
+extension $TreatementExtension on Treatement {
+  Treatement copyWith({List<Event>? events}) {
+    return Treatement(events: events ?? this.events);
+  }
+
+  Treatement copyWithWrapped({Wrapped<List<Event>?>? events}) {
+    return Treatement(events: (events != null ? events.value : this.events));
   }
 }
 

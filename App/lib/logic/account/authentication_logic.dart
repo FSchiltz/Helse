@@ -52,11 +52,11 @@ class AuthenticationLogic {
     if (data == null) return Person(type: UserType.swaggerGeneratedUnknown);
 
     var name = decodedToken["name"];
-    if(name.isEmpty) name = null;
+    if(name?.isEmpty ?? true) name = null;
 
     var surname = decodedToken["surname"];
 
-    if(surname.isEmpty) surname = null;
+    if(surname?.isEmpty ?? true) surname = null;
 
     // the enum start at 0 so we add 1
     UserType role = UserType.values[int.parse(data) + 1];

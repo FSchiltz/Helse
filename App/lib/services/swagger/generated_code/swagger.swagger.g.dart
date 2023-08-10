@@ -25,6 +25,7 @@ CreateEvent _$CreateEventFromJson(Map<String, dynamic> json) => CreateEvent(
           : DateTime.parse(json['start'] as String),
       stop:
           json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
+      address: json['address'] as int?,
     );
 
 Map<String, dynamic> _$CreateEventToJson(CreateEvent instance) =>
@@ -33,6 +34,7 @@ Map<String, dynamic> _$CreateEventToJson(CreateEvent instance) =>
       'description': instance.description,
       'start': instance.start?.toIso8601String(),
       'stop': instance.stop?.toIso8601String(),
+      'address': instance.address,
     };
 
 CreateMetric _$CreateMetricFromJson(Map<String, dynamic> json) => CreateMetric(
@@ -51,12 +53,22 @@ Map<String, dynamic> _$CreateMetricToJson(CreateMetric instance) =>
       'type': instance.type,
     };
 
+CreateTreatment _$CreateTreatmentFromJson(Map<String, dynamic> json) =>
+    CreateTreatment(
+      events: (json['events'] as List<dynamic>?)
+              ?.map((e) => CreateEvent.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      personId: json['personId'] as int?,
+    );
+
+Map<String, dynamic> _$CreateTreatmentToJson(CreateTreatment instance) =>
+    <String, dynamic>{
+      'events': instance.events?.map((e) => e.toJson()).toList(),
+      'personId': instance.personId,
+    };
+
 Event _$EventFromJson(Map<String, dynamic> json) => Event(
-      id: json['id'] as int?,
-      person: json['person'] as int?,
-      user: json['user'] as int?,
-      file: json['file'] as int?,
-      treatment: json['treatment'] as int?,
       type: json['type'] as int?,
       description: json['description'] as String?,
       start: json['start'] == null
@@ -64,34 +76,41 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
           : DateTime.parse(json['start'] as String),
       stop:
           json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
-      valid: json['valid'] as bool?,
       address: json['address'] as int?,
+      user: json['user'] as int?,
+      file: json['file'] as int?,
+      treatment: json['treatment'] as int?,
+      id: json['id'] as int?,
+      person: json['person'] as int?,
+      valid: json['valid'] as bool?,
     );
 
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
-      'id': instance.id,
-      'person': instance.person,
-      'user': instance.user,
-      'file': instance.file,
-      'treatment': instance.treatment,
       'type': instance.type,
       'description': instance.description,
       'start': instance.start?.toIso8601String(),
       'stop': instance.stop?.toIso8601String(),
-      'valid': instance.valid,
       'address': instance.address,
+      'user': instance.user,
+      'file': instance.file,
+      'treatment': instance.treatment,
+      'id': instance.id,
+      'person': instance.person,
+      'valid': instance.valid,
     };
 
 EventType _$EventTypeFromJson(Map<String, dynamic> json) => EventType(
       id: json['id'] as int?,
       name: json['name'] as String?,
       description: json['description'] as String?,
+      standAlone: json['standAlone'] as bool?,
     );
 
 Map<String, dynamic> _$EventTypeToJson(EventType instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'description': instance.description,
+      'standAlone': instance.standAlone,
     };
 
 FileType _$FileTypeFromJson(Map<String, dynamic> json) => FileType(
@@ -233,4 +252,16 @@ Status _$StatusFromJson(Map<String, dynamic> json) => Status(
 Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
       'init': instance.init,
       'error': instance.error,
+    };
+
+Treatement _$TreatementFromJson(Map<String, dynamic> json) => Treatement(
+      events: (json['events'] as List<dynamic>?)
+              ?.map((e) => Event.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$TreatementToJson(Treatement instance) =>
+    <String, dynamic>{
+      'events': instance.events?.map((e) => e.toJson()).toList(),
     };

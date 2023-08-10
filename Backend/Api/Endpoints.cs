@@ -43,19 +43,17 @@ public static class Endpoints
         .Produces((int)HttpStatusCode.NoContent)
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
-
-        person.MapPatients();
     }
 
-    public static void MapPatients(this RouteGroupBuilder person)
+    public static void MapPatients(this RouteGroupBuilder api)
     {
-        var patients = person.MapGroup("/patients");
-        patients.MapGet("/", PersonLogic.GetPatientsAsync)
+        var patients = api.MapGroup("/patients");
+        patients.MapGet("/", PatientsLogic.GetPatientsAsync)
         .Produces<List<Api.Models.Person>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
 
-        patients.MapGet("/agenda", EventsLogic.GetAgendaAsync)
+        patients.MapGet("/agenda", PatientsLogic.GetAgendaAsync)
         .Produces<List<Api.Models.Event>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
@@ -102,7 +100,6 @@ public static class Endpoints
         .WithOpenApi();
     }
 
-
     public static void MapEvents(this RouteGroupBuilder api)
     {
         /* Events endpoints*/
@@ -148,16 +145,28 @@ public static class Endpoints
     {
         var treatment = api.MapGroup("/treatment").RequireAuthorization();
 
-        treatment.MapGet("/", TreatmentLogic.GetAsync)
-              .Produces<List<Api.Models.Treatment>>((int)HttpStatusCode.OK)
+        treatment.MapPost("/", TreatmentLogic.PostAsync)
+              .Produces((int)HttpStatusCode.NoContent)
               .Produces((int)HttpStatusCode.Unauthorized)
               .WithOpenApi();
+
+        treatment.MapGet("/", TreatmentLogic.GetAsync)
+        .Produces<List<Api.Models.Treatement>>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized)
+        .WithOpenApi();
+
+        var eventsType = treatment.MapGroup("/type").RequireAuthorization();
+        eventsType.MapGet("/", TreatmentLogic.GetTypeAsync)
+        .Produces<List<Api.Data.Models.EventType>>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized)
+        .WithOpenApi();
     }
 
     public static void MapEnpoints(this RouteGroupBuilder api)
     {
         api.MapAuth();
         api.MapPerson();
+        api.MapPatients();
 
         api.MapMetrics();
         api.MapEvents();

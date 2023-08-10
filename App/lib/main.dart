@@ -3,10 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'logic/account/authentication_logic.dart';
 import 'logic/account/authentication_bloc.dart';
-import 'logic/events/events_logic.dart';
-import 'logic/import/import_logic.dart';
-import 'logic/metrics/metrics_logic.dart';
-import 'logic/persons/persons_logic.dart';
+import 'logic/events_logic.dart';
+import 'logic/import_logic.dart';
+import 'logic/metrics_logic.dart';
+import 'logic/persons_logic.dart';
+import 'logic/treatment_logic.dart';
 import 'services/account.dart';
 import 'ui/blocs/common/restart.dart';
 import 'ui/home.dart';
@@ -28,6 +29,7 @@ class AppState extends State<App> {
   static ImportLogic? importLogic;
   static EventsLogic? eventLogic;
   static PersonsLogic? personsLogic;
+  static TreatementLogic? treatementLogic;
 
   @override
   void initState() {
@@ -38,6 +40,7 @@ class AppState extends State<App> {
     importLogic = ImportLogic(account);
     eventLogic = EventsLogic(account);
     personsLogic = PersonsLogic(account);
+    treatementLogic = TreatementLogic(account);
   }
 
   @override

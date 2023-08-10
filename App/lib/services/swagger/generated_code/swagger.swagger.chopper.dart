@@ -41,25 +41,6 @@ final class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<List<Event>>> _apiPersonPatientsAgendaGet({
-    required String? start,
-    required String? end,
-  }) {
-    final Uri $url = Uri.parse('/api/person/patients/agenda');
-    final Map<String, dynamic> $params = <String, dynamic>{
-      'start': start,
-      'end': end,
-    };
-    final Request $request = Request(
-      'GET',
-      $url,
-      client.baseUrl,
-      parameters: $params,
-    );
-    return client.send<List<Event>, Event>($request);
-  }
-
-  @override
   Future<Response<List<Event>>> _apiEventsGet({
     int? type,
     required String? start,
@@ -291,6 +272,36 @@ final class _$Swagger extends Swagger {
   }
 
   @override
+  Future<Response<List<Person>>> _apiPatientsGet() {
+    final Uri $url = Uri.parse('/api/patients');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<List<Person>, Person>($request);
+  }
+
+  @override
+  Future<Response<List<Event>>> _apiPatientsAgendaGet({
+    required String? start,
+    required String? end,
+  }) {
+    final Uri $url = Uri.parse('/api/patients/agenda');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'start': start,
+      'end': end,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<List<Event>, Event>($request);
+  }
+
+  @override
   Future<Response<dynamic>> _apiPersonPost({required PersonCreation? body}) {
     final Uri $url = Uri.parse('/api/person');
     final $body = body;
@@ -315,17 +326,6 @@ final class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<List<Person>>> _apiPersonPatientsGet() {
-    final Uri $url = Uri.parse('/api/person/patients');
-    final Request $request = Request(
-      'GET',
-      $url,
-      client.baseUrl,
-    );
-    return client.send<List<Person>, Person>($request);
-  }
-
-  @override
   Future<Response<dynamic>> _apiPersonRightsPersonIdPost({
     required int? personId,
     required List<Right>? body,
@@ -339,5 +339,51 @@ final class _$Swagger extends Swagger {
       body: $body,
     );
     return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiTreatmentPost(
+      {required CreateTreatment? body}) {
+    final Uri $url = Uri.parse('/api/treatment');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<List<Treatement>>> _apiTreatmentGet({
+    required String? start,
+    required String? end,
+    int? personId,
+  }) {
+    final Uri $url = Uri.parse('/api/treatment');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'start': start,
+      'end': end,
+      'personId': personId,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<List<Treatement>, Treatement>($request);
+  }
+
+  @override
+  Future<Response<List<EventType>>> _apiTreatmentTypeGet() {
+    final Uri $url = Uri.parse('/api/treatment/type');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<List<EventType>, EventType>($request);
   }
 }

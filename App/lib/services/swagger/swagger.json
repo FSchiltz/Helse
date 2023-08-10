@@ -58,51 +58,6 @@
         }
       }
     },
-    "/api/person/patients/agenda": {
-      "get": {
-        "tags": [
-          "EventsLogic"
-        ],
-        "parameters": [
-          {
-            "name": "start",
-            "in": "query",
-            "required": true,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "end",
-            "in": "query",
-            "required": true,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Event"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
     "/api/events": {
       "get": {
         "tags": [
@@ -610,6 +565,76 @@
         }
       }
     },
+    "/api/patients": {
+      "get": {
+        "tags": [
+          "PatientsLogic"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Person"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/patients/agenda": {
+      "get": {
+        "tags": [
+          "PatientsLogic"
+        ],
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Event"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/api/person": {
       "post": {
         "tags": [
@@ -634,31 +659,6 @@
           }
         }
       },
-      "get": {
-        "tags": [
-          "PersonLogic"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Person"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/api/person/patients": {
       "get": {
         "tags": [
           "PersonLogic"
@@ -722,6 +722,108 @@
           }
         }
       }
+    },
+    "/api/treatment": {
+      "post": {
+        "tags": [
+          "TreatmentLogic"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTreatment"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "TreatmentLogic"
+        ],
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "personId",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Treatement"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/treatment/type": {
+      "get": {
+        "tags": [
+          "TreatmentLogic"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EventType"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -758,6 +860,11 @@
           "stop": {
             "type": "string",
             "format": "date-time"
+          },
+          "address": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -784,31 +891,27 @@
         },
         "additionalProperties": false
       },
+      "CreateTreatment": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateEvent"
+            },
+            "nullable": true
+          },
+          "personId": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Event": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "person": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "user": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "file": {
-            "type": "integer",
-            "format": "int64",
-            "nullable": true
-          },
-          "treatment": {
-            "type": "integer",
-            "format": "int64",
-            "nullable": true
-          },
           "type": {
             "type": "integer",
             "format": "int32"
@@ -825,13 +928,35 @@
             "type": "string",
             "format": "date-time"
           },
-          "valid": {
-            "type": "boolean"
-          },
           "address": {
             "type": "integer",
             "format": "int64",
             "nullable": true
+          },
+          "user": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "file": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "treatment": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "person": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "valid": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -850,6 +975,9 @@
           "description": {
             "type": "string",
             "nullable": true
+          },
+          "standAlone": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -1074,6 +1202,19 @@
           },
           "error": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Treatement": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Event"
+            },
             "nullable": true
           }
         },
