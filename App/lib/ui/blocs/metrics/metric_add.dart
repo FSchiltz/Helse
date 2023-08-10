@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../logic/event.dart';
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../common/date_input.dart';
 import '../common/text_input.dart';
 import '../loader.dart';
 
@@ -77,7 +78,8 @@ class _MetricAddState extends State<MetricAdd> {
                             _tag = value;
                           })),
                   const SizedBox(height: 10),
-                  _DateInput(
+                  DateInput(
+                      "Date",
                       _date,
                       (value) => setState(() {
                             _date = value;
@@ -130,73 +132,6 @@ class _TypeInput extends StatelessWidget {
       decoration: InputDecoration(
         labelText: 'Type',
         prefixIcon: const Icon(Icons.list),
-        prefixIconColor: theme.primary,
-        filled: true,
-        fillColor: theme.background,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: theme.primary),
-        ),
-      ),
-    );
-  }
-}
-
-class _DateInput extends StatelessWidget {
-  final TextEditingController _textController = TextEditingController();
-  final void Function(DateTime?) callback;
-  final DateTime? date;
-
-  _DateInput(this.date, this.callback) {
-    _textController.text = date?.toString() ?? "";
-  }
-
-  Future<void> _setDate(BuildContext context) async {
-    var date = await _pick(context);
-    if (date != null) {
-      _textController.text = date.toString();
-      callback(date);
-    }
-  }
-
-  Future<DateTime?> _pick(BuildContext context) async {
-    final DateTime? selectedDate = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(), //get today's date
-        firstDate: DateTime(1000),
-        lastDate: DateTime(3000));
-
-    if (selectedDate == null) return null;
-
-    if (!context.mounted) return selectedDate;
-
-    final TimeOfDay? selectedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.fromDateTime(selectedDate),
-    );
-
-    return selectedTime == null
-        ? selectedDate
-        : DateTime(
-            selectedDate.year,
-            selectedDate.month,
-            selectedDate.day,
-            selectedTime.hour,
-            selectedTime.minute,
-          );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
-    return TextField(
-      controller: _textController,
-      onTap: () {
-        _setDate(context);
-      },
-      decoration: InputDecoration(
-        labelText: 'Date',
-        prefixIcon: const Icon(Icons.edit_calendar_outlined),
         prefixIconColor: theme.primary,
         filled: true,
         fillColor: theme.background,

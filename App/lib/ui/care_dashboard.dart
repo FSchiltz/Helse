@@ -14,13 +14,11 @@ class CareDashBoard extends StatelessWidget {
       length: 2,
       child: Column(
         children: [
-          Container(
-            child: const TabBar(
-              tabs: [
-                Tab(icon: Icon(Icons.personal_injury_sharp)),
-                Tab(icon: Icon(Icons.monitor_heart_sharp)),
-              ],
-            ),
+          const TabBar(
+            tabs: [
+              Tab(icon: Icon(Icons.personal_injury_sharp)),
+              Tab(icon: Icon(Icons.monitor_heart_sharp)),
+            ],
           ),
           Expanded(
             child: TabBarView(
