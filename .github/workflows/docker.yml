@@ -18,16 +18,6 @@ jobs:
       contents: read
       packages: write
       
-    strategy:
-      matrix:
-        include:
-          - dockerfile: ./Proxy
-            image: ghcr.io/fschiltz/helse-proxy
-          - dockerfile: ./App
-            image: ghcr.io/fschiltz/helse-web
-          - dockerfile: ./Backend
-            image: ghcr.io/fschiltz/helse-api
-
     steps:
     - uses: actions/checkout@v3
 
@@ -41,13 +31,10 @@ jobs:
     - name: Extract metadata (tags, labels) for Docker
       id: meta
       uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-      with:
-        images: ${{ matrix.image }}
 
     - name: Build and push Docker image
       uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
       with:
-        context: ${{ matrix.dockerfile }}
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
