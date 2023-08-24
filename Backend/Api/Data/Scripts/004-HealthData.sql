@@ -10,4 +10,4 @@ INSERT INTO health.metrictype(id, description, name, unit)
 
     INSERT INTO health.EventType(id,description, name, standalone)
 	VALUES (1,null, 'Sleep', true),    
-	(null, 'Care', false)    ; 
+	(2, null, 'Care', false)    ; 
