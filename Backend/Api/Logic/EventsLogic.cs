@@ -10,7 +10,7 @@ namespace Api.Logic;
 /// </summary>
 public static class EventsLogic
 {
-    public async static Task<IResult> GetAsync(long? type, DateTime start, DateTime end, long? personId, AppDataConnection db, HttpContext context)
+    public async static Task<IResult> GetAsync(int? type, DateTime start, DateTime end, long? personId, AppDataConnection db, HttpContext context)
     {
         // get the connected user
         var userName = context.User.GetUser();
