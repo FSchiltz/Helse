@@ -14,7 +14,7 @@ class Patients extends StatefulWidget {
 }
 
 class _PatientsState extends State<Patients> {
-  late List<Person>? _patients = null;
+  late List<Person>? _patients;
 
   @override
   void initState() {

@@ -12,7 +12,7 @@ import 'blocs/treatments/treatments_grid.dart';
 class Dashboard extends StatefulWidget {
   final DateTimeRange date;
   final int? person;
-  const Dashboard({Key? key, required this.date, this.person}) : super(key: key);
+  const Dashboard({super.key, required this.date, this.person});
 
   @override
   State<Dashboard> createState() => _DashboardState();

@@ -186,8 +186,11 @@ public static class PersonLogic
         // TODO add patient account creation
         if (newUser.Type != Models.UserType.Patient)
         {
-            if (newUser.UserName == null)
+            if (newUser.UserName is null)
                 throw new ArgumentException("Missing username", nameof(newUser));
+
+            if (newUser.Password is null)
+                throw new ArgumentException("Missing password", nameof(newUser));
 
             await db.GetTable<User>().InsertAsync(()
                 => new User

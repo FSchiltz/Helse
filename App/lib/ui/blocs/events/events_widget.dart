@@ -17,8 +17,8 @@ class EventWidget extends StatefulWidget {
 }
 
 class _EventWidgetState extends State<EventWidget> {
-  List<Event>? _events = null;
-  DateTimeRange? _date = null;
+  List<Event>? _events;
+  DateTimeRange? _date;
 
   _EventWidgetState();
 
