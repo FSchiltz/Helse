@@ -10,8 +10,8 @@ import 'blocs/loader.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   static Route<void> route() {
     return MaterialPageRoute<void>(builder: (_) => const LoginPage());

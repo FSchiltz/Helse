@@ -6,7 +6,7 @@ import 'dashboard.dart';
 
 class CareDashBoard extends StatelessWidget {
   final DateTimeRange date;
-  const CareDashBoard({Key? key, required this.date}) : super(key: key);
+  const CareDashBoard({super.key, required this.date});
 
   @override
   Widget build(BuildContext context) {

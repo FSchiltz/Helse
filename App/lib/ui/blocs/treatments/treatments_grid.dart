@@ -16,7 +16,7 @@ class TreatmentsGrid extends StatefulWidget {
 }
 
 class _TreatmentsGridState extends State<TreatmentsGrid> {
-  List<Treatement>? _treatments = null;
+  List<Treatement>? _treatments;
 
   Future<List<Treatement>?> _getData() async {
     if (_treatments != null) return _treatments;
