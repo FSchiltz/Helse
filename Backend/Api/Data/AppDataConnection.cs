@@ -5,14 +5,8 @@ using LinqToDB.Data;
 
 namespace Api.Data;
 
-public class AppDataConnection : DataConnection
+public class AppDataConnection(DataOptions<AppDataConnection> options) : DataConnection(options.Options)
 {
-    public AppDataConnection(DataOptions<AppDataConnection> options)
-        : base(options.Options)
-    {
-
-    }
-
     public static void Init(string connection, ILogger logger)
     {
         EnsureDatabase.For.PostgresqlDatabase(connection);
@@ -34,6 +28,5 @@ public class AppDataConnection : DataConnection
         {
             throw new Exception("Migration error");
         }
-
     }
 }

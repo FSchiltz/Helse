@@ -1,100 +1,14 @@
 using System.Globalization;
 using Api.Data;
 using Api.Data.Models;
+using Api.Logic.Import.Redmi;
 using Api.Models;
 using CsvHelper;
-using LinqToDB;
 using Newtonsoft.Json;
 
 namespace Api.Logic.Import;
 
-internal class RedmiRecord
-{
-    public string? Uid { get; set; }
-    public string? Sid { get; set; }
-    public string? Key { get; set; }
-    public int Time { get; set; }
-    public string? Value { get; set; }
-
-    public string GetKey()
-    {
-        return $"{Key}_{Time}";
-    }
-}
-
-public class SleepTime
-{
-    public int End_time { get; set; }
-    public int State { get; set; }
-    public int Start_time { get; set; }
-
-    public string GetKey() => Start_time + "_" + End_time;
-}
-
-public class SleepRecord
-{
-    public int Avg_hr { get; set; }
-    public int Bpmedtime { get; set; }
-    public int Sleep_deep_duration { get; set; }
-    public int Device_bedtime { get; set; }
-    public int Device_wake_up_time { get; set; }
-    public int Sleep_light_duration { get; set; }
-    public int Max_hr { get; set; }
-    public int Min_hr { get; set; }
-    public int ProtoTime { get; set; }
-    public int Sleep_rem_duration { get; set; }
-    public int Duration { get; set; }
-    public List<SleepTime>? Items { get; set; }
-    public int Timezone { get; set; }
-    public int Version { get; set; }
-    public int Awake_count { get; set; }
-    public int Sleep_awake_duration { get; set; }
-    public int Wake_up_time { get; set; }
-}
-
-internal enum SleepType
-{
-    None,
-    State1,
-    State2,
-    State3,
-    State4,
-}
-
-internal class Record
-{
-    public int? Date_time { get; set; }
-    public int? Time { get; set; }
-    public int Timezone { get; set; }
-}
-
-internal class SpoRecord : Record
-{
-    public string? Spo2 { get; set; }
-}
-
-internal class HeartRecord : Record
-{
-    public string? Bpm { get; set; }
-}
-
-internal class StepRecord : Record
-{
-    public string? Steps { get; set; }
-    public string? Distance { get; set; }
-}
-
-internal class CalorieRecord : Record
-{
-    public string? Calories { get; set; }
-}
-
-internal class WeightRecord : Record
-{
-    public string? Weight { get; set; }
-}
-
-public class RedmiWatch : FileImporter
+public class RedmiWatch(string file, AppDataConnection dataConnection, Data.Models.User user) : FileImporter(file, dataConnection, user)
 {
     private const string MaxSpo = "max_spo2";
     private const string MinSpo = "min_spo2";
@@ -114,8 +28,6 @@ public class RedmiWatch : FileImporter
     private const string Sleep = "sleep";
 
     private const string Weight = "weight";
-
-    public RedmiWatch(string file, AppDataConnection dataConnection, Data.Models.User user) : base(file, dataConnection, user) { }
 
     public override async Task Import()
     {
@@ -147,7 +59,7 @@ public class RedmiWatch : FileImporter
                             Stop = DateTimeOffset.FromUnixTimeSeconds(item.End_time).DateTime,
                             Tag = item.GetKey(),
                             Type = (int)EventTypes.Sleep,
-                            Description = item.State.ToString(), 
+                            Description = item.State.ToString(),
                         });
                     }
                     break;
@@ -252,5 +164,5 @@ public class RedmiWatch : FileImporter
                     break;
             }
         }
-    }   
+    }
 }

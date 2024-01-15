@@ -14,9 +14,6 @@ public enum FileTypes
 
   [Description("Redmi watch fitness file")]
   RedmiWatch,
-
-  [Description("Gadgetbridge database file")]
-  Gadgetbridge,
 }
 
 public record FileType(int Type, string? Name);
@@ -40,7 +37,6 @@ public static class ImportLogic
     FileImporter importer = (FileTypes)type switch
     {
       FileTypes.RedmiWatch => new RedmiWatch(file, db, user),
-      FileTypes.Gadgetbridge => new GagdgetImporter(file, db, user),
       _ => throw new NotSupportedException("Invalid file type"),
     };
 

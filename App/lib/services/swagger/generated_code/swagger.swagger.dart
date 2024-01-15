@@ -9,6 +9,7 @@ import 'package:chopper/chopper.dart';
 import 'client_mapping.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart' show MultipartFile;
 import 'package:chopper/chopper.dart' as chopper;
 import 'swagger.enums.swagger.dart' as enums;
 export 'swagger.enums.swagger.dart';
@@ -26,6 +27,7 @@ abstract class Swagger extends ChopperService {
     ChopperClient? client,
     http.Client? httpClient,
     Authenticator? authenticator,
+    ErrorConverter? errorConverter,
     Converter? converter,
     Uri? baseUrl,
     Iterable<dynamic>? interceptors,
@@ -40,6 +42,7 @@ abstract class Swagger extends ChopperService {
         interceptors: interceptors ?? [],
         client: httpClient,
         authenticator: authenticator,
+        errorConverter: errorConverter,
         baseUrl: baseUrl ?? Uri.parse('http://'));
     return _$Swagger(newClient);
   }
@@ -447,7 +450,7 @@ abstract class Swagger extends ChopperService {
 
 @JsonSerializable(explicitToJson: true)
 class Connection {
-  Connection({
+  const Connection({
     this.user,
     this.password,
   });
@@ -501,12 +504,11 @@ extension $ConnectionExtension on Connection {
 
 @JsonSerializable(explicitToJson: true)
 class CreateEvent {
-  CreateEvent({
+  const CreateEvent({
     this.type,
     this.description,
     this.start,
     this.stop,
-    this.address,
   });
 
   factory CreateEvent.fromJson(Map<String, dynamic> json) =>
@@ -523,8 +525,6 @@ class CreateEvent {
   final DateTime? start;
   @JsonKey(name: 'stop')
   final DateTime? stop;
-  @JsonKey(name: 'address')
-  final int? address;
   static const fromJsonFactory = _$CreateEventFromJson;
 
   @override
@@ -539,9 +539,7 @@ class CreateEvent {
             (identical(other.start, start) ||
                 const DeepCollectionEquality().equals(other.start, start)) &&
             (identical(other.stop, stop) ||
-                const DeepCollectionEquality().equals(other.stop, stop)) &&
-            (identical(other.address, address) ||
-                const DeepCollectionEquality().equals(other.address, address)));
+                const DeepCollectionEquality().equals(other.stop, stop)));
   }
 
   @override
@@ -553,44 +551,36 @@ class CreateEvent {
       const DeepCollectionEquality().hash(description) ^
       const DeepCollectionEquality().hash(start) ^
       const DeepCollectionEquality().hash(stop) ^
-      const DeepCollectionEquality().hash(address) ^
       runtimeType.hashCode;
 }
 
 extension $CreateEventExtension on CreateEvent {
   CreateEvent copyWith(
-      {int? type,
-      String? description,
-      DateTime? start,
-      DateTime? stop,
-      int? address}) {
+      {int? type, String? description, DateTime? start, DateTime? stop}) {
     return CreateEvent(
         type: type ?? this.type,
         description: description ?? this.description,
         start: start ?? this.start,
-        stop: stop ?? this.stop,
-        address: address ?? this.address);
+        stop: stop ?? this.stop);
   }
 
   CreateEvent copyWithWrapped(
       {Wrapped<int?>? type,
       Wrapped<String?>? description,
       Wrapped<DateTime?>? start,
-      Wrapped<DateTime?>? stop,
-      Wrapped<int?>? address}) {
+      Wrapped<DateTime?>? stop}) {
     return CreateEvent(
         type: (type != null ? type.value : this.type),
         description:
             (description != null ? description.value : this.description),
         start: (start != null ? start.value : this.start),
-        stop: (stop != null ? stop.value : this.stop),
-        address: (address != null ? address.value : this.address));
+        stop: (stop != null ? stop.value : this.stop));
   }
 }
 
 @JsonSerializable(explicitToJson: true)
 class CreateMetric {
-  CreateMetric({
+  const CreateMetric({
     this.date,
     this.value,
     this.tag,
@@ -664,7 +654,7 @@ extension $CreateMetricExtension on CreateMetric {
 
 @JsonSerializable(explicitToJson: true)
 class CreateTreatment {
-  CreateTreatment({
+  const CreateTreatment({
     this.events,
     this.personId,
   });
@@ -718,18 +708,18 @@ extension $CreateTreatmentExtension on CreateTreatment {
 
 @JsonSerializable(explicitToJson: true)
 class Event {
-  Event({
+  const Event({
     this.type,
     this.description,
     this.start,
     this.stop,
-    this.address,
     this.user,
     this.file,
     this.treatment,
     this.id,
     this.person,
     this.valid,
+    this.address,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
@@ -745,8 +735,6 @@ class Event {
   final DateTime? start;
   @JsonKey(name: 'stop')
   final DateTime? stop;
-  @JsonKey(name: 'address')
-  final int? address;
   @JsonKey(name: 'user')
   final int? user;
   @JsonKey(name: 'file')
@@ -759,6 +747,8 @@ class Event {
   final int? person;
   @JsonKey(name: 'valid')
   final bool? valid;
+  @JsonKey(name: 'address')
+  final int? address;
   static const fromJsonFactory = _$EventFromJson;
 
   @override
@@ -774,9 +764,6 @@ class Event {
                 const DeepCollectionEquality().equals(other.start, start)) &&
             (identical(other.stop, stop) ||
                 const DeepCollectionEquality().equals(other.stop, stop)) &&
-            (identical(other.address, address) ||
-                const DeepCollectionEquality()
-                    .equals(other.address, address)) &&
             (identical(other.user, user) ||
                 const DeepCollectionEquality().equals(other.user, user)) &&
             (identical(other.file, file) ||
@@ -789,7 +776,9 @@ class Event {
             (identical(other.person, person) ||
                 const DeepCollectionEquality().equals(other.person, person)) &&
             (identical(other.valid, valid) ||
-                const DeepCollectionEquality().equals(other.valid, valid)));
+                const DeepCollectionEquality().equals(other.valid, valid)) &&
+            (identical(other.address, address) ||
+                const DeepCollectionEquality().equals(other.address, address)));
   }
 
   @override
@@ -801,13 +790,13 @@ class Event {
       const DeepCollectionEquality().hash(description) ^
       const DeepCollectionEquality().hash(start) ^
       const DeepCollectionEquality().hash(stop) ^
-      const DeepCollectionEquality().hash(address) ^
       const DeepCollectionEquality().hash(user) ^
       const DeepCollectionEquality().hash(file) ^
       const DeepCollectionEquality().hash(treatment) ^
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(person) ^
       const DeepCollectionEquality().hash(valid) ^
+      const DeepCollectionEquality().hash(address) ^
       runtimeType.hashCode;
 }
 
@@ -817,25 +806,25 @@ extension $EventExtension on Event {
       String? description,
       DateTime? start,
       DateTime? stop,
-      int? address,
       int? user,
       int? file,
       int? treatment,
       int? id,
       int? person,
-      bool? valid}) {
+      bool? valid,
+      int? address}) {
     return Event(
         type: type ?? this.type,
         description: description ?? this.description,
         start: start ?? this.start,
         stop: stop ?? this.stop,
-        address: address ?? this.address,
         user: user ?? this.user,
         file: file ?? this.file,
         treatment: treatment ?? this.treatment,
         id: id ?? this.id,
         person: person ?? this.person,
-        valid: valid ?? this.valid);
+        valid: valid ?? this.valid,
+        address: address ?? this.address);
   }
 
   Event copyWithWrapped(
@@ -843,32 +832,32 @@ extension $EventExtension on Event {
       Wrapped<String?>? description,
       Wrapped<DateTime?>? start,
       Wrapped<DateTime?>? stop,
-      Wrapped<int?>? address,
       Wrapped<int?>? user,
       Wrapped<int?>? file,
       Wrapped<int?>? treatment,
       Wrapped<int?>? id,
       Wrapped<int?>? person,
-      Wrapped<bool?>? valid}) {
+      Wrapped<bool?>? valid,
+      Wrapped<int?>? address}) {
     return Event(
         type: (type != null ? type.value : this.type),
         description:
             (description != null ? description.value : this.description),
         start: (start != null ? start.value : this.start),
         stop: (stop != null ? stop.value : this.stop),
-        address: (address != null ? address.value : this.address),
         user: (user != null ? user.value : this.user),
         file: (file != null ? file.value : this.file),
         treatment: (treatment != null ? treatment.value : this.treatment),
         id: (id != null ? id.value : this.id),
         person: (person != null ? person.value : this.person),
-        valid: (valid != null ? valid.value : this.valid));
+        valid: (valid != null ? valid.value : this.valid),
+        address: (address != null ? address.value : this.address));
   }
 }
 
 @JsonSerializable(explicitToJson: true)
 class EventType {
-  EventType({
+  const EventType({
     this.id,
     this.name,
     this.description,
@@ -945,7 +934,7 @@ extension $EventTypeExtension on EventType {
 
 @JsonSerializable(explicitToJson: true)
 class FileType {
-  FileType({
+  const FileType({
     this.type,
     this.name,
   });
@@ -996,7 +985,7 @@ extension $FileTypeExtension on FileType {
 
 @JsonSerializable(explicitToJson: true)
 class Metric {
-  Metric({
+  const Metric({
     this.id,
     this.person,
     this.user,
@@ -1102,7 +1091,7 @@ extension $MetricExtension on Metric {
 
 @JsonSerializable(explicitToJson: true)
 class MetricType {
-  MetricType({
+  const MetricType({
     this.id,
     this.name,
     this.description,
@@ -1178,7 +1167,7 @@ extension $MetricTypeExtension on MetricType {
 
 @JsonSerializable(explicitToJson: true)
 class Person {
-  Person({
+  const Person({
     this.name,
     this.surname,
     this.identifier,
@@ -1211,8 +1200,8 @@ class Person {
   final String? password;
   @JsonKey(
     name: 'type',
-    toJson: userTypeToJson,
-    fromJson: userTypeFromJson,
+    toJson: userTypeNullableToJson,
+    fromJson: userTypeNullableFromJson,
   )
   final enums.UserType? type;
   @JsonKey(name: 'email')
@@ -1332,7 +1321,7 @@ extension $PersonExtension on Person {
 
 @JsonSerializable(explicitToJson: true)
 class PersonCreation {
-  PersonCreation({
+  const PersonCreation({
     this.name,
     this.surname,
     this.identifier,
@@ -1365,8 +1354,8 @@ class PersonCreation {
   final String? password;
   @JsonKey(
     name: 'type',
-    toJson: userTypeToJson,
-    fromJson: userTypeFromJson,
+    toJson: userTypeNullableToJson,
+    fromJson: userTypeNullableFromJson,
   )
   final enums.UserType? type;
   @JsonKey(name: 'email')
@@ -1477,7 +1466,7 @@ extension $PersonCreationExtension on PersonCreation {
 
 @JsonSerializable(explicitToJson: true)
 class Right {
-  Right({
+  const Right({
     this.personId,
     this.userId,
     this.start,
@@ -1500,8 +1489,8 @@ class Right {
   final DateTime? stop;
   @JsonKey(
     name: 'type',
-    toJson: rightTypeToJson,
-    fromJson: rightTypeFromJson,
+    toJson: rightTypeNullableToJson,
+    fromJson: rightTypeNullableFromJson,
   )
   final enums.RightType? type;
   static const fromJsonFactory = _$RightFromJson;
@@ -1568,7 +1557,7 @@ extension $RightExtension on Right {
 
 @JsonSerializable(explicitToJson: true)
 class Status {
-  Status({
+  const Status({
     this.init,
     this.error,
   });
@@ -1618,7 +1607,7 @@ extension $StatusExtension on Status {
 
 @JsonSerializable(explicitToJson: true)
 class Treatement {
-  Treatement({
+  const Treatement({
     this.events,
   });
 
@@ -1658,17 +1647,38 @@ extension $TreatementExtension on Treatement {
   }
 }
 
-int? rightTypeToJson(enums.RightType? rightType) {
+int? rightTypeNullableToJson(enums.RightType? rightType) {
   return rightType?.value;
+}
+
+int? rightTypeToJson(enums.RightType rightType) {
+  return rightType.value;
 }
 
 enums.RightType rightTypeFromJson(
   Object? rightType, [
   enums.RightType? defaultValue,
 ]) {
-  return enums.RightType.values.firstWhereOrNull((e) => e.value == rightType) ??
+  return enums.RightType.values.firstWhereOrNull((e) =>
+          e.value.toString().toLowerCase() ==
+          rightType?.toString().toLowerCase()) ??
       defaultValue ??
       enums.RightType.swaggerGeneratedUnknown;
+}
+
+enums.RightType? rightTypeNullableFromJson(
+  Object? rightType, [
+  enums.RightType? defaultValue,
+]) {
+  if (rightType == null) {
+    return null;
+  }
+  return enums.RightType.values.firstWhereOrNull((e) => e.value == rightType) ??
+      defaultValue;
+}
+
+String rightTypeExplodedListToJson(List<enums.RightType>? rightType) {
+  return rightType?.map((e) => e.value!).join(',') ?? '';
 }
 
 List<int> rightTypeListToJson(List<enums.RightType>? rightType) {
@@ -1701,17 +1711,38 @@ List<enums.RightType>? rightTypeNullableListFromJson(
   return rightType.map((e) => rightTypeFromJson(e.toString())).toList();
 }
 
-int? userTypeToJson(enums.UserType? userType) {
+int? userTypeNullableToJson(enums.UserType? userType) {
   return userType?.value;
+}
+
+int? userTypeToJson(enums.UserType userType) {
+  return userType.value;
 }
 
 enums.UserType userTypeFromJson(
   Object? userType, [
   enums.UserType? defaultValue,
 ]) {
-  return enums.UserType.values.firstWhereOrNull((e) => e.value == userType) ??
+  return enums.UserType.values.firstWhereOrNull((e) =>
+          e.value.toString().toLowerCase() ==
+          userType?.toString().toLowerCase()) ??
       defaultValue ??
       enums.UserType.swaggerGeneratedUnknown;
+}
+
+enums.UserType? userTypeNullableFromJson(
+  Object? userType, [
+  enums.UserType? defaultValue,
+]) {
+  if (userType == null) {
+    return null;
+  }
+  return enums.UserType.values.firstWhereOrNull((e) => e.value == userType) ??
+      defaultValue;
+}
+
+String userTypeExplodedListToJson(List<enums.UserType>? userType) {
+  return userType?.map((e) => e.value!).join(',') ?? '';
 }
 
 List<int> userTypeListToJson(List<enums.UserType>? userType) {
@@ -1796,6 +1827,16 @@ class $JsonSerializableConverter extends chopper.JsonConverter {
       // In rare cases, when let's say 204 (no content) is returned -
       // we cannot decode the missing json with the result type specified
       return chopper.Response(response.base, null, error: response.error);
+    }
+
+    if (ResultType == String) {
+      return response.copyWith();
+    }
+
+    if (ResultType == DateTime) {
+      return response.copyWith(
+          body: DateTime.parse((response.body as String).replaceAll('"', ''))
+              as ResultType);
     }
 
     final jsonRes = await super.convertResponse(response);
