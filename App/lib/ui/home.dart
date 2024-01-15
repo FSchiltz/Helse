@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'admin_dashboard.dart';
 import '../helpers/date.dart';
 import '../main.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';
@@ -68,6 +69,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     Widget page;
     page = switch (user?.type) {
+      UserType.admin => AdminDashBoard(date:date),
       UserType.user => Dashboard(date: date),
       UserType.caregiver => CareDashBoard(date: date),
       _ => const Center(child: HelseLoader()),
@@ -223,7 +225,7 @@ class CustomToolbarShape extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint();
 
-//First oval
+    //First oval
     Path path = Path();
     Rect pathGradientRect = Rect.fromCircle(
       center: Offset(size.width / 4, 0),
