@@ -5,11 +5,6 @@ using LinqToDB;
 
 namespace Api.Logic;
 
-public enum TreatmentType
-{
-    Care,
-}
-
 /// <summary>
 /// Management of the users and rights
 /// </summary>
@@ -41,7 +36,7 @@ public static class TreatmentLogic
         var id = await db.GetTable<Data.Models.Treatment>().InsertWithInt64IdentityAsync(() => new Data.Models.Treatment
         {
             PersonId = treatment.PersonId ?? user.PersonId,
-            Type = (int)TreatmentType.Care,
+            Type = (int)treatment.Type,
         });
 
         // create the events

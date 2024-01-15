@@ -70,7 +70,7 @@
             "style": "form",
             "schema": {
               "type": "integer",
-              "format": "int64"
+              "format": "int32"
             }
           },
           {
@@ -355,7 +355,7 @@
             "style": "form",
             "schema": {
               "type": "integer",
-              "format": "int64"
+              "format": "int32"
             }
           },
           {
@@ -860,11 +860,6 @@
           "stop": {
             "type": "string",
             "format": "date-time"
-          },
-          "address": {
-            "type": "integer",
-            "format": "int64",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -928,11 +923,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "address": {
-            "type": "integer",
-            "format": "int64",
-            "nullable": true
-          },
           "user": {
             "type": "integer",
             "format": "int64"
@@ -957,6 +947,11 @@
           },
           "valid": {
             "type": "boolean"
+          },
+          "address": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
           }
         },
         "additionalProperties": false

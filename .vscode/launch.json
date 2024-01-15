@@ -22,7 +22,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/Backend/Api/bin/Debug/net7.0/Api.dll",
+            "program": "${workspaceFolder}/Backend/Api/bin/Debug/net8.0/Api.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Backend/Api",
             "stopAtEntry": false,
