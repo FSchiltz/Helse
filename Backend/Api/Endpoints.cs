@@ -1,5 +1,6 @@
 using System.Net;
 using Api.Logic;
+using Api.Models;
 
 namespace Api;
 
@@ -162,6 +163,32 @@ public static class Endpoints
         .WithOpenApi();
     }
 
+    public static void MapAdmin(this RouteGroupBuilder api)
+    {
+        var admin = api.MapGroup("/admin").RequireAuthorization();
+        var settings = admin.MapGroup("/settings").RequireAuthorization();
+
+        settings.MapPost("/", SettingsLogic.PostSettingAsync)
+                     .Produces((int)HttpStatusCode.NoContent)
+                     .Produces((int)HttpStatusCode.Unauthorized)
+                     .WithOpenApi();
+
+        settings.MapGet("/", SettingsLogic.GetSettingsAsync)
+        .Produces<Settings>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized)
+        .WithOpenApi();
+
+        settings.MapPost("/oauth", SettingsLogic.PostOauthAsync)
+                     .Produces((int)HttpStatusCode.NoContent)
+                     .Produces((int)HttpStatusCode.Unauthorized)
+                     .WithOpenApi();
+
+        settings.MapGet("/oauth", SettingsLogic.GetOauthAsync)
+        .Produces<Oauth>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized)
+        .WithOpenApi();
+    }
+
     public static void MapEnpoints(this RouteGroupBuilder api)
     {
         api.MapAuth();
@@ -172,6 +199,8 @@ public static class Endpoints
         api.MapEvents();
 
         api.MapTreatments();
+
+        api.MapAdmin();
 
         /* Importer endpoint */
         var import = api.MapGroup("/import").RequireAuthorization();

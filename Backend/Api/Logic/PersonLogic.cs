@@ -21,15 +21,9 @@ public static class PersonLogic
     /// <returns></returns>
     public static async Task<IResult> GetAsync(AppDataConnection db, HttpContext context)
     {
-        // get the connected user
-        var userName = context.User.GetUser();
-
-        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
-        if (user is null)
-            return TypedResults.Unauthorized();
-
-        if (user.Type != (int)Models.UserType.Admin)
-            return TypedResults.Unauthorized();
+        var admin = await db.IsAdmin(context);
+        if (admin is not null)
+            return admin;
 
         var users = await (from u in db.GetTable<Data.Models.User>()
                            from p in db.GetTable<Data.Models.Person>().RightJoin(pr => pr.Id == u.PersonId)
@@ -82,15 +76,9 @@ public static class PersonLogic
     /// <returns></returns>
     public static async Task<IResult> SetRight(long personId, List<Models.Right> rights, AppDataConnection db, HttpContext context)
     {
-        // get the connected user
-        var userName = context.User.GetUser();
-
-        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
-        if (user is null)
-            return TypedResults.Unauthorized();
-
-        if (user.Type != (int)Models.UserType.Admin)
-            return TypedResults.Unauthorized();
+        var admin = await db.IsAdmin(context);
+        if (admin is not null)
+            return admin;
 
         var now = DateTime.UtcNow;
 

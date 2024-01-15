@@ -15,12 +15,9 @@ public static class TreatmentLogic
 
     public async static Task<IResult> PostAsync(Models.CreateTreatment treatment, AppDataConnection db, HttpContext context)
     {
-        // get the connected user
-        var userName = context.User.GetUser();
-
-        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
-        if (user is null)
-            return TypedResults.Unauthorized();
+        var (error, user) = await db.GetUser(context);
+        if (error is not null)
+            return error;
 
         // check the personId
 
@@ -62,12 +59,9 @@ public static class TreatmentLogic
 
     public async static Task<IResult> GetAsync(DateTime start, DateTime end, long? personId, AppDataConnection db, HttpContext context)
     {
-        // get the connected user
-        var userName = context.User.GetUser();
-
-        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
-        if (user is null)
-            return TypedResults.Unauthorized();
+        var (error, user) = await db.GetUser(context);
+        if (error is not null)
+            return error;
 
         if (personId is not null && !await db.ValidateCaregiverAsync(user, personId.Value, RightType.View))
             return TypedResults.Forbid();

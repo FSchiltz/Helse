@@ -1,0 +1,7 @@
+CREATE SCHEMA admin;
+
+CREATE TABLE admin.Settings
+(
+  Name VARCHAR PRIMARY KEY NOT NULL,
+  Blob json NOT NULL
+);

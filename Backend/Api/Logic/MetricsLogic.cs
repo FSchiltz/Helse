@@ -12,12 +12,9 @@ public static class MetricsLogic
 {
     public async static Task<IResult> GetAsync(int type, DateTime start, DateTime end, long? personId, AppDataConnection db, HttpContext context)
     {
-        // get the connected user
-        var userName = context.User.GetUser();
-
-        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
-        if (user is null)
-            return TypedResults.Unauthorized();
+        var (error, user) = await db.GetUser(context);
+        if (error is not null)
+            return error;
 
         if (personId is not null && !await db.ValidateCaregiverAsync(user, personId.Value, RightType.View))
             return TypedResults.Forbid();
@@ -43,12 +40,9 @@ public static class MetricsLogic
 
     public static async Task<IResult> CreateAsync(CreateMetric metric, long? personId, AppDataConnection db, HttpContext context)
     {
-        // get the connected user
-        var userName = context.User.GetUser();
-
-        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
-        if (user is null)
-            return TypedResults.Unauthorized();
+        var (error, user) = await db.GetUser(context);
+        if (error is not null)
+            return error;
 
         if (personId is not null && !await db.ValidateCaregiverAsync(user, personId.Value, RightType.Edit))
             return TypedResults.Forbid();
@@ -68,12 +62,9 @@ public static class MetricsLogic
 
     public async static Task<IResult> DeleteAsync(long id, AppDataConnection db, HttpContext context)
     {
-        // get the connected user
-        var userName = context.User.GetUser();
-
-        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
-        if (user is null)
-            return TypedResults.Unauthorized();
+        var (error, user) = await db.GetUser(context);
+        if (error is not null)
+            return error;
 
         using var transaction = db.BeginTransaction();
 
@@ -96,17 +87,9 @@ public static class MetricsLogic
 
     public static async Task<IResult> CreateTypeAsync(Data.Models.MetricType metric, AppDataConnection db, HttpContext context)
     {
-        // get the connected user
-        var userName = context.User.GetUser();
-
-        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
-        if (user is null)
-            return TypedResults.Unauthorized();
-
-        if (user.Type != (int)UserType.Admin)
-        {
-            return TypedResults.Unauthorized();
-        }
+        var admin = await db.IsAdmin(context);
+        if (admin is not null)
+            return admin;
 
         await db.GetTable<Data.Models.MetricType>().InsertAsync(() => new Data.Models.MetricType
         {
@@ -120,17 +103,9 @@ public static class MetricsLogic
 
     public static async Task<IResult> UpdateTypeAsync(Data.Models.MetricType metric, AppDataConnection db, HttpContext context)
     {
-        // get the connected user
-        var userName = context.User.GetUser();
-
-        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
-        if (user is null)
-            return TypedResults.Unauthorized();
-
-        if (user.Type != (int)UserType.Admin)
-        {
-            return TypedResults.Unauthorized();
-        }
+        var admin = await db.IsAdmin(context);
+        if (admin is not null)
+            return admin;
 
         await db.GetTable<Data.Models.MetricType>()
             .Where(x => x.Id == metric.Id)
@@ -144,17 +119,9 @@ public static class MetricsLogic
 
     public async static Task<IResult> DeleteTypeAsync(long id, AppDataConnection db, HttpContext context)
     {
-        // get the connected user
-        var userName = context.User.GetUser();
-
-        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
-        if (user is null)
-            return TypedResults.Unauthorized();
-
-        if (user.Type != (int)UserType.Admin)
-        {
-            return TypedResults.Unauthorized();
-        }
+        var admin = await db.IsAdmin(context);
+        if (admin is not null)
+            return admin;
 
         await db.GetTable<Data.Models.MetricType>().DeleteAsync(x => x.Id == id);
 

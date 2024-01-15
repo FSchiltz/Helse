@@ -16,12 +16,9 @@ public static class PatientsLogic
     /// <returns></returns>
     public static async Task<IResult> GetPatientsAsync(AppDataConnection db, HttpContext context)
     {
-        // get the connected user
-        var userName = context.User.GetUser();
-
-        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
-        if (user is null)
-            return TypedResults.Unauthorized();
+        var (error, user) = await db.GetUser(context);
+        if (error is not null)
+            return error;
 
         var now = DateTime.UtcNow;
         var persons = await (from u in db.GetTable<Data.Models.Person>()
@@ -48,13 +45,10 @@ public static class PatientsLogic
     }
 
     public async static Task<IResult> GetAgendaAsync(DateTime start, DateTime end, AppDataConnection db, HttpContext context)
-    {
-        // get the connected user
-        var userName = context.User.GetUser();
-
-        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
-        if (user is null)
-            return TypedResults.Unauthorized();
+    {        
+        var (error, user) = await db.GetUser(context);
+        if (error is not null)
+            return error;
 
         var id = user.PersonId;
         var events = await (from e in db.GetTable<Data.Models.Event>()

@@ -46,7 +46,7 @@ public static class AuthLogic
         var fromDb = await (from u in db.GetTable<User>()
                             join p in db.GetTable<Data.Models.Person>() on u.PersonId equals p.Id
                             where u.Identifier == user.User
-                            select new {u, p})
+                            select new { u, p })
                             .FirstOrDefaultAsync();
 
         if (fromDb is null)
@@ -109,9 +109,30 @@ public static class AuthLogic
         var now = DateTime.UtcNow;
         // check if the user has the right 
         var right = await HasRightAsync(user.Id, personId, type, now, db);
-        if (right is null)
-            return false;
+        return right is not null;
+    }
 
-        return true;
+    internal static async Task<IResult?> IsAdmin(this AppDataConnection db, HttpContext context)
+    {
+        var (error, user) = await db.GetUser(context);
+        if (error is not null)
+            return error;
+
+        if (user.Type != (int)Models.UserType.Admin)
+            return TypedResults.Forbid();
+
+        return null;
+    }
+
+    internal static async Task<(IResult?, User)> GetUser(this AppDataConnection db, HttpContext context)
+    {
+        // get the connected user
+        var userName = context.User.GetUser();
+
+        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
+        if (user is null)
+            return (TypedResults.Unauthorized(), User.Empty);
+
+        return (null, user);
     }
 }
