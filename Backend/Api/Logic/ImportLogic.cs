@@ -4,7 +4,6 @@ using Api.Data;
 using Api.Helpers;
 using Api.Logic.Import;
 using LinqToDB;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Logic;
@@ -15,6 +14,9 @@ public enum FileTypes
 
   [Description("Redmi watch fitness file")]
   RedmiWatch,
+
+  [Description("Gadgetbridge database file")]
+  Gadgetbridge,
 }
 
 public record FileType(int Type, string? Name);
@@ -27,7 +29,7 @@ public static class ImportLogic
   public static IResult GetTypeAsync()
     => TypedResults.Ok(Enum.GetValues<FileTypes>().Select(x => new FileType((int)x, Helper.DescriptionAttr(x))));
 
-  public static async Task<IResult> PostFileAsync([FromBody]string file, int type,  AppDataConnection db, HttpContext context)
+  public static async Task<IResult> PostFileAsync([FromBody] string file, int type, AppDataConnection db, HttpContext context)
   {
     // get the connected user
     var userName = context.User.GetUser();
@@ -38,6 +40,7 @@ public static class ImportLogic
     FileImporter importer = (FileTypes)type switch
     {
       FileTypes.RedmiWatch => new RedmiWatch(file, db, user),
+      FileTypes.Gadgetbridge => new GagdgetImporter(file, db, user),
       _ => throw new NotSupportedException("Invalid file type"),
     };
 
