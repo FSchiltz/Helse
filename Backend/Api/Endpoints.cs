@@ -177,16 +177,6 @@ public static class Endpoints
         .Produces<Settings>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
-
-        settings.MapPost("/oauth", SettingsLogic.PostOauthAsync)
-                     .Produces((int)HttpStatusCode.NoContent)
-                     .Produces((int)HttpStatusCode.Unauthorized)
-                     .WithOpenApi();
-
-        settings.MapGet("/oauth", SettingsLogic.GetOauthAsync)
-        .Produces<Oauth>((int)HttpStatusCode.OK)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
     }
 
     public static void MapEnpoints(this RouteGroupBuilder api)

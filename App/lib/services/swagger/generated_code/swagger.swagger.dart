@@ -423,30 +423,6 @@ abstract class Swagger extends ChopperService {
   Future<chopper.Response<Settings>> _apiAdminSettingsGet();
 
   ///
-  Future<chopper.Response> apiAdminSettingsOauthPost({required Oauth? body}) {
-    return _apiAdminSettingsOauthPost(body: body);
-  }
-
-  ///
-  @Post(
-    path: '/api/admin/settings/oauth',
-    optionalBody: true,
-  )
-  Future<chopper.Response> _apiAdminSettingsOauthPost(
-      {@Body() required Oauth? body});
-
-  ///
-  Future<chopper.Response<Oauth>> apiAdminSettingsOauthGet() {
-    generatedMapping.putIfAbsent(Oauth, () => Oauth.fromJsonFactory);
-
-    return _apiAdminSettingsOauthGet();
-  }
-
-  ///
-  @Get(path: '/api/admin/settings/oauth')
-  Future<chopper.Response<Oauth>> _apiAdminSettingsOauthGet();
-
-  ///
   Future<chopper.Response> apiTreatmentPost({required CreateTreatment? body}) {
     return _apiTreatmentPost(body: body);
   }
@@ -1595,6 +1571,72 @@ extension $PersonCreationExtension on PersonCreation {
 }
 
 @JsonSerializable(explicitToJson: true)
+class Proxy {
+  const Proxy({
+    this.proxyAuth,
+    this.autoRegister,
+    this.header,
+  });
+
+  factory Proxy.fromJson(Map<String, dynamic> json) => _$ProxyFromJson(json);
+
+  static const toJsonFactory = _$ProxyToJson;
+  Map<String, dynamic> toJson() => _$ProxyToJson(this);
+
+  @JsonKey(name: 'proxyAuth')
+  final bool? proxyAuth;
+  @JsonKey(name: 'autoRegister')
+  final bool? autoRegister;
+  @JsonKey(name: 'header')
+  final String? header;
+  static const fromJsonFactory = _$ProxyFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is Proxy &&
+            (identical(other.proxyAuth, proxyAuth) ||
+                const DeepCollectionEquality()
+                    .equals(other.proxyAuth, proxyAuth)) &&
+            (identical(other.autoRegister, autoRegister) ||
+                const DeepCollectionEquality()
+                    .equals(other.autoRegister, autoRegister)) &&
+            (identical(other.header, header) ||
+                const DeepCollectionEquality().equals(other.header, header)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(proxyAuth) ^
+      const DeepCollectionEquality().hash(autoRegister) ^
+      const DeepCollectionEquality().hash(header) ^
+      runtimeType.hashCode;
+}
+
+extension $ProxyExtension on Proxy {
+  Proxy copyWith({bool? proxyAuth, bool? autoRegister, String? header}) {
+    return Proxy(
+        proxyAuth: proxyAuth ?? this.proxyAuth,
+        autoRegister: autoRegister ?? this.autoRegister,
+        header: header ?? this.header);
+  }
+
+  Proxy copyWithWrapped(
+      {Wrapped<bool?>? proxyAuth,
+      Wrapped<bool?>? autoRegister,
+      Wrapped<String?>? header}) {
+    return Proxy(
+        proxyAuth: (proxyAuth != null ? proxyAuth.value : this.proxyAuth),
+        autoRegister:
+            (autoRegister != null ? autoRegister.value : this.autoRegister),
+        header: (header != null ? header.value : this.header));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class Right {
   const Right({
     this.personId,
@@ -1689,6 +1731,7 @@ extension $RightExtension on Right {
 class Settings {
   const Settings({
     this.oauth,
+    this.proxy,
   });
 
   factory Settings.fromJson(Map<String, dynamic> json) =>
@@ -1699,6 +1742,8 @@ class Settings {
 
   @JsonKey(name: 'oauth')
   final Oauth? oauth;
+  @JsonKey(name: 'proxy')
+  final Proxy? proxy;
   static const fromJsonFactory = _$SettingsFromJson;
 
   @override
@@ -1706,7 +1751,9 @@ class Settings {
     return identical(this, other) ||
         (other is Settings &&
             (identical(other.oauth, oauth) ||
-                const DeepCollectionEquality().equals(other.oauth, oauth)));
+                const DeepCollectionEquality().equals(other.oauth, oauth)) &&
+            (identical(other.proxy, proxy) ||
+                const DeepCollectionEquality().equals(other.proxy, proxy)));
   }
 
   @override
@@ -1714,16 +1761,20 @@ class Settings {
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(oauth) ^ runtimeType.hashCode;
+      const DeepCollectionEquality().hash(oauth) ^
+      const DeepCollectionEquality().hash(proxy) ^
+      runtimeType.hashCode;
 }
 
 extension $SettingsExtension on Settings {
-  Settings copyWith({Oauth? oauth}) {
-    return Settings(oauth: oauth ?? this.oauth);
+  Settings copyWith({Oauth? oauth, Proxy? proxy}) {
+    return Settings(oauth: oauth ?? this.oauth, proxy: proxy ?? this.proxy);
   }
 
-  Settings copyWithWrapped({Wrapped<Oauth?>? oauth}) {
-    return Settings(oauth: (oauth != null ? oauth.value : this.oauth));
+  Settings copyWithWrapped({Wrapped<Oauth?>? oauth, Wrapped<Proxy?>? proxy}) {
+    return Settings(
+        oauth: (oauth != null ? oauth.value : this.oauth),
+        proxy: (proxy != null ? proxy.value : this.proxy));
   }
 }
 

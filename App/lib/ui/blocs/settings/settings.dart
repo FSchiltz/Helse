@@ -20,6 +20,10 @@ class _SettingsViewState extends State<SettingsView> {
   bool _enabled = false;
   bool _autoregister = false;
 
+  bool _proxyAuth = false;
+  bool _proxyAutoRegister = false;
+  final TextEditingController _controllerHeader = TextEditingController();
+
   void _resetSettings() {
     setState(() {
       _settings = null;
@@ -38,8 +42,13 @@ class _SettingsViewState extends State<SettingsView> {
     _controllerId.text = _settings?.oauth?.clientId ?? "";
     _controllerSecret.text = _settings?.oauth?.clientSecret ?? "";
 
+    _controllerHeader.text = _settings?.proxy?.header ?? "";
+
     _enabled = _settings?.oauth?.enabled ?? false;
     _autoregister = _settings?.oauth?.autoRegister ?? false;
+
+    _proxyAuth = _settings?.proxy?.proxyAuth ?? false;
+    _proxyAutoRegister = _settings?.proxy?.autoRegister ?? false;
     return _settings;
   }
 
@@ -99,12 +108,18 @@ class _SettingsViewState extends State<SettingsView> {
     if (_formKey.currentState?.validate() ?? false) {
       // save the user
       await AppState.settingsLogic?.save(Settings(
-          oauth: Oauth(
-        clientId: _controllerId.text,
-        clientSecret: _controllerSecret.text,
-        enabled: _enabled,
-        autoRegister: _autoregister,
-      )));
+        oauth: Oauth(
+          clientId: _controllerId.text,
+          clientSecret: _controllerSecret.text,
+          enabled: _enabled,
+          autoRegister: _autoregister,
+        ),
+        proxy: Proxy(
+          autoRegister: _proxyAutoRegister,
+          proxyAuth: _proxyAuth,
+          header: _controllerHeader.text,
+        ),
+      ));
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -130,17 +145,17 @@ class _SettingsViewState extends State<SettingsView> {
         children: [
           const Text("Proxy auth"),
           Switch(
-              value: _enabled,
+              value: _proxyAuth,
               onChanged: (bool? value) {
                 setState(() {
-                  _enabled = value!;
+                  _proxyAuth = value!;
                 });
               })
         ],
       ),
       const SizedBox(height: 5),
       TextFormField(
-        controller: _controllerId,
+        controller: _controllerHeader,
         keyboardType: TextInputType.name,
         decoration: InputDecoration(
           labelText: "Header name",
@@ -159,10 +174,10 @@ class _SettingsViewState extends State<SettingsView> {
         children: [
           const Text("Auto register"),
           Switch(
-              value: _autoregister,
+              value: _proxyAutoRegister,
               onChanged: (bool? value) {
                 setState(() {
-                  _autoregister = value!;
+                  _proxyAutoRegister = value!;
                 });
               })
         ],

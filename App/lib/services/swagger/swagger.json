@@ -774,51 +774,6 @@
         }
       }
     },
-    "/api/admin/settings/oauth": {
-      "post": {
-        "tags": [
-          "SettingsLogic"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Oauth"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "SettingsLogic"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Oauth"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
     "/api/treatment": {
       "post": {
         "tags": [
@@ -1267,6 +1222,22 @@
         },
         "additionalProperties": false
       },
+      "Proxy": {
+        "type": "object",
+        "properties": {
+          "proxyAuth": {
+            "type": "boolean"
+          },
+          "autoRegister": {
+            "type": "boolean"
+          },
+          "header": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Right": {
         "type": "object",
         "properties": {
@@ -1312,6 +1283,9 @@
         "properties": {
           "oauth": {
             "$ref": "#/components/schemas/Oauth"
+          },
+          "proxy": {
+            "$ref": "#/components/schemas/Proxy"
           }
         },
         "additionalProperties": false

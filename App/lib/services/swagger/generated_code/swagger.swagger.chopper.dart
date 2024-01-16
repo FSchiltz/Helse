@@ -367,30 +367,6 @@ final class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _apiAdminSettingsOauthPost({required Oauth? body}) {
-    final Uri $url = Uri.parse('/api/admin/settings/oauth');
-    final $body = body;
-    final Request $request = Request(
-      'POST',
-      $url,
-      client.baseUrl,
-      body: $body,
-    );
-    return client.send<dynamic, dynamic>($request);
-  }
-
-  @override
-  Future<Response<Oauth>> _apiAdminSettingsOauthGet() {
-    final Uri $url = Uri.parse('/api/admin/settings/oauth');
-    final Request $request = Request(
-      'GET',
-      $url,
-      client.baseUrl,
-    );
-    return client.send<Oauth, Oauth>($request);
-  }
-
-  @override
   Future<Response<dynamic>> _apiTreatmentPost(
       {required CreateTreatment? body}) {
     final Uri $url = Uri.parse('/api/treatment');

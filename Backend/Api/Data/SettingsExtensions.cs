@@ -9,18 +9,18 @@ namespace Api.Data;
 /// </summary>
 public static class SettingsExtension
 {
-    public static Task Save(this AppDataConnection db, Oauth oauth)
+    public static Task Save<T>(this AppDataConnection db,string name, T blob)
     {
-        var data = JsonSerializer.Serialize(oauth);
+        var data = JsonSerializer.Serialize(blob);
 
         return db.GetTable<Data.Models.Settings>().InsertOrUpdateAsync(() => new Data.Models.Settings
         {
-            Name = Oauth.Name,
+            Name = name,
             Blob = data,
         },
          (x) => new Data.Models.Settings
          {
-             Name = Oauth.Name,
+             Name = name,
              Blob = data,
          });
     }

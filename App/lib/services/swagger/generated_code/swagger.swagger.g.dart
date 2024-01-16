@@ -237,6 +237,18 @@ Map<String, dynamic> _$PersonCreationToJson(PersonCreation instance) =>
       'rights': instance.rights?.map((e) => e.toJson()).toList(),
     };
 
+Proxy _$ProxyFromJson(Map<String, dynamic> json) => Proxy(
+      proxyAuth: json['proxyAuth'] as bool?,
+      autoRegister: json['autoRegister'] as bool?,
+      header: json['header'] as String?,
+    );
+
+Map<String, dynamic> _$ProxyToJson(Proxy instance) => <String, dynamic>{
+      'proxyAuth': instance.proxyAuth,
+      'autoRegister': instance.autoRegister,
+      'header': instance.header,
+    };
+
 Right _$RightFromJson(Map<String, dynamic> json) => Right(
       personId: json['personId'] as int?,
       userId: json['userId'] as int?,
@@ -260,10 +272,14 @@ Settings _$SettingsFromJson(Map<String, dynamic> json) => Settings(
       oauth: json['oauth'] == null
           ? null
           : Oauth.fromJson(json['oauth'] as Map<String, dynamic>),
+      proxy: json['proxy'] == null
+          ? null
+          : Proxy.fromJson(json['proxy'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$SettingsToJson(Settings instance) => <String, dynamic>{
       'oauth': instance.oauth?.toJson(),
+      'proxy': instance.proxy?.toJson(),
     };
 
 Status _$StatusFromJson(Map<String, dynamic> json) => Status(

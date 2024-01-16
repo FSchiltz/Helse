@@ -32,6 +32,9 @@ public static class SettingsLogic
                 case Oauth.Name:
                     settings.Oauth = JsonSerializer.Deserialize<Oauth>(setting.Blob);
                     break;
+                case Proxy.Name:
+                    settings.Proxy = JsonSerializer.Deserialize<Proxy>(setting.Blob);
+                    break;
             }
         }
 
@@ -54,49 +57,17 @@ public static class SettingsLogic
         using var transaction = await db.BeginTransactionAsync();
 
         if (settings.Oauth is not null)
-            await db.Save(settings.Oauth);
+            await db.Save(Oauth.Name, settings.Oauth);
         else
             await db.Delete(Oauth.Name);
+
+        if (settings.Proxy is not null)
+            await db.Save(Proxy.Name, settings.Proxy);
+        else
+            await db.Delete(Proxy.Name);
 
         await transaction.CommitAsync();
 
         return TypedResults.Created();
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="oauth"></param>
-    /// <param name="db"></param>
-    /// <param name="context"></param>
-    /// <returns></returns>
-    public static async Task<IResult> PostOauthAsync(Oauth oauth, AppDataConnection db, HttpContext context)
-    {
-        var admin = await db.IsAdmin(context);
-        if (admin is not null)
-            return admin;
-
-        await db.Save(oauth);
-
-        return TypedResults.Created();
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="db"></param>
-    /// <param name="context"></param>
-    /// <returns></returns>
-    public static async Task<IResult> GetOauthAsync(AppDataConnection db, HttpContext context)
-    {
-        var admin = await db.IsAdmin(context);
-        if (admin is not null)
-            return admin;
-
-        var oauth = await db.GetTable<Data.Models.Settings>().FirstOrDefaultAsync(x => x.Name == nameof(Oauth));
-        if (oauth is null)
-            return TypedResults.NotFound();
-
-        return TypedResults.Ok(JsonSerializer.Deserialize<Oauth>(oauth.Blob));
     }
 }
