@@ -71,65 +71,9 @@ class _SettingsViewState extends State<SettingsView> {
                     children: [
                       Text("Settings", style: Theme.of(context).textTheme.displaySmall),
                       const SizedBox(height: 20),
-                      Text("Oauth", style: Theme.of(context).textTheme.headlineMedium),
-                      const SizedBox(height: 5),
-                      Row(
-                        children: [
-                          const Text("Enabled"),
-                          Switch(
-                              value: _enabled,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _enabled = value!;
-                                });
-                              })
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      TextFormField(
-                        controller: _controllerId,
-                        keyboardType: TextInputType.name,
-                        decoration: InputDecoration(
-                          labelText: "Client id",
-                          prefixIcon: const Icon(Icons.person_sharp),
-                          prefixIconColor: theme.primary,
-                          filled: true,
-                          fillColor: theme.background,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: theme.primary),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: _controllerSecret,
-                        keyboardType: TextInputType.name,
-                        decoration: InputDecoration(
-                          labelText: "Client secret",
-                          prefixIcon: const Icon(Icons.person_sharp),
-                          prefixIconColor: theme.primary,
-                          filled: true,
-                          fillColor: theme.background,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: theme.primary),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      Row(
-                        children: [
-                          const Text("Auto register"),
-                          Switch(
-                              value: _autoregister,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _autoregister = value!;
-                                });
-                              })
-                        ],
-                      ),
+                      ...oauth(theme),
+                      const SizedBox(height: 20),
+                      ...proxy(theme),
                       const SizedBox(height: 20),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -176,5 +120,117 @@ class _SettingsViewState extends State<SettingsView> {
 
       _resetSettings();
     }
+  }
+
+  proxy(ColorScheme theme) {
+    return [
+      Text("Proxy", style: Theme.of(context).textTheme.headlineMedium),
+      const SizedBox(height: 5),
+      Row(
+        children: [
+          const Text("Proxy auth"),
+          Switch(
+              value: _enabled,
+              onChanged: (bool? value) {
+                setState(() {
+                  _enabled = value!;
+                });
+              })
+        ],
+      ),
+      const SizedBox(height: 5),
+      TextFormField(
+        controller: _controllerId,
+        keyboardType: TextInputType.name,
+        decoration: InputDecoration(
+          labelText: "Header name",
+          prefixIcon: const Icon(Icons.person_sharp),
+          prefixIconColor: theme.primary,
+          filled: true,
+          fillColor: theme.background,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: theme.primary),
+          ),
+        ),
+      ),
+      const SizedBox(height: 5),
+      Row(
+        children: [
+          const Text("Auto register"),
+          Switch(
+              value: _autoregister,
+              onChanged: (bool? value) {
+                setState(() {
+                  _autoregister = value!;
+                });
+              })
+        ],
+      )
+    ];
+  }
+
+  oauth(ColorScheme theme) {
+    return [
+      Text("Oauth", style: Theme.of(context).textTheme.headlineMedium),
+      const SizedBox(height: 5),
+      Row(
+        children: [
+          const Text("Enabled"),
+          Switch(
+              value: _enabled,
+              onChanged: (bool? value) {
+                setState(() {
+                  _enabled = value!;
+                });
+              })
+        ],
+      ),
+      const SizedBox(height: 5),
+      TextFormField(
+        controller: _controllerId,
+        keyboardType: TextInputType.name,
+        decoration: InputDecoration(
+          labelText: "Client id",
+          prefixIcon: const Icon(Icons.person_sharp),
+          prefixIconColor: theme.primary,
+          filled: true,
+          fillColor: theme.background,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: theme.primary),
+          ),
+        ),
+      ),
+      const SizedBox(height: 10),
+      TextFormField(
+        controller: _controllerSecret,
+        keyboardType: TextInputType.name,
+        decoration: InputDecoration(
+          labelText: "Client secret",
+          prefixIcon: const Icon(Icons.person_sharp),
+          prefixIconColor: theme.primary,
+          filled: true,
+          fillColor: theme.background,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: theme.primary),
+          ),
+        ),
+      ),
+      const SizedBox(height: 5),
+      Row(
+        children: [
+          const Text("Auto register"),
+          Switch(
+              value: _autoregister,
+              onChanged: (bool? value) {
+                setState(() {
+                  _autoregister = value!;
+                });
+              })
+        ],
+      )
+    ];
   }
 }
