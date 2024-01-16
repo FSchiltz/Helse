@@ -33,7 +33,7 @@ public static class TreatmentLogic
         var id = await db.GetTable<Data.Models.Treatment>().InsertWithInt64IdentityAsync(() => new Data.Models.Treatment
         {
             PersonId = treatment.PersonId ?? user.PersonId,
-            Type = (int)treatment.Type,
+            Type = (int)TreatmentType.Care,
         });
 
         // create the events

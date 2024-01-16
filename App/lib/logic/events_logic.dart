@@ -12,11 +12,11 @@ class EventsLogic {
   }
 
   Future<List<Event>> getEvent(int? type, DateTime? start, DateTime? end, {int? person}) async {
-    return (await ApiService(_account).events(type, start?.toUtc().toString(), end?.toUtc().toString(), person: person)) ?? List<Event>.empty();
+    return (await ApiService(_account).events(type, start?.toUtc(), end?.toUtc(), person: person)) ?? List<Event>.empty();
   }
 
    Future<List<Event>> agenda(DateTime? start, DateTime? end) async {
-    return (await ApiService(_account).agenda( start?.toUtc().toString(), end?.toUtc().toString()) )?? List<Event>.empty();
+    return (await ApiService(_account).agenda( start?.toUtc(), end?.toUtc()) )?? List<Event>.empty();
   }
 
   Future<void> addEvent(CreateEvent event, {int? person}) {

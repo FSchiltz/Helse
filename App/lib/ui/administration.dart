@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'blocs/settings/settings.dart';
 import 'blocs/administration/users.dart';
 
 class AdministrationPage extends StatelessWidget {
@@ -26,7 +27,7 @@ class AdministrationPage extends StatelessWidget {
         body: const TabBarView(
           children: [
             UsersView(),
-            Text("settings"),
+            SettingsView(),
           ],
         ),
       ),

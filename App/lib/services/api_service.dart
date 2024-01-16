@@ -75,7 +75,7 @@ class ApiService {
     return await _call(api.apiMetricsTypeGet);
   }
 
-  Future<List<Metric>?> metrics(int? type, String? start, String? end, {int? person}) async {
+  Future<List<Metric>?> metrics(int? type, DateTime? start, DateTime? end, {int? person}) async {
     var api = await _getService();
     return await _call(() => api.apiMetricsGet(type: type, start: start, end: end, personId: person));
   }
@@ -90,12 +90,12 @@ class ApiService {
     return await _call(api.apiEventsTypeGet);
   }
 
-  Future<List<Event>?> events(int? type, String? start, String? end, {int? person}) async {
+  Future<List<Event>?> events(int? type, DateTime? start, DateTime? end, {int? person}) async {
     var api = await _getService();
     return await _call(() => api.apiEventsGet(type: type, start: start, end: end, personId: person));
   }
 
-  Future<List<Event>?> agenda(String? start, String? end) async {
+  Future<List<Event>?> agenda(DateTime? start, DateTime? end) async {
     var api = await _getService();
     return await _call(() => api.apiPatientsAgendaGet(start: start, end: end));
   }
@@ -120,7 +120,7 @@ class ApiService {
     return await _call(api.apiPatientsGet);
   }
 
-  Future<List<Treatement>?> getTreatments(String? start, String? end, {int? person}) async {
+  Future<List<Treatement>?> getTreatments(DateTime? start, DateTime? end, {int? person}) async {
     var api = await _getService();
     return await _call(() => api.apiTreatmentGet(start: start, end: end, personId: person));
   }
@@ -133,5 +133,15 @@ class ApiService {
   Future<List<EventType>?> treatmentType() async {
     var api = await _getService();
     return await _call(api.apiTreatmentTypeGet);
+  }
+
+  Future<Settings> getSettings() async {
+    var api = await _getService();
+    return await _call(api.apiAdminSettingsGet) ?? const Settings();
+  }
+
+  Future<void> saveSettings(Settings settings) async {
+    var api = await _getService();
+     await _call(() => api.apiAdminSettingsPost(body: settings));
   }
 }

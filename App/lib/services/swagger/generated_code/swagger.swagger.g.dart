@@ -157,6 +157,20 @@ Map<String, dynamic> _$MetricTypeToJson(MetricType instance) =>
       'unit': instance.unit,
     };
 
+Oauth _$OauthFromJson(Map<String, dynamic> json) => Oauth(
+      enabled: json['enabled'] as bool?,
+      autoRegister: json['autoRegister'] as bool?,
+      clientId: json['clientId'] as String?,
+      clientSecret: json['clientSecret'] as String?,
+    );
+
+Map<String, dynamic> _$OauthToJson(Oauth instance) => <String, dynamic>{
+      'enabled': instance.enabled,
+      'autoRegister': instance.autoRegister,
+      'clientId': instance.clientId,
+      'clientSecret': instance.clientSecret,
+    };
+
 Person _$PersonFromJson(Map<String, dynamic> json) => Person(
       name: json['name'] as String?,
       surname: json['surname'] as String?,
@@ -242,6 +256,16 @@ Map<String, dynamic> _$RightToJson(Right instance) => <String, dynamic>{
       'type': rightTypeNullableToJson(instance.type),
     };
 
+Settings _$SettingsFromJson(Map<String, dynamic> json) => Settings(
+      oauth: json['oauth'] == null
+          ? null
+          : Oauth.fromJson(json['oauth'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$SettingsToJson(Settings instance) => <String, dynamic>{
+      'oauth': instance.oauth?.toJson(),
+    };
+
 Status _$StatusFromJson(Map<String, dynamic> json) => Status(
       init: json['init'] as bool?,
       error: json['error'] as String?,
@@ -257,9 +281,11 @@ Treatement _$TreatementFromJson(Map<String, dynamic> json) => Treatement(
               ?.map((e) => Event.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
+      type: treatmentTypeNullableFromJson(json['type']),
     );
 
 Map<String, dynamic> _$TreatementToJson(Treatement instance) =>
     <String, dynamic>{
       'events': instance.events?.map((e) => e.toJson()).toList(),
+      'type': treatmentTypeNullableToJson(instance.type),
     };
