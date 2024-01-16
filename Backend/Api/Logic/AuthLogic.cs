@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using Api.Data;
 using Api.Data.Models;
 using Api.Helpers;
@@ -14,7 +15,7 @@ namespace Api.Logic;
 /// <param name="Password"></param>
 public record Connection(string User, string Password);
 
-public record Status(bool Init, string? Error);
+public record Status(bool Init, bool ExternalAuth, string? Error);
 
 /// <summary>
 /// Logic over user authentication and right
@@ -30,36 +31,87 @@ public static class AuthLogic
     /// <param name="token"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
-    public static async Task<IResult> StatusAsync(AppDataConnection db)
+    public static async Task<IResult> StatusAsync(AppDataConnection db, HttpContext context)
     {
+        // check if the server is already init
         var count = await db.GetTable<User>().CountAsync();
-        return TypedResults.Ok(new Status(count > 0, null));
+
+        if (count == 0)
+            return TypedResults.Ok(new Status(false, false, null));
+
+        var isAuth = false;
+        // now we check if the user is already auth
+        var settings = await db.GetSetting<Proxy>(Proxy.Name);
+        if (settings?.ProxyAuth == true && settings.Header is not null && context.Request.Headers.TryGetValue(settings.Header, out var headers))
+        {
+            var header = headers.FirstOrDefault();
+            if (header is not null)
+            {
+                var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == header);
+                if (user is null)
+                {
+                    if (settings.AutoRegister)
+                    {
+                        // If auto register and not found, we create it
+                        await db.CreateUserAsync(new PersonCreation
+                        {
+                            UserName = header,
+                            Password = RandomNumberGenerator.GetInt32(100000000, int.MaxValue).ToString(),
+                            Type = UserType.User
+                        }, 0);
+                        isAuth = true;
+                    }
+                }
+                else
+                    isAuth = true;
+
+            }
+        }
+
+        return TypedResults.Ok(new Status(true, isAuth, null));
     }
 
     /// <summary>
     /// Connect and get a token
     /// </summary>
     /// <returns></returns>
-    public static async Task<IResult> AuthAsync(Connection user, AppDataConnection db, TokenService token, ILoggerFactory logger)
+    public static async Task<IResult> AuthAsync(Connection user, AppDataConnection db, HttpContext context, TokenService token, ILoggerFactory logger)
     {
+        var proxyAuth = false;
+        var username = user.User;
+        var settings = await db.GetSetting<Proxy>(Proxy.Name);
+
+        if (settings?.ProxyAuth == true && settings.Header is not null && context.Request.Headers.TryGetValue(settings.Header, out var headers))
+        {
+            var header = headers.FirstOrDefault();
+            if (header is not null)
+            {
+                // connection with the proxy header
+                username = header;
+                proxyAuth = true;
+            }
+        }
+
         // auth
         var fromDb = await (from u in db.GetTable<User>()
                             join p in db.GetTable<Data.Models.Person>() on u.PersonId equals p.Id
-                            where u.Identifier == user.User
+                            where u.Identifier == username
                             select new { u, p })
                             .FirstOrDefaultAsync();
 
         if (fromDb is null)
             return TypedResults.Unauthorized();
 
+        var passwordStatus = proxyAuth ? PasswordVerificationResult.Success : TokenService.Verify(user.Password, fromDb.u.Password);
+
         // generate the token
-        switch (TokenService.Verify(user.Password, fromDb.u.Password))
+        switch (passwordStatus)
         {
             case PasswordVerificationResult.Success:
                 // Success, nothing to do
                 break;
             case PasswordVerificationResult.SuccessRehashNeeded:
-                // Sucess but the password needs an update
+                // Success but the password needs an update
                 await UpdatePasswordAsync(fromDb.u.Id, user.Password, db);
                 break;
             case PasswordVerificationResult.Failed:

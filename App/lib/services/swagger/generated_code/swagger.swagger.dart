@@ -1782,6 +1782,7 @@ extension $SettingsExtension on Settings {
 class Status {
   const Status({
     this.init,
+    this.externalAuth,
     this.error,
   });
 
@@ -1792,6 +1793,8 @@ class Status {
 
   @JsonKey(name: 'init')
   final bool? init;
+  @JsonKey(name: 'externalAuth')
+  final bool? externalAuth;
   @JsonKey(name: 'error')
   final String? error;
   static const fromJsonFactory = _$StatusFromJson;
@@ -1802,6 +1805,9 @@ class Status {
         (other is Status &&
             (identical(other.init, init) ||
                 const DeepCollectionEquality().equals(other.init, init)) &&
+            (identical(other.externalAuth, externalAuth) ||
+                const DeepCollectionEquality()
+                    .equals(other.externalAuth, externalAuth)) &&
             (identical(other.error, error) ||
                 const DeepCollectionEquality().equals(other.error, error)));
   }
@@ -1812,18 +1818,27 @@ class Status {
   @override
   int get hashCode =>
       const DeepCollectionEquality().hash(init) ^
+      const DeepCollectionEquality().hash(externalAuth) ^
       const DeepCollectionEquality().hash(error) ^
       runtimeType.hashCode;
 }
 
 extension $StatusExtension on Status {
-  Status copyWith({bool? init, String? error}) {
-    return Status(init: init ?? this.init, error: error ?? this.error);
+  Status copyWith({bool? init, bool? externalAuth, String? error}) {
+    return Status(
+        init: init ?? this.init,
+        externalAuth: externalAuth ?? this.externalAuth,
+        error: error ?? this.error);
   }
 
-  Status copyWithWrapped({Wrapped<bool?>? init, Wrapped<String?>? error}) {
+  Status copyWithWrapped(
+      {Wrapped<bool?>? init,
+      Wrapped<bool?>? externalAuth,
+      Wrapped<String?>? error}) {
     return Status(
         init: (init != null ? init.value : this.init),
+        externalAuth:
+            (externalAuth != null ? externalAuth.value : this.externalAuth),
         error: (error != null ? error.value : this.error));
   }
 }

@@ -9,7 +9,7 @@ namespace Api.Data;
 /// </summary>
 public static class SettingsExtension
 {
-    public static Task Save<T>(this AppDataConnection db,string name, T blob)
+    public static Task Save<T>(this AppDataConnection db, string name, T blob)
     {
         var data = JsonSerializer.Serialize(blob);
 
@@ -26,4 +26,13 @@ public static class SettingsExtension
     }
 
     public static Task Delete(this AppDataConnection db, string name) => db.GetTable<Data.Models.Settings>().DeleteAsync(x => x.Name == name);
+
+    public static async Task<T?> GetSetting<T>(this AppDataConnection db, string name)
+    {
+        var setting = await db.GetTable<Data.Models.Settings>().Where(x => x.Name == name).SingleOrDefaultAsync();
+        if (setting?.Blob is null)
+            return default;
+
+        return JsonSerializer.Deserialize<T>(setting.Blob);
+    }
 }

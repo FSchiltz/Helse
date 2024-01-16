@@ -25,11 +25,7 @@
             "program": "${workspaceFolder}/Backend/Api/bin/Debug/net8.0/Api.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Backend/Api",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
+            "stopAtEntry": false,         
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },
