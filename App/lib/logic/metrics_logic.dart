@@ -12,7 +12,7 @@ class MetricsLogic {
   }
 
   Future<List<Metric>> getMetric(int type, DateTime start, DateTime end, {int? person}) async {
-    return (await ApiService(_account).metrics(type, start.toUtc().toString(), end.toUtc().toString(), person: person)) ?? List<Metric>.empty();
+    return (await ApiService(_account).metrics(type, start.toUtc(), end.toUtc(), person: person)) ?? List<Metric>.empty();
   }
 
   Future<void> addMetric(CreateMetric metric, {int? person}) {

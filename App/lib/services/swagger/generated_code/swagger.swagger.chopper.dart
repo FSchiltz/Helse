@@ -44,8 +44,8 @@ final class _$Swagger extends Swagger {
   @override
   Future<Response<List<Event>>> _apiEventsGet({
     int? type,
-    required String? start,
-    required String? end,
+    required DateTime? start,
+    required DateTime? end,
     int? personId,
   }) {
     final Uri $url = Uri.parse('/api/events');
@@ -173,8 +173,8 @@ final class _$Swagger extends Swagger {
   @override
   Future<Response<List<Metric>>> _apiMetricsGet({
     required int? type,
-    required String? start,
-    required String? end,
+    required DateTime? start,
+    required DateTime? end,
     int? personId,
   }) {
     final Uri $url = Uri.parse('/api/metrics');
@@ -285,8 +285,8 @@ final class _$Swagger extends Swagger {
 
   @override
   Future<Response<List<Event>>> _apiPatientsAgendaGet({
-    required String? start,
-    required String? end,
+    required DateTime? start,
+    required DateTime? end,
   }) {
     final Uri $url = Uri.parse('/api/patients/agenda');
     final Map<String, dynamic> $params = <String, dynamic>{
@@ -343,6 +343,30 @@ final class _$Swagger extends Swagger {
   }
 
   @override
+  Future<Response<dynamic>> _apiAdminSettingsPost({required Settings? body}) {
+    final Uri $url = Uri.parse('/api/admin/settings');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<Settings>> _apiAdminSettingsGet() {
+    final Uri $url = Uri.parse('/api/admin/settings');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Settings, Settings>($request);
+  }
+
+  @override
   Future<Response<dynamic>> _apiTreatmentPost(
       {required CreateTreatment? body}) {
     final Uri $url = Uri.parse('/api/treatment');
@@ -358,8 +382,8 @@ final class _$Swagger extends Swagger {
 
   @override
   Future<Response<List<Treatement>>> _apiTreatmentGet({
-    required String? start,
-    required String? end,
+    required DateTime? start,
+    required DateTime? end,
     int? personId,
   }) {
     final Uri $url = Uri.parse('/api/treatment');

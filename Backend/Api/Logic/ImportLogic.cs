@@ -28,11 +28,9 @@ public static class ImportLogic
 
   public static async Task<IResult> PostFileAsync([FromBody] string file, int type, AppDataConnection db, HttpContext context)
   {
-    // get the connected user
-    var userName = context.User.GetUser();
-    var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
-    if (user is null)
-      return TypedResults.Unauthorized();
+    var (error, user) = await db.GetUser(context);
+    if (error is not null)
+      return error;
 
     FileImporter importer = (FileTypes)type switch
     {

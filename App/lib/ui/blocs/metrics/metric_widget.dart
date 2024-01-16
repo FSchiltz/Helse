@@ -17,8 +17,8 @@ class MetricWidget extends StatefulWidget {
 }
 
 class _MetricWidgetState extends State<MetricWidget> {
-  late List<Metric>? _metrics;
-  late DateTimeRange? _date;
+  List<Metric>? _metrics;
+  DateTimeRange? _date;
 
   _MetricWidgetState();
 

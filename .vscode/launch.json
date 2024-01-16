@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Flutter desktop",
+            "name": "Flutter",
             "type": "dart",
             "request": "launch",
             "program": "App/lib/main.dart"

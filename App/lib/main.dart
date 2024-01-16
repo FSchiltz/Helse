@@ -7,6 +7,7 @@ import 'logic/events_logic.dart';
 import 'logic/import_logic.dart';
 import 'logic/metrics_logic.dart';
 import 'logic/persons_logic.dart';
+import 'logic/settings_logic.dart';
 import 'logic/treatment_logic.dart';
 import 'services/account.dart';
 import 'ui/blocs/common/restart.dart';
@@ -30,6 +31,7 @@ class AppState extends State<App> {
   static EventsLogic? eventLogic;
   static PersonsLogic? personsLogic;
   static TreatementLogic? treatementLogic;
+  static SettingsLogic? settingsLogic;
 
   @override
   void initState() {
@@ -41,6 +43,7 @@ class AppState extends State<App> {
     eventLogic = EventsLogic(account);
     personsLogic = PersonsLogic(account);
     treatementLogic = TreatementLogic(account);
+    settingsLogic = SettingsLogic(account);
   }
 
   @override

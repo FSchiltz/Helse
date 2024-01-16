@@ -15,6 +15,18 @@ enum RightType {
   const RightType(this.value);
 }
 
+enum TreatmentType {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue(0)
+  care(0);
+
+  final int? value;
+
+  const TreatmentType(this.value);
+}
+
 enum UserType {
   @JsonValue(null)
   swaggerGeneratedUnknown(null),

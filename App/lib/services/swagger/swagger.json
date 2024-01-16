@@ -79,7 +79,8 @@
             "required": true,
             "style": "form",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date-time"
             }
           },
           {
@@ -88,7 +89,8 @@
             "required": true,
             "style": "form",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date-time"
             }
           },
           {
@@ -364,7 +366,8 @@
             "required": true,
             "style": "form",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date-time"
             }
           },
           {
@@ -373,7 +376,8 @@
             "required": true,
             "style": "form",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date-time"
             }
           },
           {
@@ -602,7 +606,8 @@
             "required": true,
             "style": "form",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date-time"
             }
           },
           {
@@ -611,7 +616,8 @@
             "required": true,
             "style": "form",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date-time"
             }
           }
         ],
@@ -723,6 +729,51 @@
         }
       }
     },
+    "/api/admin/settings": {
+      "post": {
+        "tags": [
+          "SettingsLogic"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Settings"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "SettingsLogic"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Settings"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/api/treatment": {
       "post": {
         "tags": [
@@ -758,7 +809,8 @@
             "required": true,
             "style": "form",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date-time"
             }
           },
           {
@@ -767,7 +819,8 @@
             "required": true,
             "style": "form",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date-time"
             }
           },
           {
@@ -1047,6 +1100,26 @@
         },
         "additionalProperties": false
       },
+      "Oauth": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "autoRegister": {
+            "type": "boolean"
+          },
+          "clientId": {
+            "type": "string",
+            "nullable": true
+          },
+          "clientSecret": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Person": {
         "type": "object",
         "properties": {
@@ -1149,6 +1222,22 @@
         },
         "additionalProperties": false
       },
+      "Proxy": {
+        "type": "object",
+        "properties": {
+          "proxyAuth": {
+            "type": "boolean"
+          },
+          "autoRegister": {
+            "type": "boolean"
+          },
+          "header": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Right": {
         "type": "object",
         "properties": {
@@ -1189,6 +1278,18 @@
           "Edit"
         ]
       },
+      "Settings": {
+        "type": "object",
+        "properties": {
+          "oauth": {
+            "$ref": "#/components/schemas/Oauth"
+          },
+          "proxy": {
+            "$ref": "#/components/schemas/Proxy"
+          }
+        },
+        "additionalProperties": false
+      },
       "Status": {
         "type": "object",
         "properties": {
@@ -1211,9 +1312,23 @@
               "$ref": "#/components/schemas/Event"
             },
             "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/TreatmentType"
           }
         },
         "additionalProperties": false
+      },
+      "TreatmentType": {
+        "enum": [
+          0
+        ],
+        "type": "integer",
+        "description": "\n\n0 = Care",
+        "format": "int32",
+        "x-enumNames": [
+          "Care"
+        ]
       },
       "UserType": {
         "enum": [

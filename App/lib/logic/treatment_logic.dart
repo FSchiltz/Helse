@@ -8,7 +8,7 @@ class TreatementLogic {
   TreatementLogic(Account account) : _account = account;
 
   Future<List<Treatement>> get(DateTime? start, DateTime? end, {int? person}) async {
-    return (await ApiService(_account).getTreatments(start?.toUtc().toString(), end?.toUtc().toString(), person: person)) ?? List<Treatement>.empty();
+    return (await ApiService(_account).getTreatments(start?.toUtc(), end?.toUtc(), person: person)) ?? List<Treatement>.empty();
   }
 
   Future add(CreateTreatment treatment) async {

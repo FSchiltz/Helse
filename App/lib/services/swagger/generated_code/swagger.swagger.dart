@@ -78,8 +78,8 @@ abstract class Swagger extends ChopperService {
   ///@param personId
   Future<chopper.Response<List<Event>>> apiEventsGet({
     int? type,
-    required String? start,
-    required String? end,
+    required DateTime? start,
+    required DateTime? end,
     int? personId,
   }) {
     generatedMapping.putIfAbsent(Event, () => Event.fromJsonFactory);
@@ -96,8 +96,8 @@ abstract class Swagger extends ChopperService {
   @Get(path: '/api/events')
   Future<chopper.Response<List<Event>>> _apiEventsGet({
     @Query('type') int? type,
-    @Query('start') required String? start,
-    @Query('end') required String? end,
+    @Query('start') required DateTime? start,
+    @Query('end') required DateTime? end,
     @Query('personId') int? personId,
   });
 
@@ -219,8 +219,8 @@ abstract class Swagger extends ChopperService {
   ///@param personId
   Future<chopper.Response<List<Metric>>> apiMetricsGet({
     required int? type,
-    required String? start,
-    required String? end,
+    required DateTime? start,
+    required DateTime? end,
     int? personId,
   }) {
     generatedMapping.putIfAbsent(Metric, () => Metric.fromJsonFactory);
@@ -237,8 +237,8 @@ abstract class Swagger extends ChopperService {
   @Get(path: '/api/metrics')
   Future<chopper.Response<List<Metric>>> _apiMetricsGet({
     @Query('type') required int? type,
-    @Query('start') required String? start,
-    @Query('end') required String? end,
+    @Query('start') required DateTime? start,
+    @Query('end') required DateTime? end,
     @Query('personId') int? personId,
   });
 
@@ -337,8 +337,8 @@ abstract class Swagger extends ChopperService {
   ///@param start
   ///@param end
   Future<chopper.Response<List<Event>>> apiPatientsAgendaGet({
-    required String? start,
-    required String? end,
+    required DateTime? start,
+    required DateTime? end,
   }) {
     generatedMapping.putIfAbsent(Event, () => Event.fromJsonFactory);
 
@@ -350,8 +350,8 @@ abstract class Swagger extends ChopperService {
   ///@param end
   @Get(path: '/api/patients/agenda')
   Future<chopper.Response<List<Event>>> _apiPatientsAgendaGet({
-    @Query('start') required String? start,
-    @Query('end') required String? end,
+    @Query('start') required DateTime? start,
+    @Query('end') required DateTime? end,
   });
 
   ///
@@ -399,6 +399,30 @@ abstract class Swagger extends ChopperService {
   });
 
   ///
+  Future<chopper.Response> apiAdminSettingsPost({required Settings? body}) {
+    return _apiAdminSettingsPost(body: body);
+  }
+
+  ///
+  @Post(
+    path: '/api/admin/settings',
+    optionalBody: true,
+  )
+  Future<chopper.Response> _apiAdminSettingsPost(
+      {@Body() required Settings? body});
+
+  ///
+  Future<chopper.Response<Settings>> apiAdminSettingsGet() {
+    generatedMapping.putIfAbsent(Settings, () => Settings.fromJsonFactory);
+
+    return _apiAdminSettingsGet();
+  }
+
+  ///
+  @Get(path: '/api/admin/settings')
+  Future<chopper.Response<Settings>> _apiAdminSettingsGet();
+
+  ///
   Future<chopper.Response> apiTreatmentPost({required CreateTreatment? body}) {
     return _apiTreatmentPost(body: body);
   }
@@ -416,8 +440,8 @@ abstract class Swagger extends ChopperService {
   ///@param end
   ///@param personId
   Future<chopper.Response<List<Treatement>>> apiTreatmentGet({
-    required String? start,
-    required String? end,
+    required DateTime? start,
+    required DateTime? end,
     int? personId,
   }) {
     generatedMapping.putIfAbsent(Treatement, () => Treatement.fromJsonFactory);
@@ -431,8 +455,8 @@ abstract class Swagger extends ChopperService {
   ///@param personId
   @Get(path: '/api/treatment')
   Future<chopper.Response<List<Treatement>>> _apiTreatmentGet({
-    @Query('start') required String? start,
-    @Query('end') required String? end,
+    @Query('start') required DateTime? start,
+    @Query('end') required DateTime? end,
     @Query('personId') int? personId,
   });
 
@@ -1166,6 +1190,88 @@ extension $MetricTypeExtension on MetricType {
 }
 
 @JsonSerializable(explicitToJson: true)
+class Oauth {
+  const Oauth({
+    this.enabled,
+    this.autoRegister,
+    this.clientId,
+    this.clientSecret,
+  });
+
+  factory Oauth.fromJson(Map<String, dynamic> json) => _$OauthFromJson(json);
+
+  static const toJsonFactory = _$OauthToJson;
+  Map<String, dynamic> toJson() => _$OauthToJson(this);
+
+  @JsonKey(name: 'enabled')
+  final bool? enabled;
+  @JsonKey(name: 'autoRegister')
+  final bool? autoRegister;
+  @JsonKey(name: 'clientId')
+  final String? clientId;
+  @JsonKey(name: 'clientSecret')
+  final String? clientSecret;
+  static const fromJsonFactory = _$OauthFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is Oauth &&
+            (identical(other.enabled, enabled) ||
+                const DeepCollectionEquality()
+                    .equals(other.enabled, enabled)) &&
+            (identical(other.autoRegister, autoRegister) ||
+                const DeepCollectionEquality()
+                    .equals(other.autoRegister, autoRegister)) &&
+            (identical(other.clientId, clientId) ||
+                const DeepCollectionEquality()
+                    .equals(other.clientId, clientId)) &&
+            (identical(other.clientSecret, clientSecret) ||
+                const DeepCollectionEquality()
+                    .equals(other.clientSecret, clientSecret)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(enabled) ^
+      const DeepCollectionEquality().hash(autoRegister) ^
+      const DeepCollectionEquality().hash(clientId) ^
+      const DeepCollectionEquality().hash(clientSecret) ^
+      runtimeType.hashCode;
+}
+
+extension $OauthExtension on Oauth {
+  Oauth copyWith(
+      {bool? enabled,
+      bool? autoRegister,
+      String? clientId,
+      String? clientSecret}) {
+    return Oauth(
+        enabled: enabled ?? this.enabled,
+        autoRegister: autoRegister ?? this.autoRegister,
+        clientId: clientId ?? this.clientId,
+        clientSecret: clientSecret ?? this.clientSecret);
+  }
+
+  Oauth copyWithWrapped(
+      {Wrapped<bool?>? enabled,
+      Wrapped<bool?>? autoRegister,
+      Wrapped<String?>? clientId,
+      Wrapped<String?>? clientSecret}) {
+    return Oauth(
+        enabled: (enabled != null ? enabled.value : this.enabled),
+        autoRegister:
+            (autoRegister != null ? autoRegister.value : this.autoRegister),
+        clientId: (clientId != null ? clientId.value : this.clientId),
+        clientSecret:
+            (clientSecret != null ? clientSecret.value : this.clientSecret));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class Person {
   const Person({
     this.name,
@@ -1465,6 +1571,72 @@ extension $PersonCreationExtension on PersonCreation {
 }
 
 @JsonSerializable(explicitToJson: true)
+class Proxy {
+  const Proxy({
+    this.proxyAuth,
+    this.autoRegister,
+    this.header,
+  });
+
+  factory Proxy.fromJson(Map<String, dynamic> json) => _$ProxyFromJson(json);
+
+  static const toJsonFactory = _$ProxyToJson;
+  Map<String, dynamic> toJson() => _$ProxyToJson(this);
+
+  @JsonKey(name: 'proxyAuth')
+  final bool? proxyAuth;
+  @JsonKey(name: 'autoRegister')
+  final bool? autoRegister;
+  @JsonKey(name: 'header')
+  final String? header;
+  static const fromJsonFactory = _$ProxyFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is Proxy &&
+            (identical(other.proxyAuth, proxyAuth) ||
+                const DeepCollectionEquality()
+                    .equals(other.proxyAuth, proxyAuth)) &&
+            (identical(other.autoRegister, autoRegister) ||
+                const DeepCollectionEquality()
+                    .equals(other.autoRegister, autoRegister)) &&
+            (identical(other.header, header) ||
+                const DeepCollectionEquality().equals(other.header, header)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(proxyAuth) ^
+      const DeepCollectionEquality().hash(autoRegister) ^
+      const DeepCollectionEquality().hash(header) ^
+      runtimeType.hashCode;
+}
+
+extension $ProxyExtension on Proxy {
+  Proxy copyWith({bool? proxyAuth, bool? autoRegister, String? header}) {
+    return Proxy(
+        proxyAuth: proxyAuth ?? this.proxyAuth,
+        autoRegister: autoRegister ?? this.autoRegister,
+        header: header ?? this.header);
+  }
+
+  Proxy copyWithWrapped(
+      {Wrapped<bool?>? proxyAuth,
+      Wrapped<bool?>? autoRegister,
+      Wrapped<String?>? header}) {
+    return Proxy(
+        proxyAuth: (proxyAuth != null ? proxyAuth.value : this.proxyAuth),
+        autoRegister:
+            (autoRegister != null ? autoRegister.value : this.autoRegister),
+        header: (header != null ? header.value : this.header));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class Right {
   const Right({
     this.personId,
@@ -1556,6 +1728,57 @@ extension $RightExtension on Right {
 }
 
 @JsonSerializable(explicitToJson: true)
+class Settings {
+  const Settings({
+    this.oauth,
+    this.proxy,
+  });
+
+  factory Settings.fromJson(Map<String, dynamic> json) =>
+      _$SettingsFromJson(json);
+
+  static const toJsonFactory = _$SettingsToJson;
+  Map<String, dynamic> toJson() => _$SettingsToJson(this);
+
+  @JsonKey(name: 'oauth')
+  final Oauth? oauth;
+  @JsonKey(name: 'proxy')
+  final Proxy? proxy;
+  static const fromJsonFactory = _$SettingsFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is Settings &&
+            (identical(other.oauth, oauth) ||
+                const DeepCollectionEquality().equals(other.oauth, oauth)) &&
+            (identical(other.proxy, proxy) ||
+                const DeepCollectionEquality().equals(other.proxy, proxy)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(oauth) ^
+      const DeepCollectionEquality().hash(proxy) ^
+      runtimeType.hashCode;
+}
+
+extension $SettingsExtension on Settings {
+  Settings copyWith({Oauth? oauth, Proxy? proxy}) {
+    return Settings(oauth: oauth ?? this.oauth, proxy: proxy ?? this.proxy);
+  }
+
+  Settings copyWithWrapped({Wrapped<Oauth?>? oauth, Wrapped<Proxy?>? proxy}) {
+    return Settings(
+        oauth: (oauth != null ? oauth.value : this.oauth),
+        proxy: (proxy != null ? proxy.value : this.proxy));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class Status {
   const Status({
     this.init,
@@ -1609,6 +1832,7 @@ extension $StatusExtension on Status {
 class Treatement {
   const Treatement({
     this.events,
+    this.type,
   });
 
   factory Treatement.fromJson(Map<String, dynamic> json) =>
@@ -1619,6 +1843,12 @@ class Treatement {
 
   @JsonKey(name: 'events', defaultValue: <Event>[])
   final List<Event>? events;
+  @JsonKey(
+    name: 'type',
+    toJson: treatmentTypeNullableToJson,
+    fromJson: treatmentTypeNullableFromJson,
+  )
+  final enums.TreatmentType? type;
   static const fromJsonFactory = _$TreatementFromJson;
 
   @override
@@ -1626,7 +1856,9 @@ class Treatement {
     return identical(this, other) ||
         (other is Treatement &&
             (identical(other.events, events) ||
-                const DeepCollectionEquality().equals(other.events, events)));
+                const DeepCollectionEquality().equals(other.events, events)) &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)));
   }
 
   @override
@@ -1634,16 +1866,21 @@ class Treatement {
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(events) ^ runtimeType.hashCode;
+      const DeepCollectionEquality().hash(events) ^
+      const DeepCollectionEquality().hash(type) ^
+      runtimeType.hashCode;
 }
 
 extension $TreatementExtension on Treatement {
-  Treatement copyWith({List<Event>? events}) {
-    return Treatement(events: events ?? this.events);
+  Treatement copyWith({List<Event>? events, enums.TreatmentType? type}) {
+    return Treatement(events: events ?? this.events, type: type ?? this.type);
   }
 
-  Treatement copyWithWrapped({Wrapped<List<Event>?>? events}) {
-    return Treatement(events: (events != null ? events.value : this.events));
+  Treatement copyWithWrapped(
+      {Wrapped<List<Event>?>? events, Wrapped<enums.TreatmentType?>? type}) {
+    return Treatement(
+        events: (events != null ? events.value : this.events),
+        type: (type != null ? type.value : this.type));
   }
 }
 
@@ -1709,6 +1946,72 @@ List<enums.RightType>? rightTypeNullableListFromJson(
   }
 
   return rightType.map((e) => rightTypeFromJson(e.toString())).toList();
+}
+
+int? treatmentTypeNullableToJson(enums.TreatmentType? treatmentType) {
+  return treatmentType?.value;
+}
+
+int? treatmentTypeToJson(enums.TreatmentType treatmentType) {
+  return treatmentType.value;
+}
+
+enums.TreatmentType treatmentTypeFromJson(
+  Object? treatmentType, [
+  enums.TreatmentType? defaultValue,
+]) {
+  return enums.TreatmentType.values.firstWhereOrNull((e) =>
+          e.value.toString().toLowerCase() ==
+          treatmentType?.toString().toLowerCase()) ??
+      defaultValue ??
+      enums.TreatmentType.swaggerGeneratedUnknown;
+}
+
+enums.TreatmentType? treatmentTypeNullableFromJson(
+  Object? treatmentType, [
+  enums.TreatmentType? defaultValue,
+]) {
+  if (treatmentType == null) {
+    return null;
+  }
+  return enums.TreatmentType.values
+          .firstWhereOrNull((e) => e.value == treatmentType) ??
+      defaultValue;
+}
+
+String treatmentTypeExplodedListToJson(
+    List<enums.TreatmentType>? treatmentType) {
+  return treatmentType?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<int> treatmentTypeListToJson(List<enums.TreatmentType>? treatmentType) {
+  if (treatmentType == null) {
+    return [];
+  }
+
+  return treatmentType.map((e) => e.value!).toList();
+}
+
+List<enums.TreatmentType> treatmentTypeListFromJson(
+  List? treatmentType, [
+  List<enums.TreatmentType>? defaultValue,
+]) {
+  if (treatmentType == null) {
+    return defaultValue ?? [];
+  }
+
+  return treatmentType.map((e) => treatmentTypeFromJson(e.toString())).toList();
+}
+
+List<enums.TreatmentType>? treatmentTypeNullableListFromJson(
+  List? treatmentType, [
+  List<enums.TreatmentType>? defaultValue,
+]) {
+  if (treatmentType == null) {
+    return defaultValue;
+  }
+
+  return treatmentType.map((e) => treatmentTypeFromJson(e.toString())).toList();
 }
 
 int? userTypeNullableToJson(enums.UserType? userType) {

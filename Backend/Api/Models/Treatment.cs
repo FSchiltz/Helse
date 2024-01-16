@@ -1,7 +1,9 @@
 namespace Api.Models;
 
-public class CreateTreatment : Treatement
+public class CreateTreatment 
 {
+    public List<CreateEvent> Events { get; set; } = [];
+
     public long? PersonId { get; set; }
 }
 
