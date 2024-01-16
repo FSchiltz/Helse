@@ -18,7 +18,7 @@ public class Proxy
     public string? Header { get; set; }
 }
 
-public class Oauth
+public class Oauth 
 {
     public const string Name = "Oauth";
 

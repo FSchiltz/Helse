@@ -1296,6 +1296,9 @@
           "init": {
             "type": "boolean"
           },
+          "externalAuth": {
+            "type": "boolean"
+          },
           "error": {
             "type": "string",
             "nullable": true

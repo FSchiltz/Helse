@@ -284,11 +284,13 @@ Map<String, dynamic> _$SettingsToJson(Settings instance) => <String, dynamic>{
 
 Status _$StatusFromJson(Map<String, dynamic> json) => Status(
       init: json['init'] as bool?,
+      externalAuth: json['externalAuth'] as bool?,
       error: json['error'] as String?,
     );
 
 Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
       'init': instance.init,
+      'externalAuth': instance.externalAuth,
       'error': instance.error,
     };
 
