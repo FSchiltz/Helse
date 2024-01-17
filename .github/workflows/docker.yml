@@ -1,9 +1,7 @@
-name: Docker Image CI
+name: Docker Image CD
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
     branches: [ "main" ]
     
 env:
