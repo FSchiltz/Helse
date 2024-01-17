@@ -105,6 +105,7 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   void submit() async {
+    var localContext = context;
     if (_formKey.currentState?.validate() ?? false) {
       // save the user
       await AppState.settingsLogic?.save(Settings(
@@ -121,17 +122,19 @@ class _SettingsViewState extends State<SettingsView> {
         ),
       ));
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          width: 200,
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+      if (localContext.mounted) {
+        ScaffoldMessenger.of(localContext).showSnackBar(
+          SnackBar(
+            width: 200,
+            backgroundColor: Theme.of(localContext).colorScheme.secondary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            behavior: SnackBarBehavior.floating,
+            content: const Text("Saved Successfully"),
           ),
-          behavior: SnackBarBehavior.floating,
-          content: const Text("Saved Successfully"),
-        ),
-      );
+        );
+      }
 
       _resetSettings();
     }

@@ -34,6 +34,7 @@ class _TreatementState extends State<TreatmentAdd> {
   }
 
   void _submit() async {
+    var localContext = context;
     if (AppState.metricsLogic != null) {
       setState(() {
         _status = SubmissionStatus.inProgress;
@@ -47,7 +48,7 @@ class _TreatementState extends State<TreatmentAdd> {
           _status = SubmissionStatus.success;
         });
 
-        Navigator.of(context).pop();
+        if (localContext.mounted) Navigator.of(localContext).pop();
       } catch (_) {
         setState(() {
           _status = SubmissionStatus.failure;

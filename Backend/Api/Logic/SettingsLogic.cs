@@ -48,8 +48,10 @@ public static class SettingsLogic
     /// <param name="db"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static async Task<IResult> PostSettingAsync(Settings settings, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> PostSettingAsync(Settings settings, AppDataConnection db, HttpContext context, ILoggerFactory logger)
     {
+        var log = logger.CreateLogger(nameof(SettingsLogic));
+
         var admin = await db.IsAdmin(context);
         if (admin is not null)
             return admin;
@@ -67,6 +69,8 @@ public static class SettingsLogic
             await db.Delete(Proxy.Name);
 
         await transaction.CommitAsync();
+
+        log.LogInformation("Admin settings saved");
 
         return TypedResults.Created();
     }

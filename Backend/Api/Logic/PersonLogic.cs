@@ -128,8 +128,10 @@ public static class PersonLogic
     /// Only admin role unless no user exists (App setup) or caregiver if the new person is only a patient(no connection)
     /// </summary>
     /// <returns></returns>
-    public static async Task<IResult> CreateAsync(Models.PersonCreation newUser, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> CreateAsync(Models.PersonCreation newUser, AppDataConnection db, HttpContext context, ILoggerFactory logger)
     {
+        var log = logger.CreateLogger(nameof(PersonLogic));
+
         ValidateUser(newUser);
 
         // check if no user
@@ -156,8 +158,10 @@ public static class PersonLogic
         if (!userHasRole)
             return TypedResults.Unauthorized();
 
+        log.LogInformation("User creation of {user}", newUser.UserName);
+
         await db.CreateUserAsync(newUser, userId);
 
         return TypedResults.NoContent();
     }
-    }
+}

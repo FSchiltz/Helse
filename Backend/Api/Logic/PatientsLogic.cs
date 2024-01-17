@@ -1,6 +1,5 @@
 
 using Api.Data;
-using Api.Helpers;
 using Api.Models;
 using LinqToDB;
 

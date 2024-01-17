@@ -49,7 +49,7 @@ class AuthenticationLogic {
 
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
     var data = decodedToken["roles"];
-    if (data == null) return Person(type: UserType.swaggerGeneratedUnknown);
+    if (data == null) return const Person(type: UserType.swaggerGeneratedUnknown);
 
     var name = decodedToken["name"];
     if(name?.isEmpty ?? true) name = null;

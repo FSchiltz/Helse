@@ -101,6 +101,7 @@ class _FileImportState extends State<FileImport> {
   }
 
   void submit() async {
+    var localContext = context;
     if (AppState.metricsLogic != null && selected != null) {
       setState(() {
         status = SubmissionStatus.inProgress;
@@ -114,8 +115,10 @@ class _FileImportState extends State<FileImport> {
         setState(() {
           status = SubmissionStatus.success;
         });
-        
-        Navigator.of(context).pop();
+
+        if (localContext.mounted) {
+          Navigator.of(localContext).pop();
+        }
       } catch (ex) {
         setState(() {
           status = SubmissionStatus.failure;

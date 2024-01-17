@@ -6,7 +6,6 @@ import 'package:collection/collection.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 
-
 class MetricGraph extends StatelessWidget {
   final List<Metric> metrics;
   final String? unit;

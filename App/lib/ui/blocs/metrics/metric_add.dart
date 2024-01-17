@@ -94,6 +94,7 @@ class _MetricAddState extends State<MetricAdd> {
   }
 
   void _submit() async {
+    var localContext = context;
     if (AppState.metricsLogic != null) {
       setState(() {
         _status = SubmissionStatus.inProgress;
@@ -103,7 +104,10 @@ class _MetricAddState extends State<MetricAdd> {
         var metric = CreateMetric(date: _date, type: _type, tag: _tag, value: _value);
         await AppState.metricsLogic?.addMetric(metric, person: widget.person);
 
-        Navigator.of(context).pop();
+        if (localContext.mounted) {
+          Navigator.of(localContext).pop();
+        }
+        
         widget.callback();
         setState(() {
           _status = SubmissionStatus.success;

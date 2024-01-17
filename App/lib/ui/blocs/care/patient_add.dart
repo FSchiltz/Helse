@@ -23,6 +23,7 @@ class _PatientAddState extends State<PatientAdd> {
   final TextEditingController _controllerSurname = TextEditingController();
 
   void _submit() async {
+    var localContext = context;
     setState(() {
       _status = SubmissionStatus.inProgress;
     });
@@ -35,21 +36,22 @@ class _PatientAddState extends State<PatientAdd> {
         type: UserType.patient,
       ));
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          width: 200,
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          behavior: SnackBarBehavior.floating,
-          content: const Text("Added Successfully"),
-        ),
-      );
-
       _formKey.currentState?.reset();
       widget.callback.call();
-      Navigator.of(context).pop();
+      if (localContext.mounted) {
+        ScaffoldMessenger.of(localContext).showSnackBar(
+          SnackBar(
+            width: 200,
+            backgroundColor: Theme.of(localContext).colorScheme.secondary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            behavior: SnackBarBehavior.floating,
+            content: const Text("Added Successfully"),
+          ),
+        );
+        Navigator.of(localContext).pop();
+      }
       setState(() {
         _status = SubmissionStatus.success;
       });
