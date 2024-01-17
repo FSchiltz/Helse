@@ -7,7 +7,7 @@ services:
   app:
     build: .
     ports:
-      - 8000:80
+      - 8080:8080
     environment:
         - ConnectionStrings__Default=Server=database;Port=5432;Database=helse;User Id=postgres;Password=postgres
         - Jwt__Issuer=test.com
@@ -21,5 +21,3 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: helse
       PG_DATA: /var/lib/postgresql/data
-
-

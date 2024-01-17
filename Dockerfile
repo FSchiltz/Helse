@@ -40,7 +40,7 @@ COPY --from=build /backend ./
 ## Copy the webApp
 COPY --from=build /app/build/web /app/wwwroot
 
-EXPOSE 80
+EXPOSE 8080
 
 ENV DOTNET_EnableDiagnostics=0
 ENTRYPOINT ["dotnet", "Api.dll"]
