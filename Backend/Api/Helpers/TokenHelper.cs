@@ -1,7 +1,4 @@
 using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
-using Api.Data.Models;
-using Api.Models;
 
 namespace Api.Helpers;
 

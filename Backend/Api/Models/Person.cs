@@ -1,5 +1,3 @@
-using Api.Data.Models;
-
 namespace Api.Models;
 
 public class Person : PersonBase

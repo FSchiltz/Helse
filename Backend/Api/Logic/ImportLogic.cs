@@ -1,20 +1,11 @@
-
-using System.ComponentModel;
 using Api.Data;
 using Api.Helpers;
 using Api.Logic.Import;
+using Api.Models;
 using LinqToDB;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Logic;
-
-public enum FileTypes
-{
-  None = 0,
-
-  [Description("Redmi watch fitness file")]
-  RedmiWatch,
-}
 
 public record FileType(int Type, string? Name);
 

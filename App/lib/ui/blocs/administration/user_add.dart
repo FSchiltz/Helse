@@ -71,6 +71,7 @@ class _SignupState extends State<UserAdd> {
   }
 
   void submit() async {
+    var localContext = context;
     if (_formKey.currentState?.validate() ?? false) {
       // save the user
       await AppState.authenticationLogic?.createAccount(
@@ -83,21 +84,22 @@ class _SignupState extends State<UserAdd> {
         type: _type,
       ));
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          width: 200,
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          behavior: SnackBarBehavior.floating,
-          content: const Text("Added Successfully"),
-        ),
-      );
-
       _formKey.currentState?.reset();
       widget.callback?.call();
-      Navigator.of(context).pop();
+      if (localContext.mounted) {
+        ScaffoldMessenger.of(localContext).showSnackBar(
+          SnackBar(
+            width: 200,
+            backgroundColor: Theme.of(localContext).colorScheme.secondary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            behavior: SnackBarBehavior.floating,
+            content: const Text("Added Successfully"),
+          ),
+        );
+        Navigator.of(localContext).pop();
+      }
     }
   }
 

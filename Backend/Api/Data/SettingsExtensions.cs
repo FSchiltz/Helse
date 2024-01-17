@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Api.Models;
 using LinqToDB;
 
 namespace Api.Data;

@@ -6,18 +6,11 @@ using Api.Data.Models;
 
 namespace Api.Helpers;
 
-public class TokenService
+public class TokenService(string issuer, string audience, SymmetricSecurityKey key)
 {
-    private readonly string _issuer;
-    private readonly string _audience;
-    private readonly SymmetricSecurityKey _key;
-
-    public TokenService(string issuer, string audience, SymmetricSecurityKey key)
-    {
-        _issuer = issuer;
-        _audience = audience;
-        _key = key;
-    }
+    private readonly string _issuer = issuer;
+    private readonly string _audience = audience;
+    private readonly SymmetricSecurityKey _key = key;
 
     public static string Hash(string password)
     {
@@ -33,10 +26,10 @@ public class TokenService
     {
         var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.NameId, user.Identifier),
-                new Claim("roles", user.Type.ToString()),
-                new Claim("surname", person.Surname ?? string.Empty),
-                new Claim("name", person.Name ?? string.Empty),
+                new(JwtRegisteredClaimNames.NameId, user.Identifier),
+                new("roles", user.Type.ToString()),
+                new("surname", person.Surname ?? string.Empty),
+                new("name", person.Name ?? string.Empty),
              };
 
         if (user.Email != null)

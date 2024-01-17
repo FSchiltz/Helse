@@ -31,13 +31,16 @@ public static class AuthLogic
     /// <param name="token"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
-    public static async Task<IResult> StatusAsync(AppDataConnection db, HttpContext context)
+    public static async Task<IResult> StatusAsync(AppDataConnection db, HttpContext context, ILoggerFactory logger)
     {
         // check if the server is already init
         var count = await db.GetTable<User>().CountAsync();
 
         if (count == 0)
+        {
+            logger.CreateLogger(nameof(AuthLogic)).LogInformation("First connexion");
             return TypedResults.Ok(new Status(false, false, null));
+        }
 
         var isAuth = false;
         // now we check if the user is already auth
@@ -77,19 +80,26 @@ public static class AuthLogic
     /// <returns></returns>
     public static async Task<IResult> AuthAsync(Connection user, AppDataConnection db, HttpContext context, TokenService token, ILoggerFactory logger)
     {
+        var log = logger.CreateLogger("Auth");
+
         var proxyAuth = false;
         var username = user.User;
         var settings = await db.GetSetting<Proxy>(Proxy.Name);
 
         if (settings?.ProxyAuth == true && settings.Header is not null && context.Request.Headers.TryGetValue(settings.Header, out var headers))
         {
+            log.LogInformation("Connexion by proxy tentative: {header}", context.Request.Headers);
             var header = headers.FirstOrDefault();
             if (header is not null)
             {
+                log.LogInformation("Connexion by proxy auth header {header} and user {user}", settings.Header, header);
+                
                 // connection with the proxy header
                 username = header;
                 proxyAuth = true;
             }
+
+            log.LogWarning("Connexion by proxy auth header {header} rejected", settings.Header);
         }
 
         // auth
@@ -116,7 +126,7 @@ public static class AuthLogic
                 break;
             case PasswordVerificationResult.Failed:
             default:
-                logger.CreateLogger("Auth").LogWarning("Unauthorized access to getToken");
+                log.LogWarning("Unauthorized access to getToken with user {user}", username);
                 return TypedResults.Unauthorized();
         }
 

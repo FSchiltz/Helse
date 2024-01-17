@@ -1,4 +1,3 @@
-using Api.Models;
 using LinqToDB.Mapping;
 
 namespace Api.Data.Models;
