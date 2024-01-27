@@ -47,11 +47,12 @@ public static class AuthLogic
         var isAuth = false;
         // now we check if the user is already auth
         var settings = await db.GetSetting<Proxy>(Proxy.Name);
-        if (settings?.ProxyAuth == true && settings.Header is not null && context.Request.Headers.TryGetValue(settings.Header, out var headers))
+        if (settings?.ProxyAuth == true && settings.Header is not null)
         {
             log.LogInformation("Connexion by proxy tentative: {header}", context.Request.Headers);
-            var header = headers.FirstOrDefault();
-            if (header is not null)
+
+            if (context.Request.Headers.TryGetValue(settings.Header, out var headers)
+             && headers.FirstOrDefault() is string header && header is not null)
             {
                 var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == header);
                 if (user is null)
