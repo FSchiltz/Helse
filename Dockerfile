@@ -1,4 +1,4 @@
-# https://hub.docker.com/_/microsoft-dotnet
+# Build the backend on microsoft image
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 # Building the backend
@@ -8,29 +8,31 @@ WORKDIR /source
 COPY ./Backend/Api .
 RUN  dotnet publish -o /backend -c release
 
-# Building the wep app
-## Install flutter dependencies
-RUN apt-get update
-RUN apt-get install -y curl git wget unzip libgconf-2-4 gdb libstdc++6 libglu1-mesa fonts-droid-fallback lib32stdc++6 python3 sed
-RUN apt-get clean
+
+# build the flutter web app 
+# preparing the ubuntu container with all necessary tools
+RUN apt update -y
+RUN apt install -y bash curl file git unzip zip xz-utils libglu1-mesa
 
 ## Download Flutter SDK
-RUN git clone https://github.com/flutter/flutter.git /flutter
+RUN git clone https://github.com/flutter/flutter.git -b stable /flutter
 ENV PATH "$PATH:/flutter/bin"   
+RUN flutter precache
 
 ## Run flutter doctor
-RUN flutter doctor -v
-RUN flutter channel master
-RUN flutter upgrade
-RUN flutter config --no-enable-android
-RUN flutter config --no-enable-ios
 RUN flutter config --enable-web
+RUN flutter doctor -v
 
 # Copy files to container and build
 RUN mkdir /app/
 COPY ./App/ /app/
 WORKDIR /app/
+
+# run flutter clean, pub get and then build for web
+RUN flutter clean
+RUN flutter pub get
 RUN flutter build web
+
 
 # final stage/image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine

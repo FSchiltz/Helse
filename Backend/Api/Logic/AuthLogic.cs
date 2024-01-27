@@ -33,12 +33,14 @@ public static class AuthLogic
     /// <returns></returns>
     public static async Task<IResult> StatusAsync(AppDataConnection db, HttpContext context, ILoggerFactory logger)
     {
+        var log = logger.CreateLogger("Auth");
+
         // check if the server is already init
         var count = await db.GetTable<User>().CountAsync();
 
         if (count == 0)
         {
-            logger.CreateLogger(nameof(AuthLogic)).LogInformation("First connexion");
+            log.LogInformation("First connexion");
             return TypedResults.Ok(new Status(false, false, null));
         }
 
@@ -47,6 +49,7 @@ public static class AuthLogic
         var settings = await db.GetSetting<Proxy>(Proxy.Name);
         if (settings?.ProxyAuth == true && settings.Header is not null && context.Request.Headers.TryGetValue(settings.Header, out var headers))
         {
+            log.LogInformation("Connexion by proxy tentative: {header}", context.Request.Headers);
             var header = headers.FirstOrDefault();
             if (header is not null)
             {
@@ -55,6 +58,7 @@ public static class AuthLogic
                 {
                     if (settings.AutoRegister)
                     {
+                        log.LogInformation("User created for {header}", context.Request.Headers);
                         // If auto register and not found, we create it
                         await db.CreateUserAsync(new PersonCreation
                         {
@@ -71,6 +75,7 @@ public static class AuthLogic
             }
         }
 
+        log.LogInformation("Status asked");
         return TypedResults.Ok(new Status(true, isAuth, null));
     }
 
@@ -93,13 +98,13 @@ public static class AuthLogic
             if (header is not null)
             {
                 log.LogInformation("Connexion by proxy auth header {header} and user {user}", settings.Header, header);
-                
+
                 // connection with the proxy header
                 username = header;
                 proxyAuth = true;
             }
-
-            log.LogWarning("Connexion by proxy auth header {header} rejected", settings.Header);
+            else
+                log.LogWarning("Connexion by proxy auth header {header} rejected", settings.Header);
         }
 
         // auth
