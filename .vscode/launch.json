@@ -2,6 +2,15 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Docker .NET Attach (Preview)",
+            "type": "docker",
+            "request": "attach",
+            "platform": "netCore",
+            "sourceFileMap": {
+                "/src": "${workspaceFolder}"
+            }
+        },
+        {
             "name": "Flutter",
             "type": "dart",
             "request": "launch",
@@ -25,7 +34,7 @@
             "program": "${workspaceFolder}/Backend/Api/bin/Debug/net8.0/Api.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Backend/Api",
-            "stopAtEntry": false,         
+            "stopAtEntry": false,
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },
@@ -46,6 +55,15 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
+        },
+        {
+            "name": "Docker .NET Launch",
+            "type": "docker",
+            "request": "launch",
+            "preLaunchTask": "docker-run: debug",
+            "netCore": {
+                "appProject": "${workspaceFolder}/Backend/Api/Api.csproj"
+            }
         }
     ]
 }
