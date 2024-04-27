@@ -14,23 +14,23 @@ public record FileType(int Type, string? Name);
 /// </summary>
 public static class ImportLogic
 {
-  public static IResult GetTypeAsync()
-    => TypedResults.Ok(Enum.GetValues<FileTypes>().Select(x => new FileType((int)x, Helper.DescriptionAttr(x))));
+    public static IResult GetTypeAsync()
+      => TypedResults.Ok(Enum.GetValues<FileTypes>().Select(x => new FileType((int)x, Helper.DescriptionAttr(x))));
 
-  public static async Task<IResult> PostFileAsync([FromBody] string file, int type, AppDataConnection db, HttpContext context)
-  {
-    var (error, user) = await db.GetUser(context);
-    if (error is not null)
-      return error;
-
-    FileImporter importer = (FileTypes)type switch
+    public static async Task<IResult> PostFileAsync([FromBody] string file, int type, AppDataConnection db, HttpContext context)
     {
-      FileTypes.RedmiWatch => new RedmiWatch(file, db, user),
-      _ => throw new NotSupportedException("Invalid file type"),
-    };
+        var (error, user) = await db.GetUser(context);
+        if (error is not null)
+            return error;
 
-    await importer.Import();
+        FileImporter importer = (FileTypes)type switch
+        {
+            FileTypes.RedmiWatch => new RedmiWatch(file, db, user),
+            _ => throw new NotSupportedException("Invalid file type"),
+        };
 
-    return TypedResults.NoContent();
-  }
+        await importer.Import();
+
+        return TypedResults.NoContent();
+    }
 }

@@ -6,7 +6,7 @@ namespace Api.Data.Models;
 public class Prescription
 {
     [PrimaryKey]
-    public long Id { get; set; } 
+    public long Id { get; set; }
 
     [Column, NotNull]
     public long UserId { get; set; }

@@ -97,7 +97,7 @@ public static class AuthLogic
             log.LogInformation("Connexion by proxy tentative: {header}", context.Request.Headers);
             context.Request.Headers.TryGetValue(settings.Header, out var headers);
             var header = headers.FirstOrDefault();
-            
+
             if (header is not null)
             {
                 log.LogInformation("Connexion by proxy auth header {header} and user {user}", settings.Header, header);

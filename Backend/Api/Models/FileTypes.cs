@@ -8,8 +8,8 @@ namespace Api.Models;
 /// </summary>
 public enum FileTypes
 {
-  None = 0,
+    None = 0,
 
-  [Description("Redmi watch fitness file")]
-  RedmiWatch,
+    [Description("Redmi watch fitness file")]
+    RedmiWatch,
 }
