@@ -82,6 +82,10 @@ class _AppViewState extends State<AppView> {
 
   NavigatorState get _navigator => _navigatorKey.currentState!;
 
+  _AppViewState() {
+    AppState.settingsLogic?.getLocalSettings().then((value) => changeTheme(value.theme));
+  }
+
   void changeTheme(ThemeMode themeMode) {
     setState(() {
       _themeMode = themeMode;
