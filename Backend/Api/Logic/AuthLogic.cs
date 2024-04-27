@@ -92,10 +92,12 @@ public static class AuthLogic
         var username = user.User;
         var settings = await db.GetSetting<Proxy>(Proxy.Name);
 
-        if (settings?.ProxyAuth == true && settings.Header is not null && context.Request.Headers.TryGetValue(settings.Header, out var headers))
+        if (settings?.ProxyAuth == true && settings.Header is not null)
         {
             log.LogInformation("Connexion by proxy tentative: {header}", context.Request.Headers);
+            context.Request.Headers.TryGetValue(settings.Header, out var headers);
             var header = headers.FirstOrDefault();
+            
             if (header is not null)
             {
                 log.LogInformation("Connexion by proxy auth header {header} and user {user}", settings.Header, header);
