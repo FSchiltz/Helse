@@ -7,8 +7,8 @@ namespace Api.Data.Models;
 public class Settings
 {
     [PrimaryKey]
-    public required string Name { get; set; } 
-    
+    public required string Name { get; set; }
+
     [Column, NotNull, DataType(DataType.Json)]
     public required string Blob { get; set; }
 }

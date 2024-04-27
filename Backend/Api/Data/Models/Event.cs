@@ -6,8 +6,8 @@ namespace Api.Data.Models;
 public class Event
 {
     [PrimaryKey]
-    public long Id { get; set; } 
-    
+    public long Id { get; set; }
+
     [Column, NotNull]
     public long PersonId { get; set; }
 
@@ -54,5 +54,5 @@ public class Event
     public Treatment? Address { get; set; }
 
     [Column]
-    public string? Tag { get; set; }    
+    public string? Tag { get; set; }
 }

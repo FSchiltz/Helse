@@ -14,7 +14,7 @@ public class Metric
 
     public string? Tag { get; set; }
 
-    public long Type {get;set;}
+    public long Type { get; set; }
 }
 
 public class CreateMetric
@@ -25,6 +25,6 @@ public class CreateMetric
 
     public string? Tag { get; set; }
 
-    public long Type {get;set;}
+    public long Type { get; set; }
 }
 

@@ -30,7 +30,7 @@ public class Metric
     public string? Tag { get; set; }
 
     [Column]
-    public long Type {get;set;}
+    public long Type { get; set; }
 
     [Association(ThisKey = nameof(Type), OtherKey = nameof(Data.Models.MetricType.Id))]
     public MetricType? MetricType { get; set; }

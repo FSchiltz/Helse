@@ -44,7 +44,7 @@ public static class PatientsLogic
     }
 
     public async static Task<IResult> GetAgendaAsync(DateTime start, DateTime end, AppDataConnection db, HttpContext context)
-    {        
+    {
         var (error, user) = await db.GetUser(context);
         if (error is not null)
             return error;

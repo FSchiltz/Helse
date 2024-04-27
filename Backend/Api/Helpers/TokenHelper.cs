@@ -2,7 +2,8 @@ using System.Security.Claims;
 
 namespace Api.Helpers;
 
-public static class TokenHelper {
+public static class TokenHelper
+{
 
     public static string? GetUser(this ClaimsPrincipal claims)
     {

@@ -5,7 +5,8 @@ namespace Api.Data.Models;
 [Table(Schema = "person")]
 public class User
 {
-    public static User Empty => new (){
+    public static User Empty => new()
+    {
         Identifier = string.Empty,
         Password = string.Empty,
     };
