@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../loader.dart';
+import '../notification.dart';
 import 'events_graph.dart';
 
 class EventWidget extends StatefulWidget {
@@ -37,23 +38,31 @@ class _EventWidgetState extends State<EventWidget> {
   }
 
   Future<List<Event>?> _getData(int? id) async {
-    if (id == null) {
-      _events = List<Event>.empty();
+    var localContext = context;
+    try {
+      if (id == null) {
+        _events = List<Event>.empty();
+        return _events;
+      }
+
+      // if the date has not changed, no call to the backend
+      var date = _date;
+      if (date != null && widget.date.start.compareTo(date.start) == 0 && widget.date.end.compareTo(date.end) == 0) return _events;
+
+      date = widget.date;
+      _date = date;
+
+      var start = DateTime(date.start.year, date.start.month, date.start.day);
+      var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
+
+      _events = await AppState.eventLogic?.getEvent(id, start, end, person: widget.person);
+      _events?.sort(_sort);
       return _events;
+    } catch (ex) {
+      if (localContext.mounted) {
+        ErrorSnackBar.show("Error: $ex", localContext);
+      }
     }
-
-    // if the date has not changed, no call to the backend
-    var date = _date;
-    if (date != null && widget.date.start.compareTo(date.start) == 0 && widget.date.end.compareTo(date.end) == 0) return _events;
-
-    date = widget.date;
-    _date = date;
-
-    var start = DateTime(date.start.year, date.start.month, date.start.day);
-    var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
-
-    _events = await AppState.eventLogic?.getEvent(id, start, end, person: widget.person);
-    _events?.sort(_sort);
     return _events;
   }
 

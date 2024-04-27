@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../notification.dart';
 import 'user_form.dart';
 
 class UserAdd extends StatefulWidget {
@@ -72,33 +73,31 @@ class _SignupState extends State<UserAdd> {
 
   void submit() async {
     var localContext = context;
-    if (_formKey.currentState?.validate() ?? false) {
-      // save the user
-      await AppState.authenticationLogic?.createAccount(
-          person: PersonCreation(
-        userName: _controllerUsername.text,
-        name: _controllerName.text,
-        surname: _controllerSurname.text,
-        password: _controllerPassword.text,
-        email: _controllerEmail.text,
-        type: _type,
-      ));
+    try {
+      if (_formKey.currentState?.validate() ?? false) {
+        // save the user
+        await AppState.authenticationLogic?.createAccount(
+            person: PersonCreation(
+          userName: _controllerUsername.text,
+          name: _controllerName.text,
+          surname: _controllerSurname.text,
+          password: _controllerPassword.text,
+          email: _controllerEmail.text,
+          type: _type,
+        ));
 
-      _formKey.currentState?.reset();
-      widget.callback?.call();
+        _formKey.currentState?.reset();
+        widget.callback?.call();
+
+        if (localContext.mounted) {
+          SuccessSnackBar.show("Added Successfully", localContext);
+
+          Navigator.of(localContext).pop();
+        }
+      }
+    } catch (ex) {
       if (localContext.mounted) {
-        ScaffoldMessenger.of(localContext).showSnackBar(
-          SnackBar(
-            width: 200,
-            backgroundColor: Theme.of(localContext).colorScheme.secondary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            behavior: SnackBarBehavior.floating,
-            content: const Text("Added Successfully"),
-          ),
-        );
-        Navigator.of(localContext).pop();
+        ErrorSnackBar.show("Error: $ex", localContext);
       }
     }
   }

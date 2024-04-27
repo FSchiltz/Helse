@@ -89,12 +89,15 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
         // save the user
         await AppState.settingsLogic?.saveLocal(LocalSettings(_healthEnabled, _theme));
 
-        SuccessSnackBar.show("Saved Successfully", localContext);
-
+        if (localContext.mounted) {
+          SuccessSnackBar.show("Saved Successfully", localContext);
+        }
         _resetSettings();
       }
     } catch (ex) {
-      ErrorSnackBar.show("Error: $ex", localContext);
+      if (localContext.mounted) {
+        ErrorSnackBar.show("Error: $ex", localContext);
+      }
     }
   }
 

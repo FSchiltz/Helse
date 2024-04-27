@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/blocs/notification.dart';
 
 import '../../../logic/event.dart';
 import '../../../main.dart';
@@ -95,27 +96,34 @@ class _MetricAddState extends State<MetricAdd> {
 
   void _submit() async {
     var localContext = context;
-    if (AppState.metricsLogic != null) {
-      setState(() {
-        _status = SubmissionStatus.inProgress;
-      });
+    try {
+      if (AppState.metricsLogic != null) {
+        setState(() {
+          _status = SubmissionStatus.inProgress;
+        });
 
-      try {
-        var metric = CreateMetric(date: _date, type: _type, tag: _tag, value: _value);
-        await AppState.metricsLogic?.addMetric(metric, person: widget.person);
+        try {
+          var metric = CreateMetric(date: _date, type: _type, tag: _tag, value: _value);
+          await AppState.metricsLogic?.addMetric(metric, person: widget.person);
 
-        if (localContext.mounted) {
-          Navigator.of(localContext).pop();
+          if (localContext.mounted) {
+            SuccessSnackBar.show("Metric added", localContext);
+            Navigator.of(localContext).pop();
+          }
+
+          widget.callback();
+          setState(() {
+            _status = SubmissionStatus.success;
+          });
+        } catch (_) {
+          setState(() {
+            _status = SubmissionStatus.failure;
+          });
         }
-        
-        widget.callback();
-        setState(() {
-          _status = SubmissionStatus.success;
-        });
-      } catch (_) {
-        setState(() {
-          _status = SubmissionStatus.failure;
-        });
+      }
+    } catch (ex) {
+      if (localContext.mounted) {
+        ErrorSnackBar.show("Error: $ex", localContext);
       }
     }
   }

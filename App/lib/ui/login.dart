@@ -7,6 +7,7 @@ import '../services/account.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';
 import 'blocs/administration/user_form.dart';
 import 'blocs/loader.dart';
+import 'blocs/notification.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({
@@ -199,37 +200,44 @@ class _LoginState extends State<LoginPage> {
   }
 
   void _submit({bool noUser = false}) async {
-    var init = _isInit;
-    var url = _url;
-    if (init == null || url == null) return;
-
-    var user = _controllerUsername.text;
-    var password = _controllerPassword.text;
-    if (!noUser && (user.isEmpty || password.isEmpty)) return;
-
-    setState(() {
-      _status = SubmissionStatus.inProgress;
-    });
-
+    var localContext = context;
     try {
-      if (init) {
-        await AppState.authenticationLogic?.logIn(url: url, username: user, password: password);
-      } else {
-        var person = PersonCreation(type: UserType.admin, userName: user, password: password, name: _controllerName.text, surname: _controllerSurname.text);
-        await AppState.authenticationLogic?.initAccount(url: url, person: person);
+      var init = _isInit;
+      var url = _url;
+      if (init == null || url == null) return;
 
-        // after a succes, we auto login
-        await AppState.authenticationLogic?.logIn(url: url, username: user, password: password);
+      var user = _controllerUsername.text;
+      var password = _controllerPassword.text;
+      if (!noUser && (user.isEmpty || password.isEmpty)) return;
+
+      setState(() {
+        _status = SubmissionStatus.inProgress;
+      });
+
+      try {
+        if (init) {
+          await AppState.authenticationLogic?.logIn(url: url, username: user, password: password);
+        } else {
+          var person = PersonCreation(type: UserType.admin, userName: user, password: password, name: _controllerName.text, surname: _controllerSurname.text);
+          await AppState.authenticationLogic?.initAccount(url: url, person: person);
+
+          // after a succes, we auto login
+          await AppState.authenticationLogic?.logIn(url: url, username: user, password: password);
+        }
+
+        setState(() {
+          _status = SubmissionStatus.success;
+        });
+      } catch (ex) {
+        setState(() {
+          _status = SubmissionStatus.failure;
+          _error = ex.toString();
+        });
       }
-
-      setState(() {
-        _status = SubmissionStatus.success;
-      });
     } catch (ex) {
-      setState(() {
-        _status = SubmissionStatus.failure;
-        _error = ex.toString();
-      });
+      if (localContext.mounted) {
+        ErrorSnackBar.show("Error: $ex", localContext);
+      }
     }
   }
 

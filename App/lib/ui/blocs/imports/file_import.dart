@@ -6,6 +6,7 @@ import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../common/file_input.dart';
 import '../loader.dart';
+import '../notification.dart';
 
 class FileImport extends StatefulWidget {
   const FileImport({super.key});
@@ -117,9 +118,14 @@ class _FileImportState extends State<FileImport> {
         });
 
         if (localContext.mounted) {
+          SuccessSnackBar.show("Imported", localContext);
           Navigator.of(localContext).pop();
         }
       } catch (ex) {
+        if (localContext.mounted) {
+          ErrorSnackBar.show("Error: $ex", localContext);
+        }
+
         setState(() {
           status = SubmissionStatus.failure;
         });
