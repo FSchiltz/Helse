@@ -16,4 +16,5 @@ updates:
       interval: "weekly"
     groups:
       all:
-        patterns: "*"
+        patterns: 
+          - "*"
