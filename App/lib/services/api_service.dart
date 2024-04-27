@@ -51,14 +51,14 @@ class ApiService {
     await _call(() => api.apiPersonPost(body: person));
   }
 
-  Future<bool?> isInit(String url) async {
+  Future<Status?> isInit(String url) async {
     try {
       var api = await _getService(override: url);
       var response = await api.apiStatusGet();
 
       if (!response.isSuccessful) return null;
 
-      return response.body?.init;
+      return response.body;
     } catch (_) {
       // don't crash on this call, the user may have entered a wrong url
       return null;

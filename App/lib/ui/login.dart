@@ -102,7 +102,6 @@ class _LoginState extends State<LoginPage> {
                                       : Column(
                                           children: [
                                             Text("Create your account", style: Theme.of(context).textTheme.headlineLarge),
-
                                             Text("This is the admin account for the server", style: Theme.of(context).textTheme.bodyLarge),
                                             const SizedBox(height: 20),
                                             UserForm(
@@ -159,17 +158,22 @@ class _LoginState extends State<LoginPage> {
     });
 
     var isInit = await AppState.authenticationLogic?.isInit(_url ?? "");
-    var status = ((isInit == null) ? SubmissionStatus.failure : SubmissionStatus.success);
+    var status = ((isInit?.init == null) ? SubmissionStatus.failure : SubmissionStatus.success);
 
-    _checkState();
+    _checkState(status);
 
     // If the server is init or not
     // Todo use stream
     if (mounted) {
       setState(() {
-        _isInit = isInit;
+        _isInit = isInit?.init;
         _loaded = status;
       });
+
+      if (isInit?.externalAuth == true) {
+        // directly start the login procedure
+        _submit(noUser: true);
+      }
     }
   }
 
@@ -194,14 +198,14 @@ class _LoginState extends State<LoginPage> {
     }
   }
 
-  void _submit() async {
+  void _submit({bool noUser = false}) async {
     var init = _isInit;
     var url = _url;
     if (init == null || url == null) return;
 
     var user = _controllerUsername.text;
     var password = _controllerPassword.text;
-    if (user.isEmpty || password.isEmpty) return;
+    if (!noUser && (user.isEmpty || password.isEmpty)) return;
 
     setState(() {
       _status = SubmissionStatus.inProgress;
@@ -233,14 +237,14 @@ class _LoginState extends State<LoginPage> {
         _obscurePassword = !_obscurePassword;
       });
 
-  _checkState() {
-    if (_status == SubmissionStatus.failure) {
+  _checkState(SubmissionStatus status) {
+    if (status == SubmissionStatus.failure) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(content: Text('Failure: $_error')),
         );
-    } else if (_status == SubmissionStatus.success && _isInit == false) {
+    } else if (status == SubmissionStatus.success && _isInit == false) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
