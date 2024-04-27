@@ -6,6 +6,8 @@ using Api.Data.Models;
 
 namespace Api.Helpers;
 
+public record TokenInfo(long Id, string Role, string Identifier, string Password, string? Surname, string? Name, string? Email);
+
 public class TokenService(string issuer, string audience, SymmetricSecurityKey key)
 {
     private readonly string _issuer = issuer;
@@ -22,20 +24,20 @@ public class TokenService(string issuer, string audience, SymmetricSecurityKey k
         return new PasswordHasher<User>().VerifyHashedPassword(User.Empty, hash, password);
     }
 
-    public string GetToken(User user, Person person)
+    public string GetToken(TokenInfo info)
     {
         var claims = new List<Claim>
             {
-                new(JwtRegisteredClaimNames.NameId, user.Identifier),
-                new("roles", user.Type.ToString()),
-                new("surname", person.Surname ?? string.Empty),
-                new("name", person.Name ?? string.Empty),
+                new(JwtRegisteredClaimNames.NameId, info.Identifier),
+                new("roles", info.Role),
+                new("surname", info.Surname ?? string.Empty),
+                new("name", info.Name ?? string.Empty),
              };
 
-        if (user.Email != null)
+        if (info.Email != null)
         {
             claims.Add(
-            new Claim(JwtRegisteredClaimNames.Email, user.Email));
+            new Claim(JwtRegisteredClaimNames.Email, info.Email));
         }
 
         var tokenDescriptor = new SecurityTokenDescriptor

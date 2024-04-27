@@ -49,35 +49,100 @@ public static class AuthLogic
         var settings = await db.GetSetting<Proxy>(Proxy.Name);
         if (settings?.ProxyAuth == true && settings.Header is not null)
         {
-            log.LogInformation("Connexion by proxy tentative: {header}", context.Request.Headers);
-
-            if (context.Request.Headers.TryGetValue(settings.Header, out var headers)
-             && headers.FirstOrDefault() is string header && header is not null)
-            {
-                var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == header);
-                if (user is null)
-                {
-                    if (settings.AutoRegister)
-                    {
-                        log.LogInformation("User created for {header}", context.Request.Headers);
-                        // If auto register and not found, we create it
-                        await db.CreateUserAsync(new PersonCreation
-                        {
-                            UserName = header,
-                            Password = RandomNumberGenerator.GetInt32(100000000, int.MaxValue).ToString(),
-                            Type = UserType.User
-                        }, 0);
-                        isAuth = true;
-                    }
-                }
-                else
-                    isAuth = true;
-
-            }
+            (isAuth, _) = await ConnectHeader(db, context, settings, log);
         }
 
         log.LogInformation("Status asked");
         return TypedResults.Ok(new Status(true, isAuth, null));
+    }
+
+    private static async Task<(bool, TokenInfo?)> ConnectHeader(AppDataConnection db, HttpContext context, Proxy settings, ILogger log)
+    {
+        if (settings.Header is null)
+        {
+            return (false, null);
+        }
+
+        log.LogInformation("Connexion by proxy tentative using {header} in {headers}", settings.Header, context.Request.Headers);
+        context.Request.Headers.TryGetValue(settings.Header, out var headers);
+        var header = headers.FirstOrDefault();
+
+        if (header is not null)
+        {
+            log.LogInformation("Connexion by proxy auth header {header} and user {user}", settings.Header, header);
+        }
+        else
+        {
+            log.LogWarning("Connexion by proxy auth header {header} rejected", settings.Header);
+            return (false, null);
+        }
+
+        var fromDb = await TokenFromDb(db, header);
+
+        var logged = false;
+        if (fromDb is null)
+        {
+            if (settings.AutoRegister)
+            {
+                log.LogInformation("User created for {header}", context.Request.Headers);
+                // If auto register and not found, we create it
+                await db.CreateUserAsync(new PersonCreation
+                {
+                    UserName = header,
+                    Password = RandomNumberGenerator.GetInt32(100000000, int.MaxValue).ToString(),
+                    Type = UserType.User
+                }, 0);
+                logged = true;
+            }
+        }
+        else
+        {
+            logged = true;
+        }
+
+        return (logged, fromDb);
+    }
+
+    private static async Task<TokenInfo?> TokenFromDb(AppDataConnection db, string user)
+    {
+        var fromDb = await (from u in db.GetTable<User>()
+                            join p in db.GetTable<Data.Models.Person>() on u.PersonId equals p.Id
+                            where u.Identifier == user
+                            select new { u, p })
+                                 .FirstOrDefaultAsync();
+        if (fromDb is null)
+            return null;
+
+        return new TokenInfo(fromDb.u.Id, fromDb.u.Type.ToString(), fromDb.u.Identifier, fromDb.u.Password, fromDb.p.Surname, fromDb.p.Name, fromDb.u.Email);
+    }
+
+    private static async Task<(bool, TokenInfo?)> ConnectPassword(Connection user, AppDataConnection db, HttpContext context, ILogger log)
+    {
+        // auth
+        var fromDb = await TokenFromDb(db, user.User);
+
+        if (fromDb is null)
+            return (false, null);
+
+        var passwordStatus = TokenService.Verify(user.Password, fromDb.Password);
+
+        // generate the token
+        switch (passwordStatus)
+        {
+            case PasswordVerificationResult.Success:
+                // Success, nothing to do
+                break;
+            case PasswordVerificationResult.SuccessRehashNeeded:
+                // Success but the password needs an update
+                await UpdatePasswordAsync(fromDb.Id, user.Password, db);
+                break;
+            case PasswordVerificationResult.Failed:
+            default:
+                log.LogWarning("Unauthorized access to getToken with user {user}", user.User);
+                return (false, null);
+        }
+
+        return (true, fromDb);
     }
 
     /// <summary>
@@ -88,63 +153,27 @@ public static class AuthLogic
     {
         var log = logger.CreateLogger("Auth");
 
-        var proxyAuth = false;
-        var username = user.User;
         var settings = await db.GetSetting<Proxy>(Proxy.Name);
+        bool logged;
+        TokenInfo? fromDb;
 
         if (settings?.ProxyAuth == true && settings.Header is not null)
         {
-            log.LogInformation("Connexion by proxy tentative using {header} in {headers}", settings.Header, context.Request.Headers);
-            context.Request.Headers.TryGetValue(settings.Header, out var headers);
-            var header = headers.FirstOrDefault();
-
-            if (header is not null)
-            {
-                log.LogInformation("Connexion by proxy auth header {header} and user {user}", settings.Header, header);
-
-                // connection with the proxy header
-                username = header;
-                proxyAuth = true;
-            }
-            else
-                log.LogWarning("Connexion by proxy auth header {header} rejected", settings.Header);
+            log.LogInformation("Connexion by header");
+            (logged, fromDb) = await ConnectHeader(db, context, settings, log);
         }
         else
         {
             log.LogInformation("Connexion by username");
+            (logged, fromDb) = await ConnectPassword(user, db, context, log);
         }
 
-        // auth
-        var fromDb = await (from u in db.GetTable<User>()
-                            join p in db.GetTable<Data.Models.Person>() on u.PersonId equals p.Id
-                            where u.Identifier == username
-                            select new { u, p })
-                            .FirstOrDefaultAsync();
-
-        if (fromDb is null)
+        if (!logged || fromDb is null)
             return TypedResults.Unauthorized();
-
-        var passwordStatus = proxyAuth ? PasswordVerificationResult.Success : TokenService.Verify(user.Password, fromDb.u.Password);
-
-        // generate the token
-        switch (passwordStatus)
-        {
-            case PasswordVerificationResult.Success:
-                // Success, nothing to do
-                break;
-            case PasswordVerificationResult.SuccessRehashNeeded:
-                // Success but the password needs an update
-                await UpdatePasswordAsync(fromDb.u.Id, user.Password, db);
-                break;
-            case PasswordVerificationResult.Failed:
-            default:
-                log.LogWarning("Unauthorized access to getToken with user {user}", username);
-                return TypedResults.Unauthorized();
-        }
 
         log.LogDebug("Connexion validated");
 
-        return TypedResults.Ok(token.GetToken(fromDb.u, fromDb.p));
+        return TypedResults.Ok(token.GetToken(fromDb));
     }
 
     public async static Task UpdatePasswordAsync(long user, string password, AppDataConnection db)
