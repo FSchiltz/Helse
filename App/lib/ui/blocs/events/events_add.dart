@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/blocs/notification.dart';
 
 import '../../../logic/event.dart';
 import '../../../main.dart';
@@ -27,6 +28,7 @@ class _EventAddState extends State<EventAdd> {
 
   void _submit() async {
     var localContext = context;
+    try {
     if (AppState.metricsLogic != null) {
       setState(() {
         _status = SubmissionStatus.inProgress;
@@ -41,12 +43,17 @@ class _EventAddState extends State<EventAdd> {
         });
 
         if (localContext.mounted) {
+          SuccessSnackBar.show("Event Added", localContext);
           Navigator.of(localContext).pop();
         }
       } catch (_) {
         setState(() {
           _status = SubmissionStatus.failure;
         });
+      }
+    }} catch (ex) {
+      if (localContext.mounted) {
+        ErrorSnackBar.show("Error: $ex", localContext);
       }
     }
   }
@@ -131,7 +138,7 @@ class _TypeInput extends StatelessWidget {
         prefixIcon: const Icon(Icons.list_sharp),
         prefixIconColor: theme.primary,
         filled: true,
-        fillColor: theme.background,
+        fillColor: theme.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: theme.primary),

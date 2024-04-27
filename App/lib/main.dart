@@ -70,14 +70,23 @@ class AppState extends State<App> {
 class AppView extends StatefulWidget {
   const AppView({super.key});
 
+  static _AppViewState of(BuildContext context) => context.findAncestorStateOfType<_AppViewState>()!;
+
   @override
   State<AppView> createState() => _AppViewState();
 }
 
 class _AppViewState extends State<AppView> {
+  ThemeMode _themeMode = ThemeMode.system;
   final _navigatorKey = GlobalKey<NavigatorState>();
 
   NavigatorState get _navigator => _navigatorKey.currentState!;
+
+  void changeTheme(ThemeMode themeMode) {
+    setState(() {
+      _themeMode = themeMode;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,11 +101,7 @@ class _AppViewState extends State<AppView> {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 0, 97, 0), brightness: Brightness.dark),
         /* dark theme settings */
       ),
-      themeMode: ThemeMode.system,
-      /* ThemeMode.system to follow system theme, 
-         ThemeMode.light for light theme, 
-         ThemeMode.dark for dark theme
-      */
+      themeMode: _themeMode,
       debugShowCheckedModeBanner: false,
       navigatorKey: _navigatorKey,
       builder: (context, child) {

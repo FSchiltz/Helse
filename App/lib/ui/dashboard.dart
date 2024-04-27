@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/blocs/notification.dart';
 
 import '../main.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';
@@ -39,11 +40,18 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _getEventData() async {
-    var model = await AppState.eventLogic?.getType();
-    if (model != null) {
-      setState(() {
-        eventTypes = model;
-      });
+    var localContext = context;
+    try {
+      var model = await AppState.eventLogic?.getType();
+      if (model != null) {
+        setState(() {
+          eventTypes = model;
+        });
+      }
+    } catch (ex) {
+      if (localContext.mounted) {
+        ErrorSnackBar.show("Error: $ex", localContext);
+      }
     }
   }
 

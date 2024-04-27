@@ -8,9 +8,10 @@ import 'administration.dart';
 import 'blocs/common/date_range_input.dart';
 import 'blocs/imports/file_import.dart';
 import 'blocs/loader.dart';
+import 'blocs/notification.dart';
 import 'care_dashboard.dart';
 import 'dashboard.dart';
-import 'settings.dart';
+import 'local_settings.dart';
 
 class DataModel {
   final String label;
@@ -51,11 +52,18 @@ class _HomeState extends State<Home> {
   }
 
   void _getUser() async {
-    var model = await AppState.authenticationLogic?.getUser();
-    if (model != null) {
-      setState(() {
-        user = model;
-      });
+    var localContext = context;
+    try {
+      var model = await AppState.authenticationLogic?.getUser();
+      if (model != null) {
+        setState(() {
+          user = model;
+        });
+      }
+    } catch (ex) {
+      if (localContext.mounted) {
+        ErrorSnackBar.show("Error: $ex", localContext);
+      }
     }
   }
 
@@ -69,7 +77,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     Widget page;
     page = switch (user?.type) {
-      UserType.admin => AdminDashBoard(date:date),
+      UserType.admin => AdminDashBoard(date: date),
       UserType.user => Dashboard(date: date),
       UserType.caregiver => CareDashBoard(date: date),
       _ => const Center(child: HelseLoader()),
@@ -133,7 +141,7 @@ class _HomeState extends State<Home> {
                   case 1:
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const SettingsPage()),
+                      MaterialPageRoute(builder: (context) => const LocalSettingsPage()),
                     );
                     break;
                   case 2:

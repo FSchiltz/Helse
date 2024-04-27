@@ -4,6 +4,7 @@ import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../events/events_graph.dart';
 import '../loader.dart';
+import '../notification.dart';
 
 class TreatmentsGrid extends StatefulWidget {
   const TreatmentsGrid({super.key, required this.date, this.person});
@@ -19,15 +20,22 @@ class _TreatmentsGridState extends State<TreatmentsGrid> {
   List<Treatement>? _treatments;
 
   Future<List<Treatement>?> _getData() async {
-    if (_treatments != null) return _treatments;
+    var localContext = context;
+    try {
+      if (_treatments != null) return _treatments;
 
-    var date = widget.date;
+      var date = widget.date;
 
-    var start = DateTime(date.start.year, date.start.month, date.start.day);
-    var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
+      var start = DateTime(date.start.year, date.start.month, date.start.day);
+      var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-    _treatments = await AppState.treatementLogic?.get(start, end, person: widget.person);
-    return _treatments;
+      _treatments = await AppState.treatementLogic?.get(start, end, person: widget.person);
+      return _treatments;
+    } catch (ex) {
+      if (localContext.mounted) {
+        ErrorSnackBar.show("Error: $ex", localContext);
+      }
+    }
   }
 
   @override

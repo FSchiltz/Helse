@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/blocs/notification.dart';
 
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
@@ -106,37 +107,33 @@ class _SettingsViewState extends State<SettingsView> {
 
   void submit() async {
     var localContext = context;
-    if (_formKey.currentState?.validate() ?? false) {
-      // save the user
-      await AppState.settingsLogic?.save(Settings(
-        oauth: Oauth(
-          clientId: _controllerId.text,
-          clientSecret: _controllerSecret.text,
-          enabled: _enabled,
-          autoRegister: _autoregister,
-        ),
-        proxy: Proxy(
-          autoRegister: _proxyAutoRegister,
-          proxyAuth: _proxyAuth,
-          header: _controllerHeader.text,
-        ),
-      ));
-
-      if (localContext.mounted) {
-        ScaffoldMessenger.of(localContext).showSnackBar(
-          SnackBar(
-            width: 200,
-            backgroundColor: Theme.of(localContext).colorScheme.secondary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            behavior: SnackBarBehavior.floating,
-            content: const Text("Saved Successfully"),
+    try {
+      if (_formKey.currentState?.validate() ?? false) {
+        // save the user
+        await AppState.settingsLogic?.save(Settings(
+          oauth: Oauth(
+            clientId: _controllerId.text,
+            clientSecret: _controllerSecret.text,
+            enabled: _enabled,
+            autoRegister: _autoregister,
           ),
-        );
-      }
+          proxy: Proxy(
+            autoRegister: _proxyAutoRegister,
+            proxyAuth: _proxyAuth,
+            header: _controllerHeader.text,
+          ),
+        ));
 
-      _resetSettings();
+        if (localContext.mounted) {
+          SuccessSnackBar.show("Saved Successfully", localContext);
+        }
+
+        _resetSettings();
+      }
+    } catch (ex) {
+      if (localContext.mounted) {
+        ErrorSnackBar.show("Error: $ex", localContext);
+      }
     }
   }
 
@@ -165,7 +162,7 @@ class _SettingsViewState extends State<SettingsView> {
           prefixIcon: const Icon(Icons.person_sharp),
           prefixIconColor: theme.primary,
           filled: true,
-          fillColor: theme.background,
+          fillColor: theme.surface,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(color: theme.primary),
@@ -214,7 +211,7 @@ class _SettingsViewState extends State<SettingsView> {
           prefixIcon: const Icon(Icons.person_sharp),
           prefixIconColor: theme.primary,
           filled: true,
-          fillColor: theme.background,
+          fillColor: theme.surface,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(color: theme.primary),
@@ -230,7 +227,7 @@ class _SettingsViewState extends State<SettingsView> {
           prefixIcon: const Icon(Icons.person_sharp),
           prefixIconColor: theme.primary,
           filled: true,
-          fillColor: theme.background,
+          fillColor: theme.surface,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(color: theme.primary),

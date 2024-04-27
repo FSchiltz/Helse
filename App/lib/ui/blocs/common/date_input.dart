@@ -63,7 +63,7 @@ class DateInput extends StatelessWidget {
         prefixIcon: const Icon(Icons.edit_calendar_sharp),
         prefixIconColor: theme.primary,
         filled: true,
-        fillColor: theme.background,
+        fillColor: theme.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: theme.primary),

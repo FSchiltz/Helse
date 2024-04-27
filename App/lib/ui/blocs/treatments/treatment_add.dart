@@ -6,6 +6,7 @@ import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../common/date_input.dart';
 import '../common/text_input.dart';
 import '../loader.dart';
+import '../notification.dart';
 
 class TreatmentAdd extends StatefulWidget {
   final int? person;
@@ -35,24 +36,33 @@ class _TreatementState extends State<TreatmentAdd> {
 
   void _submit() async {
     var localContext = context;
-    if (AppState.metricsLogic != null) {
-      setState(() {
-        _status = SubmissionStatus.inProgress;
-      });
-      try {
-        var event = CreateEvent(start: _start, stop: _stop, type: _type, description: _description);
-        var treatment = CreateTreatment(events: [event], personId: widget.person);
-        await AppState.treatementLogic?.add(treatment);
-
+    try {
+      if (AppState.metricsLogic != null) {
         setState(() {
-          _status = SubmissionStatus.success;
+          _status = SubmissionStatus.inProgress;
         });
+        try {
+          var event = CreateEvent(start: _start, stop: _stop, type: _type, description: _description);
+          var treatment = CreateTreatment(events: [event], personId: widget.person);
+          await AppState.treatementLogic?.add(treatment);
 
-        if (localContext.mounted) Navigator.of(localContext).pop();
-      } catch (_) {
-        setState(() {
-          _status = SubmissionStatus.failure;
-        });
+          setState(() {
+            _status = SubmissionStatus.success;
+          });
+
+          if (localContext.mounted) {
+            SuccessSnackBar.show("Treatment added", localContext);
+            Navigator.of(localContext).pop();
+          }
+        } catch (_) {
+          setState(() {
+            _status = SubmissionStatus.failure;
+          });
+        }
+      }
+    } catch (ex) {
+      if (localContext.mounted) {
+        ErrorSnackBar.show("Error: $ex", localContext);
       }
     }
   }
@@ -158,7 +168,7 @@ class _TypeInput extends StatelessWidget {
         prefixIcon: const Icon(Icons.list_sharp),
         prefixIconColor: theme.primary,
         filled: true,
-        fillColor: theme.background,
+        fillColor: theme.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: theme.primary),

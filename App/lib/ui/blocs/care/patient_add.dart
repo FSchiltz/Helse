@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/blocs/notification.dart';
 
 import '../../../logic/event.dart';
 import '../../../main.dart';
@@ -24,41 +25,37 @@ class _PatientAddState extends State<PatientAdd> {
 
   void _submit() async {
     var localContext = context;
-    setState(() {
-      _status = SubmissionStatus.inProgress;
-    });
     try {
-      // save the user
-      await AppState.authenticationLogic?.createAccount(
-          person: PersonCreation(
-        name: _controllerName.text,
-        surname: _controllerSurname.text,
-        type: UserType.patient,
-      ));
+      setState(() {
+        _status = SubmissionStatus.inProgress;
+      });
+      try {
+        // save the user
+        await AppState.authenticationLogic?.createAccount(
+            person: PersonCreation(
+          name: _controllerName.text,
+          surname: _controllerSurname.text,
+          type: UserType.patient,
+        ));
 
-      _formKey.currentState?.reset();
-      widget.callback.call();
-      if (localContext.mounted) {
-        ScaffoldMessenger.of(localContext).showSnackBar(
-          SnackBar(
-            width: 200,
-            backgroundColor: Theme.of(localContext).colorScheme.secondary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            behavior: SnackBarBehavior.floating,
-            content: const Text("Added Successfully"),
-          ),
-        );
-        Navigator.of(localContext).pop();
+        _formKey.currentState?.reset();
+        widget.callback.call();
+        if (localContext.mounted) {
+          SuccessSnackBar.show("Added succesfully", localContext);
+          Navigator.of(localContext).pop();
+        }
+        setState(() {
+          _status = SubmissionStatus.success;
+        });
+      } catch (_) {
+        setState(() {
+          _status = SubmissionStatus.failure;
+        });
       }
-      setState(() {
-        _status = SubmissionStatus.success;
-      });
-    } catch (_) {
-      setState(() {
-        _status = SubmissionStatus.failure;
-      });
+    } catch (ex) {
+      if (localContext.mounted) {
+        ErrorSnackBar.show("Error: $ex", localContext);
+      }
     }
   }
 
