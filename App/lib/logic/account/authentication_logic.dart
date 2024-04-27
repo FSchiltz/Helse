@@ -73,7 +73,7 @@ class AuthenticationLogic {
     return ApiService(_account).createAccount(person);
   }
 
-  Future<bool?> isInit(String url) async {
+  Future<Status?> isInit(String url) async {
     return await ApiService(_account).isInit(url);
   }
 

@@ -154,16 +154,18 @@ public static class AuthLogic
         var log = logger.CreateLogger("Auth");
 
         var settings = await db.GetSetting<Proxy>(Proxy.Name);
-        bool logged;
-        TokenInfo? fromDb;
+        bool logged = false;
+        TokenInfo? fromDb = null;
 
         if (settings?.ProxyAuth == true && settings.Header is not null)
         {
             log.LogInformation("Connexion by header");
             (logged, fromDb) = await ConnectHeader(db, context, settings, log);
         }
-        else
+        
+        if(!logged)
         {
+            // Fallback on the password if the other means failed
             log.LogInformation("Connexion by username");
             (logged, fromDb) = await ConnectPassword(user, db, context, log);
         }
