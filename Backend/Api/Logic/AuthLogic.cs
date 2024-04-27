@@ -94,7 +94,7 @@ public static class AuthLogic
 
         if (settings?.ProxyAuth == true && settings.Header is not null)
         {
-            log.LogInformation("Connexion by proxy tentative: {header}", context.Request.Headers);
+            log.LogInformation("Connexion by proxy tentative using {header} in {headers}", settings.Header, context.Request.Headers);
             context.Request.Headers.TryGetValue(settings.Header, out var headers);
             var header = headers.FirstOrDefault();
 
@@ -108,6 +108,10 @@ public static class AuthLogic
             }
             else
                 log.LogWarning("Connexion by proxy auth header {header} rejected", settings.Header);
+        }
+        else
+        {
+            log.LogInformation("Connexion by username");
         }
 
         // auth
@@ -137,6 +141,8 @@ public static class AuthLogic
                 log.LogWarning("Unauthorized access to getToken with user {user}", username);
                 return TypedResults.Unauthorized();
         }
+
+        log.LogDebug("Connexion validated");
 
         return TypedResults.Ok(token.GetToken(fromDb.u, fromDb.p));
     }
