@@ -3,6 +3,7 @@ import 'package:helse/main.dart';
 
 import '../logic/settings_logic.dart';
 import 'blocs/loader.dart';
+import 'blocs/notification.dart';
 
 class LocalSettingsPage extends StatefulWidget {
   const LocalSettingsPage({super.key});
@@ -83,25 +84,17 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
 
   void submit() async {
     var localContext = context;
-    if (_formKey.currentState?.validate() ?? false) {
-      // save the user
-      await AppState.settingsLogic?.saveLocal(LocalSettings(_healthEnabled, _theme));
+    try {
+      if (_formKey.currentState?.validate() ?? false) {
+        // save the user
+        await AppState.settingsLogic?.saveLocal(LocalSettings(_healthEnabled, _theme));
 
-      if (localContext.mounted) {
-        ScaffoldMessenger.of(localContext).showSnackBar(
-          SnackBar(
-            width: 200,
-            backgroundColor: Theme.of(localContext).colorScheme.secondary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            behavior: SnackBarBehavior.floating,
-            content: const Text("Saved Successfully"),
-          ),
-        );
+        SuccessSnackBar.show("Saved Successfully", localContext);
+
+        _resetSettings();
       }
-
-      _resetSettings();
+    } catch (ex) {
+      ErrorSnackBar.show("Error: $ex", localContext);
     }
   }
 
