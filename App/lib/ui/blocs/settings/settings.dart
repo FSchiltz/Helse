@@ -189,6 +189,7 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   oauth(ColorScheme theme) {
+    return [];
     return [
       Text("Oauth", style: Theme.of(context).textTheme.headlineMedium),
       const SizedBox(height: 5),
