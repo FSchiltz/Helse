@@ -49,7 +49,7 @@ class _UserFormState extends State<UserForm> {
             prefixIcon: const Icon(Icons.person_sharp),
             prefixIconColor: theme.primary,
             filled: true,
-            fillColor: theme.background,
+            fillColor: theme.surface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: theme.primary),
@@ -66,7 +66,7 @@ class _UserFormState extends State<UserForm> {
             prefixIcon: const Icon(Icons.person_sharp),
             prefixIconColor: theme.primary,
             filled: true,
-            fillColor: theme.background,
+            fillColor: theme.surface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: theme.primary),
@@ -84,7 +84,7 @@ class _UserFormState extends State<UserForm> {
               prefixIcon: const Icon(Icons.email_sharp),
               prefixIconColor: theme.primary,
               filled: true,
-              fillColor: theme.background,
+              fillColor: theme.surface,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(color: theme.primary),
@@ -121,7 +121,7 @@ class _UserFormState extends State<UserForm> {
               suffixIconColor: theme.primary,
               prefixIconColor: theme.primary,
               filled: true,
-              fillColor: theme.background,
+              fillColor: theme.surface,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(color: theme.primary),
@@ -222,7 +222,7 @@ class PasswordInput extends StatelessWidget {
         suffixIcon: iconButton,
         suffixIconColor: theme.primary,
         filled: true,
-        fillColor: theme.background,
+        fillColor: theme.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: theme.primary),
@@ -260,7 +260,7 @@ class UserNameInput extends StatelessWidget {
         prefixIcon: const Icon(Icons.person_sharp),
         prefixIconColor: theme.primary,
         filled: true,
-        fillColor: theme.background,
+        fillColor: theme.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: theme.primary),

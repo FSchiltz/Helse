@@ -71,7 +71,7 @@ class _LoginState extends State<LoginPage> {
                           prefixIcon: const Icon(Icons.home_sharp),
                           prefixIconColor: theme.primary,
                           filled: true,
-                          fillColor: theme.background,
+                          fillColor: theme.surface,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(color: theme.primary),

@@ -19,7 +19,7 @@ class TextInput extends StatelessWidget {
         prefixIcon: Icon(icon),
         prefixIconColor: theme.primary,
         filled: true,
-        fillColor: theme.background,
+        fillColor: theme.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: theme.primary),

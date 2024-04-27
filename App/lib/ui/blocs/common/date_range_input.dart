@@ -51,7 +51,7 @@ class DateRangeInput extends StatelessWidget {
         style: theme.textTheme.bodyMedium,
         decoration: InputDecoration(
           filled: true,
-          fillColor: theme.colorScheme.background,
+          fillColor: theme.colorScheme.surface,
           prefixIcon: Icon(
             Icons.edit_calendar_sharp,
             color: theme.colorScheme.primary,

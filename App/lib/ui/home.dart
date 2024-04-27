@@ -10,7 +10,7 @@ import 'blocs/imports/file_import.dart';
 import 'blocs/loader.dart';
 import 'care_dashboard.dart';
 import 'dashboard.dart';
-import 'settings.dart';
+import 'local_settings.dart';
 
 class DataModel {
   final String label;
@@ -133,7 +133,7 @@ class _HomeState extends State<Home> {
                   case 1:
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const SettingsPage()),
+                      MaterialPageRoute(builder: (context) => const LocalSettingsPage()),
                     );
                     break;
                   case 2:

@@ -165,7 +165,7 @@ class _SettingsViewState extends State<SettingsView> {
           prefixIcon: const Icon(Icons.person_sharp),
           prefixIconColor: theme.primary,
           filled: true,
-          fillColor: theme.background,
+          fillColor: theme.surface,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(color: theme.primary),
@@ -214,7 +214,7 @@ class _SettingsViewState extends State<SettingsView> {
           prefixIcon: const Icon(Icons.person_sharp),
           prefixIconColor: theme.primary,
           filled: true,
-          fillColor: theme.background,
+          fillColor: theme.surface,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(color: theme.primary),
@@ -230,7 +230,7 @@ class _SettingsViewState extends State<SettingsView> {
           prefixIcon: const Icon(Icons.person_sharp),
           prefixIconColor: theme.primary,
           filled: true,
-          fillColor: theme.background,
+          fillColor: theme.surface,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(color: theme.primary),
