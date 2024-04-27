@@ -16,6 +16,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   bool _healthEnabled = false;
+  ThemeMode _theme = ThemeMode.system;
 
   void _resetSettings() {
     setState(() {
@@ -33,6 +34,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     _settings = await AppState.settingsLogic?.getLocalSettings();
 
     _healthEnabled = _settings?.syncHealth ?? false;
+    _theme = _settings?.theme ?? ThemeMode.system;
 
     return _settings;
   }
@@ -65,6 +67,8 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
                       children: [
                         Text("Settings", style: Theme.of(context).textTheme.displaySmall),
                         const SizedBox(height: 20),
+                        ...general(theme),
+                        const SizedBox(height: 20),
                         ...proxy(theme),
                       ],
                     ),
@@ -81,7 +85,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     var localContext = context;
     if (_formKey.currentState?.validate() ?? false) {
       // save the user
-      await AppState.settingsLogic?.saveLocal(LocalSettings(_healthEnabled));
+      await AppState.settingsLogic?.saveLocal(LocalSettings(_healthEnabled, _theme));
 
       if (localContext.mounted) {
         ScaffoldMessenger.of(localContext).showSnackBar(
@@ -119,5 +123,38 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
         ],
       ),
     ];
+  }
+
+  general(ColorScheme theme) {
+    return [
+      Text("General", style: Theme.of(context).textTheme.headlineMedium),
+      const SizedBox(height: 5),
+      DropdownButtonFormField(
+        value: _theme,
+        onChanged: themeCallback,
+        items: ThemeMode.values.map((type) => DropdownMenuItem(value: type, child: Text(type.name))).toList(),
+        decoration: InputDecoration(
+          labelText: 'Theme',
+          prefixIcon: const Icon(Icons.list_sharp),
+          prefixIconColor: theme.primary,
+          filled: true,
+          fillColor: theme.surface,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: theme.primary),
+          ),
+        ),
+      )
+    ];
+  }
+
+  void themeCallback(ThemeMode? value) {
+    if (value == null) return;
+    // save the settings
+    _theme = value;
+    submit();
+
+    // apply the theme
+    AppView.of(context).changeTheme(value);
   }
 }
