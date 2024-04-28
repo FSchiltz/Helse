@@ -17,10 +17,10 @@ jobs:
   build:
     runs-on: ubuntu-latest    
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4.1.4
     
     - name: Install Flutter
-      uses: subosito/flutter-action@v2
+      uses: subosito/flutter-action@v2.14.0
       with:
          channel: 'beta'
          # Enables cache for flutter packages              
@@ -37,7 +37,7 @@ jobs:
       working-directory: 'App'
 
     - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v2
+      uses: svenstaro/upload-release-action@v2.1.0
       if: ${{ inputs.push }}
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
