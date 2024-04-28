@@ -75,28 +75,25 @@ class _SettingsViewState extends State<SettingsView> {
             } else if (snapshot.hasData) {
               return Form(
                 key: _formKey,
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-                  child: Column(
-                    children: [
-                      Text("Settings", style: Theme.of(context).textTheme.displaySmall),
-                      const SizedBox(height: 20),
-                      ...oauth(theme),
-                      const SizedBox(height: 20),
-                      ...proxy(theme),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size.fromHeight(50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
+                child: Column(
+                  children: [
+                    Text("Settings", style: Theme.of(context).textTheme.displaySmall),
+                    const SizedBox(height: 20),
+                    ...oauth(theme),
+                    const SizedBox(height: 20),
+                    ...proxy(theme),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                        onPressed: submit,
-                        child: const Text("Save"),
                       ),
-                    ],
-                  ),
+                      onPressed: submit,
+                      child: const Text("Save"),
+                    ),
+                  ],
                 ),
               );
             }

@@ -52,64 +52,59 @@ class _MetricSettingsViewState extends State<MetricSettingsView> {
             } else if (snapshot.hasData) {
               // Extracting data from snapshot object
               final types = snapshot.data as List<MetricType>;
-              return Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          Text("Metric management", style: Theme.of(context).textTheme.displaySmall),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          IconButton(
-                              onPressed: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return MetricTypeAdd(_resetMetricType);
-                                    });
-                              },
-                              icon: const Icon(Icons.add_sharp)),
-                        ],
+                      Text("Metric management", style: Theme.of(context).textTheme.displaySmall),
+                      const SizedBox(
+                        width: 10,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Row(
-                          children: [
-                            DataTable(
-                              columns: const [
-                                DataColumn(
-                                    label: Expanded(
-                                  child: Text("Id"),
-                                )),
-                                DataColumn(
-                                    label: Expanded(
-                                  child: Text("Name"),
-                                )),
-                                DataColumn(
-                                    label: Expanded(
-                                  child: Text("Description"),
-                                )),
-                                DataColumn(
-                                    label: Expanded(
-                                  child: Text("Unit"),
-                                ))
-                              ],
-                              rows: types
-                                  .map((user) =>
-                                      DataRow(cells: [DataCell(Text((user.id).toString())), DataCell(Text(user.name ?? "")), DataCell(Text(user.description ?? "")), DataCell(Text(user.unit ?? ""))]))
-                                  .toList(),
-                            ),
-                          ],
-                        ),
-                      ),
+                      IconButton(
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return MetricTypeAdd(_resetMetricType);
+                                });
+                          },
+                          icon: const Icon(Icons.add_sharp)),
                     ],
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Row(
+                      children: [
+                        DataTable(
+                          columns: const [
+                            DataColumn(
+                                label: Expanded(
+                              child: Text("Id"),
+                            )),
+                            DataColumn(
+                                label: Expanded(
+                              child: Text("Name"),
+                            )),
+                            DataColumn(
+                                label: Expanded(
+                              child: Text("Description"),
+                            )),
+                            DataColumn(
+                                label: Expanded(
+                              child: Text("Unit"),
+                            ))
+                          ],
+                          rows: types
+                              .map((user) =>
+                                  DataRow(cells: [DataCell(Text((user.id).toString())), DataCell(Text(user.name ?? "")), DataCell(Text(user.description ?? "")), DataCell(Text(user.unit ?? ""))]))
+                              .toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               );
             }
           }
