@@ -39,6 +39,11 @@ public static class Endpoints
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
 
+        person.MapPost("/role", PersonLogic.SetPersonRole)
+            .Produces((int)HttpStatusCode.Unauthorized)
+            .Produces((int)HttpStatusCode.NoContent)
+            .WithOpenApi();
+
         var rights = person.MapGroup("/rights");
         rights.MapPost("/{personId}", PersonLogic.SetRight)
         .Produces((int)HttpStatusCode.NoContent)

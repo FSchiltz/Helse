@@ -329,6 +329,25 @@ final class _$Swagger extends Swagger {
   }
 
   @override
+  Future<Response<dynamic>> _apiPersonRolePost({
+    required int? personId,
+    required String? role,
+  }) {
+    final Uri $url = Uri.parse('/api/person/role');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+      'role': role,
+    };
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
   Future<Response<dynamic>> _apiPersonRightsPersonIdPost({
     required int? personId,
     required List<Right>? body,

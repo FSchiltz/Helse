@@ -4,6 +4,7 @@ import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../loader.dart';
 import 'user_add.dart';
+import 'user_change_role.dart';
 
 class UsersView extends StatefulWidget {
   const UsersView({super.key});
@@ -99,19 +100,28 @@ class _UsersViewState extends State<UsersView> {
                                 label: Expanded(
                               child: Text("Surname"),
                             )),
-                            DataColumn(
-                                label: Expanded(
-                              child: Text("Rights"),
-                            ))
                           ],
-                          rows: users
+                          rows: users.where((user) => user.type != UserType.patient)
                               .map((user) => DataRow(cells: [
-                                    DataCell(Text((user.type ?? UserType.user).toString())),
+                                    DataCell(Row(children: [
+                                      Text((user.type ?? UserType.user).name),
+                                      IconButton(
+                                          onPressed: () {
+                                            var id = user.id;
+                                            if (id != null) {
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return ChangeRole(_resetUsers, user.type ?? UserType.user, id);
+                                                  });
+                                            }
+                                          },
+                                          icon: const Icon(Icons.edit_sharp)),
+                                    ])),
                                     DataCell(Text(user.userName ?? "")),
                                     DataCell(Text(user.email ?? "")),
                                     DataCell(Text(user.name ?? "")),
                                     DataCell(Text(user.surname ?? "")),
-                                    DataCell(Text(user.rights.toString()))
                                   ]))
                               .toList(),
                         ),

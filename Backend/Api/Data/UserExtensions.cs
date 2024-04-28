@@ -66,4 +66,11 @@ public static class UserExtensions
         await transaction.CommitAsync();
     }
 
+    public static Task ChangeRole(this AppDataConnection db, long userId, int newType)
+    {
+        return db.GetTable<Data.Models.User>()
+        .Where(x => x.Id == userId)
+        .Set(x => x.Type, newType)
+        .UpdateAsync();
+    }
 }

@@ -32,4 +32,10 @@ class UserService extends ApiService {
     var api = await getService();
     return await call(api.apiPatientsGet);
   }
+
+  Future<void> updatePersonRole(int personId, UserType type) async {
+    var api = await getService();
+    var role = type.value ?? 0;
+    await call(() => api.apiPersonRolePost(personId: personId, role: role.toString()));
+  }
 }

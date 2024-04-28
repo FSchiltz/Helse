@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/blocs/administration/users/type_input.dart';
 
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
@@ -7,6 +8,7 @@ import 'user_form.dart';
 
 class UserAdd extends StatefulWidget {
   final void Function()? callback;
+  
   const UserAdd(this.callback, {super.key});
 
   @override
@@ -47,7 +49,7 @@ class _SignupState extends State<UserAdd> {
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
             children: [
-              _TypeInput(
+              TypeInput(
                   UserType.values,
                   (value) => setState(() {
                         _type = value;
@@ -108,32 +110,5 @@ class _SignupState extends State<UserAdd> {
     _controllerPassword.dispose();
     _controllerConFirmPassword.dispose();
     super.dispose();
-  }
-}
-
-class _TypeInput extends StatelessWidget {
-  final List<UserType> types;
-  final void Function(UserType?) callback;
-
-  const _TypeInput(this.types, this.callback);
-
-  @override
-  Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
-
-    return DropdownButtonFormField(
-      onChanged: callback,
-      items: types.map((type) => DropdownMenuItem(value: type, child: Text(type.name))).toList(),
-      decoration: InputDecoration(
-        labelText: 'Type',
-        prefixIcon: const Icon(Icons.list_sharp),
-        prefixIconColor: theme.primary,
-        filled: true,
-        fillColor: theme.surface,
-        border: OutlineInputBorder(
-          borderSide: BorderSide(color: theme.primary),
-        ),
-      ),
-    );
   }
 }

@@ -384,6 +384,28 @@ abstract class Swagger extends ChopperService {
 
   ///
   ///@param personId
+  ///@param role
+  Future<chopper.Response> apiPersonRolePost({
+    required int? personId,
+    required String? role,
+  }) {
+    return _apiPersonRolePost(personId: personId, role: role);
+  }
+
+  ///
+  ///@param personId
+  ///@param role
+  @Post(
+    path: '/api/person/role',
+    optionalBody: true,
+  )
+  Future<chopper.Response> _apiPersonRolePost({
+    @Query('personId') required int? personId,
+    @Query('role') required String? role,
+  });
+
+  ///
+  ///@param personId
   Future<chopper.Response> apiPersonRightsPersonIdPost({
     required int? personId,
     required List<Right>? body,
