@@ -10,9 +10,13 @@ env:
   
 jobs: 
   build-android:
+    permissions:
+      contents: read 
     uses: ./.github/workflows/build-android.yml
 
   build-docker:
+    permissions:
+      contents: read 
     uses: ./.github/workflows/build-docker.yml
     with:
       push: false
