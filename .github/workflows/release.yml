@@ -1,26 +1,20 @@
 name: Release
 
-on: 
-  push:
-    tags:
-       - "*.*"
+on:
+  release:
+    types: [published]
 
 jobs:
-  build:
+  build-android:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
-      - name: Build Docker
-        uses: ./.github/workflows/docker.yml
-        
-      - name: Build
-        uses: ./.github/workflows/android-CD.yml
-                
-      - name: Release
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Build docker
+        uses: ./.github/workflows/build-android.yml
+
+  build-docker:
+    runs-on: ubuntu-latest        
+    steps:
+      - name: Build docker
+        uses: ./.github/workflows/build-docker.yml
         with:
-          files: |
-            app.apk
+          push: true

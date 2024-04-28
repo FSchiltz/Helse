@@ -1,7 +1,7 @@
-name: Docker Image CI
+name: Docker Image CD
 
 on:
-  pull_request:
+  push:
     branches: [ "main" ]
     
 env:
@@ -16,14 +16,9 @@ jobs:
         uses: ./.github/workflows/build-android.yml
 
   build-docker:
-    runs-on: ubuntu-latest    
-    permissions:
-      contents: read
-      packages: write      
-    steps:   
+    runs-on: ubuntu-latest        
+    steps:
       - name: Build docker
         uses: ./.github/workflows/build-docker.yml
-        with:      
-          push: false
-          tags: ci
-          labels: ci
+        with:
+          push: true
