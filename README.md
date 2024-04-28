@@ -2,7 +2,8 @@
 
 [![CI](https://github.com/FSchiltz/Helse/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/FSchiltz/Helse/actions/workflows/ci.yml)
 
-This is a simple work in progress selfhosted app for logging health data
+This is a simple work in progress selfhosted app for logging health data.
+The app is composed of a c# webapi and a flutter app that can be run on Web or Android/IOS.
 
 ## Usage
 
@@ -55,3 +56,50 @@ Represent a list of recurring events. Exemple: take a medicine every 2 day at 12
 The easiest way to use the app is to use docker-compose
 exemple config:
 
+``` yaml
+volumes:
+  data:
+
+services:
+  helse:
+    image: ghcr.io/fschiltz/helse:latest
+    ports:
+      - 8080:8080
+    environment:
+      - ConnectionStrings__Default=Server=database;Port=5432;Database=helse;User Id=postgres;Password=somethinglong
+      - Jwt__Issuer=health.yoursite.com
+      - Jwt__Audience=health.yoursite.com
+      - Jwt__Key=asuperlongrandomkey
+    restart: always
+    depends_on:
+      - database
+
+  database:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_PASSWORD: somethinglong
+      POSTGRES_USER: postgres
+      POSTGRES_DB: helse
+    restart: always
+    volumes:
+      - data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "-q",
+          "-d",
+          "helse",
+          "-U",
+          "postgres"
+        ]
+      interval: 5s
+      timeout: 5s
+
+```
+
+## Local debugging
+
+The best editor to debug is to use VS code with the c# and flutter extensions.
+Launching the debug target 'Launch' should automatically open the swagger API and the flutter web app.
