@@ -22,7 +22,7 @@ class MetricAdd extends StatefulWidget {
 class _MetricAddState extends State<MetricAdd> {
   SubmissionStatus _status = SubmissionStatus.initial;
 
-  DateTime? _date;
+  DateTime _date = DateTime.now();
   String? _value;
   String? _tag;
   int? _type;

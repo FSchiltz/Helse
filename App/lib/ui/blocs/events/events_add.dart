@@ -21,8 +21,8 @@ class EventAdd extends StatefulWidget {
 
 class _EventAddState extends State<EventAdd> {
   SubmissionStatus _status = SubmissionStatus.initial;
-  DateTime? _start;
-  DateTime? _stop;
+  DateTime _start = DateTime.now();
+  DateTime _stop = DateTime.now();
   String? _description;
 
   void _submit() async {

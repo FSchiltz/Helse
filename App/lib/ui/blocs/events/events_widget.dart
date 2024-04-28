@@ -42,7 +42,7 @@ class _EventWidgetState extends State<EventWidget> {
     setState(() {
       _events = [];
     });
-    _getData();
+    //_getData();
   }
 
   Future<List<Event>?> _getData() async {
@@ -55,7 +55,7 @@ class _EventWidgetState extends State<EventWidget> {
 
       // if the date has not changed, no call to the backend
       var date = _date;
-      if (date != null && widget.date.start.compareTo(date.start) == 0 && widget.date.end.compareTo(date.end) == 0) return _events;
+     // if (date != null && widget.date.start.compareTo(date.start) == 0 && widget.date.end.compareTo(date.end) == 0) return _events;
 
       date = widget.date;
       _date = date;
