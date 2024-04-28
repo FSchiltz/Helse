@@ -13,8 +13,9 @@ on:
 jobs:
   run-linters:
     name: Run linters
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-latest   
+    permissions:
+      contents: read 
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v3

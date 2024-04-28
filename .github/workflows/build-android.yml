@@ -1,6 +1,13 @@
 name: Build Android
 on:
   workflow_call:
+    inputs:
+      tag:
+        required: false
+        type: string
+      push:
+        required: true
+        type: boolean
       
 env:
   REGISTRY: ghcr.io
@@ -9,9 +16,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest    
-    permissions:
-      contents: read 
-
     steps:
     - uses: actions/checkout@v3
     
@@ -31,4 +35,14 @@ jobs:
     - name: Build release app bundle
       run: flutter build appbundle
       working-directory: 'App'
+
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      if: ${{ inputs.push }}
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: build/app/outputs/bundle/release/app-release.aab
+        asset_name: "app_bundle.aap"
+        tag: ${{ inputs.tag }}
+    
       
