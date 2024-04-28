@@ -19,8 +19,8 @@ class TreatmentAdd extends StatefulWidget {
 
 class _TreatementState extends State<TreatmentAdd> {
   SubmissionStatus _status = SubmissionStatus.initial;
-  DateTime? _start;
-  DateTime? _stop;
+  DateTime _start = DateTime.now();
+  DateTime _stop = DateTime.now();
   String? _description;
   int? _type;
   List<EventType>? _types;

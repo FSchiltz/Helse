@@ -2,21 +2,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Docker .NET Attach (Preview)",
-            "type": "docker",
-            "request": "attach",
-            "platform": "netCore",
-            "sourceFileMap": {
-                "/src": "${workspaceFolder}"
-            }
-        },
-        {
-            "name": "Flutter",
-            "type": "dart",
-            "request": "launch",
-            "program": "App/lib/main.dart"
-        },
-        {
             "name": "Flutter web",
             "type": "dart",
             "request": "launch",
@@ -55,15 +40,16 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
-        },
+        }
+    ],
+    "compounds": [
         {
-            "name": "Docker .NET Launch",
-            "type": "docker",
-            "request": "launch",
-            "preLaunchTask": "docker-run: debug",
-            "netCore": {
-                "appProject": "${workspaceFolder}/Backend/Api/Api.csproj"
-            }
+            "name": "Launch",
+            "configurations": [
+                "Flutter web",
+                ".NET Core Launch (web)"
+            ],
+            "stopAll": true
         }
     ]
 }

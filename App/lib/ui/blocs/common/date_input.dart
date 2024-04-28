@@ -3,14 +3,14 @@ import 'package:helse/helpers/date.dart';
 
 class DateInput extends StatelessWidget {
   final String label;
-  final DateTime? date;
+  final DateTime date;
 
   final TextEditingController _textController = TextEditingController();
 
-  final void Function(DateTime? time) callback;
+  final void Function(DateTime time) callback;
 
   DateInput(this.label, this.date, this.callback, {super.key}) {
-    _textController.text = date == null ? label : DateHelper.format(date);
+    _textController.text = DateHelper.format(date);
   }
 
   Future<void> _setDate(BuildContext context) async {

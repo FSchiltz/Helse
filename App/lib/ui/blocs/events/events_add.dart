@@ -10,10 +10,10 @@ import '../loader.dart';
 
 class EventAdd extends StatefulWidget {
   final void Function() callback;
-  final List<EventType> types;
+  final EventType type;
   final int? person;
 
-  const EventAdd(this.callback, this.types, {super.key, this.person});
+  const EventAdd(this.callback, this.type, {super.key, this.person});
 
   @override
   State<EventAdd> createState() => _EventAddState();
@@ -21,10 +21,9 @@ class EventAdd extends StatefulWidget {
 
 class _EventAddState extends State<EventAdd> {
   SubmissionStatus _status = SubmissionStatus.initial;
-  DateTime? _start;
-  DateTime? _stop;
+  DateTime _start = DateTime.now();
+  DateTime _stop = DateTime.now();
   String? _description;
-  int? _type;
 
   void _submit() async {
     var localContext = context;
@@ -34,7 +33,7 @@ class _EventAddState extends State<EventAdd> {
         _status = SubmissionStatus.inProgress;
       });
       try {
-        var metric = CreateEvent(start: _start, stop: _stop, type: _type, description: _description);
+        var metric = CreateEvent(start: _start, stop: _stop, type: widget.type.id, description: _description);
         await AppState.eventLogic?.addEvent(metric, person: widget.person);
 
         widget.callback.call();
@@ -86,13 +85,7 @@ class _EventAddState extends State<EventAdd> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Text("Manually add a new event", style: Theme.of(context).textTheme.bodyMedium),
-                const SizedBox(height: 10),
-                _TypeInput(
-                    widget.types,
-                    (type) => setState(() {
-                          _type = type;
-                        })),
+                Text("Manually add ${widget.type.name}", style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: 10),
                 TextInput(Icons.description_sharp, "Description",
                     onChanged: (value) => setState(() {
@@ -115,33 +108,6 @@ class _EventAddState extends State<EventAdd> {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _TypeInput extends StatelessWidget {
-  final List<EventType> types;
-  final void Function(int?) callback;
-
-  const _TypeInput(this.types, this.callback);
-
-  @override
-  Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
-    return DropdownButtonFormField(
-      onChanged: callback,
-      items: types.map((type) => DropdownMenuItem(value: type.id, child: Text(type.name ?? ""))).toList(),
-      decoration: InputDecoration(
-        labelText: 'Type',
-        prefixIcon: const Icon(Icons.list_sharp),
-        prefixIconColor: theme.primary,
-        filled: true,
-        fillColor: theme.surface,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: theme.primary),
         ),
       ),
     );

@@ -4,6 +4,7 @@ import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../loader.dart';
 import '../notification.dart';
+import 'events_add.dart';
 import 'events_graph.dart';
 
 class EventWidget extends StatefulWidget {
@@ -19,7 +20,6 @@ class EventWidget extends StatefulWidget {
 
 class _EventWidgetState extends State<EventWidget> {
   List<Event>? _events;
-  DateTimeRange? _date;
 
   _EventWidgetState();
 
@@ -37,25 +37,25 @@ class _EventWidgetState extends State<EventWidget> {
     }
   }
 
-  Future<List<Event>?> _getData(int? id) async {
+  void _resetEvents() {
+    setState(() {
+      _events = [];
+    });
+  }
+
+  Future<List<Event>?> _getData() async {
     var localContext = context;
     try {
-      if (id == null) {
+      if (widget.type.id == null) {
         _events = List<Event>.empty();
         return _events;
       }
 
-      // if the date has not changed, no call to the backend
-      var date = _date;
-      if (date != null && widget.date.start.compareTo(date.start) == 0 && widget.date.end.compareTo(date.end) == 0) return _events;
-
-      date = widget.date;
-      _date = date;
-
+      var date = widget.date;
       var start = DateTime(date.start.year, date.start.month, date.start.day);
       var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-      _events = await AppState.eventLogic?.getEvent(id, start, end, person: widget.person);
+      _events = await AppState.eventLogic?.getEvent(widget.type.id, start, end, person: widget.person);
       _events?.sort(_sort);
       return _events;
     } catch (ex) {
@@ -77,10 +77,19 @@ class _EventWidgetState extends State<EventWidget> {
             Row(
               children: [
                 Text(widget.type.name ?? "", style: Theme.of(context).textTheme.titleLarge),
+                IconButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return EventAdd(_resetEvents, widget.type, person: widget.person);
+                          });
+                    },
+                    icon: const Icon(Icons.add_sharp))
               ],
             ),
             FutureBuilder(
-                future: _getData(widget.type.id),
+                future: _getData(),
                 builder: (ctx, snapshot) {
                   // Checking if future is resolved
                   if (snapshot.connectionState == ConnectionState.done) {

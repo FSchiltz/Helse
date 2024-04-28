@@ -9,11 +9,11 @@ import '../common/text_input.dart';
 import '../loader.dart';
 
 class MetricAdd extends StatefulWidget {
-  final List<MetricType> types;
+  final MetricType type;
   final void Function() callback;
   final int? person;
 
-  const MetricAdd(this.types, this.callback, {super.key, this.person});
+  const MetricAdd(this.type, this.callback, {super.key, this.person});
 
   @override
   State<MetricAdd> createState() => _MetricAddState();
@@ -22,10 +22,9 @@ class MetricAdd extends StatefulWidget {
 class _MetricAddState extends State<MetricAdd> {
   SubmissionStatus _status = SubmissionStatus.initial;
 
-  DateTime? _date;
+  DateTime _date = DateTime.now();
   String? _value;
   String? _tag;
-  int? _type;
 
   @override
   Widget build(BuildContext context) {
@@ -59,13 +58,7 @@ class _MetricAddState extends State<MetricAdd> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  Text("Manually add a new metric", style: Theme.of(context).textTheme.bodyMedium),
-                  const SizedBox(height: 10),
-                  _TypeInput(
-                      widget.types,
-                      (value) => setState(() {
-                            _type = value;
-                          })),
+                  Text("Manually add a ${widget.type.name}", style: Theme.of(context).textTheme.bodyMedium),
                   const SizedBox(height: 10),
                   TextInput(Icons.add, "Value",
                       onChanged: (value) => setState(
@@ -103,7 +96,7 @@ class _MetricAddState extends State<MetricAdd> {
         });
 
         try {
-          var metric = CreateMetric(date: _date, type: _type, tag: _tag, value: _value);
+          var metric = CreateMetric(date: _date, type: widget.type.id, tag: _tag, value: _value);
           await AppState.metricsLogic?.addMetric(metric, person: widget.person);
 
           if (localContext.mounted) {
@@ -126,32 +119,5 @@ class _MetricAddState extends State<MetricAdd> {
         ErrorSnackBar.show("Error: $ex", localContext);
       }
     }
-  }
-}
-
-class _TypeInput extends StatelessWidget {
-  final List<MetricType> types;
-  final void Function(int?) callback;
-
-  const _TypeInput(this.types, this.callback);
-
-  @override
-  Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
-    return DropdownButtonFormField(
-      onChanged: callback,
-      items: types.map((type) => DropdownMenuItem(value: type.id, child: Text(type.name ?? ""))).toList(),
-      decoration: InputDecoration(
-        labelText: 'Type',
-        prefixIcon: const Icon(Icons.list),
-        prefixIconColor: theme.primary,
-        filled: true,
-        fillColor: theme.surface,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: theme.primary),
-        ),
-      ),
-    );
   }
 }
