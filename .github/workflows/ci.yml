@@ -14,5 +14,6 @@ jobs:
 
   build-docker:
     uses: ./.github/actions/build-docker.yml
+    with:
       tags: ci
       labels: ci
