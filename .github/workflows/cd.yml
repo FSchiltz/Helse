@@ -10,9 +10,9 @@ env:
   
 jobs:
   build-android:
-    uses: ./.github/actions/build-android.yml
+    uses: ./.github/workflows/build-android.yml
 
   build-docker:
-    uses: ./.github/actions/build-docker.yml
+    uses: ./.github/workflows/build-docker.yml
     with:
       push: true
