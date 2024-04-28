@@ -1,4 +1,3 @@
-
 using System.Text.Json;
 using Api.Data;
 using Api.Models;
@@ -17,28 +16,28 @@ public static class SettingsLogic
     /// <param name="db"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static async Task<IResult> GetSettingsAsync(AppDataConnection db, HttpContext context)
+    public static async Task<IResult> GetOauthAsync(AppDataConnection db, HttpContext context)
     {
         var admin = await db.IsAdmin(context);
         if (admin is not null)
             return admin;
 
-        var settings = new Settings();
+        return TypedResults.Ok(await db.GetSettings<Oauth>(Oauth.Name));
+    }
 
-        await foreach (var setting in db.GetTable<Data.Models.Settings>().AsAsyncEnumerable())
-        {
-            switch (setting.Name)
-            {
-                case Oauth.Name:
-                    settings.Oauth = JsonSerializer.Deserialize<Oauth>(setting.Blob);
-                    break;
-                case Proxy.Name:
-                    settings.Proxy = JsonSerializer.Deserialize<Proxy>(setting.Blob);
-                    break;
-            }
-        }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="db"></param>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public static async Task<IResult> GetProxyAsync(AppDataConnection db, HttpContext context)
+    {
+        var admin = await db.IsAdmin(context);
+        if (admin is not null)
+            return admin;
 
-        return TypedResults.Ok(settings);
+        return TypedResults.Ok(await db.GetSettings<Proxy>(Proxy.Name));
     }
 
     /// <summary>
@@ -48,7 +47,7 @@ public static class SettingsLogic
     /// <param name="db"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static async Task<IResult> PostSettingAsync(Settings settings, AppDataConnection db, HttpContext context, ILoggerFactory logger)
+    public static async Task<IResult> PostOauthAsync(Oauth settings, AppDataConnection db, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger(nameof(SettingsLogic));
 
@@ -56,21 +55,31 @@ public static class SettingsLogic
         if (admin is not null)
             return admin;
 
-        using var transaction = await db.BeginTransactionAsync();
+        await db.SaveSettingsAsync(Oauth.Name, settings);
 
-        if (settings.Oauth is not null)
-            await db.Save(Oauth.Name, settings.Oauth);
-        else
-            await db.Delete(Oauth.Name);
+        log.LogInformation("Oauth settings saved");
 
-        if (settings.Proxy is not null)
-            await db.Save(Proxy.Name, settings.Proxy);
-        else
-            await db.Delete(Proxy.Name);
+        return TypedResults.Created();
+    }
 
-        await transaction.CommitAsync();
+     /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="settings"></param>
+    /// <param name="db"></param>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public static async Task<IResult> PostProxyAsync(Proxy settings, AppDataConnection db, HttpContext context, ILoggerFactory logger)
+    {
+        var log = logger.CreateLogger(nameof(SettingsLogic));
 
-        log.LogInformation("Admin settings saved");
+        var admin = await db.IsAdmin(context);
+        if (admin is not null)
+            return admin;
+
+        await db.SaveSettingsAsync(Proxy.Name, settings);
+
+        log.LogInformation("Proxy settings saved");
 
         return TypedResults.Created();
     }

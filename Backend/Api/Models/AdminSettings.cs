@@ -1,12 +1,5 @@
 namespace Api.Models;
 
-public class Settings
-{
-    public Oauth? Oauth { get; set; }
-
-    public Proxy? Proxy { get; set; }
-}
-
 public class Proxy
 {
     public const string Name = "proxy";

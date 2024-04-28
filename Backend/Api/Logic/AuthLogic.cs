@@ -46,7 +46,7 @@ public static class AuthLogic
 
         var isAuth = false;
         // now we check if the user is already auth
-        var settings = await db.GetSetting<Proxy>(Proxy.Name);
+        var settings = await db.GetSettings<Proxy>(Proxy.Name);
         if (settings?.ProxyAuth == true && settings.Header is not null)
         {
             (isAuth, _) = await ConnectHeader(db, context, settings, log);
@@ -153,7 +153,7 @@ public static class AuthLogic
     {
         var log = logger.CreateLogger("Auth");
 
-        var settings = await db.GetSetting<Proxy>(Proxy.Name);
+        var settings = await db.GetSettings<Proxy>(Proxy.Name);
         bool logged = false;
         TokenInfo? fromDb = null;
 

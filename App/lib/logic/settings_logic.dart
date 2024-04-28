@@ -34,16 +34,7 @@ class SettingsLogic {
 
   SettingsLogic(Account account) : _account = account;
 
-  Future<Settings> getSettings() async {
-    var settings = await SettingService(_account).getSettings();
-
-    if (settings.oauth == null) const Settings(oauth: Oauth());
-    return settings;
-  }
-
-  Future save(Settings settings) async {
-    await SettingService(_account).saveSettings(settings);
-  }
+  SettingService api() => SettingService(_account);
 
   Future<LocalSettings> getLocalSettings() async {
     var encoded = (await storage).getString(_localKey);

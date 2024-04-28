@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
 import 'package:helse/ui/blocs/notification.dart';
 
-import '../../../../main.dart';
-import '../../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../loader.dart';
 
 class MetricSettingsView extends StatefulWidget {
@@ -13,7 +12,7 @@ class MetricSettingsView extends StatefulWidget {
 }
 
 class _SettingsViewState extends State<MetricSettingsView> {
-  Settings? _settings;
+  Proxy? _settings;
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   void _resetSettings() {
@@ -25,18 +24,16 @@ class _SettingsViewState extends State<MetricSettingsView> {
 
   bool _dummy = false;
 
-  Future<Settings?> _getData(bool reset) async {
+  Future<Proxy?> _getData(bool reset) async {
     // if the users has not changed, no call to the backend
     if (_settings != null) return _settings;
 
-    _settings = await AppState.settings?.getSettings();
+    _settings = const Proxy();
     return _settings;
   }
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
-
     return FutureBuilder(
         future: _getData(_dummy),
         builder: (context, snapshot) {

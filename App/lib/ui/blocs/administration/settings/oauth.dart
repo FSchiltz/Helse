@@ -13,17 +13,13 @@ class OauthView extends StatefulWidget {
 }
 
 class _OauthViewState extends State<OauthView> {
-  Settings? _settings;
+  Oauth? _settings;
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   final TextEditingController _controllerId = TextEditingController();
   final TextEditingController _controllerSecret = TextEditingController();
   bool _enabled = false;
   bool _autoregister = false;
-
-  bool _proxyAuth = false;
-  bool _proxyAutoRegister = false;
-  final TextEditingController _controllerHeader = TextEditingController();
 
   void _resetSettings() {
     setState(() {
@@ -34,22 +30,18 @@ class _OauthViewState extends State<OauthView> {
 
   bool _dummy = false;
 
-  Future<Settings?> _getData(bool reset) async {
+  Future<Oauth?> _getData(bool reset) async {
     // if the users has not changed, no call to the backend
     if (_settings != null) return _settings;
 
-    _settings = await AppState.settings?.getSettings();
+    _settings = await AppState.settings?.api().oauth();
 
-    _controllerId.text = _settings?.oauth?.clientId ?? "";
-    _controllerSecret.text = _settings?.oauth?.clientSecret ?? "";
+    _controllerId.text = _settings?.clientId ?? "";
+    _controllerSecret.text = _settings?.clientSecret ?? "";
 
-    _controllerHeader.text = _settings?.proxy?.header ?? "";
+    _enabled = _settings?.enabled ?? false;
+    _autoregister = _settings?.autoRegister ?? false;
 
-    _enabled = _settings?.oauth?.enabled ?? false;
-    _autoregister = _settings?.oauth?.autoRegister ?? false;
-
-    _proxyAuth = _settings?.proxy?.proxyAuth ?? false;
-    _proxyAutoRegister = _settings?.proxy?.autoRegister ?? false;
     return _settings;
   }
 
@@ -162,19 +154,14 @@ class _OauthViewState extends State<OauthView> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
-        await AppState.settings?.save(Settings(
-          oauth: Oauth(
-            clientId: _controllerId.text,
-            clientSecret: _controllerSecret.text,
-            enabled: _enabled,
-            autoRegister: _autoregister,
-          ),
-          proxy: Proxy(
-            autoRegister: _proxyAutoRegister,
-            proxyAuth: _proxyAuth,
-            header: _controllerHeader.text,
-          ),
-        ));
+        await AppState.settings?.api().updateOauth(
+              Oauth(
+                clientId: _controllerId.text,
+                clientSecret: _controllerSecret.text,
+                enabled: _enabled,
+                autoRegister: _autoregister,
+              ),
+            );
 
         if (localContext.mounted) {
           SuccessSnackBar.show("Saved Successfully", localContext);

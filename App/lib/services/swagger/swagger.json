@@ -740,7 +740,7 @@
         }
       }
     },
-    "/api/admin/settings": {
+    "/api/admin/settings/oauth": {
       "post": {
         "tags": [
           "SettingsLogic"
@@ -749,7 +749,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Settings"
+                "$ref": "#/components/schemas/Oauth"
               }
             }
           },
@@ -774,7 +774,52 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Settings"
+                  "$ref": "#/components/schemas/Oauth"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/admin/settings/proxy": {
+      "post": {
+        "tags": [
+          "SettingsLogic"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Proxy"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "SettingsLogic"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Proxy"
                 }
               }
             }
@@ -1288,18 +1333,6 @@
           "View",
           "Edit"
         ]
-      },
-      "Settings": {
-        "type": "object",
-        "properties": {
-          "oauth": {
-            "$ref": "#/components/schemas/Oauth"
-          },
-          "proxy": {
-            "$ref": "#/components/schemas/Proxy"
-          }
-        },
-        "additionalProperties": false
       },
       "Status": {
         "type": "object",

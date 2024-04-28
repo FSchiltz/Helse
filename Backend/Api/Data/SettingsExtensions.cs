@@ -8,11 +8,14 @@ namespace Api.Data;
 /// </summary>
 public static class SettingsExtension
 {
-    public static Task Save<T>(this AppDataConnection db, string name, T blob)
+    static public async Task SaveSettingsAsync<T>(this AppDataConnection db, string name, T blob) where T : class
     {
+        using var transaction = await db.BeginTransactionAsync();
+
+
         var data = JsonSerializer.Serialize(blob);
 
-        return db.GetTable<Data.Models.Settings>().InsertOrUpdateAsync(() => new Data.Models.Settings
+        await db.GetTable<Data.Models.Settings>().InsertOrUpdateAsync(() => new Data.Models.Settings
         {
             Name = name,
             Blob = data,
@@ -22,16 +25,21 @@ public static class SettingsExtension
              Name = name,
              Blob = data,
          });
+
+
+        await transaction.CommitAsync();
     }
 
     public static Task Delete(this AppDataConnection db, string name) => db.GetTable<Data.Models.Settings>().DeleteAsync(x => x.Name == name);
 
-    public static async Task<T?> GetSetting<T>(this AppDataConnection db, string name)
+    public static async Task<T> GetSettings<T>(this AppDataConnection db, string name) where T : new()
     {
-        var setting = await db.GetTable<Data.Models.Settings>().Where(x => x.Name == name).SingleOrDefaultAsync();
-        if (setting?.Blob is null)
-            return default;
+        var settings = await db.GetTable<Data.Models.Settings>().Where(x => x.Name == name).SingleOrDefaultAsync();
+        if (settings?.Blob is null)
+        {
+            return new T();
+        }
 
-        return JsonSerializer.Deserialize<T>(setting.Blob);
+        return JsonSerializer.Deserialize<T>(settings.Blob) ?? new();
     }
 }

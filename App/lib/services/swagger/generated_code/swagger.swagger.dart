@@ -403,28 +403,52 @@ abstract class Swagger extends ChopperService {
   });
 
   ///
-  Future<chopper.Response> apiAdminSettingsPost({required Settings? body}) {
-    return _apiAdminSettingsPost(body: body);
+  Future<chopper.Response> apiAdminSettingsOauthPost({required Oauth? body}) {
+    return _apiAdminSettingsOauthPost(body: body);
   }
 
   ///
   @Post(
-    path: '/api/admin/settings',
+    path: '/api/admin/settings/oauth',
     optionalBody: true,
   )
-  Future<chopper.Response> _apiAdminSettingsPost(
-      {@Body() required Settings? body});
+  Future<chopper.Response> _apiAdminSettingsOauthPost(
+      {@Body() required Oauth? body});
 
   ///
-  Future<chopper.Response<Settings>> apiAdminSettingsGet() {
-    generatedMapping.putIfAbsent(Settings, () => Settings.fromJsonFactory);
+  Future<chopper.Response<Oauth>> apiAdminSettingsOauthGet() {
+    generatedMapping.putIfAbsent(Oauth, () => Oauth.fromJsonFactory);
 
-    return _apiAdminSettingsGet();
+    return _apiAdminSettingsOauthGet();
   }
 
   ///
-  @Get(path: '/api/admin/settings')
-  Future<chopper.Response<Settings>> _apiAdminSettingsGet();
+  @Get(path: '/api/admin/settings/oauth')
+  Future<chopper.Response<Oauth>> _apiAdminSettingsOauthGet();
+
+  ///
+  Future<chopper.Response> apiAdminSettingsProxyPost({required Proxy? body}) {
+    return _apiAdminSettingsProxyPost(body: body);
+  }
+
+  ///
+  @Post(
+    path: '/api/admin/settings/proxy',
+    optionalBody: true,
+  )
+  Future<chopper.Response> _apiAdminSettingsProxyPost(
+      {@Body() required Proxy? body});
+
+  ///
+  Future<chopper.Response<Proxy>> apiAdminSettingsProxyGet() {
+    generatedMapping.putIfAbsent(Proxy, () => Proxy.fromJsonFactory);
+
+    return _apiAdminSettingsProxyGet();
+  }
+
+  ///
+  @Get(path: '/api/admin/settings/proxy')
+  Future<chopper.Response<Proxy>> _apiAdminSettingsProxyGet();
 
   ///
   Future<chopper.Response> apiTreatmentPost({required CreateTreatment? body}) {
@@ -1728,57 +1752,6 @@ extension $RightExtension on Right {
         start: (start != null ? start.value : this.start),
         stop: (stop != null ? stop.value : this.stop),
         type: (type != null ? type.value : this.type));
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
-class Settings {
-  const Settings({
-    this.oauth,
-    this.proxy,
-  });
-
-  factory Settings.fromJson(Map<String, dynamic> json) =>
-      _$SettingsFromJson(json);
-
-  static const toJsonFactory = _$SettingsToJson;
-  Map<String, dynamic> toJson() => _$SettingsToJson(this);
-
-  @JsonKey(name: 'oauth')
-  final Oauth? oauth;
-  @JsonKey(name: 'proxy')
-  final Proxy? proxy;
-  static const fromJsonFactory = _$SettingsFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is Settings &&
-            (identical(other.oauth, oauth) ||
-                const DeepCollectionEquality().equals(other.oauth, oauth)) &&
-            (identical(other.proxy, proxy) ||
-                const DeepCollectionEquality().equals(other.proxy, proxy)));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(oauth) ^
-      const DeepCollectionEquality().hash(proxy) ^
-      runtimeType.hashCode;
-}
-
-extension $SettingsExtension on Settings {
-  Settings copyWith({Oauth? oauth, Proxy? proxy}) {
-    return Settings(oauth: oauth ?? this.oauth, proxy: proxy ?? this.proxy);
-  }
-
-  Settings copyWithWrapped({Wrapped<Oauth?>? oauth, Wrapped<Proxy?>? proxy}) {
-    return Settings(
-        oauth: (oauth != null ? oauth.value : this.oauth),
-        proxy: (proxy != null ? proxy.value : this.proxy));
   }
 }
 

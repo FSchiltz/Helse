@@ -268,20 +268,6 @@ Map<String, dynamic> _$RightToJson(Right instance) => <String, dynamic>{
       'type': rightTypeNullableToJson(instance.type),
     };
 
-Settings _$SettingsFromJson(Map<String, dynamic> json) => Settings(
-      oauth: json['oauth'] == null
-          ? null
-          : Oauth.fromJson(json['oauth'] as Map<String, dynamic>),
-      proxy: json['proxy'] == null
-          ? null
-          : Proxy.fromJson(json['proxy'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$SettingsToJson(Settings instance) => <String, dynamic>{
-      'oauth': instance.oauth?.toJson(),
-      'proxy': instance.proxy?.toJson(),
-    };
-
 Status _$StatusFromJson(Map<String, dynamic> json) => Status(
       init: json['init'] as bool?,
       externalAuth: json['externalAuth'] as bool?,
