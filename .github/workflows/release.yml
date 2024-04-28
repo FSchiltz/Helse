@@ -1,0 +1,26 @@
+name: Release
+
+on: 
+  push:
+    tags:
+       - "*.*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Build Docker
+        uses: ./.github/workflows/docker.yml
+        
+      - name: Build
+        uses: ./.github/workflows/android-CD.yml
+                
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            app.apk
