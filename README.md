@@ -1,5 +1,7 @@
 # Helse
 
+[![CI](https://github.com/FSchiltz/Helse/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/FSchiltz/Helse/actions/workflows/ci.yml)
+
 This is a simple work in progress selfhosted app for logging health data
 
 ## Usage
