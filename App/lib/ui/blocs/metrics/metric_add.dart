@@ -40,9 +40,7 @@ class _MetricAddState extends State<MetricAdd> {
               : ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                    shape: const ContinuousRectangleBorder(),
                   ),
                   key: const Key('loginForm_continue_raisedButton'),
                   onPressed: _submit,
@@ -90,14 +88,14 @@ class _MetricAddState extends State<MetricAdd> {
   void _submit() async {
     var localContext = context;
     try {
-      if (AppState.metricsLogic != null) {
+      if (AppState.metric != null) {
         setState(() {
           _status = SubmissionStatus.inProgress;
         });
 
         try {
-          var metric = CreateMetric(date: _date, type: widget.type.id, tag: _tag, value: _value);
-          await AppState.metricsLogic?.addMetric(metric, person: widget.person);
+          var metric = CreateMetric(date: _date, type: widget.type.id, tag: _tag, $value: _value);
+          await AppState.metric?.addMetrics(metric, person: widget.person);
 
           if (localContext.mounted) {
             SuccessSnackBar.show("Metric added", localContext);

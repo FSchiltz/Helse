@@ -24,7 +24,7 @@ class MetricGraph extends StatelessWidget {
             : ListView.builder(
                 itemCount: metrics.length,
                 itemBuilder: (context, index) {
-                  return Text(metrics[index].value ?? "");
+                  return Text(metrics[index].$value ?? "");
                 },
               ))
         : WidgetGraph(metrics, date);
@@ -69,7 +69,7 @@ class WidgetGraph extends StatelessWidget {
     // for all spots, we take the mean
     List<double> means = [];
     for (int i = 0; i < valueCount; i++) {
-      var mean = groups[i]?.map((m) => m.value != null ? double.parse(m.value!) : 0).average ?? 0;
+      var mean = groups[i]?.map((m) => m.$value != null ? double.parse(m.$value!) : 0).average ?? 0;
       means.add(mean);
     }
 

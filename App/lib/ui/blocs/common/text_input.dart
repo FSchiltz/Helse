@@ -21,7 +21,6 @@ class TextInput extends StatelessWidget {
         filled: true,
         fillColor: theme.surface,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: theme.primary),
         ),
       ),

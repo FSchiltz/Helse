@@ -147,36 +147,46 @@ public static class Endpoints
         var treatment = api.MapGroup("/treatment").RequireAuthorization();
 
         treatment.MapPost("/", TreatmentLogic.PostAsync)
-              .Produces((int)HttpStatusCode.NoContent)
-              .Produces((int)HttpStatusCode.Unauthorized)
-              .WithOpenApi();
+            .Produces((int)HttpStatusCode.NoContent)
+            .Produces((int)HttpStatusCode.Unauthorized)
+            .WithOpenApi();
 
         treatment.MapGet("/", TreatmentLogic.GetAsync)
-        .Produces<List<Api.Models.Treatement>>((int)HttpStatusCode.OK)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+            .Produces<List<Api.Models.Treatement>>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized)
+            .WithOpenApi();
 
         var eventsType = treatment.MapGroup("/type").RequireAuthorization();
         eventsType.MapGet("/", TreatmentLogic.GetTypeAsync)
-        .Produces<List<Api.Data.Models.EventType>>((int)HttpStatusCode.OK)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+            .Produces<List<Api.Data.Models.EventType>>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized)
+            .WithOpenApi();
     }
 
     public static void MapAdmin(this RouteGroupBuilder api)
     {
         var admin = api.MapGroup("/admin").RequireAuthorization();
+
         var settings = admin.MapGroup("/settings").RequireAuthorization();
+        settings.MapPost("/oauth", SettingsLogic.PostOauthAsync)
+            .Produces((int)HttpStatusCode.NoContent)
+            .Produces((int)HttpStatusCode.Unauthorized)
+            .WithOpenApi();
 
-        settings.MapPost("/", SettingsLogic.PostSettingAsync)
-                     .Produces((int)HttpStatusCode.NoContent)
-                     .Produces((int)HttpStatusCode.Unauthorized)
-                     .WithOpenApi();
+        settings.MapGet("/oauth", SettingsLogic.GetOauthAsync)
+            .Produces<Oauth>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized)
+            .WithOpenApi();
 
-        settings.MapGet("/", SettingsLogic.GetSettingsAsync)
-        .Produces<Settings>((int)HttpStatusCode.OK)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        settings.MapPost("/proxy", SettingsLogic.PostProxyAsync)
+            .Produces((int)HttpStatusCode.NoContent)
+            .Produces((int)HttpStatusCode.Unauthorized)
+            .WithOpenApi();
+
+        settings.MapGet("/proxy", SettingsLogic.GetProxyAsync)
+            .Produces<Proxy>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized)
+            .WithOpenApi();
     }
 
     public static void MapEnpoints(this RouteGroupBuilder api)

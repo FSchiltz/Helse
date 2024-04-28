@@ -21,6 +21,10 @@ class FileInput extends StatelessWidget {
       onPressed: _pickFile,
       icon: Icon(icone),
       label: Text(label),
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size.fromHeight(50),
+        shape: const ContinuousRectangleBorder(),
+      ),
     );
   }
 }

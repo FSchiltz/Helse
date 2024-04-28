@@ -110,7 +110,7 @@ class EventGraph extends StatelessWidget {
         var color = _stateColor(colors, n.description);
         if (remainingWidth > 0) {
           chartGroup.add(Container(
-            decoration: BoxDecoration(color: color.withAlpha(100), borderRadius: BorderRadius.circular(10.0)),
+            decoration: BoxDecoration(color: color.withAlpha(100)),
             height: 25.0,
             width: remainingWidth.toDouble(),
             margin: EdgeInsets.only(left: _distanceToLeftBorder(start).toDouble(), top: 2.0, bottom: 2.0),

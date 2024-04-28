@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:helse/services/user_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../../services/api_service.dart';
@@ -21,6 +22,8 @@ class AuthenticationLogic {
     yield* _controller.stream;
   }
 
+  UserService _api() => UserService(_account);
+
   /// Check if the user is logged in
   Future<void> checkLogin() async {
     var token = await _account.getToken();
@@ -30,17 +33,11 @@ class AuthenticationLogic {
   /// Call the login service
   Future<void> logIn({required String url, required String username, required String password}) async {
     await _account.setUrl(url);
-    var token = await ApiService(_account).login(username, password);
-    if (token != null) {
-      var cleaned = token.replaceAll('"', "");
-      await _account.setToken(cleaned);
+    var token = await UserService(_account).login(username, password);
+    var cleaned = token.replaceAll('"', "");
+    await _account.setToken(cleaned);
 
-      _controller.add(AuthenticationStatus.authenticated);
-    }
-  }
-
-  Future<List<Person>> getUsers() async {
-    return (await ApiService(_account).getUsers()) ?? [];
+    _controller.add(AuthenticationStatus.authenticated);
   }
 
   Future<Person> getUser() async {
@@ -52,11 +49,11 @@ class AuthenticationLogic {
     if (data == null) return const Person(type: UserType.swaggerGeneratedUnknown);
 
     var name = decodedToken["name"];
-    if(name?.isEmpty ?? true) name = null;
+    if (name?.isEmpty ?? true) name = null;
 
     var surname = decodedToken["surname"];
 
-    if(surname?.isEmpty ?? true) surname = null;
+    if (surname?.isEmpty ?? true) surname = null;
 
     // the enum start at 0 so we add 1
     UserType role = UserType.values[int.parse(data) + 1];
@@ -66,15 +63,7 @@ class AuthenticationLogic {
   /// Init the account for a first connection
   Future<void> initAccount({required String url, required PersonCreation person}) async {
     await _account.setUrl(url);
-    await ApiService(_account).createAccount(person);
-  }
-
-  Future<void> createAccount({required PersonCreation person}) {
-    return ApiService(_account).createAccount(person);
-  }
-
-  Future<Status?> isInit(String url) async {
-    return await ApiService(_account).isInit(url);
+    await _api().addPerson(person);
   }
 
   /// Call the logout service

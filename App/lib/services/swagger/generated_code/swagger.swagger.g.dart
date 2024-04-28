@@ -18,7 +18,7 @@ Map<String, dynamic> _$ConnectionToJson(Connection instance) =>
     };
 
 CreateEvent _$CreateEventFromJson(Map<String, dynamic> json) => CreateEvent(
-      type: json['type'] as int?,
+      type: (json['type'] as num?)?.toInt(),
       description: json['description'] as String?,
       start: json['start'] == null
           ? null
@@ -38,15 +38,15 @@ Map<String, dynamic> _$CreateEventToJson(CreateEvent instance) =>
 CreateMetric _$CreateMetricFromJson(Map<String, dynamic> json) => CreateMetric(
       date:
           json['date'] == null ? null : DateTime.parse(json['date'] as String),
-      value: json['value'] as String?,
+      $value: json['value'] as String?,
       tag: json['tag'] as String?,
-      type: json['type'] as int?,
+      type: (json['type'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$CreateMetricToJson(CreateMetric instance) =>
     <String, dynamic>{
       'date': instance.date?.toIso8601String(),
-      'value': instance.value,
+      'value': instance.$value,
       'tag': instance.tag,
       'type': instance.type,
     };
@@ -57,7 +57,7 @@ CreateTreatment _$CreateTreatmentFromJson(Map<String, dynamic> json) =>
               ?.map((e) => CreateEvent.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      personId: json['personId'] as int?,
+      personId: (json['personId'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$CreateTreatmentToJson(CreateTreatment instance) =>
@@ -67,20 +67,20 @@ Map<String, dynamic> _$CreateTreatmentToJson(CreateTreatment instance) =>
     };
 
 Event _$EventFromJson(Map<String, dynamic> json) => Event(
-      type: json['type'] as int?,
+      type: (json['type'] as num?)?.toInt(),
       description: json['description'] as String?,
       start: json['start'] == null
           ? null
           : DateTime.parse(json['start'] as String),
       stop:
           json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
-      user: json['user'] as int?,
-      file: json['file'] as int?,
-      treatment: json['treatment'] as int?,
-      id: json['id'] as int?,
-      person: json['person'] as int?,
+      user: (json['user'] as num?)?.toInt(),
+      file: (json['file'] as num?)?.toInt(),
+      treatment: (json['treatment'] as num?)?.toInt(),
+      id: (json['id'] as num?)?.toInt(),
+      person: (json['person'] as num?)?.toInt(),
       valid: json['valid'] as bool?,
-      address: json['address'] as int?,
+      address: (json['address'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
@@ -98,7 +98,7 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
     };
 
 EventType _$EventTypeFromJson(Map<String, dynamic> json) => EventType(
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       name: json['name'] as String?,
       description: json['description'] as String?,
       standAlone: json['standAlone'] as bool?,
@@ -112,7 +112,7 @@ Map<String, dynamic> _$EventTypeToJson(EventType instance) => <String, dynamic>{
     };
 
 FileType _$FileTypeFromJson(Map<String, dynamic> json) => FileType(
-      type: json['type'] as int?,
+      type: (json['type'] as num?)?.toInt(),
       name: json['name'] as String?,
     );
 
@@ -122,14 +122,14 @@ Map<String, dynamic> _$FileTypeToJson(FileType instance) => <String, dynamic>{
     };
 
 Metric _$MetricFromJson(Map<String, dynamic> json) => Metric(
-      id: json['id'] as int?,
-      person: json['person'] as int?,
-      user: json['user'] as int?,
+      id: (json['id'] as num?)?.toInt(),
+      person: (json['person'] as num?)?.toInt(),
+      user: (json['user'] as num?)?.toInt(),
       date:
           json['date'] == null ? null : DateTime.parse(json['date'] as String),
-      value: json['value'] as String?,
+      $value: json['value'] as String?,
       tag: json['tag'] as String?,
-      type: json['type'] as int?,
+      type: (json['type'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$MetricToJson(Metric instance) => <String, dynamic>{
@@ -137,13 +137,13 @@ Map<String, dynamic> _$MetricToJson(Metric instance) => <String, dynamic>{
       'person': instance.person,
       'user': instance.user,
       'date': instance.date?.toIso8601String(),
-      'value': instance.value,
+      'value': instance.$value,
       'tag': instance.tag,
       'type': instance.type,
     };
 
 MetricType _$MetricTypeFromJson(Map<String, dynamic> json) => MetricType(
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       name: json['name'] as String?,
       description: json['description'] as String?,
       unit: json['unit'] as String?,
@@ -187,7 +187,7 @@ Person _$PersonFromJson(Map<String, dynamic> json) => Person(
               ?.map((e) => Right.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$PersonToJson(Person instance) => <String, dynamic>{
@@ -250,8 +250,8 @@ Map<String, dynamic> _$ProxyToJson(Proxy instance) => <String, dynamic>{
     };
 
 Right _$RightFromJson(Map<String, dynamic> json) => Right(
-      personId: json['personId'] as int?,
-      userId: json['userId'] as int?,
+      personId: (json['personId'] as num?)?.toInt(),
+      userId: (json['userId'] as num?)?.toInt(),
       start: json['start'] == null
           ? null
           : DateTime.parse(json['start'] as String),
@@ -266,20 +266,6 @@ Map<String, dynamic> _$RightToJson(Right instance) => <String, dynamic>{
       'start': instance.start?.toIso8601String(),
       'stop': instance.stop?.toIso8601String(),
       'type': rightTypeNullableToJson(instance.type),
-    };
-
-Settings _$SettingsFromJson(Map<String, dynamic> json) => Settings(
-      oauth: json['oauth'] == null
-          ? null
-          : Oauth.fromJson(json['oauth'] as Map<String, dynamic>),
-      proxy: json['proxy'] == null
-          ? null
-          : Proxy.fromJson(json['proxy'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$SettingsToJson(Settings instance) => <String, dynamic>{
-      'oauth': instance.oauth?.toJson(),
-      'proxy': instance.proxy?.toJson(),
     };
 
 Status _$StatusFromJson(Map<String, dynamic> json) => Status(

@@ -28,7 +28,7 @@ class _FileImportState extends State<FileImport> {
   }
 
   void _getData() async {
-    var model = await AppState.importLogic?.getType();
+    var model = await AppState.helper?.fileTypes();
     if (model != null) {
       setState(() {
         types = model;
@@ -39,6 +39,7 @@ class _FileImportState extends State<FileImport> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      shape: const ContinuousRectangleBorder(),
       scrollable: true,
       title: const Text("Import"),
       actions: [
@@ -47,55 +48,42 @@ class _FileImportState extends State<FileImport> {
             : ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size.fromHeight(50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                  shape: const ContinuousRectangleBorder(),
                 ),
                 onPressed: submit,
                 child: const Text('Submit'),
               ),
       ],
-      content: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Form(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(30.0),
-            child: Column(
-              children: [
-                Text("Import external metric", style: Theme.of(context).textTheme.bodyMedium),
-                DropdownButtonFormField(
-                  onChanged: (value) => setState(() {
-                    selected = value;
-                  }),
-                  items: types.map((type) => DropdownMenuItem(value: type.type, child: Text(type.name ?? ""))).toList(),
-                  decoration: InputDecoration(
-                    labelText: 'Type',
-                    prefixIcon: const Icon(Icons.list_sharp),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                FileInput(
-                  (value) {
-                    setState(() {
-                      file = value;
-                    });
-                  },
-                  "File",
-                  Icons.upload_file_sharp,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(file?.name ?? ""),
-                ),
-              ],
+      content: SingleChildScrollView(
+        padding: const EdgeInsets.all(30.0),
+        child: Column(
+          children: [
+            Text("Import external metric", style: Theme.of(context).textTheme.bodyMedium),
+            DropdownButtonFormField(
+              onChanged: (value) => setState(() {
+                selected = value;
+              }),
+              items: types.map((type) => DropdownMenuItem(value: type.type, child: Text(type.name ?? ""))).toList(),
+              decoration: const InputDecoration(
+                labelText: 'Type',
+                prefixIcon: Icon(Icons.list_sharp),
+              ),
             ),
-          ),
+            const SizedBox(height: 10),
+            FileInput(
+              (value) {
+                setState(() {
+                  file = value;
+                });
+              },
+              "File",
+              Icons.upload_file_sharp,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(file?.name ?? ""),
+            ),
+          ],
         ),
       ),
     );
@@ -103,7 +91,7 @@ class _FileImportState extends State<FileImport> {
 
   void submit() async {
     var localContext = context;
-    if (AppState.metricsLogic != null && selected != null) {
+    if (AppState.helper != null && selected != null) {
       setState(() {
         status = SubmissionStatus.inProgress;
       });
@@ -111,7 +99,7 @@ class _FileImportState extends State<FileImport> {
       try {
         var content = await file?.readAsString();
         if (content == null) return;
-        await AppState.importLogic?.import(content, selected!);
+        await AppState.helper?.import(content, selected!);
 
         setState(() {
           status = SubmissionStatus.success;

@@ -28,7 +28,7 @@ class _TreatementState extends State<TreatmentAdd> {
   Future<List<EventType>?> _getTypes() async {
     if (_types != null) return _types;
 
-    var model = await AppState.treatementLogic?.getTypes();
+    var model = await AppState.treatement?.treatmentTypes();
     _types = model;
 
     return _types;
@@ -37,14 +37,14 @@ class _TreatementState extends State<TreatmentAdd> {
   void _submit() async {
     var localContext = context;
     try {
-      if (AppState.metricsLogic != null) {
+      if (AppState.treatement != null) {
         setState(() {
           _status = SubmissionStatus.inProgress;
         });
         try {
           var event = CreateEvent(start: _start, stop: _stop, type: _type, description: _description);
           var treatment = CreateTreatment(events: [event], personId: widget.person);
-          await AppState.treatementLogic?.add(treatment);
+          await AppState.treatement?.addTreatment(treatment);
 
           setState(() {
             _status = SubmissionStatus.success;
@@ -80,9 +80,7 @@ class _TreatementState extends State<TreatmentAdd> {
               : ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                    shape: const ContinuousRectangleBorder(),
                   ),
                   onPressed: _submit,
                   child: const Text('Submit'),
@@ -169,10 +167,7 @@ class _TypeInput extends StatelessWidget {
         prefixIconColor: theme.primary,
         filled: true,
         fillColor: theme.surface,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: theme.primary),
-        ),
+        border: OutlineInputBorder(borderSide: BorderSide(color: theme.primary)),
       ),
     );
   }

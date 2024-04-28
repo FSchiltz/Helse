@@ -5,7 +5,7 @@ import '../logic/event.dart';
 import '../main.dart';
 import '../services/account.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';
-import 'blocs/administration/user_form.dart';
+import 'blocs/administration/users/user_form.dart';
 import 'blocs/loader.dart';
 import 'blocs/notification.dart';
 
@@ -37,7 +37,6 @@ class _LoginState extends State<LoginPage> {
   SubmissionStatus _loaded = SubmissionStatus.initial;
   bool? _isInit;
   bool _obscurePassword = true;
-  String? _error;
   String? _url;
 
   @override
@@ -74,7 +73,6 @@ class _LoginState extends State<LoginPage> {
                           filled: true,
                           fillColor: theme.surface,
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(color: theme.primary),
                           ),
                           errorText: _status == SubmissionStatus.failure ? 'invalid url' : null,
@@ -122,9 +120,7 @@ class _LoginState extends State<LoginPage> {
                                       : ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                             minimumSize: const Size.fromHeight(50),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(10),
-                                            ),
+                                            shape: const ContinuousRectangleBorder(),
                                           ),
                                           key: const Key('loginForm_continue_raisedButton'),
                                           onPressed: _submit,
@@ -158,10 +154,8 @@ class _LoginState extends State<LoginPage> {
       _loaded = SubmissionStatus.inProgress;
     });
 
-    var isInit = await AppState.authenticationLogic?.isInit(_url ?? "");
+    var isInit = await AppState.helper?.isInit(_url ?? "");
     var status = ((isInit?.init == null) ? SubmissionStatus.failure : SubmissionStatus.success);
-
-    _checkState(status);
 
     // If the server is init or not
     // Todo use stream
@@ -180,7 +174,7 @@ class _LoginState extends State<LoginPage> {
 
   /// Prefill the url from storage or other
   Future<void> _initUrl() async {
-    AppState.authenticationLogic?.checkLogin();
+    AppState.authentication?.checkLogin();
     // We first try to get it from storage
     var url = await Account().getUrl();
 
@@ -201,63 +195,49 @@ class _LoginState extends State<LoginPage> {
 
   void _submit({bool noUser = false}) async {
     var localContext = context;
-    try {
-      var init = _isInit;
-      var url = _url;
-      if (init == null || url == null) return;
 
-      var user = _controllerUsername.text;
-      var password = _controllerPassword.text;
-      if (!noUser && (user.isEmpty || password.isEmpty)) return;
+    var init = _isInit;
+    var url = _url;
+    if (init == null || url == null) return;
+
+    var user = _controllerUsername.text;
+    var password = _controllerPassword.text;
+    if (!noUser && (user.isEmpty || password.isEmpty)) return;
+
+    setState(() {
+      _status = SubmissionStatus.inProgress;
+    });
+
+    try {
+      if (init) {
+        await AppState.authentication?.logIn(url: url, username: user, password: password);
+      } else {
+        var person = PersonCreation(type: UserType.admin, userName: user, password: password, name: _controllerName.text, surname: _controllerSurname.text);
+        await AppState.authentication?.initAccount(url: url, person: person);
+
+        // after a succes, we auto login
+        await AppState.authentication?.logIn(url: url, username: user, password: password);
+        if (localContext.mounted) {
+          SuccessSnackBar.show('User created, welcome', localContext);
+        }
+      }
 
       setState(() {
-        _status = SubmissionStatus.inProgress;
+        _status = SubmissionStatus.success;
       });
-
-      try {
-        if (init) {
-          await AppState.authenticationLogic?.logIn(url: url, username: user, password: password);
-        } else {
-          var person = PersonCreation(type: UserType.admin, userName: user, password: password, name: _controllerName.text, surname: _controllerSurname.text);
-          await AppState.authenticationLogic?.initAccount(url: url, person: person);
-
-          // after a succes, we auto login
-          await AppState.authenticationLogic?.logIn(url: url, username: user, password: password);
-        }
-
-        setState(() {
-          _status = SubmissionStatus.success;
-        });
-      } catch (ex) {
-        setState(() {
-          _status = SubmissionStatus.failure;
-          _error = ex.toString();
-        });
-      }
     } catch (ex) {
       if (localContext.mounted) {
         ErrorSnackBar.show("Error: $ex", localContext);
       }
+
+      // we start the login process again
+      setState(() {
+        _status = SubmissionStatus.initial;
+      });
     }
   }
 
   void togglePasswordVisibility() => setState(() {
         _obscurePassword = !_obscurePassword;
       });
-
-  _checkState(SubmissionStatus status) {
-    if (status == SubmissionStatus.failure) {
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(content: Text('Failure: $_error')),
-        );
-    } else if (status == SubmissionStatus.success && _isInit == false) {
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(content: Text('User created, welcome')),
-        );
-    }
-  }
 }

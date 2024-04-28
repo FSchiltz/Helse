@@ -109,7 +109,7 @@ final class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _apiEventsTypePut({required MetricType? body}) {
+  Future<Response<dynamic>> _apiEventsTypePut({required EventType? body}) {
     final Uri $url = Uri.parse('/api/events/type');
     final $body = body;
     final Request $request = Request(
@@ -122,12 +122,14 @@ final class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<List<EventType>>> _apiEventsTypeGet() {
+  Future<Response<List<EventType>>> _apiEventsTypeGet({required bool? all}) {
     final Uri $url = Uri.parse('/api/events/type');
+    final Map<String, dynamic> $params = <String, dynamic>{'all': all};
     final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
+      parameters: $params,
     );
     return client.send<List<EventType>, EventType>($request);
   }
@@ -343,8 +345,8 @@ final class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _apiAdminSettingsPost({required Settings? body}) {
-    final Uri $url = Uri.parse('/api/admin/settings');
+  Future<Response<dynamic>> _apiAdminSettingsOauthPost({required Oauth? body}) {
+    final Uri $url = Uri.parse('/api/admin/settings/oauth');
     final $body = body;
     final Request $request = Request(
       'POST',
@@ -356,14 +358,38 @@ final class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<Settings>> _apiAdminSettingsGet() {
-    final Uri $url = Uri.parse('/api/admin/settings');
+  Future<Response<Oauth>> _apiAdminSettingsOauthGet() {
+    final Uri $url = Uri.parse('/api/admin/settings/oauth');
     final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
     );
-    return client.send<Settings, Settings>($request);
+    return client.send<Oauth, Oauth>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiAdminSettingsProxyPost({required Proxy? body}) {
+    final Uri $url = Uri.parse('/api/admin/settings/proxy');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<Proxy>> _apiAdminSettingsProxyGet() {
+    final Uri $url = Uri.parse('/api/admin/settings/proxy');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Proxy, Proxy>($request);
   }
 
   @override

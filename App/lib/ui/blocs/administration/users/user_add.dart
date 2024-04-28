@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../main.dart';
-import '../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../notification.dart';
+import '../../../../main.dart';
+import '../../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../notification.dart';
 import 'user_form.dart';
 
 class UserAdd extends StatefulWidget {
@@ -35,9 +35,7 @@ class _SignupState extends State<UserAdd> {
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             minimumSize: const Size.fromHeight(50),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
+            shape: const ContinuousRectangleBorder(),
           ),
           onPressed: submit,
           child: const Text("Create"),
@@ -76,8 +74,7 @@ class _SignupState extends State<UserAdd> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
-        await AppState.authenticationLogic?.createAccount(
-            person: PersonCreation(
+        await AppState.user?.addPerson(PersonCreation(
           userName: _controllerUsername.text,
           name: _controllerName.text,
           surname: _controllerSurname.text,
@@ -134,7 +131,6 @@ class _TypeInput extends StatelessWidget {
         filled: true,
         fillColor: theme.surface,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: theme.primary),
         ),
       ),

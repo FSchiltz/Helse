@@ -81,8 +81,15 @@ public static class EventsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> GetTypeAsync(AppDataConnection db)
-        => TypedResults.Ok(await db.GetTable<Data.Models.EventType>().Where(x => x.StandAlone).ToListAsync());
+    public static async Task<IResult> GetTypeAsync(bool all, AppDataConnection db)
+    {
+        IQueryable<Data.Models.EventType> query = db.GetTable<Data.Models.EventType>();
+
+        if (!all)
+            query = query.Where(x => x.StandAlone);
+
+        return TypedResults.Ok(await query.ToListAsync());
+    }
 
     public static async Task<IResult> CreateTypeAsync(Data.Models.EventType metric, AppDataConnection db, HttpContext context)
     {
@@ -90,16 +97,17 @@ public static class EventsLogic
         if (admin is not null)
             return admin;
 
-        await db.GetTable<Data.Models.MetricType>().InsertAsync(() => new Data.Models.MetricType
+        await db.GetTable<Data.Models.EventType>().InsertAsync(() => new Data.Models.EventType
         {
             Name = metric.Name,
             Description = metric.Description,
+            StandAlone = metric.StandAlone,
         });
 
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> UpdateTypeAsync(Data.Models.MetricType metric, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> UpdateTypeAsync(Data.Models.EventType metric, AppDataConnection db, HttpContext context)
     {
         var admin = await db.IsAdmin(context);
         if (admin is not null)

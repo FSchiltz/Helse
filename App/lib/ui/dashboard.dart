@@ -27,7 +27,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _getMetricData() async {
-    var model = await AppState.metricsLogic?.getType();
+    var model = await AppState.metric?.metricsType();
     if (model != null) {
       setState(() {
         metricTypes = model;
@@ -38,7 +38,7 @@ class _DashboardState extends State<Dashboard> {
   void _getEventData() async {
     var localContext = context;
     try {
-      var model = await AppState.eventLogic?.getType();
+      var model = await AppState.event?.eventsType(false);
       if (model != null) {
         setState(() {
           eventTypes = model;
@@ -54,15 +54,18 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Center(
-        child: Column(
-          children: [
-            MetricsGrid(types: metricTypes, date: widget.date, person: widget.person),
-            const SizedBox(
-              height: 10,
-            ),
-            EventsGrid(date: widget.date, types: eventTypes, person: widget.person),
-          ],
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Column(
+            children: [
+              MetricsGrid(types: metricTypes, date: widget.date, person: widget.person),
+              const SizedBox(
+                height: 10,
+              ),
+              EventsGrid(date: widget.date, types: eventTypes, person: widget.person),
+            ],
+          ),
         ),
       ),
     );
