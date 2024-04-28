@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../main.dart';
-import '../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../notification.dart';
+import '../../../../main.dart';
+import '../../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../notification.dart';
 import 'user_form.dart';
 
 class UserAdd extends StatefulWidget {
@@ -76,15 +76,14 @@ class _SignupState extends State<UserAdd> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
-        await AppState.authenticationLogic?.createAccount(
-            person: PersonCreation(
-          userName: _controllerUsername.text,
-          name: _controllerName.text,
-          surname: _controllerSurname.text,
-          password: _controllerPassword.text,
-          email: _controllerEmail.text,
-          type: _type,
-        ));
+        await AppState.user?.addPerson(PersonCreation(
+              userName: _controllerUsername.text,
+              name: _controllerName.text,
+              surname: _controllerSurname.text,
+              password: _controllerPassword.text,
+              email: _controllerEmail.text,
+              type: _type,
+            ));
 
         _formKey.currentState?.reset();
         widget.callback?.call();

@@ -5,7 +5,7 @@ import '../logic/event.dart';
 import '../main.dart';
 import '../services/account.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';
-import 'blocs/administration/user_form.dart';
+import 'blocs/administration/users/user_form.dart';
 import 'blocs/loader.dart';
 import 'blocs/notification.dart';
 
@@ -158,7 +158,7 @@ class _LoginState extends State<LoginPage> {
       _loaded = SubmissionStatus.inProgress;
     });
 
-    var isInit = await AppState.authenticationLogic?.isInit(_url ?? "");
+    var isInit = await AppState.helper?.isInit(_url ?? "");
     var status = ((isInit?.init == null) ? SubmissionStatus.failure : SubmissionStatus.success);
 
     _checkState(status);
@@ -180,7 +180,7 @@ class _LoginState extends State<LoginPage> {
 
   /// Prefill the url from storage or other
   Future<void> _initUrl() async {
-    AppState.authenticationLogic?.checkLogin();
+    AppState.authentication?.checkLogin();
     // We first try to get it from storage
     var url = await Account().getUrl();
 
@@ -216,13 +216,13 @@ class _LoginState extends State<LoginPage> {
 
       try {
         if (init) {
-          await AppState.authenticationLogic?.logIn(url: url, username: user, password: password);
+          await AppState.authentication?.logIn(url: url, username: user, password: password);
         } else {
           var person = PersonCreation(type: UserType.admin, userName: user, password: password, name: _controllerName.text, surname: _controllerSurname.text);
-          await AppState.authenticationLogic?.initAccount(url: url, person: person);
+          await AppState.authentication?.initAccount(url: url, person: person);
 
           // after a succes, we auto login
-          await AppState.authenticationLogic?.logIn(url: url, username: user, password: password);
+          await AppState.authentication?.logIn(url: url, username: user, password: password);
         }
 
         setState(() {

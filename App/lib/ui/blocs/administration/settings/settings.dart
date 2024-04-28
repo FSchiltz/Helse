@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:helse/ui/blocs/notification.dart';
 
-import '../../../main.dart';
-import '../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../loader.dart';
+import '../../../../main.dart';
+import '../../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../loader.dart';
 
 class SettingsView extends StatefulWidget {
   const SettingsView({super.key});
@@ -38,7 +38,7 @@ class _SettingsViewState extends State<SettingsView> {
     // if the users has not changed, no call to the backend
     if (_settings != null) return _settings;
 
-    _settings = await AppState.settingsLogic?.getSettings();
+    _settings = await AppState.settings?.getSettings();
 
     _controllerId.text = _settings?.oauth?.clientId ?? "";
     _controllerSecret.text = _settings?.oauth?.clientSecret ?? "";
@@ -110,7 +110,7 @@ class _SettingsViewState extends State<SettingsView> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
-        await AppState.settingsLogic?.save(Settings(
+        await AppState.settings?.save(Settings(
           oauth: Oauth(
             clientId: _controllerId.text,
             clientSecret: _controllerSecret.text,

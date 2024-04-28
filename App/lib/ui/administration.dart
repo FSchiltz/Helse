@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/blocs/administration/metrics/metrics_settings.dart';
 
-import 'blocs/settings/settings.dart';
-import 'blocs/administration/users.dart';
+import 'blocs/administration/settings/settings.dart';
+import 'blocs/administration/users/users.dart';
 
 class AdministrationPage extends StatelessWidget {
   const AdministrationPage({super.key});
@@ -19,15 +20,20 @@ class AdministrationPage extends StatelessWidget {
           title: const Text('Administrations'),
           bottom: const TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.person_search_sharp)),
               Tab(icon: Icon(Icons.settings_sharp)),
+              Tab(icon: Icon(Icons.person_search_sharp)),
             ],
           ),
         ),
         body: const TabBarView(
           children: [
+            Column(
+              children: [
+                SettingsView(),
+                MetricSettingsView(),
+              ],
+            ),
             UsersView(),
-            SettingsView(),
           ],
         ),
       ),

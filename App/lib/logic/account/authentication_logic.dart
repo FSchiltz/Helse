@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:helse/services/user_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../../services/api_service.dart';
@@ -21,6 +22,8 @@ class AuthenticationLogic {
     yield* _controller.stream;
   }
 
+  UserService _api() => UserService(_account);
+
   /// Check if the user is logged in
   Future<void> checkLogin() async {
     var token = await _account.getToken();
@@ -30,17 +33,13 @@ class AuthenticationLogic {
   /// Call the login service
   Future<void> logIn({required String url, required String username, required String password}) async {
     await _account.setUrl(url);
-    var token = await ApiService(_account).login(username, password);
+    var token = await UserService(_account).login(username, password);
     if (token != null) {
       var cleaned = token.replaceAll('"', "");
       await _account.setToken(cleaned);
 
       _controller.add(AuthenticationStatus.authenticated);
     }
-  }
-
-  Future<List<Person>> getUsers() async {
-    return (await ApiService(_account).getUsers()) ?? [];
   }
 
   Future<Person> getUser() async {
@@ -66,15 +65,7 @@ class AuthenticationLogic {
   /// Init the account for a first connection
   Future<void> initAccount({required String url, required PersonCreation person}) async {
     await _account.setUrl(url);
-    await ApiService(_account).createAccount(person);
-  }
-
-  Future<void> createAccount({required PersonCreation person}) {
-    return ApiService(_account).createAccount(person);
-  }
-
-  Future<Status?> isInit(String url) async {
-    return await ApiService(_account).isInit(url);
+    await _api().addPerson(person);
   }
 
   /// Call the logout service

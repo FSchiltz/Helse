@@ -28,13 +28,13 @@ class _EventAddState extends State<EventAdd> {
   void _submit() async {
     var localContext = context;
     try {
-    if (AppState.metricsLogic != null) {
+    if (AppState.event != null) {
       setState(() {
         _status = SubmissionStatus.inProgress;
       });
       try {
         var metric = CreateEvent(start: _start, stop: _stop, type: widget.type.id, description: _description);
-        await AppState.eventLogic?.addEvent(metric, person: widget.person);
+        await AppState.event?.addEvents(metric, person: widget.person);
 
         widget.callback.call();
         setState(() {

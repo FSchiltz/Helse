@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:helse/services/user_service.dart';
 
 import 'logic/account/authentication_logic.dart';
 import 'logic/account/authentication_bloc.dart';
-import 'logic/events_logic.dart';
-import 'logic/import_logic.dart';
-import 'logic/metrics_logic.dart';
-import 'logic/persons_logic.dart';
 import 'logic/settings_logic.dart';
-import 'logic/treatment_logic.dart';
 import 'services/account.dart';
+import 'services/event_service.dart';
+import 'services/helper_service.dart';
+import 'services/metric_service.dart';
+import 'services/treatment_service.dart';
 import 'ui/blocs/common/restart.dart';
 import 'ui/home.dart';
 import 'ui/login.dart';
@@ -25,25 +25,25 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> {
-  static AuthenticationLogic? authenticationLogic;
-  static MetricsLogic? metricsLogic;
-  static ImportLogic? importLogic;
-  static EventsLogic? eventLogic;
-  static PersonsLogic? personsLogic;
-  static TreatementLogic? treatementLogic;
-  static SettingsLogic? settingsLogic;
+  static AuthenticationLogic? authentication;
+  static MetricService? metric;
+  static HelperService? helper;
+  static EventService? event;
+  static UserService? user;
+  static TreatmentService? treatement;
+  static SettingsLogic? settings;
 
   @override
   void initState() {
     super.initState();
     var account = Account(callback: () => RestartWidget.restartApp(context));
-    authenticationLogic = AuthenticationLogic(account);
-    metricsLogic = MetricsLogic(account);
-    importLogic = ImportLogic(account);
-    eventLogic = EventsLogic(account);
-    personsLogic = PersonsLogic(account);
-    treatementLogic = TreatementLogic(account);
-    settingsLogic = SettingsLogic(account);
+    authentication = AuthenticationLogic(account);
+    metric = MetricService(account);
+    helper = HelperService(account);
+    event = EventService(account);
+    user = UserService(account);
+    treatement = TreatmentService(account);
+    settings = SettingsLogic(account);
   }
 
   @override
@@ -53,14 +53,14 @@ class AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    if (authenticationLogic == null) {
+    if (authentication == null) {
       throw Exception("Init Error");
     }
 
     return RepositoryProvider.value(
-      value: authenticationLogic,
+      value: authentication,
       child: BlocProvider(
-        create: (_) => AuthenticationBloc(authenticationRepository: authenticationLogic!),
+        create: (_) => AuthenticationBloc(authenticationRepository: authentication!),
         child: const AppView(),
       ),
     );
@@ -70,20 +70,20 @@ class AppState extends State<App> {
 class AppView extends StatefulWidget {
   const AppView({super.key});
 
-  static _AppViewState of(BuildContext context) => context.findAncestorStateOfType<_AppViewState>()!;
+  static AppViewState of(BuildContext context) => context.findAncestorStateOfType<AppViewState>()!;
 
   @override
-  State<AppView> createState() => _AppViewState();
+  State<AppView> createState() => AppViewState();
 }
 
-class _AppViewState extends State<AppView> {
+class AppViewState extends State<AppView> {
   ThemeMode _themeMode = ThemeMode.system;
   final _navigatorKey = GlobalKey<NavigatorState>();
 
   NavigatorState get _navigator => _navigatorKey.currentState!;
 
-  _AppViewState() {
-    AppState.settingsLogic?.getLocalSettings().then((value) => changeTheme(value.theme));
+  AppViewState() {
+    AppState.settings?.getLocalSettings().then((value) => changeTheme(value.theme));
   }
 
   void changeTheme(ThemeMode themeMode) {

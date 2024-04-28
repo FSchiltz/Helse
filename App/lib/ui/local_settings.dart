@@ -32,7 +32,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     // if the users has not changed, no call to the backend
     if (_settings != null) return _settings;
 
-    _settings = await AppState.settingsLogic?.getLocalSettings();
+    _settings = await AppState.settings?.getLocalSettings();
 
     _healthEnabled = _settings?.syncHealth ?? false;
     _theme = _settings?.theme ?? ThemeMode.system;
@@ -87,7 +87,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
-        await AppState.settingsLogic?.saveLocal(LocalSettings(_healthEnabled, _theme));
+        await AppState.settings?.saveLocal(LocalSettings(_healthEnabled, _theme));
 
         if (localContext.mounted) {
           SuccessSnackBar.show("Saved Successfully", localContext);

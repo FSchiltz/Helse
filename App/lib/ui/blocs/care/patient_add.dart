@@ -4,7 +4,7 @@ import 'package:helse/ui/blocs/notification.dart';
 import '../../../logic/event.dart';
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../administration/user_form.dart';
+import '../administration/users/user_form.dart';
 import '../loader.dart';
 
 class PatientAdd extends StatefulWidget {
@@ -31,8 +31,7 @@ class _PatientAddState extends State<PatientAdd> {
       });
       try {
         // save the user
-        await AppState.authenticationLogic?.createAccount(
-            person: PersonCreation(
+        await AppState.user?.addPerson(PersonCreation(
           name: _controllerName.text,
           surname: _controllerSurname.text,
           type: UserType.patient,

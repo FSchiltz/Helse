@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../services/swagger/generated_code/swagger.enums.swagger.dart';
+import '../../../../services/swagger/generated_code/swagger.enums.swagger.dart';
 
 class UserForm extends StatefulWidget {
   final UserType? type;

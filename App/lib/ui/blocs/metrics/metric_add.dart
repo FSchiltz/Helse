@@ -90,14 +90,14 @@ class _MetricAddState extends State<MetricAdd> {
   void _submit() async {
     var localContext = context;
     try {
-      if (AppState.metricsLogic != null) {
+      if (AppState.metric != null) {
         setState(() {
           _status = SubmissionStatus.inProgress;
         });
 
         try {
           var metric = CreateMetric(date: _date, type: widget.type.id, tag: _tag, $value: _value);
-          await AppState.metricsLogic?.addMetric(metric, person: widget.person);
+          await AppState.metric?.addMetrics(metric, person: widget.person);
 
           if (localContext.mounted) {
             SuccessSnackBar.show("Metric added", localContext);

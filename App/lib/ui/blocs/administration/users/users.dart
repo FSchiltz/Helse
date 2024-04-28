@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../main.dart';
-import '../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../loader.dart';
+import '../../../../main.dart';
+import '../../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../loader.dart';
 import 'user_add.dart';
 
 class UsersView extends StatefulWidget {
@@ -28,7 +28,7 @@ class _UsersViewState extends State<UsersView> {
     // if the users has not changed, no call to the backend
     if (_users != null) return _users;
 
-    _users = await AppState.authenticationLogic?.getUsers();
+    _users = await AppState.user?.persons();
     return _users;
   }
 

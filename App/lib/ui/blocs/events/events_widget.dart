@@ -55,7 +55,7 @@ class _EventWidgetState extends State<EventWidget> {
       var start = DateTime(date.start.year, date.start.month, date.start.day);
       var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-      _events = await AppState.eventLogic?.getEvent(widget.type.id, start, end, person: widget.person);
+      _events = await AppState.event?.events(widget.type.id, start, end, person: widget.person);
       _events?.sort(_sort);
       return _events;
     } catch (ex) {
