@@ -4,6 +4,7 @@ using Api.Helpers;
 using Api.Models;
 using LinqToDB;
 using LinqToDB.Data;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Api.Logic;
 
@@ -50,6 +51,7 @@ public static class PersonLogic
 
             return new Models.Person
             {
+                Id = x.u?.Id ?? 0,
                 Birth = x.p.Birth,
                 Name = x.p.Name,
                 Surname = x.p.Surname,
@@ -161,6 +163,28 @@ public static class PersonLogic
         log.LogInformation("User creation of {user}", newUser.UserName);
 
         await db.CreateUserAsync(newUser, userId);
+
+        return TypedResults.NoContent();
+    }
+
+    /// <summary>
+    /// Change the role of a user
+    /// Needs adim right
+    /// </summary>
+    /// <param name="personId"></param>
+    /// <param name="role"></param>
+    /// <param name="db"></param>
+    /// <returns></returns>
+    public static async Task<IResult> SetPersonRole(long personId, UserType role, AppDataConnection db, HttpContext context)
+    {
+        // check if user is admin
+        var userName = context.User.GetUser();
+        var user = await db.GetTable<User>().FirstOrDefaultAsync(x => x.Identifier == userName);
+
+        if (!(user?.Type == (int)Models.UserType.Admin))
+            return TypedResults.Unauthorized();
+
+        await db.ChangeRole(personId, (int)role);
 
         return TypedResults.NoContent();
     }
