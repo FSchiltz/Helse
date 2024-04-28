@@ -30,8 +30,8 @@ jobs:
      # Get Flutter project dependencies
     - name: Get dependencies
       run: flutter pub get
-      working-directory: '/App'
+      working-directory: 'App'
       
     - name: Build release app bundle
       run: flutter build appbundle
-      working-directory: '/App'
+      working-directory: 'App'
