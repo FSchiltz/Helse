@@ -1,0 +1,37 @@
+name: Android Apk CD
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      packages: write
+      
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Flutter
+      uses: subosito/flutter-action@v2
+      with:
+         channel: 'beta'
+         # Enables cache for flutter packages              
+         # Speed up the process
+         cache: true
+         
+     # Get Flutter project dependencies
+    - name: Get dependencies
+      run: flutter pub get
+      working-directory: 'App'
+      
+    - name: Build release app bundle
+      run: flutter build appbundle
+      working-directory: 'App'
