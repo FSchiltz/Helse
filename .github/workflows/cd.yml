@@ -10,15 +10,9 @@ env:
   
 jobs:
   build-android:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Build docker
-        uses: ./.github/workflows/build-android.yml
+    uses: ./.github/workflows/build-android.yml
 
   build-docker:
-    runs-on: ubuntu-latest        
-    steps:
-      - name: Build docker
-        uses: ./.github/workflows/build-docker.yml
-        with:
-          push: true
+    uses: ./.github/workflows/build-docker.yml
+    with:
+      push: true
