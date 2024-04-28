@@ -85,9 +85,9 @@ class ApiService {
     await _call(() => api.apiMetricsPost(body: metric, personId: person));
   }
 
-  Future<List<EventType>?> eventsType() async {
+  Future<List<EventType>?> eventsType(bool all) async {
     var api = await _getService();
-    return await _call(api.apiEventsTypeGet);
+    return await _call(() => api.apiEventsTypeGet(all: all));
   }
 
   Future<List<Event>?> events(int? type, DateTime? start, DateTime? end, {int? person}) async {
@@ -142,6 +142,6 @@ class ApiService {
 
   Future<void> saveSettings(Settings settings) async {
     var api = await _getService();
-     await _call(() => api.apiAdminSettingsPost(body: settings));
+    await _call(() => api.apiAdminSettingsPost(body: settings));
   }
 }

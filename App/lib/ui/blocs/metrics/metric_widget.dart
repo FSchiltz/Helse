@@ -96,7 +96,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text(widget.type.name ?? "", style: Theme.of(context).textTheme.titleMedium),
-                          if (last != null) Text((last.value ?? "") + (widget.type.unit ?? ""), style: Theme.of(context).textTheme.labelMedium),
+                          if (last != null) Text((last.$value ?? "") + (widget.type.unit ?? ""), style: Theme.of(context).textTheme.labelMedium),
                           IconButton(
                               onPressed: () {
                                 showDialog(

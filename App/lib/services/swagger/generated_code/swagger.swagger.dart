@@ -9,6 +9,7 @@ import 'package:chopper/chopper.dart';
 import 'client_mapping.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart' show MultipartFile;
 import 'package:chopper/chopper.dart' as chopper;
 import 'swagger.enums.swagger.dart' as enums;
 export 'swagger.enums.swagger.dart';
@@ -158,15 +159,19 @@ abstract class Swagger extends ChopperService {
       {@Body() required MetricType? body});
 
   ///
-  Future<chopper.Response<List<EventType>>> apiEventsTypeGet() {
+  ///@param all
+  Future<chopper.Response<List<EventType>>> apiEventsTypeGet(
+      {required bool? all}) {
     generatedMapping.putIfAbsent(EventType, () => EventType.fromJsonFactory);
 
-    return _apiEventsTypeGet();
+    return _apiEventsTypeGet(all: all);
   }
 
   ///
+  ///@param all
   @Get(path: '/api/events/type')
-  Future<chopper.Response<List<EventType>>> _apiEventsTypeGet();
+  Future<chopper.Response<List<EventType>>> _apiEventsTypeGet(
+      {@Query('all') required bool? all});
 
   ///
   ///@param id
@@ -491,7 +496,7 @@ class Connection {
   static const fromJsonFactory = _$ConnectionFromJson;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other is Connection &&
             (identical(other.user, user) ||
@@ -551,7 +556,7 @@ class CreateEvent {
   static const fromJsonFactory = _$CreateEventFromJson;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other is CreateEvent &&
             (identical(other.type, type) ||
@@ -605,7 +610,7 @@ extension $CreateEventExtension on CreateEvent {
 class CreateMetric {
   const CreateMetric({
     this.date,
-    this.value,
+    this.$value,
     this.tag,
     this.type,
   });
@@ -619,7 +624,7 @@ class CreateMetric {
   @JsonKey(name: 'date')
   final DateTime? date;
   @JsonKey(name: 'value')
-  final String? value;
+  final String? $value;
   @JsonKey(name: 'tag')
   final String? tag;
   @JsonKey(name: 'type')
@@ -627,13 +632,13 @@ class CreateMetric {
   static const fromJsonFactory = _$CreateMetricFromJson;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other is CreateMetric &&
             (identical(other.date, date) ||
                 const DeepCollectionEquality().equals(other.date, date)) &&
-            (identical(other.value, value) ||
-                const DeepCollectionEquality().equals(other.value, value)) &&
+            (identical(other.$value, $value) ||
+                const DeepCollectionEquality().equals(other.$value, $value)) &&
             (identical(other.tag, tag) ||
                 const DeepCollectionEquality().equals(other.tag, tag)) &&
             (identical(other.type, type) ||
@@ -646,7 +651,7 @@ class CreateMetric {
   @override
   int get hashCode =>
       const DeepCollectionEquality().hash(date) ^
-      const DeepCollectionEquality().hash(value) ^
+      const DeepCollectionEquality().hash($value) ^
       const DeepCollectionEquality().hash(tag) ^
       const DeepCollectionEquality().hash(type) ^
       runtimeType.hashCode;
@@ -654,22 +659,22 @@ class CreateMetric {
 
 extension $CreateMetricExtension on CreateMetric {
   CreateMetric copyWith(
-      {DateTime? date, String? value, String? tag, int? type}) {
+      {DateTime? date, String? $value, String? tag, int? type}) {
     return CreateMetric(
         date: date ?? this.date,
-        value: value ?? this.value,
+        $value: $value ?? this.$value,
         tag: tag ?? this.tag,
         type: type ?? this.type);
   }
 
   CreateMetric copyWithWrapped(
       {Wrapped<DateTime?>? date,
-      Wrapped<String?>? value,
+      Wrapped<String?>? $value,
       Wrapped<String?>? tag,
       Wrapped<int?>? type}) {
     return CreateMetric(
         date: (date != null ? date.value : this.date),
-        value: (value != null ? value.value : this.value),
+        $value: ($value != null ? $value.value : this.$value),
         tag: (tag != null ? tag.value : this.tag),
         type: (type != null ? type.value : this.type));
   }
@@ -695,7 +700,7 @@ class CreateTreatment {
   static const fromJsonFactory = _$CreateTreatmentFromJson;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other is CreateTreatment &&
             (identical(other.events, events) ||
@@ -775,7 +780,7 @@ class Event {
   static const fromJsonFactory = _$EventFromJson;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other is Event &&
             (identical(other.type, type) ||
@@ -904,7 +909,7 @@ class EventType {
   static const fromJsonFactory = _$EventTypeFromJson;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other is EventType &&
             (identical(other.id, id) ||
@@ -975,7 +980,7 @@ class FileType {
   static const fromJsonFactory = _$FileTypeFromJson;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other is FileType &&
             (identical(other.type, type) ||
@@ -1013,7 +1018,7 @@ class Metric {
     this.person,
     this.user,
     this.date,
-    this.value,
+    this.$value,
     this.tag,
     this.type,
   });
@@ -1032,7 +1037,7 @@ class Metric {
   @JsonKey(name: 'date')
   final DateTime? date;
   @JsonKey(name: 'value')
-  final String? value;
+  final String? $value;
   @JsonKey(name: 'tag')
   final String? tag;
   @JsonKey(name: 'type')
@@ -1040,7 +1045,7 @@ class Metric {
   static const fromJsonFactory = _$MetricFromJson;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other is Metric &&
             (identical(other.id, id) ||
@@ -1051,8 +1056,8 @@ class Metric {
                 const DeepCollectionEquality().equals(other.user, user)) &&
             (identical(other.date, date) ||
                 const DeepCollectionEquality().equals(other.date, date)) &&
-            (identical(other.value, value) ||
-                const DeepCollectionEquality().equals(other.value, value)) &&
+            (identical(other.$value, $value) ||
+                const DeepCollectionEquality().equals(other.$value, $value)) &&
             (identical(other.tag, tag) ||
                 const DeepCollectionEquality().equals(other.tag, tag)) &&
             (identical(other.type, type) ||
@@ -1068,7 +1073,7 @@ class Metric {
       const DeepCollectionEquality().hash(person) ^
       const DeepCollectionEquality().hash(user) ^
       const DeepCollectionEquality().hash(date) ^
-      const DeepCollectionEquality().hash(value) ^
+      const DeepCollectionEquality().hash($value) ^
       const DeepCollectionEquality().hash(tag) ^
       const DeepCollectionEquality().hash(type) ^
       runtimeType.hashCode;
@@ -1080,7 +1085,7 @@ extension $MetricExtension on Metric {
       int? person,
       int? user,
       DateTime? date,
-      String? value,
+      String? $value,
       String? tag,
       int? type}) {
     return Metric(
@@ -1088,7 +1093,7 @@ extension $MetricExtension on Metric {
         person: person ?? this.person,
         user: user ?? this.user,
         date: date ?? this.date,
-        value: value ?? this.value,
+        $value: $value ?? this.$value,
         tag: tag ?? this.tag,
         type: type ?? this.type);
   }
@@ -1098,7 +1103,7 @@ extension $MetricExtension on Metric {
       Wrapped<int?>? person,
       Wrapped<int?>? user,
       Wrapped<DateTime?>? date,
-      Wrapped<String?>? value,
+      Wrapped<String?>? $value,
       Wrapped<String?>? tag,
       Wrapped<int?>? type}) {
     return Metric(
@@ -1106,7 +1111,7 @@ extension $MetricExtension on Metric {
         person: (person != null ? person.value : this.person),
         user: (user != null ? user.value : this.user),
         date: (date != null ? date.value : this.date),
-        value: (value != null ? value.value : this.value),
+        $value: ($value != null ? $value.value : this.$value),
         tag: (tag != null ? tag.value : this.tag),
         type: (type != null ? type.value : this.type));
   }
@@ -1138,7 +1143,7 @@ class MetricType {
   static const fromJsonFactory = _$MetricTypeFromJson;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other is MetricType &&
             (identical(other.id, id) ||
@@ -1213,7 +1218,7 @@ class Oauth {
   static const fromJsonFactory = _$OauthFromJson;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other is Oauth &&
             (identical(other.enabled, enabled) ||
@@ -1320,7 +1325,7 @@ class Person {
   static const fromJsonFactory = _$PersonFromJson;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other is Person &&
             (identical(other.name, name) ||
@@ -1472,7 +1477,7 @@ class PersonCreation {
   static const fromJsonFactory = _$PersonCreationFromJson;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other is PersonCreation &&
             (identical(other.name, name) ||
@@ -1591,7 +1596,7 @@ class Proxy {
   static const fromJsonFactory = _$ProxyFromJson;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other is Proxy &&
             (identical(other.proxyAuth, proxyAuth) ||
@@ -1667,7 +1672,7 @@ class Right {
   static const fromJsonFactory = _$RightFromJson;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other is Right &&
             (identical(other.personId, personId) ||
@@ -1746,7 +1751,7 @@ class Settings {
   static const fromJsonFactory = _$SettingsFromJson;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other is Settings &&
             (identical(other.oauth, oauth) ||
@@ -1799,7 +1804,7 @@ class Status {
   static const fromJsonFactory = _$StatusFromJson;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other is Status &&
             (identical(other.init, init) ||
@@ -1866,7 +1871,7 @@ class Treatement {
   static const fromJsonFactory = _$TreatementFromJson;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other is Treatement &&
             (identical(other.events, events) ||
@@ -1910,9 +1915,7 @@ enums.RightType rightTypeFromJson(
   Object? rightType, [
   enums.RightType? defaultValue,
 ]) {
-  return enums.RightType.values.firstWhereOrNull((e) =>
-          e.value.toString().toLowerCase() ==
-          rightType?.toString().toLowerCase()) ??
+  return enums.RightType.values.firstWhereOrNull((e) => e.value == rightType) ??
       defaultValue ??
       enums.RightType.swaggerGeneratedUnknown;
 }
@@ -1974,9 +1977,8 @@ enums.TreatmentType treatmentTypeFromJson(
   Object? treatmentType, [
   enums.TreatmentType? defaultValue,
 ]) {
-  return enums.TreatmentType.values.firstWhereOrNull((e) =>
-          e.value.toString().toLowerCase() ==
-          treatmentType?.toString().toLowerCase()) ??
+  return enums.TreatmentType.values
+          .firstWhereOrNull((e) => e.value == treatmentType) ??
       defaultValue ??
       enums.TreatmentType.swaggerGeneratedUnknown;
 }
@@ -2040,9 +2042,7 @@ enums.UserType userTypeFromJson(
   Object? userType, [
   enums.UserType? defaultValue,
 ]) {
-  return enums.UserType.values.firstWhereOrNull((e) =>
-          e.value.toString().toLowerCase() ==
-          userType?.toString().toLowerCase()) ??
+  return enums.UserType.values.firstWhereOrNull((e) => e.value == userType) ??
       defaultValue ??
       enums.UserType.swaggerGeneratedUnknown;
 }

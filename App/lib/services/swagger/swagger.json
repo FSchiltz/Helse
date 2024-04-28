@@ -235,6 +235,17 @@
         "tags": [
           "EventsLogic"
         ],
+        "parameters": [
+          {
+            "name": "all",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",

@@ -8,7 +8,7 @@ class EventsLogic {
   EventsLogic(Account account) : _account = account;
 
   Future<List<EventType>> getType() async {
-    return (await ApiService(_account).eventsType()) ?? List<EventType>.empty();
+    return (await ApiService(_account).eventsType(false)) ?? List<EventType>.empty();
   }
 
   Future<List<Event>> getEvent(int? type, DateTime? start, DateTime? end, {int? person}) async {
