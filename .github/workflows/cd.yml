@@ -13,6 +13,8 @@ jobs:
     permissions:
       contents: read 
     uses: ./.github/workflows/build-android.yml
+    with:
+      push: false
 
   build-docker:
     permissions:
