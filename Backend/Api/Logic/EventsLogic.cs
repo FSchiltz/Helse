@@ -81,8 +81,15 @@ public static class EventsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> GetTypeAsync(AppDataConnection db)
-        => TypedResults.Ok(await db.GetTable<Data.Models.EventType>().Where(x => x.StandAlone).ToListAsync());
+    public static async Task<IResult> GetTypeAsync(bool all, AppDataConnection db)
+    {
+        IQueryable<Data.Models.EventType> query = db.GetTable<Data.Models.EventType>();
+
+        if (!all)
+            query = query.Where(x => x.StandAlone);
+
+        return TypedResults.Ok(await query.ToListAsync());
+    }
 
     public static async Task<IResult> CreateTypeAsync(Data.Models.EventType metric, AppDataConnection db, HttpContext context)
     {
