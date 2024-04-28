@@ -10,19 +10,9 @@ env:
   
 jobs:
   build-android:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Build docker
-        uses: ./.github/actions/build-android
+    uses: ./.github/actions/build-android.yml
 
   build-docker:
-    runs-on: ubuntu-latest        
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Build docker
-        uses: ./.github/actions/build-docker
-        with:
-          push: true
+    uses: ./.github/actions/build-docker.yml
+    with:
+      push: true
