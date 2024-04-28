@@ -1,4 +1,6 @@
+import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
+import 'package:helse/ui/blocs/notification.dart';
 
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
@@ -94,11 +96,40 @@ class _MetricTypeViewState extends State<MetricTypeView> {
                             DataColumn(
                                 label: Expanded(
                               child: Text("Unit"),
+                            )),
+                            DataColumn(
+                                label: Expanded(
+                              child: Text(""),
+                            )),
+                            DataColumn(
+                                label: Expanded(
+                              child: Text(""),
                             ))
                           ],
                           rows: types
-                              .map((user) =>
-                                  DataRow(cells: [DataCell(Text((user.id).toString())), DataCell(Text(user.name ?? "")), DataCell(Text(user.description ?? "")), DataCell(Text(user.unit ?? ""))]))
+                              .map((type) => DataRow(cells: [
+                                    DataCell(Text((type.id).toString())),
+                                    DataCell(Text(type.name ?? "")),
+                                    DataCell(Text(type.description ?? "")),
+                                    DataCell(Text(type.unit ?? "")),
+                                    DataCell(
+                                      IconButton(
+                                          onPressed: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return MetricTypeAdd(_resetMetricType, edit: type);
+                                                });
+                                          },
+                                          icon: const Icon(Icons.edit_sharp)),
+                                    ),
+                                    DataCell(
+                                      IconButton(
+                                        onPressed: () async => deleteType(type),
+                                        icon: const Icon(Icons.delete_sharp),
+                                      ),
+                                    )
+                                  ]))
                               .toList(),
                         ),
                       ],
@@ -110,5 +141,23 @@ class _MetricTypeViewState extends State<MetricTypeView> {
           }
           return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
         });
+  }
+
+  Future<void> deleteType(MetricType type) async {
+    var localContext = context;
+    var id = type.id;
+    try {
+      if (id != null) {
+        await AppState.metric?.deleteMetricsType(id);
+        if (localContext.mounted) {
+          SuccessSnackBar.show('Metric ${type.name} deleted', localContext);
+        }
+        _resetMetricType();
+      }
+    } catch (ex) {
+      if (context.mounted) {
+        ErrorSnackBar.show('Error deleting metric ${type.name}', localContext);
+      }
+    }
   }
 }

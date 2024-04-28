@@ -10,11 +10,16 @@ class UserService extends ApiService {
     return await call(api.apiPersonGet);
   }
 
-  Future<String?> login(String username, String password) async {
+  Future<String> login(String username, String password) async {
     var api = await getService();
     var response = await api.apiAuthPost(body: Connection(user: username, password: password));
 
-    return response.isSuccessful ? response.bodyString : null;
+    switch (response.statusCode) {
+      case 401:
+        throw Exception("Incorrect username or password");
+    }
+
+    return response.isSuccessful ? response.bodyString : throw Exception(response.error ?? "Error");
   }
 
   Future<void> addPerson(PersonCreation person) async {

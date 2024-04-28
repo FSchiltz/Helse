@@ -34,12 +34,10 @@ class AuthenticationLogic {
   Future<void> logIn({required String url, required String username, required String password}) async {
     await _account.setUrl(url);
     var token = await UserService(_account).login(username, password);
-    if (token != null) {
-      var cleaned = token.replaceAll('"', "");
-      await _account.setToken(cleaned);
+    var cleaned = token.replaceAll('"', "");
+    await _account.setToken(cleaned);
 
-      _controller.add(AuthenticationStatus.authenticated);
-    }
+    _controller.add(AuthenticationStatus.authenticated);
   }
 
   Future<Person> getUser() async {
@@ -51,11 +49,11 @@ class AuthenticationLogic {
     if (data == null) return const Person(type: UserType.swaggerGeneratedUnknown);
 
     var name = decodedToken["name"];
-    if(name?.isEmpty ?? true) name = null;
+    if (name?.isEmpty ?? true) name = null;
 
     var surname = decodedToken["surname"];
 
-    if(surname?.isEmpty ?? true) surname = null;
+    if (surname?.isEmpty ?? true) surname = null;
 
     // the enum start at 0 so we add 1
     UserType role = UserType.values[int.parse(data) + 1];

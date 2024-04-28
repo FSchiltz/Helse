@@ -7,7 +7,9 @@ import 'metric_form.dart';
 
 class MetricTypeAdd extends StatefulWidget {
   final void Function()? callback;
-  const MetricTypeAdd(this.callback, {super.key});
+  final MetricType? edit;
+
+  const MetricTypeAdd(this.callback, {super.key, this.edit});
 
   @override
   State<MetricTypeAdd> createState() => _MetricTypeAddState();
@@ -22,6 +24,14 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
 
   @override
   Widget build(BuildContext context) {
+    var edit = widget.edit;
+    if (edit != null) {
+      // this is not a new addition, just an edit
+      controllerDescription.text = edit.description ?? "";
+      controllerName.text = edit.name ?? "";
+      controllerUnit.text = edit.unit ?? "";
+    }
+
     return AlertDialog(
       backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
       scrollable: true,
@@ -30,11 +40,10 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             minimumSize: const Size.fromHeight(50),
-            shape: const ContinuousRectangleBorder(
-            ),
+            shape: const ContinuousRectangleBorder(),
           ),
           onPressed: submit,
-          child: const Text("Create"),
+          child: Text(widget.edit == null ? "Create" : "Update"),
         ),
       ],
       content: Form(
@@ -60,17 +69,31 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
-        await AppState.metric?.addMetricsType(MetricType(
-              description: controllerDescription.text,
-              name: controllerName.text,
-              unit: controllerUnit.text,
-            ));
-
+        String text;
+        if (widget.edit == null) {
+          var metric = MetricType(
+            description: controllerDescription.text,
+            name: controllerName.text,
+            unit: controllerUnit.text,
+            id: 0,
+          );
+          text = "Added";
+          await AppState.metric?.addMetricsType(metric);
+        } else {
+          var metric = MetricType(
+            description: controllerDescription.text,
+            name: controllerName.text,
+            unit: controllerUnit.text,
+            id: widget.edit?.id,
+          );
+          text = "Updated";
+          await AppState.metric?.updateMetricsType(metric);
+        }
         _formKey.currentState?.reset();
         widget.callback?.call();
 
         if (localContext.mounted) {
-          SuccessSnackBar.show("Added Successfully", localContext);
+          SuccessSnackBar.show("$text Successfully", localContext);
 
           Navigator.of(localContext).pop();
         }
