@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../loader.dart';
+import 'metric_add.dart';
 import 'metric_graph.dart';
 
 class MetricWidget extends StatefulWidget {
@@ -43,7 +44,14 @@ class _MetricWidgetState extends State<MetricWidget> {
     }
   }
 
-  Future<List<Metric>?> _getData(int? id) async {
+  void _resetMetric() {
+    setState(() {
+      _metrics = [];
+    });
+  }
+
+  Future<List<Metric>?> _getData() async {
+    var id = widget.type.id;
     if (id == null) {
       _metrics = List<Metric>.empty();
       return _metrics;
@@ -51,7 +59,7 @@ class _MetricWidgetState extends State<MetricWidget> {
 
     // if the date has not changed, no call to the backend
     var date = _date;
-    if (date != null && widget.date.start.compareTo(date.start) == 0 && widget.date.end.compareTo(date.end) == 0) return _metrics;
+    //if (date != null && widget.date.start.compareTo(date.start) == 0 && widget.date.end.compareTo(date.end) == 0) return _metrics;
 
     date = widget.date;
     _date = date;
@@ -68,7 +76,7 @@ class _MetricWidgetState extends State<MetricWidget> {
   Widget build(BuildContext context) {
     return Card(
       child: FutureBuilder(
-          future: _getData(widget.type.id),
+          future: _getData(),
           builder: (ctx, snapshot) {
             // Checking if future is resolved
             if (snapshot.connectionState == ConnectionState.done) {
@@ -96,6 +104,15 @@ class _MetricWidgetState extends State<MetricWidget> {
                         children: [
                           Text(widget.type.name ?? "", style: Theme.of(context).textTheme.titleMedium),
                           if (last != null) Text((last.value ?? "") + (widget.type.unit ?? ""), style: Theme.of(context).textTheme.labelMedium),
+                          IconButton(
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return MetricAdd(widget.type, _resetMetric, person: widget.person);
+                                    });
+                              },
+                              icon: const Icon(Icons.add_sharp)),
                         ],
                       ),
                       Expanded(

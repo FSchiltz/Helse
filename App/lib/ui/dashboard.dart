@@ -55,41 +55,12 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
-  void _resetMetric() {
-    setState(() {
-      metricTypes = [];
-    });
-    _getMetricData();
-  }
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Center(
         child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Text("Metrics", style: Theme.of(context).textTheme.headlineSmall),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        if (metricTypes.isNotEmpty) {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return MetricAdd(metricTypes, _resetMetric, person: widget.person);
-                              });
-                        }
-                      },
-                      icon: const Icon(Icons.add_sharp)),
-                ],
-              ),
-            ),
+          children: [           
             MetricsGrid(types: metricTypes, date: widget.date, person: widget.person),
             const SizedBox(
               height: 10,
