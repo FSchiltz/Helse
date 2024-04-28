@@ -9,12 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Build docker
-        uses: ./.github/workflows/build-android.yml
+        uses: ./.github/actions/build-android
 
   build-docker:
     runs-on: ubuntu-latest        
     steps:
       - name: Build docker
-        uses: ./.github/workflows/build-docker.yml
+        uses: ./.github/actions/build-docker
         with:
           push: true
