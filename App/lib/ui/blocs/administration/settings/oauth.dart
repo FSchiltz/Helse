@@ -95,7 +95,6 @@ class _OauthViewState extends State<OauthView> {
                         filled: true,
                         fillColor: theme.surface,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide(color: theme.primary),
                         ),
                       ),
@@ -111,7 +110,6 @@ class _OauthViewState extends State<OauthView> {
                         filled: true,
                         fillColor: theme.surface,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide(color: theme.primary),
                         ),
                       ),
@@ -133,9 +131,7 @@ class _OauthViewState extends State<OauthView> {
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size.fromHeight(50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                        shape: const ContinuousRectangleBorder(),
                       ),
                       onPressed: submit,
                       child: const Text("Save"),

@@ -28,29 +28,30 @@ class _EventAddState extends State<EventAdd> {
   void _submit() async {
     var localContext = context;
     try {
-    if (AppState.event != null) {
-      setState(() {
-        _status = SubmissionStatus.inProgress;
-      });
-      try {
-        var metric = CreateEvent(start: _start, stop: _stop, type: widget.type.id, description: _description);
-        await AppState.event?.addEvents(metric, person: widget.person);
-
-        widget.callback.call();
+      if (AppState.event != null) {
         setState(() {
-          _status = SubmissionStatus.success;
+          _status = SubmissionStatus.inProgress;
         });
+        try {
+          var metric = CreateEvent(start: _start, stop: _stop, type: widget.type.id, description: _description);
+          await AppState.event?.addEvents(metric, person: widget.person);
 
-        if (localContext.mounted) {
-          SuccessSnackBar.show("Event Added", localContext);
-          Navigator.of(localContext).pop();
+          widget.callback.call();
+          setState(() {
+            _status = SubmissionStatus.success;
+          });
+
+          if (localContext.mounted) {
+            SuccessSnackBar.show("Event Added", localContext);
+            Navigator.of(localContext).pop();
+          }
+        } catch (_) {
+          setState(() {
+            _status = SubmissionStatus.failure;
+          });
         }
-      } catch (_) {
-        setState(() {
-          _status = SubmissionStatus.failure;
-        });
       }
-    }} catch (ex) {
+    } catch (ex) {
       if (localContext.mounted) {
         ErrorSnackBar.show("Error: $ex", localContext);
       }
@@ -70,9 +71,7 @@ class _EventAddState extends State<EventAdd> {
               : ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                    shape: const ContinuousRectangleBorder(),
                   ),
                   onPressed: _submit,
                   child: const Text('Submit'),

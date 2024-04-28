@@ -80,9 +80,7 @@ class _TreatementState extends State<TreatmentAdd> {
               : ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                    shape: const ContinuousRectangleBorder(),
                   ),
                   onPressed: _submit,
                   child: const Text('Submit'),
@@ -169,10 +167,7 @@ class _TypeInput extends StatelessWidget {
         prefixIconColor: theme.primary,
         filled: true,
         fillColor: theme.surface,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: theme.primary),
-        ),
+        border: OutlineInputBorder(borderSide: BorderSide(color: theme.primary)),
       ),
     );
   }

@@ -52,18 +52,16 @@ class _SettingsViewState extends State<MetricSettingsView> {
             } else if (snapshot.hasData) {
               return Form(
                 key: _formKey,
-                child: Column(
+                child: const Column(
                   children: [
-                    ElevatedButton(
+                    /*ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size.fromHeight(50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                        shape: const ContinuousRectangleBorder(),
                       ),
                       onPressed: submit,
                       child: const Text("Save"),
-                    ),
+                    ),*/
                   ],
                 ),
               );

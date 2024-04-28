@@ -74,7 +74,6 @@ class _LoginState extends State<LoginPage> {
                           filled: true,
                           fillColor: theme.surface,
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(color: theme.primary),
                           ),
                           errorText: _status == SubmissionStatus.failure ? 'invalid url' : null,
@@ -122,9 +121,7 @@ class _LoginState extends State<LoginPage> {
                                       : ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                             minimumSize: const Size.fromHeight(50),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(10),
-                                            ),
+                                            shape: const ContinuousRectangleBorder(),
                                           ),
                                           key: const Key('loginForm_continue_raisedButton'),
                                           onPressed: _submit,

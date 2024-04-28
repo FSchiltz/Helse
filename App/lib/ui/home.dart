@@ -91,7 +91,7 @@ class _HomeState extends State<Home> {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               'Welcome ${user?.surname ?? user?.name ?? ""}',
-              style: theme.textTheme.headlineMedium?.copyWith(color: theme.colorScheme.onTertiary),
+              style: theme.textTheme.headlineMedium?.copyWith(color: theme.colorScheme.onPrimaryContainer),
             ),
           ),
           actions: PopupMenuButton(
@@ -242,8 +242,8 @@ class CustomToolbarShape extends CustomPainter {
 
     Gradient gradient = LinearGradient(
       colors: <Color>[
-        theme.tertiary.withOpacity(0.6),
-        theme.tertiary.withOpacity(1),
+        theme.primaryContainer.withOpacity(0.6),
+        theme.primaryContainer,
       ],
       stops: const [
         0.5,
@@ -254,7 +254,7 @@ class CustomToolbarShape extends CustomPainter {
     path.lineTo(-size.width / 1.4, 0);
     path.quadraticBezierTo(size.width / 6, size.height * 2.5, size.width + size.width / 1.5, 0);
 
-    paint.color = theme.primary;
+    paint.color = theme.primaryContainer;
     paint.shader = gradient.createShader(pathGradientRect);
     paint.strokeWidth = 40;
     path.close();

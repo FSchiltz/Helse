@@ -72,9 +72,7 @@ class _PatientAddState extends State<PatientAdd> {
               : ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                    shape: const ContinuousRectangleBorder(),
                   ),
                   key: const Key('loginForm_continue_raisedButton'),
                   onPressed: _submit,

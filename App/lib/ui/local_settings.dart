@@ -45,6 +45,9 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     var theme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Local Settings', style: Theme.of(context).textTheme.displaySmall),
+      ),
       body: FutureBuilder(
           future: _getData(_dummy),
           builder: (context, snapshot) {
@@ -65,12 +68,11 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Settings", style: Theme.of(context).textTheme.displaySmall),
-                        const SizedBox(height: 20),
                         ...general(theme),
                         const SizedBox(height: 20),
-                        ...proxy(theme),
+                        //...syncHealth(theme),
                       ],
                     ),
                   ),
@@ -101,7 +103,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     }
   }
 
-  proxy(ColorScheme theme) {
+  syncHealth(ColorScheme theme) {
     return [
       Text("Sync Health", style: Theme.of(context).textTheme.headlineMedium),
       const SizedBox(height: 5),
@@ -124,20 +126,22 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
   general(ColorScheme theme) {
     return [
       Text("General", style: Theme.of(context).textTheme.headlineMedium),
-      const SizedBox(height: 5),
-      DropdownButtonFormField(
-        value: _theme,
-        onChanged: themeCallback,
-        items: ThemeMode.values.map((type) => DropdownMenuItem(value: type, child: Text(type.name))).toList(),
-        decoration: InputDecoration(
-          labelText: 'Theme',
-          prefixIcon: const Icon(Icons.list_sharp),
-          prefixIconColor: theme.primary,
-          filled: true,
-          fillColor: theme.surface,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: theme.primary),
+      const SizedBox(height: 20),
+      SizedBox(
+        width: 200,
+        child: DropdownButtonFormField(
+          value: _theme,
+          onChanged: themeCallback,
+          items: ThemeMode.values.map((type) => DropdownMenuItem(value: type, child: Text(type.name))).toList(),
+          decoration: InputDecoration(
+            labelText: 'Theme',
+            prefixIcon: const Icon(Icons.list_sharp),
+            prefixIconColor: theme.primary,
+            filled: true,
+            fillColor: theme.surface,
+            border: OutlineInputBorder(
+              borderSide: BorderSide(color: theme.primary),
+            ),
           ),
         ),
       )

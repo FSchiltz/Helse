@@ -81,23 +81,7 @@ class _ProxyViewState extends State<ProxyView> {
                             })
                       ],
                     ),
-                    const SizedBox(height: 5),
-                    TextFormField(
-                      controller: _controllerHeader,
-                      keyboardType: TextInputType.name,
-                      decoration: InputDecoration(
-                        labelText: "Header name",
-                        prefixIcon: const Icon(Icons.person_sharp),
-                        prefixIconColor: theme.primary,
-                        filled: true,
-                        fillColor: theme.surface,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: theme.primary),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 10),
                     Row(
                       children: [
                         const Text("Auto register"),
@@ -111,15 +95,34 @@ class _ProxyViewState extends State<ProxyView> {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                    SizedBox(
+                      width: 400,
+                      child: TextFormField(
+                        controller: _controllerHeader,
+                        keyboardType: TextInputType.name,
+                        decoration: InputDecoration(
+                          labelText: "Header name",
+                          prefixIcon: const Icon(Icons.person_sharp),
+                          prefixIconColor: theme.primary,
+                          filled: true,
+                          fillColor: theme.surface,
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: theme.primary),
+                          ),
                         ),
                       ),
-                      onPressed: submit,
-                      child: const Text("Save"),
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: 200,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(50),
+                          shape: const ContinuousRectangleBorder(),
+                        ),
+                        onPressed: submit,
+                        child: const Text("Save"),
+                      ),
                     ),
                   ],
                 ),

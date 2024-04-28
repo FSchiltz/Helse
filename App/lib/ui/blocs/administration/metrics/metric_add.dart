@@ -30,8 +30,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             minimumSize: const Size.fromHeight(50),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+            shape: const ContinuousRectangleBorder(
             ),
           ),
           onPressed: submit,

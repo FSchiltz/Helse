@@ -51,7 +51,6 @@ class _UserFormState extends State<UserForm> {
             filled: true,
             fillColor: theme.surface,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: theme.primary),
             ),
           ),
@@ -68,7 +67,6 @@ class _UserFormState extends State<UserForm> {
             filled: true,
             fillColor: theme.surface,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: theme.primary),
             ),
           ),
@@ -86,7 +84,6 @@ class _UserFormState extends State<UserForm> {
               filled: true,
               fillColor: theme.surface,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(color: theme.primary),
               ),
             ),
@@ -123,7 +120,6 @@ class _UserFormState extends State<UserForm> {
               filled: true,
               fillColor: theme.surface,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(color: theme.primary),
               ),
             ),
@@ -224,7 +220,6 @@ class PasswordInput extends StatelessWidget {
         filled: true,
         fillColor: theme.surface,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: theme.primary),
         ),
       ),
@@ -262,7 +257,6 @@ class UserNameInput extends StatelessWidget {
         filled: true,
         fillColor: theme.surface,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: theme.primary),
         ),
       ),

@@ -20,7 +20,7 @@ class AdministrationPage extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Administrations'),
+          title: Text('Administrations', style: Theme.of(context).textTheme.displaySmall),
           bottom: const TabBar(
             tabs: [
               Tab(icon: Icon(Icons.settings_sharp)),
@@ -40,7 +40,7 @@ class AdministrationPage extends StatelessWidget {
                   const SizedBox(height: 20),
                   const ProxyView(),
                   const SizedBox(height: 20),
-                  const OauthView(),
+                  // const OauthView(),
                 ],
               ),
             ),
