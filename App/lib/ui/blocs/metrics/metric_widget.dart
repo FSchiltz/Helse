@@ -19,14 +19,12 @@ class MetricWidget extends StatefulWidget {
 
 class _MetricWidgetState extends State<MetricWidget> {
   List<Metric>? _metrics;
-  DateTimeRange? _date;
 
   _MetricWidgetState();
 
   @override
   void initState() {
     _metrics = null;
-    _date = null;
     super.initState();
   }
 
@@ -57,12 +55,7 @@ class _MetricWidgetState extends State<MetricWidget> {
       return _metrics;
     }
 
-    // if the date has not changed, no call to the backend
-    var date = _date;
-    //if (date != null && widget.date.start.compareTo(date.start) == 0 && widget.date.end.compareTo(date.end) == 0) return _metrics;
-
-    date = widget.date;
-    _date = date;
+    var date = widget.date;
 
     var start = DateTime(date.start.year, date.start.month, date.start.day);
     var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));

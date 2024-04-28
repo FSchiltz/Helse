@@ -20,7 +20,6 @@ class EventWidget extends StatefulWidget {
 
 class _EventWidgetState extends State<EventWidget> {
   List<Event>? _events;
-  DateTimeRange? _date;
 
   _EventWidgetState();
 
@@ -42,7 +41,6 @@ class _EventWidgetState extends State<EventWidget> {
     setState(() {
       _events = [];
     });
-    //_getData();
   }
 
   Future<List<Event>?> _getData() async {
@@ -53,13 +51,7 @@ class _EventWidgetState extends State<EventWidget> {
         return _events;
       }
 
-      // if the date has not changed, no call to the backend
-      var date = _date;
-     // if (date != null && widget.date.start.compareTo(date.start) == 0 && widget.date.end.compareTo(date.end) == 0) return _events;
-
-      date = widget.date;
-      _date = date;
-
+      var date = widget.date;
       var start = DateTime(date.start.year, date.start.month, date.start.day);
       var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 

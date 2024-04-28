@@ -3,12 +3,8 @@ import 'package:helse/ui/blocs/notification.dart';
 
 import '../main.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';
-import 'blocs/events/events_add.dart';
 import 'blocs/events/events_grid.dart';
-import 'blocs/metrics/metric_add.dart';
 import 'blocs/metrics/metrics_grid.dart';
-import 'blocs/treatments/treatment_add.dart';
-import 'blocs/treatments/treatments_grid.dart';
 
 class Dashboard extends StatefulWidget {
   final DateTimeRange date;
@@ -60,12 +56,12 @@ class _DashboardState extends State<Dashboard> {
     return SingleChildScrollView(
       child: Center(
         child: Column(
-          children: [           
+          children: [
             MetricsGrid(types: metricTypes, date: widget.date, person: widget.person),
             const SizedBox(
               height: 10,
-            ),            
-            EventsGrid(date: widget.date, types: eventTypes, person: widget.person),         
+            ),
+            EventsGrid(date: widget.date, types: eventTypes, person: widget.person),
           ],
         ),
       ),
