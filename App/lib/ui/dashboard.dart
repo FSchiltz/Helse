@@ -62,13 +62,6 @@ class _DashboardState extends State<Dashboard> {
     _getMetricData();
   }
 
-  void _resetEvents() {
-    setState(() {
-      eventTypes = [];
-    });
-    _getEventData();
-  }
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -100,53 +93,8 @@ class _DashboardState extends State<Dashboard> {
             MetricsGrid(types: metricTypes, date: widget.date, person: widget.person),
             const SizedBox(
               height: 10,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Text("Events", style: Theme.of(context).textTheme.headlineSmall),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        if (eventTypes.isNotEmpty) {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return EventAdd(_resetEvents, eventTypes, person: widget.person);
-                              });
-                        }
-                      },
-                      icon: const Icon(Icons.add_sharp)),
-                ],
-              ),
-            ),
-            EventsGrid(date: widget.date, types: eventTypes, person: widget.person),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Text("Treatments", style: Theme.of(context).textTheme.headlineSmall),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        if (metricTypes.isNotEmpty) {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return TreatmentAdd(person: widget.person);
-                              });
-                        }
-                      },
-                      icon: const Icon(Icons.add_sharp)),
-                ],
-              ),
-            ),
-            TreatmentsGrid(date: widget.date, person: widget.person),
+            ),            
+            EventsGrid(date: widget.date, types: eventTypes, person: widget.person),         
           ],
         ),
       ),
