@@ -10,7 +10,7 @@ on:
         type: string
       push:
         required: true
-        type: bool
+        type: boolean
 
             
 env:
@@ -21,8 +21,7 @@ jobs:
     build:
       runs-on: ubuntu-latest    
       permissions:
-        contents: read
-        packages: write      
+        contents: read   
       steps:
       - uses: actions/checkout@v3
 
