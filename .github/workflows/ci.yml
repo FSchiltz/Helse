@@ -9,13 +9,17 @@ env:
   IMAGE_NAME: ${{ github.repository }}
   
 jobs:
-  build:
+  build-android:
     runs-on: ubuntu-latest
-    
+    steps:
+      - name: Build docker
+        uses: ./.github/workflows/build-android.yml
+
+  build-docker:
+    runs-on: ubuntu-latest    
     permissions:
       contents: read
-      packages: write
-      
+      packages: write      
     steps:   
       - name: Build docker
         uses: ./.github/workflows/build-docker.yml

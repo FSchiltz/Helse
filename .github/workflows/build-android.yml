@@ -1,21 +1,17 @@
-name: Android Apk CD
-
+name: Build Android
 on:
-  pull_request:
-    branches: [ "main" ]
-    
+  workflow_call:
+      
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
   
 jobs:
   build:
-    runs-on: ubuntu-latest
-    
+    runs-on: ubuntu-latest    
     permissions:
       contents: read
-      packages: write
-      
+      packages: write      
     steps:
     - uses: actions/checkout@v3
     
@@ -35,3 +31,4 @@ jobs:
     - name: Build release app bundle
       run: flutter build appbundle
       working-directory: 'App'
+      
