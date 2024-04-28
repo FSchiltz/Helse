@@ -21,6 +21,8 @@ jobs:
       contents: read
       packages: write      
     steps:   
+      - uses: actions/checkout@v3
+
       - name: Build docker
         uses: ./.github/workflows/build-docker.yml
         with:      
