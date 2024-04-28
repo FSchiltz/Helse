@@ -15,5 +15,6 @@ jobs:
   build-docker:
     uses: ./.github/workflows/build-docker.yml
     with:
+      push: false
       tags: ci
       labels: ci
