@@ -77,8 +77,6 @@ class _SettingsViewState extends State<SettingsView> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    Text("Settings", style: Theme.of(context).textTheme.displaySmall),
-                    const SizedBox(height: 20),
                     ...oauth(theme),
                     const SizedBox(height: 20),
                     ...proxy(theme),

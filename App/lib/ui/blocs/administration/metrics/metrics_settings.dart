@@ -1,39 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/blocs/notification.dart';
 
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../loader.dart';
-import 'metric_add.dart';
 
 class MetricSettingsView extends StatefulWidget {
   const MetricSettingsView({super.key});
 
   @override
-  State<MetricSettingsView> createState() => _MetricSettingsViewState();
+  State<MetricSettingsView> createState() => _SettingsViewState();
 }
 
-class _MetricSettingsViewState extends State<MetricSettingsView> {
-  List<MetricType>? _types;
+class _SettingsViewState extends State<MetricSettingsView> {
+  Settings? _settings;
+  final GlobalKey<FormState> _formKey = GlobalKey();
 
-  void _resetMetricType() {
+  void _resetSettings() {
     setState(() {
-      _types = null;
+      _settings = null;
       _dummy = !_dummy;
     });
   }
 
   bool _dummy = false;
 
-  Future<List<MetricType>?> _getData(bool reset) async {
+  Future<Settings?> _getData(bool reset) async {
     // if the users has not changed, no call to the backend
-    if (_types != null) return _types;
+    if (_settings != null) return _settings;
 
-    _types = await AppState.metric?.metricsType();
-    return _types;
+    _settings = await AppState.settings?.getSettings();
+    return _settings;
   }
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
+
     return FutureBuilder(
         future: _getData(_dummy),
         builder: (context, snapshot) {
@@ -50,65 +53,46 @@ class _MetricSettingsViewState extends State<MetricSettingsView> {
 
               // if we got our data
             } else if (snapshot.hasData) {
-              // Extracting data from snapshot object
-              final types = snapshot.data as List<MetricType>;
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      Text("Metric management", style: Theme.of(context).textTheme.displaySmall),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      IconButton(
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return MetricTypeAdd(_resetMetricType);
-                                });
-                          },
-                          icon: const Icon(Icons.add_sharp)),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Row(
-                      children: [
-                        DataTable(
-                          columns: const [
-                            DataColumn(
-                                label: Expanded(
-                              child: Text("Id"),
-                            )),
-                            DataColumn(
-                                label: Expanded(
-                              child: Text("Name"),
-                            )),
-                            DataColumn(
-                                label: Expanded(
-                              child: Text("Description"),
-                            )),
-                            DataColumn(
-                                label: Expanded(
-                              child: Text("Unit"),
-                            ))
-                          ],
-                          rows: types
-                              .map((user) =>
-                                  DataRow(cells: [DataCell(Text((user.id).toString())), DataCell(Text(user.name ?? "")), DataCell(Text(user.description ?? "")), DataCell(Text(user.unit ?? ""))]))
-                              .toList(),
+              return Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                      ],
+                      ),
+                      onPressed: submit,
+                      child: const Text("Save"),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             }
           }
           return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
         });
+  }
+
+  void submit() async {
+    var localContext = context;
+    try {
+      if (_formKey.currentState?.validate() ?? false) {
+        // save the settings
+        // await AppState.settings?.save();
+
+        if (localContext.mounted) {
+          SuccessSnackBar.show("Saved Successfully", localContext);
+        }
+
+        _resetSettings();
+      }
+    } catch (ex) {
+      if (localContext.mounted) {
+        ErrorSnackBar.show("Error: $ex", localContext);
+      }
+    }
   }
 }

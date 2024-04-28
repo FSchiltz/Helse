@@ -3,33 +3,33 @@ import 'package:flutter/material.dart';
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../loader.dart';
-import 'user_add.dart';
+import 'metric_add.dart';
 
-class UsersView extends StatefulWidget {
-  const UsersView({super.key});
+class MetricTypeView extends StatefulWidget {
+  const MetricTypeView({super.key});
 
   @override
-  State<UsersView> createState() => _UsersViewState();
+  State<MetricTypeView> createState() => _MetricTypeViewState();
 }
 
-class _UsersViewState extends State<UsersView> {
-  List<Person>? _users;
+class _MetricTypeViewState extends State<MetricTypeView> {
+  List<MetricType>? _types;
 
-  void _resetUsers() {
+  void _resetMetricType() {
     setState(() {
-      _users = null;
+      _types = null;
       _dummy = !_dummy;
     });
   }
 
   bool _dummy = false;
 
-  Future<List<Person>?> _getData(bool reset) async {
+  Future<List<MetricType>?> _getData(bool reset) async {
     // if the users has not changed, no call to the backend
-    if (_users != null) return _users;
+    if (_types != null) return _types;
 
-    _users = await AppState.user?.persons();
-    return _users;
+    _types = await AppState.metric?.metricsType();
+    return _types;
   }
 
   @override
@@ -51,14 +51,14 @@ class _UsersViewState extends State<UsersView> {
               // if we got our data
             } else if (snapshot.hasData) {
               // Extracting data from snapshot object
-              final users = snapshot.data as List<Person>;
+              final types = snapshot.data as List<MetricType>;
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Row(
                     children: [
-                      Text("Users", style: Theme.of(context).textTheme.headlineMedium),
+                      Text("Metric Types", style: Theme.of(context).textTheme.headlineMedium),
                       const SizedBox(
                         width: 10,
                       ),
@@ -67,7 +67,7 @@ class _UsersViewState extends State<UsersView> {
                             showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return UserAdd(_resetUsers);
+                                  return MetricTypeAdd(_resetMetricType);
                                 });
                           },
                           icon: const Icon(Icons.add_sharp)),
@@ -81,15 +81,7 @@ class _UsersViewState extends State<UsersView> {
                           columns: const [
                             DataColumn(
                                 label: Expanded(
-                              child: Text("Type"),
-                            )),
-                            DataColumn(
-                                label: Expanded(
-                              child: Text("Username"),
-                            )),
-                            DataColumn(
-                                label: Expanded(
-                              child: Text("Email"),
+                              child: Text("Id"),
                             )),
                             DataColumn(
                                 label: Expanded(
@@ -97,22 +89,16 @@ class _UsersViewState extends State<UsersView> {
                             )),
                             DataColumn(
                                 label: Expanded(
-                              child: Text("Surname"),
+                              child: Text("Description"),
                             )),
                             DataColumn(
                                 label: Expanded(
-                              child: Text("Rights"),
+                              child: Text("Unit"),
                             ))
                           ],
-                          rows: users
-                              .map((user) => DataRow(cells: [
-                                    DataCell(Text((user.type ?? UserType.user).toString())),
-                                    DataCell(Text(user.userName ?? "")),
-                                    DataCell(Text(user.email ?? "")),
-                                    DataCell(Text(user.name ?? "")),
-                                    DataCell(Text(user.surname ?? "")),
-                                    DataCell(Text(user.rights.toString()))
-                                  ]))
+                          rows: types
+                              .map((user) =>
+                                  DataRow(cells: [DataCell(Text((user.id).toString())), DataCell(Text(user.name ?? "")), DataCell(Text(user.description ?? "")), DataCell(Text(user.unit ?? ""))]))
                               .toList(),
                         ),
                       ],
