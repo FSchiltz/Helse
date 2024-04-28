@@ -109,7 +109,7 @@ final class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _apiEventsTypePut({required MetricType? body}) {
+  Future<Response<dynamic>> _apiEventsTypePut({required EventType? body}) {
     final Uri $url = Uri.parse('/api/events/type');
     final $body = body;
     final Request $request = Request(

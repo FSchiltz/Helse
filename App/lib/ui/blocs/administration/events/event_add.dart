@@ -3,22 +3,21 @@ import 'package:flutter/material.dart';
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../notification.dart';
-import 'metric_form.dart';
+import 'event_form.dart';
 
-class MetricTypeAdd extends StatefulWidget {
+class EventTypeAdd extends StatefulWidget {
   final void Function()? callback;
-  final MetricType? edit;
+  final EventType? edit;
 
-  const MetricTypeAdd(this.callback, {super.key, this.edit});
+  const EventTypeAdd(this.callback, {super.key, this.edit});
 
   @override
-  State<MetricTypeAdd> createState() => _MetricTypeAddState();
+  State<EventTypeAdd> createState() => _EventTypeAddState();
 }
 
-class _MetricTypeAddState extends State<MetricTypeAdd> {
+class _EventTypeAddState extends State<EventTypeAdd> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
-  final TextEditingController controllerUnit = TextEditingController();
   final TextEditingController controllerName = TextEditingController();
   final TextEditingController controllerDescription = TextEditingController();
 
@@ -29,13 +28,12 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
       // this is not a new addition, just an edit
       controllerDescription.text = edit.description ?? "";
       controllerName.text = edit.name ?? "";
-      controllerUnit.text = edit.unit ?? "";
     }
 
     return AlertDialog(
       backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
       scrollable: true,
-      title: const Text("Add a new metric type"),
+      title: const Text("Add a new Event type"),
       actions: [
         ElevatedButton(
           style: ElevatedButton.styleFrom(
@@ -52,10 +50,9 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
             children: [
-              MetricAddForm(
+              EventAddForm(
                 controllerDescription: controllerDescription,
                 controllerName: controllerName,
-                controllerUnit: controllerUnit,
               ),
             ],
           ),
@@ -68,20 +65,20 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
     var localContext = context;
     try {
       if (_formKey.currentState?.validate() ?? false) {
-        var metric = MetricType(
+        var event = EventType(
           description: controllerDescription.text,
           name: controllerName.text,
-          unit: controllerUnit.text,
+          standAlone: true,
           id: widget.edit?.id ?? 0,
         );
         String text;
 
         if (widget.edit == null) {
           text = "Added";
-          await AppState.metric?.addMetricsType(metric);
+          await AppState.event?.addEventsType(event);
         } else {
           text = "Updated";
-          await AppState.metric?.updateMetricsType(metric);
+          await AppState.event?.updateEventsType(event);
         }
         
         _formKey.currentState?.reset();
@@ -104,7 +101,6 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
   void dispose() {
     controllerDescription.dispose();
     controllerName.dispose();
-    controllerUnit.dispose();
     super.dispose();
   }
 }

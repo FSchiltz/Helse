@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
+import 'package:helse/ui/blocs/administration/events/event_settings.dart';
+import 'package:helse/ui/blocs/administration/events/event_type.dart';
 import 'package:helse/ui/blocs/administration/metrics/metrics_type.dart';
 import 'package:helse/ui/blocs/administration/settings/oauth.dart';
 
@@ -17,7 +19,7 @@ class AdministrationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           title: Text('Administrations', style: Theme.of(context).textTheme.displaySmall),
@@ -26,6 +28,7 @@ class AdministrationPage extends StatelessWidget {
               Tab(icon: Icon(Icons.settings_sharp)),
               Tab(icon: Icon(Icons.person_search_sharp)),
               Tab(icon: Icon(Icons.post_add_sharp)),
+              Tab(icon: Icon(Icons.event_repeat_sharp)),
             ],
           ),
         ),
@@ -65,6 +68,19 @@ class AdministrationPage extends StatelessWidget {
                   const MetricSettingsView(),
                   const SizedBox(height: 20),
                   const MetricTypeView(),
+                ],
+              ),
+            ),
+              SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Events Settings", style: Theme.of(context).textTheme.displaySmall),
+                  const SizedBox(height: 20),
+                  const EventSettingsView(),
+                  const SizedBox(height: 20),
+                  const EventTypeView(),
                 ],
               ),
             ),

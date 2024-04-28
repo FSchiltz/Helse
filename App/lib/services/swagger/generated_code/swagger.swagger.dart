@@ -146,7 +146,7 @@ abstract class Swagger extends ChopperService {
       {@Body() required EventType? body});
 
   ///
-  Future<chopper.Response> apiEventsTypePut({required MetricType? body}) {
+  Future<chopper.Response> apiEventsTypePut({required EventType? body}) {
     return _apiEventsTypePut(body: body);
   }
 
@@ -156,7 +156,7 @@ abstract class Swagger extends ChopperService {
     optionalBody: true,
   )
   Future<chopper.Response> _apiEventsTypePut(
-      {@Body() required MetricType? body});
+      {@Body() required EventType? body});
 
   ///
   ///@param all

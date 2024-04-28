@@ -216,7 +216,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MetricType"
+                "$ref": "#/components/schemas/EventType"
               }
             }
           },

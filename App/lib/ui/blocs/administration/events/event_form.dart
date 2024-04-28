@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
 
-class MetricAddForm extends StatefulWidget {
-  final TextEditingController controllerUnit;
-  final TextEditingController controllerName;
+class EventAddForm extends StatefulWidget {
   final TextEditingController controllerDescription;
+  final TextEditingController controllerName;
 
-  const MetricAddForm({
+  const EventAddForm({
     super.key,
-    required this.controllerUnit,
-    required this.controllerName,
     required this.controllerDescription,
+    required this.controllerName,
   });
 
   @override
-  State<MetricAddForm> createState() => _MetricAddFormState();
+  State<EventAddForm> createState() => _EventAddFormState();
 }
 
-class _MetricAddFormState extends State<MetricAddForm> {
+class _EventAddFormState extends State<EventAddForm> {
   final FocusNode _focusNodeName = FocusNode();
   final FocusNode _focusNodeDescription = FocusNode();
-  final FocusNode _focusNodeUnit = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +46,6 @@ class _MetricAddFormState extends State<MetricAddForm> {
           controller: widget.controllerDescription,
           keyboardType: TextInputType.name,
           focusNode: _focusNodeDescription,
-          onEditingComplete: () => _focusNodeUnit.requestFocus(),
           decoration: InputDecoration(
             labelText: "Description",
             prefixIcon: const Icon(Icons.person_sharp),
@@ -61,23 +57,7 @@ class _MetricAddFormState extends State<MetricAddForm> {
             ),
           ),
         ),
-        const SizedBox(height: 10),
-        TextFormField(
-          controller: widget.controllerUnit,
-          focusNode: _focusNodeUnit,
-          keyboardType: TextInputType.text,
-          decoration: InputDecoration(
-            labelText: "Unit",
-            prefixIcon: const Icon(Icons.email_sharp),
-            prefixIconColor: theme.primary,
-            filled: true,
-            fillColor: theme.surface,
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: theme.primary),
-            ),
-          ),
-        ),
-      ],
+         ],
     );
   }
 
@@ -93,7 +73,6 @@ class _MetricAddFormState extends State<MetricAddForm> {
   void dispose() {
     _focusNodeDescription.dispose();
     _focusNodeName.dispose();
-    _focusNodeUnit.dispose();
     super.dispose();
   }
 }
