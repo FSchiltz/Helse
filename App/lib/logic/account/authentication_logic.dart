@@ -30,9 +30,9 @@ class AuthenticationLogic {
   }
 
   /// Call the login service
-  Future<void> logIn({required String url, required String username, required String password}) async {
+  Future<void> logIn({required String url, required String username, required String password, String? redirect}) async {
     await _account.setUrl(url);
-    var token = await UserService(_account).login(username, password);
+    var token = await UserService(_account).login(username, password, redirect);
     var cleaned = token.replaceAll('"', "");
     await _account.setToken(cleaned);
 
@@ -76,5 +76,13 @@ class AuthenticationLogic {
   /// Get the current token
   Future<String?> getToken() {
     return _account.getToken();
+  }
+
+  Future<String?> getGrant() {
+    return _account.getGrant();
+  }
+
+  Future<String?> getRedirect() {
+    return _account.getRedirect();
   }
 }

@@ -34,7 +34,7 @@ class _PatientsState extends State<Patients> {
       return _patients;
     }
 
-    _patients = await AppState.user?.patients();
+    _patients = await DI.user?.patients();
     return _patients;
   }
 

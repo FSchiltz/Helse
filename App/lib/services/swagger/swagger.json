@@ -983,6 +983,10 @@
           "password": {
             "type": "string",
             "nullable": true
+          },
+          "redirect": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1208,6 +1212,14 @@
           "clientSecret": {
             "type": "string",
             "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "tokenurl": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1380,6 +1392,14 @@
             "type": "boolean"
           },
           "error": {
+            "type": "string",
+            "nullable": true
+          },
+          "oauth": {
+            "type": "string",
+            "nullable": true
+          },
+          "oauthId": {
             "type": "string",
             "nullable": true
           }

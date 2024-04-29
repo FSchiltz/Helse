@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import '../logic/event.dart';
 import '../main.dart';
 import '../services/account.dart';
@@ -154,7 +153,7 @@ class _LoginState extends State<LoginPage> {
       _loaded = SubmissionStatus.inProgress;
     });
 
-    var isInit = await AppState.helper?.isInit(_url ?? "");
+    var isInit = await DI.helper?.isInit(_url ?? "");
     var status = ((isInit?.init == null) ? SubmissionStatus.failure : SubmissionStatus.success);
 
     // If the server is init or not
@@ -165,16 +164,42 @@ class _LoginState extends State<LoginPage> {
         _loaded = status;
       });
 
-      if (isInit?.externalAuth == true) {
-        // directly start the login procedure
-        _submit(noUser: true);
+      if (isInit != null && _isInit == true) {
+        if (isInit.oauth != null) {
+          var grant = await DI.authentication?.getGrant();
+          if (grant != null) {
+            _submit(
+              noUser: true,
+              oAuth: grant,
+              redirect: await DI.authentication?.getRedirect(),
+            );
+          } else {
+            try {
+              DI.authService?.init(
+                auth: isInit.oauth ?? '',
+                clientId: isInit.oauthId ?? '',
+              );
+
+              DI.authService?.login();
+            } catch (ex) {
+              if (context.mounted) {
+                ErrorSnackBar.show("Error: $ex", context);
+              }
+            }
+          }
+        } else if (isInit.externalAuth == true) {
+          // Todo read from config
+
+          // directly start the login procedure
+          _submit(noUser: true);
+        }
       }
     }
   }
 
   /// Prefill the url from storage or other
   Future<void> _initUrl() async {
-    AppState.authentication?.checkLogin();
+    DI.authentication?.checkLogin();
     // We first try to get it from storage
     var url = await Account().getUrl();
 
@@ -193,7 +218,7 @@ class _LoginState extends State<LoginPage> {
     }
   }
 
-  void _submit({bool noUser = false}) async {
+  void _submit({bool noUser = false, String? oAuth, String? redirect}) async {
     var localContext = context;
 
     var init = _isInit;
@@ -202,6 +227,11 @@ class _LoginState extends State<LoginPage> {
 
     var user = _controllerUsername.text;
     var password = _controllerPassword.text;
+
+    if (oAuth != null) {
+      password = oAuth;
+    }
+
     if (!noUser && (user.isEmpty || password.isEmpty)) return;
 
     setState(() {
@@ -209,14 +239,29 @@ class _LoginState extends State<LoginPage> {
     });
 
     try {
-      if (init) {
-        await AppState.authentication?.logIn(url: url, username: user, password: password);
+      if (init || noUser) {
+        await DI.authentication?.logIn(
+          url: url,
+          username: user,
+          password: password,
+          redirect: redirect,
+        );
       } else {
-        var person = PersonCreation(type: UserType.admin, userName: user, password: password, name: _controllerName.text, surname: _controllerSurname.text);
-        await AppState.authentication?.initAccount(url: url, person: person);
+        var person = PersonCreation(
+          type: UserType.admin,
+          userName: user,
+          password: password,
+          name: _controllerName.text,
+          surname: _controllerSurname.text,
+        );
+        await DI.authentication?.initAccount(url: url, person: person);
 
         // after a succes, we auto login
-        await AppState.authentication?.logIn(url: url, username: user, password: password);
+        await DI.authentication?.logIn(
+          url: url,
+          username: user,
+          password: password,
+        );
         if (localContext.mounted) {
           SuccessSnackBar.show('User created, welcome', localContext);
         }

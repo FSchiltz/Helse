@@ -33,7 +33,7 @@ class _ProxyViewState extends State<ProxyView> {
     // if the users has not changed, no call to the backend
     if (_settings != null) return _settings;
 
-    _settings = await AppState.settings?.api().proxy();
+    _settings = await DI.settings?.api().proxy();
 
     _controllerHeader.text = _settings?.header ?? "";
 
@@ -138,7 +138,7 @@ class _ProxyViewState extends State<ProxyView> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
-        await AppState.settings?.api().updateProxy(
+        await DI.settings?.api().updateProxy(
               Proxy(
                 autoRegister: _proxyAutoRegister,
                 proxyAuth: _proxyAuth,

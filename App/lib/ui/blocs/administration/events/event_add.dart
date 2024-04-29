@@ -75,10 +75,10 @@ class _EventTypeAddState extends State<EventTypeAdd> {
 
         if (widget.edit == null) {
           text = "Added";
-          await AppState.event?.addEventsType(event);
+          await DI.event?.addEventsType(event);
         } else {
           text = "Updated";
-          await AppState.event?.updateEventsType(event);
+          await DI.event?.updateEventsType(event);
         }
         
         _formKey.currentState?.reset();

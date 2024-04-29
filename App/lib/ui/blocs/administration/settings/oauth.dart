@@ -34,7 +34,7 @@ class _OauthViewState extends State<OauthView> {
     // if the users has not changed, no call to the backend
     if (_settings != null) return _settings;
 
-    _settings = await AppState.settings?.api().oauth();
+    _settings = await DI.settings?.api().oauth();
 
     _controllerId.text = _settings?.clientId ?? "";
     _controllerSecret.text = _settings?.clientSecret ?? "";
@@ -150,7 +150,7 @@ class _OauthViewState extends State<OauthView> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
-        await AppState.settings?.api().updateOauth(
+        await DI.settings?.api().updateOauth(
               Oauth(
                 clientId: _controllerId.text,
                 clientSecret: _controllerSecret.text,

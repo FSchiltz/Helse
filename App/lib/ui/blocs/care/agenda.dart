@@ -26,7 +26,7 @@ class _AgendaState extends State<Agenda> {
     var start = DateTime(date.start.year, date.start.month, date.start.day);
     var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-    events = await AppState.event?.agenda(start, end);
+    events = await DI.event?.agenda(start, end);
 
     return events;
   }

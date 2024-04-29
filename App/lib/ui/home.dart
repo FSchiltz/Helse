@@ -54,7 +54,7 @@ class _HomeState extends State<Home> {
   void _getUser() async {
     var localContext = context;
     try {
-      var model = await AppState.authentication?.getUser();
+      var model = await DI.authentication?.getUser();
       if (model != null) {
         setState(() {
           user = model;
@@ -151,7 +151,7 @@ class _HomeState extends State<Home> {
                     );
                     break;
                   case 3:
-                    AppState.authentication?.logOut();
+                    DI.authentication?.logOut();
                     break;
                 }
               }),

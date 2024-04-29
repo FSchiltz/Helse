@@ -10,9 +10,9 @@ class UserService extends ApiService {
     return await call(api.apiPersonGet);
   }
 
-  Future<String> login(String username, String password) async {
+  Future<String> login(String username, String password, String? redirect) async {
     var api = await getService();
-    var response = await api.apiAuthPost(body: Connection(user: username, password: password));
+    var response = await api.apiAuthPost(body: Connection(user: username, password: password, redirect: redirect));
 
     switch (response.statusCode) {
       case 401:
