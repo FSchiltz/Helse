@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
+using System.Text.Json;
 using Api.Data;
 using Api.Data.Models;
 using Api.Helpers;
@@ -24,6 +25,11 @@ public record Status(bool Init, bool ExternalAuth, string? Error, string? Oauth,
 /// </summary>
 public static class AuthLogic
 {
+    private static readonly JsonSerializerOptions _options = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
     /// <summary>
     /// Return true if the server is correctly installed
     /// If false, some steps are missing:
@@ -312,7 +318,7 @@ public static class AuthLogic
 
         var contentString = await response.Content.ReadAsStringAsync();
         response.EnsureSuccessStatusCode();
-        return await Parse(contentString);
+        return Parse(contentString);
     }
 
     private record Token(string User);
@@ -321,9 +327,9 @@ public static class AuthLogic
         public string? Access_token { get; set; }
     }
 
-    private static async Task<Token> Parse(string content)
+    private static Token Parse(string content)
     {
-        var auth = System.Text.Json.JsonSerializer.Deserialize<OauthToken>(content);
+        var auth = JsonSerializer.Deserialize<OauthToken>(content, _options);
 
         var jwt = auth?.Access_token ?? throw new InvalidOperationException("Incorrect token");
 
