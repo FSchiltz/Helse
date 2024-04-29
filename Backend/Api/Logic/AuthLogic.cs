@@ -285,10 +285,11 @@ public static class AuthLogic
                 log.LogInformation("User created for {header}", user.Redirect);
                 // If auto register and not found, we create it
                 await db.CreateUserAsync(new PersonCreation
-                {
+                {                    
                     UserName = token.User,
                     Password = RandomNumberGenerator.GetInt32(100000000, int.MaxValue).ToString(),
-                    Type = UserType.User
+                    Type = UserType.User,
+                    Name = token.Name,
                 }, 0);
                 logged = true;
                 fromDb = await TokenFromDb(db, token.User);
@@ -324,7 +325,7 @@ public static class AuthLogic
         return Parse(contentString);
     }
 
-    private record Token(string User);
+    private record Token(string User, string? Name);
     private class OauthToken
     {
         public string? Access_token { get; set; }
@@ -339,6 +340,7 @@ public static class AuthLogic
         var token = new JwtSecurityTokenHandler().ReadJwtToken(jwt);
 
         var claim = token.Payload.Claims.First(x => x.Type == "preferred_username" || x.Type == JwtRegisteredClaimNames.UniqueName);
-        return new Token(claim.Value);
+        var name = token.Payload.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Name || x.Type == JwtRegisteredClaimNames.FamilyName);
+        return new Token(claim.Value, name?.Value ?? claim.Value);
     }
 }
