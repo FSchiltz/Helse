@@ -4,6 +4,7 @@ import 'package:helse/ui/blocs/administration/events/event_type.dart';
 import 'package:helse/ui/blocs/administration/metrics/metrics_type.dart';
 
 import 'blocs/administration/metrics/metrics_settings.dart';
+import 'blocs/administration/settings/oauth.dart';
 import 'blocs/administration/settings/proxy.dart';
 import 'blocs/administration/users/users.dart';
 
@@ -41,7 +42,7 @@ class AdministrationPage extends StatelessWidget {
                   const SizedBox(height: 20),
                   const ProxyView(),
                   const SizedBox(height: 20),
-                  // const OauthView(),
+                  const OauthView(),
                 ],
               ),
             ),

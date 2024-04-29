@@ -102,7 +102,7 @@ class _ProxyViewState extends State<ProxyView> {
                         keyboardType: TextInputType.name,
                         decoration: InputDecoration(
                           labelText: "Header name",
-                          prefixIcon: const Icon(Icons.person_sharp),
+                          prefixIcon: const Icon(Icons.text_fields_sharp),
                           prefixIconColor: theme.primary,
                           filled: true,
                           fillColor: theme.surface,
