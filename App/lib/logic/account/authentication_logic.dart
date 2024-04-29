@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:helse/services/user_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
-import '../../services/api_service.dart';
 import '../../services/account.dart';
 import '../../services/swagger/generated_code/swagger.swagger.dart';
 
@@ -31,11 +30,12 @@ class AuthenticationLogic {
   }
 
   /// Call the login service
-  Future<void> logIn({required String url, required String username, required String password}) async {
+  Future<void> logIn({required String url, required String username, required String password, String? redirect}) async {
     await _account.setUrl(url);
-    var token = await UserService(_account).login(username, password);
+    var token = await UserService(_account).login(username, password, redirect);
     var cleaned = token.replaceAll('"', "");
     await _account.setToken(cleaned);
+    await _account.removeGrant();
 
     _controller.add(AuthenticationStatus.authenticated);
   }
@@ -77,5 +77,19 @@ class AuthenticationLogic {
   /// Get the current token
   Future<String?> getToken() {
     return _account.getToken();
+  }
+
+  Future<String?> getGrant() {
+    return _account.getGrant();
+  }
+
+  Future<String?> getRedirect() {
+    return _account.getRedirect();
+  }
+
+  Future<void> clear() async {
+    await _account.removeGrant();
+    await _account.removeRedirect();
+    await _account.removeToken();
   }
 }

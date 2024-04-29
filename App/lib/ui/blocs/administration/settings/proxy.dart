@@ -33,7 +33,7 @@ class _ProxyViewState extends State<ProxyView> {
     // if the users has not changed, no call to the backend
     if (_settings != null) return _settings;
 
-    _settings = await AppState.settings?.api().proxy();
+    _settings = await DI.settings?.api().proxy();
 
     _controllerHeader.text = _settings?.header ?? "";
 
@@ -102,7 +102,7 @@ class _ProxyViewState extends State<ProxyView> {
                         keyboardType: TextInputType.name,
                         decoration: InputDecoration(
                           labelText: "Header name",
-                          prefixIcon: const Icon(Icons.person_sharp),
+                          prefixIcon: const Icon(Icons.text_fields_sharp),
                           prefixIconColor: theme.primary,
                           filled: true,
                           fillColor: theme.surface,
@@ -138,7 +138,7 @@ class _ProxyViewState extends State<ProxyView> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
-        await AppState.settings?.api().updateProxy(
+        await DI.settings?.api().updateProxy(
               Proxy(
                 autoRegister: _proxyAutoRegister,
                 proxyAuth: _proxyAuth,

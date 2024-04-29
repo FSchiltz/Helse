@@ -9,12 +9,14 @@ part of 'swagger.swagger.dart';
 Connection _$ConnectionFromJson(Map<String, dynamic> json) => Connection(
       user: json['user'] as String?,
       password: json['password'] as String?,
+      redirect: json['redirect'] as String?,
     );
 
 Map<String, dynamic> _$ConnectionToJson(Connection instance) =>
     <String, dynamic>{
       'user': instance.user,
       'password': instance.password,
+      'redirect': instance.redirect,
     };
 
 CreateEvent _$CreateEventFromJson(Map<String, dynamic> json) => CreateEvent(
@@ -160,15 +162,21 @@ Map<String, dynamic> _$MetricTypeToJson(MetricType instance) =>
 Oauth _$OauthFromJson(Map<String, dynamic> json) => Oauth(
       enabled: json['enabled'] as bool?,
       autoRegister: json['autoRegister'] as bool?,
+      autoLogin: json['autoLogin'] as bool?,
       clientId: json['clientId'] as String?,
       clientSecret: json['clientSecret'] as String?,
+      url: json['url'] as String?,
+      tokenurl: json['tokenurl'] as String?,
     );
 
 Map<String, dynamic> _$OauthToJson(Oauth instance) => <String, dynamic>{
       'enabled': instance.enabled,
       'autoRegister': instance.autoRegister,
+      'autoLogin': instance.autoLogin,
       'clientId': instance.clientId,
       'clientSecret': instance.clientSecret,
+      'url': instance.url,
+      'tokenurl': instance.tokenurl,
     };
 
 Person _$PersonFromJson(Map<String, dynamic> json) => Person(
@@ -272,12 +280,18 @@ Status _$StatusFromJson(Map<String, dynamic> json) => Status(
       init: json['init'] as bool?,
       externalAuth: json['externalAuth'] as bool?,
       error: json['error'] as String?,
+      oauth: json['oauth'] as String?,
+      oauthId: json['oauthId'] as String?,
+      autoLogin: json['autoLogin'] as bool?,
     );
 
 Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
       'init': instance.init,
       'externalAuth': instance.externalAuth,
       'error': instance.error,
+      'oauth': instance.oauth,
+      'oauthId': instance.oauthId,
+      'autoLogin': instance.autoLogin,
     };
 
 Treatement _$TreatementFromJson(Map<String, dynamic> json) => Treatement(

@@ -29,7 +29,7 @@ class _TreatmentsGridState extends State<TreatmentsGrid> {
       var start = DateTime(date.start.year, date.start.month, date.start.day);
       var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-      _treatments = await AppState.treatement?.treatments(start, end, person: widget.person);
+      _treatments = await DI.treatement?.treatments(start, end, person: widget.person);
       return _treatments;
     } catch (ex) {
       if (localContext.mounted) {

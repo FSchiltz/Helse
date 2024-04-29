@@ -27,7 +27,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _getMetricData() async {
-    var model = await AppState.metric?.metricsType();
+    var model = await DI.metric?.metricsType();
     if (model != null) {
       setState(() {
         metricTypes = model;
@@ -38,7 +38,7 @@ class _DashboardState extends State<Dashboard> {
   void _getEventData() async {
     var localContext = context;
     try {
-      var model = await AppState.event?.eventsType(false);
+      var model = await DI.event?.eventsType(false);
       if (model != null) {
         setState(() {
           eventTypes = model;

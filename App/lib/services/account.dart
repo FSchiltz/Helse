@@ -7,6 +7,8 @@ class Account {
 
   final _url = "urlPath";
   final _token = "sessionToken";
+  final _grant = "grant";
+  final _redirect = "redirect";
 
   Account({this.callback});
 
@@ -28,7 +30,32 @@ class Account {
 
   Future<void> removeToken() async {
     await (await storage).remove(_token);
-    
+
     callback?.call();
   }
+
+  Future<String?> getGrant() async {
+    return (await storage).getString(_grant);
+  }
+
+  Future<void> setGrant(String grant) async {
+    await (await storage).setString(_grant, grant);
+  }
+
+    Future<void> removeGrant() async {
+    await (await storage).remove(_grant);
+  }
+
+  Future<String?> getRedirect() async {
+    return (await storage).getString(_redirect);
+  }
+
+  Future<void> setRedirect(String redirect) async {
+    await (await storage).setString(_redirect, redirect);
+  }
+
+    Future<void> removeRedirect() async {
+    await (await storage).remove(_redirect);
+  }
+
 }

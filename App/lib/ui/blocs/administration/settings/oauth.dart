@@ -18,8 +18,11 @@ class _OauthViewState extends State<OauthView> {
 
   final TextEditingController _controllerId = TextEditingController();
   final TextEditingController _controllerSecret = TextEditingController();
+  final TextEditingController _controllerAuth = TextEditingController();
+  final TextEditingController _controllerToken = TextEditingController();
   bool _enabled = false;
   bool _autoregister = false;
+  bool _autoLogin = false;
 
   void _resetSettings() {
     setState(() {
@@ -34,13 +37,16 @@ class _OauthViewState extends State<OauthView> {
     // if the users has not changed, no call to the backend
     if (_settings != null) return _settings;
 
-    _settings = await AppState.settings?.api().oauth();
+    _settings = await DI.settings?.api().oauth();
 
     _controllerId.text = _settings?.clientId ?? "";
     _controllerSecret.text = _settings?.clientSecret ?? "";
+    _controllerAuth.text = _settings?.url ?? "";
+    _controllerToken.text = _settings?.tokenurl ?? "";
 
     _enabled = _settings?.enabled ?? false;
     _autoregister = _settings?.autoRegister ?? false;
+    _autoLogin = _settings?.autoLogin ?? false;
 
     return _settings;
   }
@@ -105,7 +111,37 @@ class _OauthViewState extends State<OauthView> {
                       keyboardType: TextInputType.name,
                       decoration: InputDecoration(
                         labelText: "Client secret",
-                        prefixIcon: const Icon(Icons.person_sharp),
+                        prefixIcon: const Icon(Icons.password_sharp),
+                        prefixIconColor: theme.primary,
+                        filled: true,
+                        fillColor: theme.surface,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(color: theme.primary),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      controller: _controllerAuth,
+                      keyboardType: TextInputType.name,
+                      decoration: InputDecoration(
+                        labelText: "Auth url",
+                        prefixIcon: const Icon(Icons.connect_without_contact_sharp),
+                        prefixIconColor: theme.primary,
+                        filled: true,
+                        fillColor: theme.surface,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(color: theme.primary),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      controller: _controllerToken,
+                      keyboardType: TextInputType.name,
+                      decoration: InputDecoration(
+                        labelText: "Token url",
+                        prefixIcon: const Icon(Icons.token_sharp),
                         prefixIconColor: theme.primary,
                         filled: true,
                         fillColor: theme.surface,
@@ -127,14 +163,30 @@ class _OauthViewState extends State<OauthView> {
                             })
                       ],
                     ),
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        const Text("Auto login"),
+                        Switch(
+                            value: _autoLogin,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _autoLogin = value!;
+                              });
+                            })
+                      ],
+                    ),
                     const SizedBox(height: 20),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(50),
-                        shape: const ContinuousRectangleBorder(),
+                    SizedBox(
+                      width: 200,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(50),
+                          shape: const ContinuousRectangleBorder(),
+                        ),
+                        onPressed: submit,
+                        child: const Text("Save"),
                       ),
-                      onPressed: submit,
-                      child: const Text("Save"),
                     ),
                   ],
                 ),
@@ -150,12 +202,15 @@ class _OauthViewState extends State<OauthView> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
-        await AppState.settings?.api().updateOauth(
+        await DI.settings?.api().updateOauth(
               Oauth(
                 clientId: _controllerId.text,
                 clientSecret: _controllerSecret.text,
                 enabled: _enabled,
                 autoRegister: _autoregister,
+                autoLogin: _autoLogin,
+                tokenurl: _controllerToken.text,
+                url: _controllerAuth.text,
               ),
             );
 

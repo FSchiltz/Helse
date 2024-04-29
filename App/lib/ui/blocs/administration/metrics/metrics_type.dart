@@ -1,4 +1,3 @@
-import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/ui/blocs/notification.dart';
 
@@ -30,7 +29,7 @@ class _MetricTypeViewState extends State<MetricTypeView> {
     // if the users has not changed, no call to the backend
     if (_types != null) return _types;
 
-    _types = await AppState.metric?.metricsType();
+    _types = await DI.metric?.metricsType();
     return _types;
   }
 
@@ -148,7 +147,7 @@ class _MetricTypeViewState extends State<MetricTypeView> {
     var id = type.id;
     try {
       if (id != null) {
-        await AppState.metric?.deleteMetricsType(id);
+        await DI.metric?.deleteMetricsType(id);
         if (localContext.mounted) {
           SuccessSnackBar.show('Metric ${type.name} deleted', localContext);
         }

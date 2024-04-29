@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import '../logic/event.dart';
 import '../main.dart';
 import '../services/account.dart';
@@ -35,7 +34,7 @@ class _LoginState extends State<LoginPage> {
 
   SubmissionStatus _status = SubmissionStatus.initial;
   SubmissionStatus _loaded = SubmissionStatus.initial;
-  bool? _isInit;
+  Status? _initStatus;
   bool _obscurePassword = true;
   String? _url;
 
@@ -60,7 +59,7 @@ class _LoginState extends State<LoginPage> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      Text("Welcome ${_isInit == true ? "Back" : ""}", style: Theme.of(context).textTheme.headlineLarge),
+                      Text("Welcome ${_initStatus == true ? "Back" : ""}", style: Theme.of(context).textTheme.headlineLarge),
                       const SizedBox(height: 20),
                       TextField(
                         controller: textController,
@@ -83,7 +82,7 @@ class _LoginState extends State<LoginPage> {
                           ? const HelseLoader()
                           : (_loaded == SubmissionStatus.success)
                               ? Column(children: [
-                                  (_isInit == true)
+                                  (_initStatus?.init == true)
                                       ? Column(
                                           children: [
                                             UserNameInput(
@@ -117,17 +116,30 @@ class _LoginState extends State<LoginPage> {
                                   const SizedBox(height: 60),
                                   _status == SubmissionStatus.inProgress
                                       ? const HelseLoader()
-                                      : ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            minimumSize: const Size.fromHeight(50),
-                                            shape: const ContinuousRectangleBorder(),
-                                          ),
-                                          key: const Key('loginForm_continue_raisedButton'),
-                                          onPressed: _submit,
-                                          child: Text(
-                                            _isInit == true ? 'Login' : 'Create',
-                                            style: Theme.of(context).textTheme.titleLarge,
-                                          ),
+                                      : Column(
+                                          children: [
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                minimumSize: const Size.fromHeight(50),
+                                                shape: const ContinuousRectangleBorder(),
+                                              ),
+                                              onPressed: _submit,
+                                              child: Text(
+                                                _initStatus?.init == true ? 'Login' : 'Create',
+                                                style: Theme.of(context).textTheme.titleLarge,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 20),
+                                            if (_initStatus?.oauth != null)
+                                              ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  minimumSize: const Size.fromHeight(50),
+                                                  shape: const ContinuousRectangleBorder(),
+                                                ),
+                                                onPressed: _submitOauth,
+                                                child: Text('Login with Oauth', style: Theme.of(context).textTheme.titleLarge),
+                                              )
+                                          ],
                                         )
                                 ])
                               : Container(),
@@ -154,27 +166,42 @@ class _LoginState extends State<LoginPage> {
       _loaded = SubmissionStatus.inProgress;
     });
 
-    var isInit = await AppState.helper?.isInit(_url ?? "");
+    var isInit = await DI.helper?.isInit(_url ?? "");
     var status = ((isInit?.init == null) ? SubmissionStatus.failure : SubmissionStatus.success);
 
     // If the server is init or not
     // Todo use stream
     if (mounted) {
       setState(() {
-        _isInit = isInit?.init;
+        _initStatus = isInit;
         _loaded = status;
       });
 
-      if (isInit?.externalAuth == true) {
-        // directly start the login procedure
-        _submit(noUser: true);
+      if (isInit != null && isInit.init == true) {
+        if (isInit.oauth != null) {
+          var grant = await DI.authentication?.getGrant();
+          if (grant != null) {
+            _submit(
+              noUser: true,
+              oAuth: grant,
+              redirect: await DI.authentication?.getRedirect(),
+            );
+          } else if (isInit.autoLogin == true) {
+            _connectOauth(isInit, url);
+          }
+        } else if (isInit.externalAuth == true) {
+          // Todo read from config
+
+          // directly start the login procedure
+          _submit(noUser: true);
+        }
       }
     }
   }
 
   /// Prefill the url from storage or other
   Future<void> _initUrl() async {
-    AppState.authentication?.checkLogin();
+    DI.authentication?.checkLogin();
     // We first try to get it from storage
     var url = await Account().getUrl();
 
@@ -193,15 +220,30 @@ class _LoginState extends State<LoginPage> {
     }
   }
 
-  void _submit({bool noUser = false}) async {
+  Future<void> _submitOauth() async {
+    var init = _initStatus;
+    if (init != null && _url != null) {
+      var grant = await _connectOauth(init, _url);
+      if (grant != null) {
+        _submit(noUser: true, oAuth: grant, redirect: await DI.authentication?.getRedirect());
+      }
+    }
+  }
+
+  void _submit({bool noUser = false, String? oAuth, String? redirect}) async {
     var localContext = context;
 
-    var init = _isInit;
+    var init = _initStatus?.init;
     var url = _url;
     if (init == null || url == null) return;
 
     var user = _controllerUsername.text;
     var password = _controllerPassword.text;
+
+    if (oAuth != null) {
+      password = oAuth;
+    }
+
     if (!noUser && (user.isEmpty || password.isEmpty)) return;
 
     setState(() {
@@ -209,14 +251,29 @@ class _LoginState extends State<LoginPage> {
     });
 
     try {
-      if (init) {
-        await AppState.authentication?.logIn(url: url, username: user, password: password);
+      if (init || noUser) {
+        await DI.authentication?.logIn(
+          url: url,
+          username: user,
+          password: password,
+          redirect: redirect,
+        );
       } else {
-        var person = PersonCreation(type: UserType.admin, userName: user, password: password, name: _controllerName.text, surname: _controllerSurname.text);
-        await AppState.authentication?.initAccount(url: url, person: person);
+        var person = PersonCreation(
+          type: UserType.admin,
+          userName: user,
+          password: password,
+          name: _controllerName.text,
+          surname: _controllerSurname.text,
+        );
+        await DI.authentication?.initAccount(url: url, person: person);
 
         // after a succes, we auto login
-        await AppState.authentication?.logIn(url: url, username: user, password: password);
+        await DI.authentication?.logIn(
+          url: url,
+          username: user,
+          password: password,
+        );
         if (localContext.mounted) {
           SuccessSnackBar.show('User created, welcome', localContext);
         }
@@ -230,6 +287,9 @@ class _LoginState extends State<LoginPage> {
         ErrorSnackBar.show("Error: $ex", localContext);
       }
 
+      // clear any info about the login
+      await DI.authentication?.clear();
+
       // we start the login process again
       setState(() {
         _status = SubmissionStatus.initial;
@@ -240,4 +300,23 @@ class _LoginState extends State<LoginPage> {
   void togglePasswordVisibility() => setState(() {
         _obscurePassword = !_obscurePassword;
       });
+
+  Future<String?> _connectOauth(Status isInit, url) async {
+    try {
+      DI.authService?.init(
+        auth: isInit.oauth ?? '',
+        clientId: isInit.oauthId ?? '',
+      );
+
+      return await DI.authService?.login(url);
+    } catch (ex) {
+      var localContext = context;
+      if (localContext.mounted) {
+        ErrorSnackBar.show("Error: $ex", localContext);
+        // TODO clear token
+      }
+
+      return null;
+    }
+  }
 }

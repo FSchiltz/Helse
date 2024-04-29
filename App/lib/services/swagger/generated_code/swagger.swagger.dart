@@ -527,6 +527,7 @@ class Connection {
   const Connection({
     this.user,
     this.password,
+    this.redirect,
   });
 
   factory Connection.fromJson(Map<String, dynamic> json) =>
@@ -539,6 +540,8 @@ class Connection {
   final String? user;
   @JsonKey(name: 'password')
   final String? password;
+  @JsonKey(name: 'redirect')
+  final String? redirect;
   static const fromJsonFactory = _$ConnectionFromJson;
 
   @override
@@ -549,7 +552,10 @@ class Connection {
                 const DeepCollectionEquality().equals(other.user, user)) &&
             (identical(other.password, password) ||
                 const DeepCollectionEquality()
-                    .equals(other.password, password)));
+                    .equals(other.password, password)) &&
+            (identical(other.redirect, redirect) ||
+                const DeepCollectionEquality()
+                    .equals(other.redirect, redirect)));
   }
 
   @override
@@ -559,20 +565,26 @@ class Connection {
   int get hashCode =>
       const DeepCollectionEquality().hash(user) ^
       const DeepCollectionEquality().hash(password) ^
+      const DeepCollectionEquality().hash(redirect) ^
       runtimeType.hashCode;
 }
 
 extension $ConnectionExtension on Connection {
-  Connection copyWith({String? user, String? password}) {
+  Connection copyWith({String? user, String? password, String? redirect}) {
     return Connection(
-        user: user ?? this.user, password: password ?? this.password);
+        user: user ?? this.user,
+        password: password ?? this.password,
+        redirect: redirect ?? this.redirect);
   }
 
   Connection copyWithWrapped(
-      {Wrapped<String?>? user, Wrapped<String?>? password}) {
+      {Wrapped<String?>? user,
+      Wrapped<String?>? password,
+      Wrapped<String?>? redirect}) {
     return Connection(
         user: (user != null ? user.value : this.user),
-        password: (password != null ? password.value : this.password));
+        password: (password != null ? password.value : this.password),
+        redirect: (redirect != null ? redirect.value : this.redirect));
   }
 }
 
@@ -1244,8 +1256,11 @@ class Oauth {
   const Oauth({
     this.enabled,
     this.autoRegister,
+    this.autoLogin,
     this.clientId,
     this.clientSecret,
+    this.url,
+    this.tokenurl,
   });
 
   factory Oauth.fromJson(Map<String, dynamic> json) => _$OauthFromJson(json);
@@ -1257,10 +1272,16 @@ class Oauth {
   final bool? enabled;
   @JsonKey(name: 'autoRegister')
   final bool? autoRegister;
+  @JsonKey(name: 'autoLogin')
+  final bool? autoLogin;
   @JsonKey(name: 'clientId')
   final String? clientId;
   @JsonKey(name: 'clientSecret')
   final String? clientSecret;
+  @JsonKey(name: 'url')
+  final String? url;
+  @JsonKey(name: 'tokenurl')
+  final String? tokenurl;
   static const fromJsonFactory = _$OauthFromJson;
 
   @override
@@ -1273,12 +1294,20 @@ class Oauth {
             (identical(other.autoRegister, autoRegister) ||
                 const DeepCollectionEquality()
                     .equals(other.autoRegister, autoRegister)) &&
+            (identical(other.autoLogin, autoLogin) ||
+                const DeepCollectionEquality()
+                    .equals(other.autoLogin, autoLogin)) &&
             (identical(other.clientId, clientId) ||
                 const DeepCollectionEquality()
                     .equals(other.clientId, clientId)) &&
             (identical(other.clientSecret, clientSecret) ||
                 const DeepCollectionEquality()
-                    .equals(other.clientSecret, clientSecret)));
+                    .equals(other.clientSecret, clientSecret)) &&
+            (identical(other.url, url) ||
+                const DeepCollectionEquality().equals(other.url, url)) &&
+            (identical(other.tokenurl, tokenurl) ||
+                const DeepCollectionEquality()
+                    .equals(other.tokenurl, tokenurl)));
   }
 
   @override
@@ -1288,8 +1317,11 @@ class Oauth {
   int get hashCode =>
       const DeepCollectionEquality().hash(enabled) ^
       const DeepCollectionEquality().hash(autoRegister) ^
+      const DeepCollectionEquality().hash(autoLogin) ^
       const DeepCollectionEquality().hash(clientId) ^
       const DeepCollectionEquality().hash(clientSecret) ^
+      const DeepCollectionEquality().hash(url) ^
+      const DeepCollectionEquality().hash(tokenurl) ^
       runtimeType.hashCode;
 }
 
@@ -1297,27 +1329,39 @@ extension $OauthExtension on Oauth {
   Oauth copyWith(
       {bool? enabled,
       bool? autoRegister,
+      bool? autoLogin,
       String? clientId,
-      String? clientSecret}) {
+      String? clientSecret,
+      String? url,
+      String? tokenurl}) {
     return Oauth(
         enabled: enabled ?? this.enabled,
         autoRegister: autoRegister ?? this.autoRegister,
+        autoLogin: autoLogin ?? this.autoLogin,
         clientId: clientId ?? this.clientId,
-        clientSecret: clientSecret ?? this.clientSecret);
+        clientSecret: clientSecret ?? this.clientSecret,
+        url: url ?? this.url,
+        tokenurl: tokenurl ?? this.tokenurl);
   }
 
   Oauth copyWithWrapped(
       {Wrapped<bool?>? enabled,
       Wrapped<bool?>? autoRegister,
+      Wrapped<bool?>? autoLogin,
       Wrapped<String?>? clientId,
-      Wrapped<String?>? clientSecret}) {
+      Wrapped<String?>? clientSecret,
+      Wrapped<String?>? url,
+      Wrapped<String?>? tokenurl}) {
     return Oauth(
         enabled: (enabled != null ? enabled.value : this.enabled),
         autoRegister:
             (autoRegister != null ? autoRegister.value : this.autoRegister),
+        autoLogin: (autoLogin != null ? autoLogin.value : this.autoLogin),
         clientId: (clientId != null ? clientId.value : this.clientId),
         clientSecret:
-            (clientSecret != null ? clientSecret.value : this.clientSecret));
+            (clientSecret != null ? clientSecret.value : this.clientSecret),
+        url: (url != null ? url.value : this.url),
+        tokenurl: (tokenurl != null ? tokenurl.value : this.tokenurl));
   }
 }
 
@@ -1783,6 +1827,9 @@ class Status {
     this.init,
     this.externalAuth,
     this.error,
+    this.oauth,
+    this.oauthId,
+    this.autoLogin,
   });
 
   factory Status.fromJson(Map<String, dynamic> json) => _$StatusFromJson(json);
@@ -1796,6 +1843,12 @@ class Status {
   final bool? externalAuth;
   @JsonKey(name: 'error')
   final String? error;
+  @JsonKey(name: 'oauth')
+  final String? oauth;
+  @JsonKey(name: 'oauthId')
+  final String? oauthId;
+  @JsonKey(name: 'autoLogin')
+  final bool? autoLogin;
   static const fromJsonFactory = _$StatusFromJson;
 
   @override
@@ -1808,7 +1861,15 @@ class Status {
                 const DeepCollectionEquality()
                     .equals(other.externalAuth, externalAuth)) &&
             (identical(other.error, error) ||
-                const DeepCollectionEquality().equals(other.error, error)));
+                const DeepCollectionEquality().equals(other.error, error)) &&
+            (identical(other.oauth, oauth) ||
+                const DeepCollectionEquality().equals(other.oauth, oauth)) &&
+            (identical(other.oauthId, oauthId) ||
+                const DeepCollectionEquality()
+                    .equals(other.oauthId, oauthId)) &&
+            (identical(other.autoLogin, autoLogin) ||
+                const DeepCollectionEquality()
+                    .equals(other.autoLogin, autoLogin)));
   }
 
   @override
@@ -1819,26 +1880,44 @@ class Status {
       const DeepCollectionEquality().hash(init) ^
       const DeepCollectionEquality().hash(externalAuth) ^
       const DeepCollectionEquality().hash(error) ^
+      const DeepCollectionEquality().hash(oauth) ^
+      const DeepCollectionEquality().hash(oauthId) ^
+      const DeepCollectionEquality().hash(autoLogin) ^
       runtimeType.hashCode;
 }
 
 extension $StatusExtension on Status {
-  Status copyWith({bool? init, bool? externalAuth, String? error}) {
+  Status copyWith(
+      {bool? init,
+      bool? externalAuth,
+      String? error,
+      String? oauth,
+      String? oauthId,
+      bool? autoLogin}) {
     return Status(
         init: init ?? this.init,
         externalAuth: externalAuth ?? this.externalAuth,
-        error: error ?? this.error);
+        error: error ?? this.error,
+        oauth: oauth ?? this.oauth,
+        oauthId: oauthId ?? this.oauthId,
+        autoLogin: autoLogin ?? this.autoLogin);
   }
 
   Status copyWithWrapped(
       {Wrapped<bool?>? init,
       Wrapped<bool?>? externalAuth,
-      Wrapped<String?>? error}) {
+      Wrapped<String?>? error,
+      Wrapped<String?>? oauth,
+      Wrapped<String?>? oauthId,
+      Wrapped<bool?>? autoLogin}) {
     return Status(
         init: (init != null ? init.value : this.init),
         externalAuth:
             (externalAuth != null ? externalAuth.value : this.externalAuth),
-        error: (error != null ? error.value : this.error));
+        error: (error != null ? error.value : this.error),
+        oauth: (oauth != null ? oauth.value : this.oauth),
+        oauthId: (oauthId != null ? oauthId.value : this.oauthId),
+        autoLogin: (autoLogin != null ? autoLogin.value : this.autoLogin));
   }
 }
 
