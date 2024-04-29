@@ -28,7 +28,7 @@ public static class AuthLogic
     ///     - Missing first user
     /// </summary>
     /// <param name="db"></param>
-    /// <param name="token"></param>
+    /// <param name="context"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
     public static async Task<IResult> StatusAsync(AppDataConnection db, HttpContext context, ILoggerFactory logger)
@@ -54,6 +54,19 @@ public static class AuthLogic
 
         log.LogInformation("Status asked");
         return TypedResults.Ok(new Status(true, isAuth, null));
+    }
+
+    private static async Task<TokenInfo?> TokenFromDb(AppDataConnection db, string user)
+    {
+        var fromDb = await (from u in db.GetTable<User>()
+                            join p in db.GetTable<Data.Models.Person>() on u.PersonId equals p.Id
+                            where u.Identifier == user
+                            select new { u, p })
+                                 .FirstOrDefaultAsync();
+        if (fromDb is null)
+            return null;
+
+        return new TokenInfo(fromDb.u.Id, fromDb.u.Type.ToString(), fromDb.u.Identifier, fromDb.u.Password, fromDb.p.Surname, fromDb.p.Name, fromDb.u.Email);
     }
 
     private static async Task<(bool, TokenInfo?)> ConnectHeader(AppDataConnection db, HttpContext context, Proxy settings, ILogger log)
@@ -101,19 +114,6 @@ public static class AuthLogic
         }
 
         return (logged, fromDb);
-    }
-
-    private static async Task<TokenInfo?> TokenFromDb(AppDataConnection db, string user)
-    {
-        var fromDb = await (from u in db.GetTable<User>()
-                            join p in db.GetTable<Data.Models.Person>() on u.PersonId equals p.Id
-                            where u.Identifier == user
-                            select new { u, p })
-                                 .FirstOrDefaultAsync();
-        if (fromDb is null)
-            return null;
-
-        return new TokenInfo(fromDb.u.Id, fromDb.u.Type.ToString(), fromDb.u.Identifier, fromDb.u.Password, fromDb.p.Surname, fromDb.p.Name, fromDb.u.Email);
     }
 
     private static async Task<(bool, TokenInfo?)> ConnectPassword(Connection user, AppDataConnection db, HttpContext context, ILogger log)

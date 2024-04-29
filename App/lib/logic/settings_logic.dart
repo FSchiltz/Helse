@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/account.dart';
 import '../services/setting_service.dart';
-import '../services/swagger/generated_code/swagger.swagger.dart';
 
 class LocalSettings {
   static const _syncHealth = "syncHealth";

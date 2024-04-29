@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:helse/services/user_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
-import '../../services/api_service.dart';
 import '../../services/account.dart';
 import '../../services/swagger/generated_code/swagger.swagger.dart';
 
