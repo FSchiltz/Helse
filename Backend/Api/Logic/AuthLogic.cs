@@ -310,8 +310,9 @@ public static class AuthLogic
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString);
         var response = await client.PostAsync(oauth.Tokenurl, content);
 
+        var contentString = await response.Content.ReadAsStringAsync();
         response.EnsureSuccessStatusCode();
-        return await Parse(response.Content);
+        return await Parse(contentString);
     }
 
     private record Token(string User);
@@ -320,10 +321,9 @@ public static class AuthLogic
         public string? Access_token { get; set; }
     }
 
-    private static async Task<Token> Parse(HttpContent content)
+    private static async Task<Token> Parse(string content)
     {
-        var contentString = await content.ReadAsStringAsync();
-        var jwt = (System.Text.Json.JsonSerializer.Deserialize<OauthToken>(contentString)?.Access_token)
+        var jwt = (System.Text.Json.JsonSerializer.Deserialize<OauthToken>(content)?.Access_token)
          ?? throw new InvalidOperationException("Incorrect token");
 
         var token = new JwtSecurityTokenHandler().ReadJwtToken(jwt);

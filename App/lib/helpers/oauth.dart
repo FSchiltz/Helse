@@ -45,9 +45,10 @@ class OauthClient {
     } else {
       var grant = await account.getGrant();
       if (grant == null) {
-        final authUrl = '$_auth?client_id=$_clientId&response_type=code&scope=openid+profile+offline_access&state=STATE&redirect_uri=$redirectUrl';
+        var redirect = redirectUrl.toString();
+        final authUrl = '$_auth?client_id=$_clientId&response_type=code&scope=openid+profile+offline_access&state=STATE&redirect_uri=$redirect';
 
-        await account.setRedirect(redirectUrl.toString());
+        await account.setRedirect(redirect);
 
         if (kIsWeb) {
           window.location.assign(authUrl);
