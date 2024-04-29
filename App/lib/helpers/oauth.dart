@@ -39,7 +39,8 @@ class OauthClient {
     );
   }
 
-  Future<void> login() async {
+  Future<void> login(url) async {
+    await account.setUrl(url);
     if (await account.getToken() != null) {
       // already auth
     } else {

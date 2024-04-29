@@ -180,10 +180,12 @@ class _LoginState extends State<LoginPage> {
                 clientId: isInit.oauthId ?? '',
               );
 
-              DI.authService?.login();
+              DI.authService?.login(url);
             } catch (ex) {
-              if (context.mounted) {
-                ErrorSnackBar.show("Error: $ex", context);
+              var localContext = context;
+              if (localContext.mounted) {
+                ErrorSnackBar.show("Error: $ex", localContext);
+                // TODO clear token
               }
             }
           }

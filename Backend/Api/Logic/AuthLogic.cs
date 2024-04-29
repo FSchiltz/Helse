@@ -323,8 +323,9 @@ public static class AuthLogic
 
     private static async Task<Token> Parse(string content)
     {
-        var jwt = (System.Text.Json.JsonSerializer.Deserialize<OauthToken>(content)?.Access_token)
-         ?? throw new InvalidOperationException("Incorrect token");
+        var auth = System.Text.Json.JsonSerializer.Deserialize<OauthToken>(content);
+
+        var jwt = auth?.Access_token ?? throw new InvalidOperationException("Incorrect token");
 
         var token = new JwtSecurityTokenHandler().ReadJwtToken(jwt);
 
