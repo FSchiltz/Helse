@@ -5,7 +5,6 @@
             "name": "Flutter web",
             "type": "dart",
             "request": "launch",
-            "flutterMode": "release",
             "program": "App/lib/main.dart",
             "args": [
                 "-d",
