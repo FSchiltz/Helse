@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'helpers/oauth.dart';
+import 'helpers/url_dummy.dart'  if (dart.library.html) 'helpers/url.dart';
 import 'logic/account/authentication_logic.dart';
 import 'logic/account/authentication_bloc.dart';
 import 'logic/settings_logic.dart';
@@ -62,6 +63,7 @@ class App extends StatelessWidget {
 
           if (uri.containsKey("code")) {
             DI.authService?.doAuthOnWeb(uri);
+            UrlHelper.removeParam();
           }
         }
         return MaterialPageRoute(builder: (BuildContext context) {

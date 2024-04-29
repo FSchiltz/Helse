@@ -35,6 +35,7 @@ class AuthenticationLogic {
     var token = await UserService(_account).login(username, password, redirect);
     var cleaned = token.replaceAll('"', "");
     await _account.setToken(cleaned);
+    await _account.removeGrant();
 
     _controller.add(AuthenticationStatus.authenticated);
   }
