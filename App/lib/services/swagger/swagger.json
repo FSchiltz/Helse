@@ -1205,6 +1205,9 @@
           "autoRegister": {
             "type": "boolean"
           },
+          "autoLogin": {
+            "type": "boolean"
+          },
           "clientId": {
             "type": "string",
             "nullable": true
@@ -1402,6 +1405,9 @@
           "oauthId": {
             "type": "string",
             "nullable": true
+          },
+          "autoLogin": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

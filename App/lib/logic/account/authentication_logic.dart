@@ -85,4 +85,10 @@ class AuthenticationLogic {
   Future<String?> getRedirect() {
     return _account.getRedirect();
   }
+
+  Future<void> clear() async {
+    await _account.removeGrant();
+    await _account.removeRedirect();
+    await _account.removeToken();
+  }
 }

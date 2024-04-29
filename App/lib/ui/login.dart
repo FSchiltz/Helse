@@ -186,7 +186,7 @@ class _LoginState extends State<LoginPage> {
               oAuth: grant,
               redirect: await DI.authentication?.getRedirect(),
             );
-          } else {
+          } else if (isInit.autoLogin == true) {
             _connectOauth(isInit, url);
           }
         } else if (isInit.externalAuth == true) {
@@ -286,6 +286,9 @@ class _LoginState extends State<LoginPage> {
       if (localContext.mounted) {
         ErrorSnackBar.show("Error: $ex", localContext);
       }
+
+      // clear any info about the login
+      await DI.authentication?.clear();
 
       // we start the login process again
       setState(() {

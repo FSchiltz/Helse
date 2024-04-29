@@ -18,7 +18,7 @@ namespace Api.Logic;
 /// <param name="Password"></param>
 public record Connection(string User, string Password, string? Redirect);
 
-public record Status(bool Init, bool ExternalAuth, string? Error, string? Oauth, string? OauthId);
+public record Status(bool Init, bool ExternalAuth, string? Error, string? Oauth, string? OauthId, bool AutoLogin);
 
 /// <summary>
 /// Logic over user authentication and right
@@ -49,7 +49,7 @@ public static class AuthLogic
         if (count == 0)
         {
             log.LogInformation("First connexion");
-            return TypedResults.Ok(new Status(false, false, null, null, null));
+            return TypedResults.Ok(new Status(false, false, null, null, null, false));
         }
 
         var isAuth = false;
@@ -73,7 +73,7 @@ public static class AuthLogic
         }
 
         log.LogInformation("Status asked");
-        return TypedResults.Ok(new Status(true, isAuth, null, oauthUrl, oauthId));
+        return TypedResults.Ok(new Status(true, isAuth, null, oauthUrl, oauthId, oauth?.AutoLogin ?? false));
     }
 
     /// <summary>

@@ -162,6 +162,7 @@ Map<String, dynamic> _$MetricTypeToJson(MetricType instance) =>
 Oauth _$OauthFromJson(Map<String, dynamic> json) => Oauth(
       enabled: json['enabled'] as bool?,
       autoRegister: json['autoRegister'] as bool?,
+      autoLogin: json['autoLogin'] as bool?,
       clientId: json['clientId'] as String?,
       clientSecret: json['clientSecret'] as String?,
       url: json['url'] as String?,
@@ -171,6 +172,7 @@ Oauth _$OauthFromJson(Map<String, dynamic> json) => Oauth(
 Map<String, dynamic> _$OauthToJson(Oauth instance) => <String, dynamic>{
       'enabled': instance.enabled,
       'autoRegister': instance.autoRegister,
+      'autoLogin': instance.autoLogin,
       'clientId': instance.clientId,
       'clientSecret': instance.clientSecret,
       'url': instance.url,
@@ -280,6 +282,7 @@ Status _$StatusFromJson(Map<String, dynamic> json) => Status(
       error: json['error'] as String?,
       oauth: json['oauth'] as String?,
       oauthId: json['oauthId'] as String?,
+      autoLogin: json['autoLogin'] as bool?,
     );
 
 Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
@@ -288,6 +291,7 @@ Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
       'error': instance.error,
       'oauth': instance.oauth,
       'oauthId': instance.oauthId,
+      'autoLogin': instance.autoLogin,
     };
 
 Treatement _$TreatementFromJson(Map<String, dynamic> json) => Treatement(
