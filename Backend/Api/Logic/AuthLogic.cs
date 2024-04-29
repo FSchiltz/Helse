@@ -89,17 +89,18 @@ public static class AuthLogic
         bool logged = false;
         TokenInfo? fromDb = null;
 
-        if (oauth.Enabled)
-        {
-            log.LogInformation("Logging from oauth using  {redirect}", user.Redirect);
-            (logged, fromDb) = await ConnectOauth(db, oauth, user, log);
-        }
-        else if (settings?.ProxyAuth == true && settings.Header is not null)
+        if (settings?.ProxyAuth == true && settings.Header is not null)
         {
             log.LogInformation("Connexion by header");
             (logged, fromDb) = await ConnectHeader(db, context, settings, log);
         }
+        else if (oauth.Enabled && user.Redirect is not null)
+        {
+            log.LogInformation("Logging from oauth using  {redirect}", user.Redirect);
+            (logged, fromDb) = await ConnectOauth(db, oauth, user, log);
+        }
 
+        // Custom auth didn't work, fall back on password
         if (!logged)
         {
             // Fallback on the password if the other means failed
@@ -230,6 +231,7 @@ public static class AuthLogic
                     Type = UserType.User
                 }, 0);
                 logged = true;
+                fromDb = await TokenFromDb(db, header);
             }
         }
         else
@@ -289,6 +291,7 @@ public static class AuthLogic
                     Type = UserType.User
                 }, 0);
                 logged = true;
+                fromDb = await TokenFromDb(db, token.User);
             }
         }
         else

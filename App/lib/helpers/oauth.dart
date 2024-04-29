@@ -39,25 +39,25 @@ class OauthClient {
     );
   }
 
-  Future<void> login(url) async {
+  Future<String?> login(url) async {
     await account.setUrl(url);
-    if (await account.getToken() != null) {
-      // already auth
-    } else {
-      var grant = await account.getGrant();
-      if (grant == null) {
-        var redirect = redirectUrl.toString();
-        final authUrl = '$_auth?client_id=$_clientId&response_type=code&scope=openid+profile+offline_access&state=STATE&redirect_uri=$redirect';
 
-        await account.setRedirect(redirect);
+    var grant = await account.getGrant();
+    if (grant == null) {
+      var redirect = redirectUrl.toString();
+      final authUrl = '$_auth?client_id=$_clientId&response_type=code&scope=openid+profile+offline_access&state=STATE&redirect_uri=$redirect';
 
-        if (kIsWeb) {
-          window.location.assign(authUrl);
-        } else {
-          //final String result = await FlutterWebAuth.authenticate(url: authorizationUrl.toString(), callbackUrlScheme: "de.xxx.xyz");
-          _doAuthOnMobile('result');
-        }
+      await account.setRedirect(redirect);
+
+      if (kIsWeb) {
+        window.location.assign(authUrl);
+        return null;
+      } else {
+        _doAuthOnMobile(redirect);
+        return '';
       }
+    } else {
+      return grant;
     }
   }
 
