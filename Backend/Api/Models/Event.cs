@@ -6,6 +6,8 @@ public abstract class BaseEvent
     public string? Description { get; set; }
     public DateTime Start { get; set; }
     public DateTime Stop { get; set; }
+
+    public string? Tag { get; set; }
 }
 
 public class Event : BaseEvent

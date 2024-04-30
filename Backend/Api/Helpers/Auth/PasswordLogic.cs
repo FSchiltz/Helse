@@ -1,17 +1,17 @@
 using Api.Data;
 using Api.Data.Models;
-using Api.Helpers.Auth;
+using Api.Models;
 using LinqToDB;
 using Microsoft.AspNetCore.Identity;
 
-namespace Api.Logic.Auth;
+namespace Api.Helpers.Auth;
 
-public static class PasswordLogic
+public static class PasswordHelper
 {
-    public static async Task<(bool, TokenInfo?)> ConnectPassword(Connection user, IDataContext db, ILogger log)
+    public static async Task<(bool, TokenInfo?)> ConnectPassword(Connection user, IUserContext db, ILogger log)
     {
         // auth
-        var fromDb = await db.TokenFromDb( user.User);
+        var fromDb = await db.TokenFromDb(user.User);
 
         if (fromDb is null)
             return (false, null);
@@ -35,10 +35,10 @@ public static class PasswordLogic
         return (true, fromDb);
     }
 
-    public async static Task UpdatePasswordAsync(long user, string password, IDataContext db)
+    public async static Task UpdatePasswordAsync(long user, string password, IUserContext db)
     {
         var hash = TokenService.Hash(password);
 
-        await db.GetTable<User>().Where(x => x.Id == user).Set(x => x.Password, password).UpdateAsync();
+        await db.UpdatePassword(user, hash);
     }
 }

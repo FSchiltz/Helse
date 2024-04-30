@@ -1,16 +1,17 @@
 using Microsoft.AspNetCore.Mvc.Testing;
-using LinqToDB;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
+using Api.Data;
 
 namespace Tests.Integrations;
 
-public abstract class IntegrationTest: IClassFixture<WebApplicationFactory<Program>> {
+public abstract class IntegrationTest : IClassFixture<WebApplicationFactory<Program>>
+{
 
     protected readonly HttpClient _client;
-    protected IDataContext mockDB = Substitute.For<IDataContext>();
+    protected IUserContext mockDB = Substitute.For<IUserContext>();
 
     public IntegrationTest(WebApplicationFactory<Program> factory)
     {

@@ -1,4 +1,5 @@
 using Api.Data;
+using Api.Helpers;
 using Api.Logic.Auth;
 using Api.Models;
 using LinqToDB;
@@ -10,23 +11,19 @@ namespace Api.Logic;
 /// </summary>
 public static class EventsLogic
 {
-    public async static Task<IResult> GetAsync(int? type, DateTime start, DateTime end, long? personId, IDataContext db, HttpContext context)
+    public async static Task<IResult> GetAsync(int type, DateTime start, DateTime end, long? personId, IUserContext users, IHealthContext events, HttpContext context)
     {
-        var (error, user) = await db.GetUser(context);
+        var (error, user) = await users.GetUser(context);
         if (error is not null)
             return error;
 
-        if (personId is not null && !await db.ValidateCaregiverAsync(user, personId.Value, RightType.View))
+        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.View))
             return TypedResults.Forbid();
 
         var id = personId ?? user.PersonId;
-        var events = await db.GetTable<Data.Models.Event>()
-            .Where(x => x.PersonId == id
-                && x.Type == type
-                && x.Start <= end && start <= x.Stop)
-            .ToListAsync();
 
-        return TypedResults.Ok(events.Select(x => new Event
+        var result = (await events.GetEvents(id, type, start, end))
+        .Select(x => new Event
         {
             Id = x.Id,
             Type = x.Type,
@@ -35,101 +32,79 @@ public static class EventsLogic
             File = x.FileId,
             Start = x.Start,
             Valid = x.Valid,
-        }));
+        });
+
+        return TypedResults.Ok(result);
     }
 
-    public static async Task<IResult> CreateAsync(CreateEvent e, long? personId, IDataContext db, HttpContext context)
+    public static async Task<IResult> CreateAsync(CreateEvent e, long? personId, IUserContext users, IHealthContext events, HttpContext context)
     {
-        var (error, user) = await db.GetUser(context);
+        var (error, user) = await users.GetUser(context);
         if (error is not null)
             return error;
 
-        if (personId is not null && !await db.ValidateCaregiverAsync(user, personId.Value, RightType.Edit))
+        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.Edit))
             return TypedResults.Forbid();
 
-        await db.GetTable<Data.Models.Event>().InsertAsync(() => new Data.Models.Event
-        {
-            PersonId = personId ?? user.PersonId,
-            UserId = user.Id,
-            Type = e.Type,
-            Description = e.Description,
-            Stop = e.Stop,
-            Start = e.Start,
-        });
+        await events.Insert(e, personId ?? user.PersonId, user.Id);
 
         return TypedResults.NoContent();
     }
 
-    public async static Task<IResult> DeleteAsync(long id, IDataContext db, HttpContext context)
+    public async static Task<IResult> DeleteAsync(long id, IUserContext users, IHealthContext events, HttpContext context)
     {
-        var (error, user) = await db.GetUser(context);
+        var (error, user) = await users.GetUser(context);
         if (error is not null)
             return error;
 
-        using var transaction = db.BeginTransaction();
+        await using var transaction = await users.BeginTransactionAsync();
 
-        var existing = await db.GetTable<Data.Models.Event>().FirstOrDefaultAsync(x => x.Id == id);
+        var existing = await events.GetEvent(id);
+
         if (existing is null)
             return TypedResults.NoContent();
 
-        if (user.PersonId != existing.PersonId && !await db.ValidateCaregiverAsync(user, existing.PersonId, RightType.Edit))
+        if (user.PersonId != existing.PersonId && !await users.ValidateCaregiverAsync(user, existing.PersonId, RightType.Edit))
             return TypedResults.Forbid();
 
-        await db.GetTable<Data.Models.Event>().DeleteAsync(x => x.Id == id);
+        await events.DeleteEvent(id);
 
         transaction.Commit();
 
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> GetTypeAsync(bool all, IDataContext db)
+    public static async Task<IResult> GetTypeAsync(bool all, IHealthContext events) => TypedResults.Ok(await events.GetEventTypes(all));
+
+    public static async Task<IResult> CreateTypeAsync(Data.Models.EventType type, IUserContext users, IHealthContext events, HttpContext context)
     {
-        IQueryable<Data.Models.EventType> query = db.GetTable<Data.Models.EventType>();
-
-        if (!all)
-            query = query.Where(x => x.StandAlone);
-
-        return TypedResults.Ok(await query.ToListAsync());
-    }
-
-    public static async Task<IResult> CreateTypeAsync(Data.Models.EventType metric, IDataContext db, HttpContext context)
-    {
-        var admin = await db.IsAdmin(context);
+        var admin = await users.IsAdmin(context);
         if (admin is not null)
             return admin;
 
-        await db.GetTable<Data.Models.EventType>().InsertAsync(() => new Data.Models.EventType
-        {
-            Name = metric.Name,
-            Description = metric.Description,
-            StandAlone = metric.StandAlone,
-        });
+        await events.Insert(type);
 
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> UpdateTypeAsync(Data.Models.EventType metric, IDataContext db, HttpContext context)
+    public static async Task<IResult> UpdateTypeAsync(Data.Models.EventType type, IUserContext users, IHealthContext events, HttpContext context)
     {
-        var admin = await db.IsAdmin(context);
+        var admin = await users.IsAdmin(context);
         if (admin is not null)
             return admin;
 
-        await db.GetTable<Data.Models.EventType>()
-            .Where(x => x.Id == metric.Id)
-            .Set(x => x.Name, metric.Name)
-            .Set(x => x.Description, metric.Description)
-            .UpdateAsync();
+        await events.Update(type);
 
         return TypedResults.NoContent();
     }
 
-    public async static Task<IResult> DeleteTypeAsync(long id, IDataContext db, HttpContext context)
+    public async static Task<IResult> DeleteTypeAsync(long id, IUserContext users, IHealthContext events, HttpContext context)
     {
-        var admin = await db.IsAdmin(context);
+        var admin = await users.IsAdmin(context);
         if (admin is not null)
             return admin;
 
-        await db.GetTable<Data.Models.EventType>().DeleteAsync(x => x.Id == id);
+        await events.DeleteEventType(id);
 
         return TypedResults.NoContent();
     }

@@ -1,19 +1,11 @@
 using Api.Data;
-using Api.Data.Models;
+using Api.Helpers;
 using Api.Helpers.Auth;
 using Api.Models;
-using LinqToDB;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Api.Logic.Auth;
-
-/// <summary>
-/// Data needed to start a connection
-/// </summary>
-/// <param name="User"></param>
-/// <param name="Password"></param>
-public record Connection(string User, string Password, string? Redirect);
 
 public record Status(bool Init, bool ExternalAuth, string? Error, string? Oauth, string? OauthId, bool AutoLogin);
 
@@ -29,16 +21,16 @@ public static class AuthLogic
     /// If false, some steps are missing:
     ///     - Missing first user
     /// </summary>
-    /// <param name="db"></param>
+    /// <param name="settings"></param>
     /// <param name="context"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
-    public static async Task<IResult> StatusAsync(IDataContext db, HttpContext context, ILoggerFactory logger)
+    public static async Task<IResult> StatusAsync(ISettingsContext settings, IUserContext users, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger("Auth");
 
         // check if the server is already init
-        var count = await db.GetTable<User>().CountAsync();
+        var count = await users.Count();
 
         if (count == 0)
         {
@@ -50,7 +42,7 @@ public static class AuthLogic
 
         string? oauthUrl = null;
         string? oauthId = null;
-        var oauth = await db.GetSettings<Oauth>(Oauth.Name);
+        var oauth = await settings.GetSettings<Oauth>(Oauth.Name);
         if (oauth?.Enabled == true)
         {
             oauthUrl = oauth.Url;
@@ -59,10 +51,10 @@ public static class AuthLogic
         else
         {
             // now we check if the user is already auth
-            var proxy = await db.GetSettings<Proxy>(Proxy.Name);
+            var proxy = await settings.GetSettings<Proxy>(Proxy.Name);
             if (proxy?.ProxyAuth == true && proxy.Header is not null)
             {
-                (isAuth, _) = await ProxyAuthLogic.ConnectHeader(db, context, proxy, log);
+                (isAuth, _) = await ProxyAuthHelper.ConnectHeader(users, context, proxy, log);
             }
         }
 
@@ -74,12 +66,12 @@ public static class AuthLogic
     /// Connect and get a token
     /// </summary>
     /// <returns></returns>
-    public static async Task<IResult> AuthAsync(Connection user, IDataContext db, HttpContext context, TokenService token, ILoggerFactory logger)
+    public static async Task<IResult> AuthAsync(Connection user, ISettingsContext settings, IUserContext users, HttpContext context, TokenService token, ILoggerFactory logger)
     {
         var log = logger.CreateLogger("Auth");
 
-        var settings = await db.GetSettings<Proxy>(Proxy.Name);
-        var oauth = await db.GetSettings<Oauth>(Oauth.Name);
+        var proxy = await settings.GetSettings<Proxy>(Proxy.Name);
+        var oauth = await settings.GetSettings<Oauth>(Oauth.Name);
         bool logged = false;
         TokenInfo? fromDb = null;
         bool needNewRefreshToken = true;
@@ -93,7 +85,7 @@ public static class AuthLogic
             if (userNameFromRefreshToken is not null)
             {
                 // the refresh token is valid
-                fromDb = await db.TokenFromDb(userNameFromRefreshToken);
+                fromDb = await users.TokenFromDb(userNameFromRefreshToken);
                 logged = true;
                 needNewRefreshToken = false;
             }
@@ -101,15 +93,15 @@ public static class AuthLogic
         else
         {
             // Unauth call
-            if (settings?.ProxyAuth == true && settings.Header is not null)
+            if (proxy?.ProxyAuth == true && proxy.Header is not null)
             {
                 log.LogInformation("Connexion by header");
-                (logged, fromDb) = await ProxyAuthLogic.ConnectHeader(db, context, settings, log);
+                (logged, fromDb) = await ProxyAuthHelper.ConnectHeader(users, context, proxy, log);
             }
             else if (oauth.Enabled && user.Redirect is not null)
             {
                 log.LogInformation("Logging from oauth using  {redirect}", user.Redirect);
-                (logged, fromDb) = await OauthLogic.ConnectOauth(db, oauth, user, log);
+                (logged, fromDb) = await OauthHelper.ConnectOauth(users, oauth, user, log);
             }
 
             // Custom auth didn't work, fall back on password
@@ -117,7 +109,7 @@ public static class AuthLogic
             {
                 // Fallback on the password if the other means failed
                 log.LogInformation("Connexion by username");
-                (logged, fromDb) = await PasswordLogic.ConnectPassword(user, db, log);
+                (logged, fromDb) = await PasswordHelper.ConnectPassword(user, users, log);
             }
         }
 
@@ -130,77 +122,5 @@ public static class AuthLogic
         var refreshToken = needNewRefreshToken ? token.GetRefreshToken(fromDb, DateTime.UtcNow.AddMinutes(3)) : string.Empty;
 
         return TypedResults.Ok(new TokenResponse(accessToken, refreshToken));
-    }
-
-    /// <summary>
-    /// Check that a user has the given right over someone
-    /// </summary>
-    /// <param name="user"></param>
-    /// <param name="person"></param>
-    /// <param name="type"></param>
-    /// <param name="time"></param>
-    /// <param name="db"></param>
-    /// <returns></returns>
-    public async static Task<Api.Models.Right?> HasRightAsync(long user, long person, RightType type, DateTime time, IDataContext db)
-     => (await db.GetTable<Data.Models.Right>()
-        .Where(x => x.UserId == user
-            && x.PersonId == person
-            && x.Type == (int)type
-            && x.Start <= time
-            && (x.Stop == null || x.Stop >= time))
-        .FirstOrDefaultAsync())?.FromDb();
-
-    /// <summary>
-    /// Validate that the user is a caregiver with the correct right
-    /// </summary>
-    /// <param name="db"></param>
-    /// <param name="user"></param>
-    /// <param name="personId"></param>
-    /// <param name="type"></param>
-    /// <returns></returns>
-    internal static async Task<bool> ValidateCaregiverAsync(this IDataContext db, Data.Models.User user, long personId, RightType type)
-    {
-        var now = DateTime.UtcNow;
-        // check if the user has the right 
-        var right = await HasRightAsync(user.Id, personId, type, now, db);
-        return right is not null;
-    }
-
-    internal static async Task<IResult?> IsAdmin(this IDataContext db, HttpContext context)
-    {
-        var (error, user) = await db.GetUser(context);
-        if (error is not null)
-            return error;
-
-        if (user.Type != (int)Models.UserType.Admin)
-            return TypedResults.Forbid();
-
-        return null;
-    }
-
-    internal static async Task<(IResult?, User)> GetUser(this IDataContext db, HttpContext context)
-    {
-        // get the connected user
-        var userName = context.User.GetUser();
-
-        var user = await db.GetTable<Data.Models.User>().FirstOrDefaultAsync(x => x.Identifier == userName);
-        if (user is null)
-            return (TypedResults.Unauthorized(), User.Empty);
-
-        return (null, user);
-    }
-
-    public static async Task<TokenInfo?> TokenFromDb(this IDataContext db, string user)
-    {
-        var fromDb = await (from u in db.GetTable<User>()
-                            join p in db.GetTable<Data.Models.Person>() on u.PersonId equals p.Id
-                            where u.Identifier == user
-                            select new { u, p })
-                                 .FirstOrDefaultAsync();
-        if (fromDb is null)
-            return null;
-
-        return new TokenInfo(fromDb.u.Id, fromDb.u.Type.ToString(),
-         fromDb.u.Identifier, fromDb.u.Password, fromDb.p.Surname, fromDb.p.Name, fromDb.u.Email);
     }
 }

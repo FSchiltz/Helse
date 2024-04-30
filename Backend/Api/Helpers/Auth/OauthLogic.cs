@@ -3,13 +3,11 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text.Json;
 using Api.Data;
-using Api.Helpers.Auth;
 using Api.Models;
-using LinqToDB;
 
-namespace Api.Logic.Auth;
+namespace Api.Helpers.Auth;
 
-public static class OauthLogic
+public static class OauthHelper
 {
     private static readonly JsonSerializerOptions _options = new()
     {
@@ -22,7 +20,7 @@ public static class OauthLogic
         public string? Access_token { get; set; }
     }
 
-    public static async Task<(bool logged, TokenInfo? fromDb)> ConnectOauth(IDataContext db, Oauth oauth, Connection user, ILogger log)
+    public static async Task<(bool logged, TokenInfo? fromDb)> ConnectOauth(IUserContext db, Oauth oauth, Connection user, ILogger log)
     {
         var token = await oauth.GetOauthTokenAsync(user);
 

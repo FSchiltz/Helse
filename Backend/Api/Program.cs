@@ -5,6 +5,7 @@ using Api.Helpers.Auth;
 using LinqToDB;
 using LinqToDB.AspNet;
 using LinqToDB.AspNet.Logging;
+using LinqToDB.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
@@ -56,7 +57,7 @@ builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 
 var connection = builder.Configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("Database configuration missing");
 
-builder.Services.AddLinqToDB((provider, options)
+builder.Services.AddLinqToDBContext<DataConnection>((provider, options)
             => options
                 .UsePostgreSQL(connection, LinqToDB.DataProvider.PostgreSQL.PostgreSQLVersion.v15, (x) => new()
                 {
@@ -71,6 +72,9 @@ var keyConfig = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationEx
 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyConfig));
 
 builder.Services.AddSingleton(new TokenService(issuer, audience, key));
+builder.Services.AddTransient<IUserContext, UserContext>();
+builder.Services.AddTransient<ISettingsContext, SettingsContext>();
+builder.Services.AddTransient<IHealthContext, HealthContext>();
 
 builder.Services.AddAuthentication(options =>
   {

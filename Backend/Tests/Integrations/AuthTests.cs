@@ -1,6 +1,4 @@
-using Api.Data;
 using Microsoft.AspNetCore.Mvc.Testing;
-using LinqToDB.AspNet;
 using System.Net;
 
 namespace Tests.Integrations;
@@ -8,11 +6,15 @@ namespace Tests.Integrations;
 public class AuthTests(WebApplicationFactory<Program> factory) : IntegrationTest(factory)
 {
     [Theory]
-    [InlineData("/admin/oauth")]
-    [InlineData("/admin/proxy")]
-    [InlineData("/person")]
-    [InlineData("/events")]
-    [InlineData("/import/types")]
+    [InlineData("/api/admin/settings/oauth")]
+    [InlineData("/api/admin/settings/proxy")]
+    [InlineData("/api/person")]
+    [InlineData("/api/events")]
+    [InlineData("/api/events/type")]
+    [InlineData("/api/metrics/")]
+    [InlineData("/api/metrics/type")]
+    [InlineData("/api/treatment/")]
+    [InlineData("/api/import/types")]
     public async Task Get_NoPassword(string url)
     {
         var response = await _client.GetAsync(url);

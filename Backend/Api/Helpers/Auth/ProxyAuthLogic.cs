@@ -2,13 +2,12 @@ using System.Security.Cryptography;
 using Api.Data;
 using Api.Helpers.Auth;
 using Api.Models;
-using LinqToDB;
 
-namespace Api.Logic.Auth;
+namespace Api.Helpers.Auth;
 
-public static class ProxyAuthLogic
+public static class ProxyAuthHelper
 {
-    public static async Task<(bool, TokenInfo?)> ConnectHeader(IDataContext db, HttpContext context, Proxy settings, ILogger log)
+    public static async Task<(bool, TokenInfo?)> ConnectHeader(IUserContext db, HttpContext context, Proxy settings, ILogger log)
     {
         if (settings.Header is null)
         {

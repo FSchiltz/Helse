@@ -18,9 +18,9 @@ public static class ImportLogic
     public static IResult GetTypeAsync()
       => TypedResults.Ok(Enum.GetValues<FileTypes>().Select(x => new FileType((int)x, Helper.DescriptionAttr(x))));
 
-    public static async Task<IResult> PostFileAsync([FromBody] string file, int type, IDataContext db, HttpContext context)
+    public static async Task<IResult> PostFileAsync([FromBody] string file, int type, IUserContext users, IHealthContext db, HttpContext context)
     {
-        var (error, user) = await db.GetUser(context);
+        var (error, user) = await users.GetUser(context);
         if (error is not null)
             return error;
 

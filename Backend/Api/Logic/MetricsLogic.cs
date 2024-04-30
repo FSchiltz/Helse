@@ -1,4 +1,5 @@
 using Api.Data;
+using Api.Helpers;
 using Api.Logic.Auth;
 using Api.Models;
 using LinqToDB;
@@ -10,21 +11,17 @@ namespace Api.Logic;
 /// </summary>
 public static class MetricsLogic
 {
-    public async static Task<IResult> GetAsync(int type, DateTime start, DateTime end, long? personId, IDataContext db, HttpContext context)
+    public async static Task<IResult> GetAsync(int type, DateTime start, DateTime end, long? personId, IUserContext users, IHealthContext db, HttpContext context)
     {
-        var (error, user) = await db.GetUser(context);
+        var (error, user) = await users.GetUser(context);
         if (error is not null)
             return error;
 
-        if (personId is not null && !await db.ValidateCaregiverAsync(user, personId.Value, RightType.View))
+        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.View))
             return TypedResults.Forbid();
 
         var id = personId ?? user.PersonId;
-        var metrics = await db.GetTable<Data.Models.Metric>()
-            .Where(x => x.PersonId == id
-                && x.Type == type
-                && x.Date <= end && x.Date >= start)
-            .ToListAsync();
+        var metrics = await db.GetMetrics(id, type, start, end);
 
         return TypedResults.Ok(metrics.Select(x => new Metric
         {
@@ -38,92 +35,75 @@ public static class MetricsLogic
         }));
     }
 
-    public static async Task<IResult> CreateAsync(CreateMetric metric, long? personId, IDataContext db, HttpContext context)
+    public static async Task<IResult> CreateAsync(CreateMetric metric, long? personId, IUserContext users, IHealthContext db, HttpContext context)
     {
-        var (error, user) = await db.GetUser(context);
+        var (error, user) = await users.GetUser(context);
         if (error is not null)
             return error;
 
-        if (personId is not null && !await db.ValidateCaregiverAsync(user, personId.Value, RightType.Edit))
+        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.Edit))
             return TypedResults.Forbid();
 
-        await db.GetTable<Data.Models.Metric>().InsertAsync(() => new Data.Models.Metric
-        {
-            PersonId = personId ?? user.PersonId,
-            Value = metric.Value,
-            Date = metric.Date,
-            Tag = metric.Tag,
-            UserId = user.Id,
-            Type = metric.Type,
-        });
+        await db.Insert(metric, personId ?? user.PersonId, user.Id);
 
         return TypedResults.NoContent();
     }
 
-    public async static Task<IResult> DeleteAsync(long id, IDataContext db, HttpContext context)
+    public async static Task<IResult> DeleteAsync(long id, IUserContext users, IHealthContext db, HttpContext context)
     {
-        var (error, user) = await db.GetUser(context);
+        var (error, user) = await users.GetUser(context);
         if (error is not null)
             return error;
 
-        using var transaction = db.BeginTransaction();
+        await using var transaction = await db.BeginTransactionAsync();
 
-        var existing = await db.GetTable<Data.Models.Metric>().FirstOrDefaultAsync(x => x.Id == id);
+        var existing = await db.GetMetric(id);
         if (existing is null)
             return TypedResults.NoContent();
 
-        if (user.PersonId != existing.PersonId && !await db.ValidateCaregiverAsync(user, existing.PersonId, RightType.Edit))
+        if (user.PersonId != existing.PersonId && !await users.ValidateCaregiverAsync(user, existing.PersonId, RightType.Edit))
             return TypedResults.Forbid();
 
-        await db.GetTable<Data.Models.Metric>().DeleteAsync(x => x.Id == id);
+        await db.DeleteMetric(id);
 
         transaction.Commit();
 
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> GetTypeAsync(IDataContext db)
-        => TypedResults.Ok(await db.GetTable<Data.Models.MetricType>().ToListAsync());
+    public static async Task<IResult> GetTypeAsync(IHealthContext db) => TypedResults.Ok(await db.GetMetricTypes());
 
-    public static async Task<IResult> CreateTypeAsync(Data.Models.MetricType metric, IDataContext db, HttpContext context)
+    public static async Task<IResult> CreateTypeAsync(Data.Models.MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
     {
-        var admin = await db.IsAdmin(context);
+        var admin = await users.IsAdmin(context);
         if (admin is not null)
             return admin;
 
-        await db.GetTable<Data.Models.MetricType>().InsertAsync(() => new Data.Models.MetricType
-        {
-            Name = metric.Name,
-            Description = metric.Description,
-            Unit = metric.Unit,
-        });
+        await db.Insert(metric);
 
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> UpdateTypeAsync(Data.Models.MetricType metric, IDataContext db, HttpContext context)
+    public static async Task<IResult> UpdateTypeAsync(Data.Models.MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
     {
-        var admin = await db.IsAdmin(context);
+        var admin = await users.IsAdmin(context);
         if (admin is not null)
             return admin;
 
-        await db.GetTable<Data.Models.MetricType>()
-            .Where(x => x.Id == metric.Id)
-            .Set(x => x.Name, metric.Name)
-            .Set(x => x.Description, metric.Description)
-            .Set(x => x.Unit, metric.Unit)
-            .UpdateAsync();
+        await db.Update(metric);
+
+
 
         return TypedResults.NoContent();
     }
 
-    public async static Task<IResult> DeleteTypeAsync(long id, IDataContext db, HttpContext context)
+    public async static Task<IResult> DeleteTypeAsync(long id, IUserContext users, IHealthContext db, HttpContext context)
     {
-        var admin = await db.IsAdmin(context);
+        var admin = await users.IsAdmin(context);
         if (admin is not null)
             return admin;
 
-        await db.GetTable<Data.Models.MetricType>().DeleteAsync(x => x.Id == id);
+        await db.DeleteMetricType(id);
 
         return TypedResults.NoContent();
     }
