@@ -59,7 +59,7 @@ class _LoginState extends State<LoginPage> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      Text("Welcome ${_initStatus == true ? "Back" : ""}", style: Theme.of(context).textTheme.headlineLarge),
+                      Text("Welcome ${_initStatus?.init == true ? "Back" : ""}", style: Theme.of(context).textTheme.headlineLarge),
                       const SizedBox(height: 20),
                       TextField(
                         controller: textController,
