@@ -51,6 +51,7 @@ dependencies:
   oauth2: ^2.0.2
   universal_html: ^2.2.4
   http: ^1.2.1
+  collection: ^1.18.0
 
 dev_dependencies:
   flutter_test:
