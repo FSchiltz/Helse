@@ -33,7 +33,7 @@ class DI {
   static SettingsLogic? settings;
 
   static void init({required void Function() callback}) {
-    var account = Account();
+    var account = Account(callback: callback);
     authService = OauthClient(account);
     authentication = AuthenticationLogic(account);
     metric = MetricService(account);

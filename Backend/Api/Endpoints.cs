@@ -13,7 +13,7 @@ public static class Endpoints
         api.MapPost("/auth", AuthLogic.AuthAsync)
         .AllowAnonymous()
         .WithDescription("Get a connection token")
-        .Produces<string>((int)HttpStatusCode.OK)
+        .Produces<TokenResponse>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
 

@@ -5,57 +5,31 @@ class Account {
   final storage = SharedPreferences.getInstance();
   final void Function()? callback;
 
-  final _url = "urlPath";
-  final _token = "sessionToken";
-  final _grant = "grant";
-  final _redirect = "redirect";
+  static const url = "urlPath";
+  static const token = "sessionToken";
+  static const grant = "grant";
+  static const redirect = "redirect";
+  static const refresh = "refresh";
 
   Account({this.callback});
 
-  Future<String?> getUrl() async {
-    return (await storage).getString(_url);
-  }
-
-  Future<void> setUrl(String url) async {
-    await (await storage).setString(_url, url);
-  }
-
-  Future<String?> getToken() async {
-    return (await storage).getString(_token);
-  }
-
-  Future<void> setToken(String token) async {
-    await (await storage).setString(_token, token);
-  }
-
-  Future<void> removeToken() async {
-    await (await storage).remove(_token);
+  Future<void> clear() async {
+    await (await storage).remove(token);
+    await (await storage).remove(grant);
+    await (await storage).remove(grant);
 
     callback?.call();
   }
 
-  Future<String?> getGrant() async {
-    return (await storage).getString(_grant);
+  Future<String?> get(String name) async {
+    return (await storage).getString(name);
   }
 
-  Future<void> setGrant(String grant) async {
-    await (await storage).setString(_grant, grant);
+  Future<void> set(String name, String value) async {
+    await (await storage).setString(name, value);
   }
 
-    Future<void> removeGrant() async {
-    await (await storage).remove(_grant);
+  Future<void> remove(String name) async {
+    await (await storage).remove(name);
   }
-
-  Future<String?> getRedirect() async {
-    return (await storage).getString(_redirect);
-  }
-
-  Future<void> setRedirect(String redirect) async {
-    await (await storage).setString(_redirect, redirect);
-  }
-
-    Future<void> removeRedirect() async {
-    await (await storage).remove(_redirect);
-  }
-
 }

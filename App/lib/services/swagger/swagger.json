@@ -27,7 +27,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/TokenResponse"
                 }
               }
             }
@@ -67,6 +67,7 @@
           {
             "name": "type",
             "in": "query",
+            "required": true,
             "style": "form",
             "schema": {
               "type": "integer",
@@ -1009,6 +1010,10 @@
           "stop": {
             "type": "string",
             "format": "date-time"
+          },
+          "tag": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1071,6 +1076,10 @@
           "stop": {
             "type": "string",
             "format": "date-time"
+          },
+          "tag": {
+            "type": "string",
+            "nullable": true
           },
           "user": {
             "type": "integer",
@@ -1408,6 +1417,20 @@
           },
           "autoLogin": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TokenResponse": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "refreshToken": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
