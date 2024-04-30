@@ -27,6 +27,7 @@ CreateEvent _$CreateEventFromJson(Map<String, dynamic> json) => CreateEvent(
           : DateTime.parse(json['start'] as String),
       stop:
           json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
+      tag: json['tag'] as String?,
     );
 
 Map<String, dynamic> _$CreateEventToJson(CreateEvent instance) =>
@@ -35,6 +36,7 @@ Map<String, dynamic> _$CreateEventToJson(CreateEvent instance) =>
       'description': instance.description,
       'start': instance.start?.toIso8601String(),
       'stop': instance.stop?.toIso8601String(),
+      'tag': instance.tag,
     };
 
 CreateMetric _$CreateMetricFromJson(Map<String, dynamic> json) => CreateMetric(
@@ -76,6 +78,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
           : DateTime.parse(json['start'] as String),
       stop:
           json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
+      tag: json['tag'] as String?,
       user: (json['user'] as num?)?.toInt(),
       file: (json['file'] as num?)?.toInt(),
       treatment: (json['treatment'] as num?)?.toInt(),
@@ -90,6 +93,7 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'description': instance.description,
       'start': instance.start?.toIso8601String(),
       'stop': instance.stop?.toIso8601String(),
+      'tag': instance.tag,
       'user': instance.user,
       'file': instance.file,
       'treatment': instance.treatment,
@@ -292,6 +296,18 @@ Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
       'oauth': instance.oauth,
       'oauthId': instance.oauthId,
       'autoLogin': instance.autoLogin,
+    };
+
+TokenResponse _$TokenResponseFromJson(Map<String, dynamic> json) =>
+    TokenResponse(
+      accessToken: json['accessToken'] as String?,
+      refreshToken: json['refreshToken'] as String?,
+    );
+
+Map<String, dynamic> _$TokenResponseToJson(TokenResponse instance) =>
+    <String, dynamic>{
+      'accessToken': instance.accessToken,
+      'refreshToken': instance.refreshToken,
     };
 
 Treatement _$TreatementFromJson(Map<String, dynamic> json) => Treatement(

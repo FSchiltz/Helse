@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../logic/event.dart';
 import '../main.dart';
-import '../services/account.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';
 import 'blocs/administration/users/user_form.dart';
 import 'blocs/loader.dart';
@@ -203,7 +202,7 @@ class _LoginState extends State<LoginPage> {
   Future<void> _initUrl() async {
     DI.authentication?.checkLogin();
     // We first try to get it from storage
-    var url = await Account().getUrl();
+    var url = await DI.authentication?.getUrl();
 
     // if not in storage, we can try to get it from the current url on the web
     if (url == null && kIsWeb) {

@@ -18,7 +18,7 @@ final class _$Swagger extends Swagger {
   final Type definitionType = Swagger;
 
   @override
-  Future<Response<String>> _apiAuthPost({required Connection? body}) {
+  Future<Response<TokenResponse>> _apiAuthPost({required Connection? body}) {
     final Uri $url = Uri.parse('/api/auth');
     final $body = body;
     final Request $request = Request(
@@ -27,7 +27,7 @@ final class _$Swagger extends Swagger {
       client.baseUrl,
       body: $body,
     );
-    return client.send<String, String>($request);
+    return client.send<TokenResponse, TokenResponse>($request);
   }
 
   @override
@@ -43,7 +43,7 @@ final class _$Swagger extends Swagger {
 
   @override
   Future<Response<List<Event>>> _apiEventsGet({
-    int? type,
+    required int? type,
     required DateTime? start,
     required DateTime? end,
     int? personId,

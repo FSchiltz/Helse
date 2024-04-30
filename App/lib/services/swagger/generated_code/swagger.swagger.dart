@@ -47,7 +47,11 @@ abstract class Swagger extends ChopperService {
   }
 
   ///
-  Future<chopper.Response<String>> apiAuthPost({required Connection? body}) {
+  Future<chopper.Response<TokenResponse>> apiAuthPost(
+      {required Connection? body}) {
+    generatedMapping.putIfAbsent(
+        TokenResponse, () => TokenResponse.fromJsonFactory);
+
     return _apiAuthPost(body: body);
   }
 
@@ -56,7 +60,7 @@ abstract class Swagger extends ChopperService {
     path: '/api/auth',
     optionalBody: true,
   )
-  Future<chopper.Response<String>> _apiAuthPost(
+  Future<chopper.Response<TokenResponse>> _apiAuthPost(
       {@Body() required Connection? body});
 
   ///
@@ -76,7 +80,7 @@ abstract class Swagger extends ChopperService {
   ///@param end
   ///@param personId
   Future<chopper.Response<List<Event>>> apiEventsGet({
-    int? type,
+    required int? type,
     required DateTime? start,
     required DateTime? end,
     int? personId,
@@ -94,7 +98,7 @@ abstract class Swagger extends ChopperService {
   ///@param personId
   @Get(path: '/api/events')
   Future<chopper.Response<List<Event>>> _apiEventsGet({
-    @Query('type') int? type,
+    @Query('type') required int? type,
     @Query('start') required DateTime? start,
     @Query('end') required DateTime? end,
     @Query('personId') int? personId,
@@ -594,6 +598,7 @@ class CreateEvent {
     this.description,
     this.start,
     this.stop,
+    this.tag,
   });
 
   factory CreateEvent.fromJson(Map<String, dynamic> json) =>
@@ -610,6 +615,8 @@ class CreateEvent {
   final DateTime? start;
   @JsonKey(name: 'stop')
   final DateTime? stop;
+  @JsonKey(name: 'tag')
+  final String? tag;
   static const fromJsonFactory = _$CreateEventFromJson;
 
   @override
@@ -624,7 +631,9 @@ class CreateEvent {
             (identical(other.start, start) ||
                 const DeepCollectionEquality().equals(other.start, start)) &&
             (identical(other.stop, stop) ||
-                const DeepCollectionEquality().equals(other.stop, stop)));
+                const DeepCollectionEquality().equals(other.stop, stop)) &&
+            (identical(other.tag, tag) ||
+                const DeepCollectionEquality().equals(other.tag, tag)));
   }
 
   @override
@@ -636,30 +645,38 @@ class CreateEvent {
       const DeepCollectionEquality().hash(description) ^
       const DeepCollectionEquality().hash(start) ^
       const DeepCollectionEquality().hash(stop) ^
+      const DeepCollectionEquality().hash(tag) ^
       runtimeType.hashCode;
 }
 
 extension $CreateEventExtension on CreateEvent {
   CreateEvent copyWith(
-      {int? type, String? description, DateTime? start, DateTime? stop}) {
+      {int? type,
+      String? description,
+      DateTime? start,
+      DateTime? stop,
+      String? tag}) {
     return CreateEvent(
         type: type ?? this.type,
         description: description ?? this.description,
         start: start ?? this.start,
-        stop: stop ?? this.stop);
+        stop: stop ?? this.stop,
+        tag: tag ?? this.tag);
   }
 
   CreateEvent copyWithWrapped(
       {Wrapped<int?>? type,
       Wrapped<String?>? description,
       Wrapped<DateTime?>? start,
-      Wrapped<DateTime?>? stop}) {
+      Wrapped<DateTime?>? stop,
+      Wrapped<String?>? tag}) {
     return CreateEvent(
         type: (type != null ? type.value : this.type),
         description:
             (description != null ? description.value : this.description),
         start: (start != null ? start.value : this.start),
-        stop: (stop != null ? stop.value : this.stop));
+        stop: (stop != null ? stop.value : this.stop),
+        tag: (tag != null ? tag.value : this.tag));
   }
 }
 
@@ -798,6 +815,7 @@ class Event {
     this.description,
     this.start,
     this.stop,
+    this.tag,
     this.user,
     this.file,
     this.treatment,
@@ -820,6 +838,8 @@ class Event {
   final DateTime? start;
   @JsonKey(name: 'stop')
   final DateTime? stop;
+  @JsonKey(name: 'tag')
+  final String? tag;
   @JsonKey(name: 'user')
   final int? user;
   @JsonKey(name: 'file')
@@ -849,6 +869,8 @@ class Event {
                 const DeepCollectionEquality().equals(other.start, start)) &&
             (identical(other.stop, stop) ||
                 const DeepCollectionEquality().equals(other.stop, stop)) &&
+            (identical(other.tag, tag) ||
+                const DeepCollectionEquality().equals(other.tag, tag)) &&
             (identical(other.user, user) ||
                 const DeepCollectionEquality().equals(other.user, user)) &&
             (identical(other.file, file) ||
@@ -875,6 +897,7 @@ class Event {
       const DeepCollectionEquality().hash(description) ^
       const DeepCollectionEquality().hash(start) ^
       const DeepCollectionEquality().hash(stop) ^
+      const DeepCollectionEquality().hash(tag) ^
       const DeepCollectionEquality().hash(user) ^
       const DeepCollectionEquality().hash(file) ^
       const DeepCollectionEquality().hash(treatment) ^
@@ -891,6 +914,7 @@ extension $EventExtension on Event {
       String? description,
       DateTime? start,
       DateTime? stop,
+      String? tag,
       int? user,
       int? file,
       int? treatment,
@@ -903,6 +927,7 @@ extension $EventExtension on Event {
         description: description ?? this.description,
         start: start ?? this.start,
         stop: stop ?? this.stop,
+        tag: tag ?? this.tag,
         user: user ?? this.user,
         file: file ?? this.file,
         treatment: treatment ?? this.treatment,
@@ -917,6 +942,7 @@ extension $EventExtension on Event {
       Wrapped<String?>? description,
       Wrapped<DateTime?>? start,
       Wrapped<DateTime?>? stop,
+      Wrapped<String?>? tag,
       Wrapped<int?>? user,
       Wrapped<int?>? file,
       Wrapped<int?>? treatment,
@@ -930,6 +956,7 @@ extension $EventExtension on Event {
             (description != null ? description.value : this.description),
         start: (start != null ? start.value : this.start),
         stop: (stop != null ? stop.value : this.stop),
+        tag: (tag != null ? tag.value : this.tag),
         user: (user != null ? user.value : this.user),
         file: (file != null ? file.value : this.file),
         treatment: (treatment != null ? treatment.value : this.treatment),
@@ -1917,6 +1944,64 @@ extension $StatusExtension on Status {
         oauth: (oauth != null ? oauth.value : this.oauth),
         oauthId: (oauthId != null ? oauthId.value : this.oauthId),
         autoLogin: (autoLogin != null ? autoLogin.value : this.autoLogin));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class TokenResponse {
+  const TokenResponse({
+    this.accessToken,
+    this.refreshToken,
+  });
+
+  factory TokenResponse.fromJson(Map<String, dynamic> json) =>
+      _$TokenResponseFromJson(json);
+
+  static const toJsonFactory = _$TokenResponseToJson;
+  Map<String, dynamic> toJson() => _$TokenResponseToJson(this);
+
+  @JsonKey(name: 'accessToken')
+  final String? accessToken;
+  @JsonKey(name: 'refreshToken')
+  final String? refreshToken;
+  static const fromJsonFactory = _$TokenResponseFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is TokenResponse &&
+            (identical(other.accessToken, accessToken) ||
+                const DeepCollectionEquality()
+                    .equals(other.accessToken, accessToken)) &&
+            (identical(other.refreshToken, refreshToken) ||
+                const DeepCollectionEquality()
+                    .equals(other.refreshToken, refreshToken)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(accessToken) ^
+      const DeepCollectionEquality().hash(refreshToken) ^
+      runtimeType.hashCode;
+}
+
+extension $TokenResponseExtension on TokenResponse {
+  TokenResponse copyWith({String? accessToken, String? refreshToken}) {
+    return TokenResponse(
+        accessToken: accessToken ?? this.accessToken,
+        refreshToken: refreshToken ?? this.refreshToken);
+  }
+
+  TokenResponse copyWithWrapped(
+      {Wrapped<String?>? accessToken, Wrapped<String?>? refreshToken}) {
+    return TokenResponse(
+        accessToken:
+            (accessToken != null ? accessToken.value : this.accessToken),
+        refreshToken:
+            (refreshToken != null ? refreshToken.value : this.refreshToken));
   }
 }
 

@@ -40,14 +40,14 @@ class OauthClient {
   }
 
   Future<String?> login(url) async {
-    await account.setUrl(url);
+    await account.set(Account.url, url);
 
-    var grant = await account.getGrant();
+    var grant = await account.get(Account.grant);
     if (grant == null) {
       var redirect = redirectUrl.toString();
       final authUrl = '$_auth?client_id=$_clientId&response_type=code&scope=openid+profile+offline_access&state=STATE&redirect_uri=$redirect';
 
-      await account.setRedirect(redirect);
+      await account.set(Account.redirect, redirect);
 
       if (kIsWeb) {
         window.location.assign(authUrl);
@@ -68,6 +68,6 @@ class OauthClient {
 
   Future<void> doAuthOnWeb(Map<String, String> uri) async {
     var code = uri['code'] ?? '';
-    await account.setGrant(code);
+    await account.set(Account.grant, code);
   }
 }

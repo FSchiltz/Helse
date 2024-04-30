@@ -118,8 +118,8 @@ public static class AuthLogic
 
         log.LogDebug("Connexion validated");
 
-        var accessToken = token.GetAccessToken(fromDb, DateTime.UtcNow.AddSeconds(30));
-        var refreshToken = needNewRefreshToken ? token.GetRefreshToken(fromDb, DateTime.UtcNow.AddMinutes(3)) : string.Empty;
+        var accessToken = token.GetAccessToken(fromDb, DateTime.UtcNow.AddMinutes(1));
+        var refreshToken = needNewRefreshToken ? token.GetRefreshToken(fromDb, DateTime.UtcNow.AddDays(30)) : string.Empty;
 
         return TypedResults.Ok(new TokenResponse(accessToken, refreshToken));
     }
