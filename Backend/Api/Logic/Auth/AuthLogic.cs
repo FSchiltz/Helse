@@ -33,7 +33,7 @@ public static class AuthLogic
     /// <param name="context"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
-    public static async Task<IResult> StatusAsync(AppDataConnection db, HttpContext context, ILoggerFactory logger)
+    public static async Task<IResult> StatusAsync(IDataContext db, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger("Auth");
 
@@ -74,7 +74,7 @@ public static class AuthLogic
     /// Connect and get a token
     /// </summary>
     /// <returns></returns>
-    public static async Task<IResult> AuthAsync(Connection user, AppDataConnection db, HttpContext context, TokenService token, ILoggerFactory logger)
+    public static async Task<IResult> AuthAsync(Connection user, IDataContext db, HttpContext context, TokenService token, ILoggerFactory logger)
     {
         var log = logger.CreateLogger("Auth");
 
@@ -101,7 +101,6 @@ public static class AuthLogic
         else
         {
             // Unauth call
-
             if (settings?.ProxyAuth == true && settings.Header is not null)
             {
                 log.LogInformation("Connexion by header");
@@ -142,7 +141,7 @@ public static class AuthLogic
     /// <param name="time"></param>
     /// <param name="db"></param>
     /// <returns></returns>
-    public async static Task<Api.Models.Right?> HasRightAsync(long user, long person, RightType type, DateTime time, AppDataConnection db)
+    public async static Task<Api.Models.Right?> HasRightAsync(long user, long person, RightType type, DateTime time, IDataContext db)
      => (await db.GetTable<Data.Models.Right>()
         .Where(x => x.UserId == user
             && x.PersonId == person
@@ -159,7 +158,7 @@ public static class AuthLogic
     /// <param name="personId"></param>
     /// <param name="type"></param>
     /// <returns></returns>
-    internal static async Task<bool> ValidateCaregiverAsync(this AppDataConnection db, Data.Models.User user, long personId, RightType type)
+    internal static async Task<bool> ValidateCaregiverAsync(this IDataContext db, Data.Models.User user, long personId, RightType type)
     {
         var now = DateTime.UtcNow;
         // check if the user has the right 
@@ -167,7 +166,7 @@ public static class AuthLogic
         return right is not null;
     }
 
-    internal static async Task<IResult?> IsAdmin(this AppDataConnection db, HttpContext context)
+    internal static async Task<IResult?> IsAdmin(this IDataContext db, HttpContext context)
     {
         var (error, user) = await db.GetUser(context);
         if (error is not null)
@@ -179,7 +178,7 @@ public static class AuthLogic
         return null;
     }
 
-    internal static async Task<(IResult?, User)> GetUser(this AppDataConnection db, HttpContext context)
+    internal static async Task<(IResult?, User)> GetUser(this IDataContext db, HttpContext context)
     {
         // get the connected user
         var userName = context.User.GetUser();
@@ -191,7 +190,7 @@ public static class AuthLogic
         return (null, user);
     }
 
-    public static async Task<TokenInfo?> TokenFromDb(this AppDataConnection db, string user)
+    public static async Task<TokenInfo?> TokenFromDb(this IDataContext db, string user)
     {
         var fromDb = await (from u in db.GetTable<User>()
                             join p in db.GetTable<Data.Models.Person>() on u.PersonId equals p.Id

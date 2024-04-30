@@ -4,11 +4,12 @@ using Api.Data.Models;
 using Api.Logic.Import.Redmi;
 using Api.Models;
 using CsvHelper;
+using LinqToDB;
 using Newtonsoft.Json;
 
 namespace Api.Logic.Import;
 
-public class RedmiWatch(string file, AppDataConnection dataConnection, Data.Models.User user) : FileImporter(file, dataConnection, user)
+public class RedmiWatch(string file, IDataContext dataConnection, Data.Models.User user) : FileImporter(file, dataConnection, user)
 {
     private const string MaxSpo = "max_spo2";
     private const string MinSpo = "min_spo2";

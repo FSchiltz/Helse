@@ -10,7 +10,7 @@ namespace Api.Logic;
 /// </summary>
 public static class MetricsLogic
 {
-    public async static Task<IResult> GetAsync(int type, DateTime start, DateTime end, long? personId, AppDataConnection db, HttpContext context)
+    public async static Task<IResult> GetAsync(int type, DateTime start, DateTime end, long? personId, IDataContext db, HttpContext context)
     {
         var (error, user) = await db.GetUser(context);
         if (error is not null)
@@ -38,7 +38,7 @@ public static class MetricsLogic
         }));
     }
 
-    public static async Task<IResult> CreateAsync(CreateMetric metric, long? personId, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> CreateAsync(CreateMetric metric, long? personId, IDataContext db, HttpContext context)
     {
         var (error, user) = await db.GetUser(context);
         if (error is not null)
@@ -60,7 +60,7 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public async static Task<IResult> DeleteAsync(long id, AppDataConnection db, HttpContext context)
+    public async static Task<IResult> DeleteAsync(long id, IDataContext db, HttpContext context)
     {
         var (error, user) = await db.GetUser(context);
         if (error is not null)
@@ -82,10 +82,10 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> GetTypeAsync(AppDataConnection db)
+    public static async Task<IResult> GetTypeAsync(IDataContext db)
         => TypedResults.Ok(await db.GetTable<Data.Models.MetricType>().ToListAsync());
 
-    public static async Task<IResult> CreateTypeAsync(Data.Models.MetricType metric, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> CreateTypeAsync(Data.Models.MetricType metric, IDataContext db, HttpContext context)
     {
         var admin = await db.IsAdmin(context);
         if (admin is not null)
@@ -101,7 +101,7 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> UpdateTypeAsync(Data.Models.MetricType metric, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> UpdateTypeAsync(Data.Models.MetricType metric, IDataContext db, HttpContext context)
     {
         var admin = await db.IsAdmin(context);
         if (admin is not null)
@@ -117,7 +117,7 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public async static Task<IResult> DeleteTypeAsync(long id, AppDataConnection db, HttpContext context)
+    public async static Task<IResult> DeleteTypeAsync(long id, IDataContext db, HttpContext context)
     {
         var admin = await db.IsAdmin(context);
         if (admin is not null)

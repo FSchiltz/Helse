@@ -22,7 +22,7 @@ public static class PersonLogic
     /// <param name="db"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static async Task<IResult> GetAsync(AppDataConnection db, HttpContext context)
+    public static async Task<IResult> GetAsync(IDataContext db, HttpContext context)
     {
         var admin = await db.IsAdmin(context);
         if (admin is not null)
@@ -78,7 +78,7 @@ public static class PersonLogic
     /// <param name="db"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static async Task<IResult> SetRight(long personId, List<Models.Right> rights, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> SetRight(long personId, List<Models.Right> rights, IDataContext db, HttpContext context)
     {
         var admin = await db.IsAdmin(context);
         if (admin is not null)
@@ -132,7 +132,7 @@ public static class PersonLogic
     /// Only admin role unless no user exists (App setup) or caregiver if the new person is only a patient(no connection)
     /// </summary>
     /// <returns></returns>
-    public static async Task<IResult> CreateAsync(Models.PersonCreation newUser, AppDataConnection db, HttpContext context, ILoggerFactory logger)
+    public static async Task<IResult> CreateAsync(Models.PersonCreation newUser, IDataContext db, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger(nameof(PersonLogic));
 
@@ -177,7 +177,7 @@ public static class PersonLogic
     /// <param name="role"></param>
     /// <param name="db"></param>
     /// <returns></returns>
-    public static async Task<IResult> SetPersonRole(long personId, UserType role, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> SetPersonRole(long personId, UserType role, IDataContext db, HttpContext context)
     {
         // check if user is admin
         var userName = context.User.GetUser();

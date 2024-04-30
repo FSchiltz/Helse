@@ -8,10 +8,9 @@ namespace Api.Data;
 /// </summary>
 public static class SettingsExtension
 {
-    static public async Task SaveSettingsAsync<T>(this AppDataConnection db, string name, T blob) where T : class
+    static public async Task SaveSettingsAsync<T>(this IDataContext db, string name, T blob) where T : class
     {
         using var transaction = await db.BeginTransactionAsync();
-
 
         var data = JsonSerializer.Serialize(blob);
 
@@ -30,9 +29,9 @@ public static class SettingsExtension
         await transaction.CommitAsync();
     }
 
-    public static Task Delete(this AppDataConnection db, string name) => db.GetTable<Data.Models.Settings>().DeleteAsync(x => x.Name == name);
+    public static Task Delete(this IDataContext db, string name) => db.GetTable<Data.Models.Settings>().DeleteAsync(x => x.Name == name);
 
-    public static async Task<T> GetSettings<T>(this AppDataConnection db, string name) where T : new()
+    public static async Task<T> GetSettings<T>(this IDataContext db, string name) where T : new()
     {
         var settings = await db.GetTable<Data.Models.Settings>().Where(x => x.Name == name).SingleOrDefaultAsync();
         if (settings?.Blob is null)

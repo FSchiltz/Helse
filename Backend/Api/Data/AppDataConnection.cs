@@ -1,24 +1,24 @@
 using System.Reflection;
 using DbUp;
-using LinqToDB;
-using LinqToDB.Data;
 
 namespace Api.Data;
 
-public class AppDataConnection(DataOptions<AppDataConnection> options) : DataConnection(options.Options)
+public static class MigrationHelper
 {
-    public static void Init(string connection, ILogger logger)
+    public static void Init(string connection, bool inMemory, ILogger logger)
     {
+        if (inMemory)
+        {
+            return;
+        }
+
         EnsureDatabase.For.PostgresqlDatabase(connection);
 
-        var upgrader =
-             DeployChanges.To
-         .PostgresqlDatabase(connection)
-         .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
-         .LogToAutodetectedLog()
-         .Build();
-
-        var result = upgrader.PerformUpgrade();
+        var result = DeployChanges.To.PostgresqlDatabase(connection)
+            .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
+            .LogToAutodetectedLog()
+            .Build()
+            .PerformUpgrade();
 
         if (result.Successful)
         {

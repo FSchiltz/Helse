@@ -10,7 +10,7 @@ namespace Api.Logic;
 /// </summary>
 public static class EventsLogic
 {
-    public async static Task<IResult> GetAsync(int? type, DateTime start, DateTime end, long? personId, AppDataConnection db, HttpContext context)
+    public async static Task<IResult> GetAsync(int? type, DateTime start, DateTime end, long? personId, IDataContext db, HttpContext context)
     {
         var (error, user) = await db.GetUser(context);
         if (error is not null)
@@ -38,7 +38,7 @@ public static class EventsLogic
         }));
     }
 
-    public static async Task<IResult> CreateAsync(CreateEvent e, long? personId, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> CreateAsync(CreateEvent e, long? personId, IDataContext db, HttpContext context)
     {
         var (error, user) = await db.GetUser(context);
         if (error is not null)
@@ -60,7 +60,7 @@ public static class EventsLogic
         return TypedResults.NoContent();
     }
 
-    public async static Task<IResult> DeleteAsync(long id, AppDataConnection db, HttpContext context)
+    public async static Task<IResult> DeleteAsync(long id, IDataContext db, HttpContext context)
     {
         var (error, user) = await db.GetUser(context);
         if (error is not null)
@@ -82,7 +82,7 @@ public static class EventsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> GetTypeAsync(bool all, AppDataConnection db)
+    public static async Task<IResult> GetTypeAsync(bool all, IDataContext db)
     {
         IQueryable<Data.Models.EventType> query = db.GetTable<Data.Models.EventType>();
 
@@ -92,7 +92,7 @@ public static class EventsLogic
         return TypedResults.Ok(await query.ToListAsync());
     }
 
-    public static async Task<IResult> CreateTypeAsync(Data.Models.EventType metric, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> CreateTypeAsync(Data.Models.EventType metric, IDataContext db, HttpContext context)
     {
         var admin = await db.IsAdmin(context);
         if (admin is not null)
@@ -108,7 +108,7 @@ public static class EventsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> UpdateTypeAsync(Data.Models.EventType metric, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> UpdateTypeAsync(Data.Models.EventType metric, IDataContext db, HttpContext context)
     {
         var admin = await db.IsAdmin(context);
         if (admin is not null)
@@ -123,7 +123,7 @@ public static class EventsLogic
         return TypedResults.NoContent();
     }
 
-    public async static Task<IResult> DeleteTypeAsync(long id, AppDataConnection db, HttpContext context)
+    public async static Task<IResult> DeleteTypeAsync(long id, IDataContext db, HttpContext context)
     {
         var admin = await db.IsAdmin(context);
         if (admin is not null)

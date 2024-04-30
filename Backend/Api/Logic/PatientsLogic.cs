@@ -14,7 +14,7 @@ public static class PatientsLogic
     /// <param name="db"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static async Task<IResult> GetPatientsAsync(AppDataConnection db, HttpContext context)
+    public static async Task<IResult> GetPatientsAsync(IDataContext db, HttpContext context)
     {
         var (error, user) = await db.GetUser(context);
         if (error is not null)
@@ -44,7 +44,7 @@ public static class PatientsLogic
         return TypedResults.Ok(models);
     }
 
-    public async static Task<IResult> GetAgendaAsync(DateTime start, DateTime end, AppDataConnection db, HttpContext context)
+    public async static Task<IResult> GetAgendaAsync(DateTime start, DateTime end, IDataContext db, HttpContext context)
     {
         var (error, user) = await db.GetUser(context);
         if (error is not null)

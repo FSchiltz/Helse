@@ -7,7 +7,7 @@ namespace Api.Data;
 
 public static class UserExtensions
 {
-    public static async Task CreateUserAsync(this AppDataConnection db, PersonCreation newUser, long userId)
+    public static async Task CreateUserAsync(this IDataContext db, PersonCreation newUser, long userId)
     {
         // Open a transaction
         using var transaction = await db.BeginTransactionAsync();
@@ -66,7 +66,7 @@ public static class UserExtensions
         await transaction.CommitAsync();
     }
 
-    public static Task ChangeRole(this AppDataConnection db, long userId, int newType)
+    public static Task ChangeRole(this IDataContext db, long userId, int newType)
     {
         return db.GetTable<Data.Models.User>()
         .Where(x => x.Id == userId)

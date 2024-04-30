@@ -3,7 +3,7 @@ using LinqToDB;
 
 namespace Api.Logic.Import;
 
-public abstract class FileImporter(string file, AppDataConnection dataConnection, Data.Models.User user)
+public abstract class FileImporter(string file, IDataContext dataConnection, Data.Models.User user)
 {
     public string File { get; } = file;
 

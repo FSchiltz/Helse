@@ -17,7 +17,7 @@ public static class SettingsLogic
     /// <param name="db"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static async Task<IResult> GetOauthAsync(AppDataConnection db, HttpContext context)
+    public static async Task<IResult> GetOauthAsync(IDataContext db, HttpContext context)
     {
         var admin = await db.IsAdmin(context);
         if (admin is not null)
@@ -32,7 +32,7 @@ public static class SettingsLogic
     /// <param name="db"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static async Task<IResult> GetProxyAsync(AppDataConnection db, HttpContext context)
+    public static async Task<IResult> GetProxyAsync(IDataContext db, HttpContext context)
     {
         var admin = await db.IsAdmin(context);
         if (admin is not null)
@@ -48,7 +48,7 @@ public static class SettingsLogic
     /// <param name="db"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static async Task<IResult> PostOauthAsync(Oauth settings, AppDataConnection db, HttpContext context, ILoggerFactory logger)
+    public static async Task<IResult> PostOauthAsync(Oauth settings, IDataContext db, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger(nameof(SettingsLogic));
 
@@ -70,7 +70,7 @@ public static class SettingsLogic
     /// <param name="db"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static async Task<IResult> PostProxyAsync(Proxy settings, AppDataConnection db, HttpContext context, ILoggerFactory logger)
+    public static async Task<IResult> PostProxyAsync(Proxy settings, IDataContext db, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger(nameof(SettingsLogic));
 

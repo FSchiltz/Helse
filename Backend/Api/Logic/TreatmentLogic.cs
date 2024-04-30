@@ -10,10 +10,10 @@ namespace Api.Logic;
 /// </summary>
 public static class TreatmentLogic
 {
-    public static async Task<IResult> GetTypeAsync(AppDataConnection db)
+    public static async Task<IResult> GetTypeAsync(IDataContext db)
        => TypedResults.Ok(await db.GetTable<Data.Models.EventType>().Where(x => !x.StandAlone).ToListAsync());
 
-    public async static Task<IResult> PostAsync(Models.CreateTreatment treatment, AppDataConnection db, HttpContext context)
+    public async static Task<IResult> PostAsync(Models.CreateTreatment treatment, IDataContext db, HttpContext context)
     {
         var (error, user) = await db.GetUser(context);
         if (error is not null)
@@ -57,7 +57,7 @@ public static class TreatmentLogic
         return TypedResults.NoContent();
     }
 
-    public async static Task<IResult> GetAsync(DateTime start, DateTime end, long? personId, AppDataConnection db, HttpContext context)
+    public async static Task<IResult> GetAsync(DateTime start, DateTime end, long? personId, IDataContext db, HttpContext context)
     {
         var (error, user) = await db.GetUser(context);
         if (error is not null)

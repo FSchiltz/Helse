@@ -8,7 +8,7 @@ namespace Api.Logic.Auth;
 
 public static class PasswordLogic
 {
-    public static async Task<(bool, TokenInfo?)> ConnectPassword(Connection user, AppDataConnection db, ILogger log)
+    public static async Task<(bool, TokenInfo?)> ConnectPassword(Connection user, IDataContext db, ILogger log)
     {
         // auth
         var fromDb = await db.TokenFromDb( user.User);
@@ -35,7 +35,7 @@ public static class PasswordLogic
         return (true, fromDb);
     }
 
-    public async static Task UpdatePasswordAsync(long user, string password, AppDataConnection db)
+    public async static Task UpdatePasswordAsync(long user, string password, IDataContext db)
     {
         var hash = TokenService.Hash(password);
 

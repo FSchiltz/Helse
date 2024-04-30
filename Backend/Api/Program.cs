@@ -1,7 +1,6 @@
 using System.Text;
 using Api;
 using Api.Data;
-using Api.Helpers;
 using Api.Helpers.Auth;
 using LinqToDB;
 using LinqToDB.AspNet;
@@ -57,7 +56,7 @@ builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 
 var connection = builder.Configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("Database configuration missing");
 
-builder.Services.AddLinqToDBContext<AppDataConnection>((provider, options)
+builder.Services.AddLinqToDB((provider, options)
             => options
                 .UsePostgreSQL(connection, LinqToDB.DataProvider.PostgreSQL.PostgreSQLVersion.v15, (x) => new()
                 {
@@ -115,6 +114,9 @@ app.UseStaticFiles();
 var api = app.MapGroup("/api");
 api.MapEnpoints();
 
-AppDataConnection.Init(connection, app.Logger);
+var inMemory = app.Configuration.GetValue<bool>("InTest");
+MigrationHelper.Init(connection, inMemory, app.Logger);
 
 app.Run();
+
+public partial class Program { }
