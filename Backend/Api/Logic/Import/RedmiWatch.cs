@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Api.Logic.Import;
 
-public class RedmiWatch(string file, AppDataConnection dataConnection, Data.Models.User user) : FileImporter(file, dataConnection, user)
+public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) : FileImporter(file, db, user)
 {
     private const string MaxSpo = "max_spo2";
     private const string MinSpo = "min_spo2";
@@ -51,16 +51,14 @@ public class RedmiWatch(string file, AppDataConnection dataConnection, Data.Mode
 
                     foreach (var item in sleep.Items)
                     {
-                        await ImportEvent(new Data.Models.Event()
+                        await ImportEvent(new CreateEvent()
                         {
-                            PersonId = User.PersonId,
-                            UserId = User.Id,
                             Start = DateTimeOffset.FromUnixTimeSeconds(item.Start_time).DateTime,
                             Stop = DateTimeOffset.FromUnixTimeSeconds(item.End_time).DateTime,
                             Tag = item.GetKey(),
                             Type = (int)EventTypes.Sleep,
                             Description = item.State.ToString(),
-                        });
+                        }, User.PersonId, User.Id);
                     }
                     break;
                 case Weight:
@@ -71,15 +69,13 @@ public class RedmiWatch(string file, AppDataConnection dataConnection, Data.Mode
                     if (weight?.Weight == null)
                         continue;
 
-                    await ImportMetric(new Data.Models.Metric()
+                    await ImportMetric(new CreateMetric()
                     {
-                        PersonId = User.PersonId,
-                        UserId = User.Id,
                         Tag = record.GetKey(),
                         Value = weight.Weight,
                         Date = DateTimeOffset.FromUnixTimeSeconds(weight.Time ?? weight.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Wheight,
-                    });
+                    }, User.PersonId, User.Id);
                     break;
                 case Steps:
                     if (record.Value == null)
@@ -89,15 +85,13 @@ public class RedmiWatch(string file, AppDataConnection dataConnection, Data.Mode
                     if (steps?.Steps == null)
                         continue;
 
-                    await ImportMetric(new Data.Models.Metric()
+                    await ImportMetric(new CreateMetric()
                     {
-                        PersonId = User.PersonId,
-                        UserId = User.Id,
                         Tag = record.GetKey(),
                         Value = steps.Steps,
                         Date = DateTimeOffset.FromUnixTimeSeconds(steps.Time ?? steps.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Steps,
-                    });
+                    }, User.PersonId, User.Id);
                     break;
                 case Calories:
                     if (record.Value == null)
@@ -107,15 +101,13 @@ public class RedmiWatch(string file, AppDataConnection dataConnection, Data.Mode
                     if (calorie?.Calories == null)
                         continue;
 
-                    await ImportMetric(new Data.Models.Metric()
+                    await ImportMetric(new CreateMetric()
                     {
-                        PersonId = User.PersonId,
-                        UserId = User.Id,
                         Tag = record.GetKey(),
                         Value = calorie.Calories,
                         Date = DateTimeOffset.FromUnixTimeSeconds(calorie.Time ?? calorie.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Calories,
-                    });
+                    }, User.PersonId, User.Id);
                     break;
                 case MaxHeart:
                 case MinHeart:
@@ -129,15 +121,13 @@ public class RedmiWatch(string file, AppDataConnection dataConnection, Data.Mode
                     if (heart?.Bpm == null)
                         continue;
 
-                    await ImportMetric(new Data.Models.Metric()
+                    await ImportMetric(new CreateMetric()
                     {
-                        PersonId = User.PersonId,
-                        UserId = User.Id,
                         Tag = record.GetKey(),
                         Value = heart.Bpm,
                         Date = DateTimeOffset.FromUnixTimeSeconds(heart.Time ?? heart.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Heart,
-                    });
+                    }, User.PersonId, User.Id);
                     break;
                 case MaxSpo:
                 case MinSpo:
@@ -150,15 +140,13 @@ public class RedmiWatch(string file, AppDataConnection dataConnection, Data.Mode
                     if (spo?.Spo2 == null)
                         continue;
 
-                    await ImportMetric(new Data.Models.Metric()
+                    await ImportMetric(new CreateMetric()
                     {
-                        PersonId = User.PersonId,
-                        UserId = User.Id,
                         Tag = record.GetKey(),
                         Value = spo.Spo2,
                         Date = DateTimeOffset.FromUnixTimeSeconds(spo.Time ?? spo.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Oxygen,
-                    });
+                    }, User.PersonId, User.Id);
                     break;
                 default:
                     break;

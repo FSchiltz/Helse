@@ -1,5 +1,6 @@
 using Api.Data;
 using Api.Helpers;
+using Api.Logic.Auth;
 using Api.Logic.Import;
 using Api.Models;
 using LinqToDB;
@@ -17,9 +18,9 @@ public static class ImportLogic
     public static IResult GetTypeAsync()
       => TypedResults.Ok(Enum.GetValues<FileTypes>().Select(x => new FileType((int)x, Helper.DescriptionAttr(x))));
 
-    public static async Task<IResult> PostFileAsync([FromBody] string file, int type, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> PostFileAsync([FromBody] string file, int type, IUserContext users, IHealthContext db, HttpContext context)
     {
-        var (error, user) = await db.GetUser(context);
+        var (error, user) = await users.GetUser(context);
         if (error is not null)
             return error;
 

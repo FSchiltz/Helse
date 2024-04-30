@@ -1,6 +1,8 @@
 using Api.Data;
 using Api.Data.Models;
 using Api.Helpers;
+using Api.Helpers.Auth;
+using Api.Logic.Auth;
 using Api.Models;
 using LinqToDB;
 using LinqToDB.Data;
@@ -20,47 +22,38 @@ public static class PersonLogic
     /// <param name="db"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static async Task<IResult> GetAsync(AppDataConnection db, HttpContext context)
+    public static async Task<IResult> GetAsync(IUserContext db, HttpContext context)
     {
         var admin = await db.IsAdmin(context);
         if (admin is not null)
             return admin;
 
-        var users = await (from u in db.GetTable<Data.Models.User>()
-                           from p in db.GetTable<Data.Models.Person>().RightJoin(pr => pr.Id == u.PersonId)
-                           select new
-                           {
-                               u,
-                               p,
-                           }).ToListAsync();
+        var users = await db.GetUsers();
 
         var now = DateTime.UtcNow;
-        var rights = (await (from r in db.GetTable<Data.Models.Right>()
-                             where r.Stop == null || r.Stop >= now && r.Start <= now
-                             select r)
-                             .ToListAsync())
+        var rights = (await db.GetRights(now))
                              .GroupBy(x => x.UserId)
                              .ToDictionary(x => x.Key);
 
         var models = users.Select(x =>
         {
-            if (x.u == null || !rights.TryGetValue(x.u.Id, out var right))
+            if (x.User == null || !rights.TryGetValue(x.User.Id, out var right))
             {
                 right = null;
             }
 
             return new Models.Person
             {
-                Id = x.u?.Id ?? 0,
-                Birth = x.p.Birth,
-                Name = x.p.Name,
-                Surname = x.p.Surname,
-                Identifier = x.p.Identifier,
-                UserName = x.u?.Identifier,
-                Email = x.u?.Email,
-                Phone = x.u?.Phone,
-                Type = (Api.Models.UserType)(x.u?.Type ?? 0),
-                Rights = right?.Select(x => x.FromDb()).ToList() ?? new List<Models.Right>(),
+                Id = x.User?.Id ?? 0,
+                Birth = x.Person.Birth,
+                Name = x.Person.Name,
+                Surname = x.Person.Surname,
+                Identifier = x.Person.Identifier,
+                UserName = x.User?.Identifier,
+                Email = x.User?.Email,
+                Phone = x.User?.Phone,
+                Type = (UserType)(x.User?.Type ?? 0),
+                Rights = right?.Select(x => x.FromDb()).ToList() ?? [],
             };
         });
 
@@ -73,12 +66,12 @@ public static class PersonLogic
     /// </summary>
     /// <param name="personId"></param>
     /// <param name="rights"></param>
-    /// <param name="db"></param>
+    /// <param name="users"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static async Task<IResult> SetRight(long personId, List<Models.Right> rights, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> SetRight(long personId, List<Models.Right> rights, IUserContext users, HttpContext context)
     {
-        var admin = await db.IsAdmin(context);
+        var admin = await users.IsAdmin(context);
         if (admin is not null)
             return admin;
 
@@ -95,16 +88,13 @@ public static class PersonLogic
             Start = now > x.Start ? now : x.Start,
         });
 
-        using var transaction = await db.BeginTransactionAsync();
+        await using var transaction = await users.BeginTransactionAsync();
 
-        // first we stop existing righs for the user by settings an enddate
-        await db.GetTable<Data.Models.Right>()
-        .Where(x => x.UserId == personId)
-        .Set(x => x.Stop, now)
-        .UpdateAsync();
+        // first we stop existing righs for the user by settings an end date
+        await users.SetExpiryRight(personId, now);
 
         // insert the new rights
-        await db.GetTable<Data.Models.Right>().BulkCopyAsync(dbRights);
+        await users.InsertRights(dbRights);
 
         await transaction.CommitAsync();
 
@@ -130,7 +120,7 @@ public static class PersonLogic
     /// Only admin role unless no user exists (App setup) or caregiver if the new person is only a patient(no connection)
     /// </summary>
     /// <returns></returns>
-    public static async Task<IResult> CreateAsync(Models.PersonCreation newUser, AppDataConnection db, HttpContext context, ILoggerFactory logger)
+    public static async Task<IResult> CreateAsync(Models.PersonCreation newUser, IUserContext db, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger(nameof(PersonLogic));
 
@@ -143,18 +133,18 @@ public static class PersonLogic
         bool userHasRole;
         if (userName is null)
         {
-            userHasRole = (await db.GetTable<User>().LongCountAsync()) == 0;
+            userHasRole = (await db.Count()) == 0;
         }
         else
         {
+            var user = await db.Get(userName);
             // else check if user is admin
-            var user = await db.GetTable<User>().FirstOrDefaultAsync(x => x.Identifier == userName);
-            userId = user?.Id ?? 0;
+            userId = user?.User.Id ?? 0;
 
-            userHasRole = user?.Type == (int)Models.UserType.Admin;
+            userHasRole = user?.User.Type == (int)Models.UserType.Admin;
 
             // Care giver can add new patients without admin right
-            userHasRole = userHasRole || (newUser.Type == Models.UserType.Patient && user?.Type == (int)Models.UserType.Caregiver);
+            userHasRole = userHasRole || (newUser.Type == Models.UserType.Patient && user?.User.Type == (int)Models.UserType.Caregiver);
         }
 
         if (!userHasRole)
@@ -175,16 +165,13 @@ public static class PersonLogic
     /// <param name="role"></param>
     /// <param name="db"></param>
     /// <returns></returns>
-    public static async Task<IResult> SetPersonRole(long personId, UserType role, AppDataConnection db, HttpContext context)
+    public static async Task<IResult> SetPersonRole(long personId, UserType role, IUserContext db, HttpContext context)
     {
-        // check if user is admin
-        var userName = context.User.GetUser();
-        var user = await db.GetTable<User>().FirstOrDefaultAsync(x => x.Identifier == userName);
+        var admin = await db.IsAdmin(context);
+        if (admin is not null)
+            return admin;
 
-        if (!(user?.Type == (int)Models.UserType.Admin))
-            return TypedResults.Unauthorized();
-
-        await db.ChangeRole(personId, (int)role);
+        await db.UpdateRole(personId, (int)role);
 
         return TypedResults.NoContent();
     }

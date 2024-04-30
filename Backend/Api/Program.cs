@@ -1,11 +1,13 @@
 using System.Text;
 using Api;
 using Api.Data;
-using Api.Helpers;
+using Api.Helpers.Auth;
 using LinqToDB;
 using LinqToDB.AspNet;
 using LinqToDB.AspNet.Logging;
+using LinqToDB.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
@@ -55,7 +57,7 @@ builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 
 var connection = builder.Configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("Database configuration missing");
 
-builder.Services.AddLinqToDBContext<AppDataConnection>((provider, options)
+builder.Services.AddLinqToDBContext<DataConnection>((provider, options)
             => options
                 .UsePostgreSQL(connection, LinqToDB.DataProvider.PostgreSQL.PostgreSQLVersion.v15, (x) => new()
                 {
@@ -70,6 +72,9 @@ var keyConfig = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationEx
 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyConfig));
 
 builder.Services.AddSingleton(new TokenService(issuer, audience, key));
+builder.Services.AddTransient<IUserContext, UserContext>();
+builder.Services.AddTransient<ISettingsContext, SettingsContext>();
+builder.Services.AddTransient<IHealthContext, HealthContext>();
 
 builder.Services.AddAuthentication(options =>
   {
@@ -87,11 +92,16 @@ builder.Services.AddAuthentication(options =>
           ValidateIssuer = true,
           ValidateAudience = true,
           ValidateLifetime = true,
-          ValidateIssuerSigningKey = false
+          ValidateIssuerSigningKey = false,
+          ClockSkew = TimeSpan.Zero
       };
   });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorizationBuilder()
+    .SetDefaultPolicy(new AuthorizationPolicyBuilder()
+            .RequireClaim("token", ["access"])
+            .Build());
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -108,6 +118,9 @@ app.UseStaticFiles();
 var api = app.MapGroup("/api");
 api.MapEnpoints();
 
-AppDataConnection.Init(connection, app.Logger);
+var inMemory = app.Configuration.GetValue<bool>("InTest");
+MigrationHelper.Init(connection, inMemory, app.Logger);
 
 app.Run();
+
+public partial class Program { }

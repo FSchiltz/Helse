@@ -16,6 +16,34 @@ jobs:
     with:
       push: false
 
+  build-net:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+        - name: Setup dotnet
+          uses: actions/setup-dotnet@v3
+          with:
+            dotnet-version: '8.0.x'
+
+        - name: Install dependencies
+          run: dotnet restore
+          working-directory: 'Backend'
+
+        - name: Build
+          run: dotnet build
+          working-directory: 'Backend'
+
+        - name: Test with the dotnet CLI
+          run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+          working-directory: 'Backend'   
+
+        - name: Codecov    
+          uses: codecov/codecov-action@v4.0.1
+          with:
+            token: ${{ secrets.CODECOV_TOKEN }}
+          
+ 
+
   build-docker:
     permissions:
       contents: read 
