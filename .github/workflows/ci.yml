@@ -23,13 +23,19 @@ jobs:
         - name: Setup dotnet
           uses: actions/setup-dotnet@v3
           with:
-            dotnet-version: '6.0.x'
+            dotnet-version: '8.0.x'
+
         - name: Install dependencies
           run: dotnet restore
+          working-directory: 'Backend'
+
         - name: Build
           run: dotnet build
+          working-directory: 'Backend'
+
         - name: Test with the dotnet CLI
-          run: dotnet test        
+          run: dotnet test    
+          working-directory: 'Backend'    
 
   build-docker:
     permissions:
