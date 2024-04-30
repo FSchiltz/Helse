@@ -34,7 +34,7 @@ jobs:
           working-directory: 'Backend'
 
         - name: Test with the dotnet CLI
-          run: dotnet test    
+          run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
           working-directory: 'Backend'    
 
   build-docker:
