@@ -1,5 +1,6 @@
 using Api.Data;
 using Api.Helpers;
+using Api.Logic.Auth;
 using Api.Logic.Import;
 using Api.Models;
 using LinqToDB;

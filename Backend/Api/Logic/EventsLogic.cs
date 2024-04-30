@@ -1,4 +1,5 @@
 using Api.Data;
+using Api.Logic.Auth;
 using Api.Models;
 using LinqToDB;
 

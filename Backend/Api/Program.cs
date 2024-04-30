@@ -2,10 +2,12 @@ using System.Text;
 using Api;
 using Api.Data;
 using Api.Helpers;
+using Api.Helpers.Auth;
 using LinqToDB;
 using LinqToDB.AspNet;
 using LinqToDB.AspNet.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
@@ -87,11 +89,16 @@ builder.Services.AddAuthentication(options =>
           ValidateIssuer = true,
           ValidateAudience = true,
           ValidateLifetime = true,
-          ValidateIssuerSigningKey = false
+          ValidateIssuerSigningKey = false,
+          ClockSkew = TimeSpan.Zero
       };
   });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorizationBuilder()
+    .SetDefaultPolicy(new AuthorizationPolicyBuilder()
+            .RequireClaim("token", ["access"])
+            .Build());
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

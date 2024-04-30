@@ -1,5 +1,5 @@
 using Api.Data.Models;
-using Api.Helpers;
+using Api.Helpers.Auth;
 using Api.Models;
 using LinqToDB;
 

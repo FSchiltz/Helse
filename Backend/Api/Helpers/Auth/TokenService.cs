@@ -4,7 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Identity;
 using Api.Data.Models;
 
-namespace Api.Helpers;
+namespace Api.Helpers.Auth;
 
 public record TokenInfo(long Id, string Role, string Identifier, string Password, string? Surname, string? Name, string? Email);
 
@@ -24,7 +24,7 @@ public class TokenService(string issuer, string audience, SymmetricSecurityKey k
         return new PasswordHasher<User>().VerifyHashedPassword(User.Empty, hash, password);
     }
 
-    public string GetToken(TokenInfo info)
+    public string GetRefreshToken(TokenInfo info, DateTime expires)
     {
         var claims = new List<Claim>
             {
@@ -32,6 +32,7 @@ public class TokenService(string issuer, string audience, SymmetricSecurityKey k
                 new("roles", info.Role),
                 new("surname", info.Surname ?? string.Empty),
                 new("name", info.Name ?? string.Empty),
+                new("token", "refresh"),
              };
 
         if (info.Email != null)
@@ -39,11 +40,26 @@ public class TokenService(string issuer, string audience, SymmetricSecurityKey k
             claims.Add(
             new Claim(JwtRegisteredClaimNames.Email, info.Email));
         }
+        return GetToken(claims, expires);
+    }
 
+    public string GetAccessToken(TokenInfo info, DateTime expires)
+    {
+        var claims = new List<Claim>
+            {
+                new(JwtRegisteredClaimNames.NameId, info.Identifier),
+                new ("token", "access"),
+             };
+
+        return GetToken(claims, expires);
+    }
+
+    private string GetToken(List<Claim> claims, DateTime expires)
+    {
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddMinutes(30),
+            Expires = expires,
             Issuer = _issuer,
             Audience = _audience,
             SigningCredentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature)
