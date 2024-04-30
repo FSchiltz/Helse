@@ -35,7 +35,12 @@ jobs:
 
         - name: Test with the dotnet CLI
           run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-          working-directory: 'Backend'    
+          working-directory: 'Backend'   
+
+        - name: Codecov
+          uses: codecov/codecov-action@v1
+          
+ 
 
   build-docker:
     permissions:
