@@ -85,9 +85,8 @@ class _EventTypeAddState extends State<EventTypeAdd> {
         widget.callback?.call();
 
         if (localContext.mounted) {
-          SuccessSnackBar.show("$text Successfully", localContext);
-
           Navigator.of(localContext).pop();
+          SuccessSnackBar.show("$text Successfully", localContext);
         }
       }
     } catch (ex) {

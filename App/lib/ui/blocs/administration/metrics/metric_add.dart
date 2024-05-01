@@ -88,9 +88,8 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
         widget.callback?.call();
 
         if (localContext.mounted) {
-          SuccessSnackBar.show("$text Successfully", localContext);
-
           Navigator.of(localContext).pop();
+          SuccessSnackBar.show("$text Successfully", localContext);
         }
       }
     } catch (ex) {

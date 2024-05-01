@@ -44,8 +44,8 @@ class _EventAddState extends State<EventAdd> {
           });
 
           if (localContext.mounted) {
-            SuccessSnackBar.show("Event Added", localContext);
             Navigator.of(localContext).pop();
+            SuccessSnackBar.show("Event Added", localContext);
           }
         } catch (_) {
           setState(() {

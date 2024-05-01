@@ -98,8 +98,8 @@ class _MetricAddState extends State<MetricAdd> {
           await DI.metric?.addMetrics(metric, person: widget.person);
 
           if (localContext.mounted) {
-            SuccessSnackBar.show("Metric added", localContext);
             Navigator.of(localContext).pop();
+            SuccessSnackBar.show("Metric added", localContext);
           }
 
           widget.callback();

@@ -64,9 +64,8 @@ class _ChangeRoleState extends State<ChangeRole> {
       widget.callback.call();
 
       if (localContext.mounted) {
-        SuccessSnackBar.show("Updated Successfully", localContext);
-
         Navigator.of(localContext).pop();
+        SuccessSnackBar.show("Updated Successfully", localContext);
       }
     } catch (ex) {
       if (localContext.mounted) {

@@ -51,8 +51,8 @@ class _TreatementState extends State<TreatmentAdd> {
           });
 
           if (localContext.mounted) {
-            SuccessSnackBar.show("Treatment added", localContext);
             Navigator.of(localContext).pop();
+            SuccessSnackBar.show("Treatment added", localContext);
           }
         } catch (_) {
           setState(() {

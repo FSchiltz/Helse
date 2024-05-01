@@ -89,9 +89,8 @@ class _SignupState extends State<UserAdd> {
         widget.callback?.call();
 
         if (localContext.mounted) {
-          SuccessSnackBar.show("Added Successfully", localContext);
-
           Navigator.of(localContext).pop();
+          SuccessSnackBar.show("Added Successfully", localContext);
         }
       }
     } catch (ex) {
