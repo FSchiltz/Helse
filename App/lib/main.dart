@@ -20,8 +20,7 @@ import 'ui/login.dart';
 import 'ui/splash.dart';
 
 void main() {
-
-  setUrlStrategy(PathUrlStrategy());
+  usePathUrlStrategy();
   runApp(const RestartWidget(child: App()));
 }
 

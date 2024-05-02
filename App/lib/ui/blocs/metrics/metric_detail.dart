@@ -65,7 +65,7 @@ class MetricGraph extends StatelessWidget {
         ? Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child:
-                Text("No data", style: Theme.of(context).textTheme.labelLarge),
+                Center(child: Text("No data", style: Theme.of(context).textTheme.labelLarge)),
           )
         : LineChart(
             LineChartData(

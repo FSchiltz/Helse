@@ -118,8 +118,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                       Expanded(
                         child: GestureDetector(
                           behavior: HitTestBehavior.translucent,
-                          onTap: () => Navigator.push(
-                            context,
+                          onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(
                                 builder: (context) => MetricDetailPage(
                                     widget: widget, metrics: metrics, date: widget.date,)),
