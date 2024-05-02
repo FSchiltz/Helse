@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/blocs/metrics/metric_detail.dart';
 
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../loader.dart';
 import 'metric_add.dart';
-import 'metric_graph.dart';
+import 'metric_summary.dart';
 
 class MetricWidget extends StatefulWidget {
   final MetricType type;
@@ -58,7 +59,8 @@ class _MetricWidgetState extends State<MetricWidget> {
     var date = widget.date;
 
     var start = DateTime(date.start.year, date.start.month, date.start.day);
-    var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
+    var end = DateTime(date.end.year, date.end.month, date.end.day)
+        .add(const Duration(days: 1));
 
     _metrics = await DI.metric?.metrics(id, start, end, person: widget.person);
     _metrics?.sort(_sort);
@@ -95,28 +97,43 @@ class _MetricWidgetState extends State<MetricWidget> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text(widget.type.name ?? "", style: Theme.of(context).textTheme.titleMedium),
-                          if (last != null) Text((last.$value ?? "") + (widget.type.unit ?? ""), style: Theme.of(context).textTheme.labelMedium),
+                          Text(widget.type.name ?? "",
+                              style: Theme.of(context).textTheme.titleMedium),
+                          if (last != null)
+                            Text((last.$value ?? "") + (widget.type.unit ?? ""),
+                                style: Theme.of(context).textTheme.labelMedium),
                           IconButton(
                               onPressed: () {
                                 showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return MetricAdd(widget.type, _resetMetric, person: widget.person);
+                                      return MetricAdd(
+                                          widget.type, _resetMetric,
+                                          person: widget.person);
                                     });
                               },
                               icon: const Icon(Icons.add_sharp)),
                         ],
                       ),
                       Expanded(
-                        child: MetricGraph(metrics, widget.type.unit, widget.date),
-                      )
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => MetricDetailPage(
+                                    widget: widget, metrics: metrics, date: widget.date,)),
+                          ),
+                          child: MetricSummarry(
+                              metrics, widget.type.unit, widget.date),
+                        ),
+                      ),
                     ],
                   ),
                 );
               }
             }
-            return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
+            return const Center(
+                child: SizedBox(width: 50, height: 50, child: HelseLoader()));
           }),
     );
   }

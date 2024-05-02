@@ -106,8 +106,8 @@ class _FileImportState extends State<FileImport> {
         });
 
         if (localContext.mounted) {
-          SuccessSnackBar.show("Imported", localContext);
           Navigator.of(localContext).pop();
+          SuccessSnackBar.show("Imported", localContext);
         }
       } catch (ex) {
         if (localContext.mounted) {

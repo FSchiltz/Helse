@@ -38,7 +38,7 @@ class _DashboardState extends State<Dashboard> {
   void _getEventData() async {
     var localContext = context;
     try {
-      var model = await DI.event?.eventsType(false);
+      var model = await DI.event?.eventsType(all: true);
       if (model != null) {
         setState(() {
           eventTypes = model;

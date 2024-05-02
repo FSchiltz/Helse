@@ -29,7 +29,7 @@ class _EventTypeViewState extends State<EventTypeView> {
     // if the users has not changed, no call to the backend
     if (_types != null) return _types;
 
-    _types = await DI.event?.eventsType(true);
+    _types = await DI.event?.eventsType();
     return _types;
   }
 

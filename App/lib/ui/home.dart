@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/blocs/app_bar/custom_app_bar.dart';
 
 import 'admin_dashboard.dart';
 import '../helpers/date.dart';
@@ -169,101 +170,5 @@ class _HomeState extends State<Home> {
         ),
       );
     });
-  }
-}
-
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final double height = 80;
-  final PopupMenuButton<int> actions;
-  final Widget title;
-  final Widget child;
-
-  const CustomAppBar({super.key, required this.title, required this.actions, required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        color: Colors.transparent,
-        child: Stack(fit: StackFit.loose, children: <Widget>[
-          Container(
-              color: Colors.transparent,
-              width: MediaQuery.of(context).size.width,
-              height: height,
-              child: CustomPaint(
-                painter: CustomToolbarShape(theme: Theme.of(context).colorScheme),
-              )),
-          Align(
-              alignment: const Alignment(0.0, 2.8),
-              child: Container(
-                padding: const EdgeInsets.only(left: 30, right: 30),
-                child: Container(
-                  decoration: const BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 20.0,
-                        // shadow
-                        spreadRadius: .5,
-                        // set effect of extending the shadow
-                        offset: Offset(
-                          0.0,
-                          5.0,
-                        ),
-                      )
-                    ],
-                  ),
-                  child: child,
-                ),
-              )),
-          Align(alignment: Alignment.topCenter, child: title),
-          Align(alignment: Alignment.topRight, child: actions),
-        ]));
-  }
-
-  @override
-  Size get preferredSize => Size.fromHeight(height);
-}
-
-class CustomToolbarShape extends CustomPainter {
-  final ColorScheme theme;
-
-  const CustomToolbarShape({required this.theme});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint paint = Paint();
-
-    //First oval
-    Path path = Path();
-    Rect pathGradientRect = Rect.fromCircle(
-      center: Offset(size.width / 4, 0),
-      radius: size.width / 1.8,
-    );
-
-    Gradient gradient = LinearGradient(
-      colors: <Color>[
-        theme.primaryContainer.withOpacity(0.6),
-        theme.primaryContainer,
-      ],
-      stops: const [
-        0.5,
-        1.0,
-      ],
-    );
-
-    path.lineTo(-size.width / 1.4, 0);
-    path.quadraticBezierTo(size.width / 6, size.height * 2.5, size.width + size.width / 1.5, 0);
-
-    paint.color = theme.primaryContainer;
-    paint.shader = gradient.createShader(pathGradientRect);
-    paint.strokeWidth = 40;
-    path.close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return false;
   }
 }

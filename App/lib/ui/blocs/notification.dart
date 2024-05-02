@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 class ErrorSnackBar extends SnackBar {
   static show(String content, BuildContext localContext) {
+    /*
     ScaffoldMessenger.of(localContext).showSnackBar(
       ErrorSnackBar(content, localContext),
-    );
+    );*/
   }
 
   ErrorSnackBar(String content, BuildContext localContext, {super.key})
@@ -19,9 +20,11 @@ class ErrorSnackBar extends SnackBar {
 
 class SuccessSnackBar extends SnackBar {
   static show(String content, BuildContext localContext) {
+    /*
     ScaffoldMessenger.of(localContext).showSnackBar(
       SuccessSnackBar(content, localContext),
     );
+    */
   }
 
   SuccessSnackBar(String content, BuildContext localContext, {super.key})

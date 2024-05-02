@@ -40,8 +40,8 @@ class _PatientAddState extends State<PatientAdd> {
         _formKey.currentState?.reset();
         widget.callback.call();
         if (localContext.mounted) {
-          SuccessSnackBar.show("Added succesfully", localContext);
           Navigator.of(localContext).pop();
+          SuccessSnackBar.show("Added succesfully", localContext);
         }
         setState(() {
           _status = SubmissionStatus.success;
@@ -88,9 +88,12 @@ class _PatientAddState extends State<PatientAdd> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  Text("Add a new patient", style: Theme.of(context).textTheme.bodyMedium),
+                  Text("Add a new patient",
+                      style: Theme.of(context).textTheme.bodyMedium),
                   const SizedBox(height: 10),
-                  UserForm(UserType.patient, controllerName: _controllerName, controllerSurname: _controllerSurname),
+                  UserForm(UserType.patient,
+                      controllerName: _controllerName,
+                      controllerSurname: _controllerSurname),
                 ],
               ),
             ),
