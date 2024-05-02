@@ -10,8 +10,10 @@ class MetricGraph extends StatelessWidget {
   final List<Metric> metrics;
   final String? unit;
   final DateTimeRange date;
+  final bool dynamic;
 
-  const MetricGraph(this.metrics, this.unit, this.date, {super.key});
+  const MetricGraph(this.metrics, this.unit, this.date, this.dynamic,
+      {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,8 @@ class MetricGraph extends StatelessWidget {
         ? (metrics.isEmpty
             ? Padding(
                 padding: const EdgeInsets.only(top: 16.0),
-                child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
+                child: Text("No data",
+                    style: Theme.of(context).textTheme.labelLarge),
               )
             : ListView.builder(
                 itemCount: metrics.length,
@@ -27,7 +30,7 @@ class MetricGraph extends StatelessWidget {
                   return Text(metrics[index].$value ?? "");
                 },
               ))
-        : WidgetGraph(metrics, date);
+        : WidgetGraph(metrics, date, dynamic);
   }
 }
 
@@ -36,8 +39,9 @@ class WidgetGraph extends StatelessWidget {
   final double scale = 1;
   final DateTimeRange date;
   static const int valueCount = 24;
+  final bool dynamic;
 
-  const WidgetGraph(this.metrics, this.date, {super.key});
+  const WidgetGraph(this.metrics, this.date, this.dynamic, {super.key});
 
   int _hourBetween(DateTime from, DateTime to) {
     return to.difference(from).inHours;
@@ -69,7 +73,10 @@ class WidgetGraph extends StatelessWidget {
     // for all spots, we take the mean
     List<double> means = [];
     for (int i = 0; i < valueCount; i++) {
-      var mean = groups[i]?.map((m) => m.$value != null ? double.parse(m.$value!) : 0).average ?? 0;
+      var mean = groups[i]
+              ?.map((m) => m.$value != null ? double.parse(m.$value!) : 0)
+              .average ??
+          0;
       means.add(mean);
     }
 
@@ -80,7 +87,7 @@ class WidgetGraph extends StatelessWidget {
     List<FlSpot> spots = [];
 
     for (final (index, item) in means.indexed) {
-     // var y = (item - yMin) / yMax;
+      // var y = (item - yMin) / yMax;
       spots.add(FlSpot(index * scale, item));
     }
 
@@ -92,39 +99,41 @@ class WidgetGraph extends StatelessWidget {
     return metrics.isEmpty
         ? Padding(
             padding: const EdgeInsets.only(top: 16.0),
-            child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
+            child:
+                Text("No data", style: Theme.of(context).textTheme.labelLarge),
           )
-        : FractionallySizedBox(
-            widthFactor: 0.9,
-            heightFactor: 0.9,
-            child: LineChart(
-              LineChartData(
-                titlesData: const FlTitlesData(
-                  leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                ),
-                borderData: FlBorderData(
-                  show: false,
-                ),
-                gridData: const FlGridData(
-                  show: true,
-                  drawHorizontalLine: true,
-                  drawVerticalLine: false,
-                ),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: _getSpot(metrics),
-                    isCurved: true,
-                    color: Colors.greenAccent,
-                    barWidth: 2,
-                    isStrokeCapRound: true,
-                    dotData: const FlDotData(show: false),
-                    belowBarData: BarAreaData(show: false),
-                  ),
-                ],
+        : LineChart(
+            LineChartData(
+              lineTouchData: LineTouchData(enabled: dynamic),
+              titlesData: const FlTitlesData(
+                leftTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                bottomTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
               ),
+              borderData: FlBorderData(
+                show: false,
+              ),
+              gridData: const FlGridData(
+                show: true,
+                drawHorizontalLine: true,
+                drawVerticalLine: false,
+              ),
+              lineBarsData: [
+                LineChartBarData(
+                  spots: _getSpot(metrics),
+                  isCurved: true,
+                  color: Colors.greenAccent,
+                  barWidth: 2,
+                  isStrokeCapRound: true,
+                  dotData: const FlDotData(show: false),
+                  belowBarData: BarAreaData(show: false),
+                ),
+              ],
             ),
           );
   }

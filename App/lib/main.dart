@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 import 'helpers/oauth.dart';
-import 'helpers/url_dummy.dart'  if (dart.library.html) 'helpers/url.dart';
+import 'helpers/url_dummy.dart' if (dart.library.html) 'helpers/url.dart';
 import 'logic/account/authentication_logic.dart';
 import 'logic/account/authentication_bloc.dart';
 import 'logic/settings_logic.dart';
@@ -19,6 +20,8 @@ import 'ui/login.dart';
 import 'ui/splash.dart';
 
 void main() {
+
+  setUrlStrategy(PathUrlStrategy());
   runApp(const RestartWidget(child: App()));
 }
 
@@ -77,7 +80,8 @@ class App extends StatelessWidget {
 class AppView extends StatefulWidget {
   const AppView({super.key});
 
-  static AppState of(BuildContext context) => context.findAncestorStateOfType<AppState>()!;
+  static AppState of(BuildContext context) =>
+      context.findAncestorStateOfType<AppState>()!;
 
   @override
   State<AppView> createState() => AppState();
@@ -110,16 +114,20 @@ class AppState extends State<AppView> {
     return RepositoryProvider.value(
       value: DI.authentication,
       child: BlocProvider(
-        create: (_) => AuthenticationBloc(authenticationRepository: DI.authentication!),
+        create: (_) =>
+            AuthenticationBloc(authenticationRepository: DI.authentication!),
         child: MaterialApp(
           title: 'Helse',
           theme: ThemeData(
             useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 123, 250, 123)),
+            colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color.fromARGB(255, 123, 250, 123)),
           ),
           darkTheme: ThemeData(
             useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 0, 97, 0), brightness: Brightness.dark),
+            colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color.fromARGB(255, 0, 97, 0),
+                brightness: Brightness.dark),
             /* dark theme settings */
           ),
           themeMode: _themeMode,
