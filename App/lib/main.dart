@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 import 'helpers/oauth.dart';
 import 'helpers/url_dummy.dart' if (dart.library.html) 'helpers/url.dart';
@@ -20,7 +19,6 @@ import 'ui/login.dart';
 import 'ui/splash.dart';
 
 void main() {
-  usePathUrlStrategy();
   runApp(const RestartWidget(child: App()));
 }
 
