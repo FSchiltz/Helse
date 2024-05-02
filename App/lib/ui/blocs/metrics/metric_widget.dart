@@ -5,7 +5,7 @@ import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../loader.dart';
 import 'metric_add.dart';
-import 'metric_graph.dart';
+import 'metric_summary.dart';
 
 class MetricWidget extends StatefulWidget {
   final MetricType type;
@@ -124,10 +124,10 @@ class _MetricWidgetState extends State<MetricWidget> {
                                 builder: (context) => MetricDetailPage(
                                     widget: widget, metrics: metrics)),
                           ),
-                          child: MetricGraph(
-                              metrics, widget.type.unit, widget.date, false),
+                          child: MetricSummarry(
+                              metrics, widget.type.unit, widget.date),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 );

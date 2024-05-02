@@ -6,14 +6,12 @@ import 'package:collection/collection.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 
-class MetricGraph extends StatelessWidget {
+class MetricSummarry extends StatelessWidget {
   final List<Metric> metrics;
   final String? unit;
   final DateTimeRange date;
-  final bool dynamic;
 
-  const MetricGraph(this.metrics, this.unit, this.date, this.dynamic,
-      {super.key});
+  const MetricSummarry(this.metrics, this.unit, this.date, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,18 +28,16 @@ class MetricGraph extends StatelessWidget {
                   return Text(metrics[index].$value ?? "");
                 },
               ))
-        : WidgetGraph(metrics, date, dynamic);
+        : WidgetGraph(metrics, date);
   }
 }
 
 class WidgetGraph extends StatelessWidget {
   final List<Metric> metrics;
-  final double scale = 1;
   final DateTimeRange date;
   static const int valueCount = 24;
-  final bool dynamic;
 
-  const WidgetGraph(this.metrics, this.date, this.dynamic, {super.key});
+  const WidgetGraph(this.metrics, this.date, {super.key});
 
   int _hourBetween(DateTime from, DateTime to) {
     return to.difference(from).inHours;
@@ -52,14 +48,19 @@ class WidgetGraph extends StatelessWidget {
     var first = date.start;
     var last = date.end;
 
-    var hour = _hourBetween(first, last);
-    var period = max(hour / valueCount, 1);
+    // First value used to make the graph pretty
+    String? firstValue;
+
+    var hours = _hourBetween(first, last);
+    var period = max(hours / valueCount, 1);
 
     var groups = <int, List<Metric>>{};
     for (var metric in raw) {
       if (metric.date == null) continue;
 
-      // calculte the spot
+      firstValue ??= metric.$value;
+
+      // calculate the spot
       var hour = _hourBetween(first, metric.date!);
       var key = hour ~/ period;
       var spot = groups[key];
@@ -71,24 +72,20 @@ class WidgetGraph extends StatelessWidget {
     }
 
     // for all spots, we take the mean
-    List<double> means = [];
+    List<double?> means = [];
     for (int i = 0; i < valueCount; i++) {
       var mean = groups[i]
-              ?.map((m) => m.$value != null ? double.parse(m.$value!) : 0)
-              .average ??
-          0;
+          ?.map((m) => m.$value != null ? double.parse(m.$value!) : 0)
+          .average;
       means.add(mean);
     }
-
-    //var yMin = means.min;
-    //var yMax = max(means.max - yMin, 1);
 
     // now we have the min and max Y and X value, we can build the spots
     List<FlSpot> spots = [];
 
+    double defaultValue = firstValue != null ? double.parse(firstValue) : 0;
     for (final (index, item) in means.indexed) {
-      // var y = (item - yMin) / yMax;
-      spots.add(FlSpot(index * scale, item));
+      spots.add(FlSpot(index * 1, item ?? defaultValue));
     }
 
     return spots;
@@ -104,7 +101,7 @@ class WidgetGraph extends StatelessWidget {
           )
         : LineChart(
             LineChartData(
-              lineTouchData: LineTouchData(enabled: dynamic),
+              lineTouchData: const LineTouchData(enabled: false),
               titlesData: const FlTitlesData(
                 leftTitles:
                     AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -126,7 +123,6 @@ class WidgetGraph extends StatelessWidget {
               lineBarsData: [
                 LineChartBarData(
                   spots: _getSpot(metrics),
-                  isCurved: true,
                   color: Colors.greenAccent,
                   barWidth: 2,
                   isStrokeCapRound: true,
