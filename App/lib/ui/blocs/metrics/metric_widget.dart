@@ -122,7 +122,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => MetricDetailPage(
-                                    widget: widget, metrics: metrics)),
+                                    widget: widget, metrics: metrics, date: widget.date,)),
                           ),
                           child: MetricSummarry(
                               metrics, widget.type.unit, widget.date),

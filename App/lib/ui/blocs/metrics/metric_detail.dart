@@ -1,30 +1,35 @@
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
 import 'package:helse/ui/blocs/metrics/metric_widget.dart';
+import 'package:helse/ui/blocs/app_bar/custom_app_bar.dart';
+
+import '../common/date_range_input.dart';
 
 class MetricDetailPage extends StatelessWidget {
   const MetricDetailPage({
     super.key,
     required this.widget,
     required this.metrics,
+    required this.date,
   });
 
+  final DateTimeRange date;
   final MetricWidget widget;
   final List<Metric> metrics;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: CustomAppBar(
         title: Text('Detail of ${widget.type.name}',
             style: Theme.of(context).textTheme.displaySmall),
+        //child: DateRangeInput((x) => {}, date),
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 80),
-        child: Container(
-          constraints: const BoxConstraints.expand(),
+      body: SizedBox.expand(
+        child: Padding(
+          padding: const EdgeInsets.only(
+              left: 8.0, right: 8.0, bottom: 8.0, top: 60.0),
           child: MetricGraph(metrics, widget.date),
         ),
       ),
@@ -39,10 +44,6 @@ class MetricGraph extends StatelessWidget {
 
   const MetricGraph(this.metrics, this.date, {super.key});
 
-  int _hourBetween(DateTime from, DateTime to) {
-    return to.difference(from).inHours;
-  }
-
   List<FlSpot> _getSpot(List<Metric> raw) {
     List<FlSpot> spots = [];
 
@@ -51,7 +52,8 @@ class MetricGraph extends StatelessWidget {
       final metricDate = metric.date;
       if (metricDate == null || value == null) continue;
 
-      spots.add(FlSpot(metricDate.millisecondsSinceEpoch as double, double.parse(value)));
+      spots.add(FlSpot(
+          metricDate.millisecondsSinceEpoch as double, double.parse(value)));
     }
 
     return spots;
