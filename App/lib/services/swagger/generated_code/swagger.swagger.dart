@@ -9,6 +9,7 @@ import 'package:chopper/chopper.dart';
 import 'client_mapping.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart' show MultipartFile;
 import 'package:chopper/chopper.dart' as chopper;
 import 'swagger.enums.swagger.dart' as enums;
 export 'swagger.enums.swagger.dart';
@@ -163,8 +164,7 @@ abstract class Swagger extends ChopperService {
 
   ///
   ///@param all
-  Future<chopper.Response<List<EventType>>> apiEventsTypeGet(
-      {required bool? all}) {
+  Future<chopper.Response<List<EventType>>> apiEventsTypeGet({bool? all}) {
     generatedMapping.putIfAbsent(EventType, () => EventType.fromJsonFactory);
 
     return _apiEventsTypeGet(all: all);
@@ -174,7 +174,7 @@ abstract class Swagger extends ChopperService {
   ///@param all
   @Get(path: '/api/events/type')
   Future<chopper.Response<List<EventType>>> _apiEventsTypeGet(
-      {@Query('all') required bool? all});
+      {@Query('all') bool? all});
 
   ///
   ///@param id

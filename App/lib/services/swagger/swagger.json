@@ -240,7 +240,6 @@
           {
             "name": "all",
             "in": "query",
-            "required": true,
             "style": "form",
             "schema": {
               "type": "boolean"

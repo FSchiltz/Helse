@@ -122,7 +122,7 @@ final class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<List<EventType>>> _apiEventsTypeGet({required bool? all}) {
+  Future<Response<List<EventType>>> _apiEventsTypeGet({bool? all}) {
     final Uri $url = Uri.parse('/api/events/type');
     final Map<String, dynamic> $params = <String, dynamic>{'all': all};
     final Request $request = Request(

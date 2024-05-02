@@ -5,7 +5,7 @@ import 'swagger/generated_code/swagger.swagger.dart';
 class EventService extends ApiService {
   EventService(super.account);
 
-    Future<List<EventType>?> eventsType(bool all) async {
+    Future<List<EventType>?> eventsType({bool? all}) async {
     var api = await getService();
     return await call(() => api.apiEventsTypeGet(all: all));
   }

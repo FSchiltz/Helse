@@ -74,7 +74,7 @@ public static class EventsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> GetTypeAsync(bool all, IHealthContext events) => TypedResults.Ok(await events.GetEventTypes(all));
+    public static async Task<IResult> GetTypeAsync(bool? all, IHealthContext events) => TypedResults.Ok(await events.GetEventTypes(all));
 
     public static async Task<IResult> CreateTypeAsync(Data.Models.EventType type, IUserContext users, IHealthContext events, HttpContext context)
     {
