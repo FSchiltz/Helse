@@ -51,7 +51,7 @@ class MetricGraph extends StatelessWidget {
       if (metricDate == null || value == null) continue;
 
       spots.add(FlSpot(
-          metricDate.millisecondsSinceEpoch as double, double.parse(value)));
+          metricDate.millisecondsSinceEpoch.toDouble(), double.parse(value)));
     }
 
     return spots;
@@ -67,8 +67,8 @@ class MetricGraph extends StatelessWidget {
           )
         : LineChart(
             LineChartData(
-              minX: date.start.millisecondsSinceEpoch as double,
-              maxX: date.end.millisecondsSinceEpoch as double,
+              minX: date.start.millisecondsSinceEpoch.toDouble(),
+              maxX: date.end.millisecondsSinceEpoch.toDouble(),
               minY: 0,
               lineTouchData: const LineTouchData(enabled: true),
               titlesData: const FlTitlesData(
