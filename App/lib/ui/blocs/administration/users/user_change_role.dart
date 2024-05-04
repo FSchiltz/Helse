@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
+import 'package:helse/ui/helpers/square_dialog.dart';
 
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.enums.swagger.dart';
@@ -23,9 +24,7 @@ class _ChangeRoleState extends State<ChangeRole> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-      scrollable: true,
+    return SquareDialog(
       title: const Text("Add a new user"),
       actions: [
         ElevatedButton(

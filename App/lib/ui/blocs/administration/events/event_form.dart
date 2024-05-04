@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../helpers/square_outline_input_border.dart';
 import '../../../helpers/square_text_field.dart';
 
 class EventAddForm extends StatefulWidget {

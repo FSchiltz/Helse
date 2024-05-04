@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/ui/blocs/notification.dart';
+import 'package:helse/ui/helpers/square_dialog.dart';
 
 import '../../../logic/event.dart';
 import '../../../main.dart';
@@ -65,10 +66,8 @@ class _EventAddState extends State<EventAdd> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-      scrollable: true,
-      title: const Text("New Event"),
+    return SquareDialog(
+      title: Text("Add a new ${widget.type.name ?? "Event"}"),
       actions: [
         SizedBox(
           child: _status == SubmissionStatus.inProgress
@@ -89,9 +88,6 @@ class _EventAddState extends State<EventAdd> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Text("Manually add ${widget.type.name}",
-                    style: Theme.of(context).textTheme.bodyMedium),
-                const SizedBox(height: 10),
                 TextInput(Icons.description_sharp, "Description",
                     onChanged: (value) => setState(() {
                           _description = value;

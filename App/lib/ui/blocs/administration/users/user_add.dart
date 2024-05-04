@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/ui/blocs/administration/users/type_input.dart';
+import 'package:helse/ui/helpers/square_dialog.dart';
 
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
@@ -30,9 +31,7 @@ class _SignupState extends State<UserAdd> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-      scrollable: true,
+    return SquareDialog(
       title: const Text("Add a new user"),
       actions: [
         ElevatedButton(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/helpers/square_dialog.dart';
 
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
@@ -32,9 +33,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
       controllerUnit.text = edit.unit ?? "";
     }
 
-    return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-      scrollable: true,
+    return SquareDialog(  
       title: const Text("Add a new metric type"),
       actions: [
         ElevatedButton(

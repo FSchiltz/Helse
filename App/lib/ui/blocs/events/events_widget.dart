@@ -78,8 +78,11 @@ class _EventWidgetState extends State<EventWidget> {
           children: [
             Row(
               children: [
-                Text(widget.type.name ?? "",
-                    style: Theme.of(context).textTheme.titleLarge),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: Text(widget.type.name ?? "",
+                      style: Theme.of(context).textTheme.titleLarge),
+                ),
                 IconButton(
                     onPressed: () {
                       showDialog(

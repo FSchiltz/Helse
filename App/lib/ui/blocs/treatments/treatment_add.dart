@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/helpers/square_dialog.dart';
 
 import '../../../logic/event.dart';
 import '../../../main.dart';
@@ -67,9 +68,7 @@ class _TreatementState extends State<TreatmentAdd> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-      scrollable: true,
+    return SquareDialog(
       title: const Text("New Event"),
       actions: [
         SizedBox(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/ui/blocs/notification.dart';
+import 'package:helse/ui/helpers/square_dialog.dart';
 
 import '../../../logic/event.dart';
 import '../../../main.dart';
@@ -60,25 +61,20 @@ class _PatientAddState extends State<PatientAdd> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-      scrollable: true,
+    return SquareDialog(
       title: const Text("Add"),
       actions: [
-        SizedBox(
-          width: 200,
-          child: _status == SubmissionStatus.inProgress
-              ? const HelseLoader()
-              : ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(50),
-                    shape: const ContinuousRectangleBorder(),
-                  ),
-                  key: const Key('loginForm_continue_raisedButton'),
-                  onPressed: _submit,
-                  child: const Text('Submit'),
+        _status == SubmissionStatus.inProgress
+            ? const HelseLoader()
+            : ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(50),
+                  shape: const ContinuousRectangleBorder(),
                 ),
-        ),
+                key: const Key('loginForm_continue_raisedButton'),
+                onPressed: _submit,
+                child: const Text('Submit'),
+              ),
       ],
       content: Container(
         constraints: const BoxConstraints(maxWidth: 500),

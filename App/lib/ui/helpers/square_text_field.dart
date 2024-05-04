@@ -9,7 +9,7 @@ class SquareTextField extends StatelessWidget {
     required this.label,
     this.onEditingComplete,
     required this.icon,
-    required this.controller,
+    this.controller,
     this.validator,
   });
 
@@ -18,7 +18,7 @@ class SquareTextField extends StatelessWidget {
   final FocusNode? focusNode;
   final ColorScheme theme;
   final IconData icon;
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String? Function(String? value)? validator;
 
   @override

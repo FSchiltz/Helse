@@ -1,5 +1,6 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:helse/ui/helpers/square_dialog.dart';
 
 import '../../../logic/event.dart';
 import '../../../main.dart';
@@ -38,9 +39,7 @@ class _FileImportState extends State<FileImport> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      shape: const ContinuousRectangleBorder(),
-      scrollable: true,
+    return SquareDialog(
       title: const Text("Import"),
       actions: [
         status == SubmissionStatus.inProgress
