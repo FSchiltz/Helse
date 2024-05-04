@@ -252,7 +252,7 @@ class _LoginState extends State<LoginPage> {
   Future<void> _submitOauth() async {
     var init = _initStatus;
     if (init != null && _url != null) {
-      await _connectOauth(init, _url);     
+      await _connectOauth(init, _url);
     }
   }
 
@@ -300,6 +300,9 @@ class _LoginState extends State<LoginPage> {
           username: user,
           password: password,
         );
+
+        await DI.authentication?.clean();
+
         if (localContext.mounted) {
           SuccessSnackBar.show('User created, welcome', localContext);
         }

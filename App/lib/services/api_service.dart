@@ -21,7 +21,7 @@ abstract class ApiService {
           result = null;
           break;
         default:
-          throw Exception(response.error);
+          throw Exception(response.error ?? "Login error");
       }
     } else {
       result = response.body;

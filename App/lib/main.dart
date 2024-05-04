@@ -130,9 +130,9 @@ class AppState extends State<AppView> {
           debugShowCheckedModeBanner: false,
           navigatorKey: _navigatorKey,
           builder: (context, child) {
-            return BlocListener<AuthenticationBloc, AuthenticationState>(
+            return BlocListener<AuthenticationBloc, AuthenticationStatus>(
               listener: (context, state) {
-                switch (state.status) {
+                switch (state) {
                   case AuthenticationStatus.authenticated:
                     _navigator.pushAndRemoveUntil<void>(
                       Home.route(),

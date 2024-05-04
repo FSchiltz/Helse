@@ -25,14 +25,15 @@ class AuthenticationLogic {
 
   /// Check if the user is logged in
   Future<void> checkLogin() async {
-    var token = await _account.get(Account.token);
+    var token = await _account.get(Account.refresh);
     if (token != null && token.isNotEmpty) {
+      // TODO check the validity
       _controller.add(AuthenticationStatus.authenticated);
     }
   }
 
-  void setLogin() {
-    _controller.add(AuthenticationStatus.authenticated);
+  void set(AuthenticationStatus status) {
+    _controller.add(status);
   }
 
   /// Call the login service
@@ -86,10 +87,15 @@ class AuthenticationLogic {
 
   /// Call the logout service
   Future<void> logOut() async {
+    clean();
     await _account.remove(Account.token);
+    await _account.remove(Account.refresh);
+    _controller.add(AuthenticationStatus.unauthenticated);
+  }
+
+  Future<void> clean() async {
     await _account.remove(Account.redirect);
     await _account.remove(Account.grant);
-    _controller.add(AuthenticationStatus.unauthenticated);
   }
 
   void dispose() => _controller.close();

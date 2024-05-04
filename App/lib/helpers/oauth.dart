@@ -1,5 +1,6 @@
 import 'dart:core';
 import 'package:app_links/app_links.dart';
+import 'package:helse/logic/account/authentication_logic.dart';
 import 'package:universal_html/html.dart';
 import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -64,10 +65,12 @@ class OauthClient {
     var links = AppLinks();
     links.allUriLinkStream.listen((uri) {
       if (uri.toString().startsWith(redirect)) {
-        getCode(uri.queryParameters).then((value) => DI.authentication?.setLogin());
+        getCode(uri.queryParameters).then((value) =>
+            DI.authentication?.set(AuthenticationStatus.unauthenticated));
       }
     });
-
+    
+    DI.authentication?.set(AuthenticationStatus.unknown);
     var uri = Uri.parse(result);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
