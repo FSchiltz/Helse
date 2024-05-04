@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:helse/services/user_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
+import '../../main.dart';
 import '../../services/account.dart';
 import '../../services/swagger/generated_code/swagger.swagger.dart';
 
@@ -41,7 +42,7 @@ class AuthenticationLogic {
       required String password,
       String? redirect}) async {
     await _account.set(Account.url, url);
-    var token = await UserService(_account).login(username, password, redirect);
+    var token = await DI.user?.login(username, password, redirect);
 
     if (token?.refreshToken != null) {
       await _account.set(Account.refresh, token?.refreshToken ?? '');
@@ -49,6 +50,8 @@ class AuthenticationLogic {
       await _account.remove(Account.grant);
 
       _controller.add(AuthenticationStatus.authenticated);
+    } else {
+      _controller.add(AuthenticationStatus.unauthenticated);
     }
   }
 

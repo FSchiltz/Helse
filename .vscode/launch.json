@@ -5,11 +5,7 @@
             "name": "Flutter web",
             "type": "dart",
             "request": "launch",
-            "program": "App/lib/main.dart",
-            "args": [
-                "-d",
-                "chrome"
-            ]
+            "program": "App/lib/main.dart"
         },
         {
             "name": ".NET Core Launch (web)",
