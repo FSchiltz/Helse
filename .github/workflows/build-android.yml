@@ -41,7 +41,7 @@ jobs:
       if: ${{ inputs.push }}
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: build/app/outputs/bundle/release/app-release.aab
+        file: App/build/app/outputs/bundle/release/app-release.aab
         asset_name: "app_bundle.aap"
         tag: ${{ inputs.tag }}
     
