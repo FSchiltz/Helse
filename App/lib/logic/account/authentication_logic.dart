@@ -11,8 +11,9 @@ enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 class AuthenticationLogic {
   final _controller = StreamController<AuthenticationStatus>();
   final Account _account;
+  final void Function()? callback;
 
-  AuthenticationLogic(Account account) : _account = account;
+  AuthenticationLogic(Account account, this.callback) : _account = account;
 
   Stream<AuthenticationStatus> get status async* {
     await Future<void>.delayed(const Duration(seconds: 1));
@@ -25,11 +26,21 @@ class AuthenticationLogic {
   /// Check if the user is logged in
   Future<void> checkLogin() async {
     var token = await _account.get(Account.token);
-    if (token != null && token.isNotEmpty) _controller.add(AuthenticationStatus.authenticated);
+    if (token != null && token.isNotEmpty) {
+      _controller.add(AuthenticationStatus.authenticated);
+    }
+  }
+
+  void setLogin() {
+    _controller.add(AuthenticationStatus.authenticated);
   }
 
   /// Call the login service
-  Future<void> logIn({required String url, required String username, required String password, String? redirect}) async {
+  Future<void> logIn(
+      {required String url,
+      required String username,
+      required String password,
+      String? redirect}) async {
     await _account.set(Account.url, url);
     var token = await UserService(_account).login(username, password, redirect);
 
@@ -48,7 +59,9 @@ class AuthenticationLogic {
 
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
     var data = decodedToken["roles"];
-    if (data == null) return const Person(type: UserType.swaggerGeneratedUnknown);
+    if (data == null) {
+      return const Person(type: UserType.swaggerGeneratedUnknown);
+    }
 
     var name = decodedToken["name"];
     if (name?.isEmpty ?? true) name = null;
@@ -63,14 +76,15 @@ class AuthenticationLogic {
   }
 
   /// Init the account for a first connection
-  Future<void> initAccount({required String url, required PersonCreation person}) async {
+  Future<void> initAccount(
+      {required String url, required PersonCreation person}) async {
     await _account.set(Account.url, url);
     await _api().addPerson(person);
   }
 
   /// Call the logout service
   void logOut() {
-    _account.clear();
+    clear();
     _controller.add(AuthenticationStatus.unauthenticated);
   }
 
@@ -94,6 +108,8 @@ class AuthenticationLogic {
     await _account.remove(Account.token);
     await _account.remove(Account.redirect);
     await _account.remove(Account.grant);
+
+    callback?.call();
   }
 
   Future<String?> getUrl() {

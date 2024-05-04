@@ -17,7 +17,7 @@ abstract class ApiService {
       switch (response.statusCode) {
         case 401:
           // no auth, we remove the token and return null;
-          _account.clear();
+          _account.remove(Account.token);
           result = null;
           break;
         default:

@@ -4,7 +4,6 @@ import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
 import 'package:helse/ui/blocs/metrics/metric_widget.dart';
 import 'package:helse/ui/blocs/app_bar/custom_app_bar.dart';
 
-import '../common/date_range_input.dart';
 
 class MetricDetailPage extends StatelessWidget {
   const MetricDetailPage({
