@@ -49,110 +49,93 @@ class _LoginState extends State<LoginPage> {
     var theme = Theme.of(context).colorScheme;
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        body: SingleChildScrollView(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                constraints: const BoxConstraints(maxWidth: 500),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      Text("Welcome ${_initStatus?.init == true ? "Back" : ""}",
-                          style: Theme.of(context).textTheme.headlineLarge),
-                      const SizedBox(height: 20),
-                      TextField(
-                        controller: textController,
-                        onChanged: _urlChanged,
-                        key: const Key('loginForm_urlInput_textField'),
-                        decoration: InputDecoration(
-                          labelText: 'Server url',
-                          prefixIcon: const Icon(Icons.home_sharp),
-                          prefixIconColor: theme.primary,
-                          filled: true,
-                          fillColor: theme.surface,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(0),
-                            borderSide: BorderSide(color: theme.primary),
+        body: SafeArea(
+          top: true,
+          child: SingleChildScrollView(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        Text("Welcome ${_initStatus?.init == true ? "Back" : ""}",
+                            style: Theme.of(context).textTheme.headlineLarge),
+                        const SizedBox(height: 20),
+                        TextField(
+                          controller: textController,
+                          onChanged: _urlChanged,
+                          key: const Key('loginForm_urlInput_textField'),
+                          decoration: InputDecoration(
+                            labelText: 'Server url',
+                            prefixIcon: const Icon(Icons.home_sharp),
+                            prefixIconColor: theme.primary,
+                            filled: true,
+                            fillColor: theme.surface,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(0),
+                              borderSide: BorderSide(color: theme.primary),
+                            ),
+                            errorText: _status == SubmissionStatus.failure
+                                ? 'invalid url'
+                                : null,
                           ),
-                          errorText: _status == SubmissionStatus.failure
-                              ? 'invalid url'
-                              : null,
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      (_loaded == SubmissionStatus.inProgress)
-                          ? const HelseLoader()
-                          : (_loaded == SubmissionStatus.success)
-                              ? Column(children: [
-                                  (_initStatus?.init == true)
-                                      ? Column(
-                                          children: [
-                                            UserNameInput(
-                                              controller: _controllerUsername,
-                                              validate: validateUserName,
-                                            ),
-                                            const SizedBox(height: 10),
-                                            PasswordInput(
-                                              controller: _controllerPassword,
-                                              toggleCallback:
-                                                  togglePasswordVisibility,
-                                              obscurePassword: _obscurePassword,
-                                            ),
-                                          ],
-                                        )
-                                      : Column(
-                                          children: [
-                                            Text("Create your account",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineLarge),
-                                            Text(
-                                                "This is the admin account for the server",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyLarge),
-                                            const SizedBox(height: 20),
-                                            UserForm(
-                                              UserType.admin,
-                                              controllerUsername:
-                                                  _controllerUsername,
-                                              controllerEmail: _controllerEmail,
-                                              controllerPassword:
-                                                  _controllerPassword,
-                                              controllerConFirmPassword:
-                                                  _controllerConFirmPassword,
-                                              controllerName: _controllerName,
-                                              controllerSurname:
-                                                  _controllerSurname,
-                                            )
-                                          ],
-                                        ),
-                                  const SizedBox(height: 60),
-                                  _status == SubmissionStatus.inProgress
-                                      ? const HelseLoader()
-                                      : Column(
-                                          children: [
-                                            ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                minimumSize:
-                                                    const Size.fromHeight(50),
-                                                shape:
-                                                    const ContinuousRectangleBorder(),
+                        const SizedBox(height: 20),
+                        (_loaded == SubmissionStatus.inProgress)
+                            ? const HelseLoader()
+                            : (_loaded == SubmissionStatus.success)
+                                ? Column(children: [
+                                    (_initStatus?.init == true)
+                                        ? Column(
+                                            children: [
+                                              UserNameInput(
+                                                controller: _controllerUsername,
+                                                validate: validateUserName,
                                               ),
-                                              onPressed: _submit,
-                                              child: Text(
-                                                _initStatus?.init == true
-                                                    ? 'Login'
-                                                    : 'Create',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .titleLarge,
+                                              const SizedBox(height: 10),
+                                              PasswordInput(
+                                                controller: _controllerPassword,
+                                                toggleCallback:
+                                                    togglePasswordVisibility,
+                                                obscurePassword: _obscurePassword,
                                               ),
-                                            ),
-                                            const SizedBox(height: 20),
-                                            if (_initStatus?.oauth != null)
+                                            ],
+                                          )
+                                        : Column(
+                                            children: [
+                                              Text("Create your account",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .headlineLarge),
+                                              Text(
+                                                  "This is the admin account for the server",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge),
+                                              const SizedBox(height: 20),
+                                              UserForm(
+                                                UserType.admin,
+                                                controllerUsername:
+                                                    _controllerUsername,
+                                                controllerEmail: _controllerEmail,
+                                                controllerPassword:
+                                                    _controllerPassword,
+                                                controllerConFirmPassword:
+                                                    _controllerConFirmPassword,
+                                                controllerName: _controllerName,
+                                                controllerSurname:
+                                                    _controllerSurname,
+                                              )
+                                            ],
+                                          ),
+                                    const SizedBox(height: 60),
+                                    _status == SubmissionStatus.inProgress
+                                        ? const HelseLoader()
+                                        : Column(
+                                            children: [
                                               ElevatedButton(
                                                 style: ElevatedButton.styleFrom(
                                                   minimumSize:
@@ -160,17 +143,37 @@ class _LoginState extends State<LoginPage> {
                                                   shape:
                                                       const ContinuousRectangleBorder(),
                                                 ),
-                                                onPressed: _submitOauth,
-                                                child: Text('Login with Oauth',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .titleLarge),
-                                              )
-                                          ],
-                                        )
-                                ])
-                              : Container(),
-                    ],
+                                                onPressed: _submit,
+                                                child: Text(
+                                                  _initStatus?.init == true
+                                                      ? 'Login'
+                                                      : 'Create',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleLarge,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 20),
+                                              if (_initStatus?.oauth != null)
+                                                ElevatedButton(
+                                                  style: ElevatedButton.styleFrom(
+                                                    minimumSize:
+                                                        const Size.fromHeight(50),
+                                                    shape:
+                                                        const ContinuousRectangleBorder(),
+                                                  ),
+                                                  onPressed: _submitOauth,
+                                                  child: Text('Login with Oauth',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleLarge),
+                                                )
+                                            ],
+                                          )
+                                  ])
+                                : Container(),
+                      ],
+                    ),
                   ),
                 ),
               ),

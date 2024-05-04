@@ -33,16 +33,15 @@ jobs:
       working-directory: 'App'
       
     - name: Build release app bundle
-      run: flutter build appbundle
-      working-directory: 'App'
+      run: flutter build apk --release --split-per-abi
+      working-directory: 'App'    
 
     - name: Upload binaries to release
       uses: svenstaro/upload-release-action@v2
       if: ${{ inputs.push }}
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: App/build/app/outputs/bundle/release/app-release.aab
-        asset_name: "app_bundle.aap"
+        file: App/build/app/outputs/flutter-apk/*.apk
         tag: ${{ inputs.tag }}
     
       
