@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
+import 'package:helse/ui/helpers/square_dialog.dart';
 
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.enums.swagger.dart';
@@ -11,7 +12,7 @@ class ChangeRole extends StatefulWidget {
   final UserType type;
   final int id;
 
-  const ChangeRole(this.callback,this.type, this.id, {super.key});
+  const ChangeRole(this.callback, this.type, this.id, {super.key});
 
   @override
   State<ChangeRole> createState() => _ChangeRoleState();
@@ -23,9 +24,7 @@ class _ChangeRoleState extends State<ChangeRole> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-      scrollable: true,
+    return SquareDialog(
       title: const Text("Add a new user"),
       actions: [
         ElevatedButton(
@@ -65,12 +64,11 @@ class _ChangeRoleState extends State<ChangeRole> {
 
       if (localContext.mounted) {
         Navigator.of(localContext).pop();
-        SuccessSnackBar.show("Updated Successfully", localContext);
       }
+
+      Notify.show("Updated Successfully");
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.show("Error: $ex");
     }
   }
 }

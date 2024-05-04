@@ -21,6 +21,7 @@ class EventsGrid extends StatelessWidget {
         ? const LinearProgressIndicator()
         : ListView(
             shrinkWrap: true,
+            physics: const BouncingScrollPhysics(),
             children: types.map((type) => EventWidget(type, date, key: Key(type.id?.toString() ?? ""), person: person)).toList(),
           );
   }

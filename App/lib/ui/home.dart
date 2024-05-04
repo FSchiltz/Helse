@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/blocs/app_bar/custom_app_bar.dart';
 
 import 'admin_dashboard.dart';
 import '../helpers/date.dart';
@@ -49,11 +48,12 @@ class _HomeState extends State<Home> {
   }
 
   DeviceType getDevice() {
-    return MediaQuery.of(context).size.width <= 800 ? DeviceType.mobile : DeviceType.desktop;
+    return MediaQuery.of(context).size.width <= 800
+        ? DeviceType.mobile
+        : DeviceType.desktop;
   }
 
   void _getUser() async {
-    var localContext = context;
     try {
       var model = await DI.authentication?.getUser();
       if (model != null) {
@@ -62,9 +62,7 @@ class _HomeState extends State<Home> {
         });
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.showError("Error: $ex");
     }
   }
 
@@ -87,87 +85,94 @@ class _HomeState extends State<Home> {
     return LayoutBuilder(builder: (context, constraints) {
       var theme = Theme.of(context);
       return Scaffold(
-        appBar: CustomAppBar(
-          title: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Welcome ${user?.surname ?? user?.name ?? ""}',
-              style: theme.textTheme.headlineMedium?.copyWith(color: theme.colorScheme.onPrimaryContainer),
-            ),
-          ),
-          actions: PopupMenuButton(
-              icon: Icon(Icons.menu_sharp, color: theme.colorScheme.onTertiary),
-              itemBuilder: (context) {
-                return [
-                  const PopupMenuItem<int>(
-                    value: 0,
-                    child: ListTile(
-                      leading: Icon(Icons.upload_file_sharp),
-                      title: Text("Import"),
-                    ),
-                  ),
-                  const PopupMenuItem<int>(
-                    value: 1,
-                    child: ListTile(
-                      leading: Icon(Icons.settings_sharp),
-                      title: Text("Settings"),
-                    ),
-                  ),
-                  if (user?.type == UserType.admin)
-                    const PopupMenuItem<int>(
-                      value: 2,
-                      child: ListTile(
-                        leading: Icon(Icons.admin_panel_settings_sharp),
-                        title: Text("Administration"),
-                      ),
-                    ),
-                  const PopupMenuItem<int>(
-                    value: 3,
-                    child: ListTile(
-                      leading: Icon(Icons.logout_sharp),
-                      title: Text("Logout"),
-                    ),
-                  ),
-                ];
-              },
-              onSelected: (value) {
-                switch (value) {
-                  case 0:
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return const FileImport();
-                        });
-                    break;
-                  case 1:
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const LocalSettingsPage()),
-                    );
-                    break;
-                  case 2:
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const AdministrationPage()),
-                    );
-                    break;
-                  case 3:
-                    DI.authentication?.logOut();
-                    break;
-                }
-              }),
-          child: DateRangeInput(_setDate, date),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.only(top: 56.0),
-          child: Row(
+        appBar: AppBar(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Expanded(
-                child: page,
+                child: Text(
+                  'Hi ${user?.surname ?? user?.name ?? ""}',
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.headlineMedium
+                      ?.copyWith(color: theme.colorScheme.onPrimaryContainer),
+                ),
               ),
+              Flexible(
+                  child: Container(
+                    constraints: const BoxConstraints(maxWidth: 220),
+                color: theme.colorScheme.onSecondary,
+                child: DateRangeInput(_setDate, date),
+              ))
             ],
           ),
+          actions: [
+            PopupMenuButton(
+                icon: Icon(Icons.menu_sharp,
+                    color: theme.colorScheme.onBackground),
+                itemBuilder: (context) {
+                  return [
+                    const PopupMenuItem<int>(
+                      value: 0,
+                      child: ListTile(
+                        leading: Icon(Icons.upload_file_sharp),
+                        title: Text("Import"),
+                      ),
+                    ),
+                    const PopupMenuItem<int>(
+                      value: 1,
+                      child: ListTile(
+                        leading: Icon(Icons.settings_sharp),
+                        title: Text("Settings"),
+                      ),
+                    ),
+                    if (user?.type == UserType.admin)
+                      const PopupMenuItem<int>(
+                        value: 2,
+                        child: ListTile(
+                          leading: Icon(Icons.admin_panel_settings_sharp),
+                          title: Text("Administration"),
+                        ),
+                      ),
+                    const PopupMenuItem<int>(
+                      value: 3,
+                      child: ListTile(
+                        leading: Icon(Icons.logout_sharp),
+                        title: Text("Logout"),
+                      ),
+                    ),
+                  ];
+                },
+                onSelected: (value) {
+                  switch (value) {
+                    case 0:
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const FileImport();
+                          });
+                      break;
+                    case 1:
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LocalSettingsPage()),
+                      );
+                      break;
+                    case 2:
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AdministrationPage()),
+                      );
+                      break;
+                    case 3:
+                      DI.authentication?.logOut();
+                      break;
+                  }
+                })
+          ],
         ),
+        body: page,
       );
     });
   }

@@ -1,14 +1,13 @@
 {
     "version": "0.2.0",
-    "configurations": [
-        
+    "configurations": [        
         {
             "name": "Flutter web",
             "type": "dart",
             "request": "launch",
             "program": "App/lib/main.dart",
             "args": [
-                "-d",
+                "-d", 
                 "chrome"
             ]
         },
@@ -39,14 +38,11 @@
             "request": "attach"
         },
         {
-            "name": "Flutter (M2102J20SG)",
-            "program": "lib/main.dart",
-            "cwd": "App",
-            "deviceId": "f23ba6e8",
-            "request": "launch",
+            "name": "Flutter android",
             "type": "dart",
-            "flutterMode": "release"
-        }
+            "request": "launch",
+            "program": "App/lib/main.dart"
+        },
     ],
     "compounds": [
         {

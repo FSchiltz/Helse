@@ -1,12 +1,14 @@
 import 'dart:core';
-import 'package:oauth2/oauth2.dart' as oauth2;
+import 'package:app_links/app_links.dart';
+import 'package:helse/logic/account/authentication_logic.dart';
 import 'package:universal_html/html.dart';
 import 'package:flutter/foundation.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../main.dart';
 import '../services/account.dart';
 
 class OauthClient {
-  String? _token;
   String? _auth;
   String? _clientId;
   final Account account;
@@ -31,21 +33,14 @@ class OauthClient {
     _clientId = clientId;
   }
 
-  oauth2.AuthorizationCodeGrant _grant() {
-    return oauth2.AuthorizationCodeGrant(
-      _clientId ?? '',
-      Uri.parse(_auth ?? ''),
-      Uri.parse(_token ?? ''),
-    );
-  }
-
   Future<String?> login(url) async {
     await account.set(Account.url, url);
 
     var grant = await account.get(Account.grant);
     if (grant == null) {
       var redirect = redirectUrl.toString();
-      final authUrl = '$_auth?client_id=$_clientId&response_type=code&scope=openid+profile+offline_access&state=STATE&redirect_uri=$redirect';
+      final authUrl =
+          '$_auth?client_id=$_clientId&response_type=code&scope=openid+profile+offline_access&state=STATE&redirect_uri=$redirect';
 
       await account.set(Account.redirect, redirect);
 
@@ -53,7 +48,7 @@ class OauthClient {
         window.location.assign(authUrl);
         return null;
       } else {
-        _doAuthOnMobile(redirect);
+        _doAuthOnMobile(authUrl, redirect);
         return '';
       }
     } else {
@@ -61,13 +56,26 @@ class OauthClient {
     }
   }
 
-  void _doAuthOnMobile(String result) async {
-    var code = Uri.parse(result).queryParameters['code'] ?? '';
-    final oauth2.Client client = await _grant().handleAuthorizationResponse({'code': code});
-  }
-
-  Future<void> doAuthOnWeb(Map<String, String> uri) async {
+  Future<void> getCode(Map<String, String> uri) async {
     var code = uri['code'] ?? '';
     await account.set(Account.grant, code);
   }
+
+  void _doAuthOnMobile(String result, String redirect) async {
+    var links = AppLinks();
+    links.allUriLinkStream.listen((uri) {
+      if (uri.toString().startsWith(redirect)) {
+        getCode(uri.queryParameters).then((value) =>
+            DI.authentication?.set(AuthenticationStatus.unauthenticated));
+      }
+    });
+    
+    DI.authentication?.set(AuthenticationStatus.unknown);
+    var uri = Uri.parse(result);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
+  }
+
+  void doAuthOnWeb(Map<String, String> uri) => getCode(uri);
 }

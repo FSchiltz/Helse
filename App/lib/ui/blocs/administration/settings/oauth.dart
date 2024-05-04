@@ -3,6 +3,7 @@ import 'package:helse/ui/blocs/notification.dart';
 
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../helpers/square_text_field.dart';
 import '../../loader.dart';
 
 class OauthView extends StatefulWidget {
@@ -76,7 +77,8 @@ class _OauthViewState extends State<OauthView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Oauth", style: Theme.of(context).textTheme.headlineMedium),
+                    Text("Oauth",
+                        style: Theme.of(context).textTheme.headlineMedium),
                     const SizedBox(height: 5),
                     Row(
                       children: [
@@ -91,64 +93,32 @@ class _OauthViewState extends State<OauthView> {
                       ],
                     ),
                     const SizedBox(height: 5),
-                    TextFormField(
+                    SquareTextField(
                       controller: _controllerId,
-                      keyboardType: TextInputType.name,
-                      decoration: InputDecoration(
-                        labelText: "Client id",
-                        prefixIcon: const Icon(Icons.person_sharp),
-                        prefixIconColor: theme.primary,
-                        filled: true,
-                        fillColor: theme.surface,
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: theme.primary),
-                        ),
-                      ),
+                      label: "Client id",
+                      icon: Icons.person_sharp,
+                      theme: theme,
                     ),
                     const SizedBox(height: 10),
-                    TextFormField(
+                    SquareTextField(
+                      theme: theme,
                       controller: _controllerSecret,
-                      keyboardType: TextInputType.name,
-                      decoration: InputDecoration(
-                        labelText: "Client secret",
-                        prefixIcon: const Icon(Icons.password_sharp),
-                        prefixIconColor: theme.primary,
-                        filled: true,
-                        fillColor: theme.surface,
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: theme.primary),
-                        ),
-                      ),
+                      label: "Client secret",
+                      icon: Icons.password_sharp,
                     ),
                     const SizedBox(height: 10),
-                    TextFormField(
+                    SquareTextField(
                       controller: _controllerAuth,
-                      keyboardType: TextInputType.name,
-                      decoration: InputDecoration(
-                        labelText: "Auth url",
-                        prefixIcon: const Icon(Icons.connect_without_contact_sharp),
-                        prefixIconColor: theme.primary,
-                        filled: true,
-                        fillColor: theme.surface,
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: theme.primary),
-                        ),
-                      ),
+                      label: "Auth url",
+                      icon: Icons.connect_without_contact_sharp,
+                      theme: theme,
                     ),
                     const SizedBox(height: 10),
-                    TextFormField(
+                    SquareTextField(
                       controller: _controllerToken,
-                      keyboardType: TextInputType.name,
-                      decoration: InputDecoration(
-                        labelText: "Token url",
-                        prefixIcon: const Icon(Icons.token_sharp),
-                        prefixIconColor: theme.primary,
-                        filled: true,
-                        fillColor: theme.surface,
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: theme.primary),
-                        ),
-                      ),
+                      label: "Token url",
+                      icon: Icons.token_sharp,
+                      theme: theme,
                     ),
                     const SizedBox(height: 5),
                     Row(
@@ -193,12 +163,12 @@ class _OauthViewState extends State<OauthView> {
               );
             }
           }
-          return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
+          return const Center(
+              child: SizedBox(width: 50, height: 50, child: HelseLoader()));
         });
   }
 
   void submit() async {
-    var localContext = context;
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
@@ -214,16 +184,12 @@ class _OauthViewState extends State<OauthView> {
               ),
             );
 
-        if (localContext.mounted) {
-          SuccessSnackBar.show("Saved Successfully", localContext);
-        }
+        Notify.show("Saved Successfully");
 
         _resetSettings();
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.show("Error: $ex");
     }
   }
 }

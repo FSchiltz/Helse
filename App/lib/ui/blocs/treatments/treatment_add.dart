@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/helpers/square_dialog.dart';
 
 import '../../../logic/event.dart';
 import '../../../main.dart';
@@ -36,42 +37,38 @@ class _TreatementState extends State<TreatmentAdd> {
 
   void _submit() async {
     var localContext = context;
-    try {
-      if (DI.treatement != null) {
+
+    if (DI.treatement != null) {
+      setState(() {
+        _status = SubmissionStatus.inProgress;
+      });
+      try {
+        var event = CreateEvent(
+            start: _start, stop: _stop, type: _type, description: _description);
+        var treatment =
+            CreateTreatment(events: [event], personId: widget.person);
+        await DI.treatement?.addTreatment(treatment);
+
         setState(() {
-          _status = SubmissionStatus.inProgress;
+          _status = SubmissionStatus.success;
         });
-        try {
-          var event = CreateEvent(start: _start, stop: _stop, type: _type, description: _description);
-          var treatment = CreateTreatment(events: [event], personId: widget.person);
-          await DI.treatement?.addTreatment(treatment);
 
-          setState(() {
-            _status = SubmissionStatus.success;
-          });
-
-          if (localContext.mounted) {
-            Navigator.of(localContext).pop();
-            SuccessSnackBar.show("Treatment added", localContext);
-          }
-        } catch (_) {
-          setState(() {
-            _status = SubmissionStatus.failure;
-          });
+        if (localContext.mounted) {
+          Navigator.of(localContext).pop();
         }
-      }
-    } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
+        Notify.show("Treatment added");
+      } catch (ex) {
+        setState(() {
+          _status = SubmissionStatus.failure;
+        });
+        Notify.showError("Error: $ex");
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-      scrollable: true,
+    return SquareDialog(
       title: const Text("New Event"),
       actions: [
         SizedBox(
@@ -93,7 +90,8 @@ class _TreatementState extends State<TreatmentAdd> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Text("Manually add a new event", style: Theme.of(context).textTheme.bodyMedium),
+                Text("Manually add a new event",
+                    style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: 10),
                 FutureBuilder(
                     future: _getTypes(),
@@ -160,14 +158,18 @@ class _TypeInput extends StatelessWidget {
     var theme = Theme.of(context).colorScheme;
     return DropdownButtonFormField(
       onChanged: callback,
-      items: types.map((type) => DropdownMenuItem(value: type.id, child: Text(type.name ?? ""))).toList(),
+      items: types
+          .map((type) =>
+              DropdownMenuItem(value: type.id, child: Text(type.name ?? "")))
+          .toList(),
       decoration: InputDecoration(
         labelText: 'Type',
         prefixIcon: const Icon(Icons.list_sharp),
         prefixIconColor: theme.primary,
         filled: true,
         fillColor: theme.surface,
-        border: OutlineInputBorder(borderSide: BorderSide(color: theme.primary)),
+        border:
+            OutlineInputBorder(borderSide: BorderSide(color: theme.primary)),
       ),
     );
   }

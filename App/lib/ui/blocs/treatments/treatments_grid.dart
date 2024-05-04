@@ -20,21 +20,20 @@ class _TreatmentsGridState extends State<TreatmentsGrid> {
   List<Treatement>? _treatments;
 
   Future<List<Treatement>?> _getData() async {
-    var localContext = context;
     try {
       if (_treatments != null) return _treatments;
 
       var date = widget.date;
 
       var start = DateTime(date.start.year, date.start.month, date.start.day);
-      var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
+      var end = DateTime(date.end.year, date.end.month, date.end.day)
+          .add(const Duration(days: 1));
 
-      _treatments = await DI.treatement?.treatments(start, end, person: widget.person);
+      _treatments =
+          await DI.treatement?.treatments(start, end, person: widget.person);
       return _treatments;
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.show("Error: $ex");
     }
     return _treatments;
   }
@@ -58,14 +57,17 @@ class _TreatmentsGridState extends State<TreatmentsGrid> {
               // if we got our data
             }
 
-            final events = (snapshot.hasData) ? snapshot.data as List<Treatement> : List<Treatement>.empty();
+            final events = (snapshot.hasData)
+                ? snapshot.data as List<Treatement>
+                : List<Treatement>.empty();
 
             return ListView(
               shrinkWrap: true,
               children: events
                   .map((e) => Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: EventGraph(e.events ?? List<Event>.empty(), widget.date),
+                        child: EventGraph(
+                            e.events ?? List<Event>.empty(), widget.date),
                       ))
                   .toList(),
             );

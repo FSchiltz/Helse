@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/helpers/square_outline_input_border.dart';
 
 import '../../../../services/swagger/generated_code/swagger.enums.swagger.dart';
+import '../../../helpers/square_text_field.dart';
 
 class UserForm extends StatefulWidget {
   final UserType? type;
@@ -36,57 +38,36 @@ class _UserFormState extends State<UserForm> {
 
   @override
   Widget build(BuildContext context) {
-    var iconButton = IconButton(onPressed: togglePassword, icon: _obscurePassword ? const Icon(Icons.visibility_sharp) : const Icon(Icons.visibility_off_sharp));
+    var iconButton = IconButton(
+        onPressed: togglePassword,
+        icon: _obscurePassword
+            ? const Icon(Icons.visibility_sharp)
+            : const Icon(Icons.visibility_off_sharp));
     var theme = Theme.of(context).colorScheme;
 
     return Column(
       children: [
-        TextFormField(
+        SquareTextField(
           controller: widget.controllerName,
-          keyboardType: TextInputType.name,
-          decoration: InputDecoration(
-            labelText: "Name",
-            prefixIcon: const Icon(Icons.person_sharp),
-            prefixIconColor: theme.primary,
-            filled: true,
-            fillColor: theme.surface,
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: theme.primary),
-            ),
-          ),
+          label: "Name",
+          icon: Icons.person_sharp,
           validator: validateUser,
+          theme: theme,
         ),
         const SizedBox(height: 10),
-        TextFormField(
-          controller: widget.controllerSurname,
-          keyboardType: TextInputType.name,
-          decoration: InputDecoration(
-            labelText: "Surname",
-            prefixIcon: const Icon(Icons.person_sharp),
-            prefixIconColor: theme.primary,
-            filled: true,
-            fillColor: theme.surface,
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: theme.primary),
-            ),
-          ),
-        ),
+        SquareTextField(
+            controller: widget.controllerSurname,
+            label: "Surname",
+            icon: Icons.person_sharp,
+            theme: theme),
         if (widget.type != null && widget.type != UserType.patient) ...[
           const SizedBox(height: 10),
-          TextFormField(
+          SquareTextField(
             controller: widget.controllerEmail,
             focusNode: _focusNodeEmail,
-            keyboardType: TextInputType.emailAddress,
-            decoration: InputDecoration(
-              labelText: "Email",
-              prefixIcon: const Icon(Icons.email_sharp),
-              prefixIconColor: theme.primary,
-              filled: true,
-              fillColor: theme.surface,
-              border: OutlineInputBorder(
-                borderSide: BorderSide(color: theme.primary),
-              ),
-            ),
+            label: "Email",
+            icon: Icons.email_sharp,
+            theme: theme,
             validator: validateEmail,
             onEditingComplete: () => _focusNodePassword.requestFocus(),
           ),
@@ -119,9 +100,7 @@ class _UserFormState extends State<UserForm> {
               prefixIconColor: theme.primary,
               filled: true,
               fillColor: theme.surface,
-              border: OutlineInputBorder(
-                borderSide: BorderSide(color: theme.primary),
-              ),
+              border: SquareOutlineInputBorder(theme.primary),
             ),
             validator: validateConfirmPassword,
           ),
@@ -204,7 +183,11 @@ class PasswordInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var iconButton = IconButton(onPressed: toggleCallback, icon: obscurePassword ? const Icon(Icons.visibility_sharp) : const Icon(Icons.visibility_off_sharp));
+    var iconButton = IconButton(
+        onPressed: toggleCallback,
+        icon: obscurePassword
+            ? const Icon(Icons.visibility_sharp)
+            : const Icon(Icons.visibility_off_sharp));
     var theme = Theme.of(context).colorScheme;
     return TextFormField(
       controller: controller,
@@ -220,6 +203,7 @@ class PasswordInput extends StatelessWidget {
         filled: true,
         fillColor: theme.surface,
         border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(0),
           borderSide: BorderSide(color: theme.primary),
         ),
       ),
@@ -257,6 +241,7 @@ class UserNameInput extends StatelessWidget {
         filled: true,
         fillColor: theme.surface,
         border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(0),
           borderSide: BorderSide(color: theme.primary),
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:helse/ui/blocs/notification.dart';
 
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../helpers/square_text_field.dart';
 import '../../loader.dart';
 
 class ProxyView extends StatefulWidget {
@@ -67,7 +68,8 @@ class _ProxyViewState extends State<ProxyView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Proxy", style: Theme.of(context).textTheme.headlineMedium),
+                    Text("Proxy",
+                        style: Theme.of(context).textTheme.headlineMedium),
                     const SizedBox(height: 5),
                     Row(
                       children: [
@@ -97,19 +99,11 @@ class _ProxyViewState extends State<ProxyView> {
                     const SizedBox(height: 20),
                     SizedBox(
                       width: 400,
-                      child: TextFormField(
+                      child: SquareTextField(
                         controller: _controllerHeader,
-                        keyboardType: TextInputType.name,
-                        decoration: InputDecoration(
-                          labelText: "Header name",
-                          prefixIcon: const Icon(Icons.text_fields_sharp),
-                          prefixIconColor: theme.primary,
-                          filled: true,
-                          fillColor: theme.surface,
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(color: theme.primary),
-                          ),
-                        ),
+                        label: "Header name",
+                        icon: Icons.text_fields_sharp,
+                        theme: theme,
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -129,12 +123,12 @@ class _ProxyViewState extends State<ProxyView> {
               );
             }
           }
-          return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
+          return const Center(
+              child: SizedBox(width: 50, height: 50, child: HelseLoader()));
         });
   }
 
   void submit() async {
-    var localContext = context;
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
@@ -146,16 +140,12 @@ class _ProxyViewState extends State<ProxyView> {
               ),
             );
 
-        if (localContext.mounted) {
-          SuccessSnackBar.show("Saved Successfully", localContext);
-        }
+        Notify.show("Saved Successfully");
 
         _resetSettings();
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.show("Error: $ex");
     }
   }
 }

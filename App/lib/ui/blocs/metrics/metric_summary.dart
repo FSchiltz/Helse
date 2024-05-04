@@ -17,11 +17,10 @@ class MetricSummarry extends StatelessWidget {
   Widget build(BuildContext context) {
     return unit == null
         ? (metrics.isEmpty
-            ? Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: Text("No data",
-                    style: Theme.of(context).textTheme.labelLarge),
-              )
+            ? Center(
+              child: Text("No data",
+                  style: Theme.of(context).textTheme.labelLarge),
+            )
             : ListView.builder(
                 itemCount: metrics.length,
                 itemBuilder: (context, index) {

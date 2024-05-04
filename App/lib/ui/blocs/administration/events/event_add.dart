@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/helpers/square_dialog.dart';
 
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
@@ -30,9 +31,7 @@ class _EventTypeAddState extends State<EventTypeAdd> {
       controllerName.text = edit.name ?? "";
     }
 
-    return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-      scrollable: true,
+    return SquareDialog(
       title: const Text("Add a new Event type"),
       actions: [
         ElevatedButton(
@@ -80,19 +79,18 @@ class _EventTypeAddState extends State<EventTypeAdd> {
           text = "Updated";
           await DI.event?.updateEventsType(event);
         }
-        
+
         _formKey.currentState?.reset();
         widget.callback?.call();
 
         if (localContext.mounted) {
           Navigator.of(localContext).pop();
-          SuccessSnackBar.show("$text Successfully", localContext);
         }
+
+        Notify.show("$text Successfully");
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.showError("Error: $ex");
     }
   }
 

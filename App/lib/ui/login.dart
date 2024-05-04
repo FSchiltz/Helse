@@ -29,7 +29,8 @@ class _LoginState extends State<LoginPage> {
   final TextEditingController _controllerSurname = TextEditingController();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
-  final TextEditingController _controllerConFirmPassword = TextEditingController();
+  final TextEditingController _controllerConFirmPassword =
+      TextEditingController();
 
   SubmissionStatus _status = SubmissionStatus.initial;
   SubmissionStatus _loaded = SubmissionStatus.initial;
@@ -58,7 +59,8 @@ class _LoginState extends State<LoginPage> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      Text("Welcome ${_initStatus?.init == true ? "Back" : ""}", style: Theme.of(context).textTheme.headlineLarge),
+                      Text("Welcome ${_initStatus?.init == true ? "Back" : ""}",
+                          style: Theme.of(context).textTheme.headlineLarge),
                       const SizedBox(height: 20),
                       TextField(
                         controller: textController,
@@ -71,9 +73,12 @@ class _LoginState extends State<LoginPage> {
                           filled: true,
                           fillColor: theme.surface,
                           border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(0),
                             borderSide: BorderSide(color: theme.primary),
                           ),
-                          errorText: _status == SubmissionStatus.failure ? 'invalid url' : null,
+                          errorText: _status == SubmissionStatus.failure
+                              ? 'invalid url'
+                              : null,
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -91,24 +96,36 @@ class _LoginState extends State<LoginPage> {
                                             const SizedBox(height: 10),
                                             PasswordInput(
                                               controller: _controllerPassword,
-                                              toggleCallback: togglePasswordVisibility,
+                                              toggleCallback:
+                                                  togglePasswordVisibility,
                                               obscurePassword: _obscurePassword,
                                             ),
                                           ],
                                         )
                                       : Column(
                                           children: [
-                                            Text("Create your account", style: Theme.of(context).textTheme.headlineLarge),
-                                            Text("This is the admin account for the server", style: Theme.of(context).textTheme.bodyLarge),
+                                            Text("Create your account",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineLarge),
+                                            Text(
+                                                "This is the admin account for the server",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyLarge),
                                             const SizedBox(height: 20),
                                             UserForm(
                                               UserType.admin,
-                                              controllerUsername: _controllerUsername,
+                                              controllerUsername:
+                                                  _controllerUsername,
                                               controllerEmail: _controllerEmail,
-                                              controllerPassword: _controllerPassword,
-                                              controllerConFirmPassword: _controllerConFirmPassword,
+                                              controllerPassword:
+                                                  _controllerPassword,
+                                              controllerConFirmPassword:
+                                                  _controllerConFirmPassword,
                                               controllerName: _controllerName,
-                                              controllerSurname: _controllerSurname,
+                                              controllerSurname:
+                                                  _controllerSurname,
                                             )
                                           ],
                                         ),
@@ -119,24 +136,35 @@ class _LoginState extends State<LoginPage> {
                                           children: [
                                             ElevatedButton(
                                               style: ElevatedButton.styleFrom(
-                                                minimumSize: const Size.fromHeight(50),
-                                                shape: const ContinuousRectangleBorder(),
+                                                minimumSize:
+                                                    const Size.fromHeight(50),
+                                                shape:
+                                                    const ContinuousRectangleBorder(),
                                               ),
                                               onPressed: _submit,
                                               child: Text(
-                                                _initStatus?.init == true ? 'Login' : 'Create',
-                                                style: Theme.of(context).textTheme.titleLarge,
+                                                _initStatus?.init == true
+                                                    ? 'Login'
+                                                    : 'Create',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleLarge,
                                               ),
                                             ),
                                             const SizedBox(height: 20),
                                             if (_initStatus?.oauth != null)
                                               ElevatedButton(
                                                 style: ElevatedButton.styleFrom(
-                                                  minimumSize: const Size.fromHeight(50),
-                                                  shape: const ContinuousRectangleBorder(),
+                                                  minimumSize:
+                                                      const Size.fromHeight(50),
+                                                  shape:
+                                                      const ContinuousRectangleBorder(),
                                                 ),
                                                 onPressed: _submitOauth,
-                                                child: Text('Login with Oauth', style: Theme.of(context).textTheme.titleLarge),
+                                                child: Text('Login with Oauth',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .titleLarge),
                                               )
                                           ],
                                         )
@@ -166,7 +194,9 @@ class _LoginState extends State<LoginPage> {
     });
 
     var isInit = await DI.helper?.isInit(_url ?? "");
-    var status = ((isInit?.init == null) ? SubmissionStatus.failure : SubmissionStatus.success);
+    var status = ((isInit?.init == null)
+        ? SubmissionStatus.failure
+        : SubmissionStatus.success);
 
     // If the server is init or not
     // Todo use stream
@@ -206,7 +236,8 @@ class _LoginState extends State<LoginPage> {
 
     // if not in storage, we can try to get it from the current url on the web
     if (url == null && kIsWeb) {
-      url = "${Uri.base.scheme}://${Uri.base.host}${Uri.base.port > 0 ? ":${Uri.base.port}" : ""}";
+      url =
+          "${Uri.base.scheme}://${Uri.base.host}${Uri.base.port > 0 ? ":${Uri.base.port}" : ""}";
     }
 
     if (url != null && url.isNotEmpty) {
@@ -222,10 +253,7 @@ class _LoginState extends State<LoginPage> {
   Future<void> _submitOauth() async {
     var init = _initStatus;
     if (init != null && _url != null) {
-      var grant = await _connectOauth(init, _url);
-      if (grant != null) {
-        _submit(noUser: true, oAuth: grant, redirect: await DI.authentication?.getRedirect());
-      }
+      await _connectOauth(init, _url);
     }
   }
 
@@ -273,8 +301,11 @@ class _LoginState extends State<LoginPage> {
           username: user,
           password: password,
         );
+
+        await DI.authentication?.clean();
+
         if (localContext.mounted) {
-          SuccessSnackBar.show('User created, welcome', localContext);
+          Notify.show('User created, welcome');
         }
       }
 
@@ -282,12 +313,10 @@ class _LoginState extends State<LoginPage> {
         _status = SubmissionStatus.success;
       });
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.showError("Error: $ex");
 
       // clear any info about the login
-      await DI.authentication?.clear();
+      await DI.authentication?.logOut();
 
       // we start the login process again
       setState(() {
@@ -300,22 +329,23 @@ class _LoginState extends State<LoginPage> {
         _obscurePassword = !_obscurePassword;
       });
 
-  Future<String?> _connectOauth(Status isInit, url) async {
+  Future<void> _connectOauth(Status isInit, url) async {
     try {
       DI.authService?.init(
         auth: isInit.oauth ?? '',
         clientId: isInit.oauthId ?? '',
       );
 
-      return await DI.authService?.login(url);
+      await DI.authService?.login(url);
     } catch (ex) {
-      var localContext = context;
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-        // TODO clear token
-      }
+      Notify.showError("Error: $ex");
 
-      return null;
+      DI.authentication?.logOut();
+
+      // we start the login process again
+      setState(() {
+        _status = SubmissionStatus.initial;
+      });
     }
   }
 }

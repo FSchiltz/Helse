@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/helpers/square_text_field.dart';
+
 
 class MetricAddForm extends StatefulWidget {
   final TextEditingController controllerUnit;
@@ -27,56 +29,31 @@ class _MetricAddFormState extends State<MetricAddForm> {
 
     return Column(
       children: [
-        TextFormField(
+        SquareTextField(
+          theme: theme,
+          icon: Icons.person_sharp,
           controller: widget.controllerName,
-          keyboardType: TextInputType.name,
           focusNode: _focusNodeName,
-          decoration: InputDecoration(
-            labelText: "Name",
-            prefixIcon: const Icon(Icons.person_sharp),
-            prefixIconColor: theme.primary,
-            filled: true,
-            fillColor: theme.surface,
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: theme.primary),
-            ),
-          ),
+          label: "Name",         
           validator: validateName,
           onEditingComplete: () => _focusNodeDescription.requestFocus(),
         ),
         const SizedBox(height: 10),
-        TextFormField(
+        SquareTextField(
+          icon: Icons.person_sharp,
+          theme: theme,
           controller: widget.controllerDescription,
-          keyboardType: TextInputType.name,
           focusNode: _focusNodeDescription,
+          label: "Description",
           onEditingComplete: () => _focusNodeUnit.requestFocus(),
-          decoration: InputDecoration(
-            labelText: "Description",
-            prefixIcon: const Icon(Icons.person_sharp),
-            prefixIconColor: theme.primary,
-            filled: true,
-            fillColor: theme.surface,
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: theme.primary),
-            ),
-          ),
         ),
         const SizedBox(height: 10),
-        TextFormField(
-          controller: widget.controllerUnit,
-          focusNode: _focusNodeUnit,
-          keyboardType: TextInputType.text,
-          decoration: InputDecoration(
-            labelText: "Unit",
-            prefixIcon: const Icon(Icons.email_sharp),
-            prefixIconColor: theme.primary,
-            filled: true,
-            fillColor: theme.surface,
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: theme.primary),
-            ),
-          ),
-        ),
+        SquareTextField(
+            controller: widget.controllerUnit,
+            icon: Icons.email_sharp,
+            focusNode: _focusNodeUnit,
+            theme: theme,
+            label: "Unit"),
       ],
     );
   }

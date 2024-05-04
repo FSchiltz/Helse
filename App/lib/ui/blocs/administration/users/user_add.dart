@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/ui/blocs/administration/users/type_input.dart';
+import 'package:helse/ui/helpers/square_dialog.dart';
 
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
@@ -8,7 +9,7 @@ import 'user_form.dart';
 
 class UserAdd extends StatefulWidget {
   final void Function()? callback;
-  
+
   const UserAdd(this.callback, {super.key});
 
   @override
@@ -25,13 +26,12 @@ class _SignupState extends State<UserAdd> {
   final TextEditingController _controllerSurname = TextEditingController();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
-  final TextEditingController _controllerConFirmPassword = TextEditingController();
+  final TextEditingController _controllerConFirmPassword =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-      scrollable: true,
+    return SquareDialog(
       title: const Text("Add a new user"),
       actions: [
         ElevatedButton(
@@ -90,13 +90,11 @@ class _SignupState extends State<UserAdd> {
 
         if (localContext.mounted) {
           Navigator.of(localContext).pop();
-          SuccessSnackBar.show("Added Successfully", localContext);
         }
+        Notify.show("Added Successfully");
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.showError("Error: $ex");
     }
   }
 

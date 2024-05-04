@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:helse/services/user_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
+import '../../main.dart';
 import '../../services/account.dart';
 import '../../services/swagger/generated_code/swagger.swagger.dart';
 
@@ -24,14 +25,25 @@ class AuthenticationLogic {
 
   /// Check if the user is logged in
   Future<void> checkLogin() async {
-    var token = await _account.get(Account.token);
-    if (token != null && token.isNotEmpty) _controller.add(AuthenticationStatus.authenticated);
+    var token = await _account.get(Account.refresh);
+    if (token != null && token.isNotEmpty) {
+      // TODO check the validity
+      _controller.add(AuthenticationStatus.authenticated);
+    }
+  }
+
+  void set(AuthenticationStatus status) {
+    _controller.add(status);
   }
 
   /// Call the login service
-  Future<void> logIn({required String url, required String username, required String password, String? redirect}) async {
+  Future<void> logIn(
+      {required String url,
+      required String username,
+      required String password,
+      String? redirect}) async {
     await _account.set(Account.url, url);
-    var token = await UserService(_account).login(username, password, redirect);
+    var token = await DI.user?.login(username, password, redirect);
 
     if (token?.refreshToken != null) {
       await _account.set(Account.refresh, token?.refreshToken ?? '');
@@ -39,6 +51,8 @@ class AuthenticationLogic {
       await _account.remove(Account.grant);
 
       _controller.add(AuthenticationStatus.authenticated);
+    } else {
+      _controller.add(AuthenticationStatus.unauthenticated);
     }
   }
 
@@ -48,7 +62,9 @@ class AuthenticationLogic {
 
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
     var data = decodedToken["roles"];
-    if (data == null) return const Person(type: UserType.swaggerGeneratedUnknown);
+    if (data == null) {
+      return const Person(type: UserType.swaggerGeneratedUnknown);
+    }
 
     var name = decodedToken["name"];
     if (name?.isEmpty ?? true) name = null;
@@ -63,15 +79,23 @@ class AuthenticationLogic {
   }
 
   /// Init the account for a first connection
-  Future<void> initAccount({required String url, required PersonCreation person}) async {
+  Future<void> initAccount(
+      {required String url, required PersonCreation person}) async {
     await _account.set(Account.url, url);
     await _api().addPerson(person);
   }
 
   /// Call the logout service
-  void logOut() {
-    _account.clear();
+  Future<void> logOut() async {
+    clean();
+    await _account.remove(Account.token);
+    await _account.remove(Account.refresh);
     _controller.add(AuthenticationStatus.unauthenticated);
+  }
+
+  Future<void> clean() async {
+    await _account.remove(Account.redirect);
+    await _account.remove(Account.grant);
   }
 
   void dispose() => _controller.close();
@@ -88,12 +112,6 @@ class AuthenticationLogic {
 
   Future<String?> getRedirect() {
     return _account.get(Account.redirect);
-  }
-
-  Future<void> clear() async {
-    await _account.remove(Account.token);
-    await _account.remove(Account.redirect);
-    await _account.remove(Account.grant);
   }
 
   Future<String?> getUrl() {

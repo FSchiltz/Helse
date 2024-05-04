@@ -1,5 +1,6 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:helse/ui/helpers/square_dialog.dart';
 
 import '../../../logic/event.dart';
 import '../../../main.dart';
@@ -38,9 +39,7 @@ class _FileImportState extends State<FileImport> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      shape: const ContinuousRectangleBorder(),
-      scrollable: true,
+    return SquareDialog(
       title: const Text("Import"),
       actions: [
         status == SubmissionStatus.inProgress
@@ -58,12 +57,16 @@ class _FileImportState extends State<FileImport> {
         padding: const EdgeInsets.all(30.0),
         child: Column(
           children: [
-            Text("Import external metric", style: Theme.of(context).textTheme.bodyMedium),
+            Text("Import external metric",
+                style: Theme.of(context).textTheme.bodyMedium),
             DropdownButtonFormField(
               onChanged: (value) => setState(() {
                 selected = value;
               }),
-              items: types.map((type) => DropdownMenuItem(value: type.type, child: Text(type.name ?? ""))).toList(),
+              items: types
+                  .map((type) => DropdownMenuItem(
+                      value: type.type, child: Text(type.name ?? "")))
+                  .toList(),
               decoration: const InputDecoration(
                 labelText: 'Type',
                 prefixIcon: Icon(Icons.list_sharp),
@@ -107,12 +110,11 @@ class _FileImportState extends State<FileImport> {
 
         if (localContext.mounted) {
           Navigator.of(localContext).pop();
-          SuccessSnackBar.show("Imported", localContext);
         }
+
+        Notify.show("Imported");
       } catch (ex) {
-        if (localContext.mounted) {
-          ErrorSnackBar.show("Error: $ex", localContext);
-        }
+        Notify.show("Error: $ex");
 
         setState(() {
           status = SubmissionStatus.failure;
