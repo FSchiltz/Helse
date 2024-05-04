@@ -83,19 +83,17 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
           text = "Updated";
           await DI.metric?.updateMetricsType(metric);
         }
-        
+
         _formKey.currentState?.reset();
         widget.callback?.call();
 
         if (localContext.mounted) {
           Navigator.of(localContext).pop();
-          SuccessSnackBar.show("$text Successfully", localContext);
         }
+        Notify.show("$text Successfully");
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.showError("Error: $ex");
     }
   }
 

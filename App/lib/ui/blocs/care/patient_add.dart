@@ -41,8 +41,10 @@ class _PatientAddState extends State<PatientAdd> {
         widget.callback.call();
         if (localContext.mounted) {
           Navigator.of(localContext).pop();
-          SuccessSnackBar.show("Added succesfully", localContext);
         }
+
+        Notify.show("Added succesfully");
+
         setState(() {
           _status = SubmissionStatus.success;
         });
@@ -52,9 +54,7 @@ class _PatientAddState extends State<PatientAdd> {
         });
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.show("Error: $ex");
     }
   }
 

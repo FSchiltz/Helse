@@ -46,7 +46,8 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Local Settings', style: Theme.of(context).textTheme.displaySmall),
+        title: Text('Local Settings',
+            style: Theme.of(context).textTheme.displaySmall),
       ),
       body: FutureBuilder(
           future: _getData(_dummy),
@@ -66,7 +67,8 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
                 return Form(
                   key: _formKey,
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30.0, vertical: 10.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -79,27 +81,23 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
                 );
               }
             }
-            return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
+            return const Center(
+                child: SizedBox(width: 50, height: 50, child: HelseLoader()));
           }),
     );
   }
 
   void submit() async {
-    var localContext = context;
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
         await DI.settings?.saveLocal(LocalSettings(_healthEnabled, _theme));
 
-        if (localContext.mounted) {
-          SuccessSnackBar.show("Saved Successfully", localContext);
-        }
+        Notify.show("Saved Successfully");
         _resetSettings();
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.showError("Error: $ex");
     }
   }
 
@@ -132,7 +130,10 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
         child: DropdownButtonFormField(
           value: _theme,
           onChanged: themeCallback,
-          items: ThemeMode.values.map((type) => DropdownMenuItem(value: type, child: Text(type.name))).toList(),
+          items: ThemeMode.values
+              .map((type) =>
+                  DropdownMenuItem(value: type, child: Text(type.name)))
+              .toList(),
           decoration: InputDecoration(
             labelText: 'Theme',
             prefixIcon: const Icon(Icons.list_sharp),

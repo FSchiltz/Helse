@@ -76,7 +76,8 @@ class _OauthViewState extends State<OauthView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Oauth", style: Theme.of(context).textTheme.headlineMedium),
+                    Text("Oauth",
+                        style: Theme.of(context).textTheme.headlineMedium),
                     const SizedBox(height: 5),
                     Row(
                       children: [
@@ -126,7 +127,8 @@ class _OauthViewState extends State<OauthView> {
                       keyboardType: TextInputType.name,
                       decoration: InputDecoration(
                         labelText: "Auth url",
-                        prefixIcon: const Icon(Icons.connect_without_contact_sharp),
+                        prefixIcon:
+                            const Icon(Icons.connect_without_contact_sharp),
                         prefixIconColor: theme.primary,
                         filled: true,
                         fillColor: theme.surface,
@@ -193,12 +195,12 @@ class _OauthViewState extends State<OauthView> {
               );
             }
           }
-          return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
+          return const Center(
+              child: SizedBox(width: 50, height: 50, child: HelseLoader()));
         });
   }
 
   void submit() async {
-    var localContext = context;
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
@@ -214,16 +216,12 @@ class _OauthViewState extends State<OauthView> {
               ),
             );
 
-        if (localContext.mounted) {
-          SuccessSnackBar.show("Saved Successfully", localContext);
-        }
+        Notify.show("Saved Successfully");
 
         _resetSettings();
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.show("Error: $ex");
     }
   }
 }

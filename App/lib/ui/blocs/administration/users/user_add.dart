@@ -8,7 +8,7 @@ import 'user_form.dart';
 
 class UserAdd extends StatefulWidget {
   final void Function()? callback;
-  
+
   const UserAdd(this.callback, {super.key});
 
   @override
@@ -25,7 +25,8 @@ class _SignupState extends State<UserAdd> {
   final TextEditingController _controllerSurname = TextEditingController();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
-  final TextEditingController _controllerConFirmPassword = TextEditingController();
+  final TextEditingController _controllerConFirmPassword =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -90,13 +91,11 @@ class _SignupState extends State<UserAdd> {
 
         if (localContext.mounted) {
           Navigator.of(localContext).pop();
-          SuccessSnackBar.show("Added Successfully", localContext);
         }
+        Notify.show("Added Successfully");
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.showError("Error: $ex");
     }
   }
 

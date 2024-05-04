@@ -36,7 +36,6 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _getEventData() async {
-    var localContext = context;
     try {
       var model = await DI.event?.eventsType(all: true);
       if (model != null) {
@@ -45,9 +44,7 @@ class _DashboardState extends State<Dashboard> {
         });
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.show("Error: $ex");
     }
   }
 
@@ -59,11 +56,13 @@ class _DashboardState extends State<Dashboard> {
         child: Center(
           child: Column(
             children: [
-              MetricsGrid(types: metricTypes, date: widget.date, person: widget.person),
+              MetricsGrid(
+                  types: metricTypes, date: widget.date, person: widget.person),
               const SizedBox(
                 height: 10,
               ),
-              EventsGrid(date: widget.date, types: eventTypes, person: widget.person),
+              EventsGrid(
+                  date: widget.date, types: eventTypes, person: widget.person),
             ],
           ),
         ),

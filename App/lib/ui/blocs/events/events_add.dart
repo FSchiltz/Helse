@@ -28,14 +28,18 @@ class _EventAddState extends State<EventAdd> {
   void _submit() async {
     var localContext = context;
     try {
-        var event = DI.event;
+      var event = DI.event;
       if (event != null) {
         setState(() {
           _status = SubmissionStatus.inProgress;
         });
 
         try {
-          var metric = CreateEvent(start: _start, stop: _stop, type: widget.type.id, description: _description);
+          var metric = CreateEvent(
+              start: _start,
+              stop: _stop,
+              type: widget.type.id,
+              description: _description);
           await event.addEvents(metric, person: widget.person);
 
           widget.callback.call();
@@ -45,8 +49,9 @@ class _EventAddState extends State<EventAdd> {
 
           if (localContext.mounted) {
             Navigator.of(localContext).pop();
-            SuccessSnackBar.show("Event Added", localContext);
           }
+
+          Notify.show("Event Added");
         } catch (_) {
           setState(() {
             _status = SubmissionStatus.failure;
@@ -54,9 +59,7 @@ class _EventAddState extends State<EventAdd> {
         }
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.showError("Error: $ex");
     }
   }
 
@@ -86,7 +89,8 @@ class _EventAddState extends State<EventAdd> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Text("Manually add ${widget.type.name}", style: Theme.of(context).textTheme.bodyMedium),
+                Text("Manually add ${widget.type.name}",
+                    style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: 10),
                 TextInput(Icons.description_sharp, "Description",
                     onChanged: (value) => setState(() {

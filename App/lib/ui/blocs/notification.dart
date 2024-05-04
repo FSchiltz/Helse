@@ -1,38 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-class ErrorSnackBar extends SnackBar {
-  static show(String content, BuildContext localContext) {
-    /*
-    ScaffoldMessenger.of(localContext).showSnackBar(
-      ErrorSnackBar(content, localContext),
-    );*/
-  }
-
-  ErrorSnackBar(String content, BuildContext localContext, {super.key})
-      : super(
-          width: 200,
-          backgroundColor: Theme.of(localContext).colorScheme.errorContainer,
-          shape: const ContinuousRectangleBorder(),
-          behavior: SnackBarBehavior.floating,
-          content: Text(content),
-        );
-}
-
-class SuccessSnackBar extends SnackBar {
-  static show(String content, BuildContext localContext) {
-    /*
-    ScaffoldMessenger.of(localContext).showSnackBar(
-      SuccessSnackBar(content, localContext),
+class Notify {
+  static showError(String content) {
+    Fluttertoast.showToast(
+        msg: content,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0
     );
-    */
   }
 
-  SuccessSnackBar(String content, BuildContext localContext, {super.key})
-      : super(
-          width: 200,
-          backgroundColor: Theme.of(localContext).colorScheme.secondary,
-          shape: const ContinuousRectangleBorder(),
-          behavior: SnackBarBehavior.floating,
-          content: Text(content),
-        );
+  static show(String content) {
+    Fluttertoast.showToast(
+        msg: content,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
+  }
 }
+

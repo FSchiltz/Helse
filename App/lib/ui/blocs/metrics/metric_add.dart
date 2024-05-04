@@ -56,7 +56,8 @@ class _MetricAddState extends State<MetricAdd> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  Text("Manually add a ${widget.type.name}", style: Theme.of(context).textTheme.bodyMedium),
+                  Text("Manually add a ${widget.type.name}",
+                      style: Theme.of(context).textTheme.bodyMedium),
                   const SizedBox(height: 10),
                   TextInput(Icons.add, "Value",
                       onChanged: (value) => setState(
@@ -94,13 +95,14 @@ class _MetricAddState extends State<MetricAdd> {
         });
 
         try {
-          var metric = CreateMetric(date: _date, type: widget.type.id, tag: _tag, $value: _value);
+          var metric = CreateMetric(
+              date: _date, type: widget.type.id, tag: _tag, $value: _value);
           await DI.metric?.addMetrics(metric, person: widget.person);
 
           if (localContext.mounted) {
             Navigator.of(localContext).pop();
-            SuccessSnackBar.show("Metric added", localContext);
           }
+          Notify.show("Metric added");
 
           widget.callback();
           setState(() {
@@ -113,9 +115,7 @@ class _MetricAddState extends State<MetricAdd> {
         }
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.showError("Error: $ex");
     }
   }
 }

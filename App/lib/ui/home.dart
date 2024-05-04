@@ -49,11 +49,12 @@ class _HomeState extends State<Home> {
   }
 
   DeviceType getDevice() {
-    return MediaQuery.of(context).size.width <= 800 ? DeviceType.mobile : DeviceType.desktop;
+    return MediaQuery.of(context).size.width <= 800
+        ? DeviceType.mobile
+        : DeviceType.desktop;
   }
 
   void _getUser() async {
-    var localContext = context;
     try {
       var model = await DI.authentication?.getUser();
       if (model != null) {
@@ -62,9 +63,7 @@ class _HomeState extends State<Home> {
         });
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.showError("Error: $ex");
     }
   }
 
@@ -92,7 +91,8 @@ class _HomeState extends State<Home> {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               'Welcome ${user?.surname ?? user?.name ?? ""}',
-              style: theme.textTheme.headlineMedium?.copyWith(color: theme.colorScheme.onPrimaryContainer),
+              style: theme.textTheme.headlineMedium
+                  ?.copyWith(color: theme.colorScheme.onPrimaryContainer),
             ),
           ),
           actions: PopupMenuButton(
@@ -142,13 +142,15 @@ class _HomeState extends State<Home> {
                   case 1:
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const LocalSettingsPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const LocalSettingsPage()),
                     );
                     break;
                   case 2:
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const AdministrationPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const AdministrationPage()),
                     );
                     break;
                   case 3:

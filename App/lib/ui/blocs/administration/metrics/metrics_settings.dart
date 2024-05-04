@@ -67,27 +67,23 @@ class _SettingsViewState extends State<MetricSettingsView> {
               );
             }
           }
-          return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
+          return const Center(
+              child: SizedBox(width: 50, height: 50, child: HelseLoader()));
         });
   }
 
   void submit() async {
-    var localContext = context;
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the settings
         // await AppState.settings?.save();
 
-        if (localContext.mounted) {
-          SuccessSnackBar.show("Saved Successfully", localContext);
-        }
+        Notify.show("Saved Successfully");
 
         _resetSettings();
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.showError("Error: $ex");
     }
   }
 }

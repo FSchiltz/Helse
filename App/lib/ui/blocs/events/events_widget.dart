@@ -44,7 +44,6 @@ class _EventWidgetState extends State<EventWidget> {
   }
 
   Future<List<Event>?> _getData() async {
-    var localContext = context;
     try {
       if (widget.type.id == null) {
         _events = List<Event>.empty();
@@ -53,15 +52,15 @@ class _EventWidgetState extends State<EventWidget> {
 
       var date = widget.date;
       var start = DateTime(date.start.year, date.start.month, date.start.day);
-      var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
+      var end = DateTime(date.end.year, date.end.month, date.end.day)
+          .add(const Duration(days: 1));
 
-      _events = await DI.event?.events(widget.type.id, start, end, person: widget.person);
+      _events = await DI.event
+          ?.events(widget.type.id, start, end, person: widget.person);
       _events?.sort(_sort);
       return _events;
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.show("Error: $ex");
     }
     return _events;
   }
@@ -76,13 +75,15 @@ class _EventWidgetState extends State<EventWidget> {
           children: [
             Row(
               children: [
-                Text(widget.type.name ?? "", style: Theme.of(context).textTheme.titleLarge),
+                Text(widget.type.name ?? "",
+                    style: Theme.of(context).textTheme.titleLarge),
                 IconButton(
                     onPressed: () {
                       showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return EventAdd(_resetEvents, widget.type, person: widget.person);
+                            return EventAdd(_resetEvents, widget.type,
+                                person: widget.person);
                           });
                     },
                     icon: const Icon(Icons.add_sharp))
@@ -105,7 +106,9 @@ class _EventWidgetState extends State<EventWidget> {
                       // if we got our data
                     }
 
-                    final events = (snapshot.hasData) ? snapshot.data as List<Event> : List<Event>.empty();
+                    final events = (snapshot.hasData)
+                        ? snapshot.data as List<Event>
+                        : List<Event>.empty();
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: EventGraph(events, widget.date),

@@ -59,7 +59,8 @@ class _EventTypeViewState extends State<EventTypeView> {
                 children: [
                   Row(
                     children: [
-                      Text("Event Types", style: Theme.of(context).textTheme.headlineMedium),
+                      Text("Event Types",
+                          style: Theme.of(context).textTheme.headlineMedium),
                       const SizedBox(
                         width: 10,
                       ),
@@ -110,14 +111,19 @@ class _EventTypeViewState extends State<EventTypeView> {
                                     DataCell(Text((type.id).toString())),
                                     DataCell(Text(type.name ?? "")),
                                     DataCell(Text(type.description ?? "")),
-                                    DataCell(Checkbox(value: type.standAlone ?? true, onChanged: null)),
+                                    DataCell(Checkbox(
+                                        value: type.standAlone ?? true,
+                                        onChanged: null)),
                                     DataCell(
                                       IconButton(
                                           onPressed: () {
                                             showDialog(
                                                 context: context,
-                                                builder: (BuildContext context) {
-                                                  return EventTypeAdd(_resetEventType, edit: type);
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return EventTypeAdd(
+                                                      _resetEventType,
+                                                      edit: type);
                                                 });
                                           },
                                           icon: const Icon(Icons.edit_sharp)),
@@ -138,25 +144,21 @@ class _EventTypeViewState extends State<EventTypeView> {
               );
             }
           }
-          return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
+          return const Center(
+              child: SizedBox(width: 50, height: 50, child: HelseLoader()));
         });
   }
 
   Future<void> deleteType(EventType type) async {
-    var localContext = context;
     var id = type.id;
     try {
       if (id != null) {
         await DI.event?.deleteEventsType(id);
-        if (localContext.mounted) {
-          SuccessSnackBar.show('Event ${type.name} deleted', localContext);
-        }
+        Notify.show('Event ${type.name} deleted');
         _resetEventType();
       }
     } catch (ex) {
-      if (context.mounted) {
-        ErrorSnackBar.show('Error deleting event ${type.name}', localContext);
-      }
+      Notify.showError('Error deleting event ${type.name}');
     }
   }
 }

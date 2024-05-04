@@ -304,7 +304,7 @@ class _LoginState extends State<LoginPage> {
         await DI.authentication?.clean();
 
         if (localContext.mounted) {
-          SuccessSnackBar.show('User created, welcome', localContext);
+          Notify.show('User created, welcome');
         }
       }
 
@@ -312,9 +312,7 @@ class _LoginState extends State<LoginPage> {
         _status = SubmissionStatus.success;
       });
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.showError("Error: $ex");
 
       // clear any info about the login
       await DI.authentication?.logOut();
@@ -330,22 +328,23 @@ class _LoginState extends State<LoginPage> {
         _obscurePassword = !_obscurePassword;
       });
 
-  Future<String?> _connectOauth(Status isInit, url) async {
+  Future<void> _connectOauth(Status isInit, url) async {
     try {
       DI.authService?.init(
         auth: isInit.oauth ?? '',
         clientId: isInit.oauthId ?? '',
       );
 
-      return await DI.authService?.login(url);
+      await DI.authService?.login(url);
     } catch (ex) {
-      var localContext = context;
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-        // TODO clear token
-      }
+      Notify.showError("Error: $ex");
 
-      return null;
+      DI.authentication?.logOut();
+
+      // we start the login process again
+      setState(() {
+        _status = SubmissionStatus.initial;
+      });
     }
   }
 }

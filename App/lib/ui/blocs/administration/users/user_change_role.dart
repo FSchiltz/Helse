@@ -11,7 +11,7 @@ class ChangeRole extends StatefulWidget {
   final UserType type;
   final int id;
 
-  const ChangeRole(this.callback,this.type, this.id, {super.key});
+  const ChangeRole(this.callback, this.type, this.id, {super.key});
 
   @override
   State<ChangeRole> createState() => _ChangeRoleState();
@@ -65,12 +65,11 @@ class _ChangeRoleState extends State<ChangeRole> {
 
       if (localContext.mounted) {
         Navigator.of(localContext).pop();
-        SuccessSnackBar.show("Updated Successfully", localContext);
       }
+
+      Notify.show("Updated Successfully");
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.show("Error: $ex");
     }
   }
 }

@@ -67,7 +67,8 @@ class _ProxyViewState extends State<ProxyView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Proxy", style: Theme.of(context).textTheme.headlineMedium),
+                    Text("Proxy",
+                        style: Theme.of(context).textTheme.headlineMedium),
                     const SizedBox(height: 5),
                     Row(
                       children: [
@@ -129,12 +130,12 @@ class _ProxyViewState extends State<ProxyView> {
               );
             }
           }
-          return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
+          return const Center(
+              child: SizedBox(width: 50, height: 50, child: HelseLoader()));
         });
   }
 
   void submit() async {
-    var localContext = context;
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
@@ -146,16 +147,12 @@ class _ProxyViewState extends State<ProxyView> {
               ),
             );
 
-        if (localContext.mounted) {
-          SuccessSnackBar.show("Saved Successfully", localContext);
-        }
+        Notify.show("Saved Successfully");
 
         _resetSettings();
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.show("Error: $ex");
     }
   }
 }

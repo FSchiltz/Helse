@@ -80,19 +80,18 @@ class _EventTypeAddState extends State<EventTypeAdd> {
           text = "Updated";
           await DI.event?.updateEventsType(event);
         }
-        
+
         _formKey.currentState?.reset();
         widget.callback?.call();
 
         if (localContext.mounted) {
           Navigator.of(localContext).pop();
-          SuccessSnackBar.show("$text Successfully", localContext);
         }
+
+        Notify.show("$text Successfully");
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        ErrorSnackBar.show("Error: $ex", localContext);
-      }
+      Notify.showError("Error: $ex");
     }
   }
 

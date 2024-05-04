@@ -59,7 +59,8 @@ class _MetricTypeViewState extends State<MetricTypeView> {
                 children: [
                   Row(
                     children: [
-                      Text("Metric Types", style: Theme.of(context).textTheme.headlineMedium),
+                      Text("Metric Types",
+                          style: Theme.of(context).textTheme.headlineMedium),
                       const SizedBox(
                         width: 10,
                       ),
@@ -116,8 +117,11 @@ class _MetricTypeViewState extends State<MetricTypeView> {
                                           onPressed: () {
                                             showDialog(
                                                 context: context,
-                                                builder: (BuildContext context) {
-                                                  return MetricTypeAdd(_resetMetricType, edit: type);
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return MetricTypeAdd(
+                                                      _resetMetricType,
+                                                      edit: type);
                                                 });
                                           },
                                           icon: const Icon(Icons.edit_sharp)),
@@ -138,25 +142,22 @@ class _MetricTypeViewState extends State<MetricTypeView> {
               );
             }
           }
-          return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
+          return const Center(
+              child: SizedBox(width: 50, height: 50, child: HelseLoader()));
         });
   }
 
   Future<void> deleteType(MetricType type) async {
-    var localContext = context;
     var id = type.id;
     try {
       if (id != null) {
         await DI.metric?.deleteMetricsType(id);
-        if (localContext.mounted) {
-          SuccessSnackBar.show('Metric ${type.name} deleted', localContext);
-        }
+        Notify.show('Metric ${type.name} deleted');
+
         _resetMetricType();
       }
     } catch (ex) {
-      if (context.mounted) {
-        ErrorSnackBar.show('Error deleting metric ${type.name}', localContext);
-      }
+      Notify.showError('Error deleting metric ${type.name}');
     }
   }
 }
