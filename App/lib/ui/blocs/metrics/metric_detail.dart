@@ -2,7 +2,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
 import 'package:helse/ui/blocs/metrics/metric_widget.dart';
-import 'package:helse/ui/blocs/app_bar/custom_app_bar.dart';
 
 
 class MetricDetailPage extends StatelessWidget {
@@ -20,7 +19,7 @@ class MetricDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: AppBar(
         title: Text('Detail of ${widget.type.name}',
             style: Theme.of(context).textTheme.displaySmall),
         //child: DateRangeInput((x) => {}, date),
