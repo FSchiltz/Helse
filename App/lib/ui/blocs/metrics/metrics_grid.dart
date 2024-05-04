@@ -22,9 +22,10 @@ class MetricsGrid extends StatelessWidget {
         ? const HelseLoader()
         : GridView.extent(
             shrinkWrap: true,
-            crossAxisSpacing: 4,
-            mainAxisSpacing: 4,
-            maxCrossAxisExtent: 180.0,
+            crossAxisSpacing: 2,
+            mainAxisSpacing: 2,
+            physics: const BouncingScrollPhysics(),
+            maxCrossAxisExtent: 280.0,
             children: types.map((type) => MetricWidget(type, date, key: Key(type.id?.toString() ?? ""), person: person)).toList(),
           );
   }

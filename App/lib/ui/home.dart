@@ -172,13 +172,7 @@ class _HomeState extends State<Home> {
                 })
           ],
         ),
-        body: Row(
-          children: [
-            Expanded(
-              child: page,
-            ),
-          ],
-        ),
+        body: page,
       );
     });
   }

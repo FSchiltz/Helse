@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:helse/ui/blocs/metrics/metric_detail.dart';
 
 import '../../../main.dart';
@@ -92,36 +93,53 @@ class _MetricWidgetState extends State<MetricWidget> {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(widget.type.name ?? "",
-                              style: Theme.of(context).textTheme.titleMedium),
-                          if (last != null)
-                            Text((last.$value ?? "") + (widget.type.unit ?? ""),
-                                style: Theme.of(context).textTheme.labelMedium),
-                          IconButton(
-                              onPressed: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return MetricAdd(
-                                          widget.type, _resetMetric,
-                                          person: widget.person);
-                                    });
-                              },
-                              icon: const Icon(Icons.add_sharp)),
-                        ],
+                      Flexible(
+                        child: SizedBox(
+                          height: 30,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Flexible(
+                                child: Text(widget.type.name ?? "",
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context).textTheme.titleMedium),
+                              ),
+                              
+                              Expanded(
+                                child: IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return MetricAdd(
+                                                widget.type, _resetMetric,
+                                                person: widget.person);
+                                          });
+                                    },
+                                    icon: const Icon(Icons.add_sharp)),
+                              ),
+                              if (last != null)
+                                Expanded(
+                                  child: Text(
+                                      (last.$value ?? "") +
+                                          (widget.type.unit ?? ""),
+                                      style:
+                                          Theme.of(context).textTheme.labelMedium),
+                                ),
+                            ],
+                          ),
+                        ),
                       ),
                       Expanded(
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.translucent,
+                        child: InkWell(
                           onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(
                                 builder: (context) => MetricDetailPage(
-                                    widget: widget, metrics: metrics, date: widget.date,)),
+                                      widget: widget,
+                                      metrics: metrics,
+                                      date: widget.date,
+                                    )),
                           ),
                           child: MetricSummarry(
                               metrics, widget.type.unit, widget.date),
