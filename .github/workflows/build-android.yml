@@ -42,7 +42,6 @@ jobs:
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: App/build/app/outputs/bundle/release/*.apk
-        asset_name: "app_bundle.aap"
         tag: ${{ inputs.tag }}
     
       
