@@ -13,13 +13,12 @@ import 'services/helper_service.dart';
 import 'services/metric_service.dart';
 import 'services/treatment_service.dart';
 import 'services/user_service.dart';
-import 'ui/blocs/common/restart.dart';
 import 'ui/home.dart';
 import 'ui/login.dart';
 import 'ui/splash.dart';
 
 void main() {
-  runApp(const RestartWidget(child: App()));
+  runApp(const App());
 }
 
 class DI {
@@ -32,10 +31,10 @@ class DI {
   static TreatmentService? treatement;
   static SettingsLogic? settings;
 
-  static void init({required void Function() callback}) {
+  static void init() {
     var account = Account();
     authService = OauthClient(account);
-    authentication = AuthenticationLogic(account, callback);
+    authentication = AuthenticationLogic(account);
     metric = MetricService(account);
     helper = HelperService(account);
     event = EventService(account);
@@ -57,7 +56,7 @@ class App extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       onGenerateRoute: (RouteSettings routeSettings) {
-        DI.init(callback: () => RestartWidget.restartApp(context));
+        DI.init();
         if (kIsWeb) {
           var uri = Uri.base.queryParameters;
 

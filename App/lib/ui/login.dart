@@ -314,7 +314,7 @@ class _LoginState extends State<LoginPage> {
       }
 
       // clear any info about the login
-      await DI.authentication?.clear();
+      await DI.authentication?.logOut();
 
       // we start the login process again
       setState(() {

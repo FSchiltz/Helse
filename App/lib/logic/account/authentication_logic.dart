@@ -11,9 +11,8 @@ enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 class AuthenticationLogic {
   final _controller = StreamController<AuthenticationStatus>();
   final Account _account;
-  final void Function()? callback;
 
-  AuthenticationLogic(Account account, this.callback) : _account = account;
+  AuthenticationLogic(Account account) : _account = account;
 
   Stream<AuthenticationStatus> get status async* {
     await Future<void>.delayed(const Duration(seconds: 1));
@@ -83,8 +82,10 @@ class AuthenticationLogic {
   }
 
   /// Call the logout service
-  void logOut() {
-    clear();
+  Future<void> logOut() async {
+    await _account.remove(Account.token);
+    await _account.remove(Account.redirect);
+    await _account.remove(Account.grant);
     _controller.add(AuthenticationStatus.unauthenticated);
   }
 
@@ -102,14 +103,6 @@ class AuthenticationLogic {
 
   Future<String?> getRedirect() {
     return _account.get(Account.redirect);
-  }
-
-  Future<void> clear() async {
-    await _account.remove(Account.token);
-    await _account.remove(Account.redirect);
-    await _account.remove(Account.grant);
-
-    callback?.call();
   }
 
   Future<String?> getUrl() {
