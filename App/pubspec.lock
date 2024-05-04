@@ -277,10 +277,10 @@ packages:
     dependency: transitive
     description:
       name: file_selector_android
-      sha256: "1cd66575f063b689e041aec836905ba7be18d76c9f0634d0d75daec825f67095"
+      sha256: "57265ec9591e8fd8508f613544cde6f7d045731f6b09644057e49a4c9c672b7c"
       url: "https://pub.dev"
     source: hosted
-    version: "0.5.0+7"
+    version: "0.5.1+1"
   file_selector_ios:
     dependency: transitive
     description:
@@ -376,6 +376,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  fluttertoast:
+    dependency: "direct main"
+    description:
+      name: fluttertoast
+      sha256: "81b68579e23fcbcada2db3d50302813d2371664afe6165bc78148050ab94bf66"
+      url: "https://pub.dev"
+    source: hosted
+    version: "8.2.5"
   frontend_server_client:
     dependency: transitive
     description:
@@ -716,10 +724,10 @@ packages:
     dependency: transitive
     description:
       name: qs_dart
-      sha256: "9f0cea1c666d6447a7689e44efbb24b0c27245b0e52106b607330cfe99337684"
+      sha256: "78714e6cb543cf39d8a928b6372336ad8514f065ff8ca317eb85efe9abe4d10b"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.9"
+    version: "1.0.10"
   recase:
     dependency: transitive
     description:
