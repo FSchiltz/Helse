@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/main.dart';
+import 'package:helse/ui/helpers/square_outline_input_border.dart';
 
 import '../logic/settings_logic.dart';
 import 'blocs/loader.dart';
@@ -140,9 +141,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
             prefixIconColor: theme.primary,
             filled: true,
             fillColor: theme.surface,
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: theme.primary),
-            ),
+            border: SquareOutlineInputBorder(theme.primary),
           ),
         ),
       )

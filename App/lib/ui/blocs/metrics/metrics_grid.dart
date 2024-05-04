@@ -25,7 +25,7 @@ class MetricsGrid extends StatelessWidget {
             crossAxisSpacing: 2,
             mainAxisSpacing: 2,
             physics: const BouncingScrollPhysics(),
-            maxCrossAxisExtent: 280.0,
+            maxCrossAxisExtent: 240.0,
             children: types.map((type) => MetricWidget(type, date, key: Key(type.id?.toString() ?? ""), person: person)).toList(),
           );
   }

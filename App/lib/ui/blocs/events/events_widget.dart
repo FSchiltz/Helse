@@ -68,6 +68,9 @@ class _EventWidgetState extends State<EventWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(

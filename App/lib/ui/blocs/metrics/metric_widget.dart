@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:helse/ui/blocs/metrics/metric_detail.dart';
 
 import '../../../main.dart';
@@ -71,6 +70,10 @@ class _MetricWidgetState extends State<MetricWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0),
+      ),
+      clipBehavior: Clip.hardEdge,
       child: FutureBuilder(
           future: _getData(),
           builder: (ctx, snapshot) {
@@ -90,62 +93,60 @@ class _MetricWidgetState extends State<MetricWidget> {
                 // Extracting data from snapshot object
                 final metrics = snapshot.data as List<Metric>;
                 final last = metrics.isNotEmpty ? metrics.last : null;
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Flexible(
-                        child: SizedBox(
-                          height: 30,
+                return InkWell(
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (context) => MetricDetailPage(
+                              widget: widget,
+                              metrics: metrics,
+                              date: widget.date,
+                            )),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16, top: 1, right: 1),
+                    child: Column(
+                      children: [
+                        Flexible(
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Flexible(
                                 child: Text(widget.type.name ?? "",
                                     overflow: TextOverflow.ellipsis,
-                                    style: Theme.of(context).textTheme.titleMedium),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium),
                               ),
-                              
-                              Expanded(
-                                child: IconButton(
-                                    onPressed: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return MetricAdd(
-                                                widget.type, _resetMetric,
-                                                person: widget.person);
-                                          });
-                                    },
-                                    icon: const Icon(Icons.add_sharp)),
-                              ),
-                              if (last != null)
-                                Expanded(
-                                  child: Text(
-                                      (last.$value ?? "") +
-                                          (widget.type.unit ?? ""),
-                                      style:
-                                          Theme.of(context).textTheme.labelMedium),
+                              Flexible(
+                                child: SizedBox(
+                                  width: 40,
+                                  child: IconButton(
+                                      onPressed: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return MetricAdd(
+                                                  widget.type, _resetMetric,
+                                                  person: widget.person);
+                                            });
+                                      },
+                                      icon: const Icon(Icons.add_sharp)),
                                 ),
+                              ),
                             ],
                           ),
                         ),
-                      ),
-                      Expanded(
-                        child: InkWell(
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => MetricDetailPage(
-                                      widget: widget,
-                                      metrics: metrics,
-                                      date: widget.date,
-                                    )),
+                        if (last != null)
+                          Expanded(
+                            child: Text(
+                                (last.$value ?? "") + (widget.type.unit ?? ""),
+                                style: Theme.of(context).textTheme.labelLarge),
                           ),
-                          child: MetricSummarry(
-                              metrics, widget.type.unit, widget.date),
-                        ),
-                      ),
-                    ],
+                        Expanded(
+                            child: MetricSummarry(
+                                metrics, widget.type.unit, widget.date)),
+                      ],
+                    ),
                   ),
                 );
               }

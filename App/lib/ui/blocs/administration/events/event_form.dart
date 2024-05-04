@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../helpers/square_outline_input_border.dart';
+import '../../../helpers/square_text_field.dart';
+
 class EventAddForm extends StatefulWidget {
   final TextEditingController controllerDescription;
   final TextEditingController controllerName;
@@ -24,40 +27,24 @@ class _EventAddFormState extends State<EventAddForm> {
 
     return Column(
       children: [
-        TextFormField(
+        SquareTextField(
           controller: widget.controllerName,
-          keyboardType: TextInputType.name,
           focusNode: _focusNodeName,
-          decoration: InputDecoration(
-            labelText: "Name",
-            prefixIcon: const Icon(Icons.person_sharp),
-            prefixIconColor: theme.primary,
-            filled: true,
-            fillColor: theme.surface,
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: theme.primary),
-            ),
-          ),
+          label: "name",
+          icon: Icons.person_sharp,
+          theme: theme,
           validator: validateName,
           onEditingComplete: () => _focusNodeDescription.requestFocus(),
         ),
         const SizedBox(height: 10),
-        TextFormField(
+        SquareTextField(
           controller: widget.controllerDescription,
-          keyboardType: TextInputType.name,
           focusNode: _focusNodeDescription,
-          decoration: InputDecoration(
-            labelText: "Description",
-            prefixIcon: const Icon(Icons.person_sharp),
-            prefixIconColor: theme.primary,
-            filled: true,
-            fillColor: theme.surface,
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: theme.primary),
-            ),
-          ),
+          label: "Description",
+          icon: Icons.person_sharp,
+          theme: theme,
         ),
-         ],
+      ],
     );
   }
 

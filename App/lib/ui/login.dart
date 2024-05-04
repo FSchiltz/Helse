@@ -73,6 +73,7 @@ class _LoginState extends State<LoginPage> {
                           filled: true,
                           fillColor: theme.surface,
                           border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(0),
                             borderSide: BorderSide(color: theme.primary),
                           ),
                           errorText: _status == SubmissionStatus.failure

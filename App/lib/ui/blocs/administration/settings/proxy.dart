@@ -3,6 +3,7 @@ import 'package:helse/ui/blocs/notification.dart';
 
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../helpers/square_text_field.dart';
 import '../../loader.dart';
 
 class ProxyView extends StatefulWidget {
@@ -98,19 +99,11 @@ class _ProxyViewState extends State<ProxyView> {
                     const SizedBox(height: 20),
                     SizedBox(
                       width: 400,
-                      child: TextFormField(
+                      child: SquareTextField(
                         controller: _controllerHeader,
-                        keyboardType: TextInputType.name,
-                        decoration: InputDecoration(
-                          labelText: "Header name",
-                          prefixIcon: const Icon(Icons.text_fields_sharp),
-                          prefixIconColor: theme.primary,
-                          filled: true,
-                          fillColor: theme.surface,
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(color: theme.primary),
-                          ),
-                        ),
+                        label: "Header name",
+                        icon: Icons.text_fields_sharp,
+                        theme: theme,
                       ),
                     ),
                     const SizedBox(height: 20),

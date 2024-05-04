@@ -51,20 +51,23 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          MetricsGrid(
-              types: metricTypes,
-              date: widget.date,
-              person: widget.person),
-          const SizedBox(
-            height: 10,
-          ),
-          EventsGrid(
-              date: widget.date,
-              types: eventTypes,
-              person: widget.person),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            MetricsGrid(
+                types: metricTypes,
+                date: widget.date,
+                person: widget.person),
+            const SizedBox(
+              height: 10,
+            ),
+            EventsGrid(
+                date: widget.date,
+                types: eventTypes,
+                person: widget.person),
+          ],
+        ),
       ),
     );
   }
