@@ -41,7 +41,7 @@ jobs:
       if: ${{ inputs.push }}
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: App/build/app/outputs/bundle/release/*.apk
+        file: App/build/app/outputs/flutter-apk/*.apk
         tag: ${{ inputs.tag }}
     
       
