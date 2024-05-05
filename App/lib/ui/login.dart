@@ -1,3 +1,4 @@
+import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../logic/event.dart';
@@ -37,6 +38,7 @@ class _LoginState extends State<LoginPage> {
   Status? _initStatus;
   bool _obscurePassword = true;
   String? _url;
+  CancelableOperation? _operation;
 
   @override
   initState() {
@@ -61,12 +63,13 @@ class _LoginState extends State<LoginPage> {
                     key: _formKey,
                     child: Column(
                       children: [
-                        Text("Welcome ${_initStatus?.init == true ? "Back" : ""}",
+                        Text(
+                            "Welcome ${_initStatus?.init == true ? "Back" : ""}",
                             style: Theme.of(context).textTheme.headlineLarge),
                         const SizedBox(height: 20),
                         TextField(
                           controller: textController,
-                          onChanged: _urlChanged,
+                          onChanged: _urlTextChanged,
                           key: const Key('loginForm_urlInput_textField'),
                           decoration: InputDecoration(
                             labelText: 'Server url',
@@ -100,7 +103,8 @@ class _LoginState extends State<LoginPage> {
                                                 controller: _controllerPassword,
                                                 toggleCallback:
                                                     togglePasswordVisibility,
-                                                obscurePassword: _obscurePassword,
+                                                obscurePassword:
+                                                    _obscurePassword,
                                               ),
                                             ],
                                           )
@@ -120,7 +124,8 @@ class _LoginState extends State<LoginPage> {
                                                 UserType.admin,
                                                 controllerUsername:
                                                     _controllerUsername,
-                                                controllerEmail: _controllerEmail,
+                                                controllerEmail:
+                                                    _controllerEmail,
                                                 controllerPassword:
                                                     _controllerPassword,
                                                 controllerConFirmPassword:
@@ -156,14 +161,17 @@ class _LoginState extends State<LoginPage> {
                                               const SizedBox(height: 20),
                                               if (_initStatus?.oauth != null)
                                                 ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
                                                     minimumSize:
-                                                        const Size.fromHeight(50),
+                                                        const Size.fromHeight(
+                                                            50),
                                                     shape:
                                                         const ContinuousRectangleBorder(),
                                                   ),
                                                   onPressed: _submitOauth,
-                                                  child: Text('Login with Oauth',
+                                                  child: Text(
+                                                      'Login with Oauth',
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .titleLarge),
@@ -190,44 +198,70 @@ class _LoginState extends State<LoginPage> {
     return null;
   }
 
-  void _urlChanged(url) async {
+  void _urlTextChanged(url) async {
+    if (_loaded == SubmissionStatus.waiting && _operation != null) {
+      // cancel the existing call
+      _operation?.cancel();
+
+      setState(() {
+        _operation = null;
+      });
+    }
+
     setState(() {
       _url = url;
-      _loaded = SubmissionStatus.inProgress;
+      _loaded = SubmissionStatus.waiting;
     });
 
-    var isInit = await DI.helper?.isInit(_url ?? "");
-    var status = ((isInit?.init == null)
-        ? SubmissionStatus.failure
-        : SubmissionStatus.success);
+    // Launch the urlchanged handler with a delay
+    // To only call when the user has finished typing and allows giving feedback
+    var operation =
+        CancelableOperation.fromFuture(Future.delayed(Durations.medium3, () {
+      _urlChanged(url);
+    }));
 
-    // If the server is init or not
-    // Todo use stream
-    if (mounted) {
-      setState(() {
-        _initStatus = isInit;
-        _loaded = status;
-      });
+    setState(() {
+      _operation = operation;
+    });
+  }
 
-      if (isInit != null && isInit.init == true) {
-        if (isInit.oauth != null) {
-          var grant = await DI.authentication?.getGrant();
-          if (grant != null) {
-            _submit(
-              noUser: true,
-              oAuth: grant,
-              redirect: await DI.authentication?.getRedirect(),
-            );
-          } else if (isInit.autoLogin == true) {
-            _connectOauth(isInit, url);
+  void _urlChanged(url) async {
+    try {
+      var isInit = await DI.helper?.isInit(_url ?? "");
+      var status = ((isInit?.init == null)
+          ? SubmissionStatus.failure
+          : SubmissionStatus.success);
+
+      // If the server is init or not
+      // Todo use stream
+      if (mounted) {
+        setState(() {
+          _initStatus = isInit;
+          _loaded = status;
+        });
+
+        if (isInit != null && isInit.init == true) {
+          if (isInit.oauth != null) {
+            var grant = await DI.authentication?.getGrant();
+            if (grant != null) {
+              _submit(
+                noUser: true,
+                oAuth: grant,
+                redirect: await DI.authentication?.getRedirect(),
+              );
+            } else if (isInit.autoLogin == true) {
+              _connectOauth(isInit, url);
+            }
+          } else if (isInit.externalAuth == true) {
+            // Todo read from config
+
+            // directly start the login procedure
+            _submit(noUser: true);
           }
-        } else if (isInit.externalAuth == true) {
-          // Todo read from config
-
-          // directly start the login procedure
-          _submit(noUser: true);
         }
       }
+    } catch (ex) {
+      Notify.showError("Error: $ex");
     }
   }
 
@@ -261,8 +295,6 @@ class _LoginState extends State<LoginPage> {
   }
 
   void _submit({bool noUser = false, String? oAuth, String? redirect}) async {
-    var localContext = context;
-
     var init = _initStatus?.init;
     var url = _url;
     if (init == null || url == null) return;
@@ -307,9 +339,7 @@ class _LoginState extends State<LoginPage> {
 
         await DI.authentication?.clean();
 
-        if (localContext.mounted) {
-          Notify.show('User created, welcome');
-        }
+        Notify.show('User created, welcome');
       }
 
       setState(() {
