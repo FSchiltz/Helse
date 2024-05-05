@@ -1,5 +1,4 @@
 import 'package:async/async.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/ui/theme/password_input.dart';
 import '../logic/event.dart';
@@ -272,12 +271,6 @@ class _LoginState extends State<LoginPage> {
     DI.authentication?.checkLogin();
     // We first try to get it from storage
     var url = await DI.authentication?.getUrl();
-
-    // if not in storage, we can try to get it from the current url on the web
-    if (url == null && kIsWeb) {
-      url =
-          "${Uri.base.scheme}://${Uri.base.host}${Uri.base.port > 0 ? ":${Uri.base.port}" : ""}";
-    }
 
     if (url != null && url.isNotEmpty) {
       textController.text = url;
