@@ -7,6 +7,7 @@ class Notify {
       title: Text(content),
       type: ToastificationType.error,
       style: ToastificationStyle.minimal,
+      alignment: Alignment.centerRight,
       autoCloseDuration: const Duration(seconds: 5)
     );
   }
@@ -16,6 +17,7 @@ class Notify {
       title: Text(content),
       type: ToastificationType.success,
       style: ToastificationStyle.minimal,
+      alignment: Alignment.centerRight,
       autoCloseDuration: const Duration(seconds: 5)
     );
   }
