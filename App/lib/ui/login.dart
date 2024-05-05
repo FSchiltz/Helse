@@ -195,7 +195,7 @@ class _LoginState extends State<LoginPage> {
   }
 
   void _urlTextChanged(String url) async {
-    if (_loaded == SubmissionStatus.waiting && _operation != null) {
+    if (_loaded == SubmissionStatus.inProgress && _operation != null) {
       // cancel the existing call
       _operation?.cancel();
 
@@ -206,7 +206,7 @@ class _LoginState extends State<LoginPage> {
 
     setState(() {
       _url = url;
-      _loaded = SubmissionStatus.waiting;
+      _loaded = SubmissionStatus.inProgress;
     });
 
     if (url.isEmpty) {
