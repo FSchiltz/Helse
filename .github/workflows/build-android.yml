@@ -34,14 +34,23 @@ jobs:
       
     - name: Build release app bundle
       run: flutter build apk --release --split-per-abi
-      working-directory: 'App'    
+      working-directory: 'App'   
 
-    - name: Upload binaries to release
-      uses: ncipollo/release-action@v1.14.0
+    - name: Finding binaries files
       if: ${{ inputs.push }}
-      with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: App/build/app/outputs/flutter-apk/*.apk
-        tag: ${{ inputs.tag }}
+      id: finding-files        
+      run: |
+        {
+          echo 'FILELIST<<EOF'
+          find . -name 'App/build/app/outputs/flutter-apk/*.apk' -print 
+          echo EOF
+        } >> "$GITHUB_ENV"
+        
+    - name: Upload binaries to release
+      if: ${{ inputs.push }}
+      run: |
+        for i in $FILELIST; do        
+          gh release upload ${{github.event.release.tag_name}} ${i}   
+        done  
     
       
