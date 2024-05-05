@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/blocs/notification.dart';
+import 'package:helse/ui/theme/notification.dart';
 
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../../../helpers/square_text_field.dart';
-import '../../loader.dart';
+import '../../../theme/square_text_field.dart';
+import '../../../theme/loader.dart';
 
 class OauthView extends StatefulWidget {
   const OauthView({super.key});

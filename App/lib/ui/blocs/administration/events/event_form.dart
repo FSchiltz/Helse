@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../helpers/square_text_field.dart';
+import '../../../theme/square_text_field.dart';
 
 class EventAddForm extends StatefulWidget {
   final TextEditingController controllerDescription;

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../events/events_graph.dart';
-import '../loader.dart';
-import '../notification.dart';
+import '../../theme/loader.dart';
+import '../../theme/notification.dart';
 
 class TreatmentsGrid extends StatefulWidget {
   const TreatmentsGrid({super.key, required this.date, this.person});

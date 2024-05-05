@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../../loader.dart';
+import '../../../theme/loader.dart';
 import 'user_add.dart';
 import 'user_change_role.dart';
 
@@ -65,7 +65,7 @@ class _UsersViewState extends State<UsersView> {
                       ),
                       IconButton(
                           onPressed: () {
-                            showDialog(
+                            showDialog<void>(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return UserAdd(_resetUsers);
@@ -109,7 +109,7 @@ class _UsersViewState extends State<UsersView> {
                                           onPressed: () {
                                             var id = user.id;
                                             if (id != null) {
-                                              showDialog(
+                                              showDialog<void>(
                                                   context: context,
                                                   builder: (BuildContext context) {
                                                     return ChangeRole(_resetUsers, user.type ?? UserType.user, id);

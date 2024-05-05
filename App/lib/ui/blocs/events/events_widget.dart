@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../loader.dart';
-import '../notification.dart';
+import '../../theme/loader.dart';
+import '../../theme/notification.dart';
 import 'events_add.dart';
 import 'events_graph.dart';
 
@@ -85,7 +85,7 @@ class _EventWidgetState extends State<EventWidget> {
                 ),
                 IconButton(
                     onPressed: () {
-                      showDialog(
+                      showDialog<void>(
                           context: context,
                           builder: (BuildContext context) {
                             return EventAdd(_resetEvents, widget.type,

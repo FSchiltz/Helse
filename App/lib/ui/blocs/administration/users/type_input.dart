@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
-import 'package:helse/ui/helpers/square_outline_input_border.dart';
+import 'package:helse/ui/theme/square_outline_input_border.dart';
 
 class TypeInput extends StatelessWidget {
   final List<UserType> types;

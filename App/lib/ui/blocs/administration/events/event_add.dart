@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/helpers/square_dialog.dart';
+import 'package:helse/ui/theme/square_dialog.dart';
 
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../../notification.dart';
+import '../../../theme/notification.dart';
 import 'event_form.dart';
 
 class EventTypeAdd extends StatefulWidget {

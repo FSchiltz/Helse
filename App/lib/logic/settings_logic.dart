@@ -16,7 +16,7 @@ class LocalSettings {
   LocalSettings(this.syncHealth, this.theme);
 
   // stupid boilerplate code because dart can't decode json
-  LocalSettings.fromJson(Map<String, dynamic> json)
+  LocalSettings.fromJson(dynamic json)
       : syncHealth = json[_syncHealth] as bool,
         theme =  ThemeMode.values.firstWhere((e) => e.name == json[_theme]);
 
@@ -44,7 +44,7 @@ class SettingsLogic {
     return LocalSettings.fromJson(json.decode(encoded));
   }
 
-  saveLocal(LocalSettings localSettings) async {
+  Future<void> saveLocal(LocalSettings localSettings) async {
     await (await storage).setString(_localKey, json.encode(localSettings.toJson()));
   }
 }

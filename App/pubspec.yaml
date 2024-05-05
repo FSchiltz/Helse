@@ -55,6 +55,8 @@ dependencies:
   url_launcher: ^6.2.6
   app_links: ^5.0.0
   fluttertoast: ^8.2.5
+  async: ^2.11.0
+  toastification: ^2.0.0
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,5 @@
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, strict_raw_type, inference_failure_on_function_invocation
+// ignore_for_file: type=analyzer
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:collection/collection.dart';

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/helpers/square_dialog.dart';
+import 'package:helse/ui/theme/square_dialog.dart';
 
 import '../../../logic/event.dart';
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../common/date_input.dart';
 import '../common/text_input.dart';
-import '../loader.dart';
-import '../notification.dart';
+import '../../theme/loader.dart';
+import '../../theme/notification.dart';
 
 class TreatmentAdd extends StatefulWidget {
   final int? person;

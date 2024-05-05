@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../loader.dart';
+import '../../theme/loader.dart';
 import 'patient_add.dart';
 import 'patient_dashboard.dart';
 
@@ -76,7 +76,7 @@ class _PatientsState extends State<Patients> {
                               Row(
                                 children: [
                                   IconButton(
-                                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => PatientDashboard(p))),
+                                    onPressed: () => Navigator.push(context, MaterialPageRoute<void>(builder: (context) => PatientDashboard(p))),
                                     icon: Icon(
                                       Icons.visibility_sharp,
                                       color: theme.primary,
@@ -99,7 +99,7 @@ class _PatientsState extends State<Patients> {
               cards.add(Card(
                 child: IconButton(
                   onPressed: () {
-                    showDialog(
+                    showDialog<void>(
                         context: context,
                         builder: (BuildContext context) {
                           return PatientAdd(_resetPatients);

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/blocs/notification.dart';
+import 'package:helse/ui/theme/notification.dart';
 
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../../loader.dart';
+import '../../../theme/loader.dart';
 import 'metric_add.dart';
 
 class MetricTypeView extends StatefulWidget {
@@ -66,7 +66,7 @@ class _MetricTypeViewState extends State<MetricTypeView> {
                       ),
                       IconButton(
                           onPressed: () {
-                            showDialog(
+                            showDialog<void>(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return MetricTypeAdd(_resetMetricType);
@@ -115,7 +115,7 @@ class _MetricTypeViewState extends State<MetricTypeView> {
                                     DataCell(
                                       IconButton(
                                           onPressed: () {
-                                            showDialog(
+                                            showDialog<void>(
                                                 context: context,
                                                 builder:
                                                     (BuildContext context) {

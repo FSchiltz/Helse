@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:helse/main.dart';
-import 'package:helse/ui/helpers/square_outline_input_border.dart';
+import 'package:helse/ui/theme/square_outline_input_border.dart';
 
 import '../logic/settings_logic.dart';
-import 'blocs/loader.dart';
-import 'blocs/notification.dart';
+import 'theme/loader.dart';
+import 'theme/notification.dart';
 
 class LocalSettingsPage extends StatefulWidget {
   const LocalSettingsPage({super.key});
@@ -102,7 +102,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     }
   }
 
-  syncHealth(ColorScheme theme) {
+  List<Widget> syncHealth(ColorScheme theme) {
     return [
       Text("Sync Health", style: Theme.of(context).textTheme.headlineMedium),
       const SizedBox(height: 5),
@@ -122,7 +122,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     ];
   }
 
-  general(ColorScheme theme) {
+  List<Widget> general(ColorScheme theme) {
     return [
       Text("General", style: Theme.of(context).textTheme.headlineMedium),
       const SizedBox(height: 20),

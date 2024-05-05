@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/blocs/notification.dart';
+import 'package:helse/ui/theme/notification.dart';
 
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../../loader.dart';
+import '../../../theme/loader.dart';
 import 'event_add.dart';
 
 class EventTypeView extends StatefulWidget {
@@ -66,7 +66,7 @@ class _EventTypeViewState extends State<EventTypeView> {
                       ),
                       IconButton(
                           onPressed: () {
-                            showDialog(
+                            showDialog<void>(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return EventTypeAdd(_resetEventType);
@@ -117,7 +117,7 @@ class _EventTypeViewState extends State<EventTypeView> {
                                     DataCell(
                                       IconButton(
                                           onPressed: () {
-                                            showDialog(
+                                            showDialog<void>(
                                                 context: context,
                                                 builder:
                                                     (BuildContext context) {
