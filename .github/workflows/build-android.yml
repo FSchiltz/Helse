@@ -41,6 +41,7 @@ jobs:
       id: finding-files        
       run: |
         {
+          cd build/app/outputs/flutter-apk
           echo 'FILELIST<<EOF'
           find . -name '*-release.apk' -print 
           echo EOF
