@@ -52,5 +52,7 @@ jobs:
         for i in $FILELIST; do        
           gh release upload ${{github.event.release.tag_name}} ${i}   
         done  
+      env:
+        GH_TOKEN: ${{ github.token }}
     
       
