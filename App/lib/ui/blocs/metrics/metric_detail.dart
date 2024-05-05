@@ -2,7 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
 import 'package:helse/ui/blocs/metrics/metric_widget.dart';
-
+import 'package:intl/intl.dart';
 
 class MetricDetailPage extends StatelessWidget {
   const MetricDetailPage({
@@ -57,45 +57,57 @@ class MetricGraph extends StatelessWidget {
     return spots;
   }
 
+  double _getInterval(DateTimeRange date) {
+    var epoch =
+        date.end.millisecondsSinceEpoch - date.start.millisecondsSinceEpoch;
+    return epoch / 5;
+  }
+
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
     return metrics.isEmpty
         ? Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child:
-                Center(child: Text("No data", style: Theme.of(context).textTheme.labelLarge)),
+            padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
+            child: Center(
+                child: Text("No data",
+                    style: Theme.of(context).textTheme.labelLarge)),
           )
         : LineChart(
             LineChartData(
               minX: date.start.millisecondsSinceEpoch.toDouble(),
               maxX: date.end.millisecondsSinceEpoch.toDouble(),
-              minY: 0,
-              lineTouchData: const LineTouchData(enabled: true),
-              titlesData: const FlTitlesData(
-                leftTitles:
-                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              minY: 0,              
+              lineTouchData: const LineTouchData(enabled: true, ),
+              titlesData: FlTitlesData(
+                leftTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: true, reservedSize: 50)),
                 rightTitles:
-                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                bottomTitles:
-                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                  showTitles: true,
+                  interval: _getInterval(date),
+                  getTitlesWidget: (value, meta) => Text(DateFormat().add_yMd().add_jms().format(
+                      DateTime.fromMillisecondsSinceEpoch(value.toInt()))),
+                )),
                 topTitles:
-                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               ),
               borderData: FlBorderData(
-                show: true,
+                show: false,
               ),
               gridData: const FlGridData(
                 show: true,
-                drawHorizontalLine: true,
-                drawVerticalLine: true,
+                drawVerticalLine: false,
               ),
               lineBarsData: [
                 LineChartBarData(
                   spots: _getSpot(metrics),
-                  color: Colors.greenAccent,
+                  color: theme.primary,
                   barWidth: 2,
                   isStrokeCapRound: true,
-                  dotData: const FlDotData(show: true),
+                  dotData: const FlDotData(show: false),
                   belowBarData: BarAreaData(show: false),
                 ),
               ],

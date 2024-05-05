@@ -18,9 +18,9 @@ class MetricSummarry extends StatelessWidget {
     return unit == null
         ? (metrics.isEmpty
             ? Center(
-              child: Text("No data",
-                  style: Theme.of(context).textTheme.labelLarge),
-            )
+                child: Text("No data",
+                    style: Theme.of(context).textTheme.labelLarge),
+              )
             : ListView.builder(
                 itemCount: metrics.length,
                 itemBuilder: (context, index) {
@@ -92,6 +92,7 @@ class WidgetGraph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
     return metrics.isEmpty
         ? Padding(
             padding: const EdgeInsets.only(top: 16.0),
@@ -114,15 +115,11 @@ class WidgetGraph extends StatelessWidget {
               borderData: FlBorderData(
                 show: false,
               ),
-              gridData: const FlGridData(
-                show: true,
-                drawHorizontalLine: true,
-                drawVerticalLine: false,
-              ),
+              gridData: const FlGridData(show: false),
               lineBarsData: [
                 LineChartBarData(
                   spots: _getSpot(metrics),
-                  color: Colors.greenAccent,
+                  color: theme.primary,
                   barWidth: 2,
                   isStrokeCapRound: true,
                   dotData: const FlDotData(show: false),
