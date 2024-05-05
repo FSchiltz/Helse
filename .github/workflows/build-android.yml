@@ -42,7 +42,7 @@ jobs:
       run: |
         {
           echo 'FILELIST<<EOF'
-          find . -name 'App/build/app/outputs/flutter-apk/*.apk' -print 
+          find . -name '*-release.apk' -print 
           echo EOF
         } >> "$GITHUB_ENV"
         
