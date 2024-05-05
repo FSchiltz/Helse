@@ -37,7 +37,7 @@ jobs:
       working-directory: 'App'    
 
     - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v2
+      uses: ncipollo/release-action@v1.14.0
       if: ${{ inputs.push }}
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
