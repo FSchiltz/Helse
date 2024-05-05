@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toastification/toastification.dart';
 
 import 'helpers/oauth.dart';
 import 'helpers/url_dummy.dart' if (dart.library.html) 'helpers/url.dart';
@@ -49,26 +50,28 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Demo App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      onGenerateRoute: (RouteSettings routeSettings) {
-        DI.init();
-        if (kIsWeb) {
-          var uri = Uri.base.queryParameters;
-
-          if (uri.containsKey("code")) {
-            DI.authService?.doAuthOnWeb(uri);
-            UrlHelper.removeParam();
+    return ToastificationWrapper(
+      child: MaterialApp(
+        title: 'Demo App',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        onGenerateRoute: (RouteSettings routeSettings) {
+          DI.init();
+          if (kIsWeb) {
+            var uri = Uri.base.queryParameters;
+      
+            if (uri.containsKey("code")) {
+              DI.authService?.doAuthOnWeb(uri);
+              UrlHelper.removeParam();
+            }
           }
-        }
-        return MaterialPageRoute(builder: (BuildContext context) {
-          return const AppView();
-        });
-      },
+          return MaterialPageRoute(builder: (BuildContext context) {
+            return const AppView();
+          });
+        },
+      ),
     );
   }
 }

@@ -378,7 +378,7 @@ class _LoginState extends State<LoginPage> {
 
       await DI.authService?.login(url);
     } catch (ex) {
-      Notify.showError("Error: $ex");
+      Notify.showError(ex.toString());
 
       DI.authentication?.logOut();
 
