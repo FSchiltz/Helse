@@ -69,6 +69,7 @@ class _LoginState extends State<LoginPage> {
                         const SizedBox(height: 20),
                         TextField(
                           controller: textController,
+                          keyboardType: TextInputType.url,
                           onChanged: _urlTextChanged,
                           key: const Key('loginForm_urlInput_textField'),
                           decoration: InputDecoration(
