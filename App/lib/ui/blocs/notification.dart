@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class Notify {
-  static showError(String content) {
-    Fluttertoast.showToast(
+  static Future<bool?> showError(String content) {
+    return Fluttertoast.showToast(
         msg: content,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
@@ -14,8 +14,8 @@ class Notify {
     );
   }
 
-  static show(String content) {
-    Fluttertoast.showToast(
+  static Future<bool?> show(String content) {
+    return Fluttertoast.showToast(
         msg: content,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,

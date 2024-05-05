@@ -61,15 +61,15 @@ class AuthenticationLogic {
     if (token == null) throw Exception("Not connected");
 
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-    var data = decodedToken["roles"];
+    var data = decodedToken["roles"] as String?;
     if (data == null) {
       return const Person(type: UserType.swaggerGeneratedUnknown);
     }
 
-    var name = decodedToken["name"];
+    var name = decodedToken["name"] as String?;
     if (name?.isEmpty ?? true) name = null;
 
-    var surname = decodedToken["surname"];
+    var surname = decodedToken["surname"] as String?;
 
     if (surname?.isEmpty ?? true) surname = null;
 

@@ -33,7 +33,7 @@ class OauthClient {
     _clientId = clientId;
   }
 
-  Future<String?> login(url) async {
+  Future<String?> login(String url) async {
     await account.set(Account.url, url);
 
     var grant = await account.get(Account.grant);

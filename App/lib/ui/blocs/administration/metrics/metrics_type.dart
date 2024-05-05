@@ -66,7 +66,7 @@ class _MetricTypeViewState extends State<MetricTypeView> {
                       ),
                       IconButton(
                           onPressed: () {
-                            showDialog(
+                            showDialog<void>(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return MetricTypeAdd(_resetMetricType);
@@ -115,7 +115,7 @@ class _MetricTypeViewState extends State<MetricTypeView> {
                                     DataCell(
                                       IconButton(
                                           onPressed: () {
-                                            showDialog(
+                                            showDialog<void>(
                                                 context: context,
                                                 builder:
                                                     (BuildContext context) {

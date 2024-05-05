@@ -16,16 +16,11 @@ class HelperService extends ApiService {
   }
 
   Future<Status?> isInit(String url) async {
-    try {
       var api = await getService(override: url);
       var response = await api.apiStatusGet();
 
       if (!response.isSuccessful) return null;
 
-      return response.body;
-    } catch (_) {
-      // don't crash on this call, the user may have entered a wrong url
-      return null;
-    }
+      return response.bodyOrThrow;
   }
 }

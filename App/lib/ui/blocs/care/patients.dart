@@ -76,7 +76,7 @@ class _PatientsState extends State<Patients> {
                               Row(
                                 children: [
                                   IconButton(
-                                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => PatientDashboard(p))),
+                                    onPressed: () => Navigator.push(context, MaterialPageRoute<void>(builder: (context) => PatientDashboard(p))),
                                     icon: Icon(
                                       Icons.visibility_sharp,
                                       color: theme.primary,
@@ -99,7 +99,7 @@ class _PatientsState extends State<Patients> {
               cards.add(Card(
                 child: IconButton(
                   onPressed: () {
-                    showDialog(
+                    showDialog<void>(
                         context: context,
                         builder: (BuildContext context) {
                           return PatientAdd(_resetPatients);

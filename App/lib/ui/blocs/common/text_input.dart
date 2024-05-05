@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 class TextInput extends StatelessWidget {
   final IconData icon;
   final String label;
-  final Function()? onTap;
-  final Function(String)? onChanged;
+  final void Function()? onTap;
+  final void Function(String)? onChanged;
 
   const TextInput(this.icon, this.label, {super.key, this.onTap, this.onChanged});
 

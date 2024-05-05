@@ -95,7 +95,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                 final last = metrics.isNotEmpty ? metrics.last : null;
                 return InkWell(
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
+                    MaterialPageRoute<void>(
                         builder: (context) => MetricDetailPage(
                               widget: widget,
                               metrics: metrics,
@@ -122,7 +122,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                                   width: 40,
                                   child: IconButton(
                                       onPressed: () {
-                                        showDialog(
+                                        showDialog<void>(
                                             context: context,
                                             builder: (BuildContext context) {
                                               return MetricAdd(

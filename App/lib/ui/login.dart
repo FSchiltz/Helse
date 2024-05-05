@@ -38,7 +38,7 @@ class _LoginState extends State<LoginPage> {
   Status? _initStatus;
   bool _obscurePassword = true;
   String? _url;
-  CancelableOperation? _operation;
+  CancelableOperation<void>? _operation;
 
   @override
   initState() {
@@ -190,7 +190,7 @@ class _LoginState extends State<LoginPage> {
         ));
   }
 
-  String? validateUserName(value) {
+  String? validateUserName(String? value) {
     if (value == null || value.isEmpty) {
       return "Please enter a username.";
     }
@@ -198,7 +198,7 @@ class _LoginState extends State<LoginPage> {
     return null;
   }
 
-  void _urlTextChanged(url) async {
+  void _urlTextChanged(String url) async {
     if (_loaded == SubmissionStatus.waiting && _operation != null) {
       // cancel the existing call
       _operation?.cancel();
@@ -213,19 +213,24 @@ class _LoginState extends State<LoginPage> {
       _loaded = SubmissionStatus.waiting;
     });
 
-    // Launch the urlchanged handler with a delay
-    // To only call when the user has finished typing and allows giving feedback
-    var operation =
-        CancelableOperation.fromFuture(Future.delayed(Durations.medium3, () {
-      _urlChanged(url);
-    }));
+    if (url.isEmpty) {
+      setState(() {
+        _loaded = SubmissionStatus.initial;
+      });
+    } else {
+      // Launch the urlchanged handler with a delay
+      // To only call when the user has finished typing and allows giving feedback
+      var operation =
+          CancelableOperation.fromFuture(Future<void>.delayed(Durations.extralong3));
 
-    setState(() {
-      _operation = operation;
-    });
+      operation.value.then((value) async => await _urlChanged(url));
+      setState(() {
+        _operation = operation;
+      });
+    }
   }
 
-  void _urlChanged(url) async {
+  Future<void> _urlChanged(String url) async {
     try {
       var isInit = await DI.helper?.isInit(_url ?? "");
       var status = ((isInit?.init == null)
@@ -261,7 +266,8 @@ class _LoginState extends State<LoginPage> {
         }
       }
     } catch (ex) {
-      Notify.showError("Error: $ex");
+      // TODO use an icon and color of the textbox to make it less intrusive for the user
+      Notify.showError(ex.toString());
     }
   }
 
@@ -289,8 +295,9 @@ class _LoginState extends State<LoginPage> {
 
   Future<void> _submitOauth() async {
     var init = _initStatus;
-    if (init != null && _url != null) {
-      await _connectOauth(init, _url);
+    var url = _url;
+    if (init != null && url != null) {
+      await _connectOauth(init, url);
     }
   }
 
@@ -362,7 +369,7 @@ class _LoginState extends State<LoginPage> {
         _obscurePassword = !_obscurePassword;
       });
 
-  Future<void> _connectOauth(Status isInit, url) async {
+  Future<void> _connectOauth(Status isInit, String url) async {
     try {
       DI.authService?.init(
         auth: isInit.oauth ?? '',

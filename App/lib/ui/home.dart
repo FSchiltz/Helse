@@ -145,7 +145,7 @@ class _HomeState extends State<Home> {
                 onSelected: (value) {
                   switch (value) {
                     case 0:
-                      showDialog(
+                      showDialog<void>(
                           context: context,
                           builder: (BuildContext context) {
                             return const FileImport();
@@ -154,14 +154,14 @@ class _HomeState extends State<Home> {
                     case 1:
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
+                        MaterialPageRoute<void>(
                             builder: (context) => const LocalSettingsPage()),
                       );
                       break;
                     case 2:
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
+                        MaterialPageRoute<void>(
                             builder: (context) => const AdministrationPage()),
                       );
                       break;

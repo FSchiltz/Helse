@@ -102,7 +102,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     }
   }
 
-  syncHealth(ColorScheme theme) {
+  List<Widget> syncHealth(ColorScheme theme) {
     return [
       Text("Sync Health", style: Theme.of(context).textTheme.headlineMedium),
       const SizedBox(height: 5),
@@ -122,7 +122,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     ];
   }
 
-  general(ColorScheme theme) {
+  List<Widget> general(ColorScheme theme) {
     return [
       Text("General", style: Theme.of(context).textTheme.headlineMedium),
       const SizedBox(height: 20),

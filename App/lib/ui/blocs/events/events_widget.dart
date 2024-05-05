@@ -85,7 +85,7 @@ class _EventWidgetState extends State<EventWidget> {
                 ),
                 IconButton(
                     onPressed: () {
-                      showDialog(
+                      showDialog<void>(
                           context: context,
                           builder: (BuildContext context) {
                             return EventAdd(_resetEvents, widget.type,

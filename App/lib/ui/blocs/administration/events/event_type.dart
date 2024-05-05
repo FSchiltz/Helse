@@ -66,7 +66,7 @@ class _EventTypeViewState extends State<EventTypeView> {
                       ),
                       IconButton(
                           onPressed: () {
-                            showDialog(
+                            showDialog<void>(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return EventTypeAdd(_resetEventType);
@@ -117,7 +117,7 @@ class _EventTypeViewState extends State<EventTypeView> {
                                     DataCell(
                                       IconButton(
                                           onPressed: () {
-                                            showDialog(
+                                            showDialog<void>(
                                                 context: context,
                                                 builder:
                                                     (BuildContext context) {
