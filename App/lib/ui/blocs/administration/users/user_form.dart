@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/theme/square_outline_input_border.dart';
+import 'package:helse/ui/theme/password_input.dart';
 
 import '../../../../services/swagger/generated_code/swagger.enums.swagger.dart';
 import '../../../theme/square_text_field.dart';
@@ -38,11 +38,6 @@ class _UserFormState extends State<UserForm> {
 
   @override
   Widget build(BuildContext context) {
-    var iconButton = IconButton(
-        onPressed: togglePassword,
-        icon: _obscurePassword
-            ? const Icon(Icons.visibility_sharp)
-            : const Icon(Icons.visibility_off_sharp));
     var theme = Theme.of(context).colorScheme;
 
     return Column(
@@ -83,27 +78,13 @@ class _UserFormState extends State<UserForm> {
             nextFocus: _focusNodeConfirmPassword,
             validate: validatePassword,
             focus: _focusNodePassword,
-            obscurePassword: _obscurePassword,
-            toggleCallback: togglePassword,
           ),
           const SizedBox(height: 10),
-          TextFormField(
-            controller: widget.controllerConFirmPassword,
-            obscureText: _obscurePassword,
-            focusNode: _focusNodeConfirmPassword,
-            keyboardType: TextInputType.visiblePassword,
-            decoration: InputDecoration(
-              labelText: "Confirm Password",
-              prefixIcon: const Icon(Icons.password_sharp),
-              suffixIcon: iconButton,
-              suffixIconColor: theme.primary,
-              prefixIconColor: theme.primary,
-              filled: true,
-              fillColor: theme.surface,
-              border: SquareOutlineInputBorder(theme.primary),
-            ),
-            validator: validateConfirmPassword,
-          ),
+          PasswordInput(
+              text: "Confirm Password",
+              controller: widget.controllerConFirmPassword,
+              focus: _focusNodeConfirmPassword,
+              validate: validateConfirmPassword),
         ],
       ],
     );
@@ -160,56 +141,6 @@ class _UserFormState extends State<UserForm> {
     _focusNodePassword.dispose();
     _focusNodeConfirmPassword.dispose();
     super.dispose();
-  }
-}
-
-class PasswordInput extends StatelessWidget {
-  final TextEditingController? controller;
-  final String? Function(String? value)? validate;
-  final FocusNode? nextFocus;
-  final FocusNode? focus;
-  final bool obscurePassword;
-  final void Function()? toggleCallback;
-
-  const PasswordInput({
-    super.key,
-    this.controller,
-    this.nextFocus,
-    this.validate,
-    this.focus,
-    required this.obscurePassword,
-    this.toggleCallback,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    var iconButton = IconButton(
-        onPressed: toggleCallback,
-        icon: obscurePassword
-            ? const Icon(Icons.visibility_sharp)
-            : const Icon(Icons.visibility_off_sharp));
-    var theme = Theme.of(context).colorScheme;
-    return TextFormField(
-      controller: controller,
-      obscureText: obscurePassword,
-      focusNode: focus,
-      keyboardType: TextInputType.visiblePassword,
-      decoration: InputDecoration(
-        labelText: "Password",
-        prefixIcon: const Icon(Icons.password_sharp),
-        prefixIconColor: theme.primary,
-        suffixIcon: iconButton,
-        suffixIconColor: theme.primary,
-        filled: true,
-        fillColor: theme.surface,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(0),
-          borderSide: BorderSide(color: theme.primary),
-        ),
-      ),
-      validator: validate,
-      onEditingComplete: () => nextFocus?.requestFocus(),
-    );
   }
 }
 

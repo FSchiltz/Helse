@@ -1,6 +1,7 @@
 import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:helse/ui/theme/password_input.dart';
 import '../logic/event.dart';
 import '../main.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';
@@ -36,7 +37,6 @@ class _LoginState extends State<LoginPage> {
   SubmissionStatus _status = SubmissionStatus.initial;
   SubmissionStatus _loaded = SubmissionStatus.initial;
   Status? _initStatus;
-  bool _obscurePassword = true;
   String? _url;
   CancelableOperation<void>? _operation;
 
@@ -101,12 +101,8 @@ class _LoginState extends State<LoginPage> {
                                               ),
                                               const SizedBox(height: 10),
                                               PasswordInput(
-                                                controller: _controllerPassword,
-                                                toggleCallback:
-                                                    togglePasswordVisibility,
-                                                obscurePassword:
-                                                    _obscurePassword,
-                                              ),
+                                                  controller:
+                                                      _controllerPassword),
                                             ],
                                           )
                                         : Column(
@@ -221,8 +217,8 @@ class _LoginState extends State<LoginPage> {
     } else {
       // Launch the urlchanged handler with a delay
       // To only call when the user has finished typing and allows giving feedback
-      var operation =
-          CancelableOperation.fromFuture(Future<void>.delayed(Durations.extralong3));
+      var operation = CancelableOperation.fromFuture(
+          Future<void>.delayed(Durations.extralong3));
 
       operation.value.then((value) async => await _urlChanged(url));
       setState(() {
@@ -267,7 +263,6 @@ class _LoginState extends State<LoginPage> {
         }
       }
     } catch (ex) {
-      // TODO use an icon and color of the textbox to make it less intrusive for the user
       Notify.showError(ex.toString());
     }
   }
@@ -365,10 +360,6 @@ class _LoginState extends State<LoginPage> {
       });
     }
   }
-
-  void togglePasswordVisibility() => setState(() {
-        _obscurePassword = !_obscurePassword;
-      });
 
   Future<void> _connectOauth(Status isInit, String url) async {
     try {

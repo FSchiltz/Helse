@@ -35,7 +35,7 @@ abstract class ApiService {
 
     // first we try to get a new refresh token if needed
     var token = await _account.get(Account.token);
-    if (token != null) {
+    if (token != null && token.isNotEmpty) {
       if (JwtDecoder.isExpired(token)) {
         var refresh = await _account.get(Account.refresh);
         var client = Swagger.create(baseUrl: Uri.parse(url), interceptors: [
