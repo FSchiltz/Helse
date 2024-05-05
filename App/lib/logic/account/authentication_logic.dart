@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:helse/services/user_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
@@ -114,7 +115,28 @@ class AuthenticationLogic {
     return _account.get(Account.redirect);
   }
 
-  Future<String?> getUrl() {
-    return _account.get(Account.url);
+  Future<String?> getUrl() async {
+    var url = await _account.get(Account.url);
+
+    // if not in storage, we can try to get it from the current url on the web
+    if (url == null && kIsWeb) {
+      int? port = Uri.base.port;
+      if(port == 80 && Uri.base.scheme == 'http')
+      {
+        // if the url is http, don't show the default port
+        port = null;
+      }
+
+      if(port == 443 && Uri.base.scheme == 'https')
+      {
+        // if the url is https, don't show the default port
+        port = null;
+      }
+
+      url =
+          "${Uri.base.scheme}://${Uri.base.host}${port != null ? ":${port}" : ""}";
+    }
+
+    return url;
   }
 }
