@@ -50,6 +50,7 @@ jobs:
     - name: Upload binaries to release
       if: ${{ inputs.push }}
       run: |
+        cd App/build/app/outputs/flutter-apk
         for i in $FILELIST; do        
           gh release upload ${{github.event.release.tag_name}} ${i}   
         done  
