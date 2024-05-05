@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../loader.dart';
-import '../notification.dart';
+import '../../theme/loader.dart';
+import '../../theme/notification.dart';
 import 'events_add.dart';
 import 'events_graph.dart';
 

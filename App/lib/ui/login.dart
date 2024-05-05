@@ -5,8 +5,8 @@ import '../logic/event.dart';
 import '../main.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';
 import 'blocs/administration/users/user_form.dart';
-import 'blocs/loader.dart';
-import 'blocs/notification.dart';
+import 'theme/loader.dart';
+import 'theme/notification.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({

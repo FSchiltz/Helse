@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../loader.dart';
+import '../../theme/loader.dart';
 import 'metric_widget.dart';
 
 class MetricsGrid extends StatelessWidget {

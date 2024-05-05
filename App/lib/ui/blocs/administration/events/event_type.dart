@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/blocs/notification.dart';
+import 'package:helse/ui/theme/notification.dart';
 
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../../loader.dart';
+import '../../../theme/loader.dart';
 import 'event_add.dart';
 
 class EventTypeView extends StatefulWidget {

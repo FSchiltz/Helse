@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../../loader.dart';
+import '../../../theme/loader.dart';
 import 'user_add.dart';
 import 'user_change_role.dart';
 

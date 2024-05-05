@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/helpers/square_outline_input_border.dart';
+import 'package:helse/ui/theme/square_outline_input_border.dart';
 
 import '../../../../services/swagger/generated_code/swagger.enums.swagger.dart';
-import '../../../helpers/square_text_field.dart';
+import '../../../theme/square_text_field.dart';
 
 class UserForm extends StatefulWidget {
   final UserType? type;

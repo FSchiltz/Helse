@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:helse/main.dart';
-import 'package:helse/ui/helpers/square_outline_input_border.dart';
+import 'package:helse/ui/theme/square_outline_input_border.dart';
 
 import '../logic/settings_logic.dart';
-import 'blocs/loader.dart';
-import 'blocs/notification.dart';
+import 'theme/loader.dart';
+import 'theme/notification.dart';
 
 class LocalSettingsPage extends StatefulWidget {
   const LocalSettingsPage({super.key});

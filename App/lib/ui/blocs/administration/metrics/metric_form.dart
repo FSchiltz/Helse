@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/helpers/square_text_field.dart';
+import 'package:helse/ui/theme/square_text_field.dart';
 
 
 class MetricAddForm extends StatefulWidget {

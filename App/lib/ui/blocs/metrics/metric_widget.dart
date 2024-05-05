@@ -3,7 +3,7 @@ import 'package:helse/ui/blocs/metrics/metric_detail.dart';
 
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../loader.dart';
+import '../../theme/loader.dart';
 import 'metric_add.dart';
 import 'metric_summary.dart';
 

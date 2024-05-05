@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
-import 'package:helse/ui/blocs/notification.dart';
+import 'package:helse/ui/theme/notification.dart';
 
-import '../../loader.dart';
+import '../../../theme/loader.dart';
 
 class EventSettingsView extends StatefulWidget {
   const EventSettingsView({super.key});

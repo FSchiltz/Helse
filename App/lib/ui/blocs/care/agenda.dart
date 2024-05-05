@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../main.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../events/events_graph.dart';
-import '../loader.dart';
+import '../../theme/loader.dart';
 
 class Agenda extends StatefulWidget {
   final DateTimeRange date;
