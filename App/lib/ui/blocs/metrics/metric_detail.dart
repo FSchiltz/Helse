@@ -77,8 +77,8 @@ class MetricGraph extends StatelessWidget {
             LineChartData(
               minX: date.start.millisecondsSinceEpoch.toDouble(),
               maxX: date.end.millisecondsSinceEpoch.toDouble(),
-              minY: 0,
-              lineTouchData: const LineTouchData(enabled: true),
+              minY: 0,              
+              lineTouchData: const LineTouchData(enabled: true, ),
               titlesData: FlTitlesData(
                 leftTitles: const AxisTitles(
                     sideTitles: SideTitles(showTitles: true, reservedSize: 50)),
@@ -107,7 +107,7 @@ class MetricGraph extends StatelessWidget {
                   color: theme.primary,
                   barWidth: 2,
                   isStrokeCapRound: true,
-                  dotData: const FlDotData(show: true),
+                  dotData: const FlDotData(show: false),
                   belowBarData: BarAreaData(show: false),
                 ),
               ],
