@@ -31,8 +31,15 @@ class _DashboardState extends State<Dashboard> {
     try {
       var model = await DI.metric?.metricsType();
       if (model != null) {
+        var settings = await SettingsLogic.getMetrics();
+        // filter using the user settings
+        var filtered = model
+            .where(( x) => settings.metrics
+                .any((element) => element.id == x.id && element.visible))
+            .toList();
+
         setState(() {
-          metricTypes = model;
+          metricTypes = filtered;
         });
         SettingsLogic.updateMetrics(model);
       }
@@ -45,8 +52,15 @@ class _DashboardState extends State<Dashboard> {
     try {
       var model = await DI.event?.eventsType(all: true);
       if (model != null) {
+         var settings = await SettingsLogic.getEvents();
+        // filter using the user settings
+        var filtered = model
+            .where(( x) => settings.events
+                .any((element) => element.id == x.id && element.visible))
+            .toList();
+
         setState(() {
-          eventTypes = model;
+          eventTypes = filtered;
         });
         SettingsLogic.updateEvents(model);
       }
