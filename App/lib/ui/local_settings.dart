@@ -68,14 +68,20 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text('Interface',
+                            style: Theme.of(context).textTheme.headlineLarge),
+                        const SizedBox(height: 10),
                         ...general(theme),
                         //const SizedBox(height: 20),
                         //...syncHealth(theme),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 40),
+                        Text('Dashboard',
+                            style: Theme.of(context).textTheme.headlineLarge),
+                        const SizedBox(height: 10),
                         ...metrics(theme),
                         const SizedBox(height: 20),
                         ...events(theme),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 40),
                         SizedBox(
                           width: 200,
                           child: ElevatedButton(
@@ -118,7 +124,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
 
   List<Widget> syncHealth(ColorScheme theme) {
     return [
-      Text("Sync Health", style: Theme.of(context).textTheme.headlineMedium),
+      Text("Sync Health", style: Theme.of(context).textTheme.headlineSmall),
       const SizedBox(height: 5),
       Flexible(
         child: Row(
@@ -140,7 +146,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
 
   List<Widget> metrics(ColorScheme theme) {
     return [
-      Text("Metrics", style: Theme.of(context).textTheme.headlineMedium),
+      Text("Metrics", style: Theme.of(context).textTheme.headlineSmall),
       const SizedBox(height: 20),
       OrderedList(_metrics),
     ];
@@ -148,7 +154,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
 
   List<Widget> events(ColorScheme theme) {
     return [
-      Text("Events", style: Theme.of(context).textTheme.headlineMedium),
+      Text("Events", style: Theme.of(context).textTheme.headlineSmall),
       const SizedBox(height: 20),
       OrderedList(_events),
     ];
@@ -156,8 +162,6 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
 
   List<Widget> general(ColorScheme theme) {
     return [
-      Text("General", style: Theme.of(context).textTheme.headlineMedium),
-      const SizedBox(height: 20),
       SizedBox(
         width: 200,
         child: DropdownButtonFormField(
