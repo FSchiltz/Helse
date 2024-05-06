@@ -152,11 +152,15 @@ class EventGraph extends StatelessWidget {
               padding: const EdgeInsets.only(left: 8.0),
               child: Tooltip(
                 message: n.description ?? "",
-                child: Text(
-                  n.description ?? "",
-                  maxLines: 1,
-                  overflow: TextOverflow.fade,
-                  style: const TextStyle(fontSize: 10.0),
+                child: Container(
+            width: remainingWidth.toDouble(),
+                  child: Text(
+                    n.description ?? "",
+                    maxLines: 1,
+                    overflow: TextOverflow.fade,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 10.0),
+                  ),
                 ),
               ),
             ),
