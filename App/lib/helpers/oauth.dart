@@ -1,11 +1,11 @@
 import 'dart:core';
 import 'package:app_links/app_links.dart';
 import 'package:helse/logic/account/authentication_logic.dart';
+import 'package:helse/logic/d_i.dart';
 import 'package:universal_html/html.dart';
 import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../main.dart';
 import '../services/account.dart';
 
 class OauthClient {

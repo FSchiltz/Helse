@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:helse/logic/d_i.dart';
 import 'package:helse/services/user_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
-import '../../main.dart';
 import '../../services/account.dart';
 import '../../services/swagger/generated_code/swagger.swagger.dart';
 
@@ -134,7 +134,7 @@ class AuthenticationLogic {
       }
 
       url =
-          "${Uri.base.scheme}://${Uri.base.host}${port != null ? ":${port}" : ""}";
+          "${Uri.base.scheme}://${Uri.base.host}${port != null ? ":$port" : ""}";
     }
 
     return url;

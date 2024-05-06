@@ -1,8 +1,8 @@
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
+import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/theme/password_input.dart';
 import '../logic/event.dart';
-import '../main.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';
 import 'blocs/administration/users/user_form.dart';
 import 'theme/loader.dart';

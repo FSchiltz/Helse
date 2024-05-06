@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:helse/logic/d_i.dart';
 import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
 import 'package:helse/ui/theme/square_dialog.dart';
 
-import '../../../../main.dart';
 import '../../../../services/swagger/generated_code/swagger.enums.swagger.dart';
 import '../../../theme/notification.dart';
 import 'type_input.dart';

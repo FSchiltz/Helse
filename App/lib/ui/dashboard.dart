@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:helse/logic/d_i.dart';
+import 'package:helse/logic/settings/settings_logic.dart';
 import 'package:helse/ui/theme/notification.dart';
 
-import '../main.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';
 import 'blocs/events/events_grid.dart';
 import 'blocs/metrics/metrics_grid.dart';
@@ -27,11 +28,16 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _getMetricData() async {
-    var model = await DI.metric?.metricsType();
-    if (model != null) {
-      setState(() {
-        metricTypes = model;
-      });
+    try {
+      var model = await DI.metric?.metricsType();
+      if (model != null) {
+        setState(() {
+          metricTypes = model;
+        });
+        SettingsLogic.updateMetrics(model);
+      }
+    } catch (ex) {
+      Notify.show("Error: $ex");
     }
   }
 
@@ -42,6 +48,7 @@ class _DashboardState extends State<Dashboard> {
         setState(() {
           eventTypes = model;
         });
+        SettingsLogic.updateEvents(model);
       }
     } catch (ex) {
       Notify.show("Error: $ex");
@@ -56,16 +63,12 @@ class _DashboardState extends State<Dashboard> {
         child: Column(
           children: [
             MetricsGrid(
-                types: metricTypes,
-                date: widget.date,
-                person: widget.person),
+                types: metricTypes, date: widget.date, person: widget.person),
             const SizedBox(
               height: 10,
             ),
             EventsGrid(
-                date: widget.date,
-                types: eventTypes,
-                person: widget.person),
+                date: widget.date, types: eventTypes, person: widget.person),
           ],
         ),
       ),
