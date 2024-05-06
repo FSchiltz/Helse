@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/services/login_service.dart';
 import 'package:helse/services/user_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
@@ -44,7 +44,7 @@ class AuthenticationLogic {
       required String password,
       String? redirect}) async {
     await _account.set(Account.url, url);
-    var token = await DI.user?.login(username, password, redirect);
+    var token = await LoginService(_account).login(username, password, redirect);
 
     if (token?.refreshToken != null) {
       await _account.set(Account.refresh, token?.refreshToken ?? '');

@@ -32,7 +32,7 @@ class App extends StatelessWidget {
           DI.init();
           if (kIsWeb) {
             var uri = Uri.base.queryParameters;
-      
+
             if (uri.containsKey("code")) {
               DI.authService?.doAuthOnWeb(uri);
               UrlHelper.removeParam();
@@ -50,8 +50,7 @@ class App extends StatelessWidget {
 class AppView extends StatefulWidget {
   const AppView({super.key});
 
-  static AppState of(BuildContext context) =>
-      context.findAncestorStateOfType<AppState>()!;
+  static AppState of(BuildContext context) => context.findAncestorStateOfType<AppState>()!;
 
   @override
   State<AppView> createState() => AppState();
@@ -84,20 +83,16 @@ class AppState extends State<AppView> {
     return RepositoryProvider.value(
       value: DI.authentication,
       child: BlocProvider(
-        create: (_) =>
-            AuthenticationBloc(authenticationRepository: DI.authentication!),
+        create: (_) => AuthenticationBloc(authenticationRepository: DI.authentication!),
         child: MaterialApp(
           title: 'Helse',
           theme: ThemeData(
             useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(
-                seedColor: const Color.fromARGB(255, 123, 250, 123)),
+            colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 123, 250, 123)),
           ),
           darkTheme: ThemeData(
             useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(
-                seedColor: const Color.fromARGB(255, 0, 97, 0),
-                brightness: Brightness.dark),
+            colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 0, 97, 0), brightness: Brightness.dark),
             /* dark theme settings */
           ),
           themeMode: _themeMode,
