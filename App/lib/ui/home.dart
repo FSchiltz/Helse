@@ -48,19 +48,15 @@ class _HomeState extends State<Home> {
   }
 
   DeviceType getDevice() {
-    return MediaQuery.of(context).size.width <= 800
-        ? DeviceType.mobile
-        : DeviceType.desktop;
+    return MediaQuery.of(context).size.width <= 800 ? DeviceType.mobile : DeviceType.desktop;
   }
 
   void _getUser() async {
     try {
-      var model = await DI.authentication?.getUser();
-      if (model != null) {
-        setState(() {
-          user = model;
-        });
-      }
+      var model = await DI.authentication.getUser();
+      setState(() {
+        user = model;
+      });
     } catch (ex) {
       Notify.showError("Error: $ex");
     }
@@ -93,13 +89,12 @@ class _HomeState extends State<Home> {
                 child: Text(
                   'Hi ${user?.surname ?? user?.name ?? ""}',
                   overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.headlineMedium
-                      ?.copyWith(color: theme.colorScheme.onPrimaryContainer),
+                  style: theme.textTheme.headlineMedium?.copyWith(color: theme.colorScheme.onPrimaryContainer),
                 ),
               ),
               Flexible(
                   child: Container(
-                    constraints: const BoxConstraints(maxWidth: 220),
+                constraints: const BoxConstraints(maxWidth: 220),
                 color: theme.colorScheme.onSecondary,
                 child: DateRangeInput(_setDate, date),
               ))
@@ -107,8 +102,7 @@ class _HomeState extends State<Home> {
           ),
           actions: [
             PopupMenuButton(
-                icon: Icon(Icons.menu_sharp,
-                    color: theme.colorScheme.onBackground),
+                icon: Icon(Icons.menu_sharp, color: theme.colorScheme.onBackground),
                 itemBuilder: (context) {
                   return [
                     const PopupMenuItem<int>(
@@ -154,19 +148,17 @@ class _HomeState extends State<Home> {
                     case 1:
                       Navigator.push(
                         context,
-                        MaterialPageRoute<void>(
-                            builder: (context) => const LocalSettingsPage()),
+                        MaterialPageRoute<void>(builder: (context) => const LocalSettingsPage()),
                       );
                       break;
                     case 2:
                       Navigator.push(
                         context,
-                        MaterialPageRoute<void>(
-                            builder: (context) => const AdministrationPage()),
+                        MaterialPageRoute<void>(builder: (context) => const AdministrationPage()),
                       );
                       break;
                     case 3:
-                      DI.authentication?.logOut();
+                      DI.authentication.logOut();
                       break;
                   }
                 })

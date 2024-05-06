@@ -10,7 +10,15 @@ import 'package:helse/services/user_service.dart';
 
 class DI {
   static OauthClient? authService;
-  static AuthenticationLogic? authentication;
+  static AuthenticationLogic? _authentication;
+  static AuthenticationLogic get authentication {
+    var a = _authentication;
+    if (a == null) {
+      throw Exception("Invalid access");
+    }
+    return a;
+  }
+
   static MetricService? metric;
   static HelperService? helper;
   static EventService? event;
@@ -21,7 +29,7 @@ class DI {
   static void init() {
     var account = Account();
     authService = OauthClient(account);
-    authentication = AuthenticationLogic(account);
+    _authentication = AuthenticationLogic(account);
     metric = MetricService(account);
     helper = HelperService(account);
     event = EventService(account);

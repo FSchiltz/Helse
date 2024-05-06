@@ -243,12 +243,12 @@ class _LoginState extends State<LoginPage> {
 
         if (isInit != null && isInit.init == true) {
           if (isInit.oauth != null) {
-            var grant = await DI.authentication?.getGrant();
+            var grant = await DI.authentication.getGrant();
             if (grant != null) {
               _submit(
                 noUser: true,
                 oAuth: grant,
-                redirect: await DI.authentication?.getRedirect(),
+                redirect: await DI.authentication.getRedirect(),
               );
             } else if (isInit.autoLogin == true) {
               _connectOauth(isInit, url);
@@ -268,9 +268,9 @@ class _LoginState extends State<LoginPage> {
 
   /// Prefill the url from storage or other
   Future<void> _initUrl() async {
-    DI.authentication?.checkLogin();
+    DI.authentication.checkLogin();
     // We first try to get it from storage
-    var url = await DI.authentication?.getUrl();
+    var url = await DI.authentication.getUrl();
 
     if (url != null && url.isNotEmpty) {
       textController.text = url;
@@ -310,7 +310,7 @@ class _LoginState extends State<LoginPage> {
 
     try {
       if (init || noUser) {
-        await DI.authentication?.logIn(
+        await DI.authentication.logIn(
           url: url,
           username: user,
           password: password,
@@ -324,16 +324,16 @@ class _LoginState extends State<LoginPage> {
           name: _controllerName.text,
           surname: _controllerSurname.text,
         );
-        await DI.authentication?.initAccount(url: url, person: person);
+        await DI.authentication.initAccount(url: url, person: person);
 
         // after a succes, we auto login
-        await DI.authentication?.logIn(
+        await DI.authentication.logIn(
           url: url,
           username: user,
           password: password,
         );
 
-        await DI.authentication?.clean();
+        await DI.authentication.clean();
 
         Notify.show('User created, welcome');
       }
@@ -345,7 +345,7 @@ class _LoginState extends State<LoginPage> {
       Notify.showError("Error: $ex");
 
       // clear any info about the login
-      await DI.authentication?.logOut();
+      await DI.authentication.logOut();
 
       // we start the login process again
       setState(() {
@@ -365,7 +365,7 @@ class _LoginState extends State<LoginPage> {
     } catch (ex) {
       Notify.showError(ex.toString());
 
-      DI.authentication?.logOut();
+      DI.authentication.logOut();
 
       // we start the login process again
       setState(() {

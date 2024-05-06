@@ -76,52 +76,45 @@ class AppState extends State<AppView> {
 
   @override
   Widget build(BuildContext context) {
-    if (DI.authentication == null) {
-      throw Exception("Init Error");
-    }
-
-    return RepositoryProvider.value(
-      value: DI.authentication,
-      child: BlocProvider(
-        create: (_) => AuthenticationBloc(authenticationRepository: DI.authentication!),
-        child: MaterialApp(
-          title: 'Helse',
-          theme: ThemeData(
-            useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 123, 250, 123)),
-          ),
-          darkTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 0, 97, 0), brightness: Brightness.dark),
-            /* dark theme settings */
-          ),
-          themeMode: _themeMode,
-          debugShowCheckedModeBanner: false,
-          navigatorKey: _navigatorKey,
-          builder: (context, child) {
-            return BlocListener<AuthenticationBloc, AuthenticationStatus>(
-              listener: (context, state) {
-                switch (state) {
-                  case AuthenticationStatus.authenticated:
-                    _navigator.pushAndRemoveUntil<void>(
-                      Home.route(),
-                      (route) => false,
-                    );
-                  case AuthenticationStatus.unauthenticated:
-                    _navigator.pushAndRemoveUntil<void>(
-                      LoginPage.route(),
-                      (route) => false,
-                    );
-                  case AuthenticationStatus.unknown:
-                    break;
-                }
-              },
-              child: child,
-            );
-          },
-          onGenerateRoute: (_) => SplashPage.route(),
+    return BlocProvider(
+      create: (_) => AuthenticationBloc(),
+      child: MaterialApp(
+        title: 'Helse',
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 123, 250, 123)),
         ),
-      ),
-    );
+        darkTheme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 0, 97, 0), brightness: Brightness.dark),
+          /* dark theme settings */
+        ),
+        themeMode: _themeMode,
+        debugShowCheckedModeBanner: false,
+        navigatorKey: _navigatorKey,
+        builder: (context, child) {
+          return BlocListener<AuthenticationBloc, AuthenticationStatus>(
+            listener: (context, state) {
+              switch (state) {
+                case AuthenticationStatus.authenticated:
+                  _navigator.pushAndRemoveUntil<void>(
+                    Home.route(),
+                    (route) => false,
+                  );
+                case AuthenticationStatus.unauthenticated:
+                  _navigator.pushAndRemoveUntil<void>(
+                    LoginPage.route(),
+                    (route) => false,
+                  );
+                case AuthenticationStatus.unknown:
+                  break;
+              }
+            },
+            child: child,
+          );
+        },
+        onGenerateRoute: (_) => SplashPage.route(),
+    ),
+        );
   }
 }
