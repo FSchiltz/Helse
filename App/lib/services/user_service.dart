@@ -10,23 +10,6 @@ class UserService extends ApiService {
     return await call(api.apiPersonGet);
   }
 
-  Future<TokenResponse?> login(
-      String username, String password, String? redirect) async {
-    var api = await getService();
-    var response = await api.apiAuthPost(
-        body:
-            Connection(user: username, password: password, redirect: redirect));
-
-    switch (response.statusCode) {
-      case 401:
-        throw Exception("Incorrect username or password");
-      case 200:
-        return response.body;
-      default:
-        throw Exception(response.error ?? "Error");
-    }
-  }
-
   Future<void> addPerson(PersonCreation person) async {
     var api = await getService();
 
@@ -41,7 +24,6 @@ class UserService extends ApiService {
   Future<void> updatePersonRole(int personId, UserType type) async {
     var api = await getService();
     var role = type.value ?? 0;
-    await call(
-        () => api.apiPersonRolePost(personId: personId, role: role.toString()));
+    await call(() => api.apiPersonRolePost(personId: personId, role: role.toString()));
   }
 }

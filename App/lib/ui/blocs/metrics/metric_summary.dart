@@ -87,7 +87,6 @@ class WidgetGraph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
     return metrics.isEmpty
         ? Padding(
             padding: const EdgeInsets.only(top: 16.0),
