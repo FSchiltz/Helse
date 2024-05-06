@@ -42,13 +42,10 @@ Represent a list of recurring events. Exemple: take a medicine every 2 day at 12
 ## Feature to come
 
 - Multiple roles for a user
-- Allow patient to be tranformed into a full user
-- Allow user to set their caregiver
-- Allow patients sharing between caregiver
 - Add better graphs detail for the metric
 - Allow marking event as TODO and DONE.
-- Android app with support for google health connect sync
-- Bare metal install
+- Support for google health connect sync
+- Notification for incoming event
 - And more
 
 ## Installation
