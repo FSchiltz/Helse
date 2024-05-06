@@ -41,7 +41,7 @@ class WidgetGraph extends StatelessWidget {
     return to.difference(from).inHours;
   }
 
-  List<FlSpot> _getSpot(List<Metric> raw) {
+  List<BarChartGroupData> _getSpot(List<Metric> raw) {
     // find the first and last
     var first = date.start;
     var last = date.end;
@@ -74,11 +74,11 @@ class WidgetGraph extends StatelessWidget {
     }
 
     // now we have the min and max Y and X value, we can build the spots
-    List<FlSpot> spots = [];
+    List<BarChartGroupData> spots = [];
 
     for (final (index, item) in means.indexed) {
       if (item != null) {
-        spots.add(FlSpot(index * 1, item));
+        spots.add(BarChartGroupData(x: index, barRods: [BarChartRodData(toY: item)]));
       }
     }
 
@@ -95,9 +95,9 @@ class WidgetGraph extends StatelessWidget {
           )
         : Padding(
             padding: const EdgeInsets.all(8.0),
-            child: LineChart(
-              LineChartData(
-                lineTouchData: const LineTouchData(enabled: false),
+            child: BarChart(
+              BarChartData(
+                barTouchData: BarTouchData(enabled: false),
                 titlesData: const FlTitlesData(
                   leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -108,16 +108,7 @@ class WidgetGraph extends StatelessWidget {
                   show: false,
                 ),
                 gridData: const FlGridData(show: false),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: _getSpot(metrics),
-                    color: theme.primary,
-                    barWidth: 2,
-                    isStrokeCapRound: true,
-                    dotData: const FlDotData(show: false),
-                    belowBarData: BarAreaData(show: false),
-                  ),
-                ],
+                barGroups: _getSpot(metrics),
               ),
             ),
           );
