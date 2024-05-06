@@ -67,63 +67,58 @@ class _EventWidgetState extends State<EventWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(0),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                  child: Text(widget.type.name ?? "",
-                      style: Theme.of(context).textTheme.titleLarge),
-                ),
-                IconButton(
-                    onPressed: () {
-                      showDialog<void>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return EventAdd(_resetEvents, widget.type,
-                                person: widget.person);
-                          });
-                    },
-                    icon: const Icon(Icons.add_sharp))
-              ],
-            ),
-            FutureBuilder(
-                future: _getData(),
-                builder: (ctx, snapshot) {
-                  // Checking if future is resolved
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    // If we got an error
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Text(
-                          '${snapshot.error} occurred',
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                      );
-
-                      // if we got our data
-                    }
-
-                    final events = (snapshot.hasData)
-                        ? snapshot.data as List<Event>
-                        : List<Event>.empty();
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: EventGraph(events, widget.date),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                child: Text(widget.type.name ?? "",
+                    style: Theme.of(context).textTheme.titleLarge),
+              ),
+              IconButton(
+                  onPressed: () {
+                    showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return EventAdd(_resetEvents, widget.type,
+                              person: widget.person);
+                        });
+                  },
+                  icon: const Icon(Icons.add_sharp))
+            ],
+          ),
+          FutureBuilder(
+              future: _getData(),
+              builder: (ctx, snapshot) {
+                // Checking if future is resolved
+                if (snapshot.connectionState == ConnectionState.done) {
+                  // If we got an error
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        '${snapshot.error} occurred',
+                        style: const TextStyle(fontSize: 18),
+                      ),
                     );
+    
+                    // if we got our data
                   }
-                  return const HelseLoader();
-                })
-          ],
-        ),
+    
+                  final events = (snapshot.hasData)
+                      ? snapshot.data as List<Event>
+                      : List<Event>.empty();
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: EventGraph(events, widget.date),
+                  );
+                }
+                return const HelseLoader();
+              })
+        ],
       ),
     );
   }

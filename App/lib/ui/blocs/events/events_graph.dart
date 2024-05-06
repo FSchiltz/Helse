@@ -20,33 +20,66 @@ class EventGraph extends StatelessWidget {
         : buildChart(events, context));
   }
 
-  Widget buildChart(List<Event> userData,BuildContext context) {
+  Widget buildChart(List<Event> userData, BuildContext context) {
     var chartBars = buildChartBars(userData);
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: SizedBox(
+        height: chartBars.length * 29.0 + 25.0 + 4.0,
+        child: Stack(fit: StackFit.loose, children: <Widget>[
+          buildGrid(),
+          buildDayHeader(),
+          Container(
+            margin: const EdgeInsets.only(top: 25.0),
+            child: buildHeader(),
+          ),
+          Container(
+              margin: const EdgeInsets.only(top: 50.0),
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: chartBars,
+                      ),
+                    ],
+                  ),
+                ],
+              )),
+        ]),
+      ),
+    );
+  }
+
+  Widget buildDayHeader() {
+    List<Widget> headerItems = [];
+
+    DateTime tempDate = date.start;
+
+    var viewRange = _minutesBetween(date.start, date.end) / (60 * 24);
+
+    for (int i = 0; i < viewRange; i++) {
+      headerItems.add(SizedBox(
+        width: 60 * 24,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Text(
+            ' ${tempDate.day.toString().padLeft(2, '0')}/${tempDate.month.toString().padLeft(2, '0')}/${tempDate.year.toString().padLeft(4, '0')}',
+            textAlign: TextAlign.left,
+            style: const TextStyle(
+              fontSize: 16.0,
+            ),
+          ),
+        ),
+      ));
+      tempDate = tempDate.add(const Duration(days: 1));
+    }
+
     return SizedBox(
-      height: chartBars.length * 29.0 + 25.0 + 4.0,
-      child: ListView(
-        physics: const ClampingScrollPhysics(),
-        scrollDirection: Axis.horizontal,
-        children: <Widget>[
-          Stack(fit: StackFit.loose, children: <Widget>[
-            buildGrid(),
-            buildHeader(),
-            Container(
-                margin: const EdgeInsets.only(top: 25.0),
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: chartBars,
-                        ),
-                      ],
-                    ),
-                  ],
-                )),
-          ]),
-        ],
+      height: 25.0,
+      child: Row(
+        children: headerItems,
       ),
     );
   }
@@ -67,7 +100,7 @@ class EventGraph extends StatelessWidget {
             '${tempDate.hour.toString().padLeft(2, '0')}:${tempDate.second.toString().padLeft(2, '0')}',
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontSize: 10.0,
+              fontSize: 12.0,
             ),
           ),
         ),
