@@ -1,48 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:helse/logic/d_i.dart';
 import 'package:toastification/toastification.dart';
 
-import 'helpers/oauth.dart';
 import 'helpers/url_dummy.dart' if (dart.library.html) 'helpers/url.dart';
 import 'logic/account/authentication_logic.dart';
 import 'logic/account/authentication_bloc.dart';
-import 'logic/settings_logic.dart';
-import 'services/account.dart';
-import 'services/event_service.dart';
-import 'services/helper_service.dart';
-import 'services/metric_service.dart';
-import 'services/treatment_service.dart';
-import 'services/user_service.dart';
+import 'logic/settings/settings_logic.dart';
 import 'ui/home.dart';
 import 'ui/login.dart';
 import 'ui/splash.dart';
 
 void main() {
   runApp(const App());
-}
-
-class DI {
-  static OauthClient? authService;
-  static AuthenticationLogic? authentication;
-  static MetricService? metric;
-  static HelperService? helper;
-  static EventService? event;
-  static UserService? user;
-  static TreatmentService? treatement;
-  static SettingsLogic? settings;
-
-  static void init() {
-    var account = Account();
-    authService = OauthClient(account);
-    authentication = AuthenticationLogic(account);
-    metric = MetricService(account);
-    helper = HelperService(account);
-    event = EventService(account);
-    user = UserService(account);
-    treatement = TreatmentService(account);
-    settings = SettingsLogic(account);
-  }
 }
 
 class App extends StatelessWidget {
@@ -95,7 +66,7 @@ class AppState extends State<AppView> {
   @override
   void initState() {
     super.initState();
-    DI.settings?.getLocalSettings().then((value) => changeTheme(value.theme));
+    SettingsLogic.getTheme().then((value) => changeTheme(value.theme));
   }
 
   void changeTheme(ThemeMode themeMode) {

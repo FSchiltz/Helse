@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:helse/logic/settings/events_settings.dart';
+import 'package:helse/logic/settings/health_settings.dart';
+import 'package:helse/logic/settings/metrics_settings.dart';
+import 'package:helse/logic/settings/ordered_item.dart';
+import 'package:helse/logic/settings/theme_settings.dart';
 import 'package:helse/main.dart';
+import 'package:helse/ui/theme/ordered_list.dart';
 import 'package:helse/ui/theme/square_outline_input_border.dart';
 
-import '../logic/settings_logic.dart';
+import '../logic/settings/settings_logic.dart';
 import 'theme/loader.dart';
 import 'theme/notification.dart';
 
@@ -14,31 +20,20 @@ class LocalSettingsPage extends StatefulWidget {
 }
 
 class _LocalSettingsPageState extends State<LocalSettingsPage> {
-  LocalSettings? _settings;
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   bool _healthEnabled = false;
   ThemeMode _theme = ThemeMode.system;
+  List<OrderedItem> _metrics = [];
+  List<OrderedItem> _events = [];
 
-  void _resetSettings() {
-    setState(() {
-      _settings = null;
-      _dummy = !_dummy;
-    });
-  }
+  Future<int> _getData() async {
+    _healthEnabled = (await SettingsLogic.getHealth()).syncHealth;
+    _theme = (await SettingsLogic.getTheme()).theme;
+    _metrics = (await SettingsLogic.getMetrics()).metrics;
+    _events = (await SettingsLogic.getEvents()).events;
 
-  bool _dummy = false;
-
-  Future<LocalSettings?> _getData(bool reset) async {
-    // if the users has not changed, no call to the backend
-    if (_settings != null) return _settings;
-
-    _settings = await DI.settings?.getLocalSettings();
-
-    _healthEnabled = _settings?.syncHealth ?? false;
-    _theme = _settings?.theme ?? ThemeMode.system;
-
-    return _settings;
+    return 1;
   }
 
   @override
@@ -51,7 +46,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
             style: Theme.of(context).textTheme.displaySmall),
       ),
       body: FutureBuilder(
-          future: _getData(_dummy),
+          future: _getData(),
           builder: (context, snapshot) {
             // Checking if future is resolved
             if (snapshot.connectionState == ConnectionState.done) {
@@ -73,9 +68,31 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text('Interface',
+                            style: Theme.of(context).textTheme.headlineLarge),
+                        const SizedBox(height: 10),
                         ...general(theme),
-                        const SizedBox(height: 20),
+                        //const SizedBox(height: 20),
                         //...syncHealth(theme),
+                        const SizedBox(height: 40),
+                        Text('Dashboard',
+                            style: Theme.of(context).textTheme.headlineLarge),
+                        const SizedBox(height: 10),
+                        ...metrics(theme),
+                        const SizedBox(height: 20),
+                        ...events(theme),
+                        const SizedBox(height: 40),
+                        SizedBox(
+                          width: 200,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size.fromHeight(50),
+                              shape: const ContinuousRectangleBorder(),
+                            ),
+                            onPressed: _submit,
+                            child: const Text("Save"),
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -88,14 +105,17 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     );
   }
 
-  void submit() async {
+  void _submit() async {
     try {
       if (_formKey.currentState?.validate() ?? false) {
-        // save the user
-        await DI.settings?.saveLocal(LocalSettings(_healthEnabled, _theme));
+        // save the user's settings
+        await SettingsLogic.saveHealth(HealthSettings(_healthEnabled));
+        await SettingsLogic.saveTheme(ThemeSettings(_theme));
+        await SettingsLogic.saveEvents(EventsSettings(_events));
+        await SettingsLogic.saveMetrics(MetricsSettings(_metrics));
 
         Notify.show("Saved Successfully");
-        _resetSettings();
+        _getData();
       }
     } catch (ex) {
       Notify.showError("Error: $ex");
@@ -104,28 +124,44 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
 
   List<Widget> syncHealth(ColorScheme theme) {
     return [
-      Text("Sync Health", style: Theme.of(context).textTheme.headlineMedium),
+      Text("Sync Health", style: Theme.of(context).textTheme.headlineSmall),
       const SizedBox(height: 5),
-      Row(
-        children: [
-          const Text("Enable"),
-          Switch(
-              value: _healthEnabled,
-              onChanged: (bool? value) {
-                setState(() {
-                  _healthEnabled = value!;
-                });
-                submit();
-              })
-        ],
+      Flexible(
+        child: Row(
+          children: [
+            const Text("Enable"),
+            Switch(
+                value: _healthEnabled,
+                onChanged: (bool? value) {
+                  setState(() {
+                    _healthEnabled = value!;
+                  });
+                  _submit();
+                })
+          ],
+        ),
       ),
+    ];
+  }
+
+  List<Widget> metrics(ColorScheme theme) {
+    return [
+      Text("Metrics", style: Theme.of(context).textTheme.headlineSmall),
+      const SizedBox(height: 20),
+      OrderedList(_metrics),
+    ];
+  }
+
+  List<Widget> events(ColorScheme theme) {
+    return [
+      Text("Events", style: Theme.of(context).textTheme.headlineSmall),
+      const SizedBox(height: 20),
+      OrderedList(_events),
     ];
   }
 
   List<Widget> general(ColorScheme theme) {
     return [
-      Text("General", style: Theme.of(context).textTheme.headlineMedium),
-      const SizedBox(height: 20),
       SizedBox(
         width: 200,
         child: DropdownButtonFormField(
@@ -152,7 +188,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     if (value == null) return;
     // save the settings
     _theme = value;
-    submit();
+    _submit();
 
     // apply the theme
     AppView.of(context).changeTheme(value);
