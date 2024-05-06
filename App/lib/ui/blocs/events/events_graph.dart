@@ -143,7 +143,11 @@ class EventGraph extends StatelessWidget {
         var color = _stateColor(colors, n.description);
         if (remainingWidth > 0) {
           chartGroup.add(Container(
-            decoration: BoxDecoration(color: color.withAlpha(100)),
+            decoration: BoxDecoration(
+              color: color.withAlpha(100),
+              // TODO make round only when inside the date range
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+            ),
             height: 25.0,
             width: remainingWidth.toDouble(),
             margin: EdgeInsets.only(left: _distanceToLeftBorder(start).toDouble(), top: 2.0, bottom: 2.0),
@@ -153,7 +157,7 @@ class EventGraph extends StatelessWidget {
               child: Tooltip(
                 message: n.description ?? "",
                 child: Container(
-            width: remainingWidth.toDouble(),
+                  width: remainingWidth.toDouble(),
                   child: Text(
                     n.description ?? "",
                     maxLines: 1,
