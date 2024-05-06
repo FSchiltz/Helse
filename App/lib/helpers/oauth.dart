@@ -66,11 +66,11 @@ class OauthClient {
     links.allUriLinkStream.listen((uri) {
       if (uri.toString().startsWith(redirect)) {
         getCode(uri.queryParameters).then((value) =>
-            DI.authentication?.set(AuthenticationStatus.unauthenticated));
+            DI.authentication.set(AuthenticationStatus.unauthenticated));
       }
     });
     
-    DI.authentication?.set(AuthenticationStatus.unknown);
+    DI.authentication.set(AuthenticationStatus.unknown);
     var uri = Uri.parse(result);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
