@@ -18,8 +18,7 @@ class MetricSummarry extends StatelessWidget {
     return unit == null
         ? (metrics.isEmpty
             ? Center(
-                child: Text("No data",
-                    style: Theme.of(context).textTheme.labelLarge),
+                child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
               )
             : ListView.builder(
                 itemCount: metrics.length,
@@ -47,17 +46,12 @@ class WidgetGraph extends StatelessWidget {
     var first = date.start;
     var last = date.end;
 
-    // First value used to make the graph pretty
-    String? firstValue;
-
     var hours = _hourBetween(first, last);
     var period = max(hours / valueCount, 1);
 
     var groups = <int, List<Metric>>{};
     for (var metric in raw) {
       if (metric.date == null) continue;
-
-      firstValue ??= metric.$value;
 
       // calculate the spot
       var hour = _hourBetween(first, metric.date!);
@@ -73,18 +67,19 @@ class WidgetGraph extends StatelessWidget {
     // for all spots, we take the mean
     List<double?> means = [];
     for (int i = 0; i < valueCount; i++) {
-      var mean = groups[i]
-          ?.map((m) => m.$value != null ? double.parse(m.$value!) : 0)
-          .average;
+      var group = groups[i]?.where((element) => element.$value != null).map((m) => double.parse(m.$value!)) ?? [];
+
+      var mean = group.isEmpty ? null : group.average;
       means.add(mean);
     }
 
     // now we have the min and max Y and X value, we can build the spots
     List<FlSpot> spots = [];
 
-    double defaultValue = firstValue != null ? double.parse(firstValue) : 0;
     for (final (index, item) in means.indexed) {
-      spots.add(FlSpot(index * 1, item ?? defaultValue));
+      if (item != null) {
+        spots.add(FlSpot(index * 1, item));
+      }
     }
 
     return spots;
@@ -96,36 +91,34 @@ class WidgetGraph extends StatelessWidget {
     return metrics.isEmpty
         ? Padding(
             padding: const EdgeInsets.only(top: 16.0),
-            child:
-                Text("No data", style: Theme.of(context).textTheme.labelLarge),
+            child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
           )
-        : LineChart(
-            LineChartData(
-              lineTouchData: const LineTouchData(enabled: false),
-              titlesData: const FlTitlesData(
-                leftTitles:
-                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles:
-                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                bottomTitles:
-                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles:
-                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              ),
-              borderData: FlBorderData(
-                show: false,
-              ),
-              gridData: const FlGridData(show: false),
-              lineBarsData: [
-                LineChartBarData(
-                  spots: _getSpot(metrics),
-                  color: theme.primary,
-                  barWidth: 2,
-                  isStrokeCapRound: true,
-                  dotData: const FlDotData(show: false),
-                  belowBarData: BarAreaData(show: false),
+        : Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: LineChart(
+              LineChartData(
+                lineTouchData: const LineTouchData(enabled: false),
+                titlesData: const FlTitlesData(
+                  leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 ),
-              ],
+                borderData: FlBorderData(
+                  show: false,
+                ),
+                gridData: const FlGridData(show: false),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: _getSpot(metrics),
+                    color: theme.primary,
+                    barWidth: 2,
+                    isStrokeCapRound: true,
+                    dotData: const FlDotData(show: false),
+                    belowBarData: BarAreaData(show: false),
+                  ),
+                ],
+              ),
             ),
           );
   }
