@@ -14,8 +14,8 @@ class AdminDashBoard extends StatelessWidget {
         children: [
           const TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.settings)),
               Tab(icon: Icon(Icons.monitor_heart_sharp)),
+              Tab(icon: Icon(Icons.settings)),
             ],
           ),
           Expanded(
