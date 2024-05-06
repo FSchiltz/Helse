@@ -25,7 +25,7 @@ class EventGraph extends StatelessWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: SizedBox(
-        height: chartBars.length * 29.0 + 25.0 + 4.0,
+        height: chartBars.length * 29.0 + 25.0 + 25 + 4.0,
         child: Stack(fit: StackFit.loose, children: <Widget>[
           buildGrid(),
           buildDayHeader(),
@@ -139,30 +139,28 @@ class EventGraph extends StatelessWidget {
         var start = n.start ?? date.start;
         var end = n.stop ?? date.end;
 
-        var remainingWidth = _distanceInMinutes(start, end);
-        var color = _stateColor(colors, n.description);
-        if (remainingWidth > 0) {
+        var width = _distanceInMinutes(start, end);
+        var color = _stateColor(colors, n.description ?? '');
+        if (width > 0) {
           chartGroup.add(Container(
-            decoration: BoxDecoration(
-              color: color.withAlpha(100),
-              // TODO make round only when inside the date range
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
-            ),
-            height: 25.0,
-            width: remainingWidth.toDouble(),
             margin: EdgeInsets.only(left: _distanceToLeftBorder(start).toDouble(), top: 2.0, bottom: 2.0),
             alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Tooltip(
-                message: n.description ?? "",
-                child: Container(
-                  width: remainingWidth.toDouble(),
+            child: Tooltip(
+              message: "${n.description ?? ""}: ${n.start} => ${n.stop}",
+              child: Container(
+                width: width.toDouble(),
+                decoration: BoxDecoration(
+                  color: color.withAlpha(100),
+                  // TODO make round only when inside the date range
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                ),
+                height: 25.0,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
                   child: Text(
                     n.description ?? "",
                     maxLines: 1,
-                    overflow: TextOverflow.fade,
-                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.clip,
                     style: const TextStyle(fontSize: 10.0),
                   ),
                 ),
@@ -197,14 +195,12 @@ class EventGraph extends StatelessWidget {
     );
   }
 
-  Color _stateColor(Map<String, Color> colors, String? state) {
-    if (state == null) return Colors.white;
-
+  Color _stateColor(Map<String, Color> colors, String state) {
     if (colors.containsKey(state)) {
       return colors[state]!;
     } else {
       var r = Random();
-      var color = Color.fromRGBO(r.nextInt(256), r.nextInt(256), r.nextInt(256), 0.75);
+      var color = Color.fromRGBO(r.nextInt(106) + 50, r.nextInt(106) + 50, r.nextInt(106) + 50, 0.75);
       colors[state] = color;
       return color;
     }
@@ -223,23 +219,14 @@ class EventGraph extends StatelessWidget {
   }
 
   int _distanceInMinutes(DateTime start, DateTime end) {
-    var seconds = _minutesBetween(start, end);
-    var viewRange = _minutesBetween(date.start, date.end);
-
-    if (start.compareTo(date.start) >= 0 && start.compareTo(date.end) <= 0) {
-      // The date is between the bond
-      if (seconds <= viewRange) {
-        return seconds;
-      } else {
-        return viewRange - _minutesBetween(date.start, start);
-      }
-    } else if (start.isBefore(date.start) && end.isBefore(date.start)) {
-      return 0;
-    } else if (start.isBefore(date.start) && end.isBefore(date.end)) {
-      return seconds - _minutesBetween(start, date.start);
-    } else if (start.isBefore(date.start) && end.isAfter(date.end)) {
-      return viewRange;
+    if (start.compareTo(date.start) < 0) {
+      start = date.start;
     }
-    return 0;
+
+    if (end.compareTo(date.end) > 0) {
+      end = date.end;
+    }
+
+    return max(6, _minutesBetween(start, end));
   }
 }

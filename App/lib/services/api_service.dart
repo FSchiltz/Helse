@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:chopper/chopper.dart';
 import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import '../logic/d_i.dart';
 import 'account.dart';
 
 abstract class ApiService {
@@ -17,7 +18,9 @@ abstract class ApiService {
       switch (response.statusCode) {
         case 401:
           // no auth, we remove the token and return null;
+          // TODO get a new access_token if the refresh is still valid
           _account.remove(Account.token);
+          DI.authentication?.logOut();
           result = null;
           break;
         default:
