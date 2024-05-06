@@ -21,10 +21,10 @@ class AdminDashBoard extends StatelessWidget {
           Expanded(
             child: TabBarView(
               children: [
+                Dashboard(date: date),
                 const SingleChildScrollView(
                   child: Center(child: Text("Stats")),
                 ),
-                Dashboard(date: date),
               ],
             ),
           ),
