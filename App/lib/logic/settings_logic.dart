@@ -6,6 +6,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../services/account.dart';
 import '../services/setting_service.dart';
 
+class OrderedItem {
+  bool visible = true;
+  int order = 0;
+  late String name;
+}
+
 class LocalSettings {
   static const _syncHealth = "syncHealth";
   bool syncHealth;
@@ -13,16 +19,27 @@ class LocalSettings {
   static const _theme = "theme";
   ThemeMode theme;
 
-  LocalSettings(this.syncHealth, this.theme);
+  static const _metrics = "metrics";
+  List<OrderedItem>? metrics;
+
+  static const _events = "events";
+  List<OrderedItem>? events;
+
+  LocalSettings(this.syncHealth, this.theme, {this.metrics, this.events});
 
   // stupid boilerplate code because dart can't decode json
   LocalSettings.fromJson(dynamic json)
       : syncHealth = json[_syncHealth] as bool,
+      metrics = json[_metrics] as List<OrderedItem>?,
+      events = json[_events]as List<OrderedItem>?,
         theme =  ThemeMode.values.firstWhere((e) => e.name == json[_theme]);
 
   Map<String, dynamic> toJson() => {
         _syncHealth: syncHealth,
         _theme: theme.name,
+        _metrics: metrics,
+        _events: events;
+
       };
 }
 
