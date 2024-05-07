@@ -72,7 +72,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     Widget page;
     page = switch (user?.type) {
-      UserType.admin => AdminDashBoard(date: date),
+      UserType.admin => Dashboard(date: date),
       UserType.user => Dashboard(date: date),
       UserType.caregiver => CareDashBoard(date: date),
       _ => const Center(child: HelseLoader()),
