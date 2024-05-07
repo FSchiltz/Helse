@@ -69,7 +69,14 @@ builder.Services.AddLinqToDBContext<DataConnection>((provider, options)
 var issuer = builder.Configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("Jwt issuer missing");
 var audience = builder.Configuration["Jwt:Audience"] ?? throw new InvalidOperationException("Jwt audience missing");
 var keyConfig = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt key missing");
-var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyConfig));
+
+var keyText = Encoding.UTF8.GetBytes(keyConfig).Take(512).ToArray();
+var generatedKey = new byte[512];
+
+var startAt = generatedKey.Length - keyText.Length;
+Array.Copy(keyText, 0, generatedKey, startAt, keyText.Length);
+
+var key = new SymmetricSecurityKey(generatedKey);
 
 builder.Services.AddSingleton(new TokenService(issuer, audience, key));
 builder.Services.AddTransient<IUserContext, UserContext>();
