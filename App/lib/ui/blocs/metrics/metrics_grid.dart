@@ -35,7 +35,7 @@ class _MetricsGridState extends State<MetricsGrid> {
       if (model != null) {
         var settings = await SettingsLogic.getMetrics();
         // filter using the user settings
-        var filtered = model.where((x) => settings.metrics.any((element) => element.id == x.id && element.visible)).toList();
+        var filtered = settings.metrics.isEmpty ? model : model.where((x) => settings.metrics.any((element) => element.id == x.id && element.visible)).toList();
 
         setState(() {
           types = filtered;
@@ -49,7 +49,8 @@ class _MetricsGridState extends State<MetricsGrid> {
 
   @override
   Widget build(BuildContext context) {
-    return types == null
+    var cached = types;
+    return cached == null
         ? const HelseLoader()
         : GridView.extent(
             shrinkWrap: true,
@@ -58,7 +59,7 @@ class _MetricsGridState extends State<MetricsGrid> {
             physics: const BouncingScrollPhysics(),
             maxCrossAxisExtent: 240.0,
             children:
-                types?.map((type) => MetricWidget(type, widget.date, key: Key(type.id?.toString() ?? ""), person: widget.person)).toList() ?? [],
+                cached.map((type) => MetricWidget(type, widget.date, key: Key(type.id?.toString() ?? ""), person: widget.person)).toList(),
           );
   }
 }

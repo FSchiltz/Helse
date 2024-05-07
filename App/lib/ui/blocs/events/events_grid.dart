@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/theme/loader.dart';
 
 import '../../../logic/d_i.dart';
 import '../../../logic/settings/settings_logic.dart';
@@ -35,7 +36,8 @@ class _EventsGridState extends State<EventsGrid> {
       if (model != null) {
         var settings = await SettingsLogic.getEvents();
         // filter using the user settings
-        var filtered = model.where((x) => settings.events.any((element) => element.id == x.id && element.visible)).toList();
+        var filtered =
+            settings.events.isEmpty ? model : model.where((x) => settings.events.any((element) => element.id == x.id && element.visible)).toList();
 
         setState(() {
           types = filtered;
@@ -50,7 +52,7 @@ class _EventsGridState extends State<EventsGrid> {
   @override
   Widget build(BuildContext context) {
     return types == null
-        ? const LinearProgressIndicator()
+        ? const HelseLoader()
         : ListView(
             shrinkWrap: true,
             physics: const BouncingScrollPhysics(),
