@@ -75,8 +75,11 @@ class MetricGraph extends StatelessWidget {
                 minX: date.start.millisecondsSinceEpoch.toDouble(),
                 maxX: date.end.millisecondsSinceEpoch.toDouble(),
                 minY: 0,
-                lineTouchData: const LineTouchData(
+                lineTouchData: LineTouchData(
                   enabled: true,
+                  touchTooltipData: LineTouchTooltipData(
+                    getTooltipItems: (touchedSpots) => _getToolTip(touchedSpots, context),
+                  ),
                 ),
                 titlesData: FlTitlesData(
                   leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 50)),
@@ -120,14 +123,27 @@ class MetricGraph extends StatelessWidget {
                   LineChartBarData(
                     spots: _getSpot(metrics),
                     color: theme.primary,
-                    barWidth: 2,
+                    barWidth: 0,
                     isStrokeCapRound: true,
-                    dotData: const FlDotData(show: false),
+                    dotData: const FlDotData(show: true),
                     belowBarData: BarAreaData(show: false),
                   ),
                 ],
               ),
             ),
           );
+  }
+
+  List<LineTooltipItem> _getToolTip(List<LineBarSpot> touchedSpots, BuildContext context) {
+    List<LineTooltipItem> list = [];
+    var theme = Theme.of(context).textTheme.labelSmall!;
+    for (var touch in touchedSpots) {
+      var metric = metrics[touch.spotIndex];
+      var tag = metric.$value ?? '';
+
+      if (metric.tag != null) tag += ' (${metric.tag})';
+      list.add(LineTooltipItem(tag, theme));
+    }
+    return list;
   }
 }
