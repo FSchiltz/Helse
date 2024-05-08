@@ -20,7 +20,7 @@ abstract class ApiService {
           // no auth, we remove the token and return null;
           // TODO get a new access_token if the refresh is still valid
           _account.remove(Account.token);
-          DI.authentication?.logOut();
+          DI.authentication.logOut();
           result = null;
           break;
         default:

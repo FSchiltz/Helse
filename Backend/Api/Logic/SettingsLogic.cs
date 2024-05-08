@@ -17,7 +17,7 @@ public static class SettingsLogic
     /// <returns></returns>
     public static async Task<IResult> GetOauthAsync(IUserContext users, ISettingsContext settings, HttpContext context)
     {
-        var admin = await users.IsAdmin(context);
+        var admin = await users.IsAdmin(context.User);
         if (admin is not null)
             return admin;
 
@@ -32,7 +32,7 @@ public static class SettingsLogic
     /// <returns></returns>
     public static async Task<IResult> GetProxyAsync(IUserContext users, ISettingsContext settings, HttpContext context)
     {
-        var admin = await users.IsAdmin(context);
+        var admin = await users.IsAdmin(context.User);
         if (admin is not null)
             return admin;
 
@@ -50,7 +50,7 @@ public static class SettingsLogic
     {
         var log = logger.CreateLogger(nameof(SettingsLogic));
 
-        var admin = await users.IsAdmin(context);
+        var admin = await users.IsAdmin(context.User);
         if (admin is not null)
             return admin;
 
@@ -72,7 +72,7 @@ public static class SettingsLogic
     {
         var log = logger.CreateLogger(nameof(SettingsLogic));
 
-        var admin = await users.IsAdmin(context);
+        var admin = await users.IsAdmin(context.User);
         if (admin is not null)
             return admin;
 
