@@ -136,6 +136,8 @@ public class HealthContext(DataConnection db) : IHealthContext
             Name = metric.Name,
             Description = metric.Description,
             Unit = metric.Unit,
+            SummaryType = metric.SummaryType,
+            Type = metric.Type,
         });
     }
 
