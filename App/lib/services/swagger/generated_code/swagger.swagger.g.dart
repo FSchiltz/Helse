@@ -149,18 +149,22 @@ Map<String, dynamic> _$MetricToJson(Metric instance) => <String, dynamic>{
     };
 
 MetricType _$MetricTypeFromJson(Map<String, dynamic> json) => MetricType(
-      id: (json['id'] as num?)?.toInt(),
       name: json['name'] as String?,
-      description: json['description'] as String?,
       unit: json['unit'] as String?,
+      summaryType: metricSummaryNullableFromJson(json['summaryType']),
+      description: json['description'] as String?,
+      type: metricDataTypeNullableFromJson(json['type']),
+      id: (json['id'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$MetricTypeToJson(MetricType instance) =>
     <String, dynamic>{
-      'id': instance.id,
       'name': instance.name,
-      'description': instance.description,
       'unit': instance.unit,
+      'summaryType': metricSummaryNullableToJson(instance.summaryType),
+      'description': instance.description,
+      'type': metricDataTypeNullableToJson(instance.type),
+      'id': instance.id,
     };
 
 Oauth _$OauthFromJson(Map<String, dynamic> json) => Oauth(

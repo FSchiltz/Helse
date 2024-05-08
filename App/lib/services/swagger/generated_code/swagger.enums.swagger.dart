@@ -1,4 +1,35 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:collection/collection.dart';
+
+enum MetricDataType {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue(0)
+  text(0),
+  @JsonValue(1)
+  number(1);
+
+  final int? value;
+
+  const MetricDataType(this.value);
+}
+
+enum MetricSummary {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue(0)
+  latest(0),
+  @JsonValue(1)
+  sum(1),
+  @JsonValue(2)
+  mean(2);
+
+  final int? value;
+
+  const MetricSummary(this.value);
+}
 
 enum RightType {
   @JsonValue(null)

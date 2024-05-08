@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
 import 'package:helse/ui/theme/square_text_field.dart';
 
+import '../../../theme/type_input.dart';
 
 class MetricAddForm extends StatefulWidget {
   final TextEditingController controllerUnit;
   final TextEditingController controllerName;
   final TextEditingController controllerDescription;
+  final void Function(MetricSummary? value) summaryCallback;
+  final void Function(MetricDataType? value) typeCallback;
 
   const MetricAddForm({
     super.key,
     required this.controllerUnit,
     required this.controllerName,
     required this.controllerDescription,
+    required this.summaryCallback,
+    required this.typeCallback,
   });
 
   @override
@@ -34,7 +40,7 @@ class _MetricAddFormState extends State<MetricAddForm> {
           icon: Icons.person_sharp,
           controller: widget.controllerName,
           focusNode: _focusNodeName,
-          label: "Name",         
+          label: "Name",
           validator: validateName,
           onEditingComplete: () => _focusNodeDescription.requestFocus(),
         ),
@@ -48,12 +54,19 @@ class _MetricAddFormState extends State<MetricAddForm> {
           onEditingComplete: () => _focusNodeUnit.requestFocus(),
         ),
         const SizedBox(height: 10),
-        SquareTextField(
-            controller: widget.controllerUnit,
-            icon: Icons.email_sharp,
-            focusNode: _focusNodeUnit,
-            theme: theme,
-            label: "Unit"),
+        SquareTextField(controller: widget.controllerUnit, icon: Icons.email_sharp, focusNode: _focusNodeUnit, theme: theme, label: "Unit"),
+        const SizedBox(height: 10),
+        TypeInput(
+          MetricDataType.values,
+          (value) => widget.typeCallback.call(value),
+          label: 'Type',
+        ),
+        const SizedBox(height: 10),
+        TypeInput(
+          MetricSummary.values,
+          (value) => widget.summaryCallback.call(value),
+          label: 'Summary',
+        ),
       ],
     );
   }

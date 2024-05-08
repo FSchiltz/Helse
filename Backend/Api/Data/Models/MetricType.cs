@@ -16,4 +16,10 @@ public class MetricType
 
     [Column]
     public string? Unit { get; set; }
+
+    [Column]
+    public long Type { get; set; }
+
+    [Column]
+    public long SummaryType { get; set; }
 }

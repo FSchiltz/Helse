@@ -136,6 +136,8 @@ public class HealthContext(DataConnection db) : IHealthContext
             Name = metric.Name,
             Description = metric.Description,
             Unit = metric.Unit,
+            SummaryType = metric.SummaryType,
+            Type = metric.Type,
         });
     }
 
@@ -168,6 +170,8 @@ public class HealthContext(DataConnection db) : IHealthContext
             .Set(x => x.Name, metric.Name)
             .Set(x => x.Description, metric.Description)
             .Set(x => x.Unit, metric.Unit)
+            .Set(x => x.Type, metric.Type)
+            .Set(x => x.SummaryType, metric.SummaryType)
             .UpdateAsync();
     }
 

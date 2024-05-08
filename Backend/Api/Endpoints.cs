@@ -102,7 +102,7 @@ public static class Endpoints
         .WithOpenApi();
 
         metricsType.MapGet("/", MetricsLogic.GetTypeAsync)
-        .Produces<List<Api.Data.Models.MetricType>>((int)HttpStatusCode.OK)
+        .Produces<List<Api.Models.MetricType>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
     }

@@ -6,27 +6,24 @@ import 'package:collection/collection.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 
-class MetricSummarry extends StatelessWidget {
+class MetricCondensed extends StatelessWidget {
   final List<Metric> metrics;
-  final String? unit;
+  final MetricType type;
   final DateTimeRange date;
 
-  const MetricSummarry(this.metrics, this.unit, this.date, {super.key});
+  const MetricCondensed(this.metrics, this.type, this.date, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return unit == null
-        ? (metrics.isEmpty
-            ? Center(
-                child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
-              )
-            : ListView.builder(
-                itemCount: metrics.length,
-                itemBuilder: (context, index) {
-                  return Text(metrics[index].$value ?? "");
-                },
-              ))
-        : WidgetGraph(metrics, date);
+    return metrics.isEmpty
+        ? Center(
+            child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
+          )
+        : (type.type == MetricDataType.text
+            ? ListView(
+              children: metrics.map((metric) => Text(metric.$value ?? "")).toList(),
+            )
+            : WidgetGraph(metrics, date));
   }
 }
 
@@ -87,29 +84,24 @@ class WidgetGraph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return metrics.isEmpty
-        ? Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
-          )
-        : Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: BarChart(
-              BarChartData(
-                barTouchData: BarTouchData(enabled: false),
-                titlesData: const FlTitlesData(
-                  leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                ),
-                borderData: FlBorderData(
-                  show: false,
-                ),
-                gridData: const FlGridData(show: false),
-                barGroups: _getSpot(metrics),
-              ),
-            ),
-          );
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: BarChart(
+        BarChartData(
+          barTouchData: BarTouchData(enabled: false),
+          titlesData: const FlTitlesData(
+            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          ),
+          borderData: FlBorderData(
+            show: false,
+          ),
+          gridData: const FlGridData(show: false),
+          barGroups: _getSpot(metrics),
+        ),
+      ),
+    );
   }
 }

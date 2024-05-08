@@ -1,5 +1,4 @@
-// ignore_for_file: type=lint, strict_raw_type, inference_failure_on_function_invocation
-// ignore_for_file: type=analyzer
+// ignore_for_file: type=lint
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:collection/collection.dart';
@@ -10,6 +9,7 @@ import 'package:chopper/chopper.dart';
 import 'client_mapping.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart' show MultipartFile;
 import 'package:chopper/chopper.dart' as chopper;
 import 'swagger.enums.swagger.dart' as enums;
 export 'swagger.enums.swagger.dart';
@@ -1204,10 +1204,12 @@ extension $MetricExtension on Metric {
 @JsonSerializable(explicitToJson: true)
 class MetricType {
   const MetricType({
-    this.id,
     this.name,
-    this.description,
     this.unit,
+    this.summaryType,
+    this.description,
+    this.type,
+    this.id,
   });
 
   factory MetricType.fromJson(Map<String, dynamic> json) =>
@@ -1216,29 +1218,46 @@ class MetricType {
   static const toJsonFactory = _$MetricTypeToJson;
   Map<String, dynamic> toJson() => _$MetricTypeToJson(this);
 
-  @JsonKey(name: 'id')
-  final int? id;
   @JsonKey(name: 'name')
   final String? name;
-  @JsonKey(name: 'description')
-  final String? description;
   @JsonKey(name: 'unit')
   final String? unit;
+  @JsonKey(
+    name: 'summaryType',
+    toJson: metricSummaryNullableToJson,
+    fromJson: metricSummaryNullableFromJson,
+  )
+  final enums.MetricSummary? summaryType;
+  @JsonKey(name: 'description')
+  final String? description;
+  @JsonKey(
+    name: 'type',
+    toJson: metricDataTypeNullableToJson,
+    fromJson: metricDataTypeNullableFromJson,
+  )
+  final enums.MetricDataType? type;
+  @JsonKey(name: 'id')
+  final int? id;
   static const fromJsonFactory = _$MetricTypeFromJson;
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is MetricType &&
-            (identical(other.id, id) ||
-                const DeepCollectionEquality().equals(other.id, id)) &&
             (identical(other.name, name) ||
                 const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.unit, unit) ||
+                const DeepCollectionEquality().equals(other.unit, unit)) &&
+            (identical(other.summaryType, summaryType) ||
+                const DeepCollectionEquality()
+                    .equals(other.summaryType, summaryType)) &&
             (identical(other.description, description) ||
                 const DeepCollectionEquality()
                     .equals(other.description, description)) &&
-            (identical(other.unit, unit) ||
-                const DeepCollectionEquality().equals(other.unit, unit)));
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)));
   }
 
   @override
@@ -1246,34 +1265,48 @@ class MetricType {
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(name) ^
-      const DeepCollectionEquality().hash(description) ^
       const DeepCollectionEquality().hash(unit) ^
+      const DeepCollectionEquality().hash(summaryType) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(id) ^
       runtimeType.hashCode;
 }
 
 extension $MetricTypeExtension on MetricType {
   MetricType copyWith(
-      {int? id, String? name, String? description, String? unit}) {
+      {String? name,
+      String? unit,
+      enums.MetricSummary? summaryType,
+      String? description,
+      enums.MetricDataType? type,
+      int? id}) {
     return MetricType(
-        id: id ?? this.id,
         name: name ?? this.name,
+        unit: unit ?? this.unit,
+        summaryType: summaryType ?? this.summaryType,
         description: description ?? this.description,
-        unit: unit ?? this.unit);
+        type: type ?? this.type,
+        id: id ?? this.id);
   }
 
   MetricType copyWithWrapped(
-      {Wrapped<int?>? id,
-      Wrapped<String?>? name,
+      {Wrapped<String?>? name,
+      Wrapped<String?>? unit,
+      Wrapped<enums.MetricSummary?>? summaryType,
       Wrapped<String?>? description,
-      Wrapped<String?>? unit}) {
+      Wrapped<enums.MetricDataType?>? type,
+      Wrapped<int?>? id}) {
     return MetricType(
-        id: (id != null ? id.value : this.id),
         name: (name != null ? name.value : this.name),
+        unit: (unit != null ? unit.value : this.unit),
+        summaryType:
+            (summaryType != null ? summaryType.value : this.summaryType),
         description:
             (description != null ? description.value : this.description),
-        unit: (unit != null ? unit.value : this.unit));
+        type: (type != null ? type.value : this.type),
+        id: (id != null ? id.value : this.id));
   }
 }
 
@@ -2059,6 +2092,140 @@ extension $TreatementExtension on Treatement {
         events: (events != null ? events.value : this.events),
         type: (type != null ? type.value : this.type));
   }
+}
+
+int? metricDataTypeNullableToJson(enums.MetricDataType? metricDataType) {
+  return metricDataType?.value;
+}
+
+int? metricDataTypeToJson(enums.MetricDataType metricDataType) {
+  return metricDataType.value;
+}
+
+enums.MetricDataType metricDataTypeFromJson(
+  Object? metricDataType, [
+  enums.MetricDataType? defaultValue,
+]) {
+  return enums.MetricDataType.values
+          .firstWhereOrNull((e) => e.value == metricDataType) ??
+      defaultValue ??
+      enums.MetricDataType.swaggerGeneratedUnknown;
+}
+
+enums.MetricDataType? metricDataTypeNullableFromJson(
+  Object? metricDataType, [
+  enums.MetricDataType? defaultValue,
+]) {
+  if (metricDataType == null) {
+    return null;
+  }
+  return enums.MetricDataType.values
+          .firstWhereOrNull((e) => e.value == metricDataType) ??
+      defaultValue;
+}
+
+String metricDataTypeExplodedListToJson(
+    List<enums.MetricDataType>? metricDataType) {
+  return metricDataType?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<int> metricDataTypeListToJson(List<enums.MetricDataType>? metricDataType) {
+  if (metricDataType == null) {
+    return [];
+  }
+
+  return metricDataType.map((e) => e.value!).toList();
+}
+
+List<enums.MetricDataType> metricDataTypeListFromJson(
+  List? metricDataType, [
+  List<enums.MetricDataType>? defaultValue,
+]) {
+  if (metricDataType == null) {
+    return defaultValue ?? [];
+  }
+
+  return metricDataType
+      .map((e) => metricDataTypeFromJson(e.toString()))
+      .toList();
+}
+
+List<enums.MetricDataType>? metricDataTypeNullableListFromJson(
+  List? metricDataType, [
+  List<enums.MetricDataType>? defaultValue,
+]) {
+  if (metricDataType == null) {
+    return defaultValue;
+  }
+
+  return metricDataType
+      .map((e) => metricDataTypeFromJson(e.toString()))
+      .toList();
+}
+
+int? metricSummaryNullableToJson(enums.MetricSummary? metricSummary) {
+  return metricSummary?.value;
+}
+
+int? metricSummaryToJson(enums.MetricSummary metricSummary) {
+  return metricSummary.value;
+}
+
+enums.MetricSummary metricSummaryFromJson(
+  Object? metricSummary, [
+  enums.MetricSummary? defaultValue,
+]) {
+  return enums.MetricSummary.values
+          .firstWhereOrNull((e) => e.value == metricSummary) ??
+      defaultValue ??
+      enums.MetricSummary.swaggerGeneratedUnknown;
+}
+
+enums.MetricSummary? metricSummaryNullableFromJson(
+  Object? metricSummary, [
+  enums.MetricSummary? defaultValue,
+]) {
+  if (metricSummary == null) {
+    return null;
+  }
+  return enums.MetricSummary.values
+          .firstWhereOrNull((e) => e.value == metricSummary) ??
+      defaultValue;
+}
+
+String metricSummaryExplodedListToJson(
+    List<enums.MetricSummary>? metricSummary) {
+  return metricSummary?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<int> metricSummaryListToJson(List<enums.MetricSummary>? metricSummary) {
+  if (metricSummary == null) {
+    return [];
+  }
+
+  return metricSummary.map((e) => e.value!).toList();
+}
+
+List<enums.MetricSummary> metricSummaryListFromJson(
+  List? metricSummary, [
+  List<enums.MetricSummary>? defaultValue,
+]) {
+  if (metricSummary == null) {
+    return defaultValue ?? [];
+  }
+
+  return metricSummary.map((e) => metricSummaryFromJson(e.toString())).toList();
+}
+
+List<enums.MetricSummary>? metricSummaryNullableListFromJson(
+  List? metricSummary, [
+  List<enums.MetricSummary>? defaultValue,
+]) {
+  if (metricSummary == null) {
+    return defaultValue;
+  }
+
+  return metricSummary.map((e) => metricSummaryFromJson(e.toString())).toList();
 }
 
 int? rightTypeNullableToJson(enums.RightType? rightType) {

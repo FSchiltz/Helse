@@ -71,28 +71,59 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> GetTypeAsync(IHealthContext db) => TypedResults.Ok(await db.GetMetricTypes());
+    public static async Task<IResult> GetTypeAsync(IHealthContext db) => TypedResults.Ok((await db.GetMetricTypes()).Select(metric => new Models.MetricType
+    {
+        Name = metric.Name,
+        Description = metric.Description,
+        SummaryType = (MetricSummary)metric.SummaryType,
+        Type = (MetricDataType)metric.Type,
+        Unit = metric.Unit,
+        Id = metric.Id,
+    }));
 
-    public static async Task<IResult> CreateTypeAsync(Data.Models.MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> CreateTypeAsync(Models.MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
     {
         var admin = await users.IsAdmin(context);
         if (admin is not null)
             return admin;
 
-        await db.Insert(metric);
+        if (metric.Type == MetricDataType.Text && metric.SummaryType != MetricSummary.Latest)
+        {
+            throw new InvalidDataException("Text can only be summarized with latest");
+        }
+
+        await db.Insert(new Data.Models.MetricType
+        {
+            Name = metric.Name,
+            Description = metric.Description,
+            SummaryType = (long)metric.SummaryType,
+            Type = (long)metric.Type,
+            Unit = metric.Unit,
+        });
 
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> UpdateTypeAsync(Data.Models.MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> UpdateTypeAsync(Models.MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
     {
         var admin = await users.IsAdmin(context);
         if (admin is not null)
             return admin;
 
-        await db.Update(metric);
+        if (metric.Type == MetricDataType.Text && metric.SummaryType != MetricSummary.Latest)
+        {
+            throw new InvalidDataException("Text can only be summarized with latest");
+        }
 
-
+        await db.Update(new Data.Models.MetricType
+        {
+            Id = metric.Id,
+            Name = metric.Name,
+            Description = metric.Description,
+            SummaryType = (long)metric.SummaryType,
+            Type = (long)metric.Type,
+            Unit = metric.Unit,
+        });
 
         return TypedResults.NoContent();
     }

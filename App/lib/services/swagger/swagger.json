@@ -1182,24 +1182,58 @@
         },
         "additionalProperties": false
       },
+      "MetricDataType": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "description": "\n\n0 = Text\n\n1 = Number",
+        "format": "int32",
+        "x-enumNames": [
+          "Text",
+          "Number"
+        ]
+      },
+      "MetricSummary": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "description": "\n\n0 = Latest\n\n1 = Sum\n\n2 = Mean",
+        "format": "int32",
+        "x-enumNames": [
+          "Latest",
+          "Sum",
+          "Mean"
+        ]
+      },
       "MetricType": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
           "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
             "type": "string",
             "nullable": true
           },
           "unit": {
             "type": "string",
             "nullable": true
+          },
+          "summaryType": {
+            "$ref": "#/components/schemas/MetricSummary"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/MetricDataType"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
           }
         },
         "additionalProperties": false

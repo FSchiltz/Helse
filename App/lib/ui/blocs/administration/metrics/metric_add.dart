@@ -22,6 +22,8 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
   final TextEditingController controllerUnit = TextEditingController();
   final TextEditingController controllerName = TextEditingController();
   final TextEditingController controllerDescription = TextEditingController();
+  MetricSummary? _metricSummary;
+  MetricDataType? _type;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
       controllerUnit.text = edit.unit ?? "";
     }
 
-    return SquareDialog(  
+    return SquareDialog(
       title: const Text("Add a new metric type"),
       actions: [
         ElevatedButton(
@@ -52,10 +54,15 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
           child: Column(
             children: [
               MetricAddForm(
-                controllerDescription: controllerDescription,
-                controllerName: controllerName,
-                controllerUnit: controllerUnit,
-              ),
+                  controllerDescription: controllerDescription,
+                  controllerName: controllerName,
+                  controllerUnit: controllerUnit,
+                  summaryCallback: (MetricSummary? value) => setState(() {
+                        _metricSummary = value;
+                      }),
+                  typeCallback: (MetricDataType? value) => setState(() {
+                        _type = value;
+                      })),
             ],
           ),
         ),
@@ -71,6 +78,8 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
           description: controllerDescription.text,
           name: controllerName.text,
           unit: controllerUnit.text,
+          summaryType: _metricSummary,
+          type: _type,
           id: widget.edit?.id ?? 0,
         );
         String text;
