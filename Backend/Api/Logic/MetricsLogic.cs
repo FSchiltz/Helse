@@ -87,6 +87,11 @@ public static class MetricsLogic
         if (admin is not null)
             return admin;
 
+        if (metric.Type == MetricDataType.Text && metric.SummaryType != MetricSummary.Latest)
+        {
+            throw new InvalidDataException("Text can only be summarized with latest");
+        }
+
         await db.Insert(new Data.Models.MetricType
         {
             Name = metric.Name,
@@ -104,6 +109,11 @@ public static class MetricsLogic
         var admin = await users.IsAdmin(context);
         if (admin is not null)
             return admin;
+
+        if (metric.Type == MetricDataType.Text && metric.SummaryType != MetricSummary.Latest)
+        {
+            throw new InvalidDataException("Text can only be summarized with latest");
+        }
 
         await db.Update(new Data.Models.MetricType
         {
