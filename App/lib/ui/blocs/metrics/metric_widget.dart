@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/blocs/metrics/metric_detail.dart';
@@ -5,7 +6,7 @@ import 'package:helse/ui/blocs/metrics/metric_detail.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../theme/loader.dart';
 import 'metric_add.dart';
-import 'metric_summary.dart';
+import 'metric_condensed.dart';
 
 class MetricWidget extends StatefulWidget {
   final MetricType type;
@@ -59,8 +60,7 @@ class _MetricWidgetState extends State<MetricWidget> {
     var date = widget.date;
 
     var start = DateTime(date.start.year, date.start.month, date.start.day);
-    var end = DateTime(date.end.year, date.end.month, date.end.day)
-        .add(const Duration(days: 1));
+    var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
     _metrics = await DI.metric?.metrics(id, start, end, person: widget.person);
     _metrics?.sort(_sort);
@@ -92,7 +92,6 @@ class _MetricWidgetState extends State<MetricWidget> {
               } else if (snapshot.hasData) {
                 // Extracting data from snapshot object
                 final metrics = snapshot.data as List<Metric>;
-                final last = metrics.isNotEmpty ? metrics.last : null;
                 return InkWell(
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute<void>(
@@ -111,11 +110,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Flexible(
-                                child: Text(widget.type.name ?? "",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium),
+                                child: Text(widget.type.name ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.titleMedium),
                               ),
                               Flexible(
                                 child: SizedBox(
@@ -125,9 +120,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                                         showDialog<void>(
                                             context: context,
                                             builder: (BuildContext context) {
-                                              return MetricAdd(
-                                                  widget.type, _resetMetric,
-                                                  person: widget.person);
+                                              return MetricAdd(widget.type, _resetMetric, person: widget.person);
                                             });
                                       },
                                       icon: const Icon(Icons.add_sharp)),
@@ -136,24 +129,32 @@ class _MetricWidgetState extends State<MetricWidget> {
                             ],
                           ),
                         ),
-                        if (last != null)
+                        if (metrics.isNotEmpty)
                           Expanded(
-                            child: Text(
-                                (last.$value ?? "") + (widget.type.unit ?? ""),
-                                style: Theme.of(context).textTheme.labelLarge),
+                            child: Text(_getTextInfo(metrics, widget.type), style: Theme.of(context).textTheme.labelLarge),
                           ),
-                        Expanded(
-                            child: MetricSummarry(
-                                metrics, widget.type.unit, widget.date)),
+                        Expanded(child: MetricCondensed(metrics, widget.type, widget.date)),
                       ],
                     ),
                   ),
                 );
               }
             }
-            return const Center(
-                child: SizedBox(width: 50, height: 50, child: HelseLoader()));
+            return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
           }),
     );
+  }
+
+  String _getTextInfo(List<Metric> metrics, MetricType type) {
+    switch (type.summaryType) {
+      case MetricSummary.sum:
+        return metrics.map((metric) => int.parse(metric.$value ?? '0')).sum.toString();
+      case MetricSummary.mean:
+        return (metrics.map((metric) => int.parse(metric.$value ?? '0')).sum / metrics.length).toString();
+      case MetricSummary.latest:
+      case MetricSummary.text:
+      default:
+        return metrics.last.$value ?? '';
+    }
   }
 }

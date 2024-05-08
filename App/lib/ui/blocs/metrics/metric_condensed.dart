@@ -6,25 +6,26 @@ import 'package:collection/collection.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 
-class MetricSummarry extends StatelessWidget {
+class MetricCondensed extends StatelessWidget {
   final List<Metric> metrics;
-  final String? unit;
+  final MetricType type;
   final DateTimeRange date;
 
-  const MetricSummarry(this.metrics, this.unit, this.date, {super.key});
+  const MetricCondensed(this.metrics, this.type, this.date, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return unit == null
+    return type.type == null
         ? (metrics.isEmpty
             ? Center(
                 child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
               )
-            : ListView.builder(
-                itemCount: metrics.length,
-                itemBuilder: (context, index) {
-                  return Text(metrics[index].$value ?? "");
-                },
+            : Container(
+                height: 200,
+                width: 200,
+                child: ListView(
+                  children: metrics.map((metric) => Text(metric.$value ?? "")).toList(),
+                ),
               ))
         : WidgetGraph(metrics, date);
   }
