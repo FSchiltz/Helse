@@ -50,10 +50,7 @@ class DI {
     treatement = TreatmentService(account);
     settings = SettingsLogic(account);
 
-    _fit = TaskBloc();
     var fitLogic = FitLogic(account);
-
-    // TODO use a background task
-    fit.execute(fitLogic.sync, const Duration(seconds: 30));
+    _fit = TaskBloc(fitLogic.sync, const Duration(seconds: 30)); // TODO use a background task
   }
 }

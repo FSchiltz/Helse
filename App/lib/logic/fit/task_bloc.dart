@@ -13,11 +13,19 @@ class Execution {
 
 class TaskBloc extends Cubit<SubmissionStatus> {
   final List<Execution> executions = [];
+  Timer? timer;
+  Future<void> Function() action;
+  Duration duration;
 
-  TaskBloc() : super(SubmissionStatus.initial);
+  TaskBloc(this.action, this.duration) : super(SubmissionStatus.initial);
 
-  Future<void> execute(Future<void> Function() action, Duration delay) async {
-    Timer.periodic(delay, (timer) async {
+  void cancel() {
+    timer?.cancel();
+    emit(SubmissionStatus.initial);
+  }
+
+  void start() {
+    timer = Timer.periodic(duration, (timer) async {
       try {
         emit(SubmissionStatus.inProgress);
         await action.call();
