@@ -63,7 +63,7 @@ public class HealthContext(DataConnection db) : IHealthContext
         return db.GetTable<Event>()
             .Where(x => x.PersonId == id
                 && x.Type == type
-                && x.Start < end && start <= x.Stop)
+                && x.Start <= end && start <= x.Stop)
             .ToListAsync();
     }
 

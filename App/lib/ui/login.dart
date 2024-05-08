@@ -30,8 +30,7 @@ class _LoginState extends State<LoginPage> {
   final TextEditingController _controllerSurname = TextEditingController();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
-  final TextEditingController _controllerConFirmPassword =
-      TextEditingController();
+  final TextEditingController _controllerConFirmPassword = TextEditingController();
 
   SubmissionStatus _status = SubmissionStatus.initial;
   SubmissionStatus _loaded = SubmissionStatus.initial;
@@ -62,9 +61,7 @@ class _LoginState extends State<LoginPage> {
                     key: _formKey,
                     child: Column(
                       children: [
-                        Text(
-                            "Welcome ${_initStatus?.init == true ? "Back" : ""}",
-                            style: Theme.of(context).textTheme.headlineLarge),
+                        Text("Welcome ${_initStatus?.init == true ? "Back" : ""}", style: Theme.of(context).textTheme.headlineLarge),
                         const SizedBox(height: 20),
                         TextField(
                           controller: textController,
@@ -81,9 +78,7 @@ class _LoginState extends State<LoginPage> {
                               borderRadius: BorderRadius.circular(0),
                               borderSide: BorderSide(color: theme.primary),
                             ),
-                            errorText: _status == SubmissionStatus.failure
-                                ? 'invalid url'
-                                : null,
+                            errorText: _status == SubmissionStatus.failure ? 'invalid url' : null,
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -99,36 +94,22 @@ class _LoginState extends State<LoginPage> {
                                                 validate: validateUserName,
                                               ),
                                               const SizedBox(height: 10),
-                                              PasswordInput(
-                                                  controller:
-                                                      _controllerPassword),
+                                              PasswordInput(controller: _controllerPassword),
                                             ],
                                           )
                                         : Column(
                                             children: [
-                                              Text("Create your account",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .headlineLarge),
-                                              Text(
-                                                  "This is the admin account for the server",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyLarge),
+                                              Text("Create your account", style: Theme.of(context).textTheme.headlineLarge),
+                                              Text("This is the admin account for the server", style: Theme.of(context).textTheme.bodyLarge),
                                               const SizedBox(height: 20),
                                               UserForm(
                                                 UserType.admin,
-                                                controllerUsername:
-                                                    _controllerUsername,
-                                                controllerEmail:
-                                                    _controllerEmail,
-                                                controllerPassword:
-                                                    _controllerPassword,
-                                                controllerConFirmPassword:
-                                                    _controllerConFirmPassword,
+                                                controllerUsername: _controllerUsername,
+                                                controllerEmail: _controllerEmail,
+                                                controllerPassword: _controllerPassword,
+                                                controllerConFirmPassword: _controllerConFirmPassword,
                                                 controllerName: _controllerName,
-                                                controllerSurname:
-                                                    _controllerSurname,
+                                                controllerSurname: _controllerSurname,
                                               )
                                             ],
                                           ),
@@ -139,38 +120,24 @@ class _LoginState extends State<LoginPage> {
                                             children: [
                                               ElevatedButton(
                                                 style: ElevatedButton.styleFrom(
-                                                  minimumSize:
-                                                      const Size.fromHeight(50),
-                                                  shape:
-                                                      const ContinuousRectangleBorder(),
+                                                  minimumSize: const Size.fromHeight(50),
+                                                  shape: const ContinuousRectangleBorder(),
                                                 ),
                                                 onPressed: _submit,
                                                 child: Text(
-                                                  _initStatus?.init == true
-                                                      ? 'Login'
-                                                      : 'Create',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .titleLarge,
+                                                  _initStatus?.init == true ? 'Login' : 'Create',
+                                                  style: Theme.of(context).textTheme.titleLarge,
                                                 ),
                                               ),
                                               const SizedBox(height: 20),
                                               if (_initStatus?.oauth != null)
                                                 ElevatedButton(
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    minimumSize:
-                                                        const Size.fromHeight(
-                                                            50),
-                                                    shape:
-                                                        const ContinuousRectangleBorder(),
+                                                  style: ElevatedButton.styleFrom(
+                                                    minimumSize: const Size.fromHeight(50),
+                                                    shape: const ContinuousRectangleBorder(),
                                                   ),
                                                   onPressed: _submitOauth,
-                                                  child: Text(
-                                                      'Login with Oauth',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .titleLarge),
+                                                  child: Text('Login with Oauth', style: Theme.of(context).textTheme.titleLarge),
                                                 )
                                             ],
                                           )
@@ -195,7 +162,7 @@ class _LoginState extends State<LoginPage> {
   }
 
   void _urlTextChanged(String url) async {
-    if (_loaded == SubmissionStatus.inProgress && _operation != null) {
+    if (_loaded == SubmissionStatus.waiting && _operation != null) {
       // cancel the existing call
       _operation?.cancel();
 
@@ -206,7 +173,7 @@ class _LoginState extends State<LoginPage> {
 
     setState(() {
       _url = url;
-      _loaded = SubmissionStatus.inProgress;
+      _loaded = SubmissionStatus.waiting;
     });
 
     if (url.isEmpty) {
@@ -216,8 +183,7 @@ class _LoginState extends State<LoginPage> {
     } else {
       // Launch the urlchanged handler with a delay
       // To only call when the user has finished typing and allows giving feedback
-      var operation = CancelableOperation.fromFuture(
-          Future<void>.delayed(Durations.extralong3));
+      var operation = CancelableOperation.fromFuture(Future<void>.delayed(Durations.extralong3));
 
       operation.value.then((value) async => await _urlChanged(url));
       setState(() {
@@ -227,22 +193,27 @@ class _LoginState extends State<LoginPage> {
   }
 
   Future<void> _urlChanged(String url) async {
+    if (Uri.tryParse(url) == null) {
+      return;
+    }
+
+    setState(() {
+      _loaded = SubmissionStatus.inProgress;
+    });
+
     try {
-      var isInit = await DI.helper?.isInit(_url ?? "");
-      var status = ((isInit?.init == null)
-          ? SubmissionStatus.failure
-          : SubmissionStatus.success);
+      var isInit = await DI.helper?.isInit(url);
+      
+      setState(() {
+          _initStatus = isInit;
+        });
 
       // If the server is init or not
       // Todo use stream
       if (mounted) {
-        setState(() {
-          _initStatus = isInit;
-          _loaded = status;
-        });
-
         if (isInit != null && isInit.init == true) {
           if (isInit.oauth != null) {
+            // Start the oauth login procedure
             var grant = await DI.authentication.getGrant();
             if (grant != null) {
               _submit(
@@ -260,15 +231,24 @@ class _LoginState extends State<LoginPage> {
             _submit(noUser: true);
           }
         }
+
+        setState(() {
+          _loaded = ((isInit?.init == null) ? SubmissionStatus.failure : SubmissionStatus.success);
+        });
       }
     } catch (ex) {
-      Notify.showError(ex.toString());
+      if (mounted) {
+        setState(() {
+          _loaded = SubmissionStatus.failure;
+        });
+        Notify.showError(ex.toString());
+      }
     }
   }
 
   /// Prefill the url from storage or other
   Future<void> _initUrl() async {
-    DI.authentication.checkLogin();
+    await DI.authentication.checkLogin();
     // We first try to get it from storage
     var url = await DI.authentication.getUrl();
 
@@ -278,7 +258,7 @@ class _LoginState extends State<LoginPage> {
         _url = url;
       });
 
-      _urlChanged(url);
+      await _urlChanged(url);
     }
   }
 
@@ -286,11 +266,21 @@ class _LoginState extends State<LoginPage> {
     var init = _initStatus;
     var url = _url;
     if (init != null && url != null) {
-      await _connectOauth(init, url);
+      var grant = await _connectOauth(init, url);
+      if (grant != null) {
+        _submit(
+          noUser: true,
+          oAuth: grant,
+          redirect: await DI.authentication.getRedirect(),
+        );
+      }
+    } else {
+      Notify.show('Server not ready');
+      DI.authentication.logOut();
     }
   }
 
-  void _submit({bool noUser = false, String? oAuth, String? redirect}) async {
+  Future<void> _submit({bool noUser = false, String? oAuth, String? redirect}) async {
     var init = _initStatus?.init;
     var url = _url;
     if (init == null || url == null) return;
@@ -342,7 +332,7 @@ class _LoginState extends State<LoginPage> {
         _status = SubmissionStatus.success;
       });
     } catch (ex) {
-      Notify.showError("Error: $ex");
+      Notify.showError(ex.toString());
 
       // clear any info about the login
       await DI.authentication.logOut();
@@ -354,14 +344,14 @@ class _LoginState extends State<LoginPage> {
     }
   }
 
-  Future<void> _connectOauth(Status isInit, String url) async {
+  Future<String?> _connectOauth(Status isInit, String url) async {
     try {
       DI.authService?.init(
         auth: isInit.oauth ?? '',
         clientId: isInit.oauthId ?? '',
       );
 
-      await DI.authService?.login(url);
+      return await DI.authService?.login(url);
     } catch (ex) {
       Notify.showError(ex.toString());
 
@@ -372,5 +362,7 @@ class _LoginState extends State<LoginPage> {
         _status = SubmissionStatus.initial;
       });
     }
+
+    return null;
   }
 }

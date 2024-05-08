@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [        
         {
-            "name": "Flutter web",
+            "name": "Flutter debug",
             "type": "dart",
             "request": "launch",
             "program": "App/lib/main.dart",
@@ -42,13 +42,24 @@
             "type": "dart",
             "request": "launch",
             "program": "App/lib/main.dart"
+        },  
+          {
+            "name": "Flutter web",
+            "type": "dart",
+            "request": "launch",
+            "program": "App/lib/main.dart",
+            "flutterMode": "release",
+            "args": [
+                "-d", 
+                "web-server"
+            ]
         },
     ],
     "compounds": [
         {
             "name": "Launch",
             "configurations": [
-                "Flutter web",
+                "Flutter debug",
                 ".NET Core Launch (web)"
             ],
             "stopAll": true

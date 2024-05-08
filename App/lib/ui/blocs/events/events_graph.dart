@@ -31,7 +31,7 @@ class EventGraph extends StatelessWidget {
           buildDayHeader(),
           Container(
             margin: const EdgeInsets.only(top: 25.0),
-            child: buildHeader(),
+            child: buildHeader(context),
           ),
           Container(
               margin: const EdgeInsets.only(top: 50.0),
@@ -84,7 +84,7 @@ class EventGraph extends StatelessWidget {
     );
   }
 
-  Widget buildHeader() {
+  Widget buildHeader(BuildContext context) {
     List<Widget> headerItems = [];
 
     DateTime tempDate = date.start;
@@ -95,7 +95,7 @@ class EventGraph extends StatelessWidget {
       headerItems.add(SizedBox(
         width: 60,
         child: Tooltip(
-          message: DateHelper.format(tempDate),
+          message: DateHelper.format(tempDate, context: context),
           child: Text(
             '${tempDate.hour.toString().padLeft(2, '0')}:${tempDate.second.toString().padLeft(2, '0')}',
             textAlign: TextAlign.center,

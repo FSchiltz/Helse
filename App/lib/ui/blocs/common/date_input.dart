@@ -1,31 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/date.dart';
 
-class DateInput extends StatelessWidget {
+class DateInput extends StatefulWidget {
   final String label;
-  final DateTime date;
-
-  final TextEditingController _textController = TextEditingController();
+  final DateTime initdate;
 
   final void Function(DateTime time) callback;
 
-  DateInput(this.label, this.date, this.callback, {super.key}) {
-    _textController.text = DateHelper.format(date);
+  const DateInput(this.label, this.initdate, this.callback, {super.key});
+
+  @override
+  State<DateInput> createState() => _DateInputState();
+}
+
+class _DateInputState extends State<DateInput> {
+  DateTime? date;
+
+  @override
+  void initState() {
+    super.initState();
+    date = widget.initdate;
   }
 
   Future<void> _setDate(BuildContext context) async {
-    var date = await _pick(context);
-    if (date != null) {
-      callback(date);
-      var text = DateHelper.format(date);
-      _textController.text = text;
+    var picked = await _pick(context);
+    if (picked != null) {
+      widget.callback(picked);
     }
+
+    setState(() {
+      date = picked;
+    });
   }
 
   Future<DateTime?> _pick(BuildContext context) async {
     final DateTime? selectedDate = await showDatePicker(
         context: context,
-        initialDate: DateTime.now(), //get today's date
+        initialDate: date,
         firstDate: DateTime(1000),
         lastDate: DateTime(3000));
 
@@ -54,12 +65,12 @@ class DateInput extends StatelessWidget {
     var theme = Theme.of(context).colorScheme;
 
     return TextField(
-      controller: _textController,
+      controller: TextEditingController(text: DateHelper.format(date, context: context)),
       onTap: () {
         _setDate(context);
       },
       decoration: InputDecoration(
-        labelText: label,
+        labelText: widget.label,
         prefixIcon: const Icon(Icons.edit_calendar_sharp),
         prefixIconColor: theme.primary,
         filled: true,
