@@ -5,7 +5,7 @@ import 'package:helse/ui/theme/square_dialog.dart';
 
 import '../../../../services/swagger/generated_code/swagger.enums.swagger.dart';
 import '../../../theme/notification.dart';
-import 'type_input.dart';
+import '../../../theme/type_input.dart';
 
 class ChangeRole extends StatefulWidget {
   final void Function() callback;

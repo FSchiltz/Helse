@@ -146,15 +146,24 @@ class _MetricWidgetState extends State<MetricWidget> {
   }
 
   String _getTextInfo(List<Metric> metrics, MetricType type) {
+    String? value;
     switch (type.summaryType) {
       case MetricSummary.sum:
-        return metrics.map((metric) => int.parse(metric.$value ?? '0')).sum.toString();
+        value =  metrics.map((metric) => int.parse(metric.$value ?? '0')).sum.toString();
+        break;
       case MetricSummary.mean:
-        return (metrics.map((metric) => int.parse(metric.$value ?? '0')).sum / metrics.length).toString();
+        value = (metrics.map((metric) => int.parse(metric.$value ?? '0')).sum / metrics.length).toString();
+        break;
       case MetricSummary.latest:
-      case MetricSummary.text:
       default:
-        return metrics.last.$value ?? '';
+        value = metrics.last.$value ?? '';
+        break;
     }
+
+    if(type.unit != null) {
+      value += ' ${type.unit}';
+    }
+
+    return value;
   }
 }

@@ -1199,17 +1199,15 @@
         "enum": [
           0,
           1,
-          2,
-          3
+          2
         ],
         "type": "integer",
-        "description": "\n\n0 = Text\n\n1 = Sum\n\n2 = Mean\n\n3 = Latest",
+        "description": "\n\n0 = Latest\n\n1 = Sum\n\n2 = Mean",
         "format": "int32",
         "x-enumNames": [
-          "Text",
+          "Latest",
           "Sum",
-          "Mean",
-          "Latest"
+          "Mean"
         ]
       },
       "MetricType": {

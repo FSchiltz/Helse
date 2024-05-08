@@ -20,13 +20,11 @@ enum MetricSummary {
   swaggerGeneratedUnknown(null),
 
   @JsonValue(0)
-  text(0),
+  latest(0),
   @JsonValue(1)
   sum(1),
   @JsonValue(2)
-  mean(2),
-  @JsonValue(3)
-  latest(3);
+  mean(2);
 
   final int? value;
 

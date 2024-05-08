@@ -31,8 +31,7 @@ public enum MetricDataType
 
 public enum MetricSummary
 {
-    Text,
+    Latest,
     Sum,
     Mean,
-    Latest,
 }

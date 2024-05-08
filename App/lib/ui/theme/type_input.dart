@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
 import 'package:helse/ui/theme/square_outline_input_border.dart';
 
-class TypeInput extends StatelessWidget {
-  final List<UserType> types;
-  final void Function(UserType?) callback;
+class TypeInput<T extends Enum> extends StatelessWidget {
+  final List<T> types;
+  final void Function(T?) callback;
+  final String? label;
 
-  const TypeInput(this.types, this.callback, {super.key});
+  const TypeInput(this.types, this.callback, {super.key, this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -14,11 +14,9 @@ class TypeInput extends StatelessWidget {
 
     return DropdownButtonFormField(
       onChanged: callback,
-      items: types
-          .map((type) => DropdownMenuItem(value: type, child: Text(type.name)))
-          .toList(),
+      items: types.map((type) => DropdownMenuItem(value: type, child: Text(type.name))).toList(),
       decoration: InputDecoration(
-        labelText: 'Type',
+        labelText: label ?? 'Type',
         prefixIcon: const Icon(Icons.list_sharp),
         prefixIconColor: theme.primary,
         filled: true,
