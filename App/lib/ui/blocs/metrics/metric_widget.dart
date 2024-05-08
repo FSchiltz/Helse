@@ -96,9 +96,9 @@ class _MetricWidgetState extends State<MetricWidget> {
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute<void>(
                         builder: (context) => MetricDetailPage(
-                              widget: widget,
                               metrics: metrics,
                               date: widget.date,
+                              type: widget.type,
                             )),
                   ),
                   child: Padding(
