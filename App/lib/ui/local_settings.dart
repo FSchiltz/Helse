@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:helse/logic/settings/events_settings.dart';
 import 'package:helse/logic/settings/health_settings.dart';
 import 'package:helse/logic/settings/metrics_settings.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
 import 'package:helse/logic/settings/theme_settings.dart';
 import 'package:helse/main.dart';
+import 'package:helse/ui/theme/custom_switch.dart';
 import 'package:helse/ui/theme/ordered_list.dart';
 import 'package:helse/ui/theme/square_outline_input_border.dart';
 
@@ -42,8 +44,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Local Settings',
-            style: Theme.of(context).textTheme.displaySmall),
+        title: Text('Local Settings', style: Theme.of(context).textTheme.displaySmall),
       ),
       body: FutureBuilder(
           future: _getData(),
@@ -63,20 +64,36 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
                 return Form(
                   key: _formKey,
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30.0, vertical: 10.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Interface',
-                            style: Theme.of(context).textTheme.headlineLarge),
+                        Text('Interface', style: Theme.of(context).textTheme.headlineLarge),
                         const SizedBox(height: 10),
                         ...general(theme),
-                        //const SizedBox(height: 20),
-                        //...syncHealth(theme),
                         const SizedBox(height: 40),
-                        Text('Dashboard',
-                            style: Theme.of(context).textTheme.headlineLarge),
+                        Text("Sync Health", style: Theme.of(context).textTheme.headlineLarge),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          height: 50,
+                          child: Expanded(
+                            child: Row(
+                              children: [
+                                const Text("Enable"),
+                                CustomSwitch(
+                                    value: _healthEnabled,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        _healthEnabled = value!;
+                                        _submit();
+                                      });
+                                    })
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                        Text('Dashboard', style: Theme.of(context).textTheme.headlineLarge),
                         const SizedBox(height: 10),
                         ...metrics(theme),
                         const SizedBox(height: 20),
@@ -99,8 +116,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
                 );
               }
             }
-            return const Center(
-                child: SizedBox(width: 50, height: 50, child: HelseLoader()));
+            return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
           }),
     );
   }
@@ -120,28 +136,6 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     } catch (ex) {
       Notify.showError("Error: $ex");
     }
-  }
-
-  List<Widget> syncHealth(ColorScheme theme) {
-    return [
-      Text("Sync Health", style: Theme.of(context).textTheme.headlineSmall),
-      const SizedBox(height: 5),
-      Flexible(
-        child: Row(
-          children: [
-            const Text("Enable"),
-            Switch(
-                value: _healthEnabled,
-                onChanged: (bool? value) {
-                  setState(() {
-                    _healthEnabled = value!;
-                  });
-                  _submit();
-                })
-          ],
-        ),
-      ),
-    ];
   }
 
   List<Widget> metrics(ColorScheme theme) {
@@ -167,10 +161,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
         child: DropdownButtonFormField(
           value: _theme,
           onChanged: themeCallback,
-          items: ThemeMode.values
-              .map((type) =>
-                  DropdownMenuItem(value: type, child: Text(type.name)))
-              .toList(),
+          items: ThemeMode.values.map((type) => DropdownMenuItem(value: type, child: Text(type.name))).toList(),
           decoration: InputDecoration(
             labelText: 'Theme',
             prefixIcon: const Icon(Icons.list_sharp),
