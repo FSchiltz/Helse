@@ -8,16 +8,15 @@ class OrderedList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return ListView(
       shrinkWrap: true,
-      scrollDirection: Axis.vertical,
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        return Row(children: [
-          Text(items[index].name),
-          _StatefullCheck(items[index]),
-        ]);
-      },
+      physics: const BouncingScrollPhysics(),
+      children: items
+          .map((item) => Row(children: [
+                Text(item.name),
+                _StatefullCheck(item),
+              ]))
+          .toList(),
     );
   }
 }
