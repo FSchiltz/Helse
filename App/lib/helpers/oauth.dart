@@ -49,7 +49,7 @@ class OauthClient {
         return null;
       } else {
         _doAuthOnMobile(authUrl, redirect);
-        return '';
+        return null;
       }
     } else {
       return grant;

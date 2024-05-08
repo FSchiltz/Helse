@@ -58,6 +58,7 @@ dependencies:
   toastification: ^2.0.0
   flutter_localizations:
     sdk: flutter
+  bloc: ^8.1.4
 
 dev_dependencies:
   flutter_test:

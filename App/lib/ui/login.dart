@@ -203,7 +203,10 @@ class _LoginState extends State<LoginPage> {
 
     try {
       var isInit = await DI.helper?.isInit(url);
-      var status = ((isInit?.init == null) ? SubmissionStatus.failure : SubmissionStatus.success);
+      
+      setState(() {
+          _initStatus = isInit;
+        });
 
       // If the server is init or not
       // Todo use stream
@@ -230,8 +233,7 @@ class _LoginState extends State<LoginPage> {
         }
 
         setState(() {
-          _initStatus = isInit;
-          _loaded = status;
+          _loaded = ((isInit?.init == null) ? SubmissionStatus.failure : SubmissionStatus.success);
         });
       }
     } catch (ex) {
@@ -246,7 +248,7 @@ class _LoginState extends State<LoginPage> {
 
   /// Prefill the url from storage or other
   Future<void> _initUrl() async {
-    DI.authentication.checkLogin();
+    await DI.authentication.checkLogin();
     // We first try to get it from storage
     var url = await DI.authentication.getUrl();
 
@@ -256,7 +258,7 @@ class _LoginState extends State<LoginPage> {
         _url = url;
       });
 
-      _urlChanged(url);
+      await _urlChanged(url);
     }
   }
 
@@ -264,11 +266,21 @@ class _LoginState extends State<LoginPage> {
     var init = _initStatus;
     var url = _url;
     if (init != null && url != null) {
-      await _connectOauth(init, url);
+      var grant = await _connectOauth(init, url);
+      if (grant != null) {
+        _submit(
+          noUser: true,
+          oAuth: grant,
+          redirect: await DI.authentication.getRedirect(),
+        );
+      }
+    } else {
+      Notify.show('Server not ready');
+      DI.authentication.logOut();
     }
   }
 
-  void _submit({bool noUser = false, String? oAuth, String? redirect}) async {
+  Future<void> _submit({bool noUser = false, String? oAuth, String? redirect}) async {
     var init = _initStatus?.init;
     var url = _url;
     if (init == null || url == null) return;
@@ -320,7 +332,7 @@ class _LoginState extends State<LoginPage> {
         _status = SubmissionStatus.success;
       });
     } catch (ex) {
-      Notify.showError("Error: $ex");
+      Notify.showError(ex.toString());
 
       // clear any info about the login
       await DI.authentication.logOut();
@@ -332,14 +344,14 @@ class _LoginState extends State<LoginPage> {
     }
   }
 
-  Future<void> _connectOauth(Status isInit, String url) async {
+  Future<String?> _connectOauth(Status isInit, String url) async {
     try {
       DI.authService?.init(
         auth: isInit.oauth ?? '',
         clientId: isInit.oauthId ?? '',
       );
 
-      await DI.authService?.login(url);
+      return await DI.authService?.login(url);
     } catch (ex) {
       Notify.showError(ex.toString());
 
@@ -350,5 +362,7 @@ class _LoginState extends State<LoginPage> {
         _status = SubmissionStatus.initial;
       });
     }
+
+    return null;
   }
 }
