@@ -61,12 +61,12 @@ class _MetricAddState extends State<MetricAdd> {
                               _value = value;
                             },
                           )),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
                   TextInput(Icons.design_services_outlined, "Tag",
                       onChanged: (value) => setState(() {
                             _tag = value;
                           })),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
                   DateInput(
                       "Date",
                       _date,

@@ -92,14 +92,14 @@ class _EventAddState extends State<EventAdd> {
                     onChanged: (value) => setState(() {
                           _description = value;
                         })),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
                 DateInput(
                     "start",
                     _start,
                     (date) => setState(() {
                           _start = date;
                         })),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
                 DateInput(
                     "end",
                     _stop,
