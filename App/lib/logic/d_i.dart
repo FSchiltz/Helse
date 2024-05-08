@@ -51,6 +51,6 @@ class DI {
     settings = SettingsLogic(account);
 
     var fitLogic = FitLogic(account);
-    _fit = TaskBloc(fitLogic.sync, const Duration(seconds: 30)); // TODO use a background task
+    _fit = TaskBloc(fitLogic.sync, const Duration(seconds: 5)); // TODO use a background task
   }
 }

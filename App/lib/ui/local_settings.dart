@@ -10,6 +10,7 @@ import 'package:helse/ui/theme/custom_switch.dart';
 import 'package:helse/ui/theme/ordered_list.dart';
 import 'package:helse/ui/theme/square_outline_input_border.dart';
 
+import '../logic/d_i.dart';
 import '../logic/settings/settings_logic.dart';
 import 'theme/loader.dart';
 import 'theme/notification.dart';
@@ -86,6 +87,14 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
                                       setState(() {
                                         _healthEnabled = value!;
                                         _submit();
+
+                                        // Stop or start 
+                                        if(value) {
+                                          DI.fit.start();
+                                        }else 
+                                        {
+                                          DI.fit.cancel();
+                                        }
                                       });
                                     })
                               ],

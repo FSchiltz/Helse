@@ -5,6 +5,6 @@ class FitLogic {
   FitLogic(this.account);
 
   Future<void> sync() async {
-    await Future.delayed(const Duration(seconds: 10), () {});
+    await Future.delayed(const Duration(seconds: 2), () {});
   }
 }
