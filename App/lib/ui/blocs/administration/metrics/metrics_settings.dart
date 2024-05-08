@@ -18,15 +18,10 @@ class _SettingsViewState extends State<MetricSettingsView> {
   void _resetSettings() {
     setState(() {
       _settings = null;
-      _dummy = !_dummy;
     });
   }
 
-  bool _dummy = false;
-
-  Future<Proxy?> _getData(bool reset) async {
-    // if the users has not changed, no call to the backend
-    if (_settings != null) return _settings;
+  Future<Proxy?> _getData() async {
 
     _settings = const Proxy();
     return _settings;
@@ -35,7 +30,7 @@ class _SettingsViewState extends State<MetricSettingsView> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _getData(_dummy),
+        future: _getData(),
         builder: (context, snapshot) {
           // Checking if future is resolved
           if (snapshot.connectionState == ConnectionState.done) {

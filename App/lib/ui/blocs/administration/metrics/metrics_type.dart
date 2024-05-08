@@ -19,13 +19,10 @@ class _MetricTypeViewState extends State<MetricTypeView> {
   void _resetMetricType() {
     setState(() {
       _types = null;
-      _dummy = !_dummy;
     });
   }
 
-  bool _dummy = false;
-
-  Future<List<MetricType>?> _getData(bool reset) async {
+  Future<List<MetricType>?> _getData() async {
     // if the users has not changed, no call to the backend
     if (_types != null) return _types;
 
@@ -36,7 +33,7 @@ class _MetricTypeViewState extends State<MetricTypeView> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _getData(_dummy),
+        future: _getData(),
         builder: (context, snapshot) {
           // Checking if future is resolved
           if (snapshot.connectionState == ConnectionState.done) {
@@ -59,8 +56,7 @@ class _MetricTypeViewState extends State<MetricTypeView> {
                 children: [
                   Row(
                     children: [
-                      Text("Metric Types",
-                          style: Theme.of(context).textTheme.headlineMedium),
+                      Text("Metric Types", style: Theme.of(context).textTheme.headlineMedium),
                       const SizedBox(
                         width: 10,
                       ),
@@ -99,6 +95,14 @@ class _MetricTypeViewState extends State<MetricTypeView> {
                             )),
                             DataColumn(
                                 label: Expanded(
+                              child: Text("Type"),
+                            )),
+                            DataColumn(
+                                label: Expanded(
+                              child: Text("Summary"),
+                            )),
+                            DataColumn(
+                                label: Expanded(
                               child: Text(""),
                             )),
                             DataColumn(
@@ -112,16 +116,15 @@ class _MetricTypeViewState extends State<MetricTypeView> {
                                     DataCell(Text(type.name ?? "")),
                                     DataCell(Text(type.description ?? "")),
                                     DataCell(Text(type.unit ?? "")),
+                                    DataCell(Text(type.type?.name ?? "")),
+                                    DataCell(Text(type.summaryType?.name ?? "")),
                                     DataCell(
                                       IconButton(
                                           onPressed: () {
                                             showDialog<void>(
                                                 context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return MetricTypeAdd(
-                                                      _resetMetricType,
-                                                      edit: type);
+                                                builder: (BuildContext context) {
+                                                  return MetricTypeAdd(_resetMetricType, edit: type);
                                                 });
                                           },
                                           icon: const Icon(Icons.edit_sharp)),
@@ -142,8 +145,7 @@ class _MetricTypeViewState extends State<MetricTypeView> {
               );
             }
           }
-          return const Center(
-              child: SizedBox(width: 50, height: 50, child: HelseLoader()));
+          return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
         });
   }
 

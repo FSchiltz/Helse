@@ -1,8 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
-import 'package:helse/ui/blocs/metrics/metric_widget.dart';
-import 'package:intl/intl.dart';
 
 import '../../../helpers/date.dart';
 
