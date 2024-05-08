@@ -63,7 +63,7 @@ class OauthClient {
 
   void _doAuthOnMobile(String result, String redirect) async {
     var links = AppLinks();
-    links.allUriLinkStream.listen((uri) {
+    links.uriLinkStream.listen((uri) {
       if (uri.toString().startsWith(redirect)) {
         getCode(uri.queryParameters).then((value) =>
             DI.authentication.set(AuthenticationStatus.unauthenticated));
