@@ -1,5 +1,6 @@
 import 'package:helse/helpers/oauth.dart';
 import 'package:helse/logic/account/authentication_logic.dart';
+import 'package:helse/logic/fit/task_bloc.dart';
 import 'package:helse/logic/settings/settings_logic.dart';
 import 'package:helse/services/account.dart';
 import 'package:helse/services/event_service.dart';
@@ -8,9 +9,12 @@ import 'package:helse/services/metric_service.dart';
 import 'package:helse/services/treatment_service.dart';
 import 'package:helse/services/user_service.dart';
 
+import 'fit/fit_logic.dart';
+
 class DI {
   static OauthClient? authService;
   static AuthenticationLogic? _authentication;
+
   static AuthenticationLogic get authentication {
     var a = _authentication;
     if (a == null) {
@@ -26,6 +30,15 @@ class DI {
   static TreatmentService? treatement;
   static SettingsLogic? settings;
 
+  static TaskBloc? _fit;
+  static TaskBloc get fit {
+    var a = _fit;
+    if (a == null) {
+      throw Exception("Invalid access");
+    }
+    return a;
+  }
+
   static void init() {
     var account = Account();
     authService = OauthClient(account);
@@ -36,5 +49,11 @@ class DI {
     user = UserService(account);
     treatement = TreatmentService(account);
     settings = SettingsLogic(account);
+
+    _fit = TaskBloc();
+    var fitLogic = FitLogic(account);
+
+    // TODO use a background task
+    fit.execute(fitLogic.sync, const Duration(seconds: 30));
   }
 }

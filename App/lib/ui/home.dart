@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/logic/d_i.dart';
+import 'package:helse/logic/event.dart';
+import 'package:helse/logic/fit/task_bloc.dart';
 
 import '../helpers/date.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';
@@ -96,6 +99,22 @@ class _HomeState extends State<Home> {
                 constraints: const BoxConstraints(maxWidth: 220),
                 color: theme.colorScheme.onSecondary,
                 child: DateRangeInput(_setDate, date),
+              )),
+              Flexible(
+                  child: BlocProvider<TaskBloc>.value(
+                value: DI.fit,
+                child: BlocBuilder<TaskBloc, SubmissionStatus>(builder: (context, state) {
+                  switch (state) {
+                    case SubmissionStatus.success:
+                      return const HelseLoader(static:  true, color: Colors.green,);
+                    case SubmissionStatus.failure:
+                      return const HelseLoader( static: true, color: Colors.red,);
+                    case SubmissionStatus.inProgress:
+                      return const HelseLoader();
+                    default:
+                      return const HelseLoader(static: true);
+                  }
+                }),
               ))
             ],
           ),
