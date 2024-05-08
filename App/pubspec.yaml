@@ -43,7 +43,7 @@ dependencies:
   flutter_bloc: ^8.1.5
   chopper: ^7.4.0
   json_annotation: ^4.9.0
-  intl: ^0.19.0
+  intl: any
   shared_preferences: ^2.2.3
   file_selector: ^1.0.3
   jwt_decoder: ^2.0.1
@@ -57,6 +57,8 @@ dependencies:
   fluttertoast: ^8.2.5
   async: ^2.11.0
   toastification: ^2.0.0
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:

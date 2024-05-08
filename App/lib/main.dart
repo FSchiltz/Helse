@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:toastification/toastification.dart';
 
@@ -42,6 +43,16 @@ class App extends StatelessWidget {
             return const AppView();
           });
         },
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en'),
+          Locale('fr'),
+          Locale('es'),
+        ],
       ),
     );
   }
@@ -114,7 +125,7 @@ class AppState extends State<AppView> {
           );
         },
         onGenerateRoute: (_) => SplashPage.route(),
-    ),
-        );
+      ),
+    );
   }
 }
