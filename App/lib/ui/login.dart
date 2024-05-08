@@ -193,12 +193,16 @@ class _LoginState extends State<LoginPage> {
   }
 
   Future<void> _urlChanged(String url) async {
+    if (Uri.tryParse(url) == null) {
+      return;
+    }
+
     setState(() {
       _loaded = SubmissionStatus.inProgress;
     });
 
     try {
-      var isInit = await DI.helper?.isInit(_url ?? "");
+      var isInit = await DI.helper?.isInit(url);
       var status = ((isInit?.init == null) ? SubmissionStatus.failure : SubmissionStatus.success);
 
       // If the server is init or not
@@ -206,7 +210,6 @@ class _LoginState extends State<LoginPage> {
       if (mounted) {
         if (isInit != null && isInit.init == true) {
           if (isInit.oauth != null) {
-
             // Start the oauth login procedure
             var grant = await DI.authentication.getGrant();
             if (grant != null) {
@@ -231,11 +234,13 @@ class _LoginState extends State<LoginPage> {
           _loaded = status;
         });
       }
-    } catch (ex) {   
-      setState(() {
-        _loaded = SubmissionStatus.failure;
-      });
-      Notify.showError(ex.toString());
+    } catch (ex) {
+      if (mounted) {
+        setState(() {
+          _loaded = SubmissionStatus.failure;
+        });
+        Notify.showError(ex.toString());
+      }
     }
   }
 
