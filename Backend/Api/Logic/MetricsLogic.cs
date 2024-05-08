@@ -78,6 +78,7 @@ public static class MetricsLogic
         SummaryType = (MetricSummary)metric.SummaryType,
         Type = (MetricDataType)metric.Type,
         Unit = metric.Unit,
+        Id = metric.Id,
     }));
 
     public static async Task<IResult> CreateTypeAsync(Models.MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
