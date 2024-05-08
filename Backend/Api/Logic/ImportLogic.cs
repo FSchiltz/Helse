@@ -20,7 +20,7 @@ public static class ImportLogic
 
     public static async Task<IResult> PostFileAsync([FromBody] string file, int type, IUserContext users, IHealthContext db, HttpContext context)
     {
-        var (error, user) = await users.GetUser(context);
+        var (error, user) = await users.GetUser(context.User);
         if (error is not null)
             return error;
 

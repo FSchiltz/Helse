@@ -24,7 +24,7 @@ public static class PersonLogic
     /// <returns></returns>
     public static async Task<IResult> GetAsync(IUserContext db, HttpContext context)
     {
-        var admin = await db.IsAdmin(context);
+        var admin = await db.IsAdmin(context.User);
         if (admin is not null)
             return admin;
 
@@ -71,7 +71,7 @@ public static class PersonLogic
     /// <returns></returns>
     public static async Task<IResult> SetRight(long personId, List<Models.Right> rights, IUserContext users, HttpContext context)
     {
-        var admin = await users.IsAdmin(context);
+        var admin = await users.IsAdmin(context.User);
         if (admin is not null)
             return admin;
 
@@ -167,7 +167,7 @@ public static class PersonLogic
     /// <returns></returns>
     public static async Task<IResult> SetPersonRole(long personId, UserType role, IUserContext db, HttpContext context)
     {
-        var admin = await db.IsAdmin(context);
+        var admin = await db.IsAdmin(context.User);
         if (admin is not null)
             return admin;
 

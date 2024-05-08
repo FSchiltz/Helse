@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Api.Data;
 using Api.Data.Models;
 using Api.Helpers.Auth;
@@ -23,7 +24,7 @@ public static class RightsHelper
         return right is not null;
     }
 
-    internal static async Task<IResult?> IsAdmin(this IUserContext db, HttpContext context)
+    internal static async Task<IResult?> IsAdmin(this IUserContext db, ClaimsPrincipal context)
     {
         var (error, user) = await db.GetUser(context);
         if (error is not null)
@@ -35,10 +36,10 @@ public static class RightsHelper
         return null;
     }
 
-    internal static async Task<(IResult?, User)> GetUser(this IUserContext db, HttpContext context)
+    internal static async Task<(IResult?, User)> GetUser(this IUserContext db, ClaimsPrincipal context)
     {
         // get the connected user
-        var userName = context.User.GetUser();
+        var userName = context.GetUser();
 
         var user = await db.Get(userName);
         if (user is null)

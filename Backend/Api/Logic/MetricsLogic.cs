@@ -13,7 +13,7 @@ public static class MetricsLogic
 {
     public async static Task<IResult> GetAsync(int type, DateTime start, DateTime end, long? personId, IUserContext users, IHealthContext db, HttpContext context)
     {
-        var (error, user) = await users.GetUser(context);
+        var (error, user) = await users.GetUser(context.User);
         if (error is not null)
             return error;
 
@@ -37,7 +37,7 @@ public static class MetricsLogic
 
     public static async Task<IResult> CreateAsync(CreateMetric metric, long? personId, IUserContext users, IHealthContext db, HttpContext context)
     {
-        var (error, user) = await users.GetUser(context);
+        var (error, user) = await users.GetUser(context.User);
         if (error is not null)
             return error;
 
@@ -51,7 +51,7 @@ public static class MetricsLogic
 
     public async static Task<IResult> DeleteAsync(long id, IUserContext users, IHealthContext db, HttpContext context)
     {
-        var (error, user) = await users.GetUser(context);
+        var (error, user) = await users.GetUser(context.User);
         if (error is not null)
             return error;
 
@@ -83,7 +83,7 @@ public static class MetricsLogic
 
     public static async Task<IResult> CreateTypeAsync(Models.MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
     {
-        var admin = await users.IsAdmin(context);
+        var admin = await users.IsAdmin(context.User);
         if (admin is not null)
             return admin;
 
@@ -106,7 +106,7 @@ public static class MetricsLogic
 
     public static async Task<IResult> UpdateTypeAsync(Models.MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
     {
-        var admin = await users.IsAdmin(context);
+        var admin = await users.IsAdmin(context.User);
         if (admin is not null)
             return admin;
 
@@ -130,7 +130,7 @@ public static class MetricsLogic
 
     public async static Task<IResult> DeleteTypeAsync(long id, IUserContext users, IHealthContext db, HttpContext context)
     {
-        var admin = await users.IsAdmin(context);
+        var admin = await users.IsAdmin(context.User);
         if (admin is not null)
             return admin;
 

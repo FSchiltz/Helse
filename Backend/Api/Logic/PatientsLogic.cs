@@ -15,7 +15,7 @@ public static class PatientsLogic
     /// <returns></returns>
     public static async Task<IResult> GetPatientsAsync(IUserContext users, IHealthContext db, HttpContext context)
     {
-        var (error, user) = await users.GetUser(context);
+        var (error, user) = await users.GetUser(context.User);
         if (error is not null)
             return error;
 
@@ -40,7 +40,7 @@ public static class PatientsLogic
 
     public async static Task<IResult> GetAgendaAsync(DateTime start, DateTime end, IUserContext users, IHealthContext db, HttpContext context)
     {
-        var (error, user) = await users.GetUser(context);
+        var (error, user) = await users.GetUser(context.User);
         if (error is not null)
             return error;
 

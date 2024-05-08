@@ -16,7 +16,7 @@ public static class TreatmentLogic
 
     public async static Task<IResult> PostAsync(Models.CreateTreatment treatment, IUserContext db, HttpContext context)
     {
-        var (error, user) = await db.GetUser(context);
+        var (error, user) = await db.GetUser(context.User);
         if (error is not null)
             return error;
 
@@ -49,7 +49,7 @@ public static class TreatmentLogic
 
     public async static Task<IResult> GetAsync(DateTime start, DateTime end, long? personId, IUserContext users, IHealthContext db, HttpContext context)
     {
-        var (error, user) = await users.GetUser(context);
+        var (error, user) = await users.GetUser(context.User);
         if (error is not null)
             return error;
 
