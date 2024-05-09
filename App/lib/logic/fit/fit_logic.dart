@@ -35,13 +35,18 @@ class FitLogic {
     var run = await account.get(Account.fitRun);
     var runDate = run == null ? null : DateTime.parse(run);
 
-    var start = runDate ?? DateTime(2007);
+    var start = runDate ?? DateTime.now().add(const Duration(days: -60));
 
     var now = DateTime.now();
     if (start.compareTo(now) >= 0) return;
 
     // get the data
-    var types = [HealthDataType.HEART_RATE];
+    var types = [
+      HealthDataType.HEART_RATE,
+      HealthDataType.BLOOD_OXYGEN,
+      HealthDataType.WEIGHT,
+      HealthDataType.STEPS,
+    ];
 
     bool requested = await Health().requestAuthorization(types);
     if (!requested) {
@@ -49,7 +54,7 @@ class FitLogic {
     }
 
     while (start.compareTo(now) < 0) {
-      var end = start.add(const Duration(days: 30));
+      var end = start.add(const Duration(days: 1));
 
       // fetch health data from the last 24 hours
       List<HealthDataPoint> healthData = await Health().getHealthDataFromTypes(startTime: start, endTime: end, types: types);
@@ -65,14 +70,9 @@ class FitLogic {
       start = end;
       await account.set(Account.fitRun, start.toString());
     }
-
-    await Future.delayed(const Duration(seconds: 2), () {});
   }
 
   static Future<bool> isEnabled() async {
-    // ask the permission if needed
-    await Permission.activityRecognition.request();
-    // configure the health plugin before use.
     DI.health.configure(useHealthConnectIfAvailable: true);
 
     return isSupported();
@@ -86,21 +86,43 @@ class FitLogic {
     List<CreateMetric> metrics = [];
 
     for (var point in healthData) {
+      int? type;
       switch (point.type) {
+        case HealthDataType.BLOOD_OXYGEN:
+          type = MetricTypes.oxygen.value;
+        case HealthDataType.WEIGHT:
+          type = MetricTypes.wheight.value;
+        case HealthDataType.STEPS:
+          type = MetricTypes.steps.value;
         case HealthDataType.HEART_RATE:
-          metrics.add(CreateMetric(
-            date: point.dateFrom,
-            $value: _convertValue(point.value),
-            type: MetricTypes.heart.value,
-          ));
+          type = MetricTypes.heart.value;
         default:
           break;
+      }
+
+      if (type != null) {
+        var metric = CreateMetric(
+          date: point.dateFrom.toUtc(),
+          $value: _convertValue(point.value),
+          source: FileTypes.googlehealthconnect,
+          tag: '${point.typeString}:${point.dateFrom}',
+          type: type,
+        );
+        metrics.add(metric);
       }
     }
     return ImportData(metrics: metrics);
   }
 
   String? _convertValue(HealthValue value) {
-    return "";
+    switch (value) {
+      case NumericHealthValue numeric:
+        return numeric.numericValue.toString();
+      case NutritionHealthValue nutrition:
+        return nutrition.calories.toString();
+      case WorkoutHealthValue workout:
+        return workout.totalDistance.toString();
+    }
+    return value.toString();
   }
 }

@@ -17,6 +17,7 @@ class TaskBloc extends Cubit<SubmissionStatus> {
   Future<void> Function() action;
   Future<bool> Function() check;
   Duration duration;
+  bool _running = false;
 
   TaskBloc(this.action, this.duration, this.check) : super(SubmissionStatus.initial);
 
@@ -26,18 +27,26 @@ class TaskBloc extends Cubit<SubmissionStatus> {
   }
 
   Future<void> start() async {
-    if (await check.call()) {
-      timer = Timer.periodic(duration, (timer) async {
-        try {
-          emit(SubmissionStatus.inProgress);
-          await action.call();
-          executions.add(Execution(DateTime.now(), SubmissionStatus.success));
-          emit(SubmissionStatus.success);
-        } catch (ex) {
-          executions.add(Execution(DateTime.now(), SubmissionStatus.failure));
-          emit(SubmissionStatus.failure);
+    timer = Timer.periodic(duration, (timer) async {
+      try {
+        if (_running) {
+        } else {
+          _running = true;
+          if (await check.call()) {
+            emit(SubmissionStatus.inProgress);
+            await action.call();
+            executions.add(Execution(DateTime.now(), SubmissionStatus.success));
+            emit(SubmissionStatus.success);
+          } else {
+            emit(SubmissionStatus.initial);
+          }
+          _running = false;
         }
-      });
-    }
+      } catch (ex) {
+        _running = false;
+        executions.add(Execution(DateTime.now(), SubmissionStatus.failure));
+        emit(SubmissionStatus.failure);
+      }
+    });
   }
 }

@@ -1,0 +1,1 @@
+CREATE INDEX healthMetricSource ON health.Metric (source) INCLUDE (tag);

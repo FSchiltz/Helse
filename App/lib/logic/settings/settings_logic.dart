@@ -22,7 +22,7 @@ class SettingsLogic {
   SettingService api() => SettingService(_account);
 
   static Future<HealthSettings> getHealth() async {
-    var encoded = (await storage).getString('health');
+    var encoded = (await storage).getString(Account.health);
     if (encoded == null) {
       return HealthSettings(false);
     }
@@ -31,12 +31,11 @@ class SettingsLogic {
   }
 
   static Future<void> saveHealth(HealthSettings localSettings) async {
-    await (await storage)
-        .setString('health', json.encode(localSettings.toJson()));
+    await (await storage).setString(Account.health, json.encode(localSettings.toJson()));
   }
 
   static Future<ThemeSettings> getTheme() async {
-    var encoded = (await storage).getString('theme');
+    var encoded = (await storage).getString(Account.theme);
     if (encoded == null) {
       return ThemeSettings(ThemeMode.system);
     }
@@ -45,12 +44,11 @@ class SettingsLogic {
   }
 
   static Future<void> saveTheme(ThemeSettings localSettings) async {
-    await (await storage)
-        .setString('theme', json.encode(localSettings.toJson()));
+    await (await storage).setString(Account.theme, json.encode(localSettings.toJson()));
   }
 
   static Future<MetricsSettings> getMetrics() async {
-    var encoded = (await storage).getString('metrics');
+    var encoded = (await storage).getString(Account.metrics);
     if (encoded == null) {
       return MetricsSettings([]);
     }
@@ -59,12 +57,11 @@ class SettingsLogic {
   }
 
   static Future<void> saveMetrics(MetricsSettings localSettings) async {
-    await (await storage)
-        .setString('metrics', json.encode(localSettings.toJson()));
+    await (await storage).setString(Account.metrics, json.encode(localSettings.toJson()));
   }
 
   static Future<EventsSettings> getEvents() async {
-    var encoded = (await storage).getString('events');
+    var encoded = (await storage).getString(Account.events);
     if (encoded == null) {
       return EventsSettings([]);
     }
@@ -73,15 +70,13 @@ class SettingsLogic {
   }
 
   static Future<void> saveEvents(EventsSettings localSettings) async {
-    await (await storage)
-        .setString('events', json.encode(localSettings.toJson()));
+    await (await storage).setString(Account.events, json.encode(localSettings.toJson()));
   }
 
   static Future<void> updateMetrics(List<MetricType> model) async {
     var metrics = await getMetrics();
     for (var metric in model) {
-      var existing = metrics.metrics
-          .firstWhereOrNull((element) => element.name == metric.name);
+      var existing = metrics.metrics.firstWhereOrNull((element) => element.name == metric.name);
       if (existing != null) {
         // already there, just update the name
         existing.name = metric.name ?? '';
@@ -98,8 +93,7 @@ class SettingsLogic {
   static Future<void> updateEvents(List<EventType> model) async {
     var events = await getEvents();
     for (var event in model) {
-      var existing = events.events
-          .firstWhereOrNull((element) => element.name == event.name);
+      var existing = events.events.firstWhereOrNull((element) => element.name == event.name);
       if (existing != null) {
         // already there, just update the name
         existing.name = event.name ?? '';

@@ -6,6 +6,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../../services/account.dart';
 import '../../services/swagger/generated_code/swagger.swagger.dart';
+import '../d_i.dart';
 
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
@@ -88,9 +89,8 @@ class AuthenticationLogic {
 
   /// Call the logout service
   Future<void> logOut() async {
-    clean();
-    await _account.remove(Account.token);
-    await _account.remove(Account.refresh);
+    await _account.clean();
+    DI.fit.cancel();
     _controller.add(AuthenticationStatus.unauthenticated);
   }
 

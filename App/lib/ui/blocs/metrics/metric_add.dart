@@ -92,7 +92,7 @@ class _MetricAddState extends State<MetricAdd> {
 
         try {
           var metric = CreateMetric(
-            date: _date,
+            date: _date.toUtc(),
             type: widget.type.id,
             tag: _tag,
             $value: _value,
