@@ -152,7 +152,7 @@ class _MetricWidgetState extends State<MetricWidget> {
         value =  metrics.map((metric) => int.parse(metric.$value ?? '0')).sum.toString();
         break;
       case MetricSummary.mean:
-        value = (metrics.map((metric) => int.parse(metric.$value ?? '0')).sum / metrics.length).toString();
+        value = (metrics.map((metric) => int.parse(metric.$value ?? '0')).sum / metrics.length).round().toString();
         break;
       case MetricSummary.latest:
       default:
