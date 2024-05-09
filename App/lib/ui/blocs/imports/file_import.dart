@@ -114,7 +114,7 @@ class _FileImportState extends State<FileImport> {
 
         Notify.show("Imported");
       } catch (ex) {
-        Notify.show("Error: $ex");
+        Notify.showError("$ex");
 
         setState(() {
           status = SubmissionStatus.failure;

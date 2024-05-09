@@ -55,7 +55,7 @@ class _PatientAddState extends State<PatientAdd> {
         });
       }
     } catch (ex) {
-      Notify.show("Error: $ex");
+      Notify.showError("$ex");
     }
   }
 

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 
+import '../../ui/theme/notification.dart';
 import '../event.dart';
 
 class Execution {
@@ -46,6 +47,7 @@ class TaskBloc extends Cubit<SubmissionStatus> {
         _running = false;
         executions.add(Execution(DateTime.now(), SubmissionStatus.failure));
         emit(SubmissionStatus.failure);
+        Notify.showError("$ex");
       }
     });
   }

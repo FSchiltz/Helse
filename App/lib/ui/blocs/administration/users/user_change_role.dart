@@ -68,7 +68,7 @@ class _ChangeRoleState extends State<ChangeRole> {
 
       Notify.show("Updated Successfully");
     } catch (ex) {
-      Notify.show("Error: $ex");
+      Notify.showError("$ex");
     }
   }
 }

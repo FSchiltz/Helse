@@ -275,7 +275,7 @@ class _LoginState extends State<LoginPage> {
         );
       }
     } else {
-      Notify.show('Server not ready');
+      Notify.showError('Server not ready');
       DI.authentication.logOut();
     }
   }

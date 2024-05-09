@@ -60,7 +60,7 @@ class _EventWidgetState extends State<EventWidget> {
       _events?.sort(_sort);
       return _events;
     } catch (ex) {
-      Notify.show("Error: $ex");
+      Notify.showError("$ex");
     }
     return _events;
   }
