@@ -8,8 +8,14 @@ namespace Api.Models;
 /// </summary>
 public enum FileTypes
 {
+    /// <summary>
+    /// Manually added data
+    /// </summary>
     None = 0,
 
     [Description("Redmi watch fitness file")]
     RedmiWatch,
+
+    [Description("Data from health connect on android")]
+    GoogleHealthConnect,
 }

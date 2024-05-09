@@ -9,6 +9,11 @@ class Account {
   static const grant = "grant";
   static const redirect = "redirect";
   static const refresh = "refresh";
+  static const fitRun = "fitLastRun";
+  static const theme = 'theme';
+  static const health = 'health';
+  static const metrics = 'metrics';
+  static const events = 'events';
 
   Future<String?> get(String name) async {
     return (await storage).getString(name);
@@ -20,5 +25,18 @@ class Account {
 
   Future<void> remove(String name) async {
     await (await storage).remove(name);
+  }
+
+  Future<void> clean() async {
+    var s = await storage;
+    await s.remove(token);
+    await s.remove(grant);
+    await s.remove(redirect);
+    await s.remove(refresh);
+    await s.remove(fitRun);
+    await s.remove(theme);
+    await s.remove(health);
+    await s.remove(metrics);
+    await s.remove(events);
   }
 }

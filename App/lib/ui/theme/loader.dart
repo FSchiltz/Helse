@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class HelseLoader extends StatefulWidget {
-  const HelseLoader({super.key});
+  final bool static;
+  final Color? color;
+
+  const HelseLoader({super.key, this.static = false, this.color});
 
   @override
   State<HelseLoader> createState() => HelseLoaderState();
@@ -31,19 +34,18 @@ class HelseLoaderState extends State<HelseLoader> with SingleTickerProviderState
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
+    var theme = widget.color ?? Theme.of(context).colorScheme.secondary;
     return Container(
         alignment: Alignment.center,
         child: FadeTransition(
           opacity: TweenSequence([
             TweenSequenceItem<double>(
-              tween: Tween<double>(begin: 0, end: 1).chain(CurveTween(curve: Curves.easeInOut)),
+              tween: Tween<double>(begin: widget.static ? 1 : 0, end:  1).chain(CurveTween(curve: Curves.easeInOut)),
               weight: 1,
-            ),            
+            ),
           ]).animate(controller),
-          
           child: IconButton(
-            color: theme.secondary,
+            color: theme,
             icon: const Icon(Icons.favorite),
             iconSize: 40,
             onPressed: () {},

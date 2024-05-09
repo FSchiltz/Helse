@@ -27,7 +27,7 @@ public interface IHealthContext : IContext
     Task<List<Event>> GetEvents(long id, Api.Models.RightType view, DateTime start, DateTime end);
     Task<List<Event>> GetEvents(long id, DateTime start, DateTime end);
     Task<bool> ExistsEvent(long person, string tag);
-    Task<bool> ExistsMetric(long person, string tag);
+    Task<bool> ExistsMetric(long person, string tag, Api.Models.FileTypes source);
 }
 
 public class HealthContext(DataConnection db) : IHealthContext
@@ -151,6 +151,7 @@ public class HealthContext(DataConnection db) : IHealthContext
             Tag = metric.Tag,
             UserId = user,
             Type = metric.Type,
+            Source = (int)metric.Source,
         });
     }
 
@@ -177,5 +178,6 @@ public class HealthContext(DataConnection db) : IHealthContext
 
     public Task<bool> ExistsEvent(long person, string tag) => db.GetTable<Event>().AnyAsync(x => x.PersonId == person && x.Tag == tag);
 
-    public Task<bool> ExistsMetric(long person, string tag) => db.GetTable<Metric>().AnyAsync(x => x.PersonId == person && x.Tag == tag);
+    public Task<bool> ExistsMetric(long person, string tag, Api.Models.FileTypes source)
+    => db.GetTable<Metric>().AnyAsync(x => x.PersonId == person && x.Tag == tag && x.Source == (int)source);
 }

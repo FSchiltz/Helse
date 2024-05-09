@@ -59,6 +59,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   bloc: ^8.1.4
+  health: ^10.2.0
+  permission_handler: ^11.3.1
 
 dev_dependencies:
   flutter_test:

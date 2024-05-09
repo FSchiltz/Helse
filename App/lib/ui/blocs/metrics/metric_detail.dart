@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/metric_helper.dart';
 import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
 
 import '../../../helpers/date.dart';
@@ -32,8 +33,12 @@ class MetricDetailPage extends StatelessWidget {
               )
             : (type.type == MetricDataType.text
                 ? ListView(
-                  children: metrics.map((metric) => Text(metric.$value ?? "")).toList(),
-                )
+                    children: metrics
+                        .map((metric) => Row(
+                              children: [Text(metric.$value ?? ''), Text(MetricHelper.getMetricText(metric))],
+                            ))
+                        .toList(),
+                  )
                 : MetricGraph(metrics, date)),
       )),
     );
@@ -139,9 +144,8 @@ class MetricGraph extends StatelessWidget {
     var theme = Theme.of(context).textTheme.labelSmall!;
     for (var touch in touchedSpots) {
       var metric = metrics[touch.spotIndex];
-      var tag = metric.$value ?? '';
+      var tag = '${metric.$value}:  ${MetricHelper.getMetricText(metric)}';
 
-      if (metric.tag != null) tag += ' (${metric.tag})';
       list.add(LineTooltipItem(tag, theme));
     }
     return list;

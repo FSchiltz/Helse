@@ -37,8 +37,8 @@ class _EventAddState extends State<EventAdd> {
 
         try {
           var metric = CreateEvent(
-              start: _start,
-              stop: _stop,
+              start: _start.toUtc(),
+              stop: _stop.toUtc(),
               type: widget.type.id,
               description: _description);
           await event.addEvents(metric, person: widget.person);

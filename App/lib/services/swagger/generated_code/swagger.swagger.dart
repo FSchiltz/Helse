@@ -9,6 +9,7 @@ import 'package:chopper/chopper.dart';
 import 'client_mapping.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart' show MultipartFile;
 import 'package:chopper/chopper.dart' as chopper;
 import 'swagger.enums.swagger.dart' as enums;
 export 'swagger.enums.swagger.dart';
@@ -217,6 +218,18 @@ abstract class Swagger extends ChopperService {
     @Path('type') required int? type,
     @Body() required String? body,
   });
+
+  ///
+  Future<chopper.Response> apiImportPost({required ImportData? body}) {
+    return _apiImportPost(body: body);
+  }
+
+  ///
+  @Post(
+    path: '/api/import',
+    optionalBody: true,
+  )
+  Future<chopper.Response> _apiImportPost({@Body() required ImportData? body});
 
   ///
   ///@param type
@@ -686,6 +699,7 @@ class CreateMetric {
     this.$value,
     this.tag,
     this.type,
+    this.source,
   });
 
   factory CreateMetric.fromJson(Map<String, dynamic> json) =>
@@ -702,6 +716,12 @@ class CreateMetric {
   final String? tag;
   @JsonKey(name: 'type')
   final int? type;
+  @JsonKey(
+    name: 'source',
+    toJson: fileTypesNullableToJson,
+    fromJson: fileTypesNullableFromJson,
+  )
+  final enums.FileTypes? source;
   static const fromJsonFactory = _$CreateMetricFromJson;
 
   @override
@@ -715,7 +735,9 @@ class CreateMetric {
             (identical(other.tag, tag) ||
                 const DeepCollectionEquality().equals(other.tag, tag)) &&
             (identical(other.type, type) ||
-                const DeepCollectionEquality().equals(other.type, type)));
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.source, source) ||
+                const DeepCollectionEquality().equals(other.source, source)));
   }
 
   @override
@@ -727,29 +749,37 @@ class CreateMetric {
       const DeepCollectionEquality().hash($value) ^
       const DeepCollectionEquality().hash(tag) ^
       const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(source) ^
       runtimeType.hashCode;
 }
 
 extension $CreateMetricExtension on CreateMetric {
   CreateMetric copyWith(
-      {DateTime? date, String? $value, String? tag, int? type}) {
+      {DateTime? date,
+      String? $value,
+      String? tag,
+      int? type,
+      enums.FileTypes? source}) {
     return CreateMetric(
         date: date ?? this.date,
         $value: $value ?? this.$value,
         tag: tag ?? this.tag,
-        type: type ?? this.type);
+        type: type ?? this.type,
+        source: source ?? this.source);
   }
 
   CreateMetric copyWithWrapped(
       {Wrapped<DateTime?>? date,
       Wrapped<String?>? $value,
       Wrapped<String?>? tag,
-      Wrapped<int?>? type}) {
+      Wrapped<int?>? type,
+      Wrapped<enums.FileTypes?>? source}) {
     return CreateMetric(
         date: (date != null ? date.value : this.date),
         $value: ($value != null ? $value.value : this.$value),
         tag: (tag != null ? tag.value : this.tag),
-        type: (type != null ? type.value : this.type));
+        type: (type != null ? type.value : this.type),
+        source: (source != null ? source.value : this.source));
   }
 }
 
@@ -1095,15 +1125,72 @@ extension $FileTypeExtension on FileType {
 }
 
 @JsonSerializable(explicitToJson: true)
+class ImportData {
+  const ImportData({
+    this.metrics,
+    this.events,
+  });
+
+  factory ImportData.fromJson(Map<String, dynamic> json) =>
+      _$ImportDataFromJson(json);
+
+  static const toJsonFactory = _$ImportDataToJson;
+  Map<String, dynamic> toJson() => _$ImportDataToJson(this);
+
+  @JsonKey(name: 'metrics', defaultValue: <CreateMetric>[])
+  final List<CreateMetric>? metrics;
+  @JsonKey(name: 'events', defaultValue: <CreateEvent>[])
+  final List<CreateEvent>? events;
+  static const fromJsonFactory = _$ImportDataFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is ImportData &&
+            (identical(other.metrics, metrics) ||
+                const DeepCollectionEquality()
+                    .equals(other.metrics, metrics)) &&
+            (identical(other.events, events) ||
+                const DeepCollectionEquality().equals(other.events, events)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(metrics) ^
+      const DeepCollectionEquality().hash(events) ^
+      runtimeType.hashCode;
+}
+
+extension $ImportDataExtension on ImportData {
+  ImportData copyWith(
+      {List<CreateMetric>? metrics, List<CreateEvent>? events}) {
+    return ImportData(
+        metrics: metrics ?? this.metrics, events: events ?? this.events);
+  }
+
+  ImportData copyWithWrapped(
+      {Wrapped<List<CreateMetric>?>? metrics,
+      Wrapped<List<CreateEvent>?>? events}) {
+    return ImportData(
+        metrics: (metrics != null ? metrics.value : this.metrics),
+        events: (events != null ? events.value : this.events));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class Metric {
   const Metric({
-    this.id,
-    this.person,
-    this.user,
     this.date,
     this.$value,
     this.tag,
     this.type,
+    this.source,
+    this.id,
+    this.person,
+    this.user,
   });
 
   factory Metric.fromJson(Map<String, dynamic> json) => _$MetricFromJson(json);
@@ -1111,12 +1198,6 @@ class Metric {
   static const toJsonFactory = _$MetricToJson;
   Map<String, dynamic> toJson() => _$MetricToJson(this);
 
-  @JsonKey(name: 'id')
-  final int? id;
-  @JsonKey(name: 'person')
-  final int? person;
-  @JsonKey(name: 'user')
-  final int? user;
   @JsonKey(name: 'date')
   final DateTime? date;
   @JsonKey(name: 'value')
@@ -1125,18 +1206,24 @@ class Metric {
   final String? tag;
   @JsonKey(name: 'type')
   final int? type;
+  @JsonKey(
+    name: 'source',
+    toJson: fileTypesNullableToJson,
+    fromJson: fileTypesNullableFromJson,
+  )
+  final enums.FileTypes? source;
+  @JsonKey(name: 'id')
+  final int? id;
+  @JsonKey(name: 'person')
+  final int? person;
+  @JsonKey(name: 'user')
+  final int? user;
   static const fromJsonFactory = _$MetricFromJson;
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is Metric &&
-            (identical(other.id, id) ||
-                const DeepCollectionEquality().equals(other.id, id)) &&
-            (identical(other.person, person) ||
-                const DeepCollectionEquality().equals(other.person, person)) &&
-            (identical(other.user, user) ||
-                const DeepCollectionEquality().equals(other.user, user)) &&
             (identical(other.date, date) ||
                 const DeepCollectionEquality().equals(other.date, date)) &&
             (identical(other.$value, $value) ||
@@ -1144,7 +1231,15 @@ class Metric {
             (identical(other.tag, tag) ||
                 const DeepCollectionEquality().equals(other.tag, tag)) &&
             (identical(other.type, type) ||
-                const DeepCollectionEquality().equals(other.type, type)));
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.source, source) ||
+                const DeepCollectionEquality().equals(other.source, source)) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.person, person) ||
+                const DeepCollectionEquality().equals(other.person, person)) &&
+            (identical(other.user, user) ||
+                const DeepCollectionEquality().equals(other.user, user)));
   }
 
   @override
@@ -1152,51 +1247,56 @@ class Metric {
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(id) ^
-      const DeepCollectionEquality().hash(person) ^
-      const DeepCollectionEquality().hash(user) ^
       const DeepCollectionEquality().hash(date) ^
       const DeepCollectionEquality().hash($value) ^
       const DeepCollectionEquality().hash(tag) ^
       const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(source) ^
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(person) ^
+      const DeepCollectionEquality().hash(user) ^
       runtimeType.hashCode;
 }
 
 extension $MetricExtension on Metric {
   Metric copyWith(
-      {int? id,
-      int? person,
-      int? user,
-      DateTime? date,
+      {DateTime? date,
       String? $value,
       String? tag,
-      int? type}) {
+      int? type,
+      enums.FileTypes? source,
+      int? id,
+      int? person,
+      int? user}) {
     return Metric(
-        id: id ?? this.id,
-        person: person ?? this.person,
-        user: user ?? this.user,
         date: date ?? this.date,
         $value: $value ?? this.$value,
         tag: tag ?? this.tag,
-        type: type ?? this.type);
+        type: type ?? this.type,
+        source: source ?? this.source,
+        id: id ?? this.id,
+        person: person ?? this.person,
+        user: user ?? this.user);
   }
 
   Metric copyWithWrapped(
-      {Wrapped<int?>? id,
-      Wrapped<int?>? person,
-      Wrapped<int?>? user,
-      Wrapped<DateTime?>? date,
+      {Wrapped<DateTime?>? date,
       Wrapped<String?>? $value,
       Wrapped<String?>? tag,
-      Wrapped<int?>? type}) {
+      Wrapped<int?>? type,
+      Wrapped<enums.FileTypes?>? source,
+      Wrapped<int?>? id,
+      Wrapped<int?>? person,
+      Wrapped<int?>? user}) {
     return Metric(
-        id: (id != null ? id.value : this.id),
-        person: (person != null ? person.value : this.person),
-        user: (user != null ? user.value : this.user),
         date: (date != null ? date.value : this.date),
         $value: ($value != null ? $value.value : this.$value),
         tag: (tag != null ? tag.value : this.tag),
-        type: (type != null ? type.value : this.type));
+        type: (type != null ? type.value : this.type),
+        source: (source != null ? source.value : this.source),
+        id: (id != null ? id.value : this.id),
+        person: (person != null ? person.value : this.person),
+        user: (user != null ? user.value : this.user));
   }
 }
 
@@ -2091,6 +2191,68 @@ extension $TreatementExtension on Treatement {
         events: (events != null ? events.value : this.events),
         type: (type != null ? type.value : this.type));
   }
+}
+
+int? fileTypesNullableToJson(enums.FileTypes? fileTypes) {
+  return fileTypes?.value;
+}
+
+int? fileTypesToJson(enums.FileTypes fileTypes) {
+  return fileTypes.value;
+}
+
+enums.FileTypes fileTypesFromJson(
+  Object? fileTypes, [
+  enums.FileTypes? defaultValue,
+]) {
+  return enums.FileTypes.values.firstWhereOrNull((e) => e.value == fileTypes) ??
+      defaultValue ??
+      enums.FileTypes.swaggerGeneratedUnknown;
+}
+
+enums.FileTypes? fileTypesNullableFromJson(
+  Object? fileTypes, [
+  enums.FileTypes? defaultValue,
+]) {
+  if (fileTypes == null) {
+    return null;
+  }
+  return enums.FileTypes.values.firstWhereOrNull((e) => e.value == fileTypes) ??
+      defaultValue;
+}
+
+String fileTypesExplodedListToJson(List<enums.FileTypes>? fileTypes) {
+  return fileTypes?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<int> fileTypesListToJson(List<enums.FileTypes>? fileTypes) {
+  if (fileTypes == null) {
+    return [];
+  }
+
+  return fileTypes.map((e) => e.value!).toList();
+}
+
+List<enums.FileTypes> fileTypesListFromJson(
+  List? fileTypes, [
+  List<enums.FileTypes>? defaultValue,
+]) {
+  if (fileTypes == null) {
+    return defaultValue ?? [];
+  }
+
+  return fileTypes.map((e) => fileTypesFromJson(e.toString())).toList();
+}
+
+List<enums.FileTypes>? fileTypesNullableListFromJson(
+  List? fileTypes, [
+  List<enums.FileTypes>? defaultValue,
+]) {
+  if (fileTypes == null) {
+    return defaultValue;
+  }
+
+  return fileTypes.map((e) => fileTypesFromJson(e.toString())).toList();
 }
 
 int? metricDataTypeNullableToJson(enums.MetricDataType? metricDataType) {

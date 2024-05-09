@@ -202,7 +202,7 @@ class _LoginState extends State<LoginPage> {
     });
 
     try {
-      var isInit = await DI.helper?.isInit(url);
+      var isInit = await DI.helper.isInit(url);
       
       setState(() {
           _initStatus = isInit;

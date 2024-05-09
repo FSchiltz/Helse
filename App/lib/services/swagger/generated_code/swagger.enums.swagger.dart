@@ -1,4 +1,21 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:collection/collection.dart';
+
+enum FileTypes {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue(0)
+  none(0),
+  @JsonValue(1)
+  redmiwatch(1),
+  @JsonValue(2)
+  googlehealthconnect(2);
+
+  final int? value;
+
+  const FileTypes(this.value);
+}
 
 enum MetricDataType {
   @JsonValue(null)

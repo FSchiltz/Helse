@@ -173,6 +173,19 @@ final class _$Swagger extends Swagger {
   }
 
   @override
+  Future<Response<dynamic>> _apiImportPost({required ImportData? body}) {
+    final Uri $url = Uri.parse('/api/import');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
   Future<Response<List<Metric>>> _apiMetricsGet({
     required int? type,
     required DateTime? start,

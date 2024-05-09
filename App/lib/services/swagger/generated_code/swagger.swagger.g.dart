@@ -45,6 +45,7 @@ CreateMetric _$CreateMetricFromJson(Map<String, dynamic> json) => CreateMetric(
       $value: json['value'] as String?,
       tag: json['tag'] as String?,
       type: (json['type'] as num?)?.toInt(),
+      source: fileTypesNullableFromJson(json['source']),
     );
 
 Map<String, dynamic> _$CreateMetricToJson(CreateMetric instance) =>
@@ -53,6 +54,7 @@ Map<String, dynamic> _$CreateMetricToJson(CreateMetric instance) =>
       'value': instance.$value,
       'tag': instance.tag,
       'type': instance.type,
+      'source': fileTypesNullableToJson(instance.source),
     };
 
 CreateTreatment _$CreateTreatmentFromJson(Map<String, dynamic> json) =>
@@ -127,25 +129,44 @@ Map<String, dynamic> _$FileTypeToJson(FileType instance) => <String, dynamic>{
       'name': instance.name,
     };
 
+ImportData _$ImportDataFromJson(Map<String, dynamic> json) => ImportData(
+      metrics: (json['metrics'] as List<dynamic>?)
+              ?.map((e) => CreateMetric.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      events: (json['events'] as List<dynamic>?)
+              ?.map((e) => CreateEvent.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$ImportDataToJson(ImportData instance) =>
+    <String, dynamic>{
+      'metrics': instance.metrics?.map((e) => e.toJson()).toList(),
+      'events': instance.events?.map((e) => e.toJson()).toList(),
+    };
+
 Metric _$MetricFromJson(Map<String, dynamic> json) => Metric(
-      id: (json['id'] as num?)?.toInt(),
-      person: (json['person'] as num?)?.toInt(),
-      user: (json['user'] as num?)?.toInt(),
       date:
           json['date'] == null ? null : DateTime.parse(json['date'] as String),
       $value: json['value'] as String?,
       tag: json['tag'] as String?,
       type: (json['type'] as num?)?.toInt(),
+      source: fileTypesNullableFromJson(json['source']),
+      id: (json['id'] as num?)?.toInt(),
+      person: (json['person'] as num?)?.toInt(),
+      user: (json['user'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$MetricToJson(Metric instance) => <String, dynamic>{
-      'id': instance.id,
-      'person': instance.person,
-      'user': instance.user,
       'date': instance.date?.toIso8601String(),
       'value': instance.$value,
       'tag': instance.tag,
       'type': instance.type,
+      'source': fileTypesNullableToJson(instance.source),
+      'id': instance.id,
+      'person': instance.person,
+      'user': instance.user,
     };
 
 MetricType _$MetricTypeFromJson(Map<String, dynamic> json) => MetricType(

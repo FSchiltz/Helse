@@ -355,6 +355,31 @@
         }
       }
     },
+    "/api/import": {
+      "post": {
+        "tags": [
+          "ImportLogic"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/api/metrics": {
       "get": {
         "tags": [
@@ -1035,6 +1060,9 @@
           "type": {
             "type": "integer",
             "format": "int64"
+          },
+          "source": {
+            "$ref": "#/components/schemas/FileTypes"
           }
         },
         "additionalProperties": false
@@ -1148,21 +1176,44 @@
         },
         "additionalProperties": false
       },
+      "FileTypes": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "description": "\n\n0 = None\n\n1 = RedmiWatch\n\n2 = GoogleHealthConnect",
+        "format": "int32",
+        "x-enumNames": [
+          "None",
+          "RedmiWatch",
+          "GoogleHealthConnect"
+        ]
+      },
+      "ImportData": {
+        "type": "object",
+        "properties": {
+          "metrics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateMetric"
+            },
+            "nullable": true
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateEvent"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Metric": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "person": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "user": {
-            "type": "integer",
-            "format": "int64"
-          },
           "date": {
             "type": "string",
             "format": "date-time"
@@ -1176,6 +1227,21 @@
             "nullable": true
           },
           "type": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "source": {
+            "$ref": "#/components/schemas/FileTypes"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "person": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "user": {
             "type": "integer",
             "format": "int64"
           }

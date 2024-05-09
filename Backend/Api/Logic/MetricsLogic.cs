@@ -32,6 +32,7 @@ public static class MetricsLogic
             Type = x.Type,
             Tag = x.Tag,
             User = x.UserId,
+            Source = (FileTypes)x.Source,
         }));
     }
 
