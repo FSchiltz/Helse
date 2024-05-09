@@ -51,7 +51,7 @@ class WidgetGraph extends StatelessWidget {
       if (metric.date == null) continue;
 
       // calculate the spot
-      var hour = _hourBetween(first, metric.date!);
+      var hour = _hourBetween(first, metric.date!.toLocal());
       var key = hour ~/ period;
       var spot = groups[key];
       if (spot == null) {
