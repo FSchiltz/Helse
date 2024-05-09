@@ -124,7 +124,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     return [
       Text("Metrics", style: Theme.of(context).textTheme.headlineSmall),
       const SizedBox(height: 20),
-      OrderedList(_metrics),
+      OrderedList(_metrics, withGraph: true),
     ];
   }
 
