@@ -45,7 +45,7 @@ class _EventsGridState extends State<EventsGrid> {
         SettingsLogic.updateEvents(model);
       }
     } catch (ex) {
-      Notify.show("Error: $ex");
+      Notify.showError("$ex");
     }
   }
 

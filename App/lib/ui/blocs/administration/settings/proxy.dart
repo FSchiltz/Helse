@@ -160,7 +160,7 @@ class _ProxyFormViewState extends State<ProxyFormView> {
         widget.callback();
       }
     } catch (ex) {
-      Notify.show("Error: $ex");
+      Notify.showError("$ex");
     }
   }
 }

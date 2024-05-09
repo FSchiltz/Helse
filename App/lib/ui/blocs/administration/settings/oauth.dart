@@ -207,7 +207,7 @@ class _OauthFormViewState extends State<OauthFormView> {
         widget.callback();
       }
     } catch (ex) {
-      Notify.show("Error: $ex");
+      Notify.showError("$ex");
     }
   }
 }

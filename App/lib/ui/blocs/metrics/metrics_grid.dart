@@ -43,7 +43,7 @@ class _MetricsGridState extends State<MetricsGrid> {
         SettingsLogic.updateMetrics(model);
       }
     } catch (ex) {
-      Notify.show("Error: $ex");
+      Notify.showError("$ex");
     }
   }
 

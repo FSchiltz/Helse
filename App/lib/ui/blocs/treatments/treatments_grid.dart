@@ -33,7 +33,7 @@ class _TreatmentsGridState extends State<TreatmentsGrid> {
           await DI.treatement?.treatments(start, end, person: widget.person);
       return _treatments;
     } catch (ex) {
-      Notify.show("Error: $ex");
+      Notify.showError("$ex");
     }
     return _treatments;
   }
