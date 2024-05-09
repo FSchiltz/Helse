@@ -17,29 +17,58 @@ class OrderedList extends StatelessWidget {
       physics: const BouncingScrollPhysics(),
       children: items
           .map((item) => Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Row(children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: Text('${item.name} :', style: theme.textTheme.titleLarge),
-                  ),
-                  Text("Visible: ", style: theme.textTheme.bodyMedium),
-                  _StatefullCheck(item),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0, right: 8.0),
-                    child: Text("Graph type", style: theme.textTheme.bodyMedium),
-                  ),
-                  SizedBox(
-                    width: 160,
-                    height: 45,
-                    child: TypeInput(
-                      GraphKind.values,
-                      (value) => item.graph = value ?? item.graph,
-                      label: 'Type',
+                padding: const EdgeInsets.all(4.0),
+                child: Column(
+                  children: [
+                    Row(children: [Text(item.name, style: theme.textTheme.titleLarge)]),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(children: [
+                        Text("Visible: ", style: theme.textTheme.bodyLarge),
+                        _StatefullCheck(item),
+                      ]),
                     ),
-                  ),
-                ]),
-          ))
+                    if (withGraph)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Text("Graph type", style: theme.textTheme.bodyLarge),
+                          ),
+                          SizedBox(
+                            width: 160,
+                            height: 45,
+                            child: TypeInput(
+                              GraphKind.values,
+                              (value) => item.graph = value ?? item.graph,
+                              label: 'Type',
+                            ),
+                          ),
+                        ]),
+                      ),
+                    if (withGraph)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Text("Detail graph type", style: theme.textTheme.bodyLarge),
+                          ),
+                          SizedBox(
+                            width: 160,
+                            height: 45,
+                            child: TypeInput(
+                              GraphKind.values,
+                              (value) => item.graph = value ?? item.graph,
+                              label: 'Type',
+                            ),
+                          ),
+                        ]),
+                      ),
+                  ],
+                ),
+              ))
           .toList(),
     );
   }
