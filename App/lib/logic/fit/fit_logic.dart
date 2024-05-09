@@ -8,8 +8,6 @@ import 'package:permission_handler/permission_handler.dart';
 import '../d_i.dart';
 
 class FitLogic {
-  static int fitValue = 2;
-
   Account account;
   FitLogic(this.account);
 

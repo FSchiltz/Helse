@@ -219,5 +219,10 @@ public static class Endpoints
         .Produces((int)HttpStatusCode.NoContent)
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
+
+        import.MapPost("/", ImportLogic.PostListAsync)
+            .Produces((int)HttpStatusCode.NoContent)
+            .Produces((int)HttpStatusCode.Unauthorized)
+            .WithOpenApi();
     }
 }
