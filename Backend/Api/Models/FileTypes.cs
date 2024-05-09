@@ -12,4 +12,7 @@ public enum FileTypes
 
     [Description("Redmi watch fitness file")]
     RedmiWatch,
+
+    [Description("Data from health connect on android")]
+    GoogleHealthConnect,
 }

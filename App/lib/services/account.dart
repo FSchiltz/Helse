@@ -9,6 +9,7 @@ class Account {
   static const grant = "grant";
   static const redirect = "redirect";
   static const refresh = "refresh";
+  static const fitRun = "fitLastRun";
 
   Future<String?> get(String name) async {
     return (await storage).getString(name);

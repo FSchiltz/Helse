@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:helse/logic/fit/fit_logic.dart';
 import 'package:helse/logic/settings/events_settings.dart';
 import 'package:helse/logic/settings/health_settings.dart';
 import 'package:helse/logic/settings/metrics_settings.dart';
@@ -73,34 +74,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
                         const SizedBox(height: 10),
                         ...general(theme),
                         const SizedBox(height: 40),
-                        Text("Sync Health", style: Theme.of(context).textTheme.headlineLarge),
-                        const SizedBox(height: 10),
-                        SizedBox(
-                          height: 50,
-                          child: Expanded(
-                            child: Row(
-                              children: [
-                                const Text("Enable"),
-                                CustomSwitch(
-                                    value: _healthEnabled,
-                                    onChanged: (bool? value) {
-                                      setState(() {
-                                        _healthEnabled = value!;
-                                        _submit();
-
-                                        // Stop or start 
-                                        if(value) {
-                                          DI.fit.start();
-                                        }else 
-                                        {
-                                          DI.fit.cancel();
-                                        }
-                                      });
-                                    })
-                              ],
-                            ),
-                          ),
-                        ),
+                        ...syncHealth(theme),
                         const SizedBox(height: 40),
                         Text('Dashboard', style: Theme.of(context).textTheme.headlineLarge),
                         const SizedBox(height: 10),
@@ -192,5 +166,41 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
 
     // apply the theme
     AppView.of(context).changeTheme(value);
+  }
+
+  List<Widget> syncHealth(ColorScheme theme) {
+    if (FitLogic.isSupported()) {
+      return [
+        Text("Sync Health", style: Theme.of(context).textTheme.headlineLarge),
+        const SizedBox(height: 10),
+        SizedBox(
+          height: 50,
+          child: Expanded(
+            child: Row(
+              children: [
+                const Text("Enable"),
+                CustomSwitch(
+                    value: _healthEnabled,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _healthEnabled = value!;
+                        _submit();
+
+                        // Stop or start
+                        if (value) {
+                          DI.fit.start();
+                        } else {
+                          DI.fit.cancel();
+                        }
+                      });
+                    })
+              ],
+            ),
+          ),
+        ),
+      ];
+    } else {
+      return [];
+    }
   }
 }
