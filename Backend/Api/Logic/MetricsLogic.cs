@@ -26,7 +26,7 @@ public static class MetricsLogic
         return TypedResults.Ok(metrics.Select(x => new Metric
         {
             Value = x.Value,
-            Date = x.Date,
+            Date = DateTime.SpecifyKind(x.Date, DateTimeKind.Utc),
             Id = x.Id,
             Person = user.PersonId,
             Type = x.Type,

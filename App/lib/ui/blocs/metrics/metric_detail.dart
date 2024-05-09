@@ -66,74 +66,82 @@ class MetricGraph extends StatelessWidget {
     return spots;
   }
 
-  double _getInterval(DateTimeRange date, BoxConstraints constraints) {
+  double _getInterval(DateTimeRange date) {
     var epoch = date.end.millisecondsSinceEpoch - date.start.millisecondsSinceEpoch;
-    return epoch / (constraints.maxWidth / 200);
+    return epoch / (1000 * 60) * 2;
   }
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
-    return LayoutBuilder(
-      builder: (x, constraints) => LineChart(
-        LineChartData(
-          minX: date.start.millisecondsSinceEpoch.toDouble(),
-          maxX: date.end.millisecondsSinceEpoch.toDouble(),
-          minY: 0,
-          lineTouchData: LineTouchData(
-            enabled: true,
-            touchTooltipData: LineTouchTooltipData(
-              getTooltipItems: (touchedSpots) => _getToolTip(touchedSpots, context),
+    var width = _getInterval(date);
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: SizedBox(
+        //height: 50,
+        width: width,
+        child: LineChart(
+          LineChartData(
+            minX: date.start.millisecondsSinceEpoch.toDouble(),
+            maxX: date.end.millisecondsSinceEpoch.toDouble(),
+            minY: 0,
+            lineTouchData: LineTouchData(
+              enabled: true,
+              touchTooltipData: LineTouchTooltipData(
+                getTooltipItems: (touchedSpots) => _getToolTip(touchedSpots, context),
+              ),
             ),
-          ),
-          titlesData: FlTitlesData(
-            leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 50)),
-            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            bottomTitles: AxisTitles(
-                drawBelowEverything: true,
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  reservedSize: 60,
-                  interval: _getInterval(date, constraints),
-                  getTitlesWidget: (value, meta) {
-                    var time = DateTime.fromMillisecondsSinceEpoch(value.toInt(), isUtc: true);
-                    return SideTitleWidget(
-                      axisSide: meta.axisSide,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            DateHelper.formatDate(time, context: context),
-                            style: Theme.of(context).textTheme.labelMedium,
-                          ),
-                          Text(
-                            DateHelper.formatTime(time, context: context),
-                            style: Theme.of(context).textTheme.labelMedium,
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                )),
-            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          ),
-          borderData: FlBorderData(
-            show: false,
-          ),
-          gridData: const FlGridData(
-            show: true,
-            drawVerticalLine: false,
-          ),
-          lineBarsData: [
-            LineChartBarData(
-              spots: _getSpot(metrics),
-              color: theme.primary,
-              barWidth: 0,
-              isStrokeCapRound: true,
-              dotData: const FlDotData(show: true),
-              belowBarData: BarAreaData(show: false),
+            titlesData: FlTitlesData(
+              leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 50)),
+              rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              bottomTitles: AxisTitles(
+                  drawBelowEverything: true,
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 60,
+                    interval: 1000 * 60 * 60 * 2,
+                    getTitlesWidget: (value, meta) {
+                      var time = DateTime.fromMillisecondsSinceEpoch(value.toInt(), isUtc: true);
+                      return SideTitleWidget(
+                        axisSide: meta.axisSide,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              DateHelper.formatDate(time, context: context),
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                            Text(
+                              DateHelper.formatTime(time, context: context),
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  )),
+              topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
             ),
-          ],
+            borderData: FlBorderData(
+              show: false,
+            ),
+            gridData: const FlGridData(
+              show: true,
+              drawVerticalLine: false,
+            ),
+            lineBarsData: [
+              LineChartBarData(
+                spots: _getSpot(metrics),
+                color: theme.primary,
+                barWidth: 2,
+                isStrokeCapRound: true,
+                isCurved: true,
+                curveSmoothness: 0.01,
+                dotData: const FlDotData(show: true),
+                belowBarData: BarAreaData(show: true),
+              ),
+            ],
+          ),
         ),
       ),
     );

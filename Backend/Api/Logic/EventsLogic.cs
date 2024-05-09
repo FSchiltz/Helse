@@ -28,9 +28,9 @@ public static class EventsLogic
             Id = x.Id,
             Type = x.Type,
             Description = x.Description,
-            Stop = x.Stop,
+            Stop = DateTime.SpecifyKind(x.Stop, DateTimeKind.Utc),
             File = x.FileId,
-            Start = x.Start,
+            Start = DateTime.SpecifyKind(x.Start, DateTimeKind.Utc),
             Valid = x.Valid,
         });
 
