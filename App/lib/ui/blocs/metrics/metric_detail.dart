@@ -32,8 +32,8 @@ class MetricDetailPage extends StatelessWidget {
               )
             : (type.type == MetricDataType.text
                 ? ListView(
-                  children: metrics.map((metric) => Text(metric.$value ?? "")).toList(),
-                )
+                    children: metrics.map((metric) => Text(metric.$value ?? "")).toList(),
+                  )
                 : MetricGraph(metrics, date)),
       )),
     );
@@ -141,7 +141,11 @@ class MetricGraph extends StatelessWidget {
       var metric = metrics[touch.spotIndex];
       var tag = metric.$value ?? '';
 
-      if (metric.tag != null) tag += ' (${metric.tag})';
+      if (metric.tag != null) tag += ': ${metric.tag}';
+      if (metric.source != null && metric.source != FileTypes.none) {
+        tag += '(${metric.source?.name})';
+      }
+      
       list.add(LineTooltipItem(tag, theme));
     }
     return list;

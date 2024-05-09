@@ -92,7 +92,12 @@ class _MetricAddState extends State<MetricAdd> {
 
         try {
           var metric = CreateMetric(
-              date: _date, type: widget.type.id, tag: _tag, $value: _value);
+            date: _date,
+            type: widget.type.id,
+            tag: _tag,
+            $value: _value,
+            source: FileTypes.none,
+          );
           await DI.metric?.addMetrics(metric, person: widget.person);
 
           if (localContext.mounted) {
