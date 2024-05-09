@@ -174,27 +174,25 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
         const SizedBox(height: 10),
         SizedBox(
           height: 50,
-          child: Expanded(
-            child: Row(
-              children: [
-                const Text("Enable"),
-                CustomSwitch(
-                    value: _healthEnabled,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        _healthEnabled = value!;
-                        _submit();
-
-                        // Stop or start
-                        if (value) {
-                          DI.fit.start();
-                        } else {
-                          DI.fit.cancel();
-                        }
-                      });
-                    })
-              ],
-            ),
+          child: Row(
+            children: [
+              const Text("Enable"),
+              CustomSwitch(
+                  value: _healthEnabled,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _healthEnabled = value!;
+                      _submit();
+          
+                      // Stop or start
+                      if (value) {
+                        DI.fit.start();
+                      } else {
+                        DI.fit.cancel();
+                      }
+                    });
+                  })
+            ],
           ),
         ),
       ];
