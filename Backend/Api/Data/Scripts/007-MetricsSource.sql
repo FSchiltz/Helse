@@ -1,0 +1,2 @@
+ALTER TABLE health.MetricType ADD COLUMN source INT NOT NULL DEFAULT 0;
+

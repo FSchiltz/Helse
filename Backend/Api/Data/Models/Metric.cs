@@ -34,4 +34,7 @@ public class Metric
 
     [Association(ThisKey = nameof(Type), OtherKey = nameof(Data.Models.MetricType.Id))]
     public MetricType? MetricType { get; set; }
+
+    [Column]
+    public int Source { get; set; }
 }

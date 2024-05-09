@@ -74,6 +74,7 @@ public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) :
                         Value = weight.Weight,
                         Date = DateTimeOffset.FromUnixTimeSeconds(weight.Time ?? weight.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Wheight,
+                        Source = FileTypes.RedmiWatch,
                     });
                     break;
                 case Steps:
@@ -90,6 +91,7 @@ public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) :
                         Value = steps.Steps,
                         Date = DateTimeOffset.FromUnixTimeSeconds(steps.Time ?? steps.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Steps,
+                        Source = FileTypes.RedmiWatch,
                     });
                     break;
                 case Calories:
@@ -106,6 +108,7 @@ public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) :
                         Value = calorie.Calories,
                         Date = DateTimeOffset.FromUnixTimeSeconds(calorie.Time ?? calorie.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Calories,
+                        Source = FileTypes.RedmiWatch,
                     });
                     break;
                 case MaxHeart:
@@ -126,6 +129,7 @@ public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) :
                         Value = heart.Bpm,
                         Date = DateTimeOffset.FromUnixTimeSeconds(heart.Time ?? heart.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Heart,
+                        Source = FileTypes.RedmiWatch,
                     });
                     break;
                 case MaxSpo:
@@ -145,6 +149,7 @@ public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) :
                         Value = spo.Spo2,
                         Date = DateTimeOffset.FromUnixTimeSeconds(spo.Time ?? spo.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Oxygen,
+                        Source = FileTypes.RedmiWatch,
                     });
                     break;
                 default:

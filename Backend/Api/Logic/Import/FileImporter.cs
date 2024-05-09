@@ -41,7 +41,7 @@ public abstract class Importer(IHealthContext db, Data.Models.User user)
         await using var transaction = await db.BeginTransactionAsync();
 
         // check if the metric exists
-        var fromDb = await db.ExistsMetric(User.PersonId, metric.Tag);
+        var fromDb = await db.ExistsMetric(User.PersonId, metric.Tag, metric.Source);
 
         if (!fromDb)
         {
