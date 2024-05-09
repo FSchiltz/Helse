@@ -96,7 +96,7 @@ class _HomeState extends State<Home> {
                   style: theme.textTheme.headlineMedium?.copyWith(color: theme.colorScheme.onPrimaryContainer),
                 ),
               ),
-              Flexible(
+              Expanded(
                   child: Container(
                 constraints: const BoxConstraints(maxWidth: 220),
                 color: theme.colorScheme.onSecondary,
@@ -108,11 +108,11 @@ class _HomeState extends State<Home> {
                 child: BlocBuilder<TaskBloc, SubmissionStatus>(builder: (context, state) {
                   switch (state) {
                     case SubmissionStatus.success:
-                      return const HelseLoader(static: true, color: Colors.green);
+                      return const HelseLoader(static: true, color: Colors.green, size: 22,);
                     case SubmissionStatus.failure:
-                      return const HelseLoader(static: true, color: Colors.red);
+                      return const HelseLoader(static: true, color: Colors.red, size: 22,);
                     case SubmissionStatus.inProgress:
-                      return const HelseLoader();
+                      return const HelseLoader(size: 32,);
                     default:
                       return Container();
                   }
