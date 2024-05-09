@@ -219,6 +219,18 @@ abstract class Swagger extends ChopperService {
   });
 
   ///
+  Future<chopper.Response> apiImportPost({required ImportData? body}) {
+    return _apiImportPost(body: body);
+  }
+
+  ///
+  @Post(
+    path: '/api/import',
+    optionalBody: true,
+  )
+  Future<chopper.Response> _apiImportPost({@Body() required ImportData? body});
+
+  ///
   ///@param type
   ///@param start
   ///@param end
@@ -1091,6 +1103,62 @@ extension $FileTypeExtension on FileType {
     return FileType(
         type: (type != null ? type.value : this.type),
         name: (name != null ? name.value : this.name));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class ImportData {
+  const ImportData({
+    this.metrics,
+    this.events,
+  });
+
+  factory ImportData.fromJson(Map<String, dynamic> json) =>
+      _$ImportDataFromJson(json);
+
+  static const toJsonFactory = _$ImportDataToJson;
+  Map<String, dynamic> toJson() => _$ImportDataToJson(this);
+
+  @JsonKey(name: 'metrics', defaultValue: <CreateMetric>[])
+  final List<CreateMetric>? metrics;
+  @JsonKey(name: 'events', defaultValue: <CreateEvent>[])
+  final List<CreateEvent>? events;
+  static const fromJsonFactory = _$ImportDataFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is ImportData &&
+            (identical(other.metrics, metrics) ||
+                const DeepCollectionEquality()
+                    .equals(other.metrics, metrics)) &&
+            (identical(other.events, events) ||
+                const DeepCollectionEquality().equals(other.events, events)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(metrics) ^
+      const DeepCollectionEquality().hash(events) ^
+      runtimeType.hashCode;
+}
+
+extension $ImportDataExtension on ImportData {
+  ImportData copyWith(
+      {List<CreateMetric>? metrics, List<CreateEvent>? events}) {
+    return ImportData(
+        metrics: metrics ?? this.metrics, events: events ?? this.events);
+  }
+
+  ImportData copyWithWrapped(
+      {Wrapped<List<CreateMetric>?>? metrics,
+      Wrapped<List<CreateEvent>?>? events}) {
+    return ImportData(
+        metrics: (metrics != null ? metrics.value : this.metrics),
+        events: (events != null ? events.value : this.events));
   }
 }
 

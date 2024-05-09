@@ -29,7 +29,7 @@ class _FileImportState extends State<FileImport> {
   }
 
   void _getData() async {
-    var model = await DI.helper?.fileTypes();
+    var model = await DI.helper.fileTypes();
     if (model != null) {
       setState(() {
         types = model;
@@ -94,7 +94,7 @@ class _FileImportState extends State<FileImport> {
 
   void submit() async {
     var localContext = context;
-    if (DI.helper != null && selected != null) {
+    if (selected != null) {
       setState(() {
         status = SubmissionStatus.inProgress;
       });
@@ -102,7 +102,7 @@ class _FileImportState extends State<FileImport> {
       try {
         var content = await file?.readAsString();
         if (content == null) return;
-        await DI.helper?.import(content, selected!);
+        await DI.helper.import(content, selected!);
 
         setState(() {
           status = SubmissionStatus.success;

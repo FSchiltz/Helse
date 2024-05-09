@@ -4,7 +4,6 @@ import 'package:helse/logic/d_i.dart';
 import 'package:helse/logic/event.dart';
 import 'package:helse/logic/fit/task_bloc.dart';
 import 'package:helse/logic/settings/settings_logic.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../helpers/date.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';

@@ -5,7 +5,24 @@ import 'package:health/health.dart';
 import 'package:helse/services/account.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../services/swagger/generated_code/swagger.swagger.dart';
 import '../d_i.dart';
+
+enum MetricTypes {
+  none(0),
+  heart(1),
+  oxygen(2),
+  wheight(3),
+  height(4),
+  temperature(5),
+  steps(6),
+  calories(7),
+  distance(8);
+
+  final int? value;
+
+  const MetricTypes(this.value);
+}
 
 class FitLogic {
   Account account;
@@ -24,7 +41,9 @@ class FitLogic {
     if (start.compareTo(now) >= 0) return;
 
     // get the data
-    bool requested = await Health().requestAuthorization(dataTypeKeysAndroid);
+    var types = [HealthDataType.HEART_RATE];
+
+    bool requested = await Health().requestAuthorization(types);
     if (!requested) {
       throw Exception('Missing permissions');
     }
@@ -33,12 +52,13 @@ class FitLogic {
       var end = start.add(const Duration(days: 30));
 
       // fetch health data from the last 24 hours
-      List<HealthDataPoint> healthData = await Health().getHealthDataFromTypes(startTime: start, endTime: end, types: dataTypeKeysAndroid);
+      List<HealthDataPoint> healthData = await Health().getHealthDataFromTypes(startTime: start, endTime: end, types: types);
 
       // convert to import data
+      ImportData converted = _convert(healthData);
 
       // import to the server
-      //DI.helper.import(healthData, fitValue);
+      DI.helper.importData(converted);
 
       start = end;
       await account.set(Account.fitRun, start.toString());
@@ -58,5 +78,27 @@ class FitLogic {
 
   static bool isSupported() {
     return !kIsWeb && Platform.isAndroid;
+  }
+
+  ImportData _convert(List<HealthDataPoint> healthData) {
+    List<CreateMetric> metrics = [];
+
+    for (var point in healthData) {
+      switch (point.type) {
+        case HealthDataType.HEART_RATE:
+          metrics.add(CreateMetric(
+            date: point.dateFrom,
+            $value: _convertValue(point.value),
+            type: MetricTypes.heart.value,
+          ));
+        default:
+          break;
+      }
+    }
+    return ImportData(metrics: metrics);
+  }
+
+  String? _convertValue(HealthValue value) {
+    return "";
   }
 }

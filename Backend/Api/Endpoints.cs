@@ -210,15 +210,15 @@ public static class Endpoints
 
         /* Importer endpoint */
         var import = api.MapGroup("/import").RequireAuthorization();
-        import.MapGet("/types", ImportLogic.GetTypeAsync)
-        .Produces<List<FileType>>((int)HttpStatusCode.OK)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        import.MapGet("/types", ImportLogic.GetImportTypes)
+            .Produces<List<FileType>>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized)
+            .WithOpenApi();
 
         import.MapPost("/{type}", ImportLogic.PostFileAsync)
-        .Produces((int)HttpStatusCode.NoContent)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+            .Produces((int)HttpStatusCode.NoContent)
+            .Produces((int)HttpStatusCode.Unauthorized)
+            .WithOpenApi();
 
         import.MapPost("/", ImportLogic.PostListAsync)
             .Produces((int)HttpStatusCode.NoContent)

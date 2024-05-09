@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:helse/logic/fit/fit_logic.dart';
 import 'package:helse/logic/settings/events_settings.dart';
 import 'package:helse/logic/settings/health_settings.dart';
