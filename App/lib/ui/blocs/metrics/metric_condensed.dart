@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
+import 'package:helse/logic/settings/ordered_item.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 
@@ -10,8 +11,9 @@ class MetricCondensed extends StatelessWidget {
   final List<Metric> metrics;
   final MetricType type;
   final DateTimeRange date;
+  final OrderedItem settings;
 
-  const MetricCondensed(this.metrics, this.type, this.date, {super.key});
+  const MetricCondensed(this.metrics, this.type, this.settings, this.date, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,24 +23,26 @@ class MetricCondensed extends StatelessWidget {
           )
         : (type.type == MetricDataType.text
             ? ListView(
-              children: metrics.map((metric) => Text(metric.$value ?? "")).toList(),
-            )
-            : WidgetGraph(metrics, date));
+                children: metrics.map((metric) => Text(metric.$value ?? "")).toList(),
+              )
+            : WidgetGraph(metrics, date, type, settings));
   }
 }
 
 class WidgetGraph extends StatelessWidget {
   final List<Metric> metrics;
   final DateTimeRange date;
+  final MetricType type;
+  final OrderedItem settings;
   static const int valueCount = 24;
 
-  const WidgetGraph(this.metrics, this.date, {super.key});
+  const WidgetGraph(this.metrics, this.date, this.type, this.settings, {super.key});
 
   int _hourBetween(DateTime from, DateTime to) {
     return to.difference(from).inHours;
   }
 
-  List<BarChartGroupData> _getSpot(List<Metric> raw) {
+  List<FlSpot> _getSpot(List<Metric> raw) {
     // find the first and last
     var first = date.start;
     var last = date.end;
@@ -70,23 +74,38 @@ class WidgetGraph extends StatelessWidget {
       means.add(mean);
     }
 
-    // now we have the min and max Y and X value, we can build the spots
-    List<BarChartGroupData> spots = [];
+    List<FlSpot> spots = [];
 
     for (final (index, item) in means.indexed) {
       if (item != null) {
-        spots.add(BarChartGroupData(x: index, barRods: [BarChartRodData(toY: item)]));
+        spots.add(FlSpot(index.toDouble(), item));
       }
     }
 
     return spots;
   }
 
+  List<BarChartGroupData> _getBar(List<Metric> raw) {
+    var spots = _getSpot(raw);
+
+    // now we have the min and max Y and X value, we can build the spots
+    List<BarChartGroupData> bar = [];
+
+    for (final item in spots) {
+      bar.add(BarChartGroupData(x: item.x.toInt(), barRods: [BarChartRodData(toY: item.y)]));
+    }
+
+    return bar;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: BarChart(
+    return Padding(padding: const EdgeInsets.all(8.0), child: _getGraph());
+  }
+
+  Widget _getGraph() {
+    if (settings.graph == GraphKind.bar) {
+      return BarChart(
         BarChartData(
           barTouchData: BarTouchData(enabled: false),
           titlesData: const FlTitlesData(
@@ -99,9 +118,31 @@ class WidgetGraph extends StatelessWidget {
             show: false,
           ),
           gridData: const FlGridData(show: false),
-          barGroups: _getSpot(metrics),
+          barGroups: _getBar(metrics),
         ),
-      ),
-    );
+      );
+    } else {
+      return LineChart(LineChartData(
+        lineTouchData: const LineTouchData(enabled: false),
+        titlesData: const FlTitlesData(
+          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        ),
+        borderData: FlBorderData(
+          show: false,
+        ),
+        gridData: const FlGridData(show: false),
+        lineBarsData: [
+          LineChartBarData(
+            spots: _getSpot(metrics),
+            isCurved: true,
+            curveSmoothness: 0.2,
+            dotData: const FlDotData(show: false),
+          )
+        ],
+      ));
+    }
   }
 }

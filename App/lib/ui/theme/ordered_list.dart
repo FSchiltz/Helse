@@ -60,7 +60,7 @@ class OrderedList extends StatelessWidget {
                             height: 45,
                             child: TypeInput(
                               GraphKind.values,
-                              (value) => item.graph = value ?? item.graph,
+                              (value) => item.detailGraph = value ?? item.detailGraph,
                               label: 'Type',
                             ),
                           ),
