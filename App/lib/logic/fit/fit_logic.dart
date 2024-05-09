@@ -58,7 +58,9 @@ class FitLogic {
       ImportData converted = _convert(healthData);
 
       // import to the server
-      DI.helper.importData(converted);
+      if (converted.metrics?.isNotEmpty == true || converted.events?.isNotEmpty == true) {
+        DI.helper.importData(converted);
+      }
 
       start = end;
       await account.set(Account.fitRun, start.toString());
