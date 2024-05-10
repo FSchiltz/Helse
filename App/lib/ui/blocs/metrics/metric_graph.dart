@@ -5,14 +5,22 @@ import 'package:helse/helpers/metric_helper.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
 import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
 
-class MetricGraph extends StatelessWidget {
+class MetricGraph extends StatefulWidget {
   final List<Metric> metrics;
   final DateTimeRange date;
   final OrderedItem settings;
   static const int valueCount = 24;
-  final ScrollController _scrollController = ScrollController();
 
-  MetricGraph(this.metrics, this.date, this.settings, {super.key});
+  const MetricGraph(this.metrics, this.date, this.settings, {super.key});
+
+  @override
+  State<MetricGraph> createState() => _MetricGraphState();
+}
+
+class _MetricGraphState extends State<MetricGraph> {
+  final ScrollController _scrollController = ScrollController();
+  List<FlSpot> _spots = [];
+  double _width = 0;
 
   List<FlSpot> _getSpot(List<Metric> raw) {
     List<FlSpot> spots = [];
@@ -28,32 +36,21 @@ class MetricGraph extends StatelessWidget {
     return spots;
   }
 
-  List<BarChartGroupData> _getBar(List<Metric> raw) {
-    var spots = _getSpot(raw);
-
-    // now we have the min and max Y and X value, we can build the spots
-    List<BarChartGroupData> bar = [];
-
-    for (final item in spots) {
-      bar.add(BarChartGroupData(x: item.x.toInt(), barsSpace: 1, barRods: [
-        BarChartRodData(
-          toY: item.y,
-          width: 20,
-        )
-      ]));
-    }
-
-    return bar;
-  }
-
   double _getInterval(DateTimeRange date) {
     var epoch = date.end.millisecondsSinceEpoch - date.start.millisecondsSinceEpoch;
     return epoch / (1000 * 60) * 2;
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _spots = _getSpot(widget.metrics);
+    _width = _getInterval(widget.date);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    var width = _getInterval(date);
     return Scrollbar(
       interactive: true,
       controller: _scrollController,
@@ -63,7 +60,7 @@ class MetricGraph extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
           child: SizedBox(
-            width: width,
+            width: _width,
             child: _getGraph(context),
           ),
         ),
@@ -73,11 +70,11 @@ class MetricGraph extends StatelessWidget {
 
   Widget _getGraph(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
-    if (settings.detailGraph == GraphKind.line) {
+    if (widget.settings.detailGraph == GraphKind.line) {
       return LineChart(
         LineChartData(
-          minX: date.start.millisecondsSinceEpoch.toDouble(),
-          maxX: date.end.millisecondsSinceEpoch.toDouble(),
+          minX: widget.date.start.millisecondsSinceEpoch.toDouble(),
+          maxX: widget.date.end.millisecondsSinceEpoch.toDouble(),
           minY: 0,
           lineTouchData: LineTouchData(
             enabled: true,
@@ -125,7 +122,7 @@ class MetricGraph extends StatelessWidget {
           ),
           lineBarsData: [
             LineChartBarData(
-              spots: _getSpot(metrics),
+              spots: _spots,
               color: theme.primary,
               barWidth: 2,
               isStrokeCapRound: true,
@@ -165,7 +162,14 @@ class MetricGraph extends StatelessWidget {
             show: true,
             drawVerticalLine: false,
           ),
-          barGroups: _getBar(metrics),
+          barGroups: _spots
+              .map((spot) => BarChartGroupData(x: spot.x.toInt(), barsSpace: 1, barRods: [
+                    BarChartRodData(
+                      toY: spot.y,
+                      width: 20,
+                    )
+                  ]))
+              .toList(),
         ),
       );
     }
@@ -175,7 +179,7 @@ class MetricGraph extends StatelessWidget {
     List<LineTooltipItem> list = [];
     var theme = Theme.of(context).textTheme.labelSmall!;
     for (var touch in touchedSpots) {
-      var metric = metrics[touch.spotIndex];
+      var metric = widget.metrics[touch.spotIndex];
       var tag = '${metric.$value}:  ${MetricHelper.getMetricText(metric)}';
 
       list.add(LineTooltipItem(tag, theme));
@@ -185,7 +189,7 @@ class MetricGraph extends StatelessWidget {
 
   BarTooltipItem _getBarToolTip(int index, BuildContext context) {
     var theme = Theme.of(context).textTheme.labelSmall!;
-    var metric = metrics[index];
+    var metric = widget.metrics[index];
     var tag = '${metric.$value}:  ${MetricHelper.getMetricText(metric)}';
 
     return BarTooltipItem(tag, theme);
