@@ -122,7 +122,7 @@ class _HomeState extends State<Home> {
           ),
           actions: [
             PopupMenuButton(
-                icon: Icon(Icons.menu_sharp, color: theme.colorScheme.onBackground),
+                icon: Icon(Icons.menu_sharp, color: theme.colorScheme.onSurface),
                 itemBuilder: (context) {
                   return [
                     const PopupMenuItem<int>(
