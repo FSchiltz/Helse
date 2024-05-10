@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:health/health.dart';
+import 'package:helse/logic/settings/settings_logic.dart';
 import 'package:helse/services/account.dart';
 import 'package:helse/ui/theme/notification.dart';
 
@@ -32,7 +33,7 @@ class FitLogic {
     // TODO use a background task
 
     // Get the last run
-    var run = await account.get(Account.fitRun);
+    var run = await SettingsLogic.getLastRun();
     var runDate = run == null ? null : DateTime.parse(run);
 
     int events = 0;
@@ -80,10 +81,13 @@ class FitLogic {
       await account.set(Account.fitRun, start.toString());
     }
 
+    var text = "Sync sucessful with $metrics metrics and $events events";
     if (firstRun || metrics > 0 || events > 0) {
       firstRun = false;
-      Notify.show("Sync sucessful with $metrics metrics and $events events");
+      Notify.show(text);
     }
+
+    return text;
   }
 
   static Future<bool> isEnabled() async {

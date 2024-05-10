@@ -42,7 +42,6 @@
             "type": "dart",
             "request": "launch",
             "program": "App/lib/main.dart",
-            "flutterMode": "profile"
         },  
           {
             "name": "Flutter web",
