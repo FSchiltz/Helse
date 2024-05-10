@@ -34,12 +34,9 @@ class MetricDetailPage extends StatelessWidget {
                 child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
               )
             : (type.type == MetricDataType.text
-                ? ListView(
-                    children: metrics
-                        .map((metric) => Row(
-                              children: [Text(metric.$value ?? ''), Text(MetricHelper.getMetricText(metric))],
-                            ))
-                        .toList(),
+                ? ListView.builder(
+                    itemCount: metrics.length,
+                    itemBuilder: (x, y) => Row(children: [Text(metrics[y].$value ?? ''), Text(MetricHelper.getMetricText(metrics[y]))]),
                   )
                 : MetricGraph(metrics, date, settings)),
       )),

@@ -22,9 +22,7 @@ class MetricCondensed extends StatelessWidget {
             child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
           )
         : (type.type == MetricDataType.text
-            ? ListView(
-                children: metrics.map((metric) => Text(metric.$value ?? "")).toList(),
-              )
+            ? ListView.builder(itemCount: metrics.length, itemBuilder: (x, y) => Text(metrics[y].$value ?? ""))
             : WidgetGraph(metrics, date, type, settings));
   }
 }
