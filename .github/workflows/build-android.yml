@@ -51,7 +51,12 @@ jobs:
           find . -name '*-release.apk' -print 
           echo EOF
         } >> "$GITHUB_ENV"
-        
+
+    - name: Upload artefact
+      uses: actions/upload-artifact@v2
+      with:
+        path: App/build/app/outputs/flutter-apk/*.apk
+      
     - name: Upload binaries to release
       if: ${{ inputs.push }}
       run: |
