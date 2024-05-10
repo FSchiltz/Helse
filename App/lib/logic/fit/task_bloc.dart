@@ -37,7 +37,8 @@ class TaskBloc extends Cubit<SubmissionStatus> {
           if (await check.call()) {
             emit(SubmissionStatus.inProgress);
             var status = await action.call();
-            executions.add(Execution(DateTime.now(), SubmissionStatus.success, status));
+
+            executions.add(Execution(DateTime.now(), status != null ? SubmissionStatus.success : SubmissionStatus.skipped, status));
             emit(SubmissionStatus.success);
           } else {
             emit(SubmissionStatus.initial);
@@ -46,7 +47,7 @@ class TaskBloc extends Cubit<SubmissionStatus> {
         }
       } catch (ex) {
         _running = false;
-        executions.add(Execution(DateTime.now(), SubmissionStatus.failure, null));
+        executions.add(Execution(DateTime.now(), SubmissionStatus.failure, ex.toString()));
         emit(SubmissionStatus.failure);
         Notify.showError("$ex");
       }

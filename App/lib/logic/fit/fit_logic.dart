@@ -44,7 +44,7 @@ class FitLogic {
     var start = runDate ?? DateTime.now().add(const Duration(days: -60));
 
     var now = DateTime.now();
-    if (start.compareTo(now) >= 0) return null;
+    if (start.compareTo(now) <= 0) return null;
 
     // get the data
     var types = [

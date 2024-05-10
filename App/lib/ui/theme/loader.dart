@@ -4,12 +4,14 @@ class HelseLoader extends StatefulWidget {
   final bool static;
   final Color? color;
   final double size;
+  final void Function()? onTouch;
 
   const HelseLoader({
     super.key,
     this.static = false,
     this.color,
     this.size = 40,
+    this.onTouch,
   });
 
   @override
@@ -54,7 +56,7 @@ class HelseLoaderState extends State<HelseLoader> with SingleTickerProviderState
             color: theme,
             icon: const Icon(Icons.favorite),
             iconSize: widget.size,
-            onPressed: () {},
+            onPressed: widget.onTouch ?? () {},
           ),
         ));
   }
