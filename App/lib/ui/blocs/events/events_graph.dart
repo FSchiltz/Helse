@@ -7,8 +7,9 @@ import '../../../services/swagger/generated_code/swagger.swagger.dart';
 class EventGraph extends StatelessWidget {
   final List<Event> events;
   final DateTimeRange date;
+  final ScrollController _scrollController = ScrollController();
 
-  const EventGraph(this.events, this.date, {super.key});
+  EventGraph(this.events, this.date, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,32 +23,37 @@ class EventGraph extends StatelessWidget {
 
   Widget buildChart(List<Event> userData, BuildContext context) {
     var chartBars = buildChartBars(userData);
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: SizedBox(
-        height: chartBars.length * 29.0 + 25.0 + 25 + 4.0,
-        child: Stack(fit: StackFit.loose, children: <Widget>[
-          buildGrid(),
-          buildDayHeader(),
-          Container(
-            margin: const EdgeInsets.only(top: 25.0),
-            child: buildHeader(context),
-          ),
-          Container(
-              margin: const EdgeInsets.only(top: 50.0),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: chartBars,
-                      ),
-                    ],
-                  ),
-                ],
-              )),
-        ]),
+    return Scrollbar(
+      interactive: true,
+      controller: _scrollController,
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        scrollDirection: Axis.horizontal,
+        child: SizedBox(
+          height: chartBars.length * 29.0 + 25.0 + 25 + 4.0,
+          child: Stack(fit: StackFit.loose, children: <Widget>[
+            buildGrid(),
+            buildDayHeader(),
+            Container(
+              margin: const EdgeInsets.only(top: 25.0),
+              child: buildHeader(context),
+            ),
+            Container(
+                margin: const EdgeInsets.only(top: 50.0),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: chartBars,
+                        ),
+                      ],
+                    ),
+                  ],
+                )),
+          ]),
+        ),
       ),
     );
   }
