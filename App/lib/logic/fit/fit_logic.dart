@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:health/health.dart';
 import 'package:helse/services/account.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../services/swagger/generated_code/swagger.swagger.dart';
 import '../d_i.dart';
