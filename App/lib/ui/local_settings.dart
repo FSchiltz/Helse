@@ -29,12 +29,14 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
   ThemeMode _theme = ThemeMode.system;
   List<OrderedItem> _metrics = [];
   List<OrderedItem> _events = [];
+  String? _lastRun;
 
   Future<int> _getData() async {
     _healthEnabled = (await SettingsLogic.getHealth()).syncHealth;
     _theme = (await SettingsLogic.getTheme()).theme;
     _metrics = (await SettingsLogic.getMetrics()).metrics;
     _events = (await SettingsLogic.getEvents()).events;
+    _lastRun = (await SettingsLogic.getLastRun());
 
     return 1;
   }
@@ -73,7 +75,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
                         const SizedBox(height: 10),
                         ...general(theme),
                         const SizedBox(height: 40),
-                        ...syncHealth(theme),
+                        ...syncHealth(theme, _lastRun ?? 'Never'),
                         const SizedBox(height: 40),
                         Text('Dashboard', style: Theme.of(context).textTheme.headlineLarge),
                         const SizedBox(height: 10),
@@ -230,7 +232,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     AppView.of(context).changeTheme(value);
   }
 
-  List<Widget> syncHealth(ColorScheme theme) {
+  List<Widget> syncHealth(ColorScheme theme, String lastRun) {
     if (FitLogic.isSupported()) {
       return [
         Text("Sync Health", style: Theme.of(context).textTheme.headlineLarge),
@@ -258,9 +260,30 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
             ],
           ),
         ),
+        const SizedBox(height: 10),
+        Text("Last run: $lastRun", style: Theme.of(context).textTheme.bodyMedium),
+        const SizedBox(height: 10),
+        SizedBox(
+          width: 160,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size.fromHeight(40),
+              shape: const ContinuousRectangleBorder(),
+            ),
+            onPressed: _resetLastRun,
+            child: const Text("Rest last run"),
+          ),
+        ),
       ];
     } else {
       return [];
     }
+  }
+
+  Future<void> _resetLastRun() async {
+    await SettingsLogic.removeLastRun();
+    setState(() {
+      _lastRun = null;
+    });
   }
 }

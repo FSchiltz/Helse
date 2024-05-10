@@ -4,6 +4,7 @@ import 'package:helse/logic/d_i.dart';
 import 'package:helse/logic/event.dart';
 import 'package:helse/logic/fit/task_bloc.dart';
 import 'package:helse/logic/settings/settings_logic.dart';
+import 'package:helse/ui/task_status_dialog.dart';
 
 import '../helpers/date.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';
@@ -108,11 +109,11 @@ class _HomeState extends State<Home> {
                 child: BlocBuilder<TaskBloc, SubmissionStatus>(builder: (context, state) {
                   switch (state) {
                     case SubmissionStatus.success:
-                      return const HelseLoader(static: true, color: Colors.green, size: 22,);
+                      return HelseLoader(static: true, color: Colors.green, size: 22, onTouch: () => _showTasks(context));
                     case SubmissionStatus.failure:
-                      return const HelseLoader(static: true, color: Colors.red, size: 22,);
+                      return HelseLoader(static: true, color: Colors.red, size: 22, onTouch: () => _showTasks(context));
                     case SubmissionStatus.inProgress:
-                      return const HelseLoader(size: 32,);
+                      return HelseLoader(size: 32, onTouch: () => _showTasks(context));
                     default:
                       return Container();
                   }
@@ -194,5 +195,10 @@ class _HomeState extends State<Home> {
     if (settings.syncHealth) {
       fit.start();
     }
+  }
+
+  void _showTasks(BuildContext context) {
+    var tasks = DI.fit.executions;
+    showDialog<void>(context: context, builder: (context) => TaskStatusDialog(tasks));
   }
 }

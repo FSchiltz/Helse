@@ -73,6 +73,18 @@ class SettingsLogic {
     await (await storage).setString(Account.events, json.encode(localSettings.toJson()));
   }
 
+  static Future<void> setLastRun(String run) async {
+    await (await storage).setString(Account.fitRun, run);
+  }
+
+  static Future<void> removeLastRun() async {
+    await (await storage).remove(Account.fitRun);
+  }
+
+  static Future<String?> getLastRun() async {
+    return (await storage).getString(Account.fitRun);
+  }
+
   static Future<void> updateMetrics(List<MetricType> model) async {
     var metrics = await getMetrics();
     for (var metric in model) {
