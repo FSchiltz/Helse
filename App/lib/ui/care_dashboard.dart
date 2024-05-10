@@ -16,13 +16,14 @@ class CareDashBoard extends StatelessWidget {
         children: [
           const TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.personal_injury_sharp)),
               Tab(icon: Icon(Icons.monitor_heart_sharp)),
+              Tab(icon: Icon(Icons.personal_injury_sharp)),
             ],
           ),
           Expanded(
             child: TabBarView(
               children: [
+                Dashboard(date: date),
                 SingleChildScrollView(
                   child: Center(
                     child: Column(
@@ -34,7 +35,6 @@ class CareDashBoard extends StatelessWidget {
                     ),
                   ),
                 ),
-                Dashboard(date: date),
               ],
             ),
           ),
