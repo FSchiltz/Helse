@@ -17,6 +17,7 @@ jobs:
     uses: ./.github/workflows/build-android.yml
     with:
       push: false
+    secrets: inherit
 
   build-net:
     runs-on: ubuntu-latest
