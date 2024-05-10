@@ -42,11 +42,11 @@ jobs:
       run: |
         echo keyPassword=${{ secrets.KEY_STORE }} > ${{env.PROPERTIES_PATH}}
         echo storePassword=${{ secrets.KEY_PASSWORD }} >> ${{env.PROPERTIES_PATH}}
-        echo keyAlias=${{ secrets.KEY_ALIAS }} >> ${{env.PROPERTIES_PATH}}
+        echo keyAlias=$KEY_ALIAS >> ${{env.PROPERTIES_PATH}}
         echo storeFile=key.jks >> ${{env.PROPERTIES_PATH}}
         
     - name: Decoding base64 key into a file
-      run: echo ${{ secrets.KEY_FILE }} | base64 --decode > App/android/app/key.jks
+      run: echo $KEY_FILE | base64 --decode > App/android/app/key.jks
   
         
     - name: Build release app bundle
