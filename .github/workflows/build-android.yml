@@ -46,7 +46,7 @@ jobs:
         echo storeFile=key.jks >> ${{env.PROPERTIES_PATH}}
         
     - name: Decoding base64 key into a file
-      run: echo ${{ vars.KEY_FILE }} | base64 --decode > App/android/app/key.jks
+      run: echo ${{ secrets.KEY_FILE }} | base64 --decode > App/android/app/key.jks
   
         
     - name: Build release app bundle
