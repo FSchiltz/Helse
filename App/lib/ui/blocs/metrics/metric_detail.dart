@@ -58,7 +58,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                   )
                 : Column(
                     children: [
-                      SizedBox(height: 120, child: WidgetGraph(widget.metrics, widget.date, widget.settings)),
+                      SizedBox(height: 120, child: WidgetGraph(widget.metrics, widget.date, GraphKind.line)),
                       Center(
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
