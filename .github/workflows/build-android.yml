@@ -12,7 +12,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  PROPERTIES_PATH: "./android/key.properties"
+  PROPERTIES_PATH: "App/android/key.properties"
   
 jobs:
   build:
