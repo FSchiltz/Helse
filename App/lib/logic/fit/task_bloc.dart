@@ -8,14 +8,15 @@ import '../event.dart';
 class Execution {
   DateTime date;
   SubmissionStatus state;
+  String? status;
 
-  Execution(this.date, this.state);
+  Execution(this.date, this.state, this.status);
 }
 
 class TaskBloc extends Cubit<SubmissionStatus> {
   final List<Execution> executions = [];
   Timer? timer;
-  Future<void> Function() action;
+  Future<String?> Function() action;
   Future<bool> Function() check;
   Duration duration;
   bool _running = false;
@@ -35,8 +36,8 @@ class TaskBloc extends Cubit<SubmissionStatus> {
           _running = true;
           if (await check.call()) {
             emit(SubmissionStatus.inProgress);
-            await action.call();
-            executions.add(Execution(DateTime.now(), SubmissionStatus.success));
+            var status = await action.call();
+            executions.add(Execution(DateTime.now(), SubmissionStatus.success, status));
             emit(SubmissionStatus.success);
           } else {
             emit(SubmissionStatus.initial);
@@ -45,7 +46,7 @@ class TaskBloc extends Cubit<SubmissionStatus> {
         }
       } catch (ex) {
         _running = false;
-        executions.add(Execution(DateTime.now(), SubmissionStatus.failure));
+        executions.add(Execution(DateTime.now(), SubmissionStatus.failure, null));
         emit(SubmissionStatus.failure);
         Notify.showError("$ex");
       }

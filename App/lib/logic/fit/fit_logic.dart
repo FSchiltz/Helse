@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:health/health.dart';
 import 'package:helse/services/account.dart';
+import 'package:helse/ui/theme/notification.dart';
 
 import '../../services/swagger/generated_code/swagger.swagger.dart';
 import '../d_i.dart';
@@ -27,17 +28,22 @@ class FitLogic {
   Account account;
   FitLogic(this.account);
 
-  Future<void> sync() async {
+  Future<String?> sync() async {
     // TODO use a background task
 
     // Get the last run
     var run = await account.get(Account.fitRun);
     var runDate = run == null ? null : DateTime.parse(run);
 
+    int events = 0;
+    int metrics = 0;
+
+    var firstRun = run == null;
+
     var start = runDate ?? DateTime.now().add(const Duration(days: -60));
 
     var now = DateTime.now();
-    if (start.compareTo(now) >= 0) return;
+    if (start.compareTo(now) >= 0) return null;
 
     // get the data
     var types = [
@@ -67,7 +73,16 @@ class FitLogic {
       }
 
       start = end;
+
+      events += converted.events?.length ?? 0;
+      metrics += converted.metrics?.length ?? 0;
+
       await account.set(Account.fitRun, start.toString());
+    }
+
+    if (firstRun || metrics > 0 || events > 0) {
+      firstRun = false;
+      Notify.show("Sync sucessful with $metrics metrics and $events events");
     }
   }
 
