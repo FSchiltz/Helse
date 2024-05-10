@@ -19,16 +19,14 @@ class MetricGraph extends StatefulWidget {
 
 class _MetricGraphState extends State<MetricGraph> {
   final ScrollController _scrollController = ScrollController();
-  List<FlSpot> _spots = [];
-  double _width = 0;
 
-  List<FlSpot> _getSpot(List<Metric> raw) {
+  List<FlSpot> _getSpot(List<Metric> raw, DateTimeRange filter) {
     List<FlSpot> spots = [];
 
     for (var metric in raw) {
       final value = metric.$value;
       final metricDate = metric.date;
-      if (metricDate == null || value == null) continue;
+      if (metricDate == null || value == null || !(metricDate.isAfter(filter.start) && metricDate.isBefore(filter.end))) continue;
 
       spots.add(FlSpot(metricDate.millisecondsSinceEpoch.toDouble(), double.parse(value)));
     }
@@ -42,15 +40,8 @@ class _MetricGraphState extends State<MetricGraph> {
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _spots = _getSpot(widget.metrics);
-    _width = _getInterval(widget.date);
-  }
-
-  @override
   Widget build(BuildContext context) {
+    var width = _getInterval(widget.date);
     return Scrollbar(
       interactive: true,
       controller: _scrollController,
@@ -60,7 +51,7 @@ class _MetricGraphState extends State<MetricGraph> {
         child: Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
           child: SizedBox(
-            width: _width,
+            width: width,
             child: _getGraph(context),
           ),
         ),
@@ -69,6 +60,7 @@ class _MetricGraphState extends State<MetricGraph> {
   }
 
   Widget _getGraph(BuildContext context) {
+    var spots = _getSpot(widget.metrics, widget.date);
     var theme = Theme.of(context).colorScheme;
     if (widget.settings == GraphKind.line) {
       return LineChart(
@@ -123,7 +115,7 @@ class _MetricGraphState extends State<MetricGraph> {
           ),
           lineBarsData: [
             LineChartBarData(
-              spots: _spots,
+              spots: spots,
               color: theme.primary,
               barWidth: 2,
               isStrokeCapRound: true,
@@ -163,7 +155,7 @@ class _MetricGraphState extends State<MetricGraph> {
             show: true,
             drawVerticalLine: false,
           ),
-          barGroups: _spots
+          barGroups: spots
               .map((spot) => BarChartGroupData(x: spot.x.toInt(), barsSpace: 1, barRods: [
                     BarChartRodData(
                       toY: spot.y,

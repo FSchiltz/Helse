@@ -5,8 +5,9 @@ import 'package:helse/ui/blocs/metrics/metric_condensed.dart';
 import 'package:helse/ui/blocs/metrics/metric_graph.dart';
 
 import '../../../logic/settings/ordered_item.dart';
+import '../common/date_range_input.dart';
 
-class MetricDetailPage extends StatelessWidget {
+class MetricDetailPage extends StatefulWidget {
   const MetricDetailPage({
     super.key,
     required this.metrics,
@@ -21,31 +22,62 @@ class MetricDetailPage extends StatelessWidget {
   final GraphKind settings;
 
   @override
+  State<MetricDetailPage> createState() => _MetricDetailPageState();
+}
+
+class _MetricDetailPageState extends State<MetricDetailPage> {
+  DateTimeRange? _date;
+  @override
+  void initState() {
+    super.initState();
+    _date = DateTimeRange(start: widget.date.start, end: widget.date.start.add(const Duration(days: 1)));
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detail of ${type.name}', style: Theme.of(context).textTheme.displaySmall),
+        title: Text('Detail of ${widget.type.name}', style: Theme.of(context).textTheme.displaySmall),
         //child: DateRangeInput((x) => {}, date),
       ),
       body: SizedBox.expand(
           child: Padding(
         padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 16.0, top: 60.0),
-        child: metrics.isEmpty
+        child: widget.metrics.isEmpty
             ? Center(
                 child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
               )
-            : (type.type == MetricDataType.text
+            : (widget.type.type == MetricDataType.text
                 ? ListView.builder(
-                    itemCount: metrics.length,
-                    itemBuilder: (x, y) => Row(children: [Text(metrics[y].$value ?? ''), Text(MetricHelper.getMetricText(metrics[y]))]),
+                    itemCount: widget.metrics.length,
+                    itemBuilder: (x, y) => Row(children: [Text(widget.metrics[y].$value ?? ''), Text(MetricHelper.getMetricText(widget.metrics[y]))]),
                   )
                 : Column(
                     children: [
-                      SizedBox(height: 120, child: WidgetGraph(metrics, date, settings )),
-                      Expanded(child: MetricGraph(metrics, date, settings)),
+                      SizedBox(height: 120, child: WidgetGraph(widget.metrics, widget.date, widget.settings)),
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            width: 300,
+                            child: DateRangeInput(
+                              _setDate,
+                              _date ?? widget.date,
+                              range: widget.date,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(child: MetricGraph(widget.metrics, _date ?? widget.date, widget.settings)),
                     ],
                   )),
       )),
     );
+  }
+
+  void _setDate(DateTimeRange date) {
+    setState(() {
+      _date = date;
+    });
   }
 }

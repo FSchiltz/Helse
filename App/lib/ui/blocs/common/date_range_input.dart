@@ -4,10 +4,9 @@ import 'package:intl/intl.dart';
 class DateRangeInput extends StatefulWidget {
   final void Function(DateTimeRange date) _setDateCallback;
   final DateTimeRange initial;
+  final DateTimeRange? range;
 
-  const DateRangeInput(void Function(DateTimeRange date) setDate, this.initial,
-      {super.key})
-      : _setDateCallback = setDate;
+  const DateRangeInput(void Function(DateTimeRange date) setDate, this.initial, {super.key, this.range}) : _setDateCallback = setDate;
 
   @override
   State<DateRangeInput> createState() => _DateRangeInputState();
@@ -32,20 +31,18 @@ class _DateRangeInputState extends State<DateRangeInput> {
     }
   }
 
-  Future<DateTimeRange?> _pick(
-      BuildContext context, DateTimeRange initial) async {
+  Future<DateTimeRange?> _pick(BuildContext context, DateTimeRange initial) async {
     var selectedDate = await showDateRangePicker(
         context: context,
         initialDateRange: initial, //get today's date
-        firstDate: DateTime(1000),
-        lastDate: DateTime(3000));
+        firstDate: widget.range?.start ?? DateTime(1000),
+        lastDate: widget.range?.end ?? DateTime(3000));
     if (selectedDate == null) return null;
 
     var start = selectedDate.start;
     var end = selectedDate.end;
 
-    return DateTimeRange(
-        start: start, end: DateTime(end.year, end.month, end.day, 23, 59, 59));
+    return DateTimeRange(start: start, end: DateTime(end.year, end.month, end.day, 23, 59, 59));
   }
 
   @override
@@ -70,7 +67,12 @@ class _DateRangeInputState extends State<DateRangeInput> {
               color: theme.colorScheme.primary,
             ),
           ),
-          Flexible(child: Text(_text, style: theme.textTheme.bodyMedium, overflow: TextOverflow.fade,)),
+          Flexible(
+              child: Text(
+            _text,
+            style: theme.textTheme.bodyMedium,
+            overflow: TextOverflow.fade,
+          )),
         ],
       ),
     );
