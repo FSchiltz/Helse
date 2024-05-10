@@ -101,7 +101,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                               metrics: metrics,
                               date: widget.date,
                               type: widget.type,
-                              settings:  widget.settings,
+                              settings:  widget.settings.detailGraph,
                             )),
                   ),
                   child: Padding(

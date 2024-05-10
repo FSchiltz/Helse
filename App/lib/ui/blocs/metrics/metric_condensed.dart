@@ -4,6 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 
@@ -22,41 +23,52 @@ class MetricCondensed extends StatelessWidget {
             child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
           )
         : (type.type == MetricDataType.text
-            ? ListView(
-                children: metrics.map((metric) => Text(metric.$value ?? "")).toList(),
-              )
-            : WidgetGraph(metrics, date, type, settings));
+            ? ListView.builder(itemCount: metrics.length, itemBuilder: (x, y) => Text(metrics[y].$value ?? ""))
+            : WidgetGraph(metrics, date, settings.graph));
   }
+}
+
+enum StepKind {
+  hours,
+  days,
+  month,
 }
 
 class WidgetGraph extends StatelessWidget {
   final List<Metric> metrics;
   final DateTimeRange date;
-  final MetricType type;
-  final OrderedItem settings;
-  static const int valueCount = 24;
+  final GraphKind settings;
 
-  const WidgetGraph(this.metrics, this.date, this.type, this.settings, {super.key});
+  const WidgetGraph(this.metrics, this.date, this.settings, {super.key});
+
+  StepKind _kind(Duration duration) {
+    if (duration.inDays > 365) return StepKind.month;
+    if (duration.inDays > 30) return StepKind.days;
+    return StepKind.hours;
+  }
 
   int _hourBetween(DateTime from, DateTime to) {
-    return to.difference(from).inHours;
+    var difference = to.difference(from);
+    var steps = _kind(difference);
+    switch (steps) {
+      case StepKind.days:
+        return difference.inDays;
+      case StepKind.month:
+        return difference.inDays ~/ 30;
+      case StepKind.hours:
+      default:
+        return difference.inHours;
+    }
   }
 
   List<FlSpot> _getSpot(List<Metric> raw) {
-    // find the first and last
-    var first = date.start;
-    var last = date.end;
-
-    var hours = _hourBetween(first, last);
-    var period = max(hours / valueCount, 1);
-
+    var length = _hourBetween(date.start, date.end);
     var groups = <int, List<Metric>>{};
     for (var metric in raw) {
       if (metric.date == null) continue;
 
       // calculate the spot
-      var hour = _hourBetween(first, metric.date!.toLocal());
-      var key = hour ~/ period;
+      var key = _hourBetween(date.start, metric.date!.toLocal());
       var spot = groups[key];
       if (spot == null) {
         spot = [];
@@ -67,7 +79,7 @@ class WidgetGraph extends StatelessWidget {
 
     // for all spots, we take the mean
     List<double?> means = [];
-    for (int i = 0; i < valueCount; i++) {
+    for (int i = 0; i < length; i++) {
       var group = groups[i]?.where((element) => element.$value != null).map((m) => double.parse(m.$value!)) ?? [];
 
       var mean = group.isEmpty ? null : group.average;
@@ -104,7 +116,7 @@ class WidgetGraph extends StatelessWidget {
   }
 
   Widget _getGraph() {
-    if (settings.graph == GraphKind.bar) {
+    if (settings == GraphKind.bar) {
       return BarChart(
         BarChartData(
           barTouchData: BarTouchData(enabled: false),
@@ -123,6 +135,8 @@ class WidgetGraph extends StatelessWidget {
       );
     } else {
       return LineChart(LineChartData(
+        minX: 0,
+        maxX: _hourBetween(date.start, date.end).toDouble(),
         lineTouchData: const LineTouchData(enabled: false),
         titlesData: const FlTitlesData(
           leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),

@@ -5,7 +5,7 @@
             "name": "Flutter debug",
             "type": "dart",
             "request": "launch",
-            "program": "App/lib/main.dart",
+            "program": "App/lib/main.dart",        
             "args": [
                 "-d", 
                 "chrome"
@@ -41,7 +41,8 @@
             "name": "Flutter android",
             "type": "dart",
             "request": "launch",
-            "program": "App/lib/main.dart"
+            "program": "App/lib/main.dart",
+            "flutterMode": "profile"
         },  
           {
             "name": "Flutter web",
