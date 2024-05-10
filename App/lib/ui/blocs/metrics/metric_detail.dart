@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/metric_helper.dart';
 import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
+import 'package:helse/ui/blocs/metrics/metric_condensed.dart';
 import 'package:helse/ui/blocs/metrics/metric_graph.dart';
 
 import '../../../logic/settings/ordered_item.dart';
@@ -17,7 +18,7 @@ class MetricDetailPage extends StatelessWidget {
   final DateTimeRange date;
   final List<Metric> metrics;
   final MetricType type;
-  final OrderedItem settings;
+  final GraphKind settings;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,12 @@ class MetricDetailPage extends StatelessWidget {
                     itemCount: metrics.length,
                     itemBuilder: (x, y) => Row(children: [Text(metrics[y].$value ?? ''), Text(MetricHelper.getMetricText(metrics[y]))]),
                   )
-                : MetricGraph(metrics, date, settings)),
+                : Column(
+                    children: [
+                      SizedBox(height: 120, child: WidgetGraph(metrics, date, settings )),
+                      Expanded(child: MetricGraph(metrics, date, settings)),
+                    ],
+                  )),
       )),
     );
   }

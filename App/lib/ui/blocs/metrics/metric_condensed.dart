@@ -23,18 +23,17 @@ class MetricCondensed extends StatelessWidget {
           )
         : (type.type == MetricDataType.text
             ? ListView.builder(itemCount: metrics.length, itemBuilder: (x, y) => Text(metrics[y].$value ?? ""))
-            : WidgetGraph(metrics, date, type, settings));
+            : WidgetGraph(metrics, date, settings.graph));
   }
 }
 
 class WidgetGraph extends StatelessWidget {
   final List<Metric> metrics;
   final DateTimeRange date;
-  final MetricType type;
-  final OrderedItem settings;
+  final GraphKind settings;
   static const int valueCount = 24;
 
-  const WidgetGraph(this.metrics, this.date, this.type, this.settings, {super.key});
+  const WidgetGraph(this.metrics, this.date, this.settings, {super.key});
 
   int _hourBetween(DateTime from, DateTime to) {
     return to.difference(from).inHours;
@@ -102,7 +101,7 @@ class WidgetGraph extends StatelessWidget {
   }
 
   Widget _getGraph() {
-    if (settings.graph == GraphKind.bar) {
+    if (settings == GraphKind.bar) {
       return BarChart(
         BarChartData(
           barTouchData: BarTouchData(enabled: false),

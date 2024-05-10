@@ -5,7 +5,7 @@
             "name": "Flutter debug",
             "type": "dart",
             "request": "launch",
-            "program": "App/lib/main.dart",
+            "program": "App/lib/main.dart",        
             "args": [
                 "-d", 
                 "chrome"

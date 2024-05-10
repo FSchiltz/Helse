@@ -8,7 +8,7 @@ import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
 class MetricGraph extends StatefulWidget {
   final List<Metric> metrics;
   final DateTimeRange date;
-  final OrderedItem settings;
+  final GraphKind settings;
   static const int valueCount = 24;
 
   const MetricGraph(this.metrics, this.date, this.settings, {super.key});
@@ -70,8 +70,9 @@ class _MetricGraphState extends State<MetricGraph> {
 
   Widget _getGraph(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
-    if (widget.settings.detailGraph == GraphKind.line) {
+    if (widget.settings == GraphKind.line) {
       return LineChart(
+        duration: Duration.zero,
         LineChartData(
           minX: widget.date.start.millisecondsSinceEpoch.toDouble(),
           maxX: widget.date.end.millisecondsSinceEpoch.toDouble(),
