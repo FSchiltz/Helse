@@ -22,38 +22,31 @@ class EventGraph extends StatelessWidget {
   }
 
   Widget buildChart(List<Event> userData, BuildContext context) {
-    var chartBars = buildChartBars(userData);
     return Scrollbar(
       interactive: true,
       controller: _scrollController,
       child: SingleChildScrollView(
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
-        child: SizedBox(
-          height: chartBars.length * 29.0 + 25.0 + 25 + 4.0,
-          child: Stack(fit: StackFit.loose, children: <Widget>[
-            buildGrid(),
-            buildDayHeader(),
-            Container(
-              margin: const EdgeInsets.only(top: 25.0),
-              child: buildHeader(context),
-            ),
-            Container(
-                margin: const EdgeInsets.only(top: 50.0),
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: chartBars,
-                        ),
-                      ],
-                    ),
-                  ],
-                )),
-          ]),
-        ),
+        child: Stack(fit: StackFit.loose, children: <Widget>[
+          buildGrid(),
+          buildDayHeader(),
+          Container(
+            margin: const EdgeInsets.only(top: 25.0),
+            child: buildHeader(context),
+          ),
+          Container(
+              margin: const EdgeInsets.only(top: 50.0),
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      EventTimeline(userData, date),
+                    ],
+                  ),
+                ],
+              )),
+        ]),
       ),
     );
   }
@@ -122,9 +115,83 @@ class EventGraph extends StatelessWidget {
     );
   }
 
+  Widget buildGrid() {
+    List<Widget> gridColumns = [];
+
+    var viewRange = _minutesBetween(date.start, date.end) / (60);
+
+    for (int i = 0; i <= viewRange; i++) {
+      gridColumns.add(Container(
+        decoration: BoxDecoration(border: Border(right: BorderSide(color: Colors.white.withAlpha(75), width: 0.5))),
+        width: 60,
+      ));
+    }
+
+    return Row(
+      children: gridColumns,
+    );
+  }
+
+  int _minutesBetween(DateTime from, DateTime to) {
+    return to.difference(from).inMinutes;
+  }
+}
+
+class EventTimeline extends StatefulWidget {
+  final List<Event> userData;
+  final DateTimeRange date;
+
+  const EventTimeline(
+    this.userData,
+    this.date, {
+    super.key,
+  });
+
+  @override
+  State<EventTimeline> createState() => _EventTimelineState();
+}
+
+class _EventTimelineState extends State<EventTimeline> {
+  final Map<String, Color> colors = {};
+  List<Widget> _chartBars = [];
+
+  Color _stateColor(String state) {
+    if (colors.containsKey(state)) {
+      return colors[state]!;
+    } else {
+      var r = Random();
+      var color = Color.fromRGBO(r.nextInt(106) + 50, r.nextInt(106) + 50, r.nextInt(106) + 50, 0.75);
+      colors[state] = color;
+      return color;
+    }
+  }
+
+  int _minutesBetween(DateTime from, DateTime to) {
+    return to.difference(from).inMinutes;
+  }
+
+  int _distanceToLeftBorder(DateTime projectStartedAt) {
+    if (projectStartedAt.compareTo(widget.date.start) <= 0) {
+      return 0;
+    } else {
+      return _minutesBetween(widget.date.start, projectStartedAt) - 1;
+    }
+  }
+
+  int _distanceInMinutes(DateTime start, DateTime end) {
+    if (start.compareTo(widget.date.start) < 0) {
+      start = widget.date.start;
+    }
+
+    if (end.compareTo(widget.date.end) > 0) {
+      end = widget.date.end;
+    }
+
+    return max(6, _minutesBetween(start, end));
+  }
+
   List<Widget> buildChartBars(List<Event> data) {
     List<Widget> chartBars = [];
-    Map<String, Color> colors = {};
     Map<String?, List<Event>> orderedData = {};
 
     for (var n in data) {
@@ -142,11 +209,11 @@ class EventGraph extends StatelessWidget {
       List<Widget> chartGroup = [];
       for (var n in group.value) {
         // if the event has no start or end, we clamp to the filtered value
-        var start = n.start ?? date.start;
-        var end = n.stop ?? date.end;
+        var start = n.start ?? widget.date.start;
+        var end = n.stop ?? widget.date.end;
 
         var width = _distanceInMinutes(start, end);
-        var color = _stateColor(colors, n.description ?? '');
+        var color = _stateColor(n.description ?? '');
         if (width > 0) {
           chartGroup.add(Container(
             margin: EdgeInsets.only(left: _distanceToLeftBorder(start).toDouble(), top: 2.0, bottom: 2.0),
@@ -184,55 +251,18 @@ class EventGraph extends StatelessWidget {
     return chartBars;
   }
 
-  Widget buildGrid() {
-    List<Widget> gridColumns = [];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _chartBars = buildChartBars(widget.userData);
+  }
 
-    var viewRange = _minutesBetween(date.start, date.end) / (60);
-
-    for (int i = 0; i <= viewRange; i++) {
-      gridColumns.add(Container(
-        decoration: BoxDecoration(border: Border(right: BorderSide(color: Colors.white.withAlpha(75), width: 0.5))),
-        width: 60,
-      ));
-    }
-
-    return Row(
-      children: gridColumns,
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: _chartBars,
     );
-  }
-
-  Color _stateColor(Map<String, Color> colors, String state) {
-    if (colors.containsKey(state)) {
-      return colors[state]!;
-    } else {
-      var r = Random();
-      var color = Color.fromRGBO(r.nextInt(106) + 50, r.nextInt(106) + 50, r.nextInt(106) + 50, 0.75);
-      colors[state] = color;
-      return color;
-    }
-  }
-
-  int _minutesBetween(DateTime from, DateTime to) {
-    return to.difference(from).inMinutes;
-  }
-
-  int _distanceToLeftBorder(DateTime projectStartedAt) {
-    if (projectStartedAt.compareTo(date.start) <= 0) {
-      return 0;
-    } else {
-      return _minutesBetween(date.start, projectStartedAt) - 1;
-    }
-  }
-
-  int _distanceInMinutes(DateTime start, DateTime end) {
-    if (start.compareTo(date.start) < 0) {
-      start = date.start;
-    }
-
-    if (end.compareTo(date.end) > 0) {
-      end = date.end;
-    }
-
-    return max(6, _minutesBetween(start, end));
   }
 }
