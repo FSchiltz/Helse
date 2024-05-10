@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:helse/logic/settings/ordered_item.dart';
 
+import '../../../helpers/pair.dart';
 import '../../../logic/d_i.dart';
 import '../../../logic/settings/settings_logic.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
@@ -22,7 +24,7 @@ class MetricsGrid extends StatefulWidget {
 }
 
 class _MetricsGridState extends State<MetricsGrid> {
-  List<MetricType>? types;
+  List<Pair<MetricType, OrderedItem>>? types;
   @override
   void initState() {
     super.initState();
@@ -35,7 +37,15 @@ class _MetricsGridState extends State<MetricsGrid> {
       if (model != null) {
         var settings = await SettingsLogic.getMetrics();
         // filter using the user settings
-        var filtered = settings.metrics.isEmpty ? model : model.where((x) => settings.metrics.any((element) => element.id == x.id && element.visible)).toList();
+
+        List<Pair<MetricType, OrderedItem>> filtered = [];
+        for (var item in model) {
+          OrderedItem setting = settings.metrics.isEmpty
+              ? OrderedItem(item.id ?? 0, item.name ?? '', GraphKind.bar, GraphKind.line)
+              : settings.metrics.firstWhere((element) => element.id == item.id && element.visible);
+
+          filtered.add(Pair(item, setting));
+        }
 
         setState(() {
           types = filtered;
@@ -58,8 +68,9 @@ class _MetricsGridState extends State<MetricsGrid> {
             mainAxisSpacing: 2,
             physics: const BouncingScrollPhysics(),
             maxCrossAxisExtent: 240.0,
-            children:
-                cached.map((type) => MetricWidget(type, widget.date, key: Key(type.id?.toString() ?? ""), person: widget.person)).toList(),
+            children: cached
+                .map((type) => MetricWidget(type.a, type.b, widget.date, key: Key(type.a.id?.toString() ?? ""), person: widget.person))
+                .toList(),
           );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
+import 'package:helse/logic/settings/ordered_item.dart';
 import 'package:helse/ui/blocs/metrics/metric_detail.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
@@ -12,8 +13,9 @@ class MetricWidget extends StatefulWidget {
   final MetricType type;
   final DateTimeRange date;
   final int? person;
+  final OrderedItem settings;
 
-  const MetricWidget(this.type, this.date, {super.key, this.person});
+  const MetricWidget(this.type, this.settings, this.date, {super.key, this.person});
 
   @override
   State<MetricWidget> createState() => _MetricWidgetState();
@@ -99,6 +101,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                               metrics: metrics,
                               date: widget.date,
                               type: widget.type,
+                              settings:  widget.settings,
                             )),
                   ),
                   child: Padding(
@@ -133,7 +136,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                           Expanded(
                             child: Text(_getTextInfo(metrics, widget.type), style: Theme.of(context).textTheme.labelLarge),
                           ),
-                        Expanded(child: MetricCondensed(metrics, widget.type, widget.date)),
+                        Expanded(child: MetricCondensed(metrics, widget.type, widget.settings, widget.date)),
                       ],
                     ),
                   ),
@@ -149,7 +152,7 @@ class _MetricWidgetState extends State<MetricWidget> {
     String? value;
     switch (type.summaryType) {
       case MetricSummary.sum:
-        value =  metrics.map((metric) => int.parse(metric.$value ?? '0')).sum.toString();
+        value = metrics.map((metric) => int.parse(metric.$value ?? '0')).sum.toString();
         break;
       case MetricSummary.mean:
         value = (metrics.map((metric) => int.parse(metric.$value ?? '0')).sum / metrics.length).round().toString();
@@ -160,7 +163,7 @@ class _MetricWidgetState extends State<MetricWidget> {
         break;
     }
 
-    if(type.unit != null) {
+    if (type.unit != null) {
       value += ' ${type.unit}';
     }
 

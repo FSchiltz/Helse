@@ -82,7 +82,7 @@ class SettingsLogic {
         existing.name = metric.name ?? '';
       } else {
         if (metric.id != null) {
-          metrics.metrics.add(OrderedItem(metric.id!, metric.name ?? ''));
+          metrics.metrics.add(OrderedItem(metric.id!, metric.name ?? '', GraphKind.bar, GraphKind.line));
         }
       }
     }
@@ -99,7 +99,7 @@ class SettingsLogic {
         existing.name = event.name ?? '';
       } else {
         if (event.id != null) {
-          events.events.add(OrderedItem(event.id!, event.name ?? ''));
+          events.events.add(OrderedItem(event.id!, event.name ?? '', GraphKind.event, GraphKind.event));
         }
       }
     }

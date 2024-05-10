@@ -80,18 +80,6 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
                         ...metrics(theme),
                         const SizedBox(height: 20),
                         ...events(theme),
-                        const SizedBox(height: 40),
-                        SizedBox(
-                          width: 200,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size.fromHeight(50),
-                              shape: const ContinuousRectangleBorder(),
-                            ),
-                            onPressed: _submit,
-                            child: const Text("Save"),
-                          ),
-                        )
                       ],
                     ),
                   ),
@@ -103,13 +91,52 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     );
   }
 
-  void _submit() async {
+  void _submitTheme() async {
+    try {
+      if (_formKey.currentState?.validate() ?? false) {
+        // save the user's settings
+        await SettingsLogic.saveTheme(ThemeSettings(_theme));
+
+        Notify.show("Saved Successfully");
+        _getData();
+      }
+    } catch (ex) {
+      Notify.showError("Error: $ex");
+    }
+  }
+
+  void _submitHealth() async {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
         await SettingsLogic.saveHealth(HealthSettings(_healthEnabled));
-        await SettingsLogic.saveTheme(ThemeSettings(_theme));
+
+        Notify.show("Saved Successfully");
+        _getData();
+      }
+    } catch (ex) {
+      Notify.showError("Error: $ex");
+    }
+  }
+
+  void _submitEvent() async {
+    try {
+      if (_formKey.currentState?.validate() ?? false) {
+        // save the user's settings
         await SettingsLogic.saveEvents(EventsSettings(_events));
+
+        Notify.show("Saved Successfully");
+        _getData();
+      }
+    } catch (ex) {
+      Notify.showError("Error: $ex");
+    }
+  }
+
+  void _submitMetrics() async {
+    try {
+      if (_formKey.currentState?.validate() ?? false) {
+        // save the user's settings
         await SettingsLogic.saveMetrics(MetricsSettings(_metrics));
 
         Notify.show("Saved Successfully");
@@ -122,15 +149,51 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
 
   List<Widget> metrics(ColorScheme theme) {
     return [
-      Text("Metrics", style: Theme.of(context).textTheme.headlineSmall),
+      Row(
+        children: [
+          Text("Metrics", style: Theme.of(context).textTheme.headlineSmall),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              width: 80,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(40),
+                  shape: const ContinuousRectangleBorder(),
+                ),
+                onPressed: _submitMetrics,
+                child: const Text("Save"),
+              ),
+            ),
+          ),
+        ],
+      ),
       const SizedBox(height: 20),
-      OrderedList(_metrics),
+      OrderedList(_metrics, withGraph: true),
     ];
   }
 
   List<Widget> events(ColorScheme theme) {
     return [
-      Text("Events", style: Theme.of(context).textTheme.headlineSmall),
+      Row(
+        children: [
+          Text("Events", style: Theme.of(context).textTheme.headlineSmall),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              width: 80,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(40),
+                  shape: const ContinuousRectangleBorder(),
+                ),
+                onPressed: _submitEvent,
+                child: const Text("Save"),
+              ),
+            ),
+          ),
+        ],
+      ),
       const SizedBox(height: 20),
       OrderedList(_events),
     ];
@@ -161,7 +224,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     if (value == null) return;
     // save the settings
     _theme = value;
-    _submit();
+    _submitTheme();
 
     // apply the theme
     AppView.of(context).changeTheme(value);
@@ -182,8 +245,8 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
                   onChanged: (bool? value) {
                     setState(() {
                       _healthEnabled = value!;
-                      _submit();
-          
+                      _submitHealth();
+
                       // Stop or start
                       if (value) {
                         DI.fit.start();
