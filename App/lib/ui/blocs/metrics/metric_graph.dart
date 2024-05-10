@@ -20,13 +20,13 @@ class MetricGraph extends StatefulWidget {
 class _MetricGraphState extends State<MetricGraph> {
   final ScrollController _scrollController = ScrollController();
 
-  List<FlSpot> _getSpot(List<Metric> raw, DateTimeRange filter) {
+  List<FlSpot> _getSpot(List<Metric> raw) {
     List<FlSpot> spots = [];
 
     for (var metric in raw) {
       final value = metric.$value;
       final metricDate = metric.date;
-      if (metricDate == null || value == null || !(metricDate.isAfter(filter.start) && metricDate.isBefore(filter.end))) continue;
+      if (metricDate == null || value == null) continue;
 
       spots.add(FlSpot(metricDate.millisecondsSinceEpoch.toDouble(), double.parse(value)));
     }
@@ -60,7 +60,7 @@ class _MetricGraphState extends State<MetricGraph> {
   }
 
   Widget _getGraph(BuildContext context) {
-    var spots = _getSpot(widget.metrics, widget.date);
+    var spots = _getSpot(widget.metrics);
     var theme = Theme.of(context).colorScheme;
     if (widget.settings == GraphKind.line) {
       return LineChart(

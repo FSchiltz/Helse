@@ -27,10 +27,14 @@ class MetricDetailPage extends StatefulWidget {
 
 class _MetricDetailPageState extends State<MetricDetailPage> {
   DateTimeRange? _date;
+  List<Metric> _metrics = [];
+
   @override
   void initState() {
     super.initState();
-    _date = DateTimeRange(start: widget.date.start, end: widget.date.start.add(const Duration(days: 1)));
+    var date = DateTimeRange(start: widget.date.start, end: widget.date.start.add(const Duration(days: 1)));
+    _date = date;
+    _metrics = _filter(widget.metrics, date);
   }
 
   @override
@@ -68,7 +72,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                           ),
                         ),
                       ),
-                      Expanded(child: MetricGraph(widget.metrics, _date ?? widget.date, widget.settings)),
+                      Expanded(child: MetricGraph(_metrics, _date!, widget.settings)),
                     ],
                   )),
       )),
@@ -76,8 +80,14 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
   }
 
   void _setDate(DateTimeRange date) {
+    var metrics = _filter(widget.metrics, date);
     setState(() {
       _date = date;
+      _metrics = metrics;
     });
+  }
+
+  List<Metric> _filter(List<Metric> metrics, DateTimeRange date) {
+    return metrics.where((metric) => (metric.date!.compareTo(date.start) >= 0 && metric.date!.compareTo(date.end) <= 0)).toList();
   }
 }
