@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
 
@@ -42,7 +43,7 @@ class _MetricsGridState extends State<MetricsGrid> {
         for (var item in model) {
           OrderedItem setting = settings.metrics.isEmpty
               ? OrderedItem(item.id ?? 0, item.name ?? '', GraphKind.bar, GraphKind.line)
-              : settings.metrics.firstWhere((element) => element.id == item.id && element.visible);
+              : settings.metrics.firstWhereOrNull((element) => element.id == item.id && element.visible) ?? _getDefault(item);
 
           filtered.add(Pair(item, setting));
         }
@@ -72,5 +73,14 @@ class _MetricsGridState extends State<MetricsGrid> {
                 .map((type) => MetricWidget(type.a, type.b, widget.date, key: Key(type.a.id?.toString() ?? ""), person: widget.person))
                 .toList(),
           );
+  }
+  
+  OrderedItem _getDefault(MetricType item) {
+
+    if(item.type == MetricDataType.number){
+      return OrderedItem(item.id ?? 0, item.name ?? '', GraphKind.bar, GraphKind.line);
+    }
+
+    return OrderedItem(item.id ??0, item.name ?? '', GraphKind.event, GraphKind.event);
   }
 }
