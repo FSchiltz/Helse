@@ -31,8 +31,7 @@ class TaskBloc extends Cubit<SubmissionStatus> {
   Future<void> start() async {
     timer = Timer.periodic(duration, (timer) async {
       try {
-        if (_running) {
-        } else {
+        if (!_running) {
           _running = true;
           if (await check.call()) {
             emit(SubmissionStatus.inProgress);
