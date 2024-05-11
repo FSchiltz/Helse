@@ -41,11 +41,9 @@ class _MetricsGridState extends State<MetricsGrid> {
 
         List<Pair<MetricType, OrderedItem>> filtered = [];
         for (var item in model) {
-          OrderedItem setting = settings.metrics.isEmpty
-              ? OrderedItem(item.id ?? 0, item.name ?? '', GraphKind.bar, GraphKind.line)
-              : settings.metrics.firstWhereOrNull((element) => element.id == item.id && element.visible) ?? _getDefault(item);
+          OrderedItem setting = settings.metrics.firstWhereOrNull((element) => element.id == item.id) ?? _getDefault(item);
 
-          filtered.add(Pair(item, setting));
+          if (setting.visible) filtered.add(Pair(item, setting));
         }
 
         setState(() {
@@ -74,13 +72,12 @@ class _MetricsGridState extends State<MetricsGrid> {
                 .toList(),
           );
   }
-  
-  OrderedItem _getDefault(MetricType item) {
 
-    if(item.type == MetricDataType.number){
+  OrderedItem _getDefault(MetricType item) {
+    if (item.type == MetricDataType.number) {
       return OrderedItem(item.id ?? 0, item.name ?? '', GraphKind.bar, GraphKind.line);
     }
 
-    return OrderedItem(item.id ??0, item.name ?? '', GraphKind.event, GraphKind.event);
+    return OrderedItem(item.id ?? 0, item.name ?? '', GraphKind.event, GraphKind.event);
   }
 }

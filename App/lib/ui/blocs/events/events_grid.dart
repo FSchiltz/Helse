@@ -1,7 +1,9 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/ui/theme/loader.dart';
 
 import '../../../logic/d_i.dart';
+import '../../../logic/settings/ordered_item.dart';
 import '../../../logic/settings/settings_logic.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../theme/notification.dart';
@@ -35,9 +37,14 @@ class _EventsGridState extends State<EventsGrid> {
       var model = await DI.event?.eventsType(all: true);
       if (model != null) {
         var settings = await SettingsLogic.getEvents();
+
         // filter using the user settings
-        var filtered =
-            settings.events.isEmpty ? model : model.where((x) => settings.events.any((element) => element.id == x.id && element.visible)).toList();
+        List<EventType> filtered = [];
+        for (var item in model) {
+          OrderedItem? setting = settings.events.firstWhereOrNull((element) => element.id == item.id);
+
+          if (setting == null || setting.visible) filtered.add(item);
+        }
 
         setState(() {
           types = filtered;
