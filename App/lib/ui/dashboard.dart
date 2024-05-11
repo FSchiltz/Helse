@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:helse/logic/settings/settings_logic.dart';
 
+import '../logic/d_i.dart';
 import 'blocs/events/events_grid.dart';
 import 'blocs/metrics/metrics_grid.dart';
 
@@ -15,12 +18,11 @@ class Dashboard extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            MetricsGrid(                 date: date, person: person),
+            MetricsGrid(date: date, person: person),
             const SizedBox(
               height: 10,
             ),
-            EventsGrid(
-                date: date, person: person),
+            EventsGrid(date: date, person: person),
           ],
         ),
       ),

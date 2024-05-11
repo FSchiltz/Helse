@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/logic/settings/events_settings.dart';
@@ -13,9 +14,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/account.dart';
 import '../../services/setting_service.dart';
 
+class SettingsBloc extends Cubit<bool> {
+  SettingsBloc(super.initialState);
+
+  void changed() {
+    emit(true);
+  }
+}
+
 class SettingsLogic {
   static final storage = SharedPreferences.getInstance();
   final Account _account;
+  final SettingsBloc events = SettingsBloc(false);
+  final SettingsBloc metrics = SettingsBloc(false);
 
   SettingsLogic(Account account) : _account = account;
 
@@ -56,7 +67,12 @@ class SettingsLogic {
     return MetricsSettings.fromJson(json.decode(encoded));
   }
 
-  static Future<void> saveMetrics(MetricsSettings localSettings) async {
+  Future<void> saveMetrics(MetricsSettings localSettings) async {
+    await _saveMetrics(localSettings);
+    metrics.changed();
+  }
+
+  static Future<void> _saveMetrics(MetricsSettings localSettings) async {
     await (await storage).setString(Account.metrics, json.encode(localSettings.toJson()));
   }
 
@@ -69,7 +85,12 @@ class SettingsLogic {
     return EventsSettings.fromJson(json.decode(encoded));
   }
 
-  static Future<void> saveEvents(EventsSettings localSettings) async {
+  Future<void> saveEvents(EventsSettings localSettings) async {
+    await _saveEvents(localSettings);
+    events.changed();
+  }
+
+  static Future<void> _saveEvents(EventsSettings localSettings) async {
     await (await storage).setString(Account.events, json.encode(localSettings.toJson()));
   }
 
@@ -99,7 +120,7 @@ class SettingsLogic {
       }
     }
 
-    await saveMetrics(metrics);
+    await _saveMetrics(metrics);
   }
 
   static Future<void> updateEvents(List<EventType> model) async {
@@ -115,6 +136,6 @@ class SettingsLogic {
         }
       }
     }
-    await saveEvents(events);
+    await _saveEvents(events);
   }
 }

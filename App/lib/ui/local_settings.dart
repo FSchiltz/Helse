@@ -125,7 +125,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
-        await SettingsLogic.saveEvents(EventsSettings(_events));
+        await DI.settings.saveEvents(EventsSettings(_events));
 
         Notify.show("Saved Successfully");
         _getData();
@@ -139,7 +139,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
-        await SettingsLogic.saveMetrics(MetricsSettings(_metrics));
+        await DI.settings.saveMetrics(MetricsSettings(_metrics));
 
         Notify.show("Saved Successfully");
         _getData();

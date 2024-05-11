@@ -1,4 +1,3 @@
-
 import 'package:health/health.dart';
 import 'package:helse/helpers/oauth.dart';
 import 'package:helse/logic/account/authentication_logic.dart';
@@ -29,7 +28,15 @@ class DI {
   static EventService? event;
   static UserService? user;
   static TreatmentService? treatement;
-  static SettingsLogic? settings;
+  static SettingsLogic? _settings;
+  static SettingsLogic get settings {
+    var a = _settings;
+    if (a == null) {
+      throw Exception("Invalid access");
+    }
+    return a;
+  }
+
   static Health? _health;
   static Health get health {
     var a = _health;
@@ -66,7 +73,7 @@ class DI {
     event = EventService(account);
     user = UserService(account);
     treatement = TreatmentService(account);
-    settings = SettingsLogic(account);
+    _settings = SettingsLogic(account);
     _health = Health();
 
     var fitLogic = FitLogic(account);
