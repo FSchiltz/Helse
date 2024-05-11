@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/ui/theme/loader.dart';
 
 import '../../../logic/d_i.dart';
@@ -60,10 +61,17 @@ class _EventsGridState extends State<EventsGrid> {
   Widget build(BuildContext context) {
     return types == null
         ? const HelseLoader()
-        : ListView(
-            shrinkWrap: true,
-            physics: const BouncingScrollPhysics(),
-            children: types?.map((type) => EventWidget(type, widget.date, key: Key(type.id?.toString() ?? ""), person: widget.person)).toList() ?? [],
+        : BlocListener<SettingsBloc, bool>(
+            listener: (context, state) {
+              _getData();
+            },
+            bloc: DI.settings.events,
+            child: ListView(
+              shrinkWrap: true,
+              physics: const BouncingScrollPhysics(),
+              children:
+                  types?.map((type) => EventWidget(type, widget.date, key: Key(type.id?.toString() ?? ""), person: widget.person)).toList() ?? [],
+            ),
           );
   }
 }

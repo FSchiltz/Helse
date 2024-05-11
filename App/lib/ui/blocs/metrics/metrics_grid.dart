@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
 
 import '../../../helpers/pair.dart';
@@ -61,15 +62,21 @@ class _MetricsGridState extends State<MetricsGrid> {
     var cached = types;
     return cached == null
         ? const HelseLoader()
-        : GridView.extent(
-            shrinkWrap: true,
-            crossAxisSpacing: 2,
-            mainAxisSpacing: 2,
-            physics: const BouncingScrollPhysics(),
-            maxCrossAxisExtent: 240.0,
-            children: cached
-                .map((type) => MetricWidget(type.a, type.b, widget.date, key: Key(type.a.id?.toString() ?? ""), person: widget.person))
-                .toList(),
+        : BlocListener<SettingsBloc, bool>(
+            listener: (context, state) {
+              _getData();
+            },
+            bloc: DI.settings.metrics,
+            child: GridView.extent(
+              shrinkWrap: true,
+              crossAxisSpacing: 2,
+              mainAxisSpacing: 2,
+              physics: const BouncingScrollPhysics(),
+              maxCrossAxisExtent: 240.0,
+              children: cached
+                  .map((type) => MetricWidget(type.a, type.b, widget.date, key: Key(type.a.id?.toString() ?? ""), person: widget.person))
+                  .toList(),
+            ),
           );
   }
 
