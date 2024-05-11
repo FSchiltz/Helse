@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:health/health.dart';
@@ -34,17 +35,21 @@ class FitLogic {
 
     // Get the last run
     var run = await SettingsLogic.getLastRun();
-    var runDate = run == null ? null : DateTime.parse(run);
+
+    var now = DateTime.now();
+    var start = run == null ? now.add(const Duration(days: -35)) : DateTime.parse(run);
 
     int events = 0;
     int metrics = 0;
 
     var firstRun = run == null;
 
-    var start = runDate ?? DateTime.now().add(const Duration(days: -60));
+    // don't sync of in the future
+    if (start.compareTo(now) >= 0) return null;
 
-    var now = DateTime.now();
-    if (start.compareTo(now) <= 0) return null;
+    var difference = now.difference(start);
+    // Don't sync if less than 5 sec since last
+    if (difference <= const Duration(seconds: 5)) return null;
 
     // get the data
     var types = [
@@ -59,29 +64,23 @@ class FitLogic {
       throw Exception('Missing permissions');
     }
 
-    while (start.compareTo(now) < 0) {
-      var end = start.add(const Duration(days: 1));
+    // fetch health data from the last 24 hours
+    List<HealthDataPoint> healthData = await Health().getHealthDataFromTypes(startTime: start, endTime: now, types: types);
 
-      // fetch health data from the last 24 hours
-      List<HealthDataPoint> healthData = await Health().getHealthDataFromTypes(startTime: start, endTime: end, types: types);
+    // convert to import data
+    ImportData converted = _convert(healthData);
 
-      // convert to import data
-      ImportData converted = _convert(healthData);
-
-      // import to the server
-      if (converted.metrics?.isNotEmpty == true || converted.events?.isNotEmpty == true) {
-        DI.helper.importData(converted);
-      }
-
-      start = end;
-
-      events += converted.events?.length ?? 0;
-      metrics += converted.metrics?.length ?? 0;
-
-      await account.set(Account.fitRun, start.toString());
+    // import to the server
+    // TODO add a loop here if too much events
+    if (converted.metrics?.isNotEmpty == true || converted.events?.isNotEmpty == true) {
+      DI.helper.importData(converted);
     }
+    events += converted.events?.length ?? 0;
+    metrics += converted.metrics?.length ?? 0;
 
-    var text = "Sync sucessful with $metrics metrics and $events events";
+    await account.set(Account.fitRun, now.toString());
+
+    var text = "Sync sucessful with $metrics metrics and $events events of interval $difference";
     if (firstRun || metrics > 0 || events > 0) {
       firstRun = false;
       Notify.show(text);
@@ -142,5 +141,11 @@ class FitLogic {
         return workout.totalDistance.toString();
     }
     return value.toString();
+  }
+
+  DateTime _min(DateTime add, DateTime now) {
+    if (add.compareTo(now) >= 0) return now;
+
+    return add;
   }
 }
