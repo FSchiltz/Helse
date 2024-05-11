@@ -12,6 +12,7 @@ jobs:
     with:
         push: true
         tag: ${{ github.ref }}
+    secrets: inherit
 
   build-docker:
     permissions:
