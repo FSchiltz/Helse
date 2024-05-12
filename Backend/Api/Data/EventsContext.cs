@@ -97,7 +97,7 @@ public class HealthContext(DataConnection db) : IHealthContext
             .ToListAsync();
     }
 
-    public Task<List<MetricType>> GetMetricTypes() => db.GetTable<MetricType>().ToListAsync();
+    public Task<List<MetricType>> GetMetricTypes() => db.GetTable<MetricType>().OrderBy(x => x.Id).ToListAsync();
 
     public Task<List<Person>> GetPatients(long user, DateTime now, Api.Models.RightType right)
     {
@@ -116,7 +116,7 @@ public class HealthContext(DataConnection db) : IHealthContext
         if (all != null)
             query = query.Where(x => x.StandAlone == all);
 
-        return query.ToListAsync();
+        return query.OrderBy(x => x.Id).ToListAsync();
     }
 
     public Task Insert(EventType metric)
