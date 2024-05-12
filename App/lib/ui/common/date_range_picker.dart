@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/date.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/date_range_input.dart';
 
 enum DatePreset {
@@ -16,7 +17,7 @@ class DateRangePicker extends StatelessWidget {
   final void Function(DateTimeRange value) setDate;
   final DateTimeRange initial;
 
-  DateRangePicker(
+  const DateRangePicker(
     this.setDate,
     this.initial, {
     super.key,
@@ -28,15 +29,13 @@ class DateRangePicker extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: 50,
+          width: 60,
           child: IconButton(onPressed: _previousPeriod, icon: const Icon(Icons.skip_previous_sharp)),
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(left: 8.0, top: 8.0, bottom: 8.0, right: 16),
           child: MenuAnchor(
-            menuChildren: [
-              MenuItemButton(onPressed: () => _setPreset(DatePreset.today), child: Text("Today")),
-            ],
+            menuChildren: DatePreset.values.map((v) => MenuItemButton(onPressed: () => _setPreset(v), child: Text(Translation.get(v)))).toList(),
             builder: (context, controller, child) => InkWell(
               child: const Icon(Icons.calendar_month_sharp),
               onTap: () {
@@ -51,7 +50,7 @@ class DateRangePicker extends StatelessWidget {
         ),
         Flexible(child: DateRangeInput(_callBack, initial)),
         SizedBox(
-          width: 50,
+          width: 60,
           child: IconButton(onPressed: _nextPeriod, icon: const Icon(Icons.skip_next_sharp)),
         ),
       ],
@@ -83,12 +82,8 @@ class DateRangePicker extends StatelessWidget {
   void _setPreset(DatePreset? value) {
     if (value == null) return;
 
-    switch (value) {
-      case DatePreset.today:
-        setDate(DateHelper.now());
-        break;
-      default:
-        break;
-    }
+    setDate(DateHelper.getRange(value));
+
+    // TODO save in the settings for relaunch
   }
 }
