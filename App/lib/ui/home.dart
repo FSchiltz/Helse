@@ -50,6 +50,7 @@ class _HomeState extends State<Home> {
     super.initState();
     _getUser();
     _startFitJob(DI.fit);
+    _setDefaultRange();
   }
 
   DeviceType getDevice() {
@@ -97,10 +98,7 @@ class _HomeState extends State<Home> {
                   style: theme.textTheme.headlineMedium?.copyWith(color: theme.colorScheme.onPrimaryContainer),
                 ),
               ),
-              Flexible(
-                  child: Container(
-                      color: theme.colorScheme.onSecondary,
-                      child: DateRangePicker(_setDate, date))),
+              Flexible(child: Container(color: theme.colorScheme.onSecondary, child: DateRangePicker(_setDate, date))),
               Flexible(
                   child: BlocProvider<TaskBloc>.value(
                 value: DI.fit,
@@ -198,5 +196,12 @@ class _HomeState extends State<Home> {
   void _showTasks(BuildContext context) {
     var tasks = DI.fit.executions;
     showDialog<void>(context: context, builder: (context) => TaskStatusDialog(tasks));
+  }
+
+  Future<void> _setDefaultRange() async {
+    var range = await SettingsLogic.getDateRange();
+    setState(() {
+      date = DateHelper.getRange(range);
+    });
   }
 }

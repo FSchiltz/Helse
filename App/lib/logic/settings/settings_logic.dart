@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../services/account.dart';
 import '../../services/setting_service.dart';
+import '../../ui/common/date_range_picker.dart';
 
 class SettingsBloc extends Cubit<bool> {
   SettingsBloc(super.initialState);
@@ -104,6 +105,19 @@ class SettingsLogic {
 
   static Future<String?> getLastRun() async {
     return (await storage).getString(Account.fitRun);
+  }
+
+  static Future<void> setDateRange(DatePreset run) async {
+    await (await storage).setString(Account.dateRange, run.name);
+  }
+
+  static Future<DatePreset> getDateRange() async {
+    var encoded = (await storage).getString(Account.dateRange);
+    if (encoded == null) {
+      return DatePreset.today;
+    }
+
+    return DatePreset.values.firstWhereOrNull((value) => value.name == encoded) ?? DatePreset.today;
   }
 
   static Future<void> updateMetrics(List<MetricType> model) async {
