@@ -50,6 +50,7 @@ class _HomeState extends State<Home> {
     super.initState();
     _getUser();
     _startFitJob(DI.fit);
+    _setDefaultRange();
   }
 
   DeviceType getDevice() {
@@ -85,41 +86,30 @@ class _HomeState extends State<Home> {
 
     return LayoutBuilder(builder: (context, constraints) {
       var theme = Theme.of(context);
+
+      var isLargeScreen = MediaQuery.of(context).size.width > 600;
+
       return Scaffold(
         appBar: AppBar(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Text(
-                  'Hi ${user?.surname ?? user?.name ?? ""}',
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.headlineMedium?.copyWith(color: theme.colorScheme.onPrimaryContainer),
-                ),
-              ),
-              Flexible(
-                  child: Container(
-                      color: theme.colorScheme.onSecondary,
-                      child: DateRangePicker(_setDate, date))),
-              Flexible(
-                  child: BlocProvider<TaskBloc>.value(
-                value: DI.fit,
-                child: BlocBuilder<TaskBloc, SubmissionStatus>(builder: (context, state) {
-                  switch (state) {
-                    case SubmissionStatus.success:
-                      return HelseLoader(static: true, color: Colors.green, size: 22, onTouch: () => _showTasks(context));
-                    case SubmissionStatus.failure:
-                      return HelseLoader(static: true, color: Colors.red, size: 22, onTouch: () => _showTasks(context));
-                    case SubmissionStatus.inProgress:
-                      return HelseLoader(size: 32, onTouch: () => _showTasks(context));
-                    default:
-                      return Container();
-                  }
-                }),
-              ))
-            ],
-          ),
+          scrolledUnderElevation: 10,
+          elevation: 1,
+          title: DateRangePicker(_setDate, date, isLargeScreen),
           actions: [
+            BlocProvider<TaskBloc>.value(
+              value: DI.fit,
+              child: BlocBuilder<TaskBloc, SubmissionStatus>(builder: (context, state) {
+                switch (state) {
+                  case SubmissionStatus.success:
+                    return HelseLoader(static: true, color: Colors.green, size: 22, onTouch: () => _showTasks(context));
+                  case SubmissionStatus.failure:
+                    return HelseLoader(static: true, color: Colors.red, size: 22, onTouch: () => _showTasks(context));
+                  case SubmissionStatus.inProgress:
+                    return HelseLoader(size: 32, onTouch: () => _showTasks(context));
+                  default:
+                    return HelseLoader(size: 20, static: true, onTouch: () => _showTasks(context));
+                }
+              }),
+            ),
             PopupMenuButton(
                 icon: Icon(Icons.menu_sharp, color: theme.colorScheme.onSurface),
                 itemBuilder: (context) {
@@ -198,5 +188,12 @@ class _HomeState extends State<Home> {
   void _showTasks(BuildContext context) {
     var tasks = DI.fit.executions;
     showDialog<void>(context: context, builder: (context) => TaskStatusDialog(tasks));
+  }
+
+  Future<void> _setDefaultRange() async {
+    var range = await SettingsLogic.getDateRange();
+    setState(() {
+      date = DateHelper.getRange(range);
+    });
   }
 }

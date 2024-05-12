@@ -34,7 +34,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
         actions: <Widget>[
           Padding(
             padding: const EdgeInsets.only(right: 20.0),
-            child: DateRangeInput(_setDate, date),
+            child: DateRangeInput(_setDate, date, true),
           ),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/fit/fit_logic.dart';
 import 'package:helse/logic/settings/events_settings.dart';
 import 'package:helse/logic/settings/health_settings.dart';
@@ -7,6 +8,7 @@ import 'package:helse/logic/settings/ordered_item.dart';
 import 'package:helse/logic/settings/theme_settings.dart';
 import 'package:helse/main.dart';
 import 'package:helse/ui/common/custom_switch.dart';
+import 'package:helse/ui/common/date_range_picker.dart';
 import 'package:helse/ui/common/ordered_list.dart';
 import 'package:helse/ui/common/square_outline_input_border.dart';
 
@@ -30,6 +32,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
   List<OrderedItem> _metrics = [];
   List<OrderedItem> _events = [];
   String? _lastRun;
+  DatePreset _range = DatePreset.today;
 
   Future<int> _getData() async {
     _healthEnabled = (await SettingsLogic.getHealth()).syncHealth;
@@ -37,6 +40,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     _metrics = (await SettingsLogic.getMetrics()).metrics;
     _events = (await SettingsLogic.getEvents()).events;
     _lastRun = (await SettingsLogic.getLastRun());
+    _range = await SettingsLogic.getDateRange();
 
     return 1;
   }
@@ -76,7 +80,6 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
                         ...general(theme),
                         const SizedBox(height: 40),
                         ...syncHealth(theme, _lastRun ?? 'Never'),
-                        const SizedBox(height: 40),
                         Text('Dashboard', style: Theme.of(context).textTheme.headlineLarge),
                         const SizedBox(height: 10),
                         ...metrics(theme),
@@ -218,6 +221,27 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
             border: SquareOutlineInputBorder(theme.primary),
           ),
         ),
+      ),
+      const SizedBox(height: 20),
+      const Text("Default range for the date. This may be overidden by the last used range"),
+      Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: SizedBox(
+          width: 200,
+          child: DropdownButtonFormField(
+            value: _range,
+            onChanged: rangeCallback,
+            items: DatePreset.values.map((type) => DropdownMenuItem(value: type, child: Text(Translation.get(type)))).toList(),
+            decoration: InputDecoration(
+              labelText: 'Date range',
+              prefixIcon: const Icon(Icons.list_sharp),
+              prefixIconColor: theme.primary,
+              filled: true,
+              fillColor: theme.surface,
+              border: SquareOutlineInputBorder(theme.primary),
+            ),
+          ),
+        ),
       )
     ];
   }
@@ -230,6 +254,13 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
 
     // apply the theme
     AppView.of(context).changeTheme(value);
+  }
+
+  Future<void> rangeCallback(DatePreset? value) async {
+    if (value == null) return;
+
+    _range = value;
+    await SettingsLogic.setDateRange(value);
   }
 
   List<Widget> syncHealth(ColorScheme theme, String lastRun) {
@@ -274,6 +305,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
             child: const Text("Rest last run"),
           ),
         ),
+        const SizedBox(height: 40),
       ];
     } else {
       return [];

@@ -14,6 +14,7 @@ class Account {
   static const health = 'health';
   static const metrics = 'metrics';
   static const events = 'events';
+  static const dateRange = 'dateRange';
 
   Future<String?> get(String name) async {
     return (await storage).getString(name);

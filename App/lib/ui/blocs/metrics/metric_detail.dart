@@ -58,7 +58,9 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                   )
                 : Column(
                     children: [
-                      SizedBox(height: 120, child: WidgetGraph(widget.metrics, widget.date, GraphKind.line, widget.type.summaryType ?? MetricSummary.latest)),
+                      SizedBox(
+                          height: 120,
+                          child: WidgetGraph(widget.metrics, widget.date, GraphKind.line, widget.type.summaryType ?? MetricSummary.latest)),
                       Center(
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -67,6 +69,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                             child: DateRangeInput(
                               _setDate,
                               _date ?? widget.date,
+                              true,
                               range: widget.date,
                             ),
                           ),

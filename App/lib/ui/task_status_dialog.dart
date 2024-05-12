@@ -13,35 +13,37 @@ class TaskStatusDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
         title: const Text('Health sync history'),
-        content: Scrollbar(
-          interactive: true,
-          child: SingleChildScrollView(
-            child: SizedBox(
-              width: 400,
-              height: 800,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: ListView.builder(
-                      itemCount: tasks.length,
-                      itemBuilder: (x, key) {
-                        var theme = Theme.of(x).textTheme;
-                        var task = tasks[key];
-                        return Column(
-                          children: [
-                            Text('${task.state.name} at ${DateHelper.format(task.date, context: x)}', style: theme.bodyLarge),
-                            Text(task.status ?? '', style: theme.bodySmall),
-                            const SizedBox(height: 10),
-                          ],
-                        );
-                      },
+        content: tasks.isEmpty
+            ? const Text('No tasks')
+            : Scrollbar(
+                interactive: true,
+                child: SingleChildScrollView(
+                  child: SizedBox(
+                    width: 400,
+                    height: 800,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: ListView.builder(
+                            itemCount: tasks.length,
+                            itemBuilder: (x, key) {
+                              var theme = Theme.of(x).textTheme;
+                              var task = tasks[key];
+                              return Column(
+                                children: [
+                                  Text('${task.state.name} at ${DateHelper.format(task.date, context: x)}', style: theme.bodyLarge),
+                                  Text(task.status ?? '', style: theme.bodySmall),
+                                  const SizedBox(height: 10),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-        ));
+                ),
+              ));
   }
 }
