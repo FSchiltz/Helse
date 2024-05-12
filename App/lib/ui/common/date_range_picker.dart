@@ -29,17 +29,18 @@ class DateRangePicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
-          width: 25,
+          width: large ? 50 : 25,
           child: IconButton(onPressed: _previousPeriod, iconSize: large ? 24 : 18, icon: const Icon(Icons.skip_previous_sharp)),
         ),
         MenuAnchor(
           menuChildren: DatePreset.values.map((v) => MenuItemButton(onPressed: () => _setPreset(v), child: Text(Translation.get(v)))).toList(),
           builder: (context, controller, child) => IconButton(
-            iconSize: large ? 24: 16,
-            icon: const Icon( Icons.calendar_month_sharp),
+            iconSize: large ? 24 : 16,
+            icon: const Icon(Icons.calendar_month_sharp),
             onPressed: () {
               if (controller.isOpen) {
                 controller.close();
@@ -49,9 +50,9 @@ class DateRangePicker extends StatelessWidget {
             },
           ),
         ),
-        DateRangeInput(_callBack, initial, large),
+        DateRangeInput(_callBack, initial, large, showIcon: false),
         SizedBox(
-          width: 25,
+          width: large ? 50 : 25,
           child: IconButton(onPressed: _nextPeriod, iconSize: large ? 24 : 18, icon: const Icon(Icons.skip_next_sharp)),
         ),
       ],

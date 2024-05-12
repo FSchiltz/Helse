@@ -8,7 +8,7 @@ class Translation {
       case DatePreset.week:
         return '7 days';
       case DatePreset.month:
-        return 'Month';
+        return '30 days';
       case DatePreset.trimestre:
         return '3 Months';
       case DatePreset.halfYear:

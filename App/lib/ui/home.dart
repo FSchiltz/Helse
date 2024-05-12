@@ -93,6 +93,7 @@ class _HomeState extends State<Home> {
         appBar: AppBar(
           scrolledUnderElevation: 10,
           elevation: 1,
+          centerTitle: true,
           title: DateRangePicker(_setDate, date, isLargeScreen),
           actions: [
             BlocProvider<TaskBloc>.value(
