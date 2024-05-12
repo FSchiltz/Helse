@@ -25,7 +25,7 @@ class _ChangeRoleState extends State<ChangeRole> {
   @override
   Widget build(BuildContext context) {
     return SquareDialog(
-      title: const Text("Add a new user"),
+      title: const Text("Change role"),
       actions: [
         ElevatedButton(
           style: ElevatedButton.styleFrom(
@@ -33,7 +33,7 @@ class _ChangeRoleState extends State<ChangeRole> {
             shape: const ContinuousRectangleBorder(),
           ),
           onPressed: submit,
-          child: const Text("Create"),
+          child: const Text("Update"),
         ),
       ],
       content: Form(
@@ -43,6 +43,7 @@ class _ChangeRoleState extends State<ChangeRole> {
           child: Column(
             children: [
               TypeInput(
+                  value: widget.type,
                   UserType.values,
                   (value) => setState(() {
                         _type = value;

@@ -5,8 +5,9 @@ class TypeInput<T extends Enum> extends StatelessWidget {
   final List<T> types;
   final void Function(T?) callback;
   final String? label;
+  final T? value;
 
-  const TypeInput(this.types, this.callback, {super.key, this.label});
+  const TypeInput(this.types, this.callback, {super.key, this.label, this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +15,7 @@ class TypeInput<T extends Enum> extends StatelessWidget {
 
     return DropdownButtonFormField(
       onChanged: callback,
+      value: value,
       items: types.map((type) => DropdownMenuItem(value: type, child: Text(type.name))).toList(),
       decoration: InputDecoration(
         labelText: label ?? 'Type',

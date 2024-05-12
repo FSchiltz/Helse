@@ -2,23 +2,17 @@ import 'package:flutter/material.dart';
 
 import '../../../common/square_text_field.dart';
 
-class EventAddForm extends StatefulWidget {
+class EventAddForm extends StatelessWidget {
   final TextEditingController controllerDescription;
   final TextEditingController controllerName;
+  final FocusNode focusNodeName = FocusNode();
+  final FocusNode focusNodeDescription = FocusNode();
 
-  const EventAddForm({
+  EventAddForm({
     super.key,
     required this.controllerDescription,
     required this.controllerName,
   });
-
-  @override
-  State<EventAddForm> createState() => _EventAddFormState();
-}
-
-class _EventAddFormState extends State<EventAddForm> {
-  final FocusNode _focusNodeName = FocusNode();
-  final FocusNode _focusNodeDescription = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -27,18 +21,18 @@ class _EventAddFormState extends State<EventAddForm> {
     return Column(
       children: [
         SquareTextField(
-          controller: widget.controllerName,
-          focusNode: _focusNodeName,
+          controller: controllerName,
+          focusNode: focusNodeName,
           label: "name",
           icon: Icons.person_sharp,
           theme: theme,
           validator: validateName,
-          onEditingComplete: () => _focusNodeDescription.requestFocus(),
+          onEditingComplete: () => focusNodeDescription.requestFocus(),
         ),
         const SizedBox(height: 10),
         SquareTextField(
-          controller: widget.controllerDescription,
-          focusNode: _focusNodeDescription,
+          controller: controllerDescription,
+          focusNode: focusNodeDescription,
           label: "Description",
           icon: Icons.person_sharp,
           theme: theme,
@@ -53,12 +47,5 @@ class _EventAddFormState extends State<EventAddForm> {
     }
 
     return null;
-  }
-
-  @override
-  void dispose() {
-    _focusNodeDescription.dispose();
-    _focusNodeName.dispose();
-    super.dispose();
   }
 }

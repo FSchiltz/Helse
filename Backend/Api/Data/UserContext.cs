@@ -114,7 +114,7 @@ public class UserContext(DataConnection db) : IUserContext
     {
         return (from u in db.GetTable<User>()
                 from p in db.GetTable<Models.Person>().RightJoin(pr => pr.Id == u.PersonId)
-                select new PersonFromDb(u, p)).ToListAsync();
+                select new PersonFromDb(u, p)).OrderBy(x => x.User.Id).ToListAsync();
     }
 
     public Task<List<Models.Right>> GetRights(DateTime time)

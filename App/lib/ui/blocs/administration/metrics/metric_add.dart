@@ -26,6 +26,13 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
   MetricDataType? _type;
 
   @override
+  void initState() {
+    super.initState();
+    _type = widget.edit?.type;
+    _metricSummary = widget.edit?.summaryType;
+  }
+
+  @override
   Widget build(BuildContext context) {
     var edit = widget.edit;
     if (edit != null) {
@@ -57,6 +64,8 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
                   controllerDescription: controllerDescription,
                   controllerName: controllerName,
                   controllerUnit: controllerUnit,
+                  type: _type,
+                  summary: _metricSummary,
                   summaryCallback: (MetricSummary? value) => setState(() {
                         _metricSummary = value;
                       }),
