@@ -42,21 +42,22 @@ class DateRangeInput extends StatelessWidget {
       onTap: () {
         _setDate(context, initial);
       },
-      child: Row(
+      child: Row(        
         children: [
+          if(large)
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: Icon(
               Icons.edit_calendar_sharp,
-              size: large ? 24: 18,
+              size: large ? 24 : 18,
             ),
           ),
-          if (large)
-            Text(
-              _displayDate(initial),
-              style: theme.textTheme.bodyMedium,
-              overflow: TextOverflow.fade,
-            ),
+          Text(
+            _displayDate(initial),
+            style: large ? theme.textTheme.bodyMedium : theme.textTheme.bodySmall,
+            softWrap: true,
+            maxLines: 2,
+          ),
         ],
       ),
     );

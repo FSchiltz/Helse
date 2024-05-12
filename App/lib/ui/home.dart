@@ -93,19 +93,7 @@ class _HomeState extends State<Home> {
         appBar: AppBar(
           scrolledUnderElevation: 10,
           elevation: 1,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: Text(
-                  'Hi ${user?.surname ?? user?.name ?? ""}',
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.headlineMedium?.copyWith(color: theme.colorScheme.onPrimaryContainer),
-                ),
-              ),
-              Expanded(child: DateRangePicker(_setDate, date, isLargeScreen)),
-            ],
-          ),
+          title: DateRangePicker(_setDate, date, isLargeScreen),
           actions: [
             BlocProvider<TaskBloc>.value(
               value: DI.fit,
