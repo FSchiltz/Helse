@@ -1,33 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class DateRangeInput extends StatefulWidget {
+class DateRangeInput extends StatelessWidget {
   final void Function(DateTimeRange date) _setDateCallback;
   final DateTimeRange initial;
   final DateTimeRange? range;
-
-  const DateRangeInput(void Function(DateTimeRange date) setDate, this.initial, {super.key, this.range}) : _setDateCallback = setDate;
-
-  @override
-  State<DateRangeInput> createState() => _DateRangeInputState();
-}
-
-class _DateRangeInputState extends State<DateRangeInput> {
-  String _text = '';
-
   final DateFormat formatter = DateFormat('dd/MM/yyyy');
 
-  void _displayDate(DateTimeRange date) {
-    setState(() {
-      _text = "${formatter.format(date.start)} - ${formatter.format(date.end)}";
-    });
+  DateRangeInput(void Function(DateTimeRange date) setDate, this.initial, {super.key, this.range}) : _setDateCallback = setDate;
+
+  String _displayDate(DateTimeRange date) {
+    return "${formatter.format(date.start)} - ${formatter.format(date.end)}";
   }
 
   Future<void> _setDate(BuildContext context, DateTimeRange initial) async {
     var date = await _pick(context, initial);
     if (date != null) {
-      _displayDate(date);
-      widget._setDateCallback(date);
+      _setDateCallback(date);
     }
   }
 
@@ -35,8 +24,8 @@ class _DateRangeInputState extends State<DateRangeInput> {
     var selectedDate = await showDateRangePicker(
         context: context,
         initialDateRange: initial, //get today's date
-        firstDate: widget.range?.start ?? DateTime(1000),
-        lastDate: widget.range?.end ?? DateTime(3000));
+        firstDate: range?.start ?? DateTime(1000),
+        lastDate: range?.end ?? DateTime(3000));
     if (selectedDate == null) return null;
 
     var start = selectedDate.start;
@@ -46,17 +35,11 @@ class _DateRangeInputState extends State<DateRangeInput> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _displayDate(widget.initial);
-  }
-
-  @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     return InkWell(
       onTap: () {
-        _setDate(context, widget.initial);
+        _setDate(context, initial);
       },
       child: Row(
         children: [
@@ -69,7 +52,7 @@ class _DateRangeInputState extends State<DateRangeInput> {
           ),
           Flexible(
               child: Text(
-            _text,
+            _displayDate(initial),
             style: theme.textTheme.bodyMedium,
             overflow: TextOverflow.fade,
           )),

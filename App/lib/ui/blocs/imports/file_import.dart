@@ -1,13 +1,13 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
-import 'package:helse/ui/theme/square_dialog.dart';
+import 'package:helse/ui/common/square_dialog.dart';
 
 import '../../../logic/event.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../common/file_input.dart';
-import '../../theme/loader.dart';
-import '../../theme/notification.dart';
+import '../../common/file_input.dart';
+import '../../common/loader.dart';
+import '../../common/notification.dart';
 
 class FileImport extends StatefulWidget {
   const FileImport({super.key});

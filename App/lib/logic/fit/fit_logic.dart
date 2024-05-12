@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:health/health.dart';
 import 'package:helse/logic/settings/settings_logic.dart';
 import 'package:helse/services/account.dart';
-import 'package:helse/ui/theme/notification.dart';
+import 'package:helse/ui/common/notification.dart';
 
 import '../../services/swagger/generated_code/swagger.swagger.dart';
 import '../d_i.dart';

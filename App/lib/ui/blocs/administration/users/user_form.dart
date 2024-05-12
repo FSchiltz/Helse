@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/theme/password_input.dart';
+import 'package:helse/ui/common/password_input.dart';
 
 import '../../../../services/swagger/generated_code/swagger.enums.swagger.dart';
-import '../../../theme/square_text_field.dart';
+import '../../../common/square_text_field.dart';
 
 class UserForm extends StatefulWidget {
   final UserType? type;

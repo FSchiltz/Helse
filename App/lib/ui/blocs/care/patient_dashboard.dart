@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../helpers/date.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../dashboard.dart';
-import '../common/date_range_input.dart';
+import '../../common/date_range_input.dart';
 
 class PatientDashboard extends StatefulWidget {
   final Person person;

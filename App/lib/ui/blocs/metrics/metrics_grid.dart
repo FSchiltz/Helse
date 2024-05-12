@@ -7,8 +7,8 @@ import '../../../helpers/pair.dart';
 import '../../../logic/d_i.dart';
 import '../../../logic/settings/settings_logic.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../../theme/loader.dart';
-import '../../theme/notification.dart';
+import '../../common/loader.dart';
+import '../../common/notification.dart';
 import 'metric_widget.dart';
 
 class MetricsGrid extends StatefulWidget {

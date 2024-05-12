@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 class DateHelper {
   static DateTimeRange now() {
     var now = DateTime.now();
-    return DateTimeRange(start: DateTime(now.year, now.month, now.day), end: DateTime(now.year, now.month, now.day, 23, 59, 59));
+    return DateTimeRange(start: DateTime(now.year, now.month, now.day), end: DateTime(now.year, now.month, now.day + 1));
   }
 
   static String format(DateTime? date, {bool? second, required BuildContext context}) {

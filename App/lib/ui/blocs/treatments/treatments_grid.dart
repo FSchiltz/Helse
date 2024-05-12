@@ -3,8 +3,8 @@ import 'package:helse/logic/d_i.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../events/events_graph.dart';
-import '../../theme/loader.dart';
-import '../../theme/notification.dart';
+import '../../common/loader.dart';
+import '../../common/notification.dart';
 
 class TreatmentsGrid extends StatefulWidget {
   const TreatmentsGrid({super.key, required this.date, this.person});
