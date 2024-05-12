@@ -46,11 +46,10 @@ class DateRangeInput extends StatelessWidget {
       child: Row(        
         children: [
           if(showIcon)
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
+          const Padding(
+            padding: EdgeInsets.only(right: 8.0),
             child: Icon(
               Icons.edit_calendar_sharp,
-              size: large ? 24 : 18,
             ),
           ),
           Text(
