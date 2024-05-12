@@ -17,42 +17,42 @@ enum DatePreset {
 class DateRangePicker extends StatelessWidget {
   final void Function(DateTimeRange value) setDate;
   final DateTimeRange initial;
+  final bool large;
 
   const DateRangePicker(
     this.setDate,
-    this.initial, {
+    this.initial,
+    this.large, {
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
-          width: 60,
-          child: IconButton(onPressed: _previousPeriod, icon: const Icon(Icons.skip_previous_sharp)),
+          width: 40,
+          child: IconButton(onPressed: _previousPeriod, iconSize: large ? 24 : 18, icon: const Icon(Icons.skip_previous_sharp)),
         ),
-        Padding(
-          padding: const EdgeInsets.only(left: 8.0, top: 8.0, bottom: 8.0, right: 16),
-          child: MenuAnchor(
-            menuChildren: DatePreset.values.map((v) => MenuItemButton(onPressed: () => _setPreset(v), child: Text(Translation.get(v)))).toList(),
-            builder: (context, controller, child) => InkWell(
-              child: const Icon(Icons.calendar_month_sharp),
-              onTap: () {
-                if (controller.isOpen) {
-                  controller.close();
-                } else {
-                  controller.open();
-                }
-              },
-            ),
+        MenuAnchor(
+          menuChildren: DatePreset.values.map((v) => MenuItemButton(onPressed: () => _setPreset(v), child: Text(Translation.get(v)))).toList(),
+          builder: (context, controller, child) => IconButton(
+            iconSize: large ? 24: 18,
+            icon: const Icon( Icons.calendar_month_sharp),
+            onPressed: () {
+              if (controller.isOpen) {
+                controller.close();
+              } else {
+                controller.open();
+              }
+            },
           ),
         ),
-        Flexible(child: DateRangeInput(_callBack, initial)),
+        DateRangeInput(_callBack, initial, large),
         SizedBox(
-          width: 60,
-          child: IconButton(onPressed: _nextPeriod, icon: const Icon(Icons.skip_next_sharp)),
+          width: 40,
+          child: IconButton(onPressed: _nextPeriod, iconSize: large ? 24 : 18, icon: const Icon(Icons.skip_next_sharp)),
         ),
       ],
     );

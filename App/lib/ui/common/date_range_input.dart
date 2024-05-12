@@ -6,8 +6,9 @@ class DateRangeInput extends StatelessWidget {
   final DateTimeRange initial;
   final DateTimeRange? range;
   final DateFormat formatter = DateFormat('dd/MM/yyyy');
+  final bool large;
 
-  DateRangeInput(void Function(DateTimeRange date) setDate, this.initial, {super.key, this.range}) : _setDateCallback = setDate;
+  DateRangeInput(void Function(DateTimeRange date) setDate, this.initial, this.large, {super.key, this.range}) : _setDateCallback = setDate;
 
   String _displayDate(DateTimeRange date) {
     return "${formatter.format(date.start)} - ${formatter.format(date.end)}";
@@ -44,18 +45,18 @@ class DateRangeInput extends StatelessWidget {
       child: Row(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(right: 8.0),
             child: Icon(
               Icons.edit_calendar_sharp,
-              color: theme.colorScheme.primary,
+              size: large ? 24: 18,
             ),
           ),
-          Flexible(
-              child: Text(
-            _displayDate(initial),
-            style: theme.textTheme.bodyMedium,
-            overflow: TextOverflow.fade,
-          )),
+          if (large)
+            Text(
+              _displayDate(initial),
+              style: theme.textTheme.bodyMedium,
+              overflow: TextOverflow.fade,
+            ),
         ],
       ),
     );
