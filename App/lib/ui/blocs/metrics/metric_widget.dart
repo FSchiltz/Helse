@@ -5,7 +5,7 @@ import 'package:helse/logic/settings/ordered_item.dart';
 import 'package:helse/ui/blocs/metrics/metric_detail.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../../theme/loader.dart';
+import '../../common/loader.dart';
 import 'metric_add.dart';
 import 'metric_condensed.dart';
 

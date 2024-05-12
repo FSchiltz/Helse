@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
-import 'package:helse/ui/theme/square_text_field.dart';
+import 'package:helse/ui/common/square_text_field.dart';
 
-import '../../../theme/type_input.dart';
+import '../../../common/type_input.dart';
 
 class MetricAddForm extends StatefulWidget {
   final TextEditingController controllerUnit;

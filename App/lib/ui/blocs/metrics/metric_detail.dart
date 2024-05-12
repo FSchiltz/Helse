@@ -5,7 +5,7 @@ import 'package:helse/ui/blocs/metrics/metric_condensed.dart';
 import 'package:helse/ui/blocs/metrics/metric_graph.dart';
 
 import '../../../logic/settings/ordered_item.dart';
-import '../common/date_range_input.dart';
+import '../../common/date_range_input.dart';
 
 class MetricDetailPage extends StatefulWidget {
   const MetricDetailPage({

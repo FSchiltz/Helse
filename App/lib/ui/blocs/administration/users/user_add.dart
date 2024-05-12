@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
-import 'package:helse/ui/theme/type_input.dart';
-import 'package:helse/ui/theme/square_dialog.dart';
+import 'package:helse/ui/common/type_input.dart';
+import 'package:helse/ui/common/square_dialog.dart';
 
 import '../../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../../../theme/notification.dart';
+import '../../../common/notification.dart';
 import 'user_form.dart';
 
 class UserAdd extends StatefulWidget {

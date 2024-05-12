@@ -1,13 +1,13 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:helse/ui/theme/loader.dart';
+import 'package:helse/ui/common/loader.dart';
 
 import '../../../logic/d_i.dart';
 import '../../../logic/settings/ordered_item.dart';
 import '../../../logic/settings/settings_logic.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../../theme/notification.dart';
+import '../../common/notification.dart';
 import 'events_widget.dart';
 
 class EventsGrid extends StatefulWidget {

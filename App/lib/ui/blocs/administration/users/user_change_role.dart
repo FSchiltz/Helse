@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
-import 'package:helse/ui/theme/square_dialog.dart';
+import 'package:helse/ui/common/square_dialog.dart';
 
 import '../../../../services/swagger/generated_code/swagger.enums.swagger.dart';
-import '../../../theme/notification.dart';
-import '../../../theme/type_input.dart';
+import '../../../common/notification.dart';
+import '../../../common/type_input.dart';
 
 class ChangeRole extends StatefulWidget {
   final void Function() callback;

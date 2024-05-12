@@ -5,14 +5,14 @@ import 'package:helse/logic/event.dart';
 import 'package:helse/logic/fit/task_bloc.dart';
 import 'package:helse/logic/settings/settings_logic.dart';
 import 'package:helse/ui/task_status_dialog.dart';
+import 'package:helse/ui/common/date_range_picker.dart';
 
 import '../helpers/date.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';
 import 'administration.dart';
-import 'blocs/common/date_range_input.dart';
 import 'blocs/imports/file_import.dart';
-import 'theme/loader.dart';
-import 'theme/notification.dart';
+import 'common/loader.dart';
+import 'common/notification.dart';
 import 'care_dashboard.dart';
 import 'dashboard.dart';
 import 'local_settings.dart';
@@ -97,12 +97,10 @@ class _HomeState extends State<Home> {
                   style: theme.textTheme.headlineMedium?.copyWith(color: theme.colorScheme.onPrimaryContainer),
                 ),
               ),
-              Expanded(
+              Flexible(
                   child: Container(
-                constraints: const BoxConstraints(maxWidth: 220),
-                color: theme.colorScheme.onSecondary,
-                child: DateRangeInput(_setDate, date),
-              )),
+                      color: theme.colorScheme.onSecondary,
+                      child: DateRangePicker(_setDate, date))),
               Flexible(
                   child: BlocProvider<TaskBloc>.value(
                 value: DI.fit,

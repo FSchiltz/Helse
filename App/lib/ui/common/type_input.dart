@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/theme/square_outline_input_border.dart';
+import 'package:helse/ui/common/square_outline_input_border.dart';
 
 class TypeInput<T extends Enum> extends StatelessWidget {
   final List<T> types;

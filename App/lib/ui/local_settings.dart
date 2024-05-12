@@ -6,14 +6,14 @@ import 'package:helse/logic/settings/metrics_settings.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
 import 'package:helse/logic/settings/theme_settings.dart';
 import 'package:helse/main.dart';
-import 'package:helse/ui/theme/custom_switch.dart';
-import 'package:helse/ui/theme/ordered_list.dart';
-import 'package:helse/ui/theme/square_outline_input_border.dart';
+import 'package:helse/ui/common/custom_switch.dart';
+import 'package:helse/ui/common/ordered_list.dart';
+import 'package:helse/ui/common/square_outline_input_border.dart';
 
 import '../logic/d_i.dart';
 import '../logic/settings/settings_logic.dart';
-import 'theme/loader.dart';
-import 'theme/notification.dart';
+import 'common/loader.dart';
+import 'common/notification.dart';
 
 class LocalSettingsPage extends StatefulWidget {
   const LocalSettingsPage({super.key});
