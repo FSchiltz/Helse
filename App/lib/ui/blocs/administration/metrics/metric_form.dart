@@ -4,30 +4,29 @@ import 'package:helse/ui/common/square_text_field.dart';
 
 import '../../../common/type_input.dart';
 
-class MetricAddForm extends StatefulWidget {
+class MetricAddForm extends StatelessWidget {
   final TextEditingController controllerUnit;
   final TextEditingController controllerName;
   final TextEditingController controllerDescription;
   final void Function(MetricSummary? value) summaryCallback;
   final void Function(MetricDataType? value) typeCallback;
+  final MetricSummary? summary;
+  final MetricDataType? type;
 
-  const MetricAddForm({
+  final FocusNode focusNodeName = FocusNode();
+  final FocusNode focusNodeDescription = FocusNode();
+  final FocusNode focusNodeUnit = FocusNode();
+
+  MetricAddForm({
     super.key,
     required this.controllerUnit,
     required this.controllerName,
     required this.controllerDescription,
     required this.summaryCallback,
     required this.typeCallback,
+    this.summary,
+    this.type,
   });
-
-  @override
-  State<MetricAddForm> createState() => _MetricAddFormState();
-}
-
-class _MetricAddFormState extends State<MetricAddForm> {
-  final FocusNode _focusNodeName = FocusNode();
-  final FocusNode _focusNodeDescription = FocusNode();
-  final FocusNode _focusNodeUnit = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -38,33 +37,35 @@ class _MetricAddFormState extends State<MetricAddForm> {
         SquareTextField(
           theme: theme,
           icon: Icons.person_sharp,
-          controller: widget.controllerName,
-          focusNode: _focusNodeName,
+          controller: controllerName,
+          focusNode: focusNodeName,
           label: "Name",
           validator: validateName,
-          onEditingComplete: () => _focusNodeDescription.requestFocus(),
+          onEditingComplete: () => focusNodeDescription.requestFocus(),
         ),
         const SizedBox(height: 10),
         SquareTextField(
           icon: Icons.person_sharp,
           theme: theme,
-          controller: widget.controllerDescription,
-          focusNode: _focusNodeDescription,
+          controller: controllerDescription,
+          focusNode: focusNodeDescription,
           label: "Description",
-          onEditingComplete: () => _focusNodeUnit.requestFocus(),
+          onEditingComplete: () => focusNodeUnit.requestFocus(),
         ),
         const SizedBox(height: 10),
-        SquareTextField(controller: widget.controllerUnit, icon: Icons.email_sharp, focusNode: _focusNodeUnit, theme: theme, label: "Unit"),
+        SquareTextField(controller: controllerUnit, icon: Icons.email_sharp, focusNode: focusNodeUnit, theme: theme, label: "Unit"),
         const SizedBox(height: 10),
         TypeInput(
+          value: type,
           MetricDataType.values,
-          (value) => widget.typeCallback.call(value),
+          (value) => typeCallback.call(value),
           label: 'Type',
         ),
         const SizedBox(height: 10),
         TypeInput(
+          value: summary,
           MetricSummary.values,
-          (value) => widget.summaryCallback.call(value),
+          (value) => summaryCallback.call(value),
           label: 'Summary',
         ),
       ],
@@ -77,13 +78,5 @@ class _MetricAddFormState extends State<MetricAddForm> {
     }
 
     return null;
-  }
-
-  @override
-  void dispose() {
-    _focusNodeDescription.dispose();
-    _focusNodeName.dispose();
-    _focusNodeUnit.dispose();
-    super.dispose();
   }
 }
