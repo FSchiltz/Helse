@@ -8,6 +8,9 @@ on:
       sign:
         required: true
         type: boolean
+      upload:
+        required: true
+        type: boolean
       
 env:
   REGISTRY: ghcr.io
@@ -72,7 +75,7 @@ jobs:
         path: App/build/app/outputs/flutter-apk/*.apk
       
     - name: Upload binaries to release
-      if: ${{ inputs.push }}
+      if: ${{ inputs.upload }}
       run: |
         cd App/build/app/outputs/flutter-apk
         for i in $FILELIST; do        

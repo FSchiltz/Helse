@@ -11,6 +11,8 @@ jobs:
     uses: ./.github/workflows/build-android.yml
     with:
         push: true
+        sign: true
+        upload: true
     secrets: inherit
 
   build-docker:

@@ -16,6 +16,7 @@ jobs:
     with:
       push: false
       sign: false
+      upload: false
     secrets: inherit
 
   build-net:
