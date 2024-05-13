@@ -11,7 +11,8 @@ env:
 jobs: 
   linter:
     permissions:
-      contents: read 
+      contents: read
+      packages: read
     uses: ./.github/workflows/linter.yml
     secrets: inherit
 
