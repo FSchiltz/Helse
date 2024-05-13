@@ -11,6 +11,10 @@ on:
       upload:
         required: true
         type: boolean
+      mode:
+        required: false
+        type: string
+        default: release
       
 env:
   REGISTRY: ghcr.io
@@ -55,7 +59,7 @@ jobs:
   
         
     - name: Build release app bundle
-      run: flutter build apk --release --split-per-abi
+      run: flutter build apk --${{inputs.mode}} --split-per-abi
       working-directory: 'App'   
 
     - name: Finding binaries files
