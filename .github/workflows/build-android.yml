@@ -2,9 +2,6 @@ name: Build Android
 on:
   workflow_call:
     inputs:
-      tag:
-        required: false
-        type: string
       push:
         required: true
         type: boolean
