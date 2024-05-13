@@ -8,7 +8,6 @@ jobs:
     name: Run linters
     runs-on: ubuntu-latest   
       # To report GitHub Actions status checks
-      statuses: write
 
     steps:
       - name: Checkout code

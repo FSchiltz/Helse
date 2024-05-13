@@ -13,6 +13,7 @@ jobs:
     permissions:
       contents: read
       packages: read
+      statuses: write
     uses: ./.github/workflows/linter.yml
     secrets: inherit
 
