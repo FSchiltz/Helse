@@ -5,6 +5,9 @@ on:
       push:
         required: true
         type: boolean
+      sign:
+        required: true
+        type: boolean
       
 env:
   REGISTRY: ghcr.io
@@ -36,6 +39,7 @@ jobs:
       working-directory: 'App'
     
     - name: Create certificat
+      if: ${{ inputs.sign }}
       run: |
         echo keyPassword=${{ secrets.KEY_STORE }} > ${{env.PROPERTIES_PATH}}
         echo storePassword=${{ secrets.KEY_PASSWORD }} >> ${{env.PROPERTIES_PATH}}
@@ -43,6 +47,7 @@ jobs:
         echo storeFile=key.jks >> ${{env.PROPERTIES_PATH}}
         
     - name: Decoding base64 key into a file
+      if: ${{ inputs.sign }}
       run: echo ${{ secrets.KEY_FILE }} | base64 --decode > App/android/app/key.jks
   
         
