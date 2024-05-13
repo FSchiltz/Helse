@@ -9,14 +9,6 @@ env:
   IMAGE_NAME: ${{ github.repository }}
   
 jobs: 
-  linter:
-    permissions:
-      contents: read
-      packages: read
-      statuses: write
-    uses: ./.github/workflows/linter.yml
-    secrets: inherit
-
   build-android:
     permissions:
       contents: read 
