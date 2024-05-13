@@ -3,7 +3,7 @@
 [![CI](https://github.com/FSchiltz/Helse/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/FSchiltz/Helse/actions/workflows/ci.yml)
 
 This is a simple work in progress selfhosted app for logging health data.
-The app is composed of a c# webapi and a flutter app that can be run on Web or Android/IOS.
+The app is composed of a c# webapi and a flutter app that can be run on Web or Android/iOS.
 
 ![image](https://github.com/FSchiltz/Helse/assets/1764553/d4f3741d-fedd-4963-b1e7-eb207f9256ef)
 
@@ -12,7 +12,7 @@ The app is composed of a c# webapi and a flutter app that can be run on Web or A
 
 ### First use
 
-On the first connexion to the app, the url of the API will be by default the one used by the webpage but that can be changed
+On the first connexion to the app, the URL of the API will be by default the one used by the web page but that can be changed
 The webapp will ask for the information of the admin account then open the main page.
 
 ### Dashboard

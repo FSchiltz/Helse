@@ -1,8 +1,6 @@
 name: CI
 
 on:
-  push: 
-    branches: [ "main"]
   pull_request:
     branches: [ "main" ]
     
@@ -44,10 +42,8 @@ jobs:
         - name: Codecov    
           uses: codecov/codecov-action@v4.0.1
           with:
-            token: ${{ secrets.CODECOV_TOKEN }}
-          
+            token: ${{ secrets.CODECOV_TOKEN }}        
  
-
   build-docker:
     permissions:
       contents: read 
