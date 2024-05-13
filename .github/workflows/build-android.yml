@@ -5,6 +5,16 @@ on:
       push:
         required: true
         type: boolean
+      sign:
+        required: true
+        type: boolean
+      upload:
+        required: true
+        type: boolean
+      mode:
+        required: false
+        type: string
+        default: release
       
 env:
   REGISTRY: ghcr.io
@@ -36,6 +46,7 @@ jobs:
       working-directory: 'App'
     
     - name: Create certificat
+      if: ${{ inputs.sign }}
       run: |
         echo keyPassword=${{ secrets.KEY_STORE }} > ${{env.PROPERTIES_PATH}}
         echo storePassword=${{ secrets.KEY_PASSWORD }} >> ${{env.PROPERTIES_PATH}}
@@ -43,11 +54,12 @@ jobs:
         echo storeFile=key.jks >> ${{env.PROPERTIES_PATH}}
         
     - name: Decoding base64 key into a file
+      if: ${{ inputs.sign }}
       run: echo ${{ secrets.KEY_FILE }} | base64 --decode > App/android/app/key.jks
   
         
     - name: Build release app bundle
-      run: flutter build apk --release --split-per-abi
+      run: flutter build apk --${{inputs.mode}} --split-per-abi
       working-directory: 'App'   
 
     - name: Finding binaries files
@@ -67,7 +79,7 @@ jobs:
         path: App/build/app/outputs/flutter-apk/*.apk
       
     - name: Upload binaries to release
-      if: ${{ inputs.push }}
+      if: ${{ inputs.upload }}
       run: |
         cd App/build/app/outputs/flutter-apk
         for i in $FILELIST; do        
