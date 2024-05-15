@@ -18,4 +18,7 @@ public enum FileTypes
 
     [Description("Data from health connect on android")]
     GoogleHealthConnect,
+
+    [Description("Data from the Clue application")]
+    Clue,
 }

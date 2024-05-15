@@ -12,15 +12,19 @@ public class ListImporter(ImportData file, IHealthContext db, User user) : Impor
     public override async Task Import()
     {
         if (Data.Metrics is not null)
+        {
             foreach (var metric in Data.Metrics)
             {
                 await ImportMetric(metric);
             }
+        }
 
         if (Data.Events is not null)
+        {
             foreach (var value in Data.Events)
             {
                 await ImportEvent(value);
             }
+        }
     }
 }

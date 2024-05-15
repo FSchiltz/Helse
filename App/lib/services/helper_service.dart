@@ -12,7 +12,8 @@ class HelperService extends ApiService {
 
   Future<void> import(String? file, int type) async {
     var api = await getService();
-    await call(() => api.apiImportTypePost(body: file, type: type));
+
+    await call(() => api.apiImportTypePost(body: ImportFile(content: file), type: type));
   }
 
   Future<void> importData(ImportData file) async {
@@ -21,11 +22,11 @@ class HelperService extends ApiService {
   }
 
   Future<Status?> isInit(String url) async {
-      var api = await getService(override: url);
-      var response = await api.apiStatusGet();
+    var api = await getService(override: url);
+    var response = await api.apiStatusGet();
 
-      if (!response.isSuccessful) return null;
+    if (!response.isSuccessful) return null;
 
-      return response.bodyOrThrow;
+    return response.bodyOrThrow;
   }
 }

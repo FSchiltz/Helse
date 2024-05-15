@@ -10,7 +10,9 @@ enum FileTypes {
   @JsonValue(1)
   redmiwatch(1),
   @JsonValue(2)
-  googlehealthconnect(2);
+  googlehealthconnect(2),
+  @JsonValue(3)
+  clue(3);
 
   final int? value;
 
