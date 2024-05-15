@@ -4,21 +4,23 @@ using Api.Data.Models;
 using Api.Logic;
 using Api.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;
 
-public class MetricLogicTests
+namespace Tests.Unit.Logic;
+
+public class EventsLogicTests
 {
     private readonly IUserContext _users = Substitute.For<IUserContext>();
     private readonly IHealthContext _db = Substitute.For<IHealthContext>();
 
     [Fact]
-    public async Task MetricType_AddTextSumAsync()
+    public async Task EventType_NonAdmin()
     {
-        var type = new Api.Models.MetricType()
+        var type = new Api.Data.Models.EventType()
         {
             Name = "",
-            Type = MetricDataType.Text,
-            SummaryType = MetricSummary.Sum,
+            Description = "",
         };
         var context = new DefaultHttpContext
         {
@@ -30,20 +32,20 @@ public class MetricLogicTests
         {
             Identifier = "",
             Password = "",
-            Type = 2,
+            Type = (int)UserType.Patient,
         }, new Api.Data.Models.Person()));
 
-        await Assert.ThrowsAsync<System.IO.InvalidDataException>(() => MetricsLogic.CreateTypeAsync(type, _users, _db, context));
+        var result = await EventsLogic.CreateTypeAsync(type, _users, _db, context);
+        Assert.IsType<ForbidHttpResult>(result);
     }
 
     [Fact]
-    public async Task MetricType_AddTextMeanAsync()
+    public async Task EventType()
     {
-        var type = new Api.Models.MetricType()
+        var type = new Api.Data.Models.EventType()
         {
             Name = "",
-            Type = MetricDataType.Text,
-            SummaryType = MetricSummary.Sum,
+            Description = "",
         };
         var context = new DefaultHttpContext
         {
@@ -55,9 +57,10 @@ public class MetricLogicTests
         {
             Identifier = "",
             Password = "",
-            Type = 2,
+            Type = (int)UserType.Admin,
         }, new Api.Data.Models.Person()));
 
-        await Assert.ThrowsAsync<System.IO.InvalidDataException>(() => MetricsLogic.CreateTypeAsync(type, _users, _db, context));
+        var result = await EventsLogic.CreateTypeAsync(type, _users, _db, context);
+        Assert.IsType<NoContent>(result);
     }
 }
