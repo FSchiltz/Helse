@@ -14,9 +14,9 @@ public interface IHealthContext : IContext
     Task<List<EventType>> GetEventTypes(bool? all);
     Task Insert(EventType metric);
     Task Update(EventType type);
-    Task DeleteEventType(long id);
+    Task<int> DeleteEventType(long id);
     Task<List<MetricType>> GetMetricTypes();
-    Task DeleteMetricType(long id);
+    Task<int> DeleteMetricType(long id);
     Task Update(MetricType metric);
     Task Insert(MetricType metric);
     Task DeleteMetric(long id);
@@ -50,11 +50,11 @@ public class HealthContext(DataConnection db) : IHealthContext
 
     public Task DeleteEvent(long id) => db.GetTable<Event>().DeleteAsync(x => x.Id == id);
 
-    public Task DeleteEventType(long id) => db.GetTable<EventType>().DeleteAsync(x => x.Id == id && x.UserEditable);
+    public Task<int> DeleteEventType(long id) => db.GetTable<EventType>().DeleteAsync(x => x.Id == id && x.UserEditable);
 
     public Task DeleteMetric(long id) => db.GetTable<Data.Models.Metric>().DeleteAsync(x => x.Id == id);
 
-    public Task DeleteMetricType(long id) => db.GetTable<MetricType>().DeleteAsync(x => x.Id == id && x.UserEditable);
+    public Task<int> DeleteMetricType(long id) => db.GetTable<MetricType>().DeleteAsync(x => x.Id == id && x.UserEditable);
 
     public Task<Event?> GetEvent(long id) => db.GetTable<Event>().FirstOrDefaultAsync(x => x.Id == id);
 

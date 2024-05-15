@@ -104,8 +104,11 @@ public static class EventsLogic
         if (admin is not null)
             return admin;
 
-        await events.DeleteEventType(id);
+        var count = await events.DeleteEventType(id);
 
-        return TypedResults.NoContent();
+        if (count == 1)
+            return TypedResults.NoContent();
+        else
+            return TypedResults.BadRequest();
     }
 }

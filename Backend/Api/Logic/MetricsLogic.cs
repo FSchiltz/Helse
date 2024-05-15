@@ -139,8 +139,11 @@ public static class MetricsLogic
         if (admin is not null)
             return admin;
 
-        await db.DeleteMetricType(id);
+        var count = await db.DeleteMetricType(id);
 
-        return TypedResults.NoContent();
+        if (count == 1)
+            return TypedResults.NoContent();
+        else
+            return TypedResults.BadRequest();
     }
 }
