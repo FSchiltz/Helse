@@ -141,10 +141,10 @@ public static class PersonLogic
             // else check if user is admin
             userId = user?.User.Id ?? 0;
 
-            userHasRole = user?.User.Type == (int)Models.UserType.Admin;
+            userHasRole = user?.User.Type.HasRight(Models.UserType.Admin) == true;
 
             // Care giver can add new patients without admin right
-            userHasRole = userHasRole || (newUser.Type == Models.UserType.Patient && user?.User.Type == (int)Models.UserType.Caregiver);
+            userHasRole = userHasRole || user?.User.Type.HasRight(Models.UserType.Caregiver) == true;
         }
 
         if (!userHasRole)

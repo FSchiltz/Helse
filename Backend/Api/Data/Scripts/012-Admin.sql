@@ -1,2 +1,9 @@
-UPDATE person.User SET Type = 0 where Type <> 2;
-UPDATE person.User SET Type = 1 where Type <> 0;
+
+-- User move to the new flag
+UPDATE person.User SET Type = 4 where Type = 1;
+
+-- Caregiver move to the new flag
+UPDATE person.User SET Type = 6 where Type = 3;
+
+-- Admin move to the new flag
+UPDATE person.User SET Type = 1 where Type = 2;
