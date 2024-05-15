@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
+import 'package:helse/ui/common/statefull_check.dart';
 
 import 'type_input.dart';
 
@@ -25,7 +26,7 @@ class OrderedList extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Row(children: [
                         Text("Visible: ", style: theme.textTheme.bodyLarge),
-                        _StatefullCheck(item),
+                        StatefullCheck(item.visible, (value) => item.visible = value),
                       ]),
                     ),
                     if (withGraph)
@@ -73,29 +74,5 @@ class OrderedList extends StatelessWidget {
               ))
           .toList(),
     );
-  }
-}
-
-class _StatefullCheck extends StatefulWidget {
-  const _StatefullCheck(this.items);
-
-  final OrderedItem items;
-
-  @override
-  State<_StatefullCheck> createState() => _StatefullCheckState();
-}
-
-class _StatefullCheckState extends State<_StatefullCheck> {
-  late bool check = widget.items.visible;
-  @override
-  Widget build(BuildContext context) {
-    return Checkbox(
-        value: check,
-        onChanged: (value) {
-          setState(() {
-            check = value ?? false;
-          });
-          widget.items.visible = value ?? false;
-        });
   }
 }

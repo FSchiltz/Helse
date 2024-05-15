@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
 import 'package:helse/ui/common/square_text_field.dart';
 
+import '../../../common/statefull_check.dart';
 import '../../../common/type_input.dart';
 
 class MetricAddForm extends StatelessWidget {
@@ -12,6 +13,9 @@ class MetricAddForm extends StatelessWidget {
   final void Function(MetricDataType? value) typeCallback;
   final MetricSummary? summary;
   final MetricDataType? type;
+
+  final void Function(bool value) visibleCallback;
+  final bool visible;
 
   final FocusNode focusNodeName = FocusNode();
   final FocusNode focusNodeDescription = FocusNode();
@@ -24,8 +28,10 @@ class MetricAddForm extends StatelessWidget {
     required this.controllerDescription,
     required this.summaryCallback,
     required this.typeCallback,
-    this.summary,
-    this.type,
+    required this.summary,
+    required this.type,
+    required this.visible,
+    required this.visibleCallback,
   });
 
   @override
@@ -69,11 +75,12 @@ class MetricAddForm extends StatelessWidget {
           label: 'Summary',
         ),
         const SizedBox(height: 10),
-        TypeInput(
-          value: summary,
-          MetricSummary.values,
-          (value) => summaryCallback.call(value),
-          label: 'Editable',
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(children: [
+            const Text("Visible: "),
+            StatefullCheck(visible, visibleCallback),
+          ]),
         ),
       ],
     );
