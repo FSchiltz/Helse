@@ -15,7 +15,7 @@ public interface IHealthContext : IContext
     Task Insert(EventType metric);
     Task Update(EventType type);
     Task<int> DeleteEventType(long id);
-    Task<List<MetricType>> GetMetricTypes();
+    Task<List<MetricType>> GetMetricTypes(bool? all);
     Task<int> DeleteMetricType(long id);
     Task Update(MetricType metric);
     Task Insert(MetricType metric);
@@ -97,7 +97,15 @@ public class HealthContext(DataConnection db) : IHealthContext
             .ToListAsync();
     }
 
-    public Task<List<MetricType>> GetMetricTypes() => db.GetTable<MetricType>().OrderBy(x => x.Id).ToListAsync();
+    public Task<List<MetricType>> GetMetricTypes(bool? all)
+    {
+        IQueryable<MetricType> query = db.GetTable<MetricType>();
+
+        if (all == false)
+            query = query.Where(x => x.Visible);
+
+        return query.OrderBy(x => x.Id).ToListAsync();
+    }
 
     public Task<List<Person>> GetPatients(long user, DateTime now, Api.Models.RightType right)
     {
@@ -113,8 +121,8 @@ public class HealthContext(DataConnection db) : IHealthContext
     {
         IQueryable<EventType> query = db.GetTable<EventType>();
 
-        if (all != null)
-            query = query.Where(x => x.StandAlone == all);
+        if (all == false)
+            query = query.Where(x => x.Visible);
 
         return query.OrderBy(x => x.Id).ToListAsync();
     }

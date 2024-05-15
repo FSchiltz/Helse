@@ -6,6 +6,7 @@ ALTER TABLE health.Eventtype ADD COLUMN UserEditable boolean NOT NULL DEFAULT TR
 
 --Make the first row non user editable (this disable deleting but allow changing names and description)
 UPDATE health.Eventtype SET UserEditable = FALSE WHERE Id < 3;
+UPDATE health.Eventtype SET Visible = TRUE WHERE Id < 3;
 
 
 -- Add delete cascade to allow update the primay key of the type

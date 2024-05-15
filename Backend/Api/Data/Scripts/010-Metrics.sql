@@ -6,6 +6,7 @@ ALTER TABLE health.MetricType ADD COLUMN UserEditable boolean NOT NULL DEFAULT T
 
 --Make the first row non user editable (this disable deleting but allow changing names and description)
 UPDATE health.MetricType SET UserEditable = FALSE WHERE Id < 9;
+UPDATE health.MetricType SET Visible = TRUE WHERE Id < 9;
 
 
 -- Add delete cascade to allow update the primay key of the type

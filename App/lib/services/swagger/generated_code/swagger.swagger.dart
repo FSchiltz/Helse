@@ -319,15 +319,18 @@ abstract class Swagger extends ChopperService {
       {@Body() required MetricType? body});
 
   ///
-  Future<chopper.Response<List<MetricType>>> apiMetricsTypeGet() {
+  ///@param all
+  Future<chopper.Response<List<MetricType>>> apiMetricsTypeGet({bool? all}) {
     generatedMapping.putIfAbsent(MetricType, () => MetricType.fromJsonFactory);
 
-    return _apiMetricsTypeGet();
+    return _apiMetricsTypeGet(all: all);
   }
 
   ///
+  ///@param all
   @Get(path: '/api/metrics/type')
-  Future<chopper.Response<List<MetricType>>> _apiMetricsTypeGet();
+  Future<chopper.Response<List<MetricType>>> _apiMetricsTypeGet(
+      {@Query('all') bool? all});
 
   ///
   ///@param id

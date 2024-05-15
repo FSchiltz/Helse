@@ -266,12 +266,14 @@ final class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<List<MetricType>>> _apiMetricsTypeGet() {
+  Future<Response<List<MetricType>>> _apiMetricsTypeGet({bool? all}) {
     final Uri $url = Uri.parse('/api/metrics/type');
+    final Map<String, dynamic> $params = <String, dynamic>{'all': all};
     final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
+      parameters: $params,
     );
     return client.send<List<MetricType>, MetricType>($request);
   }

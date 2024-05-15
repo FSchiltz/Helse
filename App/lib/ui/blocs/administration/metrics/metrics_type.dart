@@ -26,7 +26,7 @@ class _MetricTypeViewState extends State<MetricTypeView> {
     // if the users has not changed, no call to the backend
     if (_types != null) return _types;
 
-    _types = await DI.metric?.metricsType();
+    _types = await DI.metric?.metricsType(true);
     return _types;
   }
 

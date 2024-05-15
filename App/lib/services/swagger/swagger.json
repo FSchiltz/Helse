@@ -558,6 +558,16 @@
         "tags": [
           "MetricsLogic"
         ],
+        "parameters": [
+          {
+            "name": "all",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",

@@ -72,7 +72,7 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> GetTypeAsync(IHealthContext db) => TypedResults.Ok((await db.GetMetricTypes()).Select(metric => new Models.MetricType
+    public static async Task<IResult> GetTypeAsync(bool? all, IHealthContext db) => TypedResults.Ok((await db.GetMetricTypes(all)).Select(metric => new Models.MetricType
     {
         Name = metric.Name,
         Description = metric.Description,
