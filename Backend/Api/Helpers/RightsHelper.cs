@@ -30,11 +30,13 @@ public static class RightsHelper
         if (error is not null)
             return error;
 
-        if (user.Type != (int)UserType.Admin)
+        if (!user.Type.HasRight(UserType.Admin))
             return TypedResults.Forbid();
 
         return null;
     }
+
+    internal static bool HasRight(this int type, Models.UserType right) => ((Models.UserType)type).HasFlag(right);
 
     internal static async Task<(IResult?, User)> GetUser(this IUserContext db, ClaimsPrincipal context)
     {

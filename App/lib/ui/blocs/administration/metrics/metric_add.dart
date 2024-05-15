@@ -31,6 +31,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
     super.initState();
     _type = widget.edit?.type;
     _metricSummary = widget.edit?.summaryType;
+    _visible = widget.edit?.visible ?? true;
   }
 
   @override

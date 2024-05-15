@@ -1588,16 +1588,20 @@
           0,
           1,
           2,
-          3
+          4,
+          6,
+          7
         ],
         "type": "integer",
-        "description": "\n\n0 = Patient\n\n1 = User\n\n2 = Admin\n\n3 = Caregiver",
+        "description": "\n\n0 = Patient\n\n1 = Admin\n\n2 = Caregiver\n\n4 = User\n\n6 = CareWithSelf\n\n7 = Superuser",
         "format": "int32",
         "x-enumNames": [
           "Patient",
-          "User",
           "Admin",
-          "Caregiver"
+          "Caregiver",
+          "User",
+          "CareWithSelf",
+          "Superuser"
         ]
       }
     },

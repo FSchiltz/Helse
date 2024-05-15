@@ -39,11 +39,7 @@ class AuthenticationLogic {
   }
 
   /// Call the login service
-  Future<void> logIn(
-      {required String url,
-      required String username,
-      required String password,
-      String? redirect}) async {
+  Future<void> logIn({required String url, required String username, required String password, String? redirect}) async {
     await _account.set(Account.url, url);
     var token = await LoginService(_account).login(username, password, redirect);
 
@@ -76,13 +72,12 @@ class AuthenticationLogic {
     if (surname?.isEmpty ?? true) surname = null;
 
     // the enum start at 0 so we add 1
-    UserType role = UserType.values[int.parse(data) + 1];
+    UserType role = UserType.values.firstWhere((x) => x.value == int.parse(data));
     return Person(type: role, name: name, surname: surname);
   }
 
   /// Init the account for a first connection
-  Future<void> initAccount(
-      {required String url, required PersonCreation person}) async {
+  Future<void> initAccount({required String url, required PersonCreation person}) async {
     await _account.set(Account.url, url);
     await _api().addPerson(person);
   }
@@ -121,20 +116,17 @@ class AuthenticationLogic {
     // if not in storage, we can try to get it from the current url on the web
     if (url == null && kIsWeb) {
       int? port = Uri.base.port;
-      if(port == 80 && Uri.base.scheme == 'http')
-      {
+      if (port == 80 && Uri.base.scheme == 'http') {
         // if the url is http, don't show the default port
         port = null;
       }
 
-      if(port == 443 && Uri.base.scheme == 'https')
-      {
+      if (port == 443 && Uri.base.scheme == 'https') {
         // if the url is https, don't show the default port
         port = null;
       }
 
-      url =
-          "${Uri.base.scheme}://${Uri.base.host}${port != null ? ":$port" : ""}";
+      url = "${Uri.base.scheme}://${Uri.base.host}${port != null ? ":$port" : ""}";
     }
 
     return url;

@@ -1,31 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:helse/logic/settings/settings_logic.dart';
 
-import '../logic/d_i.dart';
-import 'blocs/events/events_grid.dart';
-import 'blocs/metrics/metrics_grid.dart';
+import '../helpers/users.dart';
+import '../services/swagger/generated_code/swagger.swagger.dart';
+import 'care_dashboard.dart';
+import 'patient_dashboard.dart';
 
 class Dashboard extends StatelessWidget {
   final DateTimeRange date;
-  final int? person;
-  const Dashboard({super.key, required this.date, this.person});
+  final UserType? type;
+  const Dashboard({super.key, required this.date, this.type});
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            MetricsGrid(date: date, person: person),
-            const SizedBox(
-              height: 10,
+    List<Widget> tabs = [];
+    List<IconData> icons = [];
+
+    if (type?.isUser() == true) {
+      icons.add(Icons.monitor_heart_sharp);
+      tabs.add(PatientDashboard(date: date));
+    }
+
+    if (type?.isCare() == true) {
+      icons.add(Icons.personal_injury_sharp);
+      tabs.add(CareDashBoard(date: date));
+    }
+
+    return DefaultTabController(
+      length: tabs.length,
+      child: (tabs.length == 1)
+          ? tabs[0]
+          : Column(
+              children: [
+                TabBar(tabs: icons.map((t) => Tab(icon: Icon(t))).toList()),
+                Expanded(
+                  child: TabBarView(
+                    children: tabs,
+                  ),
+                ),
+              ],
             ),
-            EventsGrid(date: date, person: person),
-          ],
-        ),
-      ),
     );
   }
 }

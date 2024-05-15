@@ -27,7 +27,7 @@ class _OauthViewState extends State<OauthView> {
   bool _dummy = false;
 
   Future<Oauth?> _getData(bool reset) async {
-    _settings = await DI.settings?.api().oauth();
+    _settings = await DI.settings.api().oauth();
     return _settings;
   }
 
@@ -190,7 +190,7 @@ class _OauthFormViewState extends State<OauthFormView> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
-        await DI.settings?.api().updateOauth(
+        await DI.settings.api().updateOauth(
               Oauth(
                 clientId: _controllerId.text,
                 clientSecret: _controllerSecret.text,

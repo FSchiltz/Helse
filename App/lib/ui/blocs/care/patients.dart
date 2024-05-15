@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
 
+import '../../../logic/d_i.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../common/loader.dart';
 import 'patient_add.dart';
-import 'patient_dashboard.dart';
+import 'patients_dashboard.dart';
 
 class Patients extends StatefulWidget {
   const Patients({super.key});
@@ -76,7 +76,7 @@ class _PatientsState extends State<Patients> {
                               Row(
                                 children: [
                                   IconButton(
-                                    onPressed: () => Navigator.push(context, MaterialPageRoute<void>(builder: (context) => PatientDashboard(p))),
+                                    onPressed: () => Navigator.push(context, MaterialPageRoute<void>(builder: (context) => PatientsDashboard(p))),
                                     icon: Icon(
                                       Icons.visibility_sharp,
                                       color: theme.primary,

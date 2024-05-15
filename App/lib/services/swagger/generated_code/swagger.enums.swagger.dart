@@ -80,11 +80,15 @@ enum UserType {
   @JsonValue(0)
   patient(0),
   @JsonValue(1)
-  user(1),
+  admin(1),
   @JsonValue(2)
-  admin(2),
-  @JsonValue(3)
-  caregiver(3);
+  caregiver(2),
+  @JsonValue(4)
+  user(4),
+  @JsonValue(6)
+  carewithself(6),
+  @JsonValue(7)
+  superuser(7);
 
   final int? value;
 
