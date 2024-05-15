@@ -30,7 +30,7 @@ public static class RightsHelper
         if (error is not null)
             return error;
 
-        if (user.Type.HasRight(UserType.Admin))
+        if (!user.Type.HasRight(UserType.Admin))
             return TypedResults.Forbid();
 
         return null;

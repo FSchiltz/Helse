@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 
 import '../../../helpers/date.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../../dashboard.dart';
 import '../../common/date_range_input.dart';
+import '../../patient_dashboard.dart';
 
-class PatientDashboard extends StatefulWidget {
+class PatientsDashboard extends StatefulWidget {
   final Person person;
 
-  const PatientDashboard(this.person, {super.key});
+  const PatientsDashboard(this.person, {super.key});
 
   @override
-  State<PatientDashboard> createState() => _PatientDashboardState();
+  State<PatientsDashboard> createState() => _PatientDashboardState();
 }
 
-class _PatientDashboardState extends State<PatientDashboard> {
+class _PatientDashboardState extends State<PatientsDashboard> {
   DateTimeRange date = DateHelper.now();
 
   void _setDate(DateTimeRange value) {
@@ -41,7 +41,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
       body: Row(
         children: [
           Expanded(
-            child: Dashboard(
+            child: PatientDashboard(
               date: date,
               person: widget.person.id,
             ),

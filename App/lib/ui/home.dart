@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:helse/logic/d_i.dart';
-import 'package:helse/logic/event.dart';
-import 'package:helse/logic/fit/task_bloc.dart';
-import 'package:helse/logic/settings/settings_logic.dart';
-import 'package:helse/ui/task_status_dialog.dart';
-import 'package:helse/ui/common/date_range_picker.dart';
+import 'package:helse/services/swagger/generated_code/swagger.enums.swagger.dart';
 
+import '../helpers/users.dart';
 import '../helpers/date.dart';
+import '../logic/d_i.dart';
+import '../logic/event.dart';
+import '../logic/fit/task_bloc.dart';
+import '../logic/settings/settings_logic.dart';
 import '../services/swagger/generated_code/swagger.swagger.dart';
 import 'administration.dart';
 import 'blocs/imports/file_import.dart';
+import 'common/date_range_picker.dart';
 import 'common/loader.dart';
 import 'common/notification.dart';
-import 'care_dashboard.dart';
 import 'dashboard.dart';
 import 'local_settings.dart';
+import 'task_status_dialog.dart';
 
 class DataModel {
   final String label;
@@ -76,12 +77,10 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    Widget page;
-    page = switch (user?.type) {
-      UserType.admin => Dashboard(date: date),
-      UserType.user => Dashboard(date: date),
-      UserType.caregiver => CareDashBoard(date: date),
-      _ => const Center(child: HelseLoader()),
+    Widget page = switch (user?.type ?? UserType.patient) {
+      UserType.patient => const Center(child: Text("Welcome")),
+      UserType.admin => const Center(child: Text("Logged in as only admin")),
+      _ => Dashboard(date: date, type: user?.type),
     };
 
     return LayoutBuilder(builder: (context, constraints) {
@@ -129,7 +128,7 @@ class _HomeState extends State<Home> {
                         title: Text("Settings"),
                       ),
                     ),
-                    if (user?.type == UserType.admin)
+                    if (user?.type?.isAdmin() == true)
                       const PopupMenuItem<int>(
                         value: 2,
                         child: ListTile(
