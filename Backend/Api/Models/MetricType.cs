@@ -21,6 +21,9 @@ public enum MetricTypes
     Steps = 6,
     Calories = 7,
     Distance = 8,
+    Menstruation = 9,
+    Pain = 10,
+    Mood = 11,
 }
 
 public enum MetricDataType
