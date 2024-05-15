@@ -22,7 +22,7 @@ ALTER TABLE health.Metric
 UPDATE health.MetricType SET Id = (Id + 100) WHERE UserEditable = TRUE;
 
 -- Set the key at around 100 to leave space for future hardcoded metric
-SELECT setval(pg_get_serial_sequence('health.MetricType','id'), COALESCE((SELECT MAX(Id)+1 FROM health.MetricType), 1), false);
+SELECT setval(pg_get_serial_sequence('health.MetricType','id'), COALESCE((SELECT MAX(Id)+100 FROM health.MetricType), 1), false);
 
 INSERT INTO health.MetricType(id, description, name, unit, type, summaryType, usereditable)
 	VALUES (9, null, 'Menstruation', '', 1, 0, false),
