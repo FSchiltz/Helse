@@ -26,8 +26,8 @@ UPDATE health.MetricType SET Id = (Id + 100) WHERE UserEditable = TRUE;
 SELECT setval(pg_get_serial_sequence('health.MetricType','id'), COALESCE((SELECT MAX(Id)+100 FROM health.MetricType), 1), false);
 
 INSERT INTO health.MetricType(id, description, name, unit, type, summaryType, usereditable)
-	VALUES (9, null, 'Menstruation', '', 1, 0, false),
-    (10, null, 'Pain', '', 1, 0, false),
+	VALUES (9, null, 'Menstruation', '', 0, 0, false),
+    (10, null, 'Pain', '', 0, 0, false),
     (11, null, 'Mood', '', 0, 0, false);
 
 COMMIT;

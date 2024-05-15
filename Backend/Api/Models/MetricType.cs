@@ -28,6 +28,11 @@ public enum MetricTypes
     Menstruation = 9,
     Pain = 10,
     Mood = 11,
+    Medication = 12,
+    Tests = 13,
+    Sex = 14,
+    Stool = 15,
+    Spotting = 16,
 }
 
 public enum MetricDataType
