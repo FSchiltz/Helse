@@ -17,4 +17,10 @@ public class EventType
     // If the event is standalone or part of a treatment
     [Column, NotNull]
     public bool StandAlone { get; set; }
+
+    [Column]
+    public bool UserEditable { get; set; }
+
+    [Column]
+    public bool Visible { get; set; }
 }

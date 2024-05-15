@@ -50,11 +50,11 @@ public class HealthContext(DataConnection db) : IHealthContext
 
     public Task DeleteEvent(long id) => db.GetTable<Event>().DeleteAsync(x => x.Id == id);
 
-    public Task DeleteEventType(long id) => db.GetTable<EventType>().DeleteAsync(x => x.Id == id);
+    public Task DeleteEventType(long id) => db.GetTable<EventType>().DeleteAsync(x => x.Id == id && x.UserEditable);
 
     public Task DeleteMetric(long id) => db.GetTable<Data.Models.Metric>().DeleteAsync(x => x.Id == id);
 
-    public Task DeleteMetricType(long id) => db.GetTable<MetricType>().DeleteAsync(x => x.Id == id);
+    public Task DeleteMetricType(long id) => db.GetTable<MetricType>().DeleteAsync(x => x.Id == id && x.UserEditable);
 
     public Task<Event?> GetEvent(long id) => db.GetTable<Event>().FirstOrDefaultAsync(x => x.Id == id);
 
@@ -119,13 +119,15 @@ public class HealthContext(DataConnection db) : IHealthContext
         return query.OrderBy(x => x.Id).ToListAsync();
     }
 
-    public Task Insert(EventType metric)
+    public Task Insert(EventType eventType)
     {
         return db.GetTable<EventType>().InsertAsync(() => new EventType
         {
-            Name = metric.Name,
-            Description = metric.Description,
-            StandAlone = metric.StandAlone,
+            Name = eventType.Name,
+            Description = eventType.Description,
+            StandAlone = eventType.StandAlone,
+            UserEditable = true,
+            Visible = eventType.Visible
         });
     }
 
@@ -138,6 +140,8 @@ public class HealthContext(DataConnection db) : IHealthContext
             Unit = metric.Unit,
             SummaryType = metric.SummaryType,
             Type = metric.Type,
+            UserEditable = true,
+            Visible = metric.Visible,
         });
     }
 
