@@ -26,8 +26,8 @@ UPDATE health.EventType SET Id = (Id + 100) WHERE UserEditable = TRUE;
 SELECT setval(pg_get_serial_sequence('health.EventType','id'), COALESCE((SELECT MAX(Id)+100 FROM health.EventType), 1), false);
 
 
-    INSERT INTO health.EventType(id, description, name, standalone)
-	VALUES (3, null, 'Workout', true); 
+    INSERT INTO health.EventType(id, description, name, standalone, usereditable)
+	VALUES (3, null, 'Workout', true, false); 
    
    COMMIT;
 
