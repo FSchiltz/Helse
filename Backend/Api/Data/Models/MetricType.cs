@@ -22,4 +22,10 @@ public class MetricType
 
     [Column]
     public long SummaryType { get; set; }
+
+    [Column]
+    public bool UserEditable { get; set; }
+
+    [Column]
+    public bool Visible { get; set; }
 }

@@ -110,6 +110,8 @@ EventType _$EventTypeFromJson(Map<String, dynamic> json) => EventType(
       name: json['name'] as String?,
       description: json['description'] as String?,
       standAlone: json['standAlone'] as bool?,
+      userEditable: json['userEditable'] as bool?,
+      visible: json['visible'] as bool?,
     );
 
 Map<String, dynamic> _$EventTypeToJson(EventType instance) => <String, dynamic>{
@@ -117,6 +119,8 @@ Map<String, dynamic> _$EventTypeToJson(EventType instance) => <String, dynamic>{
       'name': instance.name,
       'description': instance.description,
       'standAlone': instance.standAlone,
+      'userEditable': instance.userEditable,
+      'visible': instance.visible,
     };
 
 FileType _$FileTypeFromJson(Map<String, dynamic> json) => FileType(
@@ -176,6 +180,8 @@ MetricType _$MetricTypeFromJson(Map<String, dynamic> json) => MetricType(
       description: json['description'] as String?,
       type: metricDataTypeNullableFromJson(json['type']),
       id: (json['id'] as num?)?.toInt(),
+      userEditable: json['userEditable'] as bool?,
+      visible: json['visible'] as bool?,
     );
 
 Map<String, dynamic> _$MetricTypeToJson(MetricType instance) =>
@@ -186,6 +192,8 @@ Map<String, dynamic> _$MetricTypeToJson(MetricType instance) =>
       'description': instance.description,
       'type': metricDataTypeNullableToJson(instance.type),
       'id': instance.id,
+      'userEditable': instance.userEditable,
+      'visible': instance.visible,
     };
 
 Oauth _$OauthFromJson(Map<String, dynamic> json) => Oauth(

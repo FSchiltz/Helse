@@ -24,6 +24,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
   final TextEditingController controllerDescription = TextEditingController();
   MetricSummary? _metricSummary;
   MetricDataType? _type;
+  bool _visible = true;
 
   @override
   void initState() {
@@ -61,17 +62,22 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
           child: Column(
             children: [
               MetricAddForm(
-                  controllerDescription: controllerDescription,
-                  controllerName: controllerName,
-                  controllerUnit: controllerUnit,
-                  type: _type,
-                  summary: _metricSummary,
-                  summaryCallback: (MetricSummary? value) => setState(() {
-                        _metricSummary = value;
-                      }),
-                  typeCallback: (MetricDataType? value) => setState(() {
-                        _type = value;
-                      })),
+                controllerDescription: controllerDescription,
+                controllerName: controllerName,
+                controllerUnit: controllerUnit,
+                type: _type,
+                summary: _metricSummary,
+                summaryCallback: (MetricSummary? value) => setState(() {
+                  _metricSummary = value;
+                }),
+                typeCallback: (MetricDataType? value) => setState(() {
+                  _type = value;
+                }),
+                visible: _visible,
+                visibleCallback: (bool value) => setState(() {
+                  _visible = value;
+                }),
+              ),
             ],
           ),
         ),
@@ -90,6 +96,8 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
           summaryType: _metricSummary,
           type: _type,
           id: widget.edit?.id ?? 0,
+          visible: _visible,
+          userEditable: true,
         );
         String text;
 

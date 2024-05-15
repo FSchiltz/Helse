@@ -35,7 +35,7 @@ class _EventsGridState extends State<EventsGrid> {
 
   void _getData() async {
     try {
-      var model = await DI.event?.eventsType(all: true);
+      var model = await DI.event?.eventsType(false);
       if (model != null) {
         var settings = await SettingsLogic.getEvents();
 

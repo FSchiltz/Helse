@@ -26,7 +26,7 @@ class _MetricTypeViewState extends State<MetricTypeView> {
     // if the users has not changed, no call to the backend
     if (_types != null) return _types;
 
-    _types = await DI.metric?.metricsType();
+    _types = await DI.metric?.metricsType(true);
     return _types;
   }
 
@@ -103,12 +103,12 @@ class _MetricTypeViewState extends State<MetricTypeView> {
                             )),
                             DataColumn(
                                 label: Expanded(
-                              child: Text(""),
+                              child: Text("Visible"),
                             )),
                             DataColumn(
                                 label: Expanded(
                               child: Text(""),
-                            ))
+                            )),
                           ],
                           rows: types
                               .map((type) => DataRow(cells: [
@@ -118,23 +118,27 @@ class _MetricTypeViewState extends State<MetricTypeView> {
                                     DataCell(Text(type.unit ?? "")),
                                     DataCell(Text(type.type?.name ?? "")),
                                     DataCell(Text(type.summaryType?.name ?? "")),
+                                    DataCell(Checkbox(value: type.visible ?? false, onChanged: null)),
                                     DataCell(
-                                      IconButton(
-                                          onPressed: () {
-                                            showDialog<void>(
-                                                context: context,
-                                                builder: (BuildContext context) {
-                                                  return MetricTypeAdd(_resetMetricType, edit: type);
-                                                });
-                                          },
-                                          icon: const Icon(Icons.edit_sharp)),
-                                    ),
-                                    DataCell(
-                                      IconButton(
-                                        onPressed: () async => deleteType(type),
-                                        icon: const Icon(Icons.delete_sharp),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                              onPressed: () {
+                                                showDialog<void>(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return MetricTypeAdd(_resetMetricType, edit: type);
+                                                    });
+                                              },
+                                              icon: const Icon(Icons.edit_sharp)),
+                                          if (type.userEditable == true)
+                                            IconButton(
+                                              onPressed: () async => deleteType(type),
+                                              icon: const Icon(Icons.delete_sharp),
+                                            ),
+                                        ],
                                       ),
-                                    )
+                                    ),
                                   ]))
                               .toList(),
                         ),

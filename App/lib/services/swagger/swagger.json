@@ -558,6 +558,16 @@
         "tags": [
           "MetricsLogic"
         ],
+        "parameters": [
+          {
+            "name": "all",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1158,6 +1168,12 @@
           },
           "standAlone": {
             "type": "boolean"
+          },
+          "userEditable": {
+            "type": "boolean"
+          },
+          "visible": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -1300,6 +1316,12 @@
           "id": {
             "type": "integer",
             "format": "int64"
+          },
+          "userEditable": {
+            "type": "boolean"
+          },
+          "visible": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

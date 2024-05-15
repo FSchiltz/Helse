@@ -72,7 +72,7 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> GetTypeAsync(IHealthContext db) => TypedResults.Ok((await db.GetMetricTypes()).Select(metric => new Models.MetricType
+    public static async Task<IResult> GetTypeAsync(bool? all, IHealthContext db) => TypedResults.Ok((await db.GetMetricTypes(all)).Select(metric => new Models.MetricType
     {
         Name = metric.Name,
         Description = metric.Description,
@@ -80,6 +80,8 @@ public static class MetricsLogic
         Type = (MetricDataType)metric.Type,
         Unit = metric.Unit,
         Id = metric.Id,
+        Visible = metric.Visible,
+        UserEditable = metric.UserEditable,
     }));
 
     public static async Task<IResult> CreateTypeAsync(Models.MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
@@ -100,6 +102,7 @@ public static class MetricsLogic
             SummaryType = (long)metric.SummaryType,
             Type = (long)metric.Type,
             Unit = metric.Unit,
+            Visible = metric.Visible,
         });
 
         return TypedResults.NoContent();
@@ -124,6 +127,7 @@ public static class MetricsLogic
             SummaryType = (long)metric.SummaryType,
             Type = (long)metric.Type,
             Unit = metric.Unit,
+            Visible = metric.Visible,
         });
 
         return TypedResults.NoContent();
@@ -135,8 +139,11 @@ public static class MetricsLogic
         if (admin is not null)
             return admin;
 
-        await db.DeleteMetricType(id);
+        var count = await db.DeleteMetricType(id);
 
-        return TypedResults.NoContent();
+        if (count == 1)
+            return TypedResults.NoContent();
+        else
+            return TypedResults.BadRequest();
     }
 }

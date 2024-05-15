@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../common/square_text_field.dart';
+import '../../../common/statefull_check.dart';
 
 class EventAddForm extends StatelessWidget {
   final TextEditingController controllerDescription;
@@ -8,10 +9,15 @@ class EventAddForm extends StatelessWidget {
   final FocusNode focusNodeName = FocusNode();
   final FocusNode focusNodeDescription = FocusNode();
 
+  final void Function(bool value) visibleCallback;
+  final bool visible;
+
   EventAddForm({
     super.key,
     required this.controllerDescription,
     required this.controllerName,
+    required this.visible,
+    required this.visibleCallback,
   });
 
   @override
@@ -36,6 +42,12 @@ class EventAddForm extends StatelessWidget {
           label: "Description",
           icon: Icons.person_sharp,
           theme: theme,
+        ),Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(children: [
+            const Text("Visible: "),
+            StatefullCheck(visible, visibleCallback),
+          ]),
         ),
       ],
     );

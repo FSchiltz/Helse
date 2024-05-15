@@ -35,7 +35,7 @@ class _MetricsGridState extends State<MetricsGrid> {
 
   void _getData() async {
     try {
-      var model = await DI.metric?.metricsType();
+      var model = await DI.metric?.metricsType(false);
       if (model != null) {
         var settings = await SettingsLogic.getMetrics();
         // filter using the user settings
@@ -67,16 +67,7 @@ class _MetricsGridState extends State<MetricsGrid> {
               _getData();
             },
             bloc: DI.settings.metrics,
-            child: GridView.extent(
-              shrinkWrap: true,
-              crossAxisSpacing: 2,
-              mainAxisSpacing: 2,
-              physics: const BouncingScrollPhysics(),
-              maxCrossAxisExtent: 240.0,
-              children: cached
-                  .map((type) => MetricWidget(type.a, type.b, widget.date, key: Key(type.a.id?.toString() ?? ""), person: widget.person))
-                  .toList(),
-            ),
+            child: _getGrid(cached),
           );
   }
 
@@ -86,5 +77,21 @@ class _MetricsGridState extends State<MetricsGrid> {
     }
 
     return OrderedItem(item.id ?? 0, item.name ?? '', GraphKind.event, GraphKind.event);
+  }
+
+  StatelessWidget _getGrid(List<Pair<MetricType, OrderedItem>> cached) {
+    if (cached.isEmpty) {
+      return const Text("No metrics");
+    } else {
+      return GridView.extent(
+        shrinkWrap: true,
+        crossAxisSpacing: 2,
+        mainAxisSpacing: 2,
+        physics: const BouncingScrollPhysics(),
+        maxCrossAxisExtent: 240.0,
+        children:
+            cached.map((type) => MetricWidget(type.a, type.b, widget.date, key: Key(type.a.id?.toString() ?? ""), person: widget.person)).toList(),
+      );
+    }
   }
 }

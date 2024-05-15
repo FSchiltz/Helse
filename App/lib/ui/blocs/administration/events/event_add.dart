@@ -21,6 +21,7 @@ class _EventTypeAddState extends State<EventTypeAdd> {
 
   final TextEditingController controllerName = TextEditingController();
   final TextEditingController controllerDescription = TextEditingController();
+  bool _visible = true;
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +53,10 @@ class _EventTypeAddState extends State<EventTypeAdd> {
               EventAddForm(
                 controllerDescription: controllerDescription,
                 controllerName: controllerName,
+                visible: _visible,
+                visibleCallback: (bool value) => setState(() {
+                  _visible = value;
+                }),
               ),
             ],
           ),
@@ -69,6 +74,8 @@ class _EventTypeAddState extends State<EventTypeAdd> {
           name: controllerName.text,
           standAlone: true,
           id: widget.edit?.id ?? 0,
+          visible: _visible,
+          userEditable: true,
         );
         String text;
 

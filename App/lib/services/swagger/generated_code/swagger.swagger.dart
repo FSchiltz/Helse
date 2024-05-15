@@ -319,15 +319,18 @@ abstract class Swagger extends ChopperService {
       {@Body() required MetricType? body});
 
   ///
-  Future<chopper.Response<List<MetricType>>> apiMetricsTypeGet() {
+  ///@param all
+  Future<chopper.Response<List<MetricType>>> apiMetricsTypeGet({bool? all}) {
     generatedMapping.putIfAbsent(MetricType, () => MetricType.fromJsonFactory);
 
-    return _apiMetricsTypeGet();
+    return _apiMetricsTypeGet(all: all);
   }
 
   ///
+  ///@param all
   @Get(path: '/api/metrics/type')
-  Future<chopper.Response<List<MetricType>>> _apiMetricsTypeGet();
+  Future<chopper.Response<List<MetricType>>> _apiMetricsTypeGet(
+      {@Query('all') bool? all});
 
   ///
   ///@param id
@@ -1003,6 +1006,8 @@ class EventType {
     this.name,
     this.description,
     this.standAlone,
+    this.userEditable,
+    this.visible,
   });
 
   factory EventType.fromJson(Map<String, dynamic> json) =>
@@ -1019,6 +1024,10 @@ class EventType {
   final String? description;
   @JsonKey(name: 'standAlone')
   final bool? standAlone;
+  @JsonKey(name: 'userEditable')
+  final bool? userEditable;
+  @JsonKey(name: 'visible')
+  final bool? visible;
   static const fromJsonFactory = _$EventTypeFromJson;
 
   @override
@@ -1034,7 +1043,12 @@ class EventType {
                     .equals(other.description, description)) &&
             (identical(other.standAlone, standAlone) ||
                 const DeepCollectionEquality()
-                    .equals(other.standAlone, standAlone)));
+                    .equals(other.standAlone, standAlone)) &&
+            (identical(other.userEditable, userEditable) ||
+                const DeepCollectionEquality()
+                    .equals(other.userEditable, userEditable)) &&
+            (identical(other.visible, visible) ||
+                const DeepCollectionEquality().equals(other.visible, visible)));
   }
 
   @override
@@ -1046,30 +1060,44 @@ class EventType {
       const DeepCollectionEquality().hash(name) ^
       const DeepCollectionEquality().hash(description) ^
       const DeepCollectionEquality().hash(standAlone) ^
+      const DeepCollectionEquality().hash(userEditable) ^
+      const DeepCollectionEquality().hash(visible) ^
       runtimeType.hashCode;
 }
 
 extension $EventTypeExtension on EventType {
   EventType copyWith(
-      {int? id, String? name, String? description, bool? standAlone}) {
+      {int? id,
+      String? name,
+      String? description,
+      bool? standAlone,
+      bool? userEditable,
+      bool? visible}) {
     return EventType(
         id: id ?? this.id,
         name: name ?? this.name,
         description: description ?? this.description,
-        standAlone: standAlone ?? this.standAlone);
+        standAlone: standAlone ?? this.standAlone,
+        userEditable: userEditable ?? this.userEditable,
+        visible: visible ?? this.visible);
   }
 
   EventType copyWithWrapped(
       {Wrapped<int?>? id,
       Wrapped<String?>? name,
       Wrapped<String?>? description,
-      Wrapped<bool?>? standAlone}) {
+      Wrapped<bool?>? standAlone,
+      Wrapped<bool?>? userEditable,
+      Wrapped<bool?>? visible}) {
     return EventType(
         id: (id != null ? id.value : this.id),
         name: (name != null ? name.value : this.name),
         description:
             (description != null ? description.value : this.description),
-        standAlone: (standAlone != null ? standAlone.value : this.standAlone));
+        standAlone: (standAlone != null ? standAlone.value : this.standAlone),
+        userEditable:
+            (userEditable != null ? userEditable.value : this.userEditable),
+        visible: (visible != null ? visible.value : this.visible));
   }
 }
 
@@ -1309,6 +1337,8 @@ class MetricType {
     this.description,
     this.type,
     this.id,
+    this.userEditable,
+    this.visible,
   });
 
   factory MetricType.fromJson(Map<String, dynamic> json) =>
@@ -1337,6 +1367,10 @@ class MetricType {
   final enums.MetricDataType? type;
   @JsonKey(name: 'id')
   final int? id;
+  @JsonKey(name: 'userEditable')
+  final bool? userEditable;
+  @JsonKey(name: 'visible')
+  final bool? visible;
   static const fromJsonFactory = _$MetricTypeFromJson;
 
   @override
@@ -1356,7 +1390,12 @@ class MetricType {
             (identical(other.type, type) ||
                 const DeepCollectionEquality().equals(other.type, type)) &&
             (identical(other.id, id) ||
-                const DeepCollectionEquality().equals(other.id, id)));
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.userEditable, userEditable) ||
+                const DeepCollectionEquality()
+                    .equals(other.userEditable, userEditable)) &&
+            (identical(other.visible, visible) ||
+                const DeepCollectionEquality().equals(other.visible, visible)));
   }
 
   @override
@@ -1370,6 +1409,8 @@ class MetricType {
       const DeepCollectionEquality().hash(description) ^
       const DeepCollectionEquality().hash(type) ^
       const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(userEditable) ^
+      const DeepCollectionEquality().hash(visible) ^
       runtimeType.hashCode;
 }
 
@@ -1380,14 +1421,18 @@ extension $MetricTypeExtension on MetricType {
       enums.MetricSummary? summaryType,
       String? description,
       enums.MetricDataType? type,
-      int? id}) {
+      int? id,
+      bool? userEditable,
+      bool? visible}) {
     return MetricType(
         name: name ?? this.name,
         unit: unit ?? this.unit,
         summaryType: summaryType ?? this.summaryType,
         description: description ?? this.description,
         type: type ?? this.type,
-        id: id ?? this.id);
+        id: id ?? this.id,
+        userEditable: userEditable ?? this.userEditable,
+        visible: visible ?? this.visible);
   }
 
   MetricType copyWithWrapped(
@@ -1396,7 +1441,9 @@ extension $MetricTypeExtension on MetricType {
       Wrapped<enums.MetricSummary?>? summaryType,
       Wrapped<String?>? description,
       Wrapped<enums.MetricDataType?>? type,
-      Wrapped<int?>? id}) {
+      Wrapped<int?>? id,
+      Wrapped<bool?>? userEditable,
+      Wrapped<bool?>? visible}) {
     return MetricType(
         name: (name != null ? name.value : this.name),
         unit: (unit != null ? unit.value : this.unit),
@@ -1405,7 +1452,10 @@ extension $MetricTypeExtension on MetricType {
         description:
             (description != null ? description.value : this.description),
         type: (type != null ? type.value : this.type),
-        id: (id != null ? id.value : this.id));
+        id: (id != null ? id.value : this.id),
+        userEditable:
+            (userEditable != null ? userEditable.value : this.userEditable),
+        visible: (visible != null ? visible.value : this.visible));
   }
 }
 
