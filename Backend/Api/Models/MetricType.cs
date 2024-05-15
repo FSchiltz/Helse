@@ -9,6 +9,10 @@ public class MetricType
 
     public MetricDataType Type { get; set; }
     public long Id { get; set; }
+
+    public bool UserEditable { get; set; }
+
+    public bool Visible { get; set; }
 }
 
 public enum MetricTypes

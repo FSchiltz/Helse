@@ -80,6 +80,8 @@ public static class MetricsLogic
         Type = (MetricDataType)metric.Type,
         Unit = metric.Unit,
         Id = metric.Id,
+        Visible = metric.Visible,
+        UserEditable = metric.UserEditable,
     }));
 
     public static async Task<IResult> CreateTypeAsync(Models.MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
@@ -100,6 +102,7 @@ public static class MetricsLogic
             SummaryType = (long)metric.SummaryType,
             Type = (long)metric.Type,
             Unit = metric.Unit,
+            Visible = metric.Visible,
         });
 
         return TypedResults.NoContent();
@@ -124,6 +127,7 @@ public static class MetricsLogic
             SummaryType = (long)metric.SummaryType,
             Type = (long)metric.Type,
             Unit = metric.Unit,
+            Visible = metric.Visible,
         });
 
         return TypedResults.NoContent();
