@@ -68,6 +68,13 @@ class MetricAddForm extends StatelessWidget {
           (value) => summaryCallback.call(value),
           label: 'Summary',
         ),
+        const SizedBox(height: 10),
+        TypeInput(
+          value: summary,
+          MetricSummary.values,
+          (value) => summaryCallback.call(value),
+          label: 'Editable',
+        ),
       ],
     );
   }

@@ -59,8 +59,7 @@ class _EventTypeViewState extends State<EventTypeView> {
                 children: [
                   Row(
                     children: [
-                      Text("Event Types",
-                          style: Theme.of(context).textTheme.headlineMedium),
+                      Text("Event Types", style: Theme.of(context).textTheme.headlineMedium),
                       const SizedBox(
                         width: 10,
                       ),
@@ -99,7 +98,7 @@ class _EventTypeViewState extends State<EventTypeView> {
                             )),
                             DataColumn(
                                 label: Expanded(
-                              child: Text(""),
+                              child: Text("Visible"),
                             )),
                             DataColumn(
                                 label: Expanded(
@@ -111,29 +110,28 @@ class _EventTypeViewState extends State<EventTypeView> {
                                     DataCell(Text((type.id).toString())),
                                     DataCell(Text(type.name ?? "")),
                                     DataCell(Text(type.description ?? "")),
-                                    DataCell(Checkbox(
-                                        value: type.standAlone ?? true,
-                                        onChanged: null)),
+                                    DataCell(Checkbox(value: type.standAlone ?? true, onChanged: null)),
+                                    DataCell(Checkbox(value: type.userEditable ?? false, onChanged: null)),
                                     DataCell(
-                                      IconButton(
-                                          onPressed: () {
-                                            showDialog<void>(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return EventTypeAdd(
-                                                      _resetEventType,
-                                                      edit: type);
-                                                });
-                                          },
-                                          icon: const Icon(Icons.edit_sharp)),
-                                    ),
-                                    DataCell(
-                                      IconButton(
-                                        onPressed: () async => deleteType(type),
-                                        icon: const Icon(Icons.delete_sharp),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                              onPressed: () {
+                                                showDialog<void>(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return EventTypeAdd(_resetEventType, edit: type);
+                                                    });
+                                              },
+                                              icon: const Icon(Icons.edit_sharp)),
+                                          if (type.userEditable == true)
+                                            IconButton(
+                                              onPressed: () async => deleteType(type),
+                                              icon: const Icon(Icons.delete_sharp),
+                                            ),
+                                        ],
                                       ),
-                                    )
+                                    ),
                                   ]))
                               .toList(),
                         ),
@@ -144,8 +142,7 @@ class _EventTypeViewState extends State<EventTypeView> {
               );
             }
           }
-          return const Center(
-              child: SizedBox(width: 50, height: 50, child: HelseLoader()));
+          return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
         });
   }
 
