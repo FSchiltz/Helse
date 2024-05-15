@@ -1,9 +1,8 @@
 namespace Api.Models;
 
+[Flags]
 public enum UserType
 {
     Patient = 0,
-    User = 1,
-    Admin = 2,
-    Caregiver = 3,
+    Admin = 1,
 }
