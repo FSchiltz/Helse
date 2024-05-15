@@ -3,6 +3,7 @@
 using System.Text.Json.Nodes;
 using Api.Data;
 using Api.Data.Models;
+using Api.Logic.Import.Clue;
 using Api.Models;
 using Newtonsoft.Json;
 
@@ -13,7 +14,7 @@ public class ClueImporter(string file, IHealthContext db, User user) : FileImpor
     public override async Task Import()
     {
         // parse the file as an arry of json object
-        var json = JsonConvert.DeserializeObject<JsonArray>(File);
+        var json = JsonConvert.DeserializeObject<ClueItem[]>(File);
         if (json is null)
         {
             return;
@@ -21,13 +22,27 @@ public class ClueImporter(string file, IHealthContext db, User user) : FileImpor
 
         foreach (var node in json)
         {
+            if (node.Date is null || node.Value?.Any() != true)
+                continue;
+
             var metric = new CreateMetric
             {
-                Value = "",
+                Type = (int)GetType(node.Type),
+                Tag = node.Id,
+                Source = FileTypes.Clue,
+                Date = DateTime.Parse(node.Date),
+                Value = node.Value?[0].Option ?? "",
             };
-            
+
             // import the data
             await this.ImportMetric(metric);
         }
     }
+
+    private static MetricTypes GetType(string? type) => type switch
+    {
+        "period" => MetricTypes.Menstruation,
+        "feelings" => MetricTypes.Mood,
+        _ => throw new InvalidDataException(),
+    };
 }

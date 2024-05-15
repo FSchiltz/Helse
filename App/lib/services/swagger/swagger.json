@@ -1196,15 +1196,17 @@
         "enum": [
           0,
           1,
-          2
+          2,
+          3
         ],
         "type": "integer",
-        "description": "\n\n0 = None\n\n1 = RedmiWatch\n\n2 = GoogleHealthConnect",
+        "description": "\n\n0 = None\n\n1 = RedmiWatch\n\n2 = GoogleHealthConnect\n\n3 = Clue",
         "format": "int32",
         "x-enumNames": [
           "None",
           "RedmiWatch",
-          "GoogleHealthConnect"
+          "GoogleHealthConnect",
+          "Clue"
         ]
       },
       "ImportData": {
