@@ -150,6 +150,15 @@ Map<String, dynamic> _$ImportDataToJson(ImportData instance) =>
       'events': instance.events?.map((e) => e.toJson()).toList(),
     };
 
+ImportFile _$ImportFileFromJson(Map<String, dynamic> json) => ImportFile(
+      content: json['content'] as String?,
+    );
+
+Map<String, dynamic> _$ImportFileToJson(ImportFile instance) =>
+    <String, dynamic>{
+      'content': instance.content,
+    };
+
 Metric _$MetricFromJson(Map<String, dynamic> json) => Metric(
       date:
           json['date'] == null ? null : DateTime.parse(json['date'] as String),

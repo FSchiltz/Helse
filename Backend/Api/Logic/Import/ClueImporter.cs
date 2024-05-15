@@ -1,6 +1,3 @@
-
-
-using System.Text.Json.Nodes;
 using Api.Data;
 using Api.Data.Models;
 using Api.Logic.Import.Clue;
@@ -25,24 +22,39 @@ public class ClueImporter(string file, IHealthContext db, User user) : FileImpor
             if (node.Date is null || node.Value?.Any() != true)
                 continue;
 
-            var metric = new CreateMetric
+            foreach (var value in node.Value.Where(x => x.Option is not null))
             {
-                Type = (int)GetType(node.Type),
-                Tag = node.Id,
-                Source = FileTypes.Clue,
-                Date = DateTime.Parse(node.Date),
-                Value = node.Value?[0].Option ?? "",
-            };
-
-            // import the data
-            await this.ImportMetric(metric);
+                var (type, subValue) = GetType(node.Type);
+                var metric = new CreateMetric
+                {
+                    Type = (int)type,
+                    Tag = node.Id + value.Option,
+                    Source = FileTypes.Clue,
+                    Date = DateTime.Parse(node.Date),
+                    Value = subValue + value.Option!,
+                };
+                // import the data
+                await ImportMetric(metric);
+            }
         }
     }
 
-    private static MetricTypes GetType(string? type) => type switch
+    private static (MetricTypes, string?) GetType(string? type) => type switch
     {
-        "period" => MetricTypes.Menstruation,
-        "feelings" => MetricTypes.Mood,
-        _ => throw new InvalidDataException(),
+        "medication" => (MetricTypes.Medication, null),
+        "birth_control_ring" => (MetricTypes.Medication, "Birth control ring "),
+        "birth_control_pill" => (MetricTypes.Medication, "Birth control pill "),
+        "mind" => (MetricTypes.Mood, null),
+        "pain" => (MetricTypes.Pain, null),
+        "sex_life" => (MetricTypes.Sex, null),
+        "stool" => (MetricTypes.Stool, null),
+        "energy" => (MetricTypes.Mood, null),
+        "spotting" => (MetricTypes.Spotting, null),
+        "period" => (MetricTypes.Menstruation, null),
+        "discharge" => (MetricTypes.Menstruation, "discharge "),
+        "feelings" => (MetricTypes.Mood, null),
+        "pms" => (MetricTypes.Pain, "Premenstrual syndrome "),
+        "tests" => (MetricTypes.Tests, null),
+        _ => throw new InvalidDataException(type),
     };
 }

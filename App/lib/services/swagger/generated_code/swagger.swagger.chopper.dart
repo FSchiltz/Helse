@@ -159,7 +159,7 @@ final class _$Swagger extends Swagger {
   @override
   Future<Response<dynamic>> _apiImportTypePost({
     required int? type,
-    required String? body,
+    required ImportFile? body,
   }) {
     final Uri $url = Uri.parse('/api/import/${type}');
     final $body = body;

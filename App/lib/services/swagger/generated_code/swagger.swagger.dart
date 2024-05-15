@@ -203,7 +203,7 @@ abstract class Swagger extends ChopperService {
   ///@param type
   Future<chopper.Response> apiImportTypePost({
     required int? type,
-    required String? body,
+    required ImportFile? body,
   }) {
     return _apiImportTypePost(type: type, body: body);
   }
@@ -216,7 +216,7 @@ abstract class Swagger extends ChopperService {
   )
   Future<chopper.Response> _apiImportTypePost({
     @Path('type') required int? type,
-    @Body() required String? body,
+    @Body() required ImportFile? body,
   });
 
   ///
@@ -1205,6 +1205,49 @@ extension $ImportDataExtension on ImportData {
     return ImportData(
         metrics: (metrics != null ? metrics.value : this.metrics),
         events: (events != null ? events.value : this.events));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class ImportFile {
+  const ImportFile({
+    this.content,
+  });
+
+  factory ImportFile.fromJson(Map<String, dynamic> json) =>
+      _$ImportFileFromJson(json);
+
+  static const toJsonFactory = _$ImportFileToJson;
+  Map<String, dynamic> toJson() => _$ImportFileToJson(this);
+
+  @JsonKey(name: 'content')
+  final String? content;
+  static const fromJsonFactory = _$ImportFileFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is ImportFile &&
+            (identical(other.content, content) ||
+                const DeepCollectionEquality().equals(other.content, content)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(content) ^ runtimeType.hashCode;
+}
+
+extension $ImportFileExtension on ImportFile {
+  ImportFile copyWith({String? content}) {
+    return ImportFile(content: content ?? this.content);
+  }
+
+  ImportFile copyWithWrapped({Wrapped<String?>? content}) {
+    return ImportFile(
+        content: (content != null ? content.value : this.content));
   }
 }
 
