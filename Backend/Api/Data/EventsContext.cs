@@ -173,6 +173,7 @@ public class HealthContext(DataConnection db) : IHealthContext
             .Where(x => x.Id == type.Id)
             .Set(x => x.Name, type.Name)
             .Set(x => x.Description, type.Description)
+            .Set(x => x.Visible, type.Visible)
             .UpdateAsync();
     }
 
@@ -185,6 +186,7 @@ public class HealthContext(DataConnection db) : IHealthContext
             .Set(x => x.Unit, metric.Unit)
             .Set(x => x.Type, metric.Type)
             .Set(x => x.SummaryType, metric.SummaryType)
+            .Set(x => x.Visible, metric.Visible)
             .UpdateAsync();
     }
 

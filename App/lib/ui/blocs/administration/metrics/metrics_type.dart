@@ -118,7 +118,7 @@ class _MetricTypeViewState extends State<MetricTypeView> {
                                     DataCell(Text(type.unit ?? "")),
                                     DataCell(Text(type.type?.name ?? "")),
                                     DataCell(Text(type.summaryType?.name ?? "")),
-                                    DataCell(Checkbox(value: type.userEditable ?? false, onChanged: null)),
+                                    DataCell(Checkbox(value: type.visible ?? false, onChanged: null)),
                                     DataCell(
                                       Row(
                                         children: [

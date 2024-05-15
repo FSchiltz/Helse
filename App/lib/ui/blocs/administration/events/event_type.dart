@@ -111,7 +111,7 @@ class _EventTypeViewState extends State<EventTypeView> {
                                     DataCell(Text(type.name ?? "")),
                                     DataCell(Text(type.description ?? "")),
                                     DataCell(Checkbox(value: type.standAlone ?? true, onChanged: null)),
-                                    DataCell(Checkbox(value: type.userEditable ?? false, onChanged: null)),
+                                    DataCell(Checkbox(value: type.visible ?? false, onChanged: null)),
                                     DataCell(
                                       Row(
                                         children: [
