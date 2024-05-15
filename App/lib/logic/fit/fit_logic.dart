@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:health/health.dart';
@@ -141,11 +140,5 @@ class FitLogic {
         return workout.totalDistance.toString();
     }
     return value.toString();
-  }
-
-  DateTime _min(DateTime add, DateTime now) {
-    if (add.compareTo(now) >= 0) return now;
-
-    return add;
   }
 }

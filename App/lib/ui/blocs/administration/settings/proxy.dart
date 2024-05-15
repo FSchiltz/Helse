@@ -24,7 +24,7 @@ class _ProxyViewState extends State<ProxyView> {
   }
 
   Future<Proxy?> _getData() async {
-    _settings = await DI.settings?.api().proxy();
+    _settings = await DI.settings.api().proxy();
 
     return _settings;
   }
@@ -147,7 +147,7 @@ class _ProxyFormViewState extends State<ProxyFormView> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
-        await DI.settings?.api().updateProxy(
+        await DI.settings.api().updateProxy(
               Proxy(
                 autoRegister: _proxyAutoRegister,
                 proxyAuth: _proxyAuth,

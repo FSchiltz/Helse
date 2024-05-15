@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:helse/services/swagger/generated_code/swagger.enums.swagger.dart';
 
 import '../helpers/users.dart';
 import '../helpers/date.dart';
