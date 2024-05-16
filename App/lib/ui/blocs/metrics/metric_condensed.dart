@@ -1,6 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:collection/collection.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
@@ -19,84 +18,31 @@ class MetricCondensed extends StatelessWidget {
         ? Center(
             child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
           )
-        : (type.type == MetricDataType.text
-            ? ListView.builder(itemCount: metrics.length, itemBuilder: (x, y) => Text(metrics[y].$value ?? ""))
-            : WidgetGraph(metrics, date, settings.graph, type.summaryType ?? MetricSummary.latest));
+        : (type.type == MetricDataType.text ? const Center() : WidgetGraph(metrics, date, settings.graph));
   }
-}
-
-enum StepKind {
-  hours,
-  days,
-  month,
 }
 
 class WidgetGraph extends StatelessWidget {
   final List<Metric> metrics;
   final DateTimeRange date;
   final GraphKind settings;
-  final MetricSummary type;
 
-  const WidgetGraph(this.metrics, this.date, this.settings, this.type, {super.key});
+  const WidgetGraph(this.metrics, this.date, this.settings, {super.key});
 
-  StepKind _kind(Duration duration) {
-    if (duration.inDays > 365) return StepKind.month;
-    if (duration.inDays > 30) return StepKind.days;
-    return StepKind.hours;
-  }
-
-  int _hourBetween(DateTime from, DateTime to) {
-    var difference = to.difference(from);
-    var steps = _kind(difference);
-    switch (steps) {
-      case StepKind.days:
-        return difference.inDays;
-      case StepKind.month:
-        return difference.inDays ~/ 30;
-      case StepKind.hours:
-      default:
-        return difference.inHours;
-    }
-  }
-
-  List<FlSpot> _getSpot(List<Metric> raw, MetricSummary type) {
-    var length = _hourBetween(date.start, date.end);
-    var groups = <int, List<Metric>>{};
-    for (var metric in raw) {
-      if (metric.date == null) continue;
-
-      // calculate the spot
-      var key = _hourBetween(date.start, metric.date!.toLocal());
-      var spot = groups[key];
-      if (spot == null) {
-        spot = [];
-        groups[key] = spot;
-      }
-      spot.add(metric);
-    }
-
-    // for all spots, we take the mean
-    List<double?> means = [];
-    for (int i = 0; i < length; i++) {
-      var group = groups[i]?.where((element) => element.$value != null).map((m) => double.parse(m.$value!)) ?? [];
-
-      var mean = group.isEmpty ? null : (type == MetricSummary.sum ? group.sum : group.average);
-      means.add(mean);
-    }
-
+  List<FlSpot> _getSpot(List<Metric> raw) {
     List<FlSpot> spots = [];
 
-    for (final (index, item) in means.indexed) {
-      if (item != null) {
-        spots.add(FlSpot(index.toDouble(), item));
-      }
+    for (final item in raw) {
+      var x = double.parse(item.tag ?? "0");
+      var y = (double.parse(item.$value ?? "0") * 10).roundToDouble() / 10;
+      spots.add(FlSpot(x, y));
     }
 
     return spots;
   }
 
-  List<BarChartGroupData> _getBar(List<Metric> raw, MetricSummary type) {
-    var spots = _getSpot(raw, type);
+  List<BarChartGroupData> _getBar(List<Metric> raw) {
+    var spots = _getSpot(raw);
 
     // now we have the min and max Y and X value, we can build the spots
     List<BarChartGroupData> bar = [];
@@ -110,10 +56,10 @@ class WidgetGraph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: const EdgeInsets.all(8.0), child: _getGraph(type));
+    return Padding(padding: const EdgeInsets.all(8.0), child: _getGraph());
   }
 
-  Widget _getGraph(MetricSummary type) {
+  Widget _getGraph() {
     if (settings == GraphKind.bar) {
       return BarChart(
         BarChartData(
@@ -128,13 +74,13 @@ class WidgetGraph extends StatelessWidget {
             show: false,
           ),
           gridData: const FlGridData(show: false),
-          barGroups: _getBar(metrics, type),
+          barGroups: _getBar(metrics),
         ),
       );
     } else {
       return LineChart(LineChartData(
         minX: 0,
-        maxX: _hourBetween(date.start, date.end).toDouble(),
+        maxX: 16,
         lineTouchData: const LineTouchData(enabled: false),
         titlesData: const FlTitlesData(
           leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -148,7 +94,8 @@ class WidgetGraph extends StatelessWidget {
         gridData: const FlGridData(show: false),
         lineBarsData: [
           LineChartBarData(
-            spots: _getSpot(metrics, type),
+            barWidth: 4,
+            spots: _getSpot(metrics),
             isCurved: true,
             curveSmoothness: 0.2,
             dotData: const FlDotData(show: false),

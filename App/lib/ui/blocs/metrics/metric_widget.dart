@@ -26,26 +26,6 @@ class _MetricWidgetState extends State<MetricWidget> {
 
   _MetricWidgetState();
 
-  @override
-  void initState() {
-    _metrics = null;
-    super.initState();
-  }
-
-  int _sort(Metric m1, Metric m2) {
-    var a = m1.date;
-    var b = m2.date;
-    if (a == null && b == null) {
-      return 0;
-    } else if (a == null) {
-      return -1;
-    } else if (b == null) {
-      return 1;
-    } else {
-      return a.compareTo(b);
-    }
-  }
-
   void _resetMetric() {
     setState(() {
       _metrics = [];
@@ -64,8 +44,8 @@ class _MetricWidgetState extends State<MetricWidget> {
     var start = DateTime(date.start.year, date.start.month, date.start.day);
     var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-    _metrics = await DI.metric?.metrics(id, start, end, person: widget.person);
-    _metrics?.sort(_sort);
+    _metrics = await DI.metric?.metrics(id, start, end, person: widget.person, simple: true);
+
     return _metrics;
   }
 
@@ -98,9 +78,10 @@ class _MetricWidgetState extends State<MetricWidget> {
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute<void>(
                         builder: (context) => MetricDetailPage(
-                              metrics: metrics,
                               date: widget.date,
                               type: widget.type,
+                              person: widget.person,
+                              summary: metrics,
                               settings:  widget.settings.detailGraph,
                             )),
                   ),
@@ -134,9 +115,9 @@ class _MetricWidgetState extends State<MetricWidget> {
                         ),
                         if (metrics.isNotEmpty)
                           Expanded(
-                            child: Text(_getTextInfo(metrics, widget.type), style: Theme.of(context).textTheme.labelLarge),
+                            child: Text(_getTextInfo(metrics, widget.type), style: Theme.of(context).textTheme.bodyLarge),
                           ),
-                        Expanded(child: MetricCondensed(metrics, widget.type, widget.settings, widget.date)),
+                        Flexible(child: MetricCondensed(metrics, widget.type, widget.settings, widget.date)),
                       ],
                     ),
                   ),
@@ -152,10 +133,10 @@ class _MetricWidgetState extends State<MetricWidget> {
     String? value;
     switch (type.summaryType) {
       case MetricSummary.sum:
-        value = metrics.map((metric) => int.parse(metric.$value ?? '0')).sum.toString();
+        value = metrics.map((metric) => double.parse(metric.$value ?? '0')).sum.toString();
         break;
       case MetricSummary.mean:
-        value = (metrics.map((metric) => int.parse(metric.$value ?? '0')).sum / metrics.length).round().toString();
+        value = (metrics.map((metric) => double.parse(metric.$value ?? '0')).sum / metrics.length).round().toString();
         break;
       case MetricSummary.latest:
       default:

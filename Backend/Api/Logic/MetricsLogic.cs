@@ -36,6 +36,45 @@ public static class MetricsLogic
         }));
     }
 
+    public async static Task<IResult> GetSummaryAsync(int tile, int type, DateTime start, DateTime end, long? personId, IUserContext users, IHealthContext db, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.View))
+            return TypedResults.Forbid();
+
+        var id = personId ?? user.PersonId;
+        var metricType = await db.GetMetricType(type) ?? throw new InvalidDataException("Incorrect metric type: " + type);
+
+        Api.Data.Models.Metric[] metrics;
+        if (metricType.Type == (long)MetricDataType.Text)
+        {
+            var last = await db.GetLastMetrics(id, type, start, end);
+            if (last is not null)
+                metrics = [last];
+            else
+                metrics = [];
+        }
+        else
+        {
+            metrics = await db.GetSummaryMetrics(tile, id, type, (MetricSummary)metricType.SummaryType, start, end);
+        }
+
+        return TypedResults.Ok(metrics.Select(x => new Metric
+        {
+            Value = x.Value,
+            Date = DateTime.SpecifyKind(x.Date, DateTimeKind.Utc),
+            Id = x.Id,
+            Person = user.PersonId,
+            Type = x.Type,
+            Tag = x.Tag,
+            User = x.UserId,
+            Source = (FileTypes)x.Source,
+        }));
+    }
+
     public static async Task<IResult> CreateAsync(CreateMetric metric, long? personId, IUserContext users, IHealthContext db, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);

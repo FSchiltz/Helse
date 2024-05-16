@@ -70,6 +70,11 @@ public static class Endpoints
     {
         /* Metrics endpoints*/
         var metrics = api.MapGroup("/metrics").RequireAuthorization();
+        metrics.MapGet("/summary", MetricsLogic.GetSummaryAsync)
+        .Produces<List<Api.Models.Metric>>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized)
+        .WithOpenApi();
+
         metrics.MapGet("/", MetricsLogic.GetAsync)
         .Produces<List<Api.Models.Metric>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)

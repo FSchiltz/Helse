@@ -186,6 +186,31 @@ final class _$Swagger extends Swagger {
   }
 
   @override
+  Future<Response<List<Metric>>> _apiMetricsSummaryGet({
+    required int? tile,
+    required int? type,
+    required DateTime? start,
+    required DateTime? end,
+    int? personId,
+  }) {
+    final Uri $url = Uri.parse('/api/metrics/summary');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'tile': tile,
+      'type': type,
+      'start': start,
+      'end': end,
+      'personId': personId,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<List<Metric>, Metric>($request);
+  }
+
+  @override
   Future<Response<List<Metric>>> _apiMetricsGet({
     required int? type,
     required DateTime? start,
