@@ -94,6 +94,7 @@ class WidgetGraph extends StatelessWidget {
         gridData: const FlGridData(show: false),
         lineBarsData: [
           LineChartBarData(
+            barWidth: 4,
             spots: _getSpot(metrics),
             isCurved: true,
             curveSmoothness: 0.2,
