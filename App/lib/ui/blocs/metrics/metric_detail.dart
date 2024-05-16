@@ -95,7 +95,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                           ? CalendarView(metrics, widget.date)
                           : Column(
                               children: [
-                                SizedBox(height: 120, child: WidgetGraph(widget.summary, widget.date, GraphKind.line)),
+                                SizedBox(height: 80, child: WidgetGraph(widget.summary, widget.date, GraphKind.line)),
                                 Center(
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
