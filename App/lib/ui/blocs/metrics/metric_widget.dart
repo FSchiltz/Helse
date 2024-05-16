@@ -64,8 +64,8 @@ class _MetricWidgetState extends State<MetricWidget> {
     var start = DateTime(date.start.year, date.start.month, date.start.day);
     var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-    _metrics = await DI.metric?.metrics(id, start, end, person: widget.person);
-    _metrics?.sort(_sort);
+    _metrics = await DI.metric?.metrics(id, start, end, person: widget.person, simple: true);
+
     return _metrics;
   }
 
@@ -152,10 +152,10 @@ class _MetricWidgetState extends State<MetricWidget> {
     String? value;
     switch (type.summaryType) {
       case MetricSummary.sum:
-        value = metrics.map((metric) => int.parse(metric.$value ?? '0')).sum.toString();
+        value = metrics.map((metric) => double.parse(metric.$value ?? '0')).sum.toString();
         break;
       case MetricSummary.mean:
-        value = (metrics.map((metric) => int.parse(metric.$value ?? '0')).sum / metrics.length).round().toString();
+        value = (metrics.map((metric) => double.parse(metric.$value ?? '0')).sum / metrics.length).round().toString();
         break;
       case MetricSummary.latest:
       default:

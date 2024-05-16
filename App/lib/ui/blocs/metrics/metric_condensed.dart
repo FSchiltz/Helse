@@ -1,6 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:collection/collection.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
@@ -25,12 +24,6 @@ class MetricCondensed extends StatelessWidget {
   }
 }
 
-enum StepKind {
-  hours,
-  days,
-  month,
-}
-
 class WidgetGraph extends StatelessWidget {
   final List<Metric> metrics;
   final DateTimeRange date;
@@ -39,57 +32,11 @@ class WidgetGraph extends StatelessWidget {
 
   const WidgetGraph(this.metrics, this.date, this.settings, this.type, {super.key});
 
-  StepKind _kind(Duration duration) {
-    if (duration.inDays > 365) return StepKind.month;
-    if (duration.inDays > 30) return StepKind.days;
-    return StepKind.hours;
-  }
-
-  int _hourBetween(DateTime from, DateTime to) {
-    var difference = to.difference(from);
-    var steps = _kind(difference);
-    switch (steps) {
-      case StepKind.days:
-        return difference.inDays;
-      case StepKind.month:
-        return difference.inDays ~/ 30;
-      case StepKind.hours:
-      default:
-        return difference.inHours;
-    }
-  }
-
   List<FlSpot> _getSpot(List<Metric> raw, MetricSummary type) {
-    var length = _hourBetween(date.start, date.end);
-    var groups = <int, List<Metric>>{};
-    for (var metric in raw) {
-      if (metric.date == null) continue;
-
-      // calculate the spot
-      var key = _hourBetween(date.start, metric.date!.toLocal());
-      var spot = groups[key];
-      if (spot == null) {
-        spot = [];
-        groups[key] = spot;
-      }
-      spot.add(metric);
-    }
-
-    // for all spots, we take the mean
-    List<double?> means = [];
-    for (int i = 0; i < length; i++) {
-      var group = groups[i]?.where((element) => element.$value != null).map((m) => double.parse(m.$value!)) ?? [];
-
-      var mean = group.isEmpty ? null : (type == MetricSummary.sum ? group.sum : group.average);
-      means.add(mean);
-    }
-
     List<FlSpot> spots = [];
 
-    for (final (index, item) in means.indexed) {
-      if (item != null) {
-        spots.add(FlSpot(index.toDouble(), item));
-      }
+    for (final item in raw) {
+      spots.add(FlSpot(double.parse(item.tag ?? "0"), (double.parse(item.$value ?? "0") *10 ).roundToDouble() / 10));
     }
 
     return spots;
@@ -134,7 +81,7 @@ class WidgetGraph extends StatelessWidget {
     } else {
       return LineChart(LineChartData(
         minX: 0,
-        maxX: _hourBetween(date.start, date.end).toDouble(),
+        maxX: 24,
         lineTouchData: const LineTouchData(enabled: false),
         titlesData: const FlTitlesData(
           leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),

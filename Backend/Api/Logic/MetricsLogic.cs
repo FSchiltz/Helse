@@ -59,7 +59,7 @@ public static class MetricsLogic
         }
         else
         {
-            metrics = await db.GetSummaryMetrics(tile, id, type, start, end);
+            metrics = await db.GetSummaryMetrics(tile, id, type, (MetricSummary)metricType.SummaryType, start, end);
         }
 
         return TypedResults.Ok(metrics.Select(x => new Metric

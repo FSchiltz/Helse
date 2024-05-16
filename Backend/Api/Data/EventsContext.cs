@@ -26,7 +26,7 @@ public interface IHealthContext : IContext
     Task DeleteMetric(long id);
     Task<Metric?> GetMetric(long id);
     Task<Metric[]> GetMetrics(long id, long type, DateTime start, DateTime end);
-    Task<Metric[]> GetSummaryMetrics(int tile, long id, int type, DateTime start, DateTime end);
+    Task<Metric[]> GetSummaryMetrics(int tile, long id, int type, Api.Models.MetricSummary action, DateTime start, DateTime end);
     Task Insert(Api.Models.CreateMetric metric, long v, long id);
     Task<List<Person>> GetPatients(long id, DateTime now, Api.Models.RightType view);
     Task<List<Event>> GetEvents(long id, Api.Models.RightType view, DateTime start, DateTime end);
@@ -61,6 +61,18 @@ public class HealthContext(DataConnection db) : IHealthContext
     {
         [Column, NotNull]
         public int Chunk { get; set; }
+    }
+
+    private class Chunked
+    {
+        [Column, NotNull]
+        public int Chunk { get; set; }
+
+        [Column, NotNull]
+        public DateTime Date { get; set; }
+
+        [Column, NotNull]
+        public string? Value { get; set; }
     }
 
     /// <summary>
@@ -300,31 +312,56 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public async Task<Metric[]> GetSummaryMetrics(int tile, long id, int type, DateTime start, DateTime end)
+    public async Task<Metric[]> GetSummaryMetrics(int tile, long id, int type, Api.Models.MetricSummary action, DateTime start, DateTime end)
     {
         // Use a manual command to use the SQL function NTILE
-        var chunks = await db.FromSql<ChunkedMetric>($"SELECT NTILE(${tile}) OVER (ORDER BY date) as chunk,* FROM health.metric m")
-        .Where(x => x.PersonId == id
-                && x.Type == type
-                && x.Date <= end && x.Date >= start)
-        .AsSubQuery()
-        .GroupBy(x => x.Chunk)
-        .Select(x => new
+        var groups = db.FromSql<ChunkedMetric>($"SELECT NTILE({tile}) OVER (ORDER BY date) as chunk,* FROM health.metric m")
+         .Where(x => x.PersonId == id
+                 && x.Type == type
+                 && x.Date <= end && x.Date >= start)
+         .AsSubQuery()
+         .GroupBy(x => x.Chunk);
+
+        IQueryable<Chunked> query;
+        switch (action)
         {
-            Chunk = x.Key,
-            Date = x.Min(y => y.Date),
-            Value = x.Average(y => Sql.Convert<double, string>(y.Value)),
-        })
-        .OrderBy(x => x.Chunk)
-        .ToListAsync();
+            case Api.Models.MetricSummary.Mean:
+                query = groups.Select(x => new Chunked
+                {
+                    Chunk = x.Key,
+                    Date = x.Min(y => y.Date),
+                    Value = x.Average(y => Sql.Convert<double, string>(y.Value)).ToString(),
+                });
+                break;
+            case Api.Models.MetricSummary.Sum:
+                query = groups.Select(x => new Chunked
+                {
+                    Chunk = x.Key,
+                    Date = x.Min(y => y.Date),
+                    Value = x.Sum(y => Sql.Convert<double, string>(y.Value)).ToString(),
+                });
+                break;
+            default:
+                query = groups.Select(x => new Chunked
+                {
+                    Chunk = x.Key,
+                    Date = x.Min(y => y.Date),
+                    Value = x.Min(y => y.Value),
+                });
+                break;
+
+        }
+
+        var chunks = await query.OrderBy(x => x.Chunk)
+       .ToListAsync();
 
         return chunks.Select(x => new Metric
         {
             Date = x.Date,
-            Value = x.Value.ToString(),
+            Value = x.Value ?? string.Empty,
+            Tag = x.Chunk.ToString(),
         }).ToArray();
     }
-
 
     /// <summary>
     /// <inheritdoc/>

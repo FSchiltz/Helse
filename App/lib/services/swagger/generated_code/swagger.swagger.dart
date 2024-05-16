@@ -232,6 +232,40 @@ abstract class Swagger extends ChopperService {
   Future<chopper.Response> _apiImportPost({@Body() required ImportData? body});
 
   ///
+  ///@param tile
+  ///@param type
+  ///@param start
+  ///@param end
+  ///@param personId
+  Future<chopper.Response<List<Metric>>> apiMetricsSummaryGet({
+    required int? tile,
+    required int? type,
+    required DateTime? start,
+    required DateTime? end,
+    int? personId,
+  }) {
+    generatedMapping.putIfAbsent(Metric, () => Metric.fromJsonFactory);
+
+    return _apiMetricsSummaryGet(
+        tile: tile, type: type, start: start, end: end, personId: personId);
+  }
+
+  ///
+  ///@param tile
+  ///@param type
+  ///@param start
+  ///@param end
+  ///@param personId
+  @Get(path: '/api/metrics/summary')
+  Future<chopper.Response<List<Metric>>> _apiMetricsSummaryGet({
+    @Query('tile') required int? tile,
+    @Query('type') required int? type,
+    @Query('start') required DateTime? start,
+    @Query('end') required DateTime? end,
+    @Query('personId') int? personId,
+  });
+
+  ///
   ///@param type
   ///@param start
   ///@param end
