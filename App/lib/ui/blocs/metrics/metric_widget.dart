@@ -26,12 +26,6 @@ class _MetricWidgetState extends State<MetricWidget> {
 
   _MetricWidgetState();
 
-  @override
-  void initState() {
-    _metrics = null;
-    super.initState();
-  }
-
   void _resetMetric() {
     setState(() {
       _metrics = [];
@@ -84,9 +78,9 @@ class _MetricWidgetState extends State<MetricWidget> {
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute<void>(
                         builder: (context) => MetricDetailPage(
-                              metrics: metrics,
                               date: widget.date,
                               type: widget.type,
+                              person: widget.person,
                               settings:  widget.settings.detailGraph,
                             )),
                   ),
