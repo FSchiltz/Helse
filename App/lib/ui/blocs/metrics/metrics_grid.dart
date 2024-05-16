@@ -88,7 +88,7 @@ class _MetricsGridState extends State<MetricsGrid> {
         crossAxisSpacing: 2,
         mainAxisSpacing: 2,
         physics: const BouncingScrollPhysics(),
-        maxCrossAxisExtent: 240.0,
+        maxCrossAxisExtent: 200.0,
         children:
             cached.map((type) => MetricWidget(type.a, type.b, widget.date, key: Key(type.a.id?.toString() ?? ""), person: widget.person)).toList(),
       );

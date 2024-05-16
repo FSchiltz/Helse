@@ -28,7 +28,7 @@ class MetricService extends ApiService {
   Future<List<Metric>?> metrics(int? type, DateTime? start, DateTime? end, {int? person, bool simple = false}) async {
     var api = await getService();
     if (simple) {
-      return await call(() => api.apiMetricsSummaryGet(tile: 24, type: type, start: start?.toUtc(), end: end?.toUtc(), personId: person));
+      return await call(() => api.apiMetricsSummaryGet(tile: 16, type: type, start: start?.toUtc(), end: end?.toUtc(), personId: person));
     } else {
       return await call(() => api.apiMetricsGet(type: type, start: start?.toUtc(), end: end?.toUtc(), personId: person));
     }

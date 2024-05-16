@@ -18,9 +18,7 @@ class MetricCondensed extends StatelessWidget {
         ? Center(
             child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
           )
-        : (type.type == MetricDataType.text
-            ? ListView.builder(itemCount: metrics.length, itemBuilder: (x, y) => Text(metrics[y].$value ?? ""))
-            : WidgetGraph(metrics, date, settings.graph, type.summaryType ?? MetricSummary.latest));
+        : (type.type == MetricDataType.text ? const Center() : WidgetGraph(metrics, date, settings.graph, type.summaryType ?? MetricSummary.latest));
   }
 }
 
@@ -36,7 +34,7 @@ class WidgetGraph extends StatelessWidget {
     List<FlSpot> spots = [];
 
     for (final item in raw) {
-      spots.add(FlSpot(double.parse(item.tag ?? "0"), (double.parse(item.$value ?? "0") *10 ).roundToDouble() / 10));
+      spots.add(FlSpot(double.parse(item.tag ?? "0"), (double.parse(item.$value ?? "0") * 10).roundToDouble() / 10));
     }
 
     return spots;
@@ -81,7 +79,7 @@ class WidgetGraph extends StatelessWidget {
     } else {
       return LineChart(LineChartData(
         minX: 0,
-        maxX: 24,
+        maxX: 16,
         lineTouchData: const LineTouchData(enabled: false),
         titlesData: const FlTitlesData(
           leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),

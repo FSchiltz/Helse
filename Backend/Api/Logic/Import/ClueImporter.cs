@@ -31,7 +31,7 @@ public class ClueImporter(string file, IHealthContext db, User user) : FileImpor
                     Tag = node.Id + value.Option,
                     Source = FileTypes.Clue,
                     Date = DateTime.Parse(node.Date),
-                    Value = subValue + value.Option!,
+                    Value = $"{subValue}{value.Option?.Replace('_', ' ')}",
                 };
                 // import the data
                 await ImportMetric(metric);

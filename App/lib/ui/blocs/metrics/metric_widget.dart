@@ -32,20 +32,6 @@ class _MetricWidgetState extends State<MetricWidget> {
     super.initState();
   }
 
-  int _sort(Metric m1, Metric m2) {
-    var a = m1.date;
-    var b = m2.date;
-    if (a == null && b == null) {
-      return 0;
-    } else if (a == null) {
-      return -1;
-    } else if (b == null) {
-      return 1;
-    } else {
-      return a.compareTo(b);
-    }
-  }
-
   void _resetMetric() {
     setState(() {
       _metrics = [];
@@ -134,9 +120,9 @@ class _MetricWidgetState extends State<MetricWidget> {
                         ),
                         if (metrics.isNotEmpty)
                           Expanded(
-                            child: Text(_getTextInfo(metrics, widget.type), style: Theme.of(context).textTheme.labelLarge),
+                            child: Text(_getTextInfo(metrics, widget.type), style: Theme.of(context).textTheme.bodyLarge),
                           ),
-                        Expanded(child: MetricCondensed(metrics, widget.type, widget.settings, widget.date)),
+                        Flexible(child: MetricCondensed(metrics, widget.type, widget.settings, widget.date)),
                       ],
                     ),
                   ),
