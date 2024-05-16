@@ -40,7 +40,13 @@ class _CalendarViewState extends State<CalendarView> {
   @override
   void initState() {
     super.initState();
-    _focusedDay = widget.date.start;
+
+    var firstDay = widget.metrics.firstOrNull?.date;
+    if (firstDay != null) {
+      _onDaySelected(firstDay, firstDay);
+    } else {
+      _focusedDay = widget.date.start;
+    }
   }
 
   @override
