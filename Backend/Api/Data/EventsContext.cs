@@ -173,6 +173,7 @@ public class HealthContext(DataConnection db) : IHealthContext
             .Where(x => x.PersonId == id
                 && x.Type == type
                 && x.Date <= end && x.Date >= start)
+                                .OrderBy(x => x.Date)
             .ToArrayAsync();
     }
 

@@ -81,6 +81,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                               date: widget.date,
                               type: widget.type,
                               person: widget.person,
+                              summary: metrics,
                               settings:  widget.settings.detailGraph,
                             )),
                   ),

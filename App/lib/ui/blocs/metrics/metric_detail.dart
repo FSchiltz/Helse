@@ -16,12 +16,14 @@ class MetricDetailPage extends StatefulWidget {
     required this.type,
     required this.settings,
     required this.person,
+    required this.summary,
   });
 
   final DateTimeRange date;
   final MetricType type;
   final GraphKind settings;
   final int? person;
+  final List<Metric> summary;
 
   @override
   State<MetricDetailPage> createState() => _MetricDetailPageState();
@@ -93,7 +95,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                           ? CalendarView(metrics, widget.date)
                           : Column(
                               children: [
-                                SizedBox(height: 120, child: WidgetGraph(metrics, widget.date, GraphKind.line)),
+                                SizedBox(height: 120, child: WidgetGraph(widget.summary, widget.date, GraphKind.line)),
                                 Center(
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
