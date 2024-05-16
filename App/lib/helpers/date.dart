@@ -21,6 +21,13 @@ class DateHelper {
     return dateTimeFormat.format(date);
   }
 
+  static String formatMonth(DateTime? date, {required BuildContext context}) {
+    if (date == null) return "";
+    var tag = Localizations.maybeLocaleOf(context)?.toLanguageTag();
+    DateFormat dateTimeFormat = DateFormat.yMMM(tag);
+    return dateTimeFormat.format(date);
+  }  
+
   static String formatDate(DateTime? date, {required BuildContext context}) {
     if (date == null) return "";
     var tag = Localizations.maybeLocaleOf(context)?.toLanguageTag();

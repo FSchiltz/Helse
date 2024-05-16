@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:helse/helpers/metric_helper.dart';
 import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
+import 'package:helse/ui/blocs/calendar/calendar_view.dart';
 import 'package:helse/ui/blocs/metrics/metric_condensed.dart';
 import 'package:helse/ui/blocs/metrics/metric_graph.dart';
 
@@ -52,10 +52,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                 child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
               )
             : (widget.type.type == MetricDataType.text
-                ? ListView.builder(
-                    itemCount: widget.metrics.length,
-                    itemBuilder: (x, y) => Row(children: [Text(widget.metrics[y].$value ?? ''), Text(MetricHelper.getMetricText(widget.metrics[y]))]),
-                  )
+                ? CalendarView(widget.metrics, widget.date)
                 : Column(
                     children: [
                       SizedBox(
