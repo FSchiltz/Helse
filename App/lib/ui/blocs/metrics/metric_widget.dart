@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
-import 'package:helse/ui/blocs/metrics/metric_detail.dart';
+import 'package:helse/ui/blocs/metrics/metric_detail_page.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../common/loader.dart';

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:helse/logic/d_i.dart';
+import 'package:helse/ui/blocs/events/event_detail_page.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../common/loader.dart';
@@ -105,9 +107,20 @@ class _EventWidgetState extends State<EventWidget> {
                   }
 
                   final events = (snapshot.hasData) ? snapshot.data as List<Event> : List<Event>.empty();
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: EventGraph(events, widget.date),
+                  return InkWell(
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                          builder: (context) => EventDetailPage(
+                                date: widget.date,
+                                type: widget.type,
+                                person: widget.person,
+                                summary: events,
+                              )),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: EventGraph(events, widget.date),
+                    ),
                   );
                 }
                 return const HelseLoader();
