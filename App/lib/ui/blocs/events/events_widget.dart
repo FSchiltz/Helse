@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/blocs/events/event_detail_page.dart';
+import 'package:helse/ui/blocs/events/events_summary.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../common/loader.dart';
@@ -25,20 +26,6 @@ class _EventWidgetState extends State<EventWidget> {
 
   _EventWidgetState();
 
-  int _sort(Event m1, Event m2) {
-    var a = m1.stop;
-    var b = m2.stop;
-    if (a == null && b == null) {
-      return 0;
-    } else if (a == null) {
-      return -1;
-    } else if (b == null) {
-      return 1;
-    } else {
-      return a.compareTo(b);
-    }
-  }
-
   void _resetEvents() {
     setState(() {
       _events = [];
@@ -57,7 +44,6 @@ class _EventWidgetState extends State<EventWidget> {
       var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
       _events = await DI.event?.events(widget.type.id, start, end, person: widget.person);
-      _events?.sort(_sort);
       return _events;
     } catch (ex) {
       Notify.showError("$ex");
@@ -114,12 +100,11 @@ class _EventWidgetState extends State<EventWidget> {
                                 date: widget.date,
                                 type: widget.type,
                                 person: widget.person,
-                                summary: events,
                               )),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: EventGraph(events, widget.date),
+                      child: EventSummary(events, widget.date),
                     ),
                   );
                 }

@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-import '../../../helpers/date.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 
 class EventSummary extends StatelessWidget {
@@ -29,111 +28,18 @@ class EventSummary extends StatelessWidget {
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
         child: Stack(fit: StackFit.loose, children: <Widget>[
-          buildGrid(),
-          buildDayHeader(),
-          Container(
-            margin: const EdgeInsets.only(top: 25.0),
-            child: buildHeader(context),
-          ),
-          Container(
-              margin: const EdgeInsets.only(top: 50.0),
-              child: Column(
+          Column(
+            children: <Widget>[
+              Row(
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      EventTimeline(userData, date),
-                    ],
-                  ),
+                  EventTimeline(userData, date),
                 ],
-              )),
+              ),
+            ],
+          ),
         ]),
       ),
     );
-  }
-
-  Widget buildDayHeader() {
-    List<Widget> headerItems = [];
-
-    DateTime tempDate = date.start;
-
-    var viewRange = _minutesBetween(date.start, date.end) / (60 * 24);
-
-    for (int i = 0; i < viewRange; i++) {
-      headerItems.add(SizedBox(
-        width: 60 * 24,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: Text(
-            ' ${tempDate.day.toString().padLeft(2, '0')}/${tempDate.month.toString().padLeft(2, '0')}/${tempDate.year.toString().padLeft(4, '0')}',
-            textAlign: TextAlign.left,
-            style: const TextStyle(
-              fontSize: 16.0,
-            ),
-          ),
-        ),
-      ));
-      tempDate = tempDate.add(const Duration(days: 1));
-    }
-
-    return SizedBox(
-      height: 25.0,
-      child: Row(
-        children: headerItems,
-      ),
-    );
-  }
-
-  Widget buildHeader(BuildContext context) {
-    List<Widget> headerItems = [];
-
-    DateTime tempDate = date.start;
-
-    var viewRange = _minutesBetween(date.start, date.end) / (60);
-
-    for (int i = 0; i < viewRange; i++) {
-      headerItems.add(SizedBox(
-        width: 60,
-        child: Tooltip(
-          message: DateHelper.format(tempDate, context: context),
-          child: Text(
-            '${tempDate.hour.toString().padLeft(2, '0')}:${tempDate.second.toString().padLeft(2, '0')}',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 12.0,
-            ),
-          ),
-        ),
-      ));
-      tempDate = tempDate.add(const Duration(hours: 1));
-    }
-
-    return SizedBox(
-      height: 25.0,
-      child: Row(
-        children: headerItems,
-      ),
-    );
-  }
-
-  Widget buildGrid() {
-    List<Widget> gridColumns = [];
-
-    var viewRange = _minutesBetween(date.start, date.end) / (60);
-
-    for (int i = 0; i <= viewRange; i++) {
-      gridColumns.add(Container(
-        decoration: BoxDecoration(border: Border(right: BorderSide(color: Colors.white.withAlpha(75), width: 0.5))),
-        width: 60,
-      ));
-    }
-
-    return Row(
-      children: gridColumns,
-    );
-  }
-
-  int _minutesBetween(DateTime from, DateTime to) {
-    return to.difference(from).inMinutes;
   }
 }
 
