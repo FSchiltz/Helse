@@ -54,6 +54,7 @@ class _MetricWidgetState extends State<MetricWidget> {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(0),
+        side: BorderSide(color: Theme.of(context).colorScheme.onPrimaryContainer)
       ),
       clipBehavior: Clip.hardEdge,
       child: FutureBuilder(

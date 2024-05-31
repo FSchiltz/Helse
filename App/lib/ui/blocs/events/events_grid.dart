@@ -69,8 +69,15 @@ class _EventsGridState extends State<EventsGrid> {
             child: ListView(
               shrinkWrap: true,
               physics: const BouncingScrollPhysics(),
-              children:
-                  types?.map((type) => EventWidget(type, widget.date, key: Key(type.id?.toString() ?? ""), person: widget.person)).toList() ?? [],
+              children: types
+                      ?.map((type) => Column(
+                            children: [
+                              Divider(color: Theme.of(context).colorScheme.onPrimaryContainer),
+                              EventWidget(type, widget.date, key: Key(type.id?.toString() ?? ""), person: widget.person),
+                            ],
+                          ))
+                      .toList() ??
+                  [],
             ),
           );
   }
