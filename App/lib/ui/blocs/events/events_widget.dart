@@ -52,11 +52,9 @@ class _EventWidgetState extends State<EventWidget> {
 
       var date = widget.date;
       var start = DateTime(date.start.year, date.start.month, date.start.day);
-      var end = DateTime(date.end.year, date.end.month, date.end.day)
-          .add(const Duration(days: 1));
+      var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-      _events = await DI.event
-          ?.events(widget.type.id, start, end, person: widget.person);
+      _events = await DI.event?.events(widget.type.id, start, end, person: widget.person);
       _events?.sort(_sort);
       return _events;
     } catch (ex) {
@@ -76,16 +74,14 @@ class _EventWidgetState extends State<EventWidget> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                child: Text(widget.type.name ?? "",
-                    style: Theme.of(context).textTheme.titleLarge),
+                child: Text(widget.type.name ?? "", style: Theme.of(context).textTheme.titleLarge),
               ),
               IconButton(
                   onPressed: () {
                     showDialog<void>(
                         context: context,
                         builder: (BuildContext context) {
-                          return EventAdd(_resetEvents, widget.type,
-                              person: widget.person);
+                          return EventAdd(_resetEvents, widget.type, person: widget.person);
                         });
                   },
                   icon: const Icon(Icons.add_sharp))
@@ -104,13 +100,11 @@ class _EventWidgetState extends State<EventWidget> {
                         style: const TextStyle(fontSize: 18),
                       ),
                     );
-    
+
                     // if we got our data
                   }
-    
-                  final events = (snapshot.hasData)
-                      ? snapshot.data as List<Event>
-                      : List<Event>.empty();
+
+                  final events = (snapshot.hasData) ? snapshot.data as List<Event> : List<Event>.empty();
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: EventGraph(events, widget.date),
