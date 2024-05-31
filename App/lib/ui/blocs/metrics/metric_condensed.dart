@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
@@ -26,8 +27,9 @@ class WidgetGraph extends StatelessWidget {
   final List<Metric> metrics;
   final DateTimeRange date;
   final GraphKind settings;
+  final DateTimeRange? highlight;
 
-  const WidgetGraph(this.metrics, this.date, this.settings, {super.key});
+  const WidgetGraph(this.metrics, this.date, this.settings, {super.key, this.highlight});
 
   List<FlSpot> _getSpot(List<Metric> raw) {
     List<FlSpot> spots = [];
@@ -56,10 +58,10 @@ class WidgetGraph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: const EdgeInsets.all(8.0), child: _getGraph());
+    return Padding(padding: const EdgeInsets.all(8.0), child: _getGraph(context));
   }
 
-  Widget _getGraph() {
+  Widget _getGraph(BuildContext context) {
     if (settings == GraphKind.bar) {
       return BarChart(
         BarChartData(
@@ -93,15 +95,38 @@ class WidgetGraph extends StatelessWidget {
         ),
         gridData: const FlGridData(show: false),
         lineBarsData: [
+          if (highlight != null)
+            LineChartBarData(
+              barWidth: 4,
+              color: Theme.of(context).colorScheme.secondaryContainer,
+              aboveBarData: BarAreaData(color: Theme.of(context).colorScheme.secondaryContainer, show: true),
+              spots: _getHighLight(),
+              dotData: const FlDotData(show: false),
+            ),
           LineChartBarData(
             barWidth: 4,
             spots: _getSpot(metrics),
             isCurved: true,
             curveSmoothness: 0.2,
             dotData: const FlDotData(show: false),
-          )
+          ),
         ],
       ));
     }
+  }
+
+  List<FlSpot> _getHighLight() {
+    var range = highlight;
+    if (range == null) return [];
+
+    // first we need the range fo the highlight
+    var coeff = 16 / date.end.difference(date.start).inHours;
+    var start = range.start.difference(date.start).inHours * coeff;
+    var end = range.end.difference(date.start).inHours * coeff;
+
+    return [
+      FlSpot(start, 0),
+      FlSpot(end, 0),
+    ];
   }
 }
