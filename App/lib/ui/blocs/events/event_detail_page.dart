@@ -24,19 +24,6 @@ class EventDetailPage extends StatefulWidget {
 
 class _EventDetailPageState extends State<EventDetailPage> {
   List<Event>? _events;
-  int _sort(Event m1, Event m2) {
-    var a = m1.stop;
-    var b = m2.stop;
-    if (a == null && b == null) {
-      return 0;
-    } else if (a == null) {
-      return -1;
-    } else if (b == null) {
-      return 1;
-    } else {
-      return a.compareTo(b);
-    }
-  }
 
   Future<List<Event>?> _getData() async {
     try {
@@ -50,7 +37,6 @@ class _EventDetailPageState extends State<EventDetailPage> {
       var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
       _events = await DI.event?.events(widget.type.id, start, end, person: widget.person);
-      _events?.sort(_sort);
       return _events;
     } catch (ex) {
       Notify.showError("$ex");
