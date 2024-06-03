@@ -53,10 +53,10 @@ class _MetricWidgetState extends State<MetricWidget> {
   Widget build(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(0),
-        side: BorderSide(color: Theme.of(context).colorScheme.onPrimaryContainer)
+        borderRadius: BorderRadius.circular(0),     
       ),
-      clipBehavior: Clip.hardEdge,
+      shadowColor: Theme.of(context).colorScheme.shadow,
+      elevation: 2,
       child: FutureBuilder(
           future: _getData(),
           builder: (ctx, snapshot) {

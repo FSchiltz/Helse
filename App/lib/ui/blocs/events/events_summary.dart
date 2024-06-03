@@ -72,7 +72,7 @@ class _EventTimelineState extends State<EventTimeline> {
     }
   }
 
-  List<Widget> buildChartBars(List<EventSummary> data) {
+  List<Widget> buildChartBars(List<EventSummary> data, ColorScheme colorScheme) {
     List<Widget> chartBars = [];
 
     int tick = 0;
@@ -84,14 +84,14 @@ class _EventTimelineState extends State<EventTimeline> {
           child: Container(
             clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colorScheme.primary,
               border: Border.all(
                 width: 0,
               ),
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(6),
             ),
             child: Column(
-              children: map(p, tick),
+              children: map(p, tick, colorScheme.primary),
             ),
           ),
         ));
@@ -105,10 +105,14 @@ class _EventTimelineState extends State<EventTimeline> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: buildChartBars(widget.userData));
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: buildChartBars(widget.userData, Theme.of(context).colorScheme),
+    );
   }
 
-  List<Widget> map(Map<String, dynamic> p, int tick) {
+  List<Widget> map(Map<String, dynamic> p, int tick, Color empty) {
     List<Widget> widgets = [];
 
     for (var entry in p.entries) {
@@ -129,7 +133,9 @@ class _EventTimelineState extends State<EventTimeline> {
 
     if (widgets.isEmpty) {
       widgets.add(Container(
+        color: empty,
         width: 28,
+        height: 1,
       ));
     }
 

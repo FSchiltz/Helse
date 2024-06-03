@@ -29,9 +29,13 @@ public static class EventHelpers
         // add each summary in the data
         foreach (var e in events)
         {
-            // cut the steps into the different summary          
+            // cut the steps into the different summary    
+            var steps = Cut(kind, e, start, end);
+            if (steps.Count > count)
+                throw new Exception("Date mismatched");
+
             // add to the existing summary
-            foreach (var step in Cut(kind, e, start, end))
+            foreach (var step in steps)
             {
                 var summary = data[step.Item1];
                 if (!summary.Data.ContainsKey(e.Description ?? string.Empty))
@@ -123,9 +127,9 @@ public static class EventHelpers
         if (totalDays <= DayPerYear * 3)
         {
             // less than 3 year
-            return (Steps.Months, (int)(totalDays / DayPerMonth));
+            return (Steps.Months, (int)Math.Ceiling(totalDays / DayPerMonth));
         }
 
-        return (Steps.Years, (int)(totalDays / DayPerYear));
+        return (Steps.Years, (int)Math.Ceiling(totalDays / DayPerYear));
     }
 }
