@@ -66,7 +66,7 @@ class _EventTimelineState extends State<EventTimeline> {
       return colors[state]!;
     } else {
       var r = Random();
-      var color = Color.fromRGBO(r.nextInt(106) + 50, r.nextInt(106) + 50, r.nextInt(106) + 50, 0.75);
+      var color = Color.fromRGBO(r.nextInt(55) + 100, r.nextInt(105) + 150, r.nextInt(105) + 100, 1);
       colors[state] = color;
       return color;
     }
@@ -82,13 +82,11 @@ class _EventTimelineState extends State<EventTimeline> {
         chartBars.add(Padding(
           padding: const EdgeInsets.all(4.0),
           child: Container(
-            clipBehavior: Clip.hardEdge,
+            clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               color: colorScheme.primary,
-              border: Border.all(
-                width: 0,
-              ),
-              borderRadius: BorderRadius.circular(6),
+              
+              borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
               children: map(p, tick, colorScheme.primary),
