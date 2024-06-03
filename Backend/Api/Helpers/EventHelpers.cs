@@ -28,7 +28,15 @@ public static class EventHelpers
             foreach (var step in Cut(kind, e, start, end))
             {
                 data[step.Item1] ??= new EventSummary([]);
-                data[step.Item1].Data[e.Tag ?? string.Empty] += step.Item2;
+                var summary = data[step.Item1];
+                if (!summary.Data.ContainsKey(e.Description ?? string.Empty))
+                {
+                    summary.Data[e.Description ?? string.Empty] = step.Item2;
+                }
+                else
+                {
+                    summary.Data[e.Description ?? string.Empty] += step.Item2;
+                }
             }
         }
 
@@ -38,40 +46,40 @@ public static class EventHelpers
     private static List<(int, int)> Cut(Steps kind, Data.Models.Event e, DateTime start, DateTime end)
     {
         var steps = new List<(int, int)>();
+        var startDate = start;
+        int tick = 0;
 
-        var endDate = e.Stop.Date.AddDays(1).AddSeconds(-1);
+        do
+        {
+            var endDate = AddDuration(startDate, kind);
 
-        // add the first step
-        steps.Add(GetStep(e.Start, e.Stop, kind));
+            // First check if the event is inside the current tick
+            if (e.Start < endDate && e.Stop > startDate)
+            {
+                // end and start of the common range between the tick and the event
+                var eventEnd = Min(end, endDate);
+                var eventStart = Max(start, startDate);
+
+                var count = kind switch
+                {
+                    Steps.Hours => (int)(eventEnd - eventStart).TotalHours,
+                    Steps.Days => (int)(eventEnd - eventStart).TotalDays,
+                    Steps.Months => (int)(eventEnd - eventStart).TotalDays / 30,
+                    _ => (int)(eventEnd - eventStart).TotalDays / 365,
+                };
+                steps.Add((tick, count));
+            }
+            else
+            {
+                steps.Add((tick, 0));
+            }
+
+            startDate = endDate;
+            tick++;
+        }
+        while (startDate < end);
 
         return steps;
-    }
-
-    private static (int, int) GetStep(DateTime start, DateTime end, Steps kind)
-    {
-        var startDate = start.Date;
-        if (kind == Steps.Hours)
-            startDate.AddHours(start.Hour);
-
-        var endDate = Min(end, AddDuration(startDate, kind));
-        var startCount = Max(start, startDate);
-
-        int tick;
-        int count;
-        switch (kind)
-        {
-            case Steps.Hours:
-                count = (int)(endDate - startCount).TotalMinutes;
-                tick = 0;
-                break;
-            default:
-                count = 0;
-                tick = 0;
-                break;
-
-        };
-
-        return (tick, count);
     }
 
     public static DateTime Min(DateTime date1, DateTime date2) => date1 < date2 ? date1 : date2;

@@ -1,14 +1,15 @@
 import 'dart:math';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 
-class EventSummary extends StatelessWidget {
-  final List<Event> events;
+class EventsSummary extends StatelessWidget {
+  final List<EventSummary> events;
   final DateTimeRange date;
   final ScrollController _scrollController = ScrollController();
 
-  EventSummary(this.events, this.date, {super.key});
+  EventsSummary(this.events, this.date, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,7 @@ class EventSummary extends StatelessWidget {
         : buildChart(events, context));
   }
 
-  Widget buildChart(List<Event> userData, BuildContext context) {
+  Widget buildChart(List<EventSummary> userData, BuildContext context) {
     return Scrollbar(
       interactive: true,
       controller: _scrollController,
@@ -44,7 +45,7 @@ class EventSummary extends StatelessWidget {
 }
 
 class EventTimeline extends StatefulWidget {
-  final List<Event> userData;
+  final List<EventSummary> userData;
   final DateTimeRange date;
 
   const EventTimeline(
@@ -59,7 +60,6 @@ class EventTimeline extends StatefulWidget {
 
 class _EventTimelineState extends State<EventTimeline> {
   final Map<String, Color> colors = {};
-  List<Widget> _chartBars = [];
 
   Color _stateColor(String state) {
     if (colors.containsKey(state)) {
@@ -72,103 +72,67 @@ class _EventTimelineState extends State<EventTimeline> {
     }
   }
 
-  int _minutesBetween(DateTime from, DateTime to) {
-    return to.difference(from).inMinutes;
-  }
-
-  int _distanceToLeftBorder(DateTime projectStartedAt) {
-    if (projectStartedAt.compareTo(widget.date.start) <= 0) {
-      return 0;
-    } else {
-      return _minutesBetween(widget.date.start, projectStartedAt) - 1;
-    }
-  }
-
-  int _distanceInMinutes(DateTime start, DateTime end) {
-    if (start.compareTo(widget.date.start) < 0) {
-      start = widget.date.start;
-    }
-
-    if (end.compareTo(widget.date.end) > 0) {
-      end = widget.date.end;
-    }
-
-    return max(6, _minutesBetween(start, end));
-  }
-
-  List<Widget> buildChartBars(List<Event> data) {
+  List<Widget> buildChartBars(List<EventSummary> data) {
     List<Widget> chartBars = [];
-    Map<String?, List<Event>> orderedData = {};
 
-    for (var n in data) {
-      var list = orderedData[n.description];
-      if (list == null) {
-        list = [];
-        list.add(n);
-        orderedData[n.description] = list;
-      } else {
-        list.add(n);
-      }
-    }
-
-    for (var group in orderedData.entries) {
-      List<Widget> chartGroup = [];
-      for (var n in group.value) {
-        // if the event has no start or end, we clamp to the filtered value
-        var start = n.start ?? widget.date.start;
-        var end = n.stop ?? widget.date.end;
-
-        var width = _distanceInMinutes(start, end);
-        var color = _stateColor(n.description ?? '');
-        if (width > 0) {
-          chartGroup.add(Container(
-            margin: EdgeInsets.only(left: _distanceToLeftBorder(start).toDouble(), top: 2.0, bottom: 2.0),
-            alignment: Alignment.centerLeft,
-            child: Tooltip(
-              message: "${n.description ?? ""}: ${n.start} => ${n.stop}",
-              child: Container(
-                width: width.toDouble(),
-                decoration: BoxDecoration(
-                  color: color.withAlpha(100),
-                  // TODO make round only when inside the date range
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                ),
-                height: 25.0,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Text(
-                    n.description ?? "",
-                    maxLines: 1,
-                    overflow: TextOverflow.clip,
-                    style: const TextStyle(fontSize: 10.0),
-                  ),
-                ),
+    int tick = 0;
+    for (var d in data) {
+      var p = d.data;
+      if (p != null) {
+        chartBars.add(Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Container(
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                width: 0,
               ),
+              borderRadius: BorderRadius.circular(4),
             ),
-          ));
-        }
+            child: Column(
+              children: map(p, tick),
+            ),
+          ),
+        ));
       }
-      chartBars.add(Stack(
-        fit: StackFit.loose,
-        children: chartGroup,
-      ));
+
+      tick++;
     }
 
     return chartBars;
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _chartBars = buildChartBars(widget.userData);
+  Widget build(BuildContext context) {
+    return Row(children: buildChartBars(widget.userData));
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: _chartBars,
-    );
+  List<Widget> map(Map<String, dynamic> p, int tick) {
+    List<Widget> widgets = [];
+
+    for (var entry in p.entries) {
+      var count = entry.value as int?;
+      if (count != null && count > 0) {
+        widgets.add(Tooltip(
+          message: entry.key,
+          child: Container(
+            decoration: BoxDecoration(
+              color: _stateColor(entry.key),
+            ),
+            width: 20,
+            height: 30 * count as double,
+          ),
+        ));
+      }
+    }
+
+    if (widgets.isEmpty) {
+      widgets.add(Container(
+        width: 28,
+      ));
+    }
+
+    return widgets;
   }
 }

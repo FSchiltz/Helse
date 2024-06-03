@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/blocs/events/event_detail_page.dart';
 import 'package:helse/ui/blocs/events/events_summary.dart';
@@ -8,7 +7,6 @@ import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
 import 'events_add.dart';
-import 'events_graph.dart';
 
 class EventWidget extends StatefulWidget {
   final EventType type;
@@ -22,7 +20,7 @@ class EventWidget extends StatefulWidget {
 }
 
 class _EventWidgetState extends State<EventWidget> {
-  List<Event>? _events;
+  List<EventSummary>? _events;
 
   _EventWidgetState();
 
@@ -32,10 +30,10 @@ class _EventWidgetState extends State<EventWidget> {
     });
   }
 
-  Future<List<Event>?> _getData() async {
+  Future<List<EventSummary>?> _getData() async {
     try {
       if (widget.type.id == null) {
-        _events = List<Event>.empty();
+        _events = List<EventSummary>.empty();
         return _events;
       }
 
@@ -43,7 +41,7 @@ class _EventWidgetState extends State<EventWidget> {
       var start = DateTime(date.start.year, date.start.month, date.start.day);
       var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-      _events = await DI.event?.events(widget.type.id, start, end, person: widget.person);
+      _events = await DI.event?.eventsSummary(widget.type.id, start, end, person: widget.person);
       return _events;
     } catch (ex) {
       Notify.showError("$ex");
@@ -92,7 +90,7 @@ class _EventWidgetState extends State<EventWidget> {
                     // if we got our data
                   }
 
-                  final events = (snapshot.hasData) ? snapshot.data as List<Event> : List<Event>.empty();
+                  final events = (snapshot.hasData) ? snapshot.data as List<EventSummary> : List<EventSummary>.empty();
                   return InkWell(
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute<void>(
@@ -104,7 +102,7 @@ class _EventWidgetState extends State<EventWidget> {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: EventSummary(events, widget.date),
+                      child: EventsSummary(events, widget.date),
                     ),
                   );
                 }

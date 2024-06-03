@@ -30,6 +30,11 @@ class EventService extends ApiService {
     return await call(() => api.apiEventsGet(type: type, start: start?.toUtc(), end: end?.toUtc(), personId: person));
   }
 
+  Future<List<EventSummary>?> eventsSummary(int? type, DateTime? start, DateTime? end, {int? person}) async {
+    var api = await getService();
+    return await call(() => api.apiEventsSummaryGet(type: type, start: start?.toUtc(), end: end?.toUtc(), personId: person));
+  }
+
   Future<List<Event>?> agenda(DateTime? start, DateTime? end) async {
     var api = await getService();
     return await call(() => api.apiPatientsAgendaGet(start: start?.toUtc(), end: end?.toUtc()));

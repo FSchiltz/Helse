@@ -58,6 +58,68 @@
         }
       }
     },
+    "/api/events/summary": {
+      "get": {
+        "tags": [
+          "EventsLogic"
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "personId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EventSummary"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/api/events": {
       "get": {
         "tags": [
@@ -68,7 +130,6 @@
             "name": "type",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -78,7 +139,6 @@
             "name": "start",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -88,7 +148,6 @@
             "name": "end",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -97,7 +156,6 @@
           {
             "name": "personId",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -131,7 +189,6 @@
           {
             "name": "personId",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -168,7 +225,6 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -240,7 +296,6 @@
           {
             "name": "all",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "boolean"
             }
@@ -276,7 +331,6 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -328,7 +382,6 @@
             "name": "type",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -390,7 +443,6 @@
             "name": "tile",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -400,7 +452,6 @@
             "name": "type",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -410,7 +461,6 @@
             "name": "start",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -420,7 +470,6 @@
             "name": "end",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -429,7 +478,6 @@
           {
             "name": "personId",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -466,7 +514,6 @@
             "name": "type",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -476,7 +523,6 @@
             "name": "start",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -486,7 +532,6 @@
             "name": "end",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -495,7 +540,6 @@
           {
             "name": "personId",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -529,7 +573,6 @@
           {
             "name": "personId",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -566,7 +609,6 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -638,7 +680,6 @@
           {
             "name": "all",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "boolean"
             }
@@ -674,7 +715,6 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -726,7 +766,6 @@
             "name": "start",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -736,7 +775,6 @@
             "name": "end",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -821,7 +859,6 @@
             "name": "personId",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -831,7 +868,6 @@
             "name": "role",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
               "type": "string"
             }
@@ -857,7 +893,6 @@
             "name": "personId",
             "in": "path",
             "required": true,
-            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -1010,7 +1045,6 @@
             "name": "start",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -1020,7 +1054,6 @@
             "name": "end",
             "in": "query",
             "required": true,
-            "style": "form",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -1029,7 +1062,6 @@
           {
             "name": "personId",
             "in": "query",
-            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -1129,6 +1161,9 @@
         "additionalProperties": false
       },
       "CreateMetric": {
+        "required": [
+          "value"
+        ],
         "type": "object",
         "properties": {
           "date": {
@@ -1227,7 +1262,24 @@
         },
         "additionalProperties": false
       },
+      "EventSummary": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "EventType": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -1306,6 +1358,9 @@
         "additionalProperties": false
       },
       "ImportFile": {
+        "required": [
+          "content"
+        ],
         "type": "object",
         "properties": {
           "content": {
@@ -1316,6 +1371,9 @@
         "additionalProperties": false
       },
       "Metric": {
+        "required": [
+          "value"
+        ],
         "type": "object",
         "properties": {
           "date": {
@@ -1381,6 +1439,9 @@
         ]
       },
       "MetricType": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
