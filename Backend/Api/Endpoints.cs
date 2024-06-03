@@ -116,6 +116,12 @@ public static class Endpoints
     {
         /* Events endpoints*/
         var events = api.MapGroup("/events").RequireAuthorization();
+
+        events.MapGet("/summary", EventsLogic.GetSummaryAsync)
+        .Produces<EventSummary[]>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized)
+        .WithOpenApi();
+
         events.MapGet("/", EventsLogic.GetAsync)
         .Produces<List<Api.Models.Event>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)

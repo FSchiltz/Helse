@@ -105,6 +105,15 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'address': instance.address,
     };
 
+EventSummary _$EventSummaryFromJson(Map<String, dynamic> json) => EventSummary(
+      data: json['data'] as Map<String, dynamic>?,
+    );
+
+Map<String, dynamic> _$EventSummaryToJson(EventSummary instance) =>
+    <String, dynamic>{
+      'data': instance.data,
+    };
+
 EventType _$EventTypeFromJson(Map<String, dynamic> json) => EventType(
       id: (json['id'] as num?)?.toInt(),
       name: json['name'] as String?,

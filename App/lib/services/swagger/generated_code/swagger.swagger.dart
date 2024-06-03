@@ -80,6 +80,37 @@ abstract class Swagger extends ChopperService {
   ///@param start
   ///@param end
   ///@param personId
+  Future<chopper.Response<List<EventSummary>>> apiEventsSummaryGet({
+    required int? type,
+    required DateTime? start,
+    required DateTime? end,
+    int? personId,
+  }) {
+    generatedMapping.putIfAbsent(
+        EventSummary, () => EventSummary.fromJsonFactory);
+
+    return _apiEventsSummaryGet(
+        type: type, start: start, end: end, personId: personId);
+  }
+
+  ///
+  ///@param type
+  ///@param start
+  ///@param end
+  ///@param personId
+  @Get(path: '/api/events/summary')
+  Future<chopper.Response<List<EventSummary>>> _apiEventsSummaryGet({
+    @Query('type') required int? type,
+    @Query('start') required DateTime? start,
+    @Query('end') required DateTime? end,
+    @Query('personId') int? personId,
+  });
+
+  ///
+  ///@param type
+  ///@param start
+  ///@param end
+  ///@param personId
   Future<chopper.Response<List<Event>>> apiEventsGet({
     required int? type,
     required DateTime? start,
@@ -1030,6 +1061,48 @@ extension $EventExtension on Event {
         person: (person != null ? person.value : this.person),
         valid: (valid != null ? valid.value : this.valid),
         address: (address != null ? address.value : this.address));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class EventSummary {
+  const EventSummary({
+    this.data,
+  });
+
+  factory EventSummary.fromJson(Map<String, dynamic> json) =>
+      _$EventSummaryFromJson(json);
+
+  static const toJsonFactory = _$EventSummaryToJson;
+  Map<String, dynamic> toJson() => _$EventSummaryToJson(this);
+
+  @JsonKey(name: 'data')
+  final Map<String, dynamic>? data;
+  static const fromJsonFactory = _$EventSummaryFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is EventSummary &&
+            (identical(other.data, data) ||
+                const DeepCollectionEquality().equals(other.data, data)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(data) ^ runtimeType.hashCode;
+}
+
+extension $EventSummaryExtension on EventSummary {
+  EventSummary copyWith({Map<String, dynamic>? data}) {
+    return EventSummary(data: data ?? this.data);
+  }
+
+  EventSummary copyWithWrapped({Wrapped<Map<String, dynamic>?>? data}) {
+    return EventSummary(data: (data != null ? data.value : this.data));
   }
 }
 

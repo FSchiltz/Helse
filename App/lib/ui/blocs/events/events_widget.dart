@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
+import 'package:helse/ui/blocs/events/event_detail_page.dart';
+import 'package:helse/ui/blocs/events/events_summary.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
 import 'events_add.dart';
-import 'events_graph.dart';
 
 class EventWidget extends StatefulWidget {
   final EventType type;
@@ -19,23 +20,9 @@ class EventWidget extends StatefulWidget {
 }
 
 class _EventWidgetState extends State<EventWidget> {
-  List<Event>? _events;
+  List<EventSummary>? _events;
 
   _EventWidgetState();
-
-  int _sort(Event m1, Event m2) {
-    var a = m1.stop;
-    var b = m2.stop;
-    if (a == null && b == null) {
-      return 0;
-    } else if (a == null) {
-      return -1;
-    } else if (b == null) {
-      return 1;
-    } else {
-      return a.compareTo(b);
-    }
-  }
 
   void _resetEvents() {
     setState(() {
@@ -43,10 +30,10 @@ class _EventWidgetState extends State<EventWidget> {
     });
   }
 
-  Future<List<Event>?> _getData() async {
+  Future<List<EventSummary>?> _getData() async {
     try {
       if (widget.type.id == null) {
-        _events = List<Event>.empty();
+        _events = List<EventSummary>.empty();
         return _events;
       }
 
@@ -54,8 +41,7 @@ class _EventWidgetState extends State<EventWidget> {
       var start = DateTime(date.start.year, date.start.month, date.start.day);
       var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-      _events = await DI.event?.events(widget.type.id, start, end, person: widget.person);
-      _events?.sort(_sort);
+      _events = await DI.event?.eventsSummary(widget.type.id, start, end, person: widget.person);
       return _events;
     } catch (ex) {
       Notify.showError("$ex");
@@ -65,55 +51,63 @@ class _EventWidgetState extends State<EventWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                child: Text(widget.type.name ?? "", style: Theme.of(context).textTheme.titleLarge),
-              ),
-              IconButton(
-                  onPressed: () {
-                    showDialog<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return EventAdd(_resetEvents, widget.type, person: widget.person);
-                        });
-                  },
-                  icon: const Icon(Icons.add_sharp))
-            ],
-          ),
-          FutureBuilder(
-              future: _getData(),
-              builder: (ctx, snapshot) {
-                // Checking if future is resolved
-                if (snapshot.connectionState == ConnectionState.done) {
-                  // If we got an error
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        '${snapshot.error} occurred',
-                        style: const TextStyle(fontSize: 18),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(shape: const ContinuousRectangleBorder()),
+                  onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                            builder: (context) => EventDetailPage(
+                                  date: widget.date,
+                                  type: widget.type,
+                                  person: widget.person,
+                                )),
                       ),
-                    );
-
-                    // if we got our data
-                  }
-
-                  final events = (snapshot.hasData) ? snapshot.data as List<Event> : List<Event>.empty();
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: EventGraph(events, widget.date),
+                  child: Text(widget.type.name ?? "", style: Theme.of(context).textTheme.titleLarge)),
+            ),
+            IconButton(
+                onPressed: () {
+                  showDialog<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return EventAdd(_resetEvents, widget.type, person: widget.person);
+                      });
+                },
+                icon: const Icon(Icons.add_sharp))
+          ],
+        ),
+        FutureBuilder(
+            future: _getData(),
+            builder: (ctx, snapshot) {
+              // Checking if future is resolved
+              if (snapshot.connectionState == ConnectionState.done) {
+                // If we got an error
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      '${snapshot.error} occurred',
+                      style: const TextStyle(fontSize: 18),
+                    ),
                   );
+
+                  // if we got our data
                 }
-                return const HelseLoader();
-              })
-        ],
-      ),
+
+                final events = (snapshot.hasData) ? snapshot.data as List<EventSummary> : List<EventSummary>.empty();
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: EventsSummary(events, widget.date),
+                );
+              }
+              return const HelseLoader();
+            }),
+      ],
     );
   }
 }

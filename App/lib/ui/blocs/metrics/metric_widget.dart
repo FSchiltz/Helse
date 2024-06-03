@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
-import 'package:helse/ui/blocs/metrics/metric_detail.dart';
+import 'package:helse/ui/blocs/metrics/metric_detail_page.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../common/loader.dart';
@@ -53,10 +53,10 @@ class _MetricWidgetState extends State<MetricWidget> {
   Widget build(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(0),
-        side: BorderSide(color: Theme.of(context).colorScheme.onPrimaryContainer)
+        borderRadius: BorderRadius.circular(0),     
       ),
-      clipBehavior: Clip.hardEdge,
+      shadowColor: Theme.of(context).colorScheme.shadow,
+      elevation: 2,
       child: FutureBuilder(
           future: _getData(),
           builder: (ctx, snapshot) {

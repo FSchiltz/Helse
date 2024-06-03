@@ -72,7 +72,7 @@ class _EventsGridState extends State<EventsGrid> {
               children: types
                       ?.map((type) => Column(
                             children: [
-                              Divider(color: Theme.of(context).colorScheme.onPrimaryContainer),
+                              Divider(color: Theme.of(context).colorScheme.secondary),
                               EventWidget(type, widget.date, key: Key(type.id?.toString() ?? ""), person: widget.person),
                             ],
                           ))

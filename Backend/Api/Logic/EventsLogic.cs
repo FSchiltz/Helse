@@ -3,6 +3,8 @@ using Api.Helpers;
 using Api.Logic.Auth;
 using Api.Models;
 using LinqToDB;
+using LinqToDB.SqlQuery;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Api.Logic;
 
@@ -35,6 +37,22 @@ public static class EventsLogic
         });
 
         return TypedResults.Ok(result);
+    }
+
+     public async static Task<IResult> GetSummaryAsync(int type, DateTime start, DateTime end, long? personId, IUserContext users, IHealthContext events, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.View))
+            return TypedResults.Forbid();
+
+        var id = personId ?? user.PersonId;
+
+        var data = await events.GetEvents(id, type, start, end);       
+        
+        return TypedResults.Ok(data.Summarize(start, end));
     }
 
     public static async Task<IResult> CreateAsync(CreateEvent e, long? personId, IUserContext users, IHealthContext events, HttpContext context)

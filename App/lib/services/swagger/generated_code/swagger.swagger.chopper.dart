@@ -42,6 +42,29 @@ final class _$Swagger extends Swagger {
   }
 
   @override
+  Future<Response<List<EventSummary>>> _apiEventsSummaryGet({
+    required int? type,
+    required DateTime? start,
+    required DateTime? end,
+    int? personId,
+  }) {
+    final Uri $url = Uri.parse('/api/events/summary');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'type': type,
+      'start': start,
+      'end': end,
+      'personId': personId,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<List<EventSummary>, EventSummary>($request);
+  }
+
+  @override
   Future<Response<List<Event>>> _apiEventsGet({
     required int? type,
     required DateTime? start,
