@@ -21,6 +21,10 @@ public static class EventHelpers
 
         // create the list of summary
         var data = new EventSummary[count];
+        for (int i = 0; i < data.Length; i++)
+        {
+            data[i] = new EventSummary([]);
+        }
 
         // add each summary in the data
         foreach (var e in events)
@@ -29,7 +33,6 @@ public static class EventHelpers
             // add to the existing summary
             foreach (var step in Cut(kind, e, start, end))
             {
-                data[step.Item1] ??= new EventSummary([]);
                 var summary = data[step.Item1];
                 if (!summary.Data.ContainsKey(e.Description ?? string.Empty))
                 {
