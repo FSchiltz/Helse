@@ -4,6 +4,8 @@ namespace Api.Helpers;
 
 public static class EventHelpers
 {
+    private const int DayPerMonth = 30;
+    private const int DayPerYear = 365;
     private enum Steps
     {
         Hours,
@@ -64,8 +66,8 @@ public static class EventHelpers
                 {
                     Steps.Hours => (int)(eventEnd - eventStart).TotalHours,
                     Steps.Days => (int)(eventEnd - eventStart).TotalDays,
-                    Steps.Months => (int)(eventEnd - eventStart).TotalDays / 30,
-                    _ => (int)(eventEnd - eventStart).TotalDays / 365,
+                    Steps.Months => (int)(eventEnd - eventStart).TotalDays / DayPerMonth,
+                    _ => (int)(eventEnd - eventStart).TotalDays / DayPerYear,
                 };
                 steps.Add((tick, count));
             }
@@ -108,18 +110,19 @@ public static class EventHelpers
             return (Steps.Hours, (int)duration.TotalHours);
         }
 
-        if (duration.TotalDays <= 31 * 3)
+        var totalDays = Math.Ceiling(duration.TotalDays);
+        if (totalDays <= DayPerMonth * 3)
         {
             // less than 3 month, show in day
-            return (Steps.Days, (int)duration.TotalDays);
+            return (Steps.Days, (int)totalDays);
         }
 
-        if (duration.TotalDays <= 365 * 3)
+        if (totalDays <= DayPerYear * 3)
         {
             // less than 3 year
-            return (Steps.Months, (int)(duration.TotalDays / 31));
+            return (Steps.Months, (int)(totalDays / DayPerMonth));
         }
 
-        return (Steps.Years, (int)(duration.TotalDays / 365));
+        return (Steps.Years, (int)(totalDays / DayPerYear));
     }
 }
