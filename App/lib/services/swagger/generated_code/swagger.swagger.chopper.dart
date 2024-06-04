@@ -368,6 +368,31 @@ final class _$Swagger extends Swagger {
   }
 
   @override
+  Future<Response<dynamic>> _apiPatientsShareGet({
+    required int? patient,
+    required int? caregiver,
+    required String? right,
+    required DateTime? start,
+    DateTime? end,
+  }) {
+    final Uri $url = Uri.parse('/api/patients/share');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'patient': patient,
+      'caregiver': caregiver,
+      'right': right,
+      'start': start,
+      'end': end,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
   Future<Response<dynamic>> _apiPersonPost({required PersonCreation? body}) {
     final Uri $url = Uri.parse('/api/person');
     final $body = body;
@@ -383,6 +408,17 @@ final class _$Swagger extends Swagger {
   @override
   Future<Response<List<Person>>> _apiPersonGet() {
     final Uri $url = Uri.parse('/api/person');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<List<Person>, Person>($request);
+  }
+
+  @override
+  Future<Response<List<Person>>> _apiPersonCaregiverGet() {
+    final Uri $url = Uri.parse('/api/person/caregiver');
     final Request $request = Request(
       'GET',
       $url,

@@ -442,6 +442,42 @@ abstract class Swagger extends ChopperService {
   });
 
   ///
+  ///@param patient
+  ///@param caregiver
+  ///@param right
+  ///@param start
+  ///@param end
+  Future<chopper.Response> apiPatientsShareGet({
+    required int? patient,
+    required int? caregiver,
+    required String? right,
+    required DateTime? start,
+    DateTime? end,
+  }) {
+    return _apiPatientsShareGet(
+        patient: patient,
+        caregiver: caregiver,
+        right: right,
+        start: start,
+        end: end);
+  }
+
+  ///
+  ///@param patient
+  ///@param caregiver
+  ///@param right
+  ///@param start
+  ///@param end
+  @Get(path: '/api/patients/share')
+  Future<chopper.Response> _apiPatientsShareGet({
+    @Query('patient') required int? patient,
+    @Query('caregiver') required int? caregiver,
+    @Query('right') required String? right,
+    @Query('start') required DateTime? start,
+    @Query('end') DateTime? end,
+  });
+
+  ///
   Future<chopper.Response> apiPersonPost({required PersonCreation? body}) {
     return _apiPersonPost(body: body);
   }
@@ -464,6 +500,17 @@ abstract class Swagger extends ChopperService {
   ///
   @Get(path: '/api/person')
   Future<chopper.Response<List<Person>>> _apiPersonGet();
+
+  ///
+  Future<chopper.Response<List<Person>>> apiPersonCaregiverGet() {
+    generatedMapping.putIfAbsent(Person, () => Person.fromJsonFactory);
+
+    return _apiPersonCaregiverGet();
+  }
+
+  ///
+  @Get(path: '/api/person/caregiver')
+  Future<chopper.Response<List<Person>>> _apiPersonCaregiverGet();
 
   ///
   ///@param personId
