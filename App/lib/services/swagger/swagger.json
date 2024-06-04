@@ -826,28 +826,11 @@
             }
           },
           {
-            "name": "right",
+            "name": "edit",
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "start",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "end",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
+              "type": "boolean"
             }
           }
         ],

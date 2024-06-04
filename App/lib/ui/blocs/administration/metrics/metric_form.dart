@@ -63,14 +63,14 @@ class MetricAddForm extends StatelessWidget {
         const SizedBox(height: 10),
         TypeInput(
           value: type,
-          MetricDataType.values,
+          MetricDataType.values.map((x) => DropDownItem(x, x.name)).toList(),
           (value) => typeCallback.call(value),
           label: 'Type',
         ),
         const SizedBox(height: 10),
         TypeInput(
           value: summary,
-          MetricSummary.values,
+          MetricSummary.values.map((x) => DropDownItem(x, x.name)).toList(),
           (value) => summaryCallback.call(value),
           label: 'Summary',
         ),

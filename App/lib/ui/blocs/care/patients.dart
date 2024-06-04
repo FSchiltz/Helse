@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/blocs/care/share_patient_dialog.dart';
 
 import '../../../logic/d_i.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
@@ -34,7 +35,7 @@ class _PatientsState extends State<Patients> {
       return _patients;
     }
 
-    _patients = await DI.user?.patients();
+    _patients = await DI.user.patients();
     return _patients;
   }
 
@@ -86,6 +87,19 @@ class _PatientsState extends State<Patients> {
                                     onPressed: () {},
                                     icon: Icon(
                                       Icons.edit_sharp,
+                                      color: theme.primary,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      showDialog<void>(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return SharePatientDialog(p);
+                                          });
+                                    },
+                                    icon: Icon(
+                                      Icons.share_sharp,
                                       color: theme.primary,
                                     ),
                                   ),

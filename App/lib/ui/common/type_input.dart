@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:helse/ui/common/square_outline_input_border.dart';
 
-class TypeInput<T extends Enum> extends StatelessWidget {
-  final List<T> types;
+class DropDownItem<T> {
+  final T value;
+  final String description;
+
+  const DropDownItem(this.value, this.description);
+}
+
+class TypeInput<T> extends StatelessWidget {
+  final List<DropDownItem<T>> types;
   final void Function(T?) callback;
   final String? label;
   final T? value;
@@ -16,7 +23,7 @@ class TypeInput<T extends Enum> extends StatelessWidget {
     return DropdownButtonFormField(
       onChanged: callback,
       value: value,
-      items: types.map((type) => DropdownMenuItem(value: type, child: Text(type.name))).toList(),
+      items: types.map((type) => DropdownMenuItem(value: type.value, child: Text(type.description))).toList(),
       decoration: InputDecoration(
         labelText: label ?? 'Type',
         prefixIcon: const Icon(Icons.list_sharp),

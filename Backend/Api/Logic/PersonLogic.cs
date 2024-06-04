@@ -73,8 +73,8 @@ public static class PersonLogic
         if (error is not null)
             return error;
 
-        if (((UserType)user.Type).HasFlag(UserType.Caregiver))
-            return TypedResults.Unauthorized();
+        if (!((UserType)user.Type).HasFlag(UserType.Caregiver))
+            return TypedResults.Forbid();
 
         var users = await db.GetUsers((int)UserType.Caregiver);
 

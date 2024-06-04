@@ -44,7 +44,7 @@ class _ChangeRoleState extends State<ChangeRole> {
             children: [
               TypeInput(
                   value: widget.type,
-                  UserType.values,
+                  UserType.values.map((x) => DropDownItem(x, x.name)).toList(),
                   (value) => setState(() {
                         _type = value;
                       })),
@@ -59,7 +59,7 @@ class _ChangeRoleState extends State<ChangeRole> {
     var localContext = context;
     try {
       // save the user
-      await DI.user?.updatePersonRole(widget.id, _type ?? UserType.user);
+      await DI.user.updatePersonRole(widget.id, _type ?? UserType.user);
 
       widget.callback.call();
 

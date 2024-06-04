@@ -371,17 +371,13 @@ final class _$Swagger extends Swagger {
   Future<Response<dynamic>> _apiPatientsShareGet({
     required int? patient,
     required int? caregiver,
-    required String? right,
-    required DateTime? start,
-    DateTime? end,
+    required bool? edit,
   }) {
     final Uri $url = Uri.parse('/api/patients/share');
     final Map<String, dynamic> $params = <String, dynamic>{
       'patient': patient,
       'caregiver': caregiver,
-      'right': right,
-      'start': start,
-      'end': end,
+      'edit': edit,
     };
     final Request $request = Request(
       'GET',

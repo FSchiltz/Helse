@@ -48,10 +48,15 @@ public static class PatientsLogic
             return error;
 
         // to share a patient, the user need to have write access to it
-        if (await users.ValidateCaregiverAsync(user, patient, RightType.Edit))
-            return TypedResults.Unauthorized();
+        if (!await users.ValidateCaregiverAsync(user, patient, RightType.Edit))
+            return TypedResults.Forbid();
 
-        await users.AddRight(caregiver, patient, edit? RightType.Edit : RightType.View);
+        await users.AddRight(caregiver, patient, RightType.View);
+        if (edit)
+        {
+            await users.AddRight(caregiver, patient, RightType.Edit);
+        }
+
         return TypedResults.NoContent();
     }
 

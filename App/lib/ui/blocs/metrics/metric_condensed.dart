@@ -1,8 +1,7 @@
-import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:helse/logic/settings/ordered_item.dart';
 
+import '../../../logic/settings/ordered_item.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 
 class MetricCondensed extends StatelessWidget {
