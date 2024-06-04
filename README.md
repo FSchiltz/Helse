@@ -5,8 +5,8 @@
 This is a simple work in progress selfhosted app for logging health data.
 The app is composed of a c# webapi and a flutter app that can be run on Web or Android/iOS.
 
-![image](https://github.com/FSchiltz/Helse/assets/1764553/d4f3741d-fedd-4963-b1e7-eb207f9256ef)
 
+![image](https://github.com/FSchiltz/Helse/assets/1764553/78dc1cbe-c870-4e51-a88a-95a654a27dcf)
 
 ## Usage
 
