@@ -801,6 +801,49 @@
         }
       }
     },
+    "/api/patients/share": {
+      "get": {
+        "tags": [
+          "PatientsLogic"
+        ],
+        "parameters": [
+          {
+            "name": "patient",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "caregiver",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "edit",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/api/person": {
       "post": {
         "tags": [
@@ -825,6 +868,31 @@
           }
         }
       },
+      "get": {
+        "tags": [
+          "PersonLogic"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Person"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/person/caregiver": {
       "get": {
         "tags": [
           "PersonLogic"

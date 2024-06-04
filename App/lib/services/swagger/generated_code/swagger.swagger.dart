@@ -442,6 +442,30 @@ abstract class Swagger extends ChopperService {
   });
 
   ///
+  ///@param patient
+  ///@param caregiver
+  ///@param edit
+  Future<chopper.Response> apiPatientsShareGet({
+    required int? patient,
+    required int? caregiver,
+    required bool? edit,
+  }) {
+    return _apiPatientsShareGet(
+        patient: patient, caregiver: caregiver, edit: edit);
+  }
+
+  ///
+  ///@param patient
+  ///@param caregiver
+  ///@param edit
+  @Get(path: '/api/patients/share')
+  Future<chopper.Response> _apiPatientsShareGet({
+    @Query('patient') required int? patient,
+    @Query('caregiver') required int? caregiver,
+    @Query('edit') required bool? edit,
+  });
+
+  ///
   Future<chopper.Response> apiPersonPost({required PersonCreation? body}) {
     return _apiPersonPost(body: body);
   }
@@ -464,6 +488,17 @@ abstract class Swagger extends ChopperService {
   ///
   @Get(path: '/api/person')
   Future<chopper.Response<List<Person>>> _apiPersonGet();
+
+  ///
+  Future<chopper.Response<List<Person>>> apiPersonCaregiverGet() {
+    generatedMapping.putIfAbsent(Person, () => Person.fromJsonFactory);
+
+    return _apiPersonCaregiverGet();
+  }
+
+  ///
+  @Get(path: '/api/person/caregiver')
+  Future<chopper.Response<List<Person>>> _apiPersonCaregiverGet();
 
   ///
   ///@param personId

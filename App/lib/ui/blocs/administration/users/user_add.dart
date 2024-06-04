@@ -50,7 +50,7 @@ class _SignupState extends State<UserAdd> {
           child: Column(
             children: [
               TypeInput(
-                  UserType.values,
+                  UserType.values.map((x) => DropDownItem(x, x.name)).toList(),
                   (value) => setState(() {
                         _type = value;
                       })),
@@ -76,7 +76,7 @@ class _SignupState extends State<UserAdd> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
-        await DI.user?.addPerson(PersonCreation(
+        await DI.user.addPerson(PersonCreation(
           userName: _controllerUsername.text,
           name: _controllerName.text,
           surname: _controllerSurname.text,

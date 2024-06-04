@@ -29,7 +29,7 @@ class _UsersViewState extends State<UsersView> {
     // if the users has not changed, no call to the backend
     if (_users != null) return _users;
 
-    _users = await DI.user?.persons();
+    _users = await DI.user.persons();
     return _users;
   }
 

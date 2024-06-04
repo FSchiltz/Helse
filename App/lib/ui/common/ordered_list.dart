@@ -42,7 +42,7 @@ class OrderedList extends StatelessWidget {
                             height: 45,
                             child: TypeInput(
                               value: item.graph,
-                              GraphKind.values,
+                              GraphKind.values.map((x) => DropDownItem(x, x.name)).toList(),
                               (value) => item.graph = value ?? item.graph,
                               label: 'Type',
                             ),
@@ -62,7 +62,7 @@ class OrderedList extends StatelessWidget {
                             height: 45,
                             child: TypeInput(
                               value: item.detailGraph,
-                              GraphKind.values,
+                              GraphKind.values.map((x) => DropDownItem(x, x.name)).toList(),
                               (value) => item.detailGraph = value ?? item.detailGraph,
                               label: 'Type',
                             ),

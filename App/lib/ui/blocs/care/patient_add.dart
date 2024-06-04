@@ -32,7 +32,7 @@ class _PatientAddState extends State<PatientAdd> {
       });
       try {
         // save the user
-        await DI.user?.addPerson(PersonCreation(
+        await DI.user.addPerson(PersonCreation(
           name: _controllerName.text,
           surname: _controllerSurname.text,
           type: UserType.patient,

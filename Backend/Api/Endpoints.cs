@@ -40,6 +40,12 @@ public static class Endpoints
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
 
+        person.MapGet("/caregiver", PersonLogic.GetCaregiverAsync)
+        .AllowAnonymous()
+        .Produces<List<Api.Models.Person>>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized)
+        .WithOpenApi();
+
         person.MapPost("/role", PersonLogic.SetPersonRole)
             .Produces((int)HttpStatusCode.Unauthorized)
             .Produces((int)HttpStatusCode.NoContent)
@@ -62,6 +68,11 @@ public static class Endpoints
 
         patients.MapGet("/agenda", PatientsLogic.GetAgendaAsync)
         .Produces<List<Api.Models.Event>>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized)
+        .WithOpenApi();
+
+         patients.MapGet("/share", PatientsLogic.SharePatient)
+        .Produces((int)HttpStatusCode.NoContent)
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
     }

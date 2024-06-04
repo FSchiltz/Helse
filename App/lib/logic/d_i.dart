@@ -26,7 +26,14 @@ class DI {
   }
 
   static EventService? event;
-  static UserService? user;
+  static UserService? _user;
+    static UserService get user {
+    var a = _user;
+    if (a == null) {
+      throw Exception("Invalid access");
+    }
+    return a;
+  }
   static TreatmentService? treatement;
   static SettingsLogic? _settings;
   static SettingsLogic get settings {
@@ -71,7 +78,7 @@ class DI {
     metric = MetricService(account);
     _helper = HelperService(account);
     event = EventService(account);
-    user = UserService(account);
+    _user = UserService(account);
     treatement = TreatmentService(account);
     _settings = SettingsLogic(account);
     _health = Health();

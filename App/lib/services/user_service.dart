@@ -26,4 +26,15 @@ class UserService extends ApiService {
     var role = type.value ?? 0;
     await call(() => api.apiPersonRolePost(personId: personId, role: role.toString()));
   }
+
+  Future<List<Person>> caregiver() async {
+    var api = await getService();
+    return await call(api.apiPersonCaregiverGet) ?? [];
+  }
+
+  Future<void> sharePatient({required int patient, required int caregiver, required bool edit }) async {
+
+    var api = await getService();
+    return await call(() => api.apiPatientsShareGet(patient: patient, caregiver: caregiver, edit: edit));
+  }
 }
