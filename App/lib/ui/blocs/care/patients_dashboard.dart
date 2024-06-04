@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../helpers/date.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../common/date_range_input.dart';
+import '../../common/date_range_picker.dart';
 import '../../patient_dashboard.dart';
 
 class PatientsDashboard extends StatefulWidget {
@@ -25,6 +26,7 @@ class _PatientDashboardState extends State<PatientsDashboard> {
 
   @override
   Widget build(BuildContext context) {
+    var isLargeScreen = MediaQuery.of(context).size.width > 600;
     return Scaffold(
       appBar: AppBar(
         title: Padding(
@@ -34,7 +36,7 @@ class _PatientDashboardState extends State<PatientsDashboard> {
         actions: <Widget>[
           Padding(
             padding: const EdgeInsets.only(right: 20.0),
-            child: DateRangeInput(_setDate, date, true),
+            child: DateRangePicker(_setDate, date, isLargeScreen),
           ),
         ],
       ),
