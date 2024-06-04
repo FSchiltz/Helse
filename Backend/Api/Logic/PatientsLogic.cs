@@ -41,7 +41,7 @@ public static class PatientsLogic
     /// <summary>
     /// Share a patient between caregiver
     /// </summary>
-    public async static Task<IResult> SharePatient(int patient, int caregiver, RightType right, DateTime start, DateTime? end, IUserContext users, IHealthContext db, HttpContext context)
+    public async static Task<IResult> SharePatient(int patient, int caregiver, bool edit, IUserContext users, IHealthContext db, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -51,7 +51,7 @@ public static class PatientsLogic
         if (await users.ValidateCaregiverAsync(user, patient, RightType.Edit))
             return TypedResults.Unauthorized();
 
-        await users.AddRight(caregiver, patient, right);
+        await users.AddRight(caregiver, patient, edit? RightType.Edit : RightType.View);
         return TypedResults.NoContent();
     }
 
