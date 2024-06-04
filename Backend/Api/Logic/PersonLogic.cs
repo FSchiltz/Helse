@@ -28,7 +28,7 @@ public static class PersonLogic
         if (admin is not null)
             return admin;
 
-        var users = await db.GetUsers();
+        var users = await db.GetUsers(null);
 
         var now = DateTime.UtcNow;
         var rights = (await db.GetRights(now))
@@ -54,6 +54,38 @@ public static class PersonLogic
                 Phone = x.User?.Phone,
                 Type = (UserType)(x.User?.Type ?? 0),
                 Rights = right?.Select(x => x.FromDb()).ToList() ?? [],
+            };
+        });
+
+        return TypedResults.Ok(models);
+    }
+
+    /// <summary>
+    /// Get the list of users/person that are caregiver
+    /// The caller needs to be another caregiver
+    /// </summary>
+    /// <param name="db"></param>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public static async Task<IResult> GetCaregiverAsync(IUserContext db, HttpContext context)
+    {
+        var (error, user) = await db.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+        if (((UserType)user.Type).HasFlag(UserType.Caregiver))
+            return TypedResults.Unauthorized();
+
+        var users = await db.GetUsers((int)UserType.Caregiver);
+
+        var now = DateTime.UtcNow;
+
+        var models = users.Select(x =>
+        {
+            return new Models.Person
+            {
+                Id = x.User?.Id ?? 0,
+                UserName = x.User?.Identifier,
             };
         });
 

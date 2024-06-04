@@ -38,6 +38,23 @@ public static class PatientsLogic
         return TypedResults.Ok(models);
     }
 
+    /// <summary>
+    /// Share a patient between caregiver
+    /// </summary>
+    public async static Task<IResult> SharePatient(int patient, int caregiver, RightType right, DateTime start, DateTime? end, IUserContext users, IHealthContext db, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+        // to share a patient, the user need to have write access to it
+        if (await users.ValidateCaregiverAsync(user, patient, RightType.Edit))
+            return TypedResults.Unauthorized();
+
+        await users.AddRight(caregiver, patient, right);
+        return TypedResults.NoContent();
+    }
+
     public async static Task<IResult> GetAgendaAsync(DateTime start, DateTime end, IUserContext users, IHealthContext db, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
@@ -58,5 +75,4 @@ public static class PatientsLogic
             Valid = x.Valid,
         }));
     }
-
 }

@@ -19,7 +19,7 @@ public interface IUserContext : IContext
     Task<long> InsertPerson(PersonCreation newUser);
     Task InsertUser(PersonCreation newUser, long id, string password);
     Task UpdatePassword(long user, string password);
-    Task<List<PersonFromDb>> GetUsers();
+    Task<List<PersonFromDb>> GetUsers(int? role);
     Task<List<Models.Right>> GetRights(DateTime time);
     Task SetExpiryRight(long personId, DateTime now);
     Task InsertRights(IEnumerable<Models.Right> dbRights);
@@ -110,11 +110,17 @@ public class UserContext(DataConnection db) : IUserContext
         });
     }
 
-    public Task<List<PersonFromDb>> GetUsers()
+    public Task<List<PersonFromDb>> GetUsers(int? role)
     {
-        return (from u in db.GetTable<User>()
-                from p in db.GetTable<Models.Person>().RightJoin(pr => pr.Id == u.PersonId)
-                select new PersonFromDb(u, p)).OrderBy(x => x.User.Id).ToListAsync();
+        var query =
+        from u in db.GetTable<User>()
+        from p in db.GetTable<Models.Person>().RightJoin(pr => pr.Id == u.PersonId)
+        select new PersonFromDb(u, p);
+
+        if (role != null)
+            query = query.Where(x => x.User.Type == role);
+
+        return query.OrderBy(x => x.User.Id).ToListAsync();
     }
 
     public Task<List<Models.Right>> GetRights(DateTime time)
