@@ -87,7 +87,7 @@ class _EventTimelineState extends State<EventTimeline> {
           child: Container(
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-              color: colorScheme.primary,
+              color: null,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -132,10 +132,18 @@ class _EventTimelineState extends State<EventTimeline> {
     }
 
     if (widgets.isEmpty) {
-      widgets.add(Container(
-        color: empty,
+      widgets.add(SizedBox(
         width: 28,
-        height: 1,
+        child: Center(
+          child: Container(
+            decoration: BoxDecoration(
+              color: empty,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            width: 4,
+            height: 4,
+          ),
+        ),
       ));
     }
 
