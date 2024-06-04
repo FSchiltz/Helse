@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
@@ -76,6 +76,9 @@ class _EventTimelineState extends State<EventTimeline> {
     List<Widget> chartBars = [];
 
     int tick = 0;
+    int max = data.map((x) => x.data?.values.map((y) => y as int).sum ?? 0).max;
+    var coeff = min(160 / max, 30.0);
+
     for (var d in data) {
       var p = d.data;
       if (p != null) {
@@ -85,11 +88,10 @@ class _EventTimelineState extends State<EventTimeline> {
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               color: colorScheme.primary,
-              
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
-              children: map(p, tick, colorScheme.primary),
+              children: map(p, tick, colorScheme.primary, coeff: coeff),
             ),
           ),
         ));
@@ -110,7 +112,7 @@ class _EventTimelineState extends State<EventTimeline> {
     );
   }
 
-  List<Widget> map(Map<String, dynamic> p, int tick, Color empty) {
+  List<Widget> map(Map<String, dynamic> p, int tick, Color empty, {required double coeff}) {
     List<Widget> widgets = [];
 
     for (var entry in p.entries) {
@@ -123,7 +125,7 @@ class _EventTimelineState extends State<EventTimeline> {
               color: _stateColor(entry.key),
             ),
             width: 20,
-            height: 30 * count as double,
+            height: coeff * count,
           ),
         ));
       }
