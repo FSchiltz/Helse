@@ -62,6 +62,11 @@ class _PatientsState extends State<Patients> {
               final persons = snapshot.data as List<Person>;
               final cards = persons
                   .map((p) => Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(0),
+                        ),
+                        shadowColor: Theme.of(context).colorScheme.shadow,
+                        elevation: 2,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Column(

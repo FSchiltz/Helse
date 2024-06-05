@@ -316,10 +316,7 @@ public class HealthContext(DataConnection db) : IHealthContext
     public async Task<Metric[]> GetSummaryMetrics(int tile, long id, int type, Api.Models.MetricSummary action, DateTime start, DateTime end)
     {
         // Use a manual command to use the SQL function NTILE
-        var groups = db.FromSql<ChunkedMetric>($"SELECT NTILE({tile}) OVER (ORDER BY date) as chunk,* FROM health.metric m")
-         .Where(x => x.PersonId == id
-                 && x.Type == type
-                 && x.Date <= end && x.Date >= start)
+        var groups = db.FromSql<ChunkedMetric>($"SELECT NTILE({tile}) OVER (ORDER BY date) as chunk,* FROM health.metric m WHERE m.PersonId = {id} AND m.Type = {type} AND m.Date <= {end} AND m.Date >= {start}")
          .AsSubQuery()
          .GroupBy(x => x.Chunk);
 
