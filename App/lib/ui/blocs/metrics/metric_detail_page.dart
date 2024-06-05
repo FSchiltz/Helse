@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
-import 'package:helse/ui/blocs/calendar/calendar_view.dart';
-import 'package:helse/ui/blocs/metrics/metric_condensed.dart';
-import 'package:helse/ui/blocs/metrics/metric_graph.dart';
 
 import '../../../logic/d_i.dart';
 import '../../../logic/settings/ordered_item.dart';
+import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../common/date_range_input.dart';
 import '../../common/loader.dart';
+import '../calendar/calendar_view.dart';
+import 'metric_condensed.dart';
+import 'metric_graph.dart';
 
 class MetricDetailPage extends StatefulWidget {
   const MetricDetailPage({
