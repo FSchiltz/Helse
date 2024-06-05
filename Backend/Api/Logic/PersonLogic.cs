@@ -28,7 +28,7 @@ public static class PersonLogic
         if (admin is not null)
             return admin;
 
-        var users = await db.GetUsers(null);
+        var users = await db.GetUsers();
 
         var now = DateTime.UtcNow;
         var rights = (await db.GetRights(now))
@@ -76,11 +76,11 @@ public static class PersonLogic
         if (!((UserType)user.Type).HasFlag(UserType.Caregiver))
             return TypedResults.Forbid();
 
-        var users = await db.GetUsers((int)UserType.Caregiver);
+        var users = await db.GetUsers();
 
         var now = DateTime.UtcNow;
 
-        var models = users.Select(x =>
+        var models = users.Where(x => x.User is not null && ((UserType)x.User.Type).HasFlag(UserType.Caregiver)).Select(x =>
         {
             return new Models.Person
             {
