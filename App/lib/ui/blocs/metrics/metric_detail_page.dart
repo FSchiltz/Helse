@@ -34,12 +34,14 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
   List<Metric> _metrics = [];
   List<Metric>? _allMetrics;
 
+  Future<List<Metric>?>? _dataFuture;
+
   @override
   void initState() {
     super.initState();
     var date = DateTimeRange(start: widget.date.start, end: widget.date.start.add(const Duration(days: 1)));
     _date = date;
-    _metrics = _filter(_metrics, date);
+    _dataFuture = _getData();
   }
 
   Future<List<Metric>?> _getData() async {
@@ -56,6 +58,8 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
 
     _allMetrics = await DI.metric?.metrics(id, start, end, person: widget.person, simple: false);
 
+    _metrics = _filter(_allMetrics, date);
+
     return _allMetrics;
   }
 
@@ -67,7 +71,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
         //child: DateRangeInput((x) => {}, date),
       ),
       body: FutureBuilder(
-          future: _getData(),
+          future: _dataFuture,
           builder: (ctx, snapshot) {
             // Checking if future is resolved
             if (snapshot.connectionState == ConnectionState.done) {
@@ -95,7 +99,14 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                           ? CalendarView(metrics, widget.date)
                           : Column(
                               children: [
-                                SizedBox(height: 80, child: WidgetGraph(widget.summary, widget.date, GraphKind.line, highlight: _date,)),
+                                SizedBox(
+                                    height: 80,
+                                    child: WidgetGraph(
+                                      widget.summary,
+                                      widget.date,
+                                      GraphKind.line,
+                                      highlight: _date,
+                                    )),
                                 Center(
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -123,14 +134,15 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
   }
 
   void _setDate(DateTimeRange date) {
-    var metrics = _filter(_allMetrics ?? [], date);
+    var metrics = _filter(_allMetrics, date);
     setState(() {
       _date = date;
       _metrics = metrics;
     });
   }
 
-  List<Metric> _filter(List<Metric> metrics, DateTimeRange date) {
-    return metrics.where((metric) => (metric.date!.compareTo(date.start) >= 0 && metric.date!.compareTo(date.end) <= 0)).toList();
+  List<Metric> _filter(List<Metric>? metrics, DateTimeRange date) {
+    // TODO add first and last out of bound to make the graph better 
+    return metrics?.where((metric) => (metric.date!.compareTo(date.start) >= 0 && metric.date!.compareTo(date.end) <= 0)).toList() ?? [];
   }
 }
