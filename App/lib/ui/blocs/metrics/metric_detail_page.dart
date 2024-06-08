@@ -6,6 +6,7 @@ import '../../../logic/settings/ordered_item.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../common/loader.dart';
 import '../calendar/calendar_view.dart';
+import 'metric_add.dart';
 import 'metric_graph.dart';
 
 class MetricDetailPage extends StatefulWidget {
@@ -62,11 +63,35 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
     });
   }
 
+  void _resetMetric() {
+    setState(() {
+      _metrics = [];
+    });
+    _dataFuture = _getData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detail of ${widget.type.name}', style: Theme.of(context).textTheme.displaySmall),
+        title: Row(
+          children: [
+            Text('Detail of ${widget.type.name}', style: Theme.of(context).textTheme.displaySmall),
+            const SizedBox(width: 20,),
+            SizedBox(
+              width: 40,
+              child: IconButton(
+                  onPressed: () {
+                    showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return MetricAdd(widget.type, _resetMetric, person: widget.person);
+                        });
+                  },
+                  icon: const Icon(Icons.add_sharp)),
+            ),
+          ],
+        ),
         //child: DateRangeInput((x) => {}, date),
       ),
       body: FutureBuilder(
@@ -121,7 +146,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(_metric!.tag.toString()),
                                       ),
-                                       Padding(
+                                      Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(_metric!.source.toString()),
                                       ),
