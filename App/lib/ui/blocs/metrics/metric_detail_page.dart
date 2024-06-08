@@ -28,7 +28,6 @@ class MetricDetailPage extends StatefulWidget {
 }
 
 class _MetricDetailPageState extends State<MetricDetailPage> {
-  DateTimeRange? _date;
   List<Metric> _metrics = [];
 
   Future<List<Metric>?>? _dataFuture;
@@ -36,8 +35,6 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
   @override
   void initState() {
     super.initState();
-    var date = DateTimeRange(start: widget.date.start, end: widget.date.start.add(const Duration(days: 1)));
-    _date = date;
     _dataFuture = _getData();
   }
 
@@ -93,7 +90,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                         )
                       : (widget.type.type == MetricDataType.text
                           ? CalendarView(metrics, widget.date)
-                          : MetricGraph(_metrics, _date!, widget.settings)),
+                          : MetricGraph(metrics, widget.date, widget.settings)),
                 ));
               }
             }
