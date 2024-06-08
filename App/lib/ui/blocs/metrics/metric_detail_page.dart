@@ -77,7 +77,9 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
         title: Row(
           children: [
             Text('Detail of ${widget.type.name}', style: Theme.of(context).textTheme.displaySmall),
-            const SizedBox(width: 20,),
+            const SizedBox(
+              width: 20,
+            ),
             SizedBox(
               width: 40,
               child: IconButton(
@@ -126,8 +128,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                             child: Column(
                               children: [
                                 if (_metric != null)
-                                  Flexible(
-                                      child: Row(
+                                  Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Padding(
@@ -151,8 +152,8 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                                         child: Text(_metric!.source.toString()),
                                       ),
                                     ],
-                                  )),
-                                Expanded(child: MetricGraph(metrics, widget.date, widget.settings, _selectionChanged)),
+                                  ),
+                                Flexible(fit: FlexFit.tight, child: MetricGraph(metrics, widget.date, widget.settings, _selectionChanged)),
                               ],
                             ),
                           ));
