@@ -1,9 +1,11 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:helse/helpers/date.dart';
+import 'package:graphic/graphic.dart';
 import 'package:helse/helpers/metric_helper.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
 import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
+
+import '../../../helpers/date.dart';
 
 class MetricGraph extends StatefulWidget {
   final List<Metric> metrics;
@@ -60,72 +62,51 @@ class _MetricGraphState extends State<MetricGraph> {
   }
 
   Widget _getGraph(BuildContext context) {
-    var spots = _getSpot(widget.metrics);
     var theme = Theme.of(context).colorScheme;
     if (widget.settings == GraphKind.line) {
-      return LineChart(
-        duration: Duration.zero,
-        LineChartData(
-          minX: widget.date.start.millisecondsSinceEpoch.toDouble(),
-          maxX: widget.date.end.millisecondsSinceEpoch.toDouble(),
-          minY: 0,
-          lineTouchData: LineTouchData(
-            enabled: true,
-            touchTooltipData: LineTouchTooltipData(
-              getTooltipItems: (touchedSpots) => _getToolTip(touchedSpots, context),
+      return Chart(
+        data: widget.metrics,
+        variables: {
+          'x': Variable(
+            accessor: (Metric datumn) => datumn.date!,
+            scale: TimeScale(
+              formatter: (time) => DateHelper.formatTime(time, context: context),
             ),
           ),
-          titlesData: FlTitlesData(
-            leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 50)),
-            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            bottomTitles: AxisTitles(
-                drawBelowEverything: true,
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  reservedSize: 60,
-                  interval: 1000 * 60 * 60 * 2,
-                  getTitlesWidget: (value, meta) {
-                    var time = DateTime.fromMillisecondsSinceEpoch(value.toInt(), isUtc: true);
-                    return SideTitleWidget(
-                      axisSide: meta.axisSide,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            DateHelper.formatDate(time, context: context),
-                            style: Theme.of(context).textTheme.labelMedium,
-                          ),
-                          Text(
-                            DateHelper.formatTime(time, context: context),
-                            style: Theme.of(context).textTheme.labelMedium,
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                )),
-            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          'y': Variable(
+            accessor: (Metric datumn) => int.parse(datumn.$value ?? '0'),
+            scale: LinearScale(),
           ),
-          borderData: FlBorderData(
-            show: false,
+        },
+        marks: [
+          PointMark(
+            size: SizeEncode(value: 5),
+            color: ColorEncode(value: theme.secondary),
+            selected: {
+              'touchMove': {1}
+            },
           ),
-          gridData: const FlGridData(
-            show: true,
-            drawVerticalLine: false,
+          LineMark(
+            size: SizeEncode(value: 1),
+            color: ColorEncode(value: theme.tertiary),
           ),
-          lineBarsData: [
-            LineChartBarData(
-              spots: spots,
-              color: theme.primary,
-              barWidth: 2,
-              isStrokeCapRound: true,
-              isCurved: true,
-              curveSmoothness: 0.01,
-              dotData: const FlDotData(show: true),
-              belowBarData: BarAreaData(show: true),
-            ),
-          ],
+        ],
+        selections: {
+          'touchMove': PointSelection(
+            on: {GestureType.hover, GestureType.tapDown, GestureType.longPressMoveUpdate},
+            dim: Dim.x,
+          )
+        },
+        crosshair: CrosshairGuide(followPointer: [false, false]),
+        tooltip: TooltipGuide(
+          followPointer: [false, false],
+          align: Alignment.topLeft,
+          offset: const Offset(-20, -20),
         ),
+        axes: [
+          Defaults.horizontalAxis,
+          Defaults.verticalAxis,
+        ],
       );
     } else {
       return BarChart(
@@ -155,7 +136,7 @@ class _MetricGraphState extends State<MetricGraph> {
             show: true,
             drawVerticalLine: false,
           ),
-          barGroups: spots
+          barGroups: _getSpot(widget.metrics)
               .map((spot) => BarChartGroupData(x: spot.x.toInt(), barsSpace: 1, barRods: [
                     BarChartRodData(
                       toY: spot.y,

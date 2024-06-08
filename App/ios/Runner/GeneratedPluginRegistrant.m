@@ -18,8 +18,8 @@
 @import device_info_plus;
 #endif
 
-#if __has_include(<file_selector_ios/FFSFileSelectorPlugin.h>)
-#import <file_selector_ios/FFSFileSelectorPlugin.h>
+#if __has_include(<file_selector_ios/FileSelectorPlugin.h>)
+#import <file_selector_ios/FileSelectorPlugin.h>
 #else
 @import file_selector_ios;
 #endif
@@ -65,7 +65,7 @@
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
   [AppLinksPlugin registerWithRegistrar:[registry registrarForPlugin:@"AppLinksPlugin"]];
   [FPPDeviceInfoPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPDeviceInfoPlusPlugin"]];
-  [FFSFileSelectorPlugin registerWithRegistrar:[registry registrarForPlugin:@"FFSFileSelectorPlugin"]];
+  [FileSelectorPlugin registerWithRegistrar:[registry registrarForPlugin:@"FileSelectorPlugin"]];
   [FluttertoastPlugin registerWithRegistrar:[registry registrarForPlugin:@"FluttertoastPlugin"]];
   [HealthPlugin registerWithRegistrar:[registry registrarForPlugin:@"HealthPlugin"]];
   [PathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"PathProviderPlugin"]];

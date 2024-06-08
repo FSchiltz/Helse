@@ -5,6 +5,7 @@ import 'package:helse/ui/blocs/events/events_graph.dart';
 import '../../../logic/d_i.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
+import 'events_summary.dart';
 
 class EventDetailPage extends StatefulWidget {
   const EventDetailPage({
@@ -12,11 +13,13 @@ class EventDetailPage extends StatefulWidget {
     required this.date,
     required this.type,
     required this.person,
+    required this.summary,
   });
 
   final DateTimeRange date;
   final EventType type;
   final int? person;
+  final List<EventSummary> summary;
 
   @override
   State<EventDetailPage> createState() => _EventDetailPageState();
@@ -24,6 +27,8 @@ class EventDetailPage extends StatefulWidget {
 
 class _EventDetailPageState extends State<EventDetailPage> {
   List<Event>? _events;
+  
+  Future<List<Event>?>? _dataFuture;
 
   Future<List<Event>?> _getData() async {
     try {
@@ -45,6 +50,12 @@ class _EventDetailPageState extends State<EventDetailPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _dataFuture = _getData();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
@@ -52,7 +63,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
           //child: DateRangeInput((x) => {}, date),
         ),
         body: FutureBuilder(
-            future: _getData(),
+            future: _dataFuture,
             builder: (ctx, snapshot) {
               // Checking if future is resolved
               if (snapshot.connectionState == ConnectionState.done) {
@@ -69,7 +80,17 @@ class _EventDetailPageState extends State<EventDetailPage> {
                 }
 
                 final events = (snapshot.hasData) ? snapshot.data as List<Event> : List<Event>.empty();
-                return EventGraph(events, widget.date);
+                return Column(
+                  children: [
+                        SizedBox(
+                                    height: 80,
+                                    child: EventsSummary(
+                                      widget.summary,
+                                      widget.date,
+                                    )),
+                    EventGraph(events, widget.date),
+                  ],
+                );
               }
               return const HelseLoader();
             }));
