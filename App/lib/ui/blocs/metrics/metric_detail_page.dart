@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../helpers/date.dart';
 import '../../../logic/d_i.dart';
 import '../../../logic/settings/ordered_item.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
@@ -29,8 +30,8 @@ class MetricDetailPage extends StatefulWidget {
 
 class _MetricDetailPageState extends State<MetricDetailPage> {
   List<Metric> _metrics = [];
-
   Future<List<Metric>?>? _dataFuture;
+  Metric? _metric;
 
   @override
   void initState() {
@@ -52,8 +53,13 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
 
     _metrics = await DI.metric?.metrics(id, start, end, person: widget.person, simple: false) ?? [];
 
-
     return _metrics;
+  }
+
+  void _selectionChanged(Metric metric) {
+    setState(() {
+      _metric = metric;
+    });
   }
 
   @override
@@ -81,17 +87,50 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
               } else if (snapshot.hasData) {
                 // Extracting data from snapshot object
                 final metrics = snapshot.data as List<Metric>;
-                return SizedBox.expand(
-                    child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 16.0, top: 60.0),
-                  child: metrics.isEmpty
-                      ? Center(
-                          child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
-                        )
-                      : (widget.type.type == MetricDataType.text
-                          ? CalendarView(metrics, widget.date)
-                          : MetricGraph(metrics, widget.date, widget.settings)),
-                ));
+                return metrics.isEmpty
+                    ? Center(
+                        child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
+                      )
+                    : (widget.type.type == MetricDataType.text
+                        ? SizedBox.expand(
+                            child: Padding(
+                                padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 16.0, top: 60.0),
+                                child: CalendarView(metrics, widget.date)))
+                        : Padding(
+                            padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 16.0, top: 60.0),
+                            child: Column(
+                              children: [
+                                if (_metric != null)
+                                  Flexible(
+                                      child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(_metric!.id.toString()),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(DateHelper.format(_metric!.date, context: ctx)),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(_metric!.$value.toString()),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(_metric!.tag.toString()),
+                                      ),
+                                       Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(_metric!.source.toString()),
+                                      ),
+                                    ],
+                                  )),
+                                Expanded(child: MetricGraph(metrics, widget.date, widget.settings, _selectionChanged)),
+                              ],
+                            ),
+                          ));
               }
             }
 

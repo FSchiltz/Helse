@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
@@ -10,14 +12,23 @@ class MetricGraph extends StatefulWidget {
   final DateTimeRange date;
   final GraphKind settings;
   static const int valueCount = 24;
+  final void Function(Metric metric) selectionCallback;
 
-  const MetricGraph(this.metrics, this.date, this.settings, {super.key});
+  const MetricGraph(this.metrics, this.date, this.settings, this.selectionCallback, {super.key});
 
   @override
   State<MetricGraph> createState() => _MetricGraphState();
 }
 
 class _MetricGraphState extends State<MetricGraph> {
+  final StreamController<Map<String, Set<int>>?> _selection = StreamController.broadcast();
+  
+  @override
+  void initState() {
+    super.initState();
+    _selection.stream.listen(onData);
+  }
+
   @override
   Widget build(BuildContext context) {
     return _getGraph(context);
@@ -35,6 +46,7 @@ class _MetricGraphState extends State<MetricGraph> {
           selected: {
             'touchMove': {1}
           },
+          selectionStream: _selection,
         ),
         AreaMark(
           size: SizeEncode(value: 1),
@@ -43,14 +55,17 @@ class _MetricGraphState extends State<MetricGraph> {
       ];
     } else {
       marks = [
-        IntervalMark(size: SizeEncode(value: 5), color: ColorEncode(value: theme.primary)),
+        IntervalMark(
+          size: SizeEncode(value: 5),
+          color: ColorEncode(value: theme.primary),
+        ),
       ];
     }
 
     return Chart(
       data: widget.metrics,
       variables: {
-        'x': Variable(
+        'date': Variable(
           accessor: (Metric datumn) => datumn.date!,
           scale: TimeScale(
             min: widget.date.start,
@@ -58,7 +73,7 @@ class _MetricGraphState extends State<MetricGraph> {
             formatter: (time) => DateHelper.format(time, context: context),
           ),
         ),
-        'y': Variable(
+        'value': Variable(
           accessor: (Metric datumn) => int.tryParse(datumn.$value ?? '0') ?? 0,
           scale: LinearScale(),
         ),
@@ -81,5 +96,10 @@ class _MetricGraphState extends State<MetricGraph> {
         Defaults.verticalAxis,
       ],
     );
+  }
+
+  void onData(Map<String, Set<int>>? event) {
+    var metric = widget.metrics[event?.entries.first.value.first ?? 0];
+    widget.selectionCallback(metric);
   }
 }
