@@ -22,21 +22,17 @@ class EventWidget extends StatefulWidget {
 class _EventWidgetState extends State<EventWidget> {
   List<EventSummary>? _events;
 
-  Future<List<EventSummary>?>? _dataFuture;
-
   _EventWidgetState();
 
   void _resetEvents() {
     setState(() {
       _events = [];
     });
-    _dataFuture = _getData();
   }
 
   @override
   void initState() {
     super.initState();
-    _dataFuture = _getData();
   }
 
   Future<List<EventSummary>?> _getData() async {
@@ -93,7 +89,7 @@ class _EventWidgetState extends State<EventWidget> {
           ],
         ),
         FutureBuilder(
-            future: _dataFuture,
+            future: _getData(),
             builder: (ctx, snapshot) {
               // Checking if future is resolved
               if (snapshot.connectionState == ConnectionState.done) {
