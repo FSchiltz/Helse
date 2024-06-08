@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../../../helpers/date.dart';
 import '../../../logic/d_i.dart';
 import '../../../logic/settings/ordered_item.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
-import '../../common/date_range_input.dart';
 import '../../common/loader.dart';
 import '../calendar/calendar_view.dart';
-import 'metric_condensed.dart';
+import 'metric_add.dart';
 import 'metric_graph.dart';
 
 class MetricDetailPage extends StatefulWidget {
@@ -30,17 +30,13 @@ class MetricDetailPage extends StatefulWidget {
 }
 
 class _MetricDetailPageState extends State<MetricDetailPage> {
-  DateTimeRange? _date;
   List<Metric> _metrics = [];
-  List<Metric>? _allMetrics;
-
   Future<List<Metric>?>? _dataFuture;
+  Metric? _metric;
 
   @override
   void initState() {
     super.initState();
-    var date = DateTimeRange(start: widget.date.start, end: widget.date.start.add(const Duration(days: 1)));
-    _date = date;
     _dataFuture = _getData();
   }
 
@@ -56,18 +52,46 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
     var start = DateTime(date.start.year, date.start.month, date.start.day);
     var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-    _allMetrics = await DI.metric?.metrics(id, start, end, person: widget.person, simple: false);
+    _metrics = await DI.metric?.metrics(id, start, end, person: widget.person, simple: false) ?? [];
 
-    _metrics = _filter(_allMetrics, date);
+    return _metrics;
+  }
 
-    return _allMetrics;
+  void _selectionChanged(Metric metric) {
+    setState(() {
+      _metric = metric;
+    });
+  }
+
+  void _resetMetric() {
+    setState(() {
+      _metrics = [];
+    });
+    _dataFuture = _getData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detail of ${widget.type.name}', style: Theme.of(context).textTheme.displaySmall),
+        title: Row(
+          children: [
+            Text('Detail of ${widget.type.name}', style: Theme.of(context).textTheme.displaySmall),
+            const SizedBox(width: 20,),
+            SizedBox(
+              width: 40,
+              child: IconButton(
+                  onPressed: () {
+                    showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return MetricAdd(widget.type, _resetMetric, person: widget.person);
+                        });
+                  },
+                  icon: const Icon(Icons.add_sharp)),
+            ),
+          ],
+        ),
         //child: DateRangeInput((x) => {}, date),
       ),
       body: FutureBuilder(
@@ -88,61 +112,55 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
               } else if (snapshot.hasData) {
                 // Extracting data from snapshot object
                 final metrics = snapshot.data as List<Metric>;
-                return SizedBox.expand(
-                    child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 16.0, top: 60.0),
-                  child: metrics.isEmpty
-                      ? Center(
-                          child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
-                        )
-                      : (widget.type.type == MetricDataType.text
-                          ? CalendarView(metrics, widget.date)
-                          : Column(
+                return metrics.isEmpty
+                    ? Center(
+                        child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
+                      )
+                    : (widget.type.type == MetricDataType.text
+                        ? SizedBox.expand(
+                            child: Padding(
+                                padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 16.0, top: 60.0),
+                                child: CalendarView(metrics, widget.date)))
+                        : Padding(
+                            padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 16.0, top: 60.0),
+                            child: Column(
                               children: [
-                                SizedBox(
-                                    height: 80,
-                                    child: WidgetGraph(
-                                      widget.summary,
-                                      widget.date,
-                                      GraphKind.line,
-                                      highlight: _date,
-                                    )),
-                                Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: SizedBox(
-                                      width: 300,
-                                      child: DateRangeInput(
-                                        _setDate,
-                                        _date ?? widget.date,
-                                        true,
-                                        range: widget.date,
+                                if (_metric != null)
+                                  Flexible(
+                                      child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(_metric!.id.toString()),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(child: MetricGraph(_metrics, _date!, widget.settings)),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(DateHelper.format(_metric!.date, context: ctx)),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(_metric!.$value.toString()),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(_metric!.tag.toString()),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(_metric!.source.toString()),
+                                      ),
+                                    ],
+                                  )),
+                                Expanded(child: MetricGraph(metrics, widget.date, widget.settings, _selectionChanged)),
                               ],
-                            )),
-                ));
+                            ),
+                          ));
               }
             }
 
             return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
           }),
     );
-  }
-
-  void _setDate(DateTimeRange date) {
-    var metrics = _filter(_allMetrics, date);
-    setState(() {
-      _date = date;
-      _metrics = metrics;
-    });
-  }
-
-  List<Metric> _filter(List<Metric>? metrics, DateTimeRange date) {
-    // TODO add first and last out of bound to make the graph better 
-    return metrics?.where((metric) => (metric.date!.compareTo(date.start) >= 0 && metric.date!.compareTo(date.end) <= 0)).toList() ?? [];
   }
 }
