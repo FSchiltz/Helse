@@ -53,6 +53,8 @@ class _MetricGraphState extends State<MetricGraph> {
         'x': Variable(
           accessor: (Metric datumn) => datumn.date!,
           scale: TimeScale(
+            min: widget.date.start,
+            max: widget.date.end,
             formatter: (time) => DateHelper.format(time, context: context),
           ),
         ),
