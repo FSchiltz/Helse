@@ -23,22 +23,17 @@ class MetricWidget extends StatefulWidget {
 
 class _MetricWidgetState extends State<MetricWidget> {
   List<Metric>? _metrics;
-  
-  Future<List<Metric>?>? _dataFuture;
-
   _MetricWidgetState();
 
   @override
   void initState() {
     super.initState();
-    _dataFuture = _getData();
   }
 
   void _resetMetric() {
     setState(() {
       _metrics = [];
     });
-    _dataFuture = _getData();
   }
 
   Future<List<Metric>?> _getData() async {
@@ -62,12 +57,12 @@ class _MetricWidgetState extends State<MetricWidget> {
   Widget build(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(0),     
+        borderRadius: BorderRadius.circular(0),
       ),
       shadowColor: Theme.of(context).colorScheme.shadow,
       elevation: 2,
       child: FutureBuilder(
-          future: _dataFuture,
+          future: _getData(),
           builder: (ctx, snapshot) {
             // Checking if future is resolved
             if (snapshot.connectionState == ConnectionState.done) {
@@ -92,7 +87,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                               type: widget.type,
                               person: widget.person,
                               summary: metrics,
-                              settings:  widget.settings.detailGraph,
+                              settings: widget.settings.detailGraph,
                             )),
                   ),
                   child: Padding(
