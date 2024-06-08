@@ -5,6 +5,7 @@ import 'package:helse/ui/blocs/events/events_graph.dart';
 import '../../../logic/d_i.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
+import 'events_add.dart';
 import 'events_summary.dart';
 
 class EventDetailPage extends StatefulWidget {
@@ -27,7 +28,7 @@ class EventDetailPage extends StatefulWidget {
 
 class _EventDetailPageState extends State<EventDetailPage> {
   List<Event>? _events;
-  
+
   Future<List<Event>?>? _dataFuture;
 
   Future<List<Event>?> _getData() async {
@@ -55,11 +56,35 @@ class _EventDetailPageState extends State<EventDetailPage> {
     _dataFuture = _getData();
   }
 
+  void _resetEvents() {
+    setState(() {
+      _events = [];
+    });
+    _dataFuture = _getData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Detail of ${widget.type.name}', style: Theme.of(context).textTheme.displaySmall),
+          title: Row(
+            children: [
+              Text('Detail of ${widget.type.name}', style: Theme.of(context).textTheme.displaySmall),
+              const SizedBox(width: 20),
+              SizedBox(
+                width: 40,
+                child: IconButton(
+                    onPressed: () {
+                      showDialog<void>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return EventAdd(_resetEvents, widget.type, person: widget.person);
+                          });
+                    },
+                    icon: const Icon(Icons.add_sharp)),
+              )
+            ],
+          ),
           //child: DateRangeInput((x) => {}, date),
         ),
         body: FutureBuilder(
@@ -82,12 +107,12 @@ class _EventDetailPageState extends State<EventDetailPage> {
                 final events = (snapshot.hasData) ? snapshot.data as List<Event> : List<Event>.empty();
                 return Column(
                   children: [
-                        SizedBox(
-                                    height: 80,
-                                    child: EventsSummary(
-                                      widget.summary,
-                                      widget.date,
-                                    )),
+                    SizedBox(
+                        height: 120,
+                        child: EventsSummary(
+                          widget.summary,
+                          widget.date,
+                        )),
                     EventGraph(events, widget.date),
                   ],
                 );

@@ -30,11 +30,11 @@ class _EventWidgetState extends State<EventWidget> {
     setState(() {
       _events = [];
     });
+    _dataFuture = _getData();
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _dataFuture = _getData();
   }
