@@ -75,14 +75,11 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
     var id = _metric?.id;
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            Text('Detail of ${widget.type.name}', style: Theme.of(context).textTheme.displaySmall),
-            const SizedBox(
-              width: 20,
-            ),
-            SizedBox(
-              width: 40,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              width: 32,
               child: IconButton(
                   onPressed: () {
                     showDialog<void>(
@@ -93,9 +90,9 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                   },
                   icon: const Icon(Icons.add_sharp)),
             ),
-          ],
-        ),
-        //child: DateRangeInput((x) => {}, date),
+          ),
+        ],
+        title: Text('Detail of ${widget.type.name}', style: Theme.of(context).textTheme.headlineMedium),
       ),
       body: FutureBuilder(
           future: _dataFuture,
@@ -137,8 +134,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                                   elevation: 2,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                    child: Wrap(
                                       children: [
                                         Padding(
                                           padding: const EdgeInsets.all(4.0),
