@@ -1,5 +1,4 @@
-import 'package:helse/services/api_service.dart';
-
+import 'api_service.dart';
 import 'swagger/generated_code/swagger.swagger.dart';
 
 class MetricService extends ApiService {
@@ -8,6 +7,11 @@ class MetricService extends ApiService {
   Future<List<MetricType>?> metricsType(bool all) async {
     var api = await getService();
     return await call(() => api.apiMetricsTypeGet(all: all));
+  }
+
+  Future<void> deleteMetrics(int id) async {
+    var api = await getService();
+    await call(() => api.apiMetricsIdDelete(id: id));
   }
 
   Future<void> addMetricsType(MetricType metric) async {

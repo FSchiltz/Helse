@@ -48,7 +48,7 @@ class _MetricWidgetState extends State<MetricWidget> {
     var start = DateTime(date.start.year, date.start.month, date.start.day);
     var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-    _metrics = await DI.metric?.metrics(id, start, end, person: widget.person, simple: true);
+    _metrics = await DI.metric.metrics(id, start, end, person: widget.person, simple: true);
 
     return _metrics;
   }

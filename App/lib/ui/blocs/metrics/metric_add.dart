@@ -101,49 +101,47 @@ class _MetricAddState extends State<MetricAdd> {
   void _submit() async {
     var localContext = context;
     try {
-      if (DI.metric != null) {
-        setState(() {
-          _status = SubmissionStatus.inProgress;
-        });
+      setState(() {
+        _status = SubmissionStatus.inProgress;
+      });
 
-        try {
-          if (widget.edit?.id != null) {
-            var metric = UpdateMetric(
-              id: widget.edit?.id ?? 0,
-              date: _date.toUtc(),
-              type: widget.type.id,
-              tag: _tag.text,
-              $value: _value.text,
-              source: FileTypes.none,
-            );
-            await DI.metric?.updateMetrics(metric, person: widget.person);
-          } else {
-            var metric = CreateMetric(
-              date: _date.toUtc(),
-              type: widget.type.id,
-              tag: _tag.text,
-              $value: _value.text,
-              source: FileTypes.none,
-            );
-            await DI.metric?.addMetrics(metric, person: widget.person);
-          }
-
-          if (localContext.mounted) {
-            Navigator.of(localContext).pop();
-          }
-          Notify.show("Metric added");
-
-          widget.callback();
-          setState(() {
-            _status = SubmissionStatus.success;
-          });
-        } catch (_) {
-          setState(() {
-            _status = SubmissionStatus.failure;
-          });
+      try {
+        if (widget.edit?.id != null) {
+          var metric = UpdateMetric(
+            id: widget.edit?.id ?? 0,
+            date: _date.toUtc(),
+            type: widget.type.id,
+            tag: _tag.text,
+            $value: _value.text,
+            source: FileTypes.none,
+          );
+          await DI.metric.updateMetrics(metric, person: widget.person);
+        } else {
+          var metric = CreateMetric(
+            date: _date.toUtc(),
+            type: widget.type.id,
+            tag: _tag.text,
+            $value: _value.text,
+            source: FileTypes.none,
+          );
+          await DI.metric.addMetrics(metric, person: widget.person);
         }
+
+        if (localContext.mounted) {
+          Navigator.of(localContext).pop();
+        }
+        Notify.show("Metric added");
+
+        widget.callback();
+        setState(() {
+          _status = SubmissionStatus.success;
+        });
+      } catch (_) {
+        setState(() {
+          _status = SubmissionStatus.failure;
+        });
       }
-    } catch (ex) {
+        } catch (ex) {
       Notify.showError("Error: $ex");
     }
   }

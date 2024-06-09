@@ -26,7 +26,7 @@ class _MetricTypeViewState extends State<MetricTypeView> {
     // if the users has not changed, no call to the backend
     if (_types != null) return _types;
 
-    _types = await DI.metric?.metricsType(true);
+    _types = await DI.metric.metricsType(true);
     return _types;
   }
 
@@ -157,7 +157,7 @@ class _MetricTypeViewState extends State<MetricTypeView> {
     var id = type.id;
     try {
       if (id != null) {
-        await DI.metric?.deleteMetricsType(id);
+        await DI.metric.deleteMetricsType(id);
         Notify.show('Metric ${type.name} deleted');
 
         _resetMetricType();

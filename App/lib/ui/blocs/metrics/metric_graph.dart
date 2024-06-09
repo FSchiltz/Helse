@@ -42,8 +42,8 @@ class _MetricGraphState extends State<MetricGraph> {
     if (widget.settings == GraphKind.line) {
       marks = [
         PointMark(
-          size: SizeEncode(value: 4),
-          color: ColorEncode(value: theme.onSecondary),
+          size: SizeEncode(value: 6),
+          color: ColorEncode(value: theme.primary),
           selected: {
             'touchMove': {1}
           },

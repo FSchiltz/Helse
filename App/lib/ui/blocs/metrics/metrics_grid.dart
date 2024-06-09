@@ -35,7 +35,7 @@ class _MetricsGridState extends State<MetricsGrid> {
 
   void _getData() async {
     try {
-      var model = await DI.metric?.metricsType(false);
+      var model = await DI.metric.metricsType(false);
       if (model != null) {
         var settings = await SettingsLogic.getMetrics();
         // filter using the user settings

@@ -52,7 +52,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
     var start = DateTime(date.start.year, date.start.month, date.start.day);
     var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-    _metrics = await DI.metric?.metrics(id, start, end, person: widget.person, simple: false) ?? [];
+    _metrics = await DI.metric.metrics(id, start, end, person: widget.person, simple: false) ?? [];
 
     return _metrics;
   }
@@ -72,6 +72,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    var id = _metric?.id;
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -167,18 +168,25 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                                             },
                                             icon: const Icon(Icons.edit_sharp)),
                                       ),
-                                      SizedBox(
-                                        width: 40,
-                                        child: IconButton(
-                                            onPressed: () {
-                                              showDialog<void>(
-                                                  context: context,
-                                                  builder: (BuildContext context) {
-                                                    return DeleteMetric(_resetMetric, _metric, person: widget.person);
-                                                  });
-                                            },
-                                            icon: const Icon(Icons.delete_sharp)),
-                                      ),
+                                      if (id != null)
+                                        SizedBox(
+                                          width: 40,
+                                          child: IconButton(
+                                              onPressed: () {
+                                                showDialog<void>(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return DeleteMetric(_resetMetric, () async {
+                                                        await DI.metric.deleteMetrics(id);
+                                                        _resetMetric();
+                                                        setState(() {
+                                                          _metric = null;
+                                                        });
+                                                      }, person: widget.person);
+                                                    });
+                                              },
+                                              icon: const Icon(Icons.delete_sharp)),
+                                        ),
                                     ],
                                   ),
                                 Flexible(fit: FlexFit.tight, child: MetricGraph(metrics, widget.date, widget.settings, _selectionChanged)),
@@ -195,10 +203,27 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
 }
 
 class DeleteMetric extends StatelessWidget {
-  DeleteMetric(void Function() resetMetric, Metric? metric, {int? person});
+  final Function callback;
+  const DeleteMetric(void Function() resetMetric, this.callback, {super.key, int? person});
 
   @override
   Widget build(BuildContext context) {
-    return Text('delete');
+    return AlertDialog(
+      icon: const Icon(Icons.delete_sharp),
+      title: const Text('Delete the metric ?'),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.pop(context, 'Cancel'),
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () async {
+            await callback();
+            Navigator.pop(context, 'OK');
+          },
+          child: const Text('OK'),
+        ),
+      ],
+    );
   }
 }
