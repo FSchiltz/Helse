@@ -29,7 +29,7 @@ class _EventTypeViewState extends State<EventTypeView> {
     // if the users has not changed, no call to the backend
     if (_types != null) return _types;
 
-    _types = await DI.event?.eventsType(true);
+    _types = await DI.event.eventsType(true);
     return _types;
   }
 
@@ -150,7 +150,7 @@ class _EventTypeViewState extends State<EventTypeView> {
     var id = type.id;
     try {
       if (id != null) {
-        await DI.event?.deleteEventsType(id);
+        await DI.event.deleteEventsType(id);
         Notify.show('Event ${type.name} deleted');
         _resetEventType();
       }

@@ -213,6 +213,39 @@
             "description": "Unauthorized"
           }
         }
+      },
+      "put": {
+        "tags": [
+          "EventsLogic"
+        ],
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEvent"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
       }
     },
     "/api/events/{id}": {
@@ -601,16 +634,6 @@
       "put": {
         "tags": [
           "MetricsLogic"
-        ],
-        "parameters": [
-          {
-            "name": "personId",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
         ],
         "requestBody": {
           "content": {
@@ -1832,6 +1855,36 @@
         "x-enumNames": [
           "Care"
         ]
+      },
+      "UpdateEvent": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "stop": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "tag": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
       },
       "UpdateMetric": {
         "required": [

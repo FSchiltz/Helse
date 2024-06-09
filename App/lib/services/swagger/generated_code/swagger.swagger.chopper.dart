@@ -108,6 +108,26 @@ final class _$Swagger extends Swagger {
   }
 
   @override
+  Future<Response<dynamic>> _apiEventsPut({
+    int? personId,
+    required UpdateEvent? body,
+  }) {
+    final Uri $url = Uri.parse('/api/events');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId
+    };
+    final $body = body;
+    final Request $request = Request(
+      'PUT',
+      $url,
+      client.baseUrl,
+      body: $body,
+      parameters: $params,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
   Future<Response<dynamic>> _apiEventsIdDelete({required int? id}) {
     final Uri $url = Uri.parse('/api/events/${id}');
     final Request $request = Request(
@@ -277,21 +297,14 @@ final class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<dynamic>> _apiMetricsPut({
-    int? personId,
-    required UpdateMetric? body,
-  }) {
+  Future<Response<dynamic>> _apiMetricsPut({required UpdateMetric? body}) {
     final Uri $url = Uri.parse('/api/metrics');
-    final Map<String, dynamic> $params = <String, dynamic>{
-      'personId': personId
-    };
     final $body = body;
     final Request $request = Request(
       'PUT',
       $url,
       client.baseUrl,
       body: $body,
-      parameters: $params,
     );
     return client.send<dynamic, dynamic>($request);
   }

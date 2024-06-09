@@ -375,6 +375,28 @@ Map<String, dynamic> _$TreatementToJson(Treatement instance) =>
       'type': treatmentTypeNullableToJson(instance.type),
     };
 
+UpdateEvent _$UpdateEventFromJson(Map<String, dynamic> json) => UpdateEvent(
+      type: (json['type'] as num?)?.toInt(),
+      description: json['description'] as String?,
+      start: json['start'] == null
+          ? null
+          : DateTime.parse(json['start'] as String),
+      stop:
+          json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
+      tag: json['tag'] as String?,
+      id: (json['id'] as num?)?.toInt(),
+    );
+
+Map<String, dynamic> _$UpdateEventToJson(UpdateEvent instance) =>
+    <String, dynamic>{
+      'type': instance.type,
+      'description': instance.description,
+      'start': instance.start?.toIso8601String(),
+      'stop': instance.stop?.toIso8601String(),
+      'tag': instance.tag,
+      'id': instance.id,
+    };
+
 UpdateMetric _$UpdateMetricFromJson(Map<String, dynamic> json) => UpdateMetric(
       date:
           json['date'] == null ? null : DateTime.parse(json['date'] as String),

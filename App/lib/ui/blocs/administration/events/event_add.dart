@@ -24,14 +24,18 @@ class _EventTypeAddState extends State<EventTypeAdd> {
   bool _visible = true;
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     var edit = widget.edit;
     if (edit != null) {
       // this is not a new addition, just an edit
       controllerDescription.text = edit.description ?? "";
       controllerName.text = edit.name ?? "";
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return SquareDialog(
       title: const Text("Add a new Event type"),
       actions: [
@@ -81,10 +85,10 @@ class _EventTypeAddState extends State<EventTypeAdd> {
 
         if (widget.edit == null) {
           text = "Added";
-          await DI.event?.addEventsType(event);
+          await DI.event.addEventsType(event);
         } else {
           text = "Updated";
-          await DI.event?.updateEventsType(event);
+          await DI.event.updateEventsType(event);
         }
 
         _formKey.currentState?.reset();

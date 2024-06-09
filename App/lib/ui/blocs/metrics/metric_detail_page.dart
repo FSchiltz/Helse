@@ -181,7 +181,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                                               showDialog<void>(
                                                   context: context,
                                                   builder: (BuildContext context) {
-                                                    return DeleteMetric(_resetMetric, () async {
+                                                    return DeleteMetric(() async {
                                                       await DI.metric.deleteMetrics(id);
                                                       _resetMetric();
                                                       setState(() {
@@ -209,7 +209,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
 
 class DeleteMetric extends StatelessWidget {
   final Function callback;
-  const DeleteMetric(void Function() resetMetric, this.callback, {super.key, int? person});
+  const DeleteMetric(this.callback, {super.key, int? person});
 
   @override
   Widget build(BuildContext context) {

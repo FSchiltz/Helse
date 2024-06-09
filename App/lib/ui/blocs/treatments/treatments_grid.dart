@@ -67,7 +67,7 @@ class _TreatmentsGridState extends State<TreatmentsGrid> {
                   .map((e) => Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: EventGraph(
-                            e.events ?? List<Event>.empty(), widget.date),
+                            e.events ?? List<Event>.empty(), widget.date, (e) => {}),
                       ))
                   .toList(),
             );
