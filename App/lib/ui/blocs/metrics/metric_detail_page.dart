@@ -115,6 +115,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
               } else if (snapshot.hasData) {
                 // Extracting data from snapshot object
                 final metrics = snapshot.data as List<Metric>;
+                final metric = _metric;
                 return metrics.isEmpty
                     ? Center(
                         child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
@@ -125,74 +126,85 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                                 padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 16.0, top: 60.0),
                                 child: CalendarView(metrics, widget.date)))
                         : Padding(
-                            padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 16.0, top: 60.0),
+                            padding: const EdgeInsets.all(8),
                             child: Column(
                               children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Text('Selected:'),
-                                    ),
-                                    if (_metric != null)
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(_metric!.id.toString()),
-                                      ),
-                                    if (_metric != null)
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(DateHelper.format(_metric!.date?.toLocal(), context: ctx)),
-                                      ),
-                                    if (_metric != null)
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(_metric!.$value.toString()),
-                                      ),
-                                    if (_metric != null)
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(_metric!.tag.toString()),
-                                      ),
-                                    if (_metric != null)
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(_metric!.source.toString()),
-                                      ),
-                                    if (_metric != null)
-                                      SizedBox(
-                                        width: 40,
-                                        child: IconButton(
-                                            onPressed: () {
-                                              showDialog<void>(
-                                                  context: context,
-                                                  builder: (BuildContext context) {
-                                                    return MetricAdd(widget.type, _resetMetric, person: widget.person, edit: _metric);
-                                                  });
-                                            },
-                                            icon: const Icon(Icons.edit_sharp)),
-                                      ),
-                                    if (id != null)
-                                      SizedBox(
-                                        width: 40,
-                                        child: IconButton(
-                                            onPressed: () {
-                                              showDialog<void>(
-                                                  context: context,
-                                                  builder: (BuildContext context) {
-                                                    return DeleteMetric(() async {
-                                                      await DI.metric.deleteMetrics(id);
-                                                      _resetMetric();
-                                                      setState(() {
-                                                        _metric = null;
+                                Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(0),
+                                  ),
+                                  shadowColor: Theme.of(context).colorScheme.shadow,
+                                  elevation: 2,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text('Selected ${metric != null ? '(${metric.id})' : ''} :'),
+                                        ),
+                                       
+                                        if (metric != null)
+                                          Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: Text(metric.$value.toString() + widget.type.unit.toString()),
+                                          ),
+                                           if (metric != null)
+                                          const Padding(
+                                            padding: EdgeInsets.all(4.0),
+                                            child: Text('on'),
+                                          ),
+                                           if (metric != null)
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(DateHelper.format(metric.date?.toLocal(), context: ctx)),
+                                          ),
+                                        if (metric != null)
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(metric.tag.toString()),
+                                          ),
+                                        if (metric != null && metric.source != FileTypes.none)
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text('by ${metric.source}'),
+                                          ),
+                                        if (metric != null)
+                                          SizedBox(
+                                            width: 40,
+                                            child: IconButton(
+                                                onPressed: () {
+                                                  showDialog<void>(
+                                                      context: context,
+                                                      builder: (BuildContext context) {
+                                                        return MetricAdd(widget.type, _resetMetric, person: widget.person, edit: metric);
                                                       });
-                                                    }, person: widget.person);
-                                                  });
-                                            },
-                                            icon: const Icon(Icons.delete_sharp)),
-                                      ),
-                                  ],
+                                                },
+                                                icon: const Icon(Icons.edit_sharp)),
+                                          ),
+                                        if (id != null)
+                                          SizedBox(
+                                            width: 40,
+                                            child: IconButton(
+                                                onPressed: () {
+                                                  showDialog<void>(
+                                                      context: context,
+                                                      builder: (BuildContext context) {
+                                                        return DeleteMetric(() async {
+                                                          await DI.metric.deleteMetrics(id);
+                                                          _resetMetric();
+                                                          setState(() {
+                                                            _metric = null;
+                                                          });
+                                                        }, person: widget.person);
+                                                      });
+                                                },
+                                                icon: const Icon(Icons.delete_sharp)),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                                 Flexible(fit: FlexFit.tight, child: MetricGraph(metrics, widget.date, widget.settings, _selectionChanged)),
                               ],
