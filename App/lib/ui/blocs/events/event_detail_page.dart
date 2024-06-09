@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
-import 'package:helse/ui/blocs/events/events_graph.dart';
 
 import '../../../logic/d_i.dart';
+import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
 import 'events_add.dart';
+import 'events_graph.dart';
 import 'events_summary.dart';
 
 class EventDetailPage extends StatefulWidget {
@@ -85,7 +85,6 @@ class _EventDetailPageState extends State<EventDetailPage> {
               )
             ],
           ),
-          //child: DateRangeInput((x) => {}, date),
         ),
         body: FutureBuilder(
             future: _dataFuture,
@@ -107,12 +106,14 @@ class _EventDetailPageState extends State<EventDetailPage> {
                 final events = (snapshot.hasData) ? snapshot.data as List<Event> : List<Event>.empty();
                 return Column(
                   children: [
-                    SizedBox(
-                        height: 120,
-                        child: EventsSummary(
-                          widget.summary,
-                          widget.date,
-                        )),
+                    Center(
+                      child: SizedBox(
+                          height: 120,
+                          child: EventsSummary(
+                            widget.summary,
+                            widget.date,
+                          )),
+                    ),
                     EventGraph(events, widget.date),
                   ],
                 );
