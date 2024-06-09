@@ -141,33 +141,23 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text('Selected ${metric != null ? '(${metric.id})' : ''} :'),
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: Text('Selected${metric != null ? ' (${metric.id})' : ''} :'),
                                         ),
-                                       
                                         if (metric != null)
                                           Padding(
                                             padding: const EdgeInsets.all(4.0),
-                                            child: Text(metric.$value.toString() + widget.type.unit.toString()),
-                                          ),
-                                           if (metric != null)
-                                          const Padding(
-                                            padding: EdgeInsets.all(4.0),
-                                            child: Text('on'),
-                                          ),
-                                           if (metric != null)
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(DateHelper.format(metric.date?.toLocal(), context: ctx)),
+                                            child: Text(
+                                                '${metric.$value}${widget.type.unit} on ${DateHelper.format(metric.date?.toLocal(), context: ctx)}'),
                                           ),
                                         if (metric != null)
                                           Padding(
-                                            padding: const EdgeInsets.all(8.0),
+                                            padding: const EdgeInsets.all(4.0),
                                             child: Text(metric.tag.toString()),
                                           ),
                                         if (metric != null && metric.source != FileTypes.none)
                                           Padding(
-                                            padding: const EdgeInsets.all(8.0),
+                                            padding: const EdgeInsets.all(4.0),
                                             child: Text('by ${metric.source}'),
                                           ),
                                         if (metric != null)
