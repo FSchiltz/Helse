@@ -2,14 +2,14 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
+import '../../../logic/d_i.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 
 class EventsSummary extends StatelessWidget {
   final List<EventSummary> events;
   final DateTimeRange date;
-  final ScrollController _scrollController = ScrollController();
 
-  EventsSummary(this.events, this.date, {super.key});
+  const EventsSummary(this.events, this.date, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,33 +18,11 @@ class EventsSummary extends StatelessWidget {
             padding: const EdgeInsets.only(top: 16.0),
             child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
           )
-        : buildChart(events, context));
-  }
-
-  Widget buildChart(List<EventSummary> userData, BuildContext context) {
-    return Scrollbar(
-      interactive: true,
-      controller: _scrollController,
-      child: SingleChildScrollView(
-        controller: _scrollController,
-        scrollDirection: Axis.horizontal,
-        child: Stack(fit: StackFit.loose, children: <Widget>[
-          Column(
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  EventTimeline(userData, date),
-                ],
-              ),
-            ],
-          ),
-        ]),
-      ),
-    );
+        : EventTimeline(events, date));
   }
 }
 
-class EventTimeline extends StatefulWidget {
+class EventTimeline extends StatelessWidget {
   final List<EventSummary> userData;
   final DateTimeRange date;
 
@@ -54,25 +32,7 @@ class EventTimeline extends StatefulWidget {
     super.key,
   });
 
-  @override
-  State<EventTimeline> createState() => _EventTimelineState();
-}
-
-class _EventTimelineState extends State<EventTimeline> {
-  final Map<String, Color> colors = {};
-
-  Color _stateColor(String state) {
-    if (colors.containsKey(state)) {
-      return colors[state]!;
-    } else {
-      var r = Random();
-      var color = Color.fromRGBO(r.nextInt(55) + 100, r.nextInt(105) + 150, r.nextInt(105) + 100, 1);
-      colors[state] = color;
-      return color;
-    }
-  }
-
-  List<Widget> buildChartBars(List<EventSummary> data, ColorScheme colorScheme) {
+  List<Widget> buildChartBars(List<EventSummary> data, ColorScheme colorScheme, {required double width}) {
     List<Widget> chartBars = [];
 
     int tick = 0;
@@ -83,7 +43,7 @@ class _EventTimelineState extends State<EventTimeline> {
       var p = d.data;
       if (p != null) {
         chartBars.add(Padding(
-          padding: const EdgeInsets.all(4.0),
+          padding: EdgeInsets.all(4.0 * width),
           child: Container(
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
@@ -91,7 +51,7 @@ class _EventTimelineState extends State<EventTimeline> {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
-              children: map(p, tick, colorScheme.primary, coeff: coeff),
+              children: map(p, tick, colorScheme.primary, coeff: coeff, widthCoeff: width),
             ),
           ),
         ));
@@ -105,14 +65,24 @@ class _EventTimelineState extends State<EventTimeline> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: buildChartBars(widget.userData, Theme.of(context).colorScheme),
+    var maxWidth = (userData.length) * 28.0;
+
+    return LayoutBuilder(
+      builder: (b, constraints) {
+        var widthCoeff = min(1.0, constraints.maxWidth / maxWidth);
+        return SizedBox(
+          width: min(constraints.maxWidth, maxWidth),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: buildChartBars(userData, Theme.of(context).colorScheme, width: widthCoeff),
+          ),
+        );
+      },
     );
   }
 
-  List<Widget> map(Map<String, dynamic> p, int tick, Color empty, {required double coeff}) {
+  List<Widget> map(Map<String, dynamic> p, int tick, Color empty, {required double coeff, required double widthCoeff}) {
     List<Widget> widgets = [];
 
     for (var entry in p.entries) {
@@ -122,9 +92,9 @@ class _EventTimelineState extends State<EventTimeline> {
           message: entry.key,
           child: Container(
             decoration: BoxDecoration(
-              color: _stateColor(entry.key),
+              color: DI.theme.stateColor(entry.key),
             ),
-            width: 20,
+            width: 20 * widthCoeff,
             height: coeff * count,
           ),
         ));
@@ -133,7 +103,7 @@ class _EventTimelineState extends State<EventTimeline> {
 
     if (widgets.isEmpty) {
       widgets.add(SizedBox(
-        width: 28,
+        width: 20 * widthCoeff,
         child: Center(
           child: Container(
             decoration: BoxDecoration(
