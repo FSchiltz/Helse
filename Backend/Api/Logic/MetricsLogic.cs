@@ -1,7 +1,7 @@
 using Api.Data;
 using Api.Helpers;
-using Api.Logic.Auth;
 using Api.Models;
+using CsvHelper;
 using LinqToDB;
 
 namespace Api.Logic;
@@ -84,7 +84,39 @@ public static class MetricsLogic
         if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.Edit))
             return TypedResults.Forbid();
 
+        // TODO add caching here
+        var type = await db.GetMetricType((int)metric.Type);
+
+        Validate(metric, type);
+
         await db.Insert(metric, personId ?? user.PersonId, user.Id);
+
+        return TypedResults.NoContent();
+    }
+
+    private static void Validate(MetricBase metric, Data.Models.MetricType? type)
+    {
+        if (type == null)
+            throw new InvalidDataException("Type not found");
+
+        if ((MetricDataType)type.Type == MetricDataType.Number && !int.TryParse(metric.Value, out var _))
+            throw new InvalidDataException("The metric value is not a number");
+    }
+
+    public static async Task<IResult> UpdateAsync(UpdateMetric metric, long? personId, IUserContext users, IHealthContext db, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.Edit))
+            return TypedResults.Forbid();
+
+        var type = await db.GetMetricType((int)metric.Type);
+
+        Validate(metric, type);
+
+        await db.Update(metric, personId ?? user.PersonId, user.Id);
 
         return TypedResults.NoContent();
     }

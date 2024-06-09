@@ -1,10 +1,8 @@
 using System.Data;
-using System.Reflection.Metadata;
 using Api.Data.Models;
 using LinqToDB;
 using LinqToDB.Data;
 using LinqToDB.Mapping;
-using Microsoft.Data.SqlClient;
 
 namespace Api.Data;
 
@@ -13,21 +11,25 @@ public interface IHealthContext : IContext
     Task Insert(Api.Models.CreateEvent e, long person, long user);
     Task<Event?> GetEvent(long id);
     Task<List<Event>> GetEvents(long id, int type, DateTime start, DateTime end);
-
     Task DeleteEvent(long id);
+
     Task<List<EventType>> GetEventTypes(bool? all);
     Task Insert(EventType metric);
     Task Update(EventType type);
     Task<int> DeleteEventType(long id);
+
     Task<List<MetricType>> GetMetricTypes(bool? all);
     Task<int> DeleteMetricType(long id);
     Task Update(MetricType metric);
     Task Insert(MetricType metric);
+
     Task DeleteMetric(long id);
     Task<Metric?> GetMetric(long id);
     Task<Metric[]> GetMetrics(long id, long type, DateTime start, DateTime end);
     Task<Metric[]> GetSummaryMetrics(int tile, long id, int type, Api.Models.MetricSummary action, DateTime start, DateTime end);
-    Task Insert(Api.Models.CreateMetric metric, long v, long id);
+    Task Insert(Api.Models.CreateMetric metric, long person, long id);
+    Task Update(Api.Models.UpdateMetric metric, long person, long user);
+
     Task<List<Person>> GetPatients(long id, DateTime now, Api.Models.RightType view);
     Task<List<Event>> GetEvents(long id, Api.Models.RightType view, DateTime start, DateTime end);
     Task<List<Event>> GetEvents(long id, DateTime start, DateTime end);
@@ -319,37 +321,27 @@ public class HealthContext(DataConnection db) : IHealthContext
         var groups = db.FromSql<ChunkedMetric>($"SELECT NTILE({tile}) OVER (ORDER BY date) as chunk,* FROM health.metric m WHERE m.PersonId = {id} AND m.Type = {type} AND m.Date <= {end} AND m.Date >= {start}")
          .AsSubQuery()
          .GroupBy(x => x.Chunk);
-
-        IQueryable<Chunked> query;
-        switch (action)
+        IQueryable<Chunked> query = action switch
         {
-            case Api.Models.MetricSummary.Mean:
-                query = groups.Select(x => new Chunked
-                {
-                    Chunk = x.Key,
-                    Date = x.Min(y => y.Date),
-                    Value = x.Average(y => Sql.Convert<double, string>(y.Value)).ToString(),
-                });
-                break;
-            case Api.Models.MetricSummary.Sum:
-                query = groups.Select(x => new Chunked
-                {
-                    Chunk = x.Key,
-                    Date = x.Min(y => y.Date),
-                    Value = x.Sum(y => Sql.Convert<double, string>(y.Value)).ToString(),
-                });
-                break;
-            default:
-                query = groups.Select(x => new Chunked
-                {
-                    Chunk = x.Key,
-                    Date = x.Min(y => y.Date),
-                    Value = x.Min(y => y.Value),
-                });
-                break;
-
-        }
-
+            Api.Models.MetricSummary.Mean => groups.Select(x => new Chunked
+            {
+                Chunk = x.Key,
+                Date = x.Min(y => y.Date),
+                Value = x.Average(y => Sql.Convert<double, string>(y.Value)).ToString(),
+            }),
+            Api.Models.MetricSummary.Sum => groups.Select(x => new Chunked
+            {
+                Chunk = x.Key,
+                Date = x.Min(y => y.Date),
+                Value = x.Sum(y => Sql.Convert<double, string>(y.Value)).ToString(),
+            }),
+            _ => groups.Select(x => new Chunked
+            {
+                Chunk = x.Key,
+                Date = x.Min(y => y.Date),
+                Value = x.Min(y => y.Value),
+            }),
+        };
         var chunks = await query.OrderBy(x => x.Chunk)
        .ToListAsync();
 
@@ -372,5 +364,16 @@ public class HealthContext(DataConnection db) : IHealthContext
                 .OrderByDescending(x => x.Date)
                 .Take(1)
                 .SingleOrDefaultAsync();
+    }
+
+    public Task Update(Api.Models.UpdateMetric metric, long person, long user)
+    {
+        return db.GetTable<Metric>()
+            .Where(x => x.Id == metric.Id)
+            .Set(x => x.Date, metric.Date)
+            .Set(x => x.Tag, metric.Tag)
+            .Set(x => x.Value, metric.Value)
+            .Set(x => x.Source, (int)metric.Source)
+            .UpdateAsync();
     }
 }

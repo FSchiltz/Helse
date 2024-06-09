@@ -131,6 +131,10 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
+                                      const Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Text('Selected:'),
+                                      ),
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(_metric!.id.toString()),
@@ -151,6 +155,30 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(_metric!.source.toString()),
                                       ),
+                                      SizedBox(
+                                        width: 40,
+                                        child: IconButton(
+                                            onPressed: () {
+                                              showDialog<void>(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return MetricAdd(widget.type, _resetMetric, person: widget.person, edit: _metric);
+                                                  });
+                                            },
+                                            icon: const Icon(Icons.edit_sharp)),
+                                      ),
+                                      SizedBox(
+                                        width: 40,
+                                        child: IconButton(
+                                            onPressed: () {
+                                              showDialog<void>(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return DeleteMetric(_resetMetric, _metric, person: widget.person);
+                                                  });
+                                            },
+                                            icon: const Icon(Icons.delete_sharp)),
+                                      ),
                                     ],
                                   ),
                                 Flexible(fit: FlexFit.tight, child: MetricGraph(metrics, widget.date, widget.settings, _selectionChanged)),
@@ -163,5 +191,14 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
             return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
           }),
     );
+  }
+}
+
+class DeleteMetric extends StatelessWidget {
+  DeleteMetric(void Function() resetMetric, Metric? metric, {int? person});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('delete');
   }
 }

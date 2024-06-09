@@ -1,10 +1,7 @@
 using Api.Data;
 using Api.Helpers;
-using Api.Logic.Auth;
 using Api.Models;
 using LinqToDB;
-using LinqToDB.SqlQuery;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Api.Logic;
 
