@@ -34,7 +34,7 @@ class _MetricAddState extends State<MetricAdd> {
 
     var edit = widget.edit;
     if (edit != null) {
-      if (edit.date != null) _date = edit.date!;
+      if (edit.date != null) _date = edit.date!.toLocal();
       _value.text = edit.$value ?? '';
       _tag.text = edit.tag ?? '';
     }
@@ -141,7 +141,7 @@ class _MetricAddState extends State<MetricAdd> {
           _status = SubmissionStatus.failure;
         });
       }
-        } catch (ex) {
+    } catch (ex) {
       Notify.showError("Error: $ex");
     }
   }

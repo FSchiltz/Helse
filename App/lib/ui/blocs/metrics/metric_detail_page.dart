@@ -52,7 +52,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
     var start = DateTime(date.start.year, date.start.month, date.start.day);
     var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-    _metrics = await DI.metric.metrics(id, start, end, person: widget.person, simple: false) ?? [];
+    _metrics = await DI.metric.metrics(id, start, end, person: widget.person, simple: false);
 
     return _metrics;
   }
@@ -128,34 +128,39 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                             padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 16.0, top: 60.0),
                             child: Column(
                               children: [
-                                if (_metric != null)
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Text('Selected:'),
-                                      ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text('Selected:'),
+                                    ),
+                                    if (_metric != null)
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(_metric!.id.toString()),
                                       ),
+                                    if (_metric != null)
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child: Text(DateHelper.format(_metric!.date, context: ctx)),
+                                        child: Text(DateHelper.format(_metric!.date?.toLocal(), context: ctx)),
                                       ),
+                                    if (_metric != null)
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(_metric!.$value.toString()),
                                       ),
+                                    if (_metric != null)
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(_metric!.tag.toString()),
                                       ),
+                                    if (_metric != null)
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(_metric!.source.toString()),
                                       ),
+                                    if (_metric != null)
                                       SizedBox(
                                         width: 40,
                                         child: IconButton(
@@ -168,27 +173,27 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                                             },
                                             icon: const Icon(Icons.edit_sharp)),
                                       ),
-                                      if (id != null)
-                                        SizedBox(
-                                          width: 40,
-                                          child: IconButton(
-                                              onPressed: () {
-                                                showDialog<void>(
-                                                    context: context,
-                                                    builder: (BuildContext context) {
-                                                      return DeleteMetric(_resetMetric, () async {
-                                                        await DI.metric.deleteMetrics(id);
-                                                        _resetMetric();
-                                                        setState(() {
-                                                          _metric = null;
-                                                        });
-                                                      }, person: widget.person);
-                                                    });
-                                              },
-                                              icon: const Icon(Icons.delete_sharp)),
-                                        ),
-                                    ],
-                                  ),
+                                    if (id != null)
+                                      SizedBox(
+                                        width: 40,
+                                        child: IconButton(
+                                            onPressed: () {
+                                              showDialog<void>(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return DeleteMetric(_resetMetric, () async {
+                                                      await DI.metric.deleteMetrics(id);
+                                                      _resetMetric();
+                                                      setState(() {
+                                                        _metric = null;
+                                                      });
+                                                    }, person: widget.person);
+                                                  });
+                                            },
+                                            icon: const Icon(Icons.delete_sharp)),
+                                      ),
+                                  ],
+                                ),
                                 Flexible(fit: FlexFit.tight, child: MetricGraph(metrics, widget.date, widget.settings, _selectionChanged)),
                               ],
                             ),

@@ -67,7 +67,7 @@ class _MetricGraphState extends State<MetricGraph> {
       data: widget.metrics,
       variables: {
         'date': Variable(
-          accessor: (Metric datumn) => datumn.date!,
+          accessor: (Metric datumn) => datumn.date!.toLocal(),
           scale: TimeScale(
             min: widget.date.start,
             max: widget.date.end,

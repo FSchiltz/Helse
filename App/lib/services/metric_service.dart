@@ -29,13 +29,16 @@ class MetricService extends ApiService {
     await call(() => api.apiMetricsTypeIdDelete(id: metric));
   }
 
-  Future<List<Metric>?> metrics(int? type, DateTime? start, DateTime? end, {int? person, bool simple = false}) async {
+  Future<List<Metric>> metrics(int? type, DateTime? start, DateTime? end, {int? person, bool simple = false}) async {
     var api = await getService();
+    List<Metric>? metrics;
     if (simple) {
-      return await call(() => api.apiMetricsSummaryGet(tile: 16, type: type, start: start?.toUtc(), end: end?.toUtc(), personId: person));
+      metrics = await call(() => api.apiMetricsSummaryGet(tile: 16, type: type, start: start?.toUtc(), end: end?.toUtc(), personId: person));
     } else {
-      return await call(() => api.apiMetricsGet(type: type, start: start?.toUtc(), end: end?.toUtc(), personId: person));
+      metrics = await call(() => api.apiMetricsGet(type: type, start: start?.toUtc(), end: end?.toUtc(), personId: person));
     }
+
+    return metrics ?? [];
   }
 
   Future<void> addMetrics(CreateMetric metric, {int? person}) async {
