@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:helse/ui/common/square_text_field.dart';
 
 import '../../../logic/d_i.dart';

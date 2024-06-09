@@ -209,8 +209,8 @@ class _EventTimelineState extends State<EventTimeline> {
       List<Widget> chartGroup = [];
       for (var n in group.value) {
         // if the event has no start or end, we clamp to the filtered value
-        var start = n.start ?? widget.date.start;
-        var end = n.stop ?? widget.date.end;
+        var start = n.start?.toLocal() ?? widget.date.start;
+        var end = n.stop?.toLocal() ?? widget.date.end;
 
         var width = _distanceInMinutes(start, end);
         var color = _stateColor(n.description ?? '');
@@ -219,7 +219,7 @@ class _EventTimelineState extends State<EventTimeline> {
             margin: EdgeInsets.only(left: _distanceToLeftBorder(start).toDouble(), top: 2.0, bottom: 2.0),
             alignment: Alignment.centerLeft,
             child: Tooltip(
-              message: "${n.description ?? ""}: ${n.start} => ${n.stop}",
+              message: "${n.description ?? ""}: ${n.start?.toLocal()} => ${n.stop?.toLocal()}",
               child: Container(
                 width: width.toDouble(),
                 decoration: BoxDecoration(
@@ -253,7 +253,6 @@ class _EventTimelineState extends State<EventTimeline> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _chartBars = buildChartBars(widget.userData);
   }
