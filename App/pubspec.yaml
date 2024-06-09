@@ -74,7 +74,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
-  build_runner: ^2.4.9
+  build_runner: ^2.4.11
   chopper_generator: ^7.4.0
   json_serializable: ^6.8.0
   swagger_dart_code_generator: ^2.15.2
