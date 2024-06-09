@@ -11,6 +11,7 @@ import 'package:helse/services/treatment_service.dart';
 import 'package:helse/services/user_service.dart';
 
 import 'fit/fit_logic.dart';
+import 'theme_helper.dart';
 
 class DI {
   static OauthClient? authService;
@@ -42,13 +43,14 @@ class DI {
   }
 
   static UserService? _user;
-    static UserService get user {
+  static UserService get user {
     var a = _user;
     if (a == null) {
       throw Exception("Invalid access");
     }
     return a;
   }
+
   static TreatmentService? treatement;
   static SettingsLogic? _settings;
   static SettingsLogic get settings {
@@ -59,14 +61,7 @@ class DI {
     return a;
   }
 
-  static Health? _health;
-  static Health get health {
-    var a = _health;
-    if (a == null) {
-      throw Exception("Invalid access");
-    }
-    return a;
-  }
+  static Health health = Health(); 
 
   static AuthenticationLogic? _authentication;
   static AuthenticationLogic get authentication {
@@ -86,6 +81,8 @@ class DI {
     return a;
   }
 
+  static ThemeHelper theme = ThemeHelper();
+
   static void init() {
     var account = Account();
     authService = OauthClient(account);
@@ -96,7 +93,6 @@ class DI {
     _user = UserService(account);
     treatement = TreatmentService(account);
     _settings = SettingsLogic(account);
-    _health = Health();
 
     var fitLogic = FitLogic(account);
     _fit = TaskBloc(fitLogic.sync, const Duration(seconds: 30), FitLogic.isEnabled);

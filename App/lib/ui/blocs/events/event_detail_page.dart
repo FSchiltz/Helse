@@ -116,14 +116,16 @@ class _EventDetailPageState extends State<EventDetailPage> {
                 final events = (snapshot.hasData) ? snapshot.data as List<Event> : List<Event>.empty();
                 final event = _event;
                 return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Center(
-                      child: SizedBox(
-                          height: 120,
-                          child: EventsSummary(
-                            widget.summary,
-                            widget.date,
-                          )),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: EventsSummary(
+                          widget.summary,
+                          widget.date,
+                        ),
+                      ),
                     ),
                     Card(
                       shape: RoundedRectangleBorder(
