@@ -1,7 +1,5 @@
 using Api.Data;
-using Api.Data.Models;
 using Api.Models;
-using LinqToDB;
 using Microsoft.AspNetCore.Identity;
 
 namespace Api.Helpers.Auth;

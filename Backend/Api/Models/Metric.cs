@@ -1,12 +1,15 @@
 namespace Api.Models;
 
-public class Metric : MetricBase
+public class Metric : UpdateMetric
 {
-    public long Id { get; set; }
-
     public long Person { get; set; }
 
     public long User { get; set; }
+}
+
+public class UpdateMetric : MetricBase
+{
+    public long Id { get; set; }
 }
 
 public class CreateMetric : MetricBase
@@ -25,4 +28,3 @@ public abstract class MetricBase
 
     public FileTypes Source { get; set; }
 }
-

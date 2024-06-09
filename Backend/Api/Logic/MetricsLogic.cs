@@ -1,6 +1,5 @@
 using Api.Data;
 using Api.Helpers;
-using Api.Logic.Auth;
 using Api.Models;
 using LinqToDB;
 
@@ -85,6 +84,20 @@ public static class MetricsLogic
             return TypedResults.Forbid();
 
         await db.Insert(metric, personId ?? user.PersonId, user.Id);
+
+        return TypedResults.NoContent();
+    }
+
+    public static async Task<IResult> UpdateAsync(UpdateMetric metric, long? personId, IUserContext users, IHealthContext db, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.Edit))
+            return TypedResults.Forbid();
+
+        await db.Update(metric, personId ?? user.PersonId, user.Id);
 
         return TypedResults.NoContent();
     }

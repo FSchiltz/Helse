@@ -96,6 +96,11 @@ public static class Endpoints
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
 
+        metrics.MapPut("/", MetricsLogic.UpdateAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized)
+        .WithOpenApi();
+
         metrics.MapDelete("/{id}", MetricsLogic.DeleteAsync)
         .Produces((int)HttpStatusCode.NoContent)
         .Produces((int)HttpStatusCode.Unauthorized)
