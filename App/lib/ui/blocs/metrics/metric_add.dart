@@ -115,7 +115,7 @@ class _MetricAddState extends State<MetricAdd> {
             $value: _value.text,
             source: FileTypes.none,
           );
-          await DI.metric.updateMetrics(metric, person: widget.person);
+          await DI.metric.updateMetrics(metric);
         } else {
           var metric = CreateMetric(
             date: _date.toUtc(),

@@ -157,6 +157,26 @@ abstract class Swagger extends ChopperService {
   });
 
   ///
+  ///@param personId
+  Future<chopper.Response> apiEventsPut({
+    int? personId,
+    required UpdateEvent? body,
+  }) {
+    return _apiEventsPut(personId: personId, body: body);
+  }
+
+  ///
+  ///@param personId
+  @Put(
+    path: '/api/events',
+    optionalBody: true,
+  )
+  Future<chopper.Response> _apiEventsPut({
+    @Query('personId') int? personId,
+    @Body() required UpdateEvent? body,
+  });
+
+  ///
   ///@param id
   Future<chopper.Response> apiEventsIdDelete({required int? id}) {
     return _apiEventsIdDelete(id: id);
@@ -347,24 +367,17 @@ abstract class Swagger extends ChopperService {
   });
 
   ///
-  ///@param personId
-  Future<chopper.Response> apiMetricsPut({
-    int? personId,
-    required UpdateMetric? body,
-  }) {
-    return _apiMetricsPut(personId: personId, body: body);
+  Future<chopper.Response> apiMetricsPut({required UpdateMetric? body}) {
+    return _apiMetricsPut(body: body);
   }
 
   ///
-  ///@param personId
   @Put(
     path: '/api/metrics',
     optionalBody: true,
   )
-  Future<chopper.Response> _apiMetricsPut({
-    @Query('personId') int? personId,
-    @Body() required UpdateMetric? body,
-  });
+  Future<chopper.Response> _apiMetricsPut(
+      {@Body() required UpdateMetric? body});
 
   ///
   ///@param id
@@ -2445,6 +2458,105 @@ extension $TreatementExtension on Treatement {
     return Treatement(
         events: (events != null ? events.value : this.events),
         type: (type != null ? type.value : this.type));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class UpdateEvent {
+  const UpdateEvent({
+    this.type,
+    this.description,
+    this.start,
+    this.stop,
+    this.tag,
+    this.id,
+  });
+
+  factory UpdateEvent.fromJson(Map<String, dynamic> json) =>
+      _$UpdateEventFromJson(json);
+
+  static const toJsonFactory = _$UpdateEventToJson;
+  Map<String, dynamic> toJson() => _$UpdateEventToJson(this);
+
+  @JsonKey(name: 'type')
+  final int? type;
+  @JsonKey(name: 'description')
+  final String? description;
+  @JsonKey(name: 'start')
+  final DateTime? start;
+  @JsonKey(name: 'stop')
+  final DateTime? stop;
+  @JsonKey(name: 'tag')
+  final String? tag;
+  @JsonKey(name: 'id')
+  final int? id;
+  static const fromJsonFactory = _$UpdateEventFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is UpdateEvent &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality()
+                    .equals(other.description, description)) &&
+            (identical(other.start, start) ||
+                const DeepCollectionEquality().equals(other.start, start)) &&
+            (identical(other.stop, stop) ||
+                const DeepCollectionEquality().equals(other.stop, stop)) &&
+            (identical(other.tag, tag) ||
+                const DeepCollectionEquality().equals(other.tag, tag)) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(start) ^
+      const DeepCollectionEquality().hash(stop) ^
+      const DeepCollectionEquality().hash(tag) ^
+      const DeepCollectionEquality().hash(id) ^
+      runtimeType.hashCode;
+}
+
+extension $UpdateEventExtension on UpdateEvent {
+  UpdateEvent copyWith(
+      {int? type,
+      String? description,
+      DateTime? start,
+      DateTime? stop,
+      String? tag,
+      int? id}) {
+    return UpdateEvent(
+        type: type ?? this.type,
+        description: description ?? this.description,
+        start: start ?? this.start,
+        stop: stop ?? this.stop,
+        tag: tag ?? this.tag,
+        id: id ?? this.id);
+  }
+
+  UpdateEvent copyWithWrapped(
+      {Wrapped<int?>? type,
+      Wrapped<String?>? description,
+      Wrapped<DateTime?>? start,
+      Wrapped<DateTime?>? stop,
+      Wrapped<String?>? tag,
+      Wrapped<int?>? id}) {
+    return UpdateEvent(
+        type: (type != null ? type.value : this.type),
+        description:
+            (description != null ? description.value : this.description),
+        start: (start != null ? start.value : this.start),
+        stop: (stop != null ? stop.value : this.stop),
+        tag: (tag != null ? tag.value : this.tag),
+        id: (id != null ? id.value : this.id));
   }
 }
 

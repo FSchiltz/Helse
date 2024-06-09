@@ -46,7 +46,7 @@ class _EventWidgetState extends State<EventWidget> {
       var start = DateTime(date.start.year, date.start.month, date.start.day);
       var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-      _events = await DI.event?.eventsSummary(widget.type.id, start, end, person: widget.person);
+      _events = await DI.event.eventsSummary(widget.type.id, start, end, person: widget.person);
       return _events;
     } catch (ex) {
       Notify.showError("$ex");

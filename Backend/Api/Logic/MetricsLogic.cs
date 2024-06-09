@@ -103,20 +103,22 @@ public static class MetricsLogic
             throw new InvalidDataException("The metric value is not a number");
     }
 
-    public static async Task<IResult> UpdateAsync(UpdateMetric metric, long? personId, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> UpdateAsync(UpdateMetric metric, IUserContext users, IHealthContext db, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
             return error;
 
-        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.Edit))
+        var existing = await db.GetMetric(metric.Id) ?? throw new InvalidDataException("Id not found");
+
+        if (existing.PersonId != user.PersonId && !await users.ValidateCaregiverAsync(user, existing.PersonId, RightType.Edit))
             return TypedResults.Forbid();
 
         var type = await db.GetMetricType((int)metric.Type);
 
         Validate(metric, type);
 
-        await db.Update(metric, personId ?? user.PersonId, user.Id);
+        await db.Update(metric);
 
         return TypedResults.NoContent();
     }

@@ -1,7 +1,9 @@
 namespace Api.Models;
 
-public class Metric : UpdateMetric
+public class Metric : MetricBase
 {
+    public long Id { get; set; }
+    
     public long Person { get; set; }
 
     public long User { get; set; }

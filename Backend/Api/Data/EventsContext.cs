@@ -12,6 +12,7 @@ public interface IHealthContext : IContext
     Task<Event?> GetEvent(long id);
     Task<List<Event>> GetEvents(long id, int type, DateTime start, DateTime end);
     Task DeleteEvent(long id);
+    Task Update(Api.Models.UpdateEvent e);
 
     Task<List<EventType>> GetEventTypes(bool? all);
     Task Insert(EventType metric);
@@ -28,11 +29,12 @@ public interface IHealthContext : IContext
     Task<Metric[]> GetMetrics(long id, long type, DateTime start, DateTime end);
     Task<Metric[]> GetSummaryMetrics(int tile, long id, int type, Api.Models.MetricSummary action, DateTime start, DateTime end);
     Task Insert(Api.Models.CreateMetric metric, long person, long id);
-    Task Update(Api.Models.UpdateMetric metric, long person, long user);
+    Task Update(Api.Models.UpdateMetric metric);
 
     Task<List<Person>> GetPatients(long id, DateTime now, Api.Models.RightType view);
     Task<List<Event>> GetEvents(long id, Api.Models.RightType view, DateTime start, DateTime end);
     Task<List<Event>> GetEvents(long id, DateTime start, DateTime end);
+
     Task<bool> ExistsEvent(long person, string tag);
     Task<bool> ExistsMetric(long person, string tag, Api.Models.FileTypes source);
 
@@ -366,7 +368,7 @@ public class HealthContext(DataConnection db) : IHealthContext
                 .SingleOrDefaultAsync();
     }
 
-    public Task Update(Api.Models.UpdateMetric metric, long person, long user)
+    public Task Update(Api.Models.UpdateMetric metric)
     {
         return db.GetTable<Metric>()
             .Where(x => x.Id == metric.Id)
@@ -375,5 +377,16 @@ public class HealthContext(DataConnection db) : IHealthContext
             .Set(x => x.Value, metric.Value)
             .Set(x => x.Source, (int)metric.Source)
             .UpdateAsync();
+    }
+
+    public Task Update(Api.Models.UpdateEvent e)
+    {
+        return db.GetTable<Event>()
+        .Where(x => x.Id == e.Id)
+        .Set(x => x.Start , e.Start)
+        .Set(x => x.Stop , e.Stop)
+        .Set(x => x.Description , e.Description)
+        .Set(x => x.Tag , e.Tag)
+        .UpdateAsync();
     }
 }

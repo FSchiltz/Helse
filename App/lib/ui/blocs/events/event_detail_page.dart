@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/blocs/events/delete_event.dart';
 
+import '../../../helpers/date.dart';
 import '../../../logic/d_i.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../common/loader.dart';
@@ -28,6 +30,7 @@ class EventDetailPage extends StatefulWidget {
 
 class _EventDetailPageState extends State<EventDetailPage> {
   List<Event>? _events;
+  Event? _event;
 
   Future<List<Event>?>? _dataFuture;
 
@@ -42,7 +45,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
       var start = DateTime(date.start.year, date.start.month, date.start.day);
       var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-      _events = await DI.event?.events(widget.type.id, start, end, person: widget.person);
+      _events = await DI.event.events(widget.type.id, start, end, person: widget.person);
       return _events;
     } catch (ex) {
       Notify.showError("$ex");
@@ -63,8 +66,15 @@ class _EventDetailPageState extends State<EventDetailPage> {
     _dataFuture = _getData();
   }
 
+  void _selectionChanged(Event event) {
+    setState(() {
+      _event = event;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    var id = _event?.id;
     return Scaffold(
         appBar: AppBar(
           title: Row(
@@ -114,7 +124,73 @@ class _EventDetailPageState extends State<EventDetailPage> {
                             widget.date,
                           )),
                     ),
-                    EventGraph(events, widget.date),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Selected:'),
+                        ),
+                        if (_event != null)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(_event!.id.toString()),
+                          ),
+                        if (_event != null)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(DateHelper.format(_event!.start?.toLocal(), context: ctx)),
+                          ),
+                        if (_event != null)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(DateHelper.format(_event!.stop?.toLocal(), context: ctx)),
+                          ),
+                        if (_event != null)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(_event!.description.toString()),
+                          ),
+                        if (_event != null)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(_event!.tag.toString()),
+                          ),
+                        if (_event != null)
+                          SizedBox(
+                            width: 40,
+                            child: IconButton(
+                                onPressed: () {
+                                  showDialog<void>(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return EventAdd(_resetEvents, widget.type, person: widget.person, edit: _event);
+                                      });
+                                },
+                                icon: const Icon(Icons.edit_sharp)),
+                          ),
+                        if (id != null)
+                          SizedBox(
+                            width: 40,
+                            child: IconButton(
+                                onPressed: () {
+                                  showDialog<void>(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return DeleteEvent(() async {
+                                          await DI.event.deleteEvent(id);
+                                          _resetEvents();
+                                          setState(() {
+                                            _event = null;
+                                          });
+                                        }, person: widget.person);
+                                      });
+                                },
+                                icon: const Icon(Icons.delete_sharp)),
+                          ),
+                      ],
+                    ),
+                    EventGraph(events, widget.date, _selectionChanged),
                   ],
                 );
               }

@@ -26,7 +26,7 @@ class _AgendaState extends State<Agenda> {
     var start = DateTime(date.start.year, date.start.month, date.start.day);
     var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
 
-    events = await DI.event?.agenda(start, end);
+    events = await DI.event.agenda(start, end);
 
     return events;
   }
@@ -63,7 +63,7 @@ class _AgendaState extends State<Agenda> {
                 final events = (snapshot.hasData) ? snapshot.data as List<Event> : List<Event>.empty();
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: EventGraph(events, widget.date),
+                  child: EventGraph(events, widget.date, (e) => {}),
                 );
               }
               return const HelseLoader();

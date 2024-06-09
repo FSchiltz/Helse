@@ -26,3 +26,8 @@ public class Event : BaseEvent
 public class CreateEvent : BaseEvent
 {
 }
+
+public class UpdateEvent : BaseEvent
+{
+    public long Id { get; set; }
+}

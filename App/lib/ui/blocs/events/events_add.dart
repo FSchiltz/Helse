@@ -13,8 +13,9 @@ class EventAdd extends StatefulWidget {
   final void Function() callback;
   final EventType type;
   final int? person;
+  final Event? edit;
 
-  const EventAdd(this.callback, this.type, {super.key, this.person});
+  const EventAdd(this.callback, this.type, {super.key, this.person, this.edit});
 
   @override
   State<EventAdd> createState() => _EventAddState();
@@ -29,34 +30,60 @@ class _EventAddState extends State<EventAdd> {
   void _submit() async {
     var localContext = context;
     try {
-      var event = DI.event;
-      if (event != null) {
+      setState(() {
+        _status = SubmissionStatus.inProgress;
+      });
+
+      try {
+        if (widget.edit?.id != null) {
+          var event = UpdateEvent(
+            start: _start.toUtc(),
+            stop: _stop.toUtc(),
+            type: widget.type.id,
+            description: _description.text,
+            id: widget.edit?.id,
+          );
+          await DI.event.updateEvent(event, person: widget.person);
+        } else {
+          var event = CreateEvent(
+            start: _start.toUtc(),
+            stop: _stop.toUtc(),
+            type: widget.type.id,
+            description: _description.text,
+          );
+          await DI.event.addEvent(event, person: widget.person);
+        }
+        widget.callback.call();
         setState(() {
-          _status = SubmissionStatus.inProgress;
+          _status = SubmissionStatus.success;
         });
 
-        try {
-          var metric = CreateEvent(start: _start.toUtc(), stop: _stop.toUtc(), type: widget.type.id, description: _description.text);
-          await event.addEvents(metric, person: widget.person);
-
-          widget.callback.call();
-          setState(() {
-            _status = SubmissionStatus.success;
-          });
-
-          if (localContext.mounted) {
-            Navigator.of(localContext).pop();
-          }
-
-          Notify.show("Event Added");
-        } catch (_) {
-          setState(() {
-            _status = SubmissionStatus.failure;
-          });
+        if (localContext.mounted) {
+          Navigator.of(localContext).pop();
         }
+
+        Notify.show("Event Added");
+      } catch (_) {
+        setState(() {
+          _status = SubmissionStatus.failure;
+        });
       }
     } catch (ex) {
       Notify.showError("Error: $ex");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    var edit = widget.edit;
+    if (edit != null) {
+      if (edit.start != null) _start = edit.start ?? _start;
+
+      if (edit.stop != null) _stop = edit.stop ?? _stop;
+
+      _description.text = edit.description ?? '';
     }
   }
 

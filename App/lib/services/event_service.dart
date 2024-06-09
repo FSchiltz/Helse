@@ -5,7 +5,7 @@ import 'swagger/generated_code/swagger.swagger.dart';
 class EventService extends ApiService {
   EventService(super.account);
 
-    Future<List<EventType>?> eventsType(bool all) async {
+  Future<List<EventType>?> eventsType(bool all) async {
     var api = await getService();
     return await call(() => api.apiEventsTypeGet(all: all));
   }
@@ -40,8 +40,18 @@ class EventService extends ApiService {
     return await call(() => api.apiPatientsAgendaGet(start: start?.toUtc(), end: end?.toUtc()));
   }
 
-  Future<void> addEvents(CreateEvent event, {int? person}) async {
+  Future<void> addEvent(CreateEvent event, {int? person}) async {
     var api = await getService();
     await call(() => api.apiEventsPost(body: event, personId: person));
+  }
+
+  Future<void> updateEvent(UpdateEvent event, {int? person}) async {
+    var api = await getService();
+    await call(() => api.apiEventsPut(body: event, personId: person));
+  }
+
+  Future<void> deleteEvent(int event) async {
+    var api = await getService();
+    await call(() => api.apiEventsIdDelete(id: event));
   }
 }

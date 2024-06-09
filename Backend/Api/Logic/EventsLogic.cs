@@ -66,6 +66,22 @@ public static class EventsLogic
         return TypedResults.NoContent();
     }
 
+     public static async Task<IResult> UpdateAsync(UpdateEvent e, long? personId, IUserContext users, IHealthContext events, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+            var existing = await events.GetEvent(e.Id) ?? throw new InvalidDataException("Id not found");
+
+        if (existing.PersonId != user.PersonId && !await users.ValidateCaregiverAsync(user, existing.PersonId, RightType.Edit))
+            return TypedResults.Forbid();
+
+        await events.Update(e);
+
+        return TypedResults.NoContent();
+    }
+
     public async static Task<IResult> DeleteAsync(long id, IUserContext users, IHealthContext events, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);

@@ -71,10 +71,10 @@ public static class Endpoints
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
 
-         patients.MapGet("/share", PatientsLogic.SharePatient)
-        .Produces((int)HttpStatusCode.NoContent)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        patients.MapGet("/share", PatientsLogic.SharePatient)
+       .Produces((int)HttpStatusCode.NoContent)
+       .Produces((int)HttpStatusCode.Unauthorized)
+       .WithOpenApi();
     }
 
     public static void MapMetrics(this RouteGroupBuilder api)
@@ -144,6 +144,11 @@ public static class Endpoints
         .WithOpenApi();
 
         events.MapPost("/", EventsLogic.CreateAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized)
+        .WithOpenApi();
+
+        events.MapPut("/", EventsLogic.UpdateAsync)
         .Produces((int)HttpStatusCode.NoContent)
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();

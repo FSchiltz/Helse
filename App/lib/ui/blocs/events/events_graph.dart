@@ -8,8 +8,9 @@ class EventGraph extends StatelessWidget {
   final List<Event> events;
   final DateTimeRange date;
   final ScrollController _scrollController = ScrollController();
+  final void Function(Event event) selectionChanged;
 
-  EventGraph(this.events, this.date, {super.key});
+  EventGraph(this.events, this.date, this.selectionChanged, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,7 @@ class EventGraph extends StatelessWidget {
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-                      EventTimeline(userData, date),
+                      EventTimeline(userData, date, selectionChanged),
                     ],
                   ),
                 ],
@@ -140,10 +141,12 @@ class EventGraph extends StatelessWidget {
 class EventTimeline extends StatefulWidget {
   final List<Event> userData;
   final DateTimeRange date;
+  final void Function(Event event) selectionChanged;
 
   const EventTimeline(
     this.userData,
-    this.date, {
+    this.date,
+    this.selectionChanged, {
     super.key,
   });
 
@@ -220,21 +223,24 @@ class _EventTimelineState extends State<EventTimeline> {
             alignment: Alignment.centerLeft,
             child: Tooltip(
               message: "${n.description ?? ""}: ${n.start?.toLocal()} => ${n.stop?.toLocal()}",
-              child: Container(
-                width: width.toDouble(),
-                decoration: BoxDecoration(
-                  color: color.withAlpha(100),
-                  // TODO make round only when inside the date range
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                ),
-                height: 25.0,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Text(
-                    n.description ?? "",
-                    maxLines: 1,
-                    overflow: TextOverflow.clip,
-                    style: const TextStyle(fontSize: 10.0),
+              child: InkWell(
+                onTap: () => widget.selectionChanged(n),
+                child: Container(
+                  width: width.toDouble(),
+                  decoration: BoxDecoration(
+                    color: color.withAlpha(100),
+                    // TODO make round only when inside the date range
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  ),
+                  height: 25.0,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Text(
+                      n.description ?? "",
+                      maxLines: 1,
+                      overflow: TextOverflow.clip,
+                      style: const TextStyle(fontSize: 10.0),
+                    ),
                   ),
                 ),
               ),
