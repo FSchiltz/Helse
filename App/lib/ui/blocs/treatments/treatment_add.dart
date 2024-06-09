@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
-import 'package:helse/ui/common/square_dialog.dart';
 
+import '../../../logic/d_i.dart';
 import '../../../logic/event.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../common/date_input.dart';
-import '../../common/text_input.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
+import '../../common/square_dialog.dart';
+import '../../common/square_text_field.dart';
 
 class TreatmentAdd extends StatefulWidget {
   final int? person;
@@ -22,7 +22,7 @@ class _TreatementState extends State<TreatmentAdd> {
   SubmissionStatus _status = SubmissionStatus.initial;
   DateTime _start = DateTime.now();
   DateTime _stop = DateTime.now();
-  String? _description;
+  final TextEditingController _description = TextEditingController();
   int? _type;
   List<EventType>? _types;
 
@@ -43,10 +43,8 @@ class _TreatementState extends State<TreatmentAdd> {
         _status = SubmissionStatus.inProgress;
       });
       try {
-        var event = CreateEvent(
-            start: _start, stop: _stop, type: _type, description: _description);
-        var treatment =
-            CreateTreatment(events: [event], personId: widget.person);
+        var event = CreateEvent(start: _start, stop: _stop, type: _type, description: _description.text);
+        var treatment = CreateTreatment(events: [event], personId: widget.person);
         await DI.treatement?.addTreatment(treatment);
 
         setState(() {
@@ -68,6 +66,7 @@ class _TreatementState extends State<TreatmentAdd> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
     return SquareDialog(
       title: const Text("New Event"),
       actions: [
@@ -90,8 +89,7 @@ class _TreatementState extends State<TreatmentAdd> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Text("Manually add a new event",
-                    style: Theme.of(context).textTheme.bodyMedium),
+                Text("Manually add a new event", style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: 10),
                 FutureBuilder(
                     future: _getTypes(),
@@ -120,10 +118,12 @@ class _TreatementState extends State<TreatmentAdd> {
                       return const HelseLoader();
                     }),
                 const SizedBox(height: 10),
-                TextInput(Icons.description_sharp, "Description",
-                    onChanged: (value) => setState(() {
-                          _description = value;
-                        })),
+                SquareTextField(
+                  theme: theme,
+                  icon: Icons.description_sharp,
+                  label: "Description",
+                  controller: _description,
+                ),
                 const SizedBox(height: 10),
                 DateInput(
                     "start",
@@ -158,18 +158,14 @@ class _TypeInput extends StatelessWidget {
     var theme = Theme.of(context).colorScheme;
     return DropdownButtonFormField(
       onChanged: callback,
-      items: types
-          .map((type) =>
-              DropdownMenuItem(value: type.id, child: Text(type.name ?? "")))
-          .toList(),
+      items: types.map((type) => DropdownMenuItem(value: type.id, child: Text(type.name ?? ""))).toList(),
       decoration: InputDecoration(
         labelText: 'Type',
         prefixIcon: const Icon(Icons.list_sharp),
         prefixIconColor: theme.primary,
         filled: true,
         fillColor: theme.surface,
-        border:
-            OutlineInputBorder(borderSide: BorderSide(color: theme.primary)),
+        border: OutlineInputBorder(borderSide: BorderSide(color: theme.primary)),
       ),
     );
   }

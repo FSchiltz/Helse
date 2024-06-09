@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
-import 'package:helse/ui/common/notification.dart';
-import 'package:helse/ui/common/square_dialog.dart';
+import 'package:flutter/widgets.dart';
+import 'package:helse/ui/common/square_text_field.dart';
 
+import '../../../logic/d_i.dart';
 import '../../../logic/event.dart';
 import '../../../services/swagger/generated_code/swagger.swagger.dart';
 import '../../common/date_input.dart';
-import '../../common/text_input.dart';
 import '../../common/loader.dart';
+import '../../common/notification.dart';
+import '../../common/square_dialog.dart';
 
 class EventAdd extends StatefulWidget {
   final void Function() callback;
@@ -24,7 +25,7 @@ class _EventAddState extends State<EventAdd> {
   SubmissionStatus _status = SubmissionStatus.initial;
   DateTime _start = DateTime.now();
   DateTime _stop = DateTime.now();
-  String? _description;
+  final TextEditingController _description = TextEditingController();
 
   void _submit() async {
     var localContext = context;
@@ -36,11 +37,7 @@ class _EventAddState extends State<EventAdd> {
         });
 
         try {
-          var metric = CreateEvent(
-              start: _start.toUtc(),
-              stop: _stop.toUtc(),
-              type: widget.type.id,
-              description: _description);
+          var metric = CreateEvent(start: _start.toUtc(), stop: _stop.toUtc(), type: widget.type.id, description: _description.text);
           await event.addEvents(metric, person: widget.person);
 
           widget.callback.call();
@@ -66,6 +63,7 @@ class _EventAddState extends State<EventAdd> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
     return SquareDialog(
       title: Text("Add a new ${widget.type.name ?? "Event"}"),
       actions: [
@@ -88,10 +86,12 @@ class _EventAddState extends State<EventAdd> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                TextInput(Icons.description_sharp, "Description",
-                    onChanged: (value) => setState(() {
-                          _description = value;
-                        })),
+                SquareTextField(
+                  theme: theme,
+                  icon: Icons.description_sharp,
+                  label: "Description",
+                  controller: _description,
+                ),
                 const SizedBox(height: 20),
                 DateInput(
                     "start",

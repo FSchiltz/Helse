@@ -347,6 +347,26 @@ abstract class Swagger extends ChopperService {
   });
 
   ///
+  ///@param personId
+  Future<chopper.Response> apiMetricsPut({
+    int? personId,
+    required UpdateMetric? body,
+  }) {
+    return _apiMetricsPut(personId: personId, body: body);
+  }
+
+  ///
+  ///@param personId
+  @Put(
+    path: '/api/metrics',
+    optionalBody: true,
+  )
+  Future<chopper.Response> _apiMetricsPut({
+    @Query('personId') int? personId,
+    @Body() required UpdateMetric? body,
+  });
+
+  ///
   ///@param id
   Future<chopper.Response> apiMetricsIdDelete({required int? id}) {
     return _apiMetricsIdDelete(id: id);
@@ -2425,6 +2445,107 @@ extension $TreatementExtension on Treatement {
     return Treatement(
         events: (events != null ? events.value : this.events),
         type: (type != null ? type.value : this.type));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class UpdateMetric {
+  const UpdateMetric({
+    this.date,
+    this.$value,
+    this.tag,
+    this.type,
+    this.source,
+    this.id,
+  });
+
+  factory UpdateMetric.fromJson(Map<String, dynamic> json) =>
+      _$UpdateMetricFromJson(json);
+
+  static const toJsonFactory = _$UpdateMetricToJson;
+  Map<String, dynamic> toJson() => _$UpdateMetricToJson(this);
+
+  @JsonKey(name: 'date')
+  final DateTime? date;
+  @JsonKey(name: 'value')
+  final String? $value;
+  @JsonKey(name: 'tag')
+  final String? tag;
+  @JsonKey(name: 'type')
+  final int? type;
+  @JsonKey(
+    name: 'source',
+    toJson: fileTypesNullableToJson,
+    fromJson: fileTypesNullableFromJson,
+  )
+  final enums.FileTypes? source;
+  @JsonKey(name: 'id')
+  final int? id;
+  static const fromJsonFactory = _$UpdateMetricFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is UpdateMetric &&
+            (identical(other.date, date) ||
+                const DeepCollectionEquality().equals(other.date, date)) &&
+            (identical(other.$value, $value) ||
+                const DeepCollectionEquality().equals(other.$value, $value)) &&
+            (identical(other.tag, tag) ||
+                const DeepCollectionEquality().equals(other.tag, tag)) &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.source, source) ||
+                const DeepCollectionEquality().equals(other.source, source)) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(date) ^
+      const DeepCollectionEquality().hash($value) ^
+      const DeepCollectionEquality().hash(tag) ^
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(source) ^
+      const DeepCollectionEquality().hash(id) ^
+      runtimeType.hashCode;
+}
+
+extension $UpdateMetricExtension on UpdateMetric {
+  UpdateMetric copyWith(
+      {DateTime? date,
+      String? $value,
+      String? tag,
+      int? type,
+      enums.FileTypes? source,
+      int? id}) {
+    return UpdateMetric(
+        date: date ?? this.date,
+        $value: $value ?? this.$value,
+        tag: tag ?? this.tag,
+        type: type ?? this.type,
+        source: source ?? this.source,
+        id: id ?? this.id);
+  }
+
+  UpdateMetric copyWithWrapped(
+      {Wrapped<DateTime?>? date,
+      Wrapped<String?>? $value,
+      Wrapped<String?>? tag,
+      Wrapped<int?>? type,
+      Wrapped<enums.FileTypes?>? source,
+      Wrapped<int?>? id}) {
+    return UpdateMetric(
+        date: (date != null ? date.value : this.date),
+        $value: ($value != null ? $value.value : this.$value),
+        tag: (tag != null ? tag.value : this.tag),
+        type: (type != null ? type.value : this.type),
+        source: (source != null ? source.value : this.source),
+        id: (id != null ? id.value : this.id));
   }
 }
 
