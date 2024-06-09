@@ -104,10 +104,10 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
 
         if (widget.edit == null) {
           text = "Added";
-          await DI.metric?.addMetricsType(metric);
+          await DI.metric.addMetricsType(metric);
         } else {
           text = "Updated";
-          await DI.metric?.updateMetricsType(metric);
+          await DI.metric.updateMetricsType(metric);
         }
 
         _formKey.currentState?.reset();

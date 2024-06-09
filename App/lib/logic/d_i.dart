@@ -14,7 +14,14 @@ import 'fit/fit_logic.dart';
 
 class DI {
   static OauthClient? authService;
-  static MetricService? metric;
+  static MetricService? _metric;
+  static MetricService get metric {
+    var a = _metric;
+    if (a == null) {
+      throw Exception("Invalid access");
+    }
+    return a;
+  }
 
   static HelperService? _helper;
   static HelperService get helper {
@@ -75,7 +82,7 @@ class DI {
     var account = Account();
     authService = OauthClient(account);
     _authentication = AuthenticationLogic(account);
-    metric = MetricService(account);
+    _metric = MetricService(account);
     _helper = HelperService(account);
     event = EventService(account);
     _user = UserService(account);
