@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
@@ -22,7 +23,7 @@ class MetricGraph extends StatefulWidget {
 
 class _MetricGraphState extends State<MetricGraph> {
   final StreamController<Map<String, Set<int>>?> _selection = StreamController.broadcast();
-  
+
   @override
   void initState() {
     super.initState();
@@ -41,7 +42,7 @@ class _MetricGraphState extends State<MetricGraph> {
     if (widget.settings == GraphKind.line) {
       marks = [
         PointMark(
-          size: SizeEncode(value: 1),
+          size: SizeEncode(value: 4),
           color: ColorEncode(value: theme.onSecondary),
           selected: {
             'touchMove': {1}
@@ -80,8 +81,12 @@ class _MetricGraphState extends State<MetricGraph> {
       },
       marks: marks,
       selections: {
-        'touchMove': PointSelection(
+        'hover': PointSelection(
           on: {GestureType.hover, GestureType.tapDown, GestureType.longPressMoveUpdate},
+          dim: Dim.x,
+        ),
+        'click': PointSelection(
+          on: {GestureType.tap, GestureType.tapDown, GestureType.longPressMoveUpdate},
           dim: Dim.x,
         )
       },
@@ -99,7 +104,10 @@ class _MetricGraphState extends State<MetricGraph> {
   }
 
   void onData(Map<String, Set<int>>? event) {
-    var metric = widget.metrics[event?.entries.first.value.first ?? 0];
+    var click = event?.entries.firstWhereOrNull((x) => x.key == 'click');
+    if (click == null) return;
+    
+    var metric = widget.metrics[click.value.first];
     widget.selectionCallback(metric);
   }
 }

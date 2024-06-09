@@ -14,7 +14,7 @@ class MetricAdd extends StatefulWidget {
   final void Function() callback;
   final int? person;
 
-  const MetricAdd(this.type, this.callback, {super.key, this.person});
+  const MetricAdd(this.type, this.callback, {super.key, this.person, Metric? edit});
 
   @override
   State<MetricAdd> createState() => _MetricAddState();
