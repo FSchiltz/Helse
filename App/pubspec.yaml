@@ -61,7 +61,7 @@ dependencies:
   bloc: ^8.1.4
   health: ^10.2.0
   permission_handler: ^11.3.1
-  table_calendar: ^3.1.1
+  table_calendar: ^3.1.2
   graphic: ^2.2.1
 
 dev_dependencies:
