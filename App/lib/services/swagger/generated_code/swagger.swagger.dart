@@ -30,7 +30,7 @@ abstract class Swagger extends ChopperService {
     ErrorConverter? errorConverter,
     Converter? converter,
     Uri? baseUrl,
-    Iterable<dynamic>? interceptors,
+    Iterable<Interceptors>? interceptors,
   }) {
     if (client != null) {
       return _$Swagger(client);
