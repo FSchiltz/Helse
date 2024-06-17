@@ -39,7 +39,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   provider: ^6.1.2
   hive_flutter: ^1.1.0
-  flutter_bloc: ^8.1.5
+  flutter_bloc: ^8.1.6
   chopper: ^7.4.0
   json_annotation: ^4.9.0
   intl: any
