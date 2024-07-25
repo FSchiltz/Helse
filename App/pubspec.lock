@@ -181,18 +181,18 @@ packages:
     dependency: "direct main"
     description:
       name: chopper
-      sha256: "1b6280ec22841b844448bec8ef2644d9cbe9ea8dfce13ec9cab9e8d3aac3830d"
+      sha256: f3f11ef1690cdb71db1e1c9f4a1de1bede93f3e954dc0d654fe3569b2352408c
       url: "https://pub.dev"
     source: hosted
-    version: "7.4.0"
+    version: "8.0.1+1"
   chopper_generator:
     dependency: "direct dev"
     description:
       name: chopper_generator
-      sha256: "2984ed8589132aa8fd8225482038cad2bd576405e3751aa237d466870f5dad42"
+      sha256: f7cee7a1674c40faf19b21d10df5b4d010363df24e7ee6e2faaeb75306f3b65c
       url: "https://pub.dev"
     source: hosted
-    version: "7.4.0"
+    version: "8.0.1"
   clock:
     dependency: transitive
     description:
