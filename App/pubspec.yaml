@@ -62,7 +62,7 @@ dependencies:
   health: ^10.2.0
   permission_handler: ^11.3.1
   table_calendar: ^3.1.2
-  graphic: ^2.3.0
+  graphic: ^2.5.0
 
 dev_dependencies:
   flutter_test:
