@@ -53,7 +53,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder => builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader()));
 
 var connection = builder.Configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("Database configuration missing");
-
+var inMemory = connection.Contains(":");
 builder.Services.AddLinqToDBContext<DataConnection>((provider, options)
             => options
                 .UsePostgreSQL(connection, LinqToDB.DataProvider.PostgreSQL.PostgreSQLVersion.v15, (x) => new()

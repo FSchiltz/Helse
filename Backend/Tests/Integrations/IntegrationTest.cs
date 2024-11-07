@@ -11,15 +11,15 @@ public abstract class IntegrationTest : IClassFixture<WebApplicationFactory<Prog
 {
 
     protected readonly HttpClient _client;
-    protected IUserContext mockDB = Substitute.For<IUserContext>();
 
     public IntegrationTest(WebApplicationFactory<Program> factory)
     {
+        var db = new 
         _client = factory
                  .WithWebHostBuilder(builder =>
                     builder
                         .ConfigureAppConfiguration((_, config) => config.AddInMemoryCollection([new("InTest", "True")]))
-                        .ConfigureTestServices(services => services.AddSingleton(mockDB)))
+                        .ConfigureTestServices(services => services.AddSingleton(new UserContext(db))))
                  .CreateClient();
     }
 }

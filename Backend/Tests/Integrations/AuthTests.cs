@@ -1,6 +1,7 @@
 using Api.Logic.Auth;
 using Api.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
+using NSubstitute;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -23,6 +24,10 @@ public class AuthTests(WebApplicationFactory<Program> factory) : IntegrationTest
     [InlineData("/api/metrics/type")]
     [InlineData("/api/treatment/")]
     [InlineData("/api/import/types")]
+    [InlineData("/api/caregiver")]
+    [InlineData("/api/patients")]
+    [InlineData("/api/patients/agenda")]
+    [InlineData("/api/patients/share")]
     public async Task Get_NoPassword(string url)
     {
         var response = await _client.GetAsync(url);
@@ -54,9 +59,13 @@ public class AuthTests(WebApplicationFactory<Program> factory) : IntegrationTest
         // create the first user (shoudl allow)
         var admin = new PersonCreation
         {
+            Type = UserType.Admin,
             Password = "password",
             UserName = "admin",
+            Name = "DisplayName",
         };
+
+
         var response = await _client.PostAsJsonAsync<PersonCreation>(personUrl, admin);
         Assert.NotNull(response);
         Assert.True(response.IsSuccessStatusCode);
@@ -74,7 +83,7 @@ public class AuthTests(WebApplicationFactory<Program> factory) : IntegrationTest
         // Connect 
         var auth = await _client.PostAsJsonAsync(authUrl, new Connection(admin.UserName, admin.Password, null));
         Assert.NotNull(auth);
-        
+
         var token = JsonSerializer.Deserialize<TokenResponse>(await auth.Content.ReadAsStringAsync());
         Assert.NotNull(token);
         Assert.NotNull(token.AccessToken);
