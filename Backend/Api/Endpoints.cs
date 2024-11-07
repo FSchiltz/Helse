@@ -35,13 +35,11 @@ public static class Endpoints
         .WithOpenApi();
 
         person.MapGet("/", PersonLogic.GetAsync)
-        .AllowAnonymous()
         .Produces<List<Api.Models.Person>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
 
         person.MapGet("/caregiver", PersonLogic.GetCaregiverAsync)
-        .AllowAnonymous()
         .Produces<List<Api.Models.Person>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
