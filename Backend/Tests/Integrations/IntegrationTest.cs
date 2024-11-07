@@ -16,7 +16,7 @@ public abstract class IntegrationTest : IClassFixture<WebApplicationFactory<Prog
         _client = factory
                  .WithWebHostBuilder(builder =>
                     builder
-                        .ConfigureAppConfiguration((_, config) => config.AddInMemoryCollection([new("InTest", "True"), new ("db", "inmemory")]))
+                        .ConfigureAppConfiguration((_, config) => config.AddInMemoryCollection([new("InTest", "True"), new ("ConnectionStrings:Default", ":memory:")]))
                         .ConfigureTestServices(services => {}))
                  .CreateClient();
     }
