@@ -40,7 +40,7 @@ dependencies:
   provider: ^6.1.2
   hive_flutter: ^1.1.0
   flutter_bloc: ^8.1.6
-  chopper: ^7.4.0
+  chopper: ^8.0.1+1
   json_annotation: ^4.9.0
   intl: any
   shared_preferences: ^2.2.3
@@ -75,7 +75,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
   build_runner: ^2.4.11
-  chopper_generator: ^7.4.0
+  chopper_generator: ^8.0.1
   json_serializable: ^6.8.0
   swagger_dart_code_generator: ^2.15.2
 
