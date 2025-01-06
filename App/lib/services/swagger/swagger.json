@@ -991,10 +991,19 @@
           {
             "name": "role",
             "in": "query",
+            "description": "\n\n0 = Patient\n\n1 = Admin\n\n2 = Caregiver\n\n4 = User\n\n6 = CareWithSelf\n\n7 = Superuser",
             "required": true,
             "schema": {
-              "type": "string"
-            }
+              "$ref": "#/components/schemas/UserType"
+            },
+            "x-enumNames": [
+              "Patient",
+              "Admin",
+              "Caregiver",
+              "User",
+              "CareWithSelf",
+              "Superuser"
+            ]
           }
         ],
         "responses": {
