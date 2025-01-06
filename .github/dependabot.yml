@@ -6,7 +6,7 @@
 version: 2
 updates:
   - package-ecosystem: "pub" # See documentation for possible values
-    directory: "/App" # Location of package manifests
+    directory: "/flutter_frontend" # Location of package manifests
     schedule:
       interval: "weekly"
       
