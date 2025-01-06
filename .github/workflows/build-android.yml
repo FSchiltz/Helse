@@ -19,7 +19,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  PROPERTIES_PATH: "App/android/key.properties"
+  PROPERTIES_PATH: "flutter_frontend/android/key.properties"
   
 jobs:
   build:
