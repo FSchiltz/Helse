@@ -2,16 +2,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Flutter debug",
-            "type": "dart",
-            "request": "launch",
-            "program": "App/lib/main.dart",
-            "args": [
-                "-d",
-                "chrome"
-            ]
-        },
-        {
             "name": ".NET Core Launch (web)",
             "type": "coreclr",
             "request": "launch",
@@ -54,25 +44,25 @@
             "name": "Flutter android",
             "type": "dart",
             "request": "launch",
-            "program": "App/lib/main.dart",
+            "program": "flutter_frontend/lib/main.dart",
         },
         {
             "name": "Flutter web",
             "type": "dart",
             "request": "launch",
-            "program": "App/lib/main.dart",
+            "program": "flutter_frontend/lib/main.dart",
             "flutterMode": "release",
             "args": [
                 "-d",
                 "web-server"
             ]
-        },
+        }
     ],
     "compounds": [
         {
             "name": "Launch",
             "configurations": [
-                "Flutter debug",
+                "Flutter web",
                 ".NET Core Launch (web)"
             ],
             "stopAll": true
