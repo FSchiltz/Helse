@@ -19,7 +19,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  PROPERTIES_PATH: "App/android/key.properties"
+  PROPERTIES_PATH: "flutter_frontend/android/key.properties"
   
 jobs:
   build:
@@ -43,7 +43,7 @@ jobs:
      # Get Flutter project dependencies
     - name: Get dependencies
       run: flutter pub get
-      working-directory: 'App'
+      working-directory: 'flutter_frontend'
     
     - name: Create certificat
       if: ${{ inputs.sign }}
@@ -55,19 +55,19 @@ jobs:
         
     - name: Decoding base64 key into a file
       if: ${{ inputs.sign }}
-      run: echo ${{ secrets.KEY_FILE }} | base64 --decode > App/android/app/key.jks
+      run: echo ${{ secrets.KEY_FILE }} | base64 --decode > flutter_frontend/android/app/key.jks
   
         
     - name: Build release app bundle
       run: flutter build apk --${{inputs.mode}} --split-per-abi
-      working-directory: 'App'   
+      working-directory: 'flutter_frontend'   
 
     - name: Finding binaries files
       if: ${{ inputs.push }}
       id: finding-files        
       run: |
         {
-          cd App/build/app/outputs/flutter-apk
+          cd flutter_frontend/build/app/outputs/flutter-apk
           echo 'FILELIST<<EOF'
           find . -name '*-release.apk' -print 
           echo EOF
@@ -81,7 +81,7 @@ jobs:
     - name: Upload binaries to release
       if: ${{ inputs.upload }}
       run: |
-        cd App/build/app/outputs/flutter-apk
+        cd flutter_frontend/build/app/outputs/flutter-apk
         for i in $FILELIST; do        
           gh release upload ${{github.event.release.tag_name}} ${i}   
         done  

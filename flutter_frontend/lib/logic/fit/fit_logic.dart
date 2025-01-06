@@ -89,7 +89,7 @@ class FitLogic {
   }
 
   static Future<bool> isEnabled() async {
-    DI.health.configure(useHealthConnectIfAvailable: true);
+    DI.health.configure();
 
     return isSupported();
   }

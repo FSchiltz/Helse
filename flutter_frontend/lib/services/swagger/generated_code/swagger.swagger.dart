@@ -1,6 +1,7 @@
 // ignore_for_file: type=lint
 
 import 'package:json_annotation/json_annotation.dart';
+import 'package:json_annotation/json_annotation.dart' as json;
 import 'package:collection/collection.dart';
 import 'dart:convert';
 
@@ -30,7 +31,7 @@ abstract class Swagger extends ChopperService {
     ErrorConverter? errorConverter,
     Converter? converter,
     Uri? baseUrl,
-    Iterable<dynamic>? interceptors,
+    List<Interceptor>? interceptors,
   }) {
     if (client != null) {
       return _$Swagger(client);
@@ -535,17 +536,18 @@ abstract class Swagger extends ChopperService {
 
   ///
   ///@param personId
-  ///@param role
+  ///@param role   0 = Patient  1 = Admin  2 = Caregiver  4 = User  6 = CareWithSelf  7 = Superuser
   Future<chopper.Response> apiPersonRolePost({
     required int? personId,
-    required String? role,
+    required enums.UserType? role,
   }) {
-    return _apiPersonRolePost(personId: personId, role: role);
+    return _apiPersonRolePost(
+        personId: personId, role: role?.value?.toString());
   }
 
   ///
   ///@param personId
-  ///@param role
+  ///@param role   0 = Patient  1 = Admin  2 = Caregiver  4 = User  6 = CareWithSelf  7 = Superuser
   @Post(
     path: '/api/person/role',
     optionalBody: true,

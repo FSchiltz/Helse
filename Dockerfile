@@ -25,7 +25,7 @@ RUN flutter doctor -v
 
 # Copy files to container and build
 RUN mkdir /app/
-COPY ./App/ /app/
+COPY ./flutter_frontend/ /app/
 WORKDIR /app/
 
 # run flutter clean, pub get and then build for web
