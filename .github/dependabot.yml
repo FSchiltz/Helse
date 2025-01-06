@@ -9,6 +9,10 @@ updates:
     directory: "/flutter_frontend" # Location of package manifests
     schedule:
       interval: "weekly"
+    groups:
+      all:
+        patterns: 
+          - "*"
       
   - package-ecosystem: "nuget" # See documentation for possible values
     directory: "/Backend" # Location of package manifests
