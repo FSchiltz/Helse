@@ -39,7 +39,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   provider: ^6.1.2
   hive_flutter: ^1.1.0
-  flutter_bloc: ^8.1.6
+  flutter_bloc: ^9.0.0
   chopper: ^8.0.4
   json_annotation: ^4.9.0
   intl: any
@@ -58,7 +58,7 @@ dependencies:
   toastification: ^2.0.0
   flutter_localizations:
     sdk: flutter
-  bloc: ^8.1.4
+  bloc: ^9.0.0
   health: ^11.1.1
   permission_handler: ^11.3.1
   table_calendar: ^3.1.2
