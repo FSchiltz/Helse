@@ -43,7 +43,7 @@ dependencies:
   chopper: ^8.0.4
   json_annotation: ^4.9.0
   intl: any
-  shared_preferences: ^2.3.5
+  shared_preferences: ^2.4.0
   file_selector: ^1.0.3
   jwt_decoder: ^2.0.1
   oauth2: ^2.0.2
@@ -62,7 +62,7 @@ dependencies:
   health: ^11.1.1
   permission_handler: ^11.3.1
   table_calendar: ^3.1.2
-  graphic: ^2.3.0
+  graphic: ^2.5.1
 
 dev_dependencies:
   flutter_test:
