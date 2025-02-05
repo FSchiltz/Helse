@@ -59,7 +59,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   bloc: ^9.0.0
-  health: ^11.1.1
+  health: ^12.0.1
   permission_handler: ^11.3.1
   table_calendar: ^3.1.2
   graphic: ^2.5.1
