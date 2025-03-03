@@ -12,18 +12,18 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.13" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Npgsql" Version="9.0.2" />
-    <PackageReference Include="roslynator.analyzers" Version="4.13.0">
+    <PackageReference Include="Npgsql" Version="9.0.3" />
+    <PackageReference Include="roslynator.analyzers" Version="4.13.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="roslynator.codefixes" Version="4.13.0">
+    <PackageReference Include="roslynator.codefixes" Version="4.13.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.3.1" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.5.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.6.0" />
     <PackageReference Include="Unchase.Swashbuckle.AspNetCore.Extensions" Version="2.7.2" />
   </ItemGroup>
   <ItemGroup>
