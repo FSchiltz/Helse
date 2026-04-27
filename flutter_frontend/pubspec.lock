@@ -109,10 +109,10 @@ packages:
     dependency: "direct dev"
     description:
       name: build_runner
-      sha256: "521daf8d189deb79ba474e43a696b41c49fb3987818dbacf3308f1e03673a75e"
+      sha256: "22fdcc3cfeb9d974d7408718c4be15ec5e9b1b350088f3a6c88f154e74dd700d"
       url: "https://pub.dev"
     source: hosted
-    version: "2.13.1"
+    version: "2.14.1"
   built_collection:
     dependency: transitive
     description:
@@ -509,14 +509,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
-  iconsax_flutter:
-    dependency: transitive
-    description:
-      name: iconsax_flutter
-      sha256: "95b65699da8ea98f87c5d232f06b0debaaf1ec1332b697e4d90969ec9a93037d"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
   intl:
     dependency: "direct main"
     description:
@@ -1038,10 +1030,10 @@ packages:
     dependency: "direct main"
     description:
       name: toastification
-      sha256: "69db2bff425b484007409650d8bcd5ed1ce2e9666293ece74dcd917dacf23112"
+      sha256: "66c96678e3dece8ba24de3ea31634bd65a80aaecb8105f9bafe946e5f0d7590a"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.3"
+    version: "3.2.0"
   typed_data:
     dependency: transitive
     description:
