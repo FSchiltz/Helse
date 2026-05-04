@@ -52,7 +52,7 @@ dependencies:
   collection: ^1.18.0
   fl_chart: ^1.2.0
   url_launcher: ^6.3.2
-  app_links: ^6.4.1
+  app_links: ^7.0.0
   fluttertoast: ^8.2.5
   async: ^2.13.1
   toastification: ^3.0.3
