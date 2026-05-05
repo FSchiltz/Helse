@@ -113,7 +113,7 @@ class _MetricTypeViewState extends State<MetricTypeView> {
                           rows: types
                               .map((type) => DataRow(cells: [
                                     DataCell(Text((type.id).toString())),
-                                    DataCell(Text(type.name ?? "")),
+                                    DataCell(Text(type.name)),
                                     DataCell(Text(type.description ?? "")),
                                     DataCell(Text(type.unit ?? "")),
                                     DataCell(Text(type.type?.name ?? "")),

@@ -12,7 +12,7 @@ public record PersonFromDb(User User, Models.Person Person);
 
 public interface IUserContext : IContext
 {
-    Task UpdateRole(long userId, int newType);
+    Task UpdatePerson(UpdatePerson update);
     Task AddRight(long userId, long id, RightType edit);
     Task<long> Count();
 
@@ -49,12 +49,33 @@ public class UserContext(DataConnection db) : IUserContext
             && (x.Stop == null || x.Stop >= time))
         .FirstOrDefaultAsync())?.FromDb();
 
-    public Task UpdateRole(long userId, int newType)
+    public async Task UpdatePerson(UpdatePerson update)
     {
-        return db.GetTable<Data.Models.User>()
-        .Where(x => x.Id == userId)
-        .Set(x => x.Type, newType)
+        await db.GetTable<Data.Models.Person>()
+        .Where(x => x.Id == update.Id)
+        .Set(x => x.Birth, update.Birth)
+        .Set(x => x.Identifier, update.Identifier)
+        .Set(x => x.Name, update.Name)
+        .Set(x => x.Surname, update.Surname)
         .UpdateAsync();
+
+        var userQuery = db.GetTable<Data.Models.User>()
+        .Where(x => x.PersonId == update.Id)
+        .AsUpdatable();
+
+        if (update.Email is not null)
+            userQuery = userQuery.Set(x => x.Email, update.Email);
+
+        if (update.Phone is not null)
+            userQuery = userQuery.Set(x => x.Phone, update.Phone);
+
+        if (update.Identifier is not null)
+            userQuery = userQuery.Set(x => x.Identifier, update.Identifier);
+
+        if (update.Types is not null)
+            userQuery = userQuery.Set(x => x.Type, (int)update.Types.Cast<Models.UserType>().Aggregate((a, b) => a | b));
+
+        await userQuery.UpdateAsync();
     }
 
     public Task<long> Count() => db.GetTable<User>().LongCountAsync();

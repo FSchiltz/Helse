@@ -108,7 +108,7 @@ class _EventTypeViewState extends State<EventTypeView> {
                           rows: types
                               .map((type) => DataRow(cells: [
                                     DataCell(Text((type.id).toString())),
-                                    DataCell(Text(type.name ?? "")),
+                                    DataCell(Text(type.name)),
                                     DataCell(Text(type.description ?? "")),
                                     DataCell(Checkbox(value: type.standAlone ?? true, onChanged: null)),
                                     DataCell(Checkbox(value: type.visible ?? false, onChanged: null)),

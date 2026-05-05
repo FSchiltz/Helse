@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/blocs/administration/users/userright_input.dart';
-import 'package:helse/ui/common/type_input.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';

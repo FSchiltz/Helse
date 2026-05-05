@@ -30,7 +30,7 @@ class _EventTypeAddState extends State<EventTypeAdd> {
     if (edit != null) {
       // this is not a new addition, just an edit
       controllerDescription.text = edit.description ?? "";
-      controllerName.text = edit.name ?? "";
+      controllerName.text = edit.name;
     }
   }
 

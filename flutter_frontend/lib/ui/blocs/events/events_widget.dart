@@ -75,7 +75,7 @@ class _EventWidgetState extends State<EventWidget> {
                                   summary: _events ?? [],
                                 )),
                       ),
-                  child: Text(widget.type.name ?? "", style: Theme.of(context).textTheme.titleLarge)),
+                  child: Text(widget.type.name, style: Theme.of(context).textTheme.titleLarge)),
             ),
             IconButton(
                 onPressed: () {

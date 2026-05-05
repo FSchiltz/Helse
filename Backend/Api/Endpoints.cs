@@ -43,7 +43,7 @@ public static class Endpoints
         .Produces<List<Person>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
-        person.MapPost("/role/{personId}", PersonLogic.SetPersonRole)
+        person.MapPut("/", PersonLogic.UpdatePersonAsync)
             .Produces((int)HttpStatusCode.Unauthorized)
             .Produces((int)HttpStatusCode.NoContent);
 

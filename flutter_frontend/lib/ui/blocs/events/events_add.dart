@@ -91,7 +91,7 @@ class _EventAddState extends State<EventAdd> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
     return SquareDialog(
-      title: Text("Add a new ${widget.type.name ?? "Event"}"),
+      title: Text("Add a new ${widget.type.name}"),
       actions: [
         SizedBox(
           child: _status == SubmissionStatus.inProgress

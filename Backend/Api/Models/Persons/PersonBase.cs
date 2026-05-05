@@ -12,15 +12,7 @@ public abstract class PersonBase
 
     public DateTime? Birth { get; set; }
 
-    public string? UserName { get; set; }
-
-    public string? Password { get; set; }
-
-    public HashSet<UserType> Types { get; set; } = [];
-
     public string? Email { get; set; }
 
     public string? Phone { get; set; }
-
-    public List<Right> Rights { get; set; } = [];
 }

@@ -199,17 +199,16 @@ public static class PersonLogic
     /// Change the role of a user
     /// Needs adim right
     /// </summary>
-    /// <param name="personId"></param>
-    /// <param name="roles"></param>
+    /// <param name="update"></param>
     /// <param name="db"></param>
     /// <returns></returns>
-    public static async Task<IResult> SetPersonRole(long personId, List<UserType> roles, IUserContext db, HttpContext context)
+    public static async Task<IResult> UpdatePersonAsync(UpdatePerson update, IUserContext db, HttpContext context)
     {
         var admin = await db.IsAdmin(context.User);
         if (admin is not null)
             return admin;
 
-        await db.UpdateRole(personId, (int)roles.Cast<Data.Models.UserType>().Aggregate((a, b) => a | b));
+        await db.UpdatePerson(update);
 
         return TypedResults.NoContent();
     }

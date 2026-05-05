@@ -4,7 +4,6 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/administration/users/userright_input.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 
-import '../../../../services/swagger/generated_code/helseapi.enums.swagger.dart';
 import '../../../common/notification.dart';
 
 class ChangeRole extends StatefulWidget {
@@ -61,7 +60,7 @@ class _ChangeRoleState extends State<ChangeRole> {
     var localContext = context;
     try {
       // save the user
-      await DI.user.updatePersonRole(widget.id, types);
+      await DI.user.updatePerson(UpdatePerson(id: widget.id, types: types));
 
       widget.callback.call();
 
