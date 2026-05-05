@@ -209,7 +209,6 @@ public static class PersonLogic
         if (admin is not null)
             return admin;
 
-
         await db.UpdateRole(personId, (int)roles.Cast<Data.Models.UserType>().Aggregate((a, b) => a | b));
 
         return TypedResults.NoContent();

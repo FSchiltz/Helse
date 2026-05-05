@@ -154,16 +154,21 @@
               ],
               "format": "int64"
             }
-          },
-          {
-            "name": "role",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/UserType"
-            }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UserType"
+                }
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "401": {
             "description": "Unauthorized"
