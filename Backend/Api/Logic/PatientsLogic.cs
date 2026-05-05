@@ -1,6 +1,7 @@
 using Api.Data;
 using Api.Helpers;
-using Api.Models;
+using Api.Models.Events;
+using Api.Models.Persons;
 using Api.Models.Settings;
 using LinqToDB;
 

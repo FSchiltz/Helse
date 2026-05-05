@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using Api;
 using Api.Data;
 using Api.Helpers.Auth;
@@ -13,7 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddOpenApi("helseapi");
 
 //services cors

@@ -1,5 +1,6 @@
 using Api.Data;
 using Api.Helpers;
+using Api.Models.Events;
 using Api.Models.Settings;
 using Api.Models.Treatments;
 using LinqToDB;
@@ -60,7 +61,7 @@ public static class TreatmentLogic
 
         return TypedResults.Ok(events.GroupBy(x => x.TreatmentId).Select(t => new Treatment
         {
-            Events = t.Select(x => new Models.Event
+            Events = t.Select(x => new Event
             {
                 Id = x.Id,
                 Type = x.Type,

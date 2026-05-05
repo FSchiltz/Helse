@@ -1,7 +1,6 @@
 using Api.Data;
 using Api.Helpers;
 using Api.Helpers.Auth;
-using Api.Models;
 using Api.Models.Persons;
 using Api.Models.Settings;
 using LinqToDB;
@@ -40,7 +39,7 @@ public static class PersonLogic
                 right = null;
             }
 
-            return new Models.Person
+            return new Person
             {
                 Id = x.User?.Id ?? 0,
                 Birth = x.Person.Birth,
@@ -80,7 +79,7 @@ public static class PersonLogic
 
         var models = users.Where(x => x.User is not null && ((UserType)x.User.Type).HasFlag(UserType.Caregiver)).Select(x =>
         {
-            return new Models.Person
+            return new Person
             {
                 Id = x.User?.Id ?? 0,
                 UserName = x.User?.Identifier,
@@ -171,10 +170,10 @@ public static class PersonLogic
             // else check if user is admin
             userId = user?.User.Id ?? 0;
 
-            userHasRole = user?.User.Type.HasRight(Models.UserType.Admin) == true;
+            userHasRole = user?.User.Type.HasRight(UserType.Admin) == true;
 
             // Care giver can add new patients without admin right
-            userHasRole = userHasRole || user?.User.Type.HasRight(Models.UserType.Caregiver) == true;
+            userHasRole = userHasRole || user?.User.Type.HasRight(UserType.Caregiver) == true;
         }
 
         if (!userHasRole)

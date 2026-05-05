@@ -2,7 +2,7 @@ using System.Security.Claims;
 using Api.Data;
 using Api.Data.Models;
 using Api.Helpers.Auth;
-using Api.Models;
+using Api.Models.Persons;
 using Api.Models.Settings;
 
 namespace Api.Helpers;
@@ -37,7 +37,7 @@ public static class RightsHelper
         return null;
     }
 
-    internal static bool HasRight(this int type, Models.UserType right) => ((Models.UserType)type).HasFlag(right);
+    internal static bool HasRight(this int type, UserType right) => ((UserType)type).HasFlag(right);
 
     internal static async Task<(IResult?, User)> GetUser(this IUserContext db, ClaimsPrincipal context)
     {

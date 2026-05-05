@@ -1,6 +1,4 @@
-using Api.Models.Events;
-
-namespace Api.Models;
+namespace Api.Models.Events;
 
 public class UpdateEvent : BaseEvent
 {

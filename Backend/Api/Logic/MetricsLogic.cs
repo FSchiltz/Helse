@@ -3,7 +3,6 @@ using Api.Helpers;
 using Api.Models;
 using Api.Models.Metrics;
 using Api.Models.Settings;
-using CsvHelper;
 using LinqToDB;
 
 namespace Api.Logic;
@@ -147,7 +146,7 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> GetTypeAsync(bool? all, IHealthContext db) => TypedResults.Ok((await db.GetMetricTypes(all)).Select(metric => new Models.MetricType
+    public static async Task<IResult> GetTypeAsync(bool? all, IHealthContext db) => TypedResults.Ok((await db.GetMetricTypes(all)).Select(metric => new MetricType
     {
         Name = metric.Name,
         Description = metric.Description,

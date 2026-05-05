@@ -18,7 +18,7 @@ public static class UserHelper
         // create the user if needed
         // patient are non user of the app, only external people managed by a caregiver
         // TODO add patient account creation
-        if (newUser.Type != Api.Models.UserType.Patient)
+        if (newUser.Type != UserType.Patient)
         {
             if (newUser.UserName is null)
                 throw new ArgumentException("Missing username", nameof(newUser));

@@ -1,9 +1,7 @@
-using System.Security.Claims;
 using Api.Data;
-using Api.Data.Models;
 using Api.Logic;
-using Api.Models;
 using Api.Models.Metrics;
+using Api.Models.Persons;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;
@@ -18,7 +16,7 @@ public class MetricLogicTests
     [Fact]
     public async Task MetricType_NonAdmin()
     {
-        var type = new Api.Models.MetricType()
+        var type = new MetricType()
         {
             Name = "",
             Type = MetricDataType.Text,
@@ -26,16 +24,14 @@ public class MetricLogicTests
         };
         var context = new DefaultHttpContext
         {
-            User = new System.Security.Claims.ClaimsPrincipal([
-                new ClaimsIdentity(),
-            ])
+            User = new([new()])
         };
-        _users.Get(default).ReturnsForAnyArgs(new PersonFromDb(new User
+        _users.Get(default).ReturnsForAnyArgs(new PersonFromDb(new()
         {
             Identifier = "",
             Password = "",
             Type = (int)UserType.Patient,
-        }, new Api.Data.Models.Person()));
+        }, new()));
 
         var result = await MetricsLogic.CreateTypeAsync(type, _users, _db, context);
         Assert.IsType<ForbidHttpResult>(result);
@@ -44,7 +40,7 @@ public class MetricLogicTests
     [Fact]
     public async Task MetricType_AddTextSumAsync()
     {
-        var type = new Api.Models.MetricType()
+        var type = new MetricType()
         {
             Name = "",
             Type = MetricDataType.Text,
@@ -52,24 +48,22 @@ public class MetricLogicTests
         };
         var context = new DefaultHttpContext
         {
-            User = new System.Security.Claims.ClaimsPrincipal([
-                new ClaimsIdentity(),
-            ])
+            User = new([new()])
         };
-        _users.Get(default).ReturnsForAnyArgs(new PersonFromDb(new User
+        _users.Get(default).ReturnsForAnyArgs(new PersonFromDb(new()
         {
             Identifier = "",
             Password = "",
             Type = (int)UserType.Admin,
-        }, new Api.Data.Models.Person()));
+        }, new()));
 
-        await Assert.ThrowsAsync<System.IO.InvalidDataException>(() => MetricsLogic.CreateTypeAsync(type, _users, _db, context));
+        await Assert.ThrowsAsync<InvalidDataException>(() => MetricsLogic.CreateTypeAsync(type, _users, _db, context));
     }
 
     [Fact]
     public async Task MetricType_AddTextMeanAsync()
     {
-        var type = new Api.Models.MetricType()
+        var type = new MetricType()
         {
             Name = "",
             Type = MetricDataType.Text,
@@ -77,24 +71,22 @@ public class MetricLogicTests
         };
         var context = new DefaultHttpContext
         {
-            User = new System.Security.Claims.ClaimsPrincipal([
-                new ClaimsIdentity(),
-            ])
+            User = new([new()])
         };
-        _users.Get(default).ReturnsForAnyArgs(new PersonFromDb(new User
+        _users.Get(default).ReturnsForAnyArgs(new PersonFromDb(new()
         {
             Identifier = "",
             Password = "",
             Type = (int)UserType.Admin,
-        }, new Api.Data.Models.Person()));
+        }, new()));
 
-        await Assert.ThrowsAsync<System.IO.InvalidDataException>(() => MetricsLogic.CreateTypeAsync(type, _users, _db, context));
+        await Assert.ThrowsAsync<InvalidDataException>(() => MetricsLogic.CreateTypeAsync(type, _users, _db, context));
     }
 
     [Fact]
     public async Task MetricType_Text()
     {
-        var type = new Api.Models.MetricType()
+        var type = new MetricType()
         {
             Name = "",
             Type = MetricDataType.Text,
@@ -102,16 +94,14 @@ public class MetricLogicTests
         };
         var context = new DefaultHttpContext
         {
-            User = new System.Security.Claims.ClaimsPrincipal([
-                new ClaimsIdentity(),
-            ])
+            User = new([new()])
         };
-        _users.Get(default).ReturnsForAnyArgs(new PersonFromDb(new User
+        _users.Get(default).ReturnsForAnyArgs(new PersonFromDb(new()
         {
             Identifier = "",
             Password = "",
             Type = (int)UserType.Admin,
-        }, new Api.Data.Models.Person()));
+        }, new()));
 
         var result = await MetricsLogic.CreateTypeAsync(type, _users, _db, context);
         Assert.IsType<NoContent>(result);
@@ -120,7 +110,7 @@ public class MetricLogicTests
     [Fact]
     public async Task MetricType_Number()
     {
-        var type = new Api.Models.MetricType()
+        var type = new MetricType()
         {
             Name = "",
             Type = MetricDataType.Number,
@@ -128,16 +118,14 @@ public class MetricLogicTests
         };
         var context = new DefaultHttpContext
         {
-            User = new System.Security.Claims.ClaimsPrincipal([
-                new ClaimsIdentity(),
-            ])
+            User = new([new()])
         };
-        _users.Get(default).ReturnsForAnyArgs(new PersonFromDb(new User
+        _users.Get(default).ReturnsForAnyArgs(new PersonFromDb(new()
         {
             Identifier = "",
             Password = "",
             Type = (int)UserType.Admin,
-        }, new Api.Data.Models.Person()));
+        }, new()));
 
         var result = await MetricsLogic.CreateTypeAsync(type, _users, _db, context);
         Assert.IsType<NoContent>(result);
