@@ -30,7 +30,7 @@ public class MetricLogicTests
         {
             Identifier = "",
             Password = "",
-            Type = (int)UserType.Patient,
+            Type = 0,
         }, new()));
 
         var result = await MetricsLogic.CreateTypeAsync(type, _users, _db, context);

@@ -41,7 +41,7 @@ public static class ProxyAuthHelper
                 {
                     UserName = header,
                     Password = RandomNumberGenerator.GetInt32(100000000, int.MaxValue).ToString(),
-                    Type = UserType.User
+                    Types = [UserType.User],
                 }, 0);
                 logged = true;
                 fromDb = await db.TokenFromDb(header);

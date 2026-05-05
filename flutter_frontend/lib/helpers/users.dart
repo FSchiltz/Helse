@@ -1,5 +1,5 @@
 
-import '../services/swagger/generated_code/swagger.swagger.dart';
+import '../services/swagger/generated_code/helseapi.swagger.dart';
 
 extension UsersHelper on UserType {
   /// Rights is just a flag and admin is true when the first bit is 1

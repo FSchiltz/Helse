@@ -39,6 +39,15 @@ public static class PersonLogic
                 right = null;
             }
 
+            HashSet<UserType> types = [];
+            if (x.User is not null)
+            {
+                types = [.. Enum.GetValues<UserType>()
+                      .Cast<UserType>()
+                      .Where(e => ((UserType)x.User.Type).HasFlag(e))
+                      .Select(e => e)];
+            }
+
             return new Person
             {
                 Id = x.User?.Id ?? 0,
@@ -49,7 +58,7 @@ public static class PersonLogic
                 UserName = x.User?.Identifier,
                 Email = x.User?.Email,
                 Phone = x.User?.Phone,
-                Type = (UserType)(x.User?.Type ?? 0),
+                Types = types,
                 Rights = right?.Select(x => x.FromDb()).ToList() ?? [],
             };
         });
@@ -137,7 +146,7 @@ public static class PersonLogic
             throw new ArgumentException("Missing name", nameof(user));
 
         // validate other user
-        if (user.Type == UserType.Patient)
+        if (!user.Types.Contains(UserType.User))
             return;
 
         if (user.Password == null)
@@ -170,10 +179,10 @@ public static class PersonLogic
             // else check if user is admin
             userId = user?.User.Id ?? 0;
 
-            userHasRole = user?.User.Type.HasRight(UserType.Admin) == true;
+            userHasRole = user?.User.HasRight(Data.Models.UserType.Admin) == true;
 
             // Care giver can add new patients without admin right
-            userHasRole = userHasRole || user?.User.Type.HasRight(UserType.Caregiver) == true;
+            userHasRole = userHasRole || user?.User.HasRight(Data.Models.UserType.Caregiver) == true;
         }
 
         if (!userHasRole)

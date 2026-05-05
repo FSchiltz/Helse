@@ -61,7 +61,7 @@ public class AuthTests(WebApplicationFactory<Program> factory) : IntegrationTest
         // create the first user (shoudl allow)
         var admin = new PersonCreation
         {
-            Type = UserType.Admin,
+            Types = [UserType.Admin, UserType.User],
             Password = "password",
             UserName = "admin",
             Name = "DisplayName",

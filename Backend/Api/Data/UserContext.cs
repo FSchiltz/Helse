@@ -98,13 +98,13 @@ public class UserContext(DataConnection db) : IUserContext
                     Phone = newUser.Phone,
                     Email = newUser.Email,
                     PersonId = id,
-                    Type = (int)newUser.Type,
+                    Type = (int)newUser.Types.Aggregate((a, b) => a | b),
                 });
     }
 
     public Task AddRight(long userId, long id, RightType right)
     {
-        return db.GetTable<Data.Models.Right>().InsertAsync(() => new Data.Models.Right
+        return db.GetTable<Models.Right>().InsertAsync(() => new()
         {
             UserId = userId,
             Start = DateTime.UtcNow,
@@ -125,7 +125,7 @@ public class UserContext(DataConnection db) : IUserContext
 
     public Task<List<Models.Right>> GetRights(DateTime time)
     {
-        return (from r in db.GetTable<Data.Models.Right>()
+        return (from r in db.GetTable<Models.Right>()
                 where r.Stop == null || (r.Stop >= time && r.Start <= time)
                 select r)
                 .ToListAsync();
@@ -133,17 +133,17 @@ public class UserContext(DataConnection db) : IUserContext
 
     public Task SetExpiryRight(long personId, DateTime now)
     {
-        return db.GetTable<Data.Models.Right>()
+        return db.GetTable<Models.Right>()
             .Where(x => x.UserId == personId)
             .Set(x => x.Stop, now)
             .UpdateAsync();
     }
 
-    public Task InsertRights(IEnumerable<Models.Right> dbRights) => db.GetTable<Data.Models.Right>().BulkCopyAsync(dbRights);
+    public Task InsertRights(IEnumerable<Models.Right> dbRights) => db.GetTable<Models.Right>().BulkCopyAsync(dbRights);
 
     public Task<long> InsertTreatment(long person, TreatmentType type)
     {
-        return db.GetTable<Data.Models.Treatment>().InsertWithInt64IdentityAsync(() => new Data.Models.Treatment
+        return db.GetTable<Models.Treatment>().InsertWithInt64IdentityAsync(() => new()
         {
             PersonId = person,
             Type = (int)type,
@@ -152,7 +152,7 @@ public class UserContext(DataConnection db) : IUserContext
 
     public Task InsertEvent(CreateEvent e, long person, long user, long? treatment)
     {
-        return db.GetTable<Data.Models.Event>().InsertAsync(() => new Data.Models.Event
+        return db.GetTable<Models.Event>().InsertAsync(() => new()
         {
             PersonId = person,
             UserId = user,

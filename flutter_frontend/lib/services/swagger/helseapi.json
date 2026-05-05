@@ -1113,7 +1113,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Treatement"
+                    "$ref": "#/components/schemas/Treatment"
                   }
                 }
               }
@@ -1604,7 +1604,12 @@
         }
       },
       "FileTypes": {
-        "type": "integer"
+        "enum": [
+          "None",
+          "RedmiWatch",
+          "GoogleHealthConnect",
+          "Clue"
+        ]
       },
       "ImportData": {
         "type": "object",
@@ -1691,10 +1696,17 @@
         }
       },
       "MetricDataType": {
-        "type": "integer"
+        "enum": [
+          "Text",
+          "Number"
+        ]
       },
       "MetricSummary": {
-        "type": "integer"
+        "enum": [
+          "Latest",
+          "Sum",
+          "Mean"
+        ]
       },
       "MetricType": {
         "required": [
@@ -1825,8 +1837,11 @@
               "string"
             ]
           },
-          "type": {
-            "$ref": "#/components/schemas/UserType"
+          "types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserType"
+            }
           },
           "email": {
             "type": [
@@ -1888,8 +1903,11 @@
               "string"
             ]
           },
-          "type": {
-            "$ref": "#/components/schemas/UserType"
+          "types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserType"
+            }
           },
           "email": {
             "type": [
@@ -1965,7 +1983,10 @@
         }
       },
       "RightType": {
-        "type": "integer"
+        "enum": [
+          "View",
+          "Edit"
+        ]
       },
       "Status": {
         "required": [
@@ -2022,7 +2043,7 @@
           }
         }
       },
-      "Treatement": {
+      "Treatment": {
         "type": "object",
         "properties": {
           "events": {
@@ -2037,7 +2058,9 @@
         }
       },
       "TreatmentType": {
-        "type": "integer"
+        "enum": [
+          "Care"
+        ]
       },
       "UpdateEvent": {
         "type": "object",
@@ -2121,7 +2144,11 @@
         }
       },
       "UserType": {
-        "type": "integer"
+        "enum": [
+          "Admin",
+          "Caregiver",
+          "User"
+        ]
       }
     }
   },

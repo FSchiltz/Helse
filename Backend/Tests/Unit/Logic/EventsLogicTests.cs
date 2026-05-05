@@ -32,7 +32,7 @@ public class EventsLogicTests
         {
             Identifier = "",
             Password = "",
-            Type = (int)UserType.Patient,
+            Type = 0,
         }, new Api.Data.Models.Person()));
 
         var result = await EventsLogic.CreateTypeAsync(type, _users, _db, context);
@@ -57,7 +57,7 @@ public class EventsLogicTests
         {
             Identifier = "",
             Password = "",
-            Type = (int)UserType.Admin,
+            Type = (int)Api.Data.Models.UserType.Admin,
         }, new Api.Data.Models.Person()));
 
         var result = await EventsLogic.CreateTypeAsync(type, _users, _db, context);

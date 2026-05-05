@@ -14,7 +14,9 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart' show MultipartFile;
 import 'package:chopper/chopper.dart' as chopper;
+import 'helseapi.enums.swagger.dart' as enums;
 import 'helseapi.metadata.swagger.dart';
+export 'helseapi.enums.swagger.dart';
 
 part 'helseapi.swagger.chopper.dart';
 part 'helseapi.swagger.g.dart';
@@ -175,7 +177,7 @@ abstract class Helseapi extends ChopperService {
   ///@param role
   Future<chopper.Response> apiPersonRolePost({
     required int? personId,
-    required int? role,
+    required UserType? role,
   }) {
     return _apiPersonRolePost(personId: personId, role: role);
   }
@@ -186,7 +188,7 @@ abstract class Helseapi extends ChopperService {
   @POST(path: '/api/person/role', optionalBody: true)
   Future<chopper.Response> _apiPersonRolePost({
     @Query('personId') required int? personId,
-    @Query('role') required int? role,
+    @Query('role') required UserType? role,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -877,12 +879,12 @@ abstract class Helseapi extends ChopperService {
   ///@param start
   ///@param end
   ///@param personId
-  Future<chopper.Response<List<Treatement>>> apiTreatmentGet({
+  Future<chopper.Response<List<Treatment>>> apiTreatmentGet({
     required DateTime? start,
     required DateTime? end,
     int? personId,
   }) {
-    generatedMapping.putIfAbsent(Treatement, () => Treatement.fromJsonFactory);
+    generatedMapping.putIfAbsent(Treatment, () => Treatment.fromJsonFactory);
 
     return _apiTreatmentGet(start: start, end: end, personId: personId);
   }
@@ -892,7 +894,7 @@ abstract class Helseapi extends ChopperService {
   ///@param end
   ///@param personId
   @GET(path: '/api/treatment')
-  Future<chopper.Response<List<Treatement>>> _apiTreatmentGet({
+  Future<chopper.Response<List<Treatment>>> _apiTreatmentGet({
     @Query('start') required DateTime? start,
     @Query('end') required DateTime? end,
     @Query('personId') int? personId,
@@ -1283,8 +1285,12 @@ class CreateMetric {
   final String? tag;
   @JsonKey(name: 'type')
   final int? type;
-  @JsonKey(name: 'source')
-  final int? source;
+  @JsonKey(
+    name: 'source',
+    toJson: fileTypesNullableToJson,
+    fromJson: fileTypesNullableFromJson,
+  )
+  final enums.FileTypes? source;
   static const fromJsonFactory = _$CreateMetricFromJson;
 
   @override
@@ -1322,7 +1328,7 @@ extension $CreateMetricExtension on CreateMetric {
     String? value,
     String? tag,
     int? type,
-    int? source,
+    enums.FileTypes? source,
   }) {
     return CreateMetric(
       date: date ?? this.date,
@@ -1338,7 +1344,7 @@ extension $CreateMetricExtension on CreateMetric {
     Wrapped<String>? value,
     Wrapped<String?>? tag,
     Wrapped<int?>? type,
-    Wrapped<int?>? source,
+    Wrapped<enums.FileTypes?>? source,
   }) {
     return CreateMetric(
       date: (date != null ? date.value : this.date),
@@ -1913,8 +1919,12 @@ class Metric {
   final String? tag;
   @JsonKey(name: 'type')
   final int? type;
-  @JsonKey(name: 'source')
-  final int? source;
+  @JsonKey(
+    name: 'source',
+    toJson: fileTypesNullableToJson,
+    fromJson: fileTypesNullableFromJson,
+  )
+  final enums.FileTypes? source;
   static const fromJsonFactory = _$MetricFromJson;
 
   @override
@@ -1964,7 +1974,7 @@ extension $MetricExtension on Metric {
     String? value,
     String? tag,
     int? type,
-    int? source,
+    enums.FileTypes? source,
   }) {
     return Metric(
       id: id ?? this.id,
@@ -1986,7 +1996,7 @@ extension $MetricExtension on Metric {
     Wrapped<String>? value,
     Wrapped<String?>? tag,
     Wrapped<int?>? type,
-    Wrapped<int?>? source,
+    Wrapped<enums.FileTypes?>? source,
   }) {
     return Metric(
       id: (id != null ? id.value : this.id),
@@ -2024,12 +2034,20 @@ class MetricType {
   final String name;
   @JsonKey(name: 'unit')
   final String? unit;
-  @JsonKey(name: 'summaryType')
-  final int? summaryType;
+  @JsonKey(
+    name: 'summaryType',
+    toJson: metricSummaryNullableToJson,
+    fromJson: metricSummaryNullableFromJson,
+  )
+  final enums.MetricSummary? summaryType;
   @JsonKey(name: 'description')
   final String? description;
-  @JsonKey(name: 'type')
-  final int? type;
+  @JsonKey(
+    name: 'type',
+    toJson: metricDataTypeNullableToJson,
+    fromJson: metricDataTypeNullableFromJson,
+  )
+  final enums.MetricDataType? type;
   @JsonKey(name: 'id')
   final int? id;
   @JsonKey(name: 'userEditable')
@@ -2089,9 +2107,9 @@ extension $MetricTypeExtension on MetricType {
   MetricType copyWith({
     String? name,
     String? unit,
-    int? summaryType,
+    enums.MetricSummary? summaryType,
     String? description,
-    int? type,
+    enums.MetricDataType? type,
     int? id,
     bool? userEditable,
     bool? visible,
@@ -2111,9 +2129,9 @@ extension $MetricTypeExtension on MetricType {
   MetricType copyWithWrapped({
     Wrapped<String>? name,
     Wrapped<String?>? unit,
-    Wrapped<int?>? summaryType,
+    Wrapped<enums.MetricSummary?>? summaryType,
     Wrapped<String?>? description,
-    Wrapped<int?>? type,
+    Wrapped<enums.MetricDataType?>? type,
     Wrapped<int?>? id,
     Wrapped<bool?>? userEditable,
     Wrapped<bool?>? visible,
@@ -2275,7 +2293,7 @@ class Person {
     this.birth,
     this.userName,
     this.password,
-    this.type,
+    this.types,
     this.email,
     this.phone,
     this.rights,
@@ -2300,8 +2318,12 @@ class Person {
   final String? userName;
   @JsonKey(name: 'password')
   final String? password;
-  @JsonKey(name: 'type')
-  final int? type;
+  @JsonKey(
+    name: 'types',
+    toJson: userTypeListToJson,
+    fromJson: userTypeListFromJson,
+  )
+  final List<enums.UserType>? types;
   @JsonKey(name: 'email')
   final String? email;
   @JsonKey(name: 'phone')
@@ -2340,8 +2362,8 @@ class Person {
                   other.password,
                   password,
                 )) &&
-            (identical(other.type, type) ||
-                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.types, types) ||
+                const DeepCollectionEquality().equals(other.types, types)) &&
             (identical(other.email, email) ||
                 const DeepCollectionEquality().equals(other.email, email)) &&
             (identical(other.phone, phone) ||
@@ -2362,7 +2384,7 @@ class Person {
       const DeepCollectionEquality().hash(birth) ^
       const DeepCollectionEquality().hash(userName) ^
       const DeepCollectionEquality().hash(password) ^
-      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(types) ^
       const DeepCollectionEquality().hash(email) ^
       const DeepCollectionEquality().hash(phone) ^
       const DeepCollectionEquality().hash(rights) ^
@@ -2378,7 +2400,7 @@ extension $PersonExtension on Person {
     DateTime? birth,
     String? userName,
     String? password,
-    int? type,
+    List<enums.UserType>? types,
     String? email,
     String? phone,
     List<Right>? rights,
@@ -2391,7 +2413,7 @@ extension $PersonExtension on Person {
       birth: birth ?? this.birth,
       userName: userName ?? this.userName,
       password: password ?? this.password,
-      type: type ?? this.type,
+      types: types ?? this.types,
       email: email ?? this.email,
       phone: phone ?? this.phone,
       rights: rights ?? this.rights,
@@ -2406,7 +2428,7 @@ extension $PersonExtension on Person {
     Wrapped<DateTime?>? birth,
     Wrapped<String?>? userName,
     Wrapped<String?>? password,
-    Wrapped<int?>? type,
+    Wrapped<List<enums.UserType>?>? types,
     Wrapped<String?>? email,
     Wrapped<String?>? phone,
     Wrapped<List<Right>?>? rights,
@@ -2419,7 +2441,7 @@ extension $PersonExtension on Person {
       birth: (birth != null ? birth.value : this.birth),
       userName: (userName != null ? userName.value : this.userName),
       password: (password != null ? password.value : this.password),
-      type: (type != null ? type.value : this.type),
+      types: (types != null ? types.value : this.types),
       email: (email != null ? email.value : this.email),
       phone: (phone != null ? phone.value : this.phone),
       rights: (rights != null ? rights.value : this.rights),
@@ -2436,7 +2458,7 @@ class PersonCreation {
     this.birth,
     this.userName,
     this.password,
-    this.type,
+    this.types,
     this.email,
     this.phone,
     this.rights,
@@ -2460,8 +2482,12 @@ class PersonCreation {
   final String? userName;
   @JsonKey(name: 'password')
   final String? password;
-  @JsonKey(name: 'type')
-  final int? type;
+  @JsonKey(
+    name: 'types',
+    toJson: userTypeListToJson,
+    fromJson: userTypeListFromJson,
+  )
+  final List<enums.UserType>? types;
   @JsonKey(name: 'email')
   final String? email;
   @JsonKey(name: 'phone')
@@ -2498,8 +2524,8 @@ class PersonCreation {
                   other.password,
                   password,
                 )) &&
-            (identical(other.type, type) ||
-                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.types, types) ||
+                const DeepCollectionEquality().equals(other.types, types)) &&
             (identical(other.email, email) ||
                 const DeepCollectionEquality().equals(other.email, email)) &&
             (identical(other.phone, phone) ||
@@ -2519,7 +2545,7 @@ class PersonCreation {
       const DeepCollectionEquality().hash(birth) ^
       const DeepCollectionEquality().hash(userName) ^
       const DeepCollectionEquality().hash(password) ^
-      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(types) ^
       const DeepCollectionEquality().hash(email) ^
       const DeepCollectionEquality().hash(phone) ^
       const DeepCollectionEquality().hash(rights) ^
@@ -2534,7 +2560,7 @@ extension $PersonCreationExtension on PersonCreation {
     DateTime? birth,
     String? userName,
     String? password,
-    int? type,
+    List<enums.UserType>? types,
     String? email,
     String? phone,
     List<Right>? rights,
@@ -2546,7 +2572,7 @@ extension $PersonCreationExtension on PersonCreation {
       birth: birth ?? this.birth,
       userName: userName ?? this.userName,
       password: password ?? this.password,
-      type: type ?? this.type,
+      types: types ?? this.types,
       email: email ?? this.email,
       phone: phone ?? this.phone,
       rights: rights ?? this.rights,
@@ -2560,7 +2586,7 @@ extension $PersonCreationExtension on PersonCreation {
     Wrapped<DateTime?>? birth,
     Wrapped<String?>? userName,
     Wrapped<String?>? password,
-    Wrapped<int?>? type,
+    Wrapped<List<enums.UserType>?>? types,
     Wrapped<String?>? email,
     Wrapped<String?>? phone,
     Wrapped<List<Right>?>? rights,
@@ -2572,7 +2598,7 @@ extension $PersonCreationExtension on PersonCreation {
       birth: (birth != null ? birth.value : this.birth),
       userName: (userName != null ? userName.value : this.userName),
       password: (password != null ? password.value : this.password),
-      type: (type != null ? type.value : this.type),
+      types: (types != null ? types.value : this.types),
       email: (email != null ? email.value : this.email),
       phone: (phone != null ? phone.value : this.phone),
       rights: (rights != null ? rights.value : this.rights),
@@ -2667,8 +2693,12 @@ class Right {
   final DateTime? start;
   @JsonKey(name: 'stop')
   final DateTime? stop;
-  @JsonKey(name: 'type')
-  final int? type;
+  @JsonKey(
+    name: 'type',
+    toJson: rightTypeNullableToJson,
+    fromJson: rightTypeNullableFromJson,
+  )
+  final enums.RightType? type;
   static const fromJsonFactory = _$RightFromJson;
 
   @override
@@ -2709,7 +2739,7 @@ extension $RightExtension on Right {
     int? userId,
     DateTime? start,
     DateTime? stop,
-    int? type,
+    enums.RightType? type,
   }) {
     return Right(
       personId: personId ?? this.personId,
@@ -2725,7 +2755,7 @@ extension $RightExtension on Right {
     Wrapped<int?>? userId,
     Wrapped<DateTime?>? start,
     Wrapped<DateTime?>? stop,
-    Wrapped<int?>? type,
+    Wrapped<enums.RightType?>? type,
   }) {
     return Right(
       personId: (personId != null ? personId.value : this.personId),
@@ -2912,25 +2942,29 @@ extension $TokenResponseExtension on TokenResponse {
 }
 
 @JsonSerializable(explicitToJson: true)
-class Treatement {
-  const Treatement({this.events, this.type});
+class Treatment {
+  const Treatment({this.events, this.type});
 
-  factory Treatement.fromJson(Map<String, dynamic> json) =>
-      _$TreatementFromJson(json);
+  factory Treatment.fromJson(Map<String, dynamic> json) =>
+      _$TreatmentFromJson(json);
 
-  static const toJsonFactory = _$TreatementToJson;
-  Map<String, dynamic> toJson() => _$TreatementToJson(this);
+  static const toJsonFactory = _$TreatmentToJson;
+  Map<String, dynamic> toJson() => _$TreatmentToJson(this);
 
   @JsonKey(name: 'events', defaultValue: <Event>[])
   final List<Event>? events;
-  @JsonKey(name: 'type')
-  final int? type;
-  static const fromJsonFactory = _$TreatementFromJson;
+  @JsonKey(
+    name: 'type',
+    toJson: treatmentTypeNullableToJson,
+    fromJson: treatmentTypeNullableFromJson,
+  )
+  final enums.TreatmentType? type;
+  static const fromJsonFactory = _$TreatmentFromJson;
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other is Treatement &&
+        (other is Treatment &&
             (identical(other.events, events) ||
                 const DeepCollectionEquality().equals(other.events, events)) &&
             (identical(other.type, type) ||
@@ -2947,16 +2981,16 @@ class Treatement {
       runtimeType.hashCode;
 }
 
-extension $TreatementExtension on Treatement {
-  Treatement copyWith({List<Event>? events, int? type}) {
-    return Treatement(events: events ?? this.events, type: type ?? this.type);
+extension $TreatmentExtension on Treatment {
+  Treatment copyWith({List<Event>? events, enums.TreatmentType? type}) {
+    return Treatment(events: events ?? this.events, type: type ?? this.type);
   }
 
-  Treatement copyWithWrapped({
+  Treatment copyWithWrapped({
     Wrapped<List<Event>?>? events,
-    Wrapped<int?>? type,
+    Wrapped<enums.TreatmentType?>? type,
   }) {
-    return Treatement(
+    return Treatment(
       events: (events != null ? events.value : this.events),
       type: (type != null ? type.value : this.type),
     );
@@ -3094,8 +3128,12 @@ class UpdateMetric {
   final String? tag;
   @JsonKey(name: 'type')
   final int? type;
-  @JsonKey(name: 'source')
-  final int? source;
+  @JsonKey(
+    name: 'source',
+    toJson: fileTypesNullableToJson,
+    fromJson: fileTypesNullableFromJson,
+  )
+  final enums.FileTypes? source;
   static const fromJsonFactory = _$UpdateMetricFromJson;
 
   @override
@@ -3137,7 +3175,7 @@ extension $UpdateMetricExtension on UpdateMetric {
     String? value,
     String? tag,
     int? type,
-    int? source,
+    enums.FileTypes? source,
   }) {
     return UpdateMetric(
       id: id ?? this.id,
@@ -3155,7 +3193,7 @@ extension $UpdateMetricExtension on UpdateMetric {
     Wrapped<String>? value,
     Wrapped<String?>? tag,
     Wrapped<int?>? type,
-    Wrapped<int?>? source,
+    Wrapped<enums.FileTypes?>? source,
   }) {
     return UpdateMetric(
       id: (id != null ? id.value : this.id),
@@ -3166,6 +3204,402 @@ extension $UpdateMetricExtension on UpdateMetric {
       source: (source != null ? source.value : this.source),
     );
   }
+}
+
+String? fileTypesNullableToJson(enums.FileTypes? fileTypes) {
+  return fileTypes?.value;
+}
+
+String? fileTypesToJson(enums.FileTypes fileTypes) {
+  return fileTypes.value;
+}
+
+enums.FileTypes fileTypesFromJson(
+  Object? fileTypes, [
+  enums.FileTypes? defaultValue,
+]) {
+  return enums.FileTypes.values.firstWhereOrNull((e) => e.value == fileTypes) ??
+      defaultValue ??
+      enums.FileTypes.swaggerGeneratedUnknown;
+}
+
+enums.FileTypes? fileTypesNullableFromJson(
+  Object? fileTypes, [
+  enums.FileTypes? defaultValue,
+]) {
+  if (fileTypes == null) {
+    return null;
+  }
+  return enums.FileTypes.values.firstWhereOrNull((e) => e.value == fileTypes) ??
+      defaultValue;
+}
+
+String fileTypesExplodedListToJson(List<enums.FileTypes>? fileTypes) {
+  return fileTypes?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> fileTypesListToJson(List<enums.FileTypes>? fileTypes) {
+  if (fileTypes == null) {
+    return [];
+  }
+
+  return fileTypes.map((e) => e.value!).toList();
+}
+
+List<enums.FileTypes> fileTypesListFromJson(
+  List? fileTypes, [
+  List<enums.FileTypes>? defaultValue,
+]) {
+  if (fileTypes == null) {
+    return defaultValue ?? [];
+  }
+
+  return fileTypes.map((e) => fileTypesFromJson(e.toString())).toList();
+}
+
+List<enums.FileTypes>? fileTypesNullableListFromJson(
+  List? fileTypes, [
+  List<enums.FileTypes>? defaultValue,
+]) {
+  if (fileTypes == null) {
+    return defaultValue;
+  }
+
+  return fileTypes.map((e) => fileTypesFromJson(e.toString())).toList();
+}
+
+String? metricDataTypeNullableToJson(enums.MetricDataType? metricDataType) {
+  return metricDataType?.value;
+}
+
+String? metricDataTypeToJson(enums.MetricDataType metricDataType) {
+  return metricDataType.value;
+}
+
+enums.MetricDataType metricDataTypeFromJson(
+  Object? metricDataType, [
+  enums.MetricDataType? defaultValue,
+]) {
+  return enums.MetricDataType.values.firstWhereOrNull(
+        (e) => e.value == metricDataType,
+      ) ??
+      defaultValue ??
+      enums.MetricDataType.swaggerGeneratedUnknown;
+}
+
+enums.MetricDataType? metricDataTypeNullableFromJson(
+  Object? metricDataType, [
+  enums.MetricDataType? defaultValue,
+]) {
+  if (metricDataType == null) {
+    return null;
+  }
+  return enums.MetricDataType.values.firstWhereOrNull(
+        (e) => e.value == metricDataType,
+      ) ??
+      defaultValue;
+}
+
+String metricDataTypeExplodedListToJson(
+  List<enums.MetricDataType>? metricDataType,
+) {
+  return metricDataType?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> metricDataTypeListToJson(
+  List<enums.MetricDataType>? metricDataType,
+) {
+  if (metricDataType == null) {
+    return [];
+  }
+
+  return metricDataType.map((e) => e.value!).toList();
+}
+
+List<enums.MetricDataType> metricDataTypeListFromJson(
+  List? metricDataType, [
+  List<enums.MetricDataType>? defaultValue,
+]) {
+  if (metricDataType == null) {
+    return defaultValue ?? [];
+  }
+
+  return metricDataType
+      .map((e) => metricDataTypeFromJson(e.toString()))
+      .toList();
+}
+
+List<enums.MetricDataType>? metricDataTypeNullableListFromJson(
+  List? metricDataType, [
+  List<enums.MetricDataType>? defaultValue,
+]) {
+  if (metricDataType == null) {
+    return defaultValue;
+  }
+
+  return metricDataType
+      .map((e) => metricDataTypeFromJson(e.toString()))
+      .toList();
+}
+
+String? metricSummaryNullableToJson(enums.MetricSummary? metricSummary) {
+  return metricSummary?.value;
+}
+
+String? metricSummaryToJson(enums.MetricSummary metricSummary) {
+  return metricSummary.value;
+}
+
+enums.MetricSummary metricSummaryFromJson(
+  Object? metricSummary, [
+  enums.MetricSummary? defaultValue,
+]) {
+  return enums.MetricSummary.values.firstWhereOrNull(
+        (e) => e.value == metricSummary,
+      ) ??
+      defaultValue ??
+      enums.MetricSummary.swaggerGeneratedUnknown;
+}
+
+enums.MetricSummary? metricSummaryNullableFromJson(
+  Object? metricSummary, [
+  enums.MetricSummary? defaultValue,
+]) {
+  if (metricSummary == null) {
+    return null;
+  }
+  return enums.MetricSummary.values.firstWhereOrNull(
+        (e) => e.value == metricSummary,
+      ) ??
+      defaultValue;
+}
+
+String metricSummaryExplodedListToJson(
+  List<enums.MetricSummary>? metricSummary,
+) {
+  return metricSummary?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> metricSummaryListToJson(List<enums.MetricSummary>? metricSummary) {
+  if (metricSummary == null) {
+    return [];
+  }
+
+  return metricSummary.map((e) => e.value!).toList();
+}
+
+List<enums.MetricSummary> metricSummaryListFromJson(
+  List? metricSummary, [
+  List<enums.MetricSummary>? defaultValue,
+]) {
+  if (metricSummary == null) {
+    return defaultValue ?? [];
+  }
+
+  return metricSummary.map((e) => metricSummaryFromJson(e.toString())).toList();
+}
+
+List<enums.MetricSummary>? metricSummaryNullableListFromJson(
+  List? metricSummary, [
+  List<enums.MetricSummary>? defaultValue,
+]) {
+  if (metricSummary == null) {
+    return defaultValue;
+  }
+
+  return metricSummary.map((e) => metricSummaryFromJson(e.toString())).toList();
+}
+
+String? rightTypeNullableToJson(enums.RightType? rightType) {
+  return rightType?.value;
+}
+
+String? rightTypeToJson(enums.RightType rightType) {
+  return rightType.value;
+}
+
+enums.RightType rightTypeFromJson(
+  Object? rightType, [
+  enums.RightType? defaultValue,
+]) {
+  return enums.RightType.values.firstWhereOrNull((e) => e.value == rightType) ??
+      defaultValue ??
+      enums.RightType.swaggerGeneratedUnknown;
+}
+
+enums.RightType? rightTypeNullableFromJson(
+  Object? rightType, [
+  enums.RightType? defaultValue,
+]) {
+  if (rightType == null) {
+    return null;
+  }
+  return enums.RightType.values.firstWhereOrNull((e) => e.value == rightType) ??
+      defaultValue;
+}
+
+String rightTypeExplodedListToJson(List<enums.RightType>? rightType) {
+  return rightType?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> rightTypeListToJson(List<enums.RightType>? rightType) {
+  if (rightType == null) {
+    return [];
+  }
+
+  return rightType.map((e) => e.value!).toList();
+}
+
+List<enums.RightType> rightTypeListFromJson(
+  List? rightType, [
+  List<enums.RightType>? defaultValue,
+]) {
+  if (rightType == null) {
+    return defaultValue ?? [];
+  }
+
+  return rightType.map((e) => rightTypeFromJson(e.toString())).toList();
+}
+
+List<enums.RightType>? rightTypeNullableListFromJson(
+  List? rightType, [
+  List<enums.RightType>? defaultValue,
+]) {
+  if (rightType == null) {
+    return defaultValue;
+  }
+
+  return rightType.map((e) => rightTypeFromJson(e.toString())).toList();
+}
+
+String? treatmentTypeNullableToJson(enums.TreatmentType? treatmentType) {
+  return treatmentType?.value;
+}
+
+String? treatmentTypeToJson(enums.TreatmentType treatmentType) {
+  return treatmentType.value;
+}
+
+enums.TreatmentType treatmentTypeFromJson(
+  Object? treatmentType, [
+  enums.TreatmentType? defaultValue,
+]) {
+  return enums.TreatmentType.values.firstWhereOrNull(
+        (e) => e.value == treatmentType,
+      ) ??
+      defaultValue ??
+      enums.TreatmentType.swaggerGeneratedUnknown;
+}
+
+enums.TreatmentType? treatmentTypeNullableFromJson(
+  Object? treatmentType, [
+  enums.TreatmentType? defaultValue,
+]) {
+  if (treatmentType == null) {
+    return null;
+  }
+  return enums.TreatmentType.values.firstWhereOrNull(
+        (e) => e.value == treatmentType,
+      ) ??
+      defaultValue;
+}
+
+String treatmentTypeExplodedListToJson(
+  List<enums.TreatmentType>? treatmentType,
+) {
+  return treatmentType?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> treatmentTypeListToJson(List<enums.TreatmentType>? treatmentType) {
+  if (treatmentType == null) {
+    return [];
+  }
+
+  return treatmentType.map((e) => e.value!).toList();
+}
+
+List<enums.TreatmentType> treatmentTypeListFromJson(
+  List? treatmentType, [
+  List<enums.TreatmentType>? defaultValue,
+]) {
+  if (treatmentType == null) {
+    return defaultValue ?? [];
+  }
+
+  return treatmentType.map((e) => treatmentTypeFromJson(e.toString())).toList();
+}
+
+List<enums.TreatmentType>? treatmentTypeNullableListFromJson(
+  List? treatmentType, [
+  List<enums.TreatmentType>? defaultValue,
+]) {
+  if (treatmentType == null) {
+    return defaultValue;
+  }
+
+  return treatmentType.map((e) => treatmentTypeFromJson(e.toString())).toList();
+}
+
+String? userTypeNullableToJson(enums.UserType? userType) {
+  return userType?.value;
+}
+
+String? userTypeToJson(enums.UserType userType) {
+  return userType.value;
+}
+
+enums.UserType userTypeFromJson(
+  Object? userType, [
+  enums.UserType? defaultValue,
+]) {
+  return enums.UserType.values.firstWhereOrNull((e) => e.value == userType) ??
+      defaultValue ??
+      enums.UserType.swaggerGeneratedUnknown;
+}
+
+enums.UserType? userTypeNullableFromJson(
+  Object? userType, [
+  enums.UserType? defaultValue,
+]) {
+  if (userType == null) {
+    return null;
+  }
+  return enums.UserType.values.firstWhereOrNull((e) => e.value == userType) ??
+      defaultValue;
+}
+
+String userTypeExplodedListToJson(List<enums.UserType>? userType) {
+  return userType?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> userTypeListToJson(List<enums.UserType>? userType) {
+  if (userType == null) {
+    return [];
+  }
+
+  return userType.map((e) => e.value!).toList();
+}
+
+List<enums.UserType> userTypeListFromJson(
+  List? userType, [
+  List<enums.UserType>? defaultValue,
+]) {
+  if (userType == null) {
+    return defaultValue ?? [];
+  }
+
+  return userType.map((e) => userTypeFromJson(e.toString())).toList();
+}
+
+List<enums.UserType>? userTypeNullableListFromJson(
+  List? userType, [
+  List<enums.UserType>? defaultValue,
+]) {
+  if (userType == null) {
+    return defaultValue;
+  }
+
+  return userType.map((e) => userTypeFromJson(e.toString())).toList();
 }
 
 typedef $JsonFactory<T> = T Function(Map<String, dynamic> json);

@@ -39,7 +39,7 @@ public static class OauthHelper
                 {
                     UserName = token.User,
                     Password = RandomNumberGenerator.GetInt32(100000000, int.MaxValue).ToString(),
-                    Type = UserType.User,
+                    Types = [UserType.User],
                     Name = token.Name,
                 }, 0);
                 logged = true;

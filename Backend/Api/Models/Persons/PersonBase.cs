@@ -4,7 +4,6 @@ namespace Api.Models.Persons;
 
 public abstract class PersonBase
 {
-
     public string? Name { get; set; }
 
     public string? Surname { get; set; }
@@ -17,11 +16,11 @@ public abstract class PersonBase
 
     public string? Password { get; set; }
 
-    public UserType Type { get; set; }
+    public HashSet<UserType> Types { get; set; } = [];
 
     public string? Email { get; set; }
 
     public string? Phone { get; set; }
 
-    public List<Right> Rights { get; set; } = new List<Right>();
+    public List<Right> Rights { get; set; } = [];
 }

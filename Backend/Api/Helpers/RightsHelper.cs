@@ -31,13 +31,11 @@ public static class RightsHelper
         if (error is not null)
             return error;
 
-        if (!user.Type.HasRight(UserType.Admin))
+        if (!user.HasRight(Data.Models.UserType.Admin))
             return TypedResults.Forbid();
 
         return null;
     }
-
-    internal static bool HasRight(this int type, UserType right) => ((UserType)type).HasFlag(right);
 
     internal static async Task<(IResult?, User)> GetUser(this IUserContext db, ClaimsPrincipal context)
     {
@@ -58,9 +56,13 @@ public static class RightsHelper
         if (fromDb is null)
             return null;
 
-        return new TokenInfo(fromDb.User.Id, fromDb.User.Type.ToString(),
-         fromDb.User.Identifier, fromDb.User.Password,
-          fromDb.Person.Surname, fromDb.Person.Name,
-          fromDb.User.Email);
+        return new(
+            Id: fromDb.User.Id,
+            Role: fromDb.User.Type.ToString(),
+            Identifier: fromDb.User.Identifier,
+            Password: fromDb.User.Password,
+            Surname: fromDb.Person.Surname,
+            Name: fromDb.Person.Name,
+            Email: fromDb.User.Email);
     }
 }

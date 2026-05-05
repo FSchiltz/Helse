@@ -1,4 +1,4 @@
-import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class MetricHelper {
 

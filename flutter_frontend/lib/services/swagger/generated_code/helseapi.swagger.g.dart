@@ -45,7 +45,7 @@ CreateMetric _$CreateMetricFromJson(Map<String, dynamic> json) => CreateMetric(
       value: json['value'] as String,
       tag: json['tag'] as String?,
       type: (json['type'] as num?)?.toInt(),
-      source: (json['source'] as num?)?.toInt(),
+      source: fileTypesNullableFromJson(json['source']),
     );
 
 Map<String, dynamic> _$CreateMetricToJson(CreateMetric instance) =>
@@ -54,7 +54,7 @@ Map<String, dynamic> _$CreateMetricToJson(CreateMetric instance) =>
       'value': instance.value,
       'tag': instance.tag,
       'type': instance.type,
-      'source': instance.source,
+      'source': fileTypesNullableToJson(instance.source),
     };
 
 CreateTreatment _$CreateTreatmentFromJson(Map<String, dynamic> json) =>
@@ -177,7 +177,7 @@ Metric _$MetricFromJson(Map<String, dynamic> json) => Metric(
       value: json['value'] as String,
       tag: json['tag'] as String?,
       type: (json['type'] as num?)?.toInt(),
-      source: (json['source'] as num?)?.toInt(),
+      source: fileTypesNullableFromJson(json['source']),
     );
 
 Map<String, dynamic> _$MetricToJson(Metric instance) => <String, dynamic>{
@@ -188,15 +188,15 @@ Map<String, dynamic> _$MetricToJson(Metric instance) => <String, dynamic>{
       'value': instance.value,
       'tag': instance.tag,
       'type': instance.type,
-      'source': instance.source,
+      'source': fileTypesNullableToJson(instance.source),
     };
 
 MetricType _$MetricTypeFromJson(Map<String, dynamic> json) => MetricType(
       name: json['name'] as String,
       unit: json['unit'] as String?,
-      summaryType: (json['summaryType'] as num?)?.toInt(),
+      summaryType: metricSummaryNullableFromJson(json['summaryType']),
       description: json['description'] as String?,
-      type: (json['type'] as num?)?.toInt(),
+      type: metricDataTypeNullableFromJson(json['type']),
       id: (json['id'] as num?)?.toInt(),
       userEditable: json['userEditable'] as bool?,
       visible: json['visible'] as bool?,
@@ -206,9 +206,9 @@ Map<String, dynamic> _$MetricTypeToJson(MetricType instance) =>
     <String, dynamic>{
       'name': instance.name,
       'unit': instance.unit,
-      'summaryType': instance.summaryType,
+      'summaryType': metricSummaryNullableToJson(instance.summaryType),
       'description': instance.description,
-      'type': instance.type,
+      'type': metricDataTypeNullableToJson(instance.type),
       'id': instance.id,
       'userEditable': instance.userEditable,
       'visible': instance.visible,
@@ -244,7 +244,7 @@ Person _$PersonFromJson(Map<String, dynamic> json) => Person(
           : DateTime.parse(json['birth'] as String),
       userName: json['userName'] as String?,
       password: json['password'] as String?,
-      type: (json['type'] as num?)?.toInt(),
+      types: userTypeListFromJson(json['types'] as List?),
       email: json['email'] as String?,
       phone: json['phone'] as String?,
       rights: (json['rights'] as List<dynamic>?)
@@ -261,7 +261,7 @@ Map<String, dynamic> _$PersonToJson(Person instance) => <String, dynamic>{
       'birth': instance.birth?.toIso8601String(),
       'userName': instance.userName,
       'password': instance.password,
-      'type': instance.type,
+      'types': userTypeListToJson(instance.types),
       'email': instance.email,
       'phone': instance.phone,
       'rights': instance.rights?.map((e) => e.toJson()).toList(),
@@ -277,7 +277,7 @@ PersonCreation _$PersonCreationFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['birth'] as String),
       userName: json['userName'] as String?,
       password: json['password'] as String?,
-      type: (json['type'] as num?)?.toInt(),
+      types: userTypeListFromJson(json['types'] as List?),
       email: json['email'] as String?,
       phone: json['phone'] as String?,
       rights: (json['rights'] as List<dynamic>?)
@@ -294,7 +294,7 @@ Map<String, dynamic> _$PersonCreationToJson(PersonCreation instance) =>
       'birth': instance.birth?.toIso8601String(),
       'userName': instance.userName,
       'password': instance.password,
-      'type': instance.type,
+      'types': userTypeListToJson(instance.types),
       'email': instance.email,
       'phone': instance.phone,
       'rights': instance.rights?.map((e) => e.toJson()).toList(),
@@ -320,7 +320,7 @@ Right _$RightFromJson(Map<String, dynamic> json) => Right(
           : DateTime.parse(json['start'] as String),
       stop:
           json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
-      type: (json['type'] as num?)?.toInt(),
+      type: rightTypeNullableFromJson(json['type']),
     );
 
 Map<String, dynamic> _$RightToJson(Right instance) => <String, dynamic>{
@@ -328,7 +328,7 @@ Map<String, dynamic> _$RightToJson(Right instance) => <String, dynamic>{
       'userId': instance.userId,
       'start': instance.start?.toIso8601String(),
       'stop': instance.stop?.toIso8601String(),
-      'type': instance.type,
+      'type': rightTypeNullableToJson(instance.type),
     };
 
 Status _$StatusFromJson(Map<String, dynamic> json) => Status(
@@ -361,18 +361,17 @@ Map<String, dynamic> _$TokenResponseToJson(TokenResponse instance) =>
       'refreshToken': instance.refreshToken,
     };
 
-Treatement _$TreatementFromJson(Map<String, dynamic> json) => Treatement(
+Treatment _$TreatmentFromJson(Map<String, dynamic> json) => Treatment(
       events: (json['events'] as List<dynamic>?)
               ?.map((e) => Event.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      type: (json['type'] as num?)?.toInt(),
+      type: treatmentTypeNullableFromJson(json['type']),
     );
 
-Map<String, dynamic> _$TreatementToJson(Treatement instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$TreatmentToJson(Treatment instance) => <String, dynamic>{
       'events': instance.events?.map((e) => e.toJson()).toList(),
-      'type': instance.type,
+      'type': treatmentTypeNullableToJson(instance.type),
     };
 
 UpdateEvent _$UpdateEventFromJson(Map<String, dynamic> json) => UpdateEvent(
@@ -404,7 +403,7 @@ UpdateMetric _$UpdateMetricFromJson(Map<String, dynamic> json) => UpdateMetric(
       value: json['value'] as String,
       tag: json['tag'] as String?,
       type: (json['type'] as num?)?.toInt(),
-      source: (json['source'] as num?)?.toInt(),
+      source: fileTypesNullableFromJson(json['source']),
     );
 
 Map<String, dynamic> _$UpdateMetricToJson(UpdateMetric instance) =>
@@ -414,5 +413,5 @@ Map<String, dynamic> _$UpdateMetricToJson(UpdateMetric instance) =>
       'value': instance.value,
       'tag': instance.tag,
       'type': instance.type,
-      'source': instance.source,
+      'source': fileTypesNullableToJson(instance.source),
     };

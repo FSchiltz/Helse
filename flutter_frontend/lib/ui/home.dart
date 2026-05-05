@@ -7,7 +7,7 @@ import '../logic/d_i.dart';
 import '../logic/event.dart';
 import '../logic/fit/task_bloc.dart';
 import '../logic/settings/settings_logic.dart';
-import '../services/swagger/generated_code/swagger.swagger.dart';
+import '../services/swagger/generated_code/helseapi.swagger.dart';
 import 'administration.dart';
 import 'blocs/imports/file_import.dart';
 import 'common/date_range_picker.dart';
