@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/date.dart';
-import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarView extends StatefulWidget {
@@ -87,7 +87,7 @@ class _CalendarViewState extends State<CalendarView> {
             itemCount: _selectedEvents.length,
             itemBuilder: (x, index) => Row(
               children: [
-                Text("${_selectedEvents[index].$value} at ${DateHelper.formatTime(_selectedEvents[index].date, context: x)}"),
+                Text("${_selectedEvents[index].value} at ${DateHelper.formatTime(_selectedEvents[index].date, context: x)}"),
               ],
             ),
           ),

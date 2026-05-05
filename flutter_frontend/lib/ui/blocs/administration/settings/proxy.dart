@@ -3,7 +3,7 @@ import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/common/custom_switch.dart';
 import 'package:helse/ui/common/notification.dart';
 
-import '../../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/square_text_field.dart';
 import '../../../common/loader.dart';
 

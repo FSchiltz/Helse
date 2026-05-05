@@ -1,8 +1,9 @@
 import 'dart:math';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import '../../../logic/d_i.dart';
-import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 
 class EventsSummary extends StatelessWidget {
   final List<EventSummary> events;
@@ -35,12 +36,10 @@ class EventTimeline extends StatelessWidget {
     List<Widget> chartBars = [];
 
     int tick = 0;
-    int max = data.map((x) => x.data?.values.map((y) => y as int).sum ?? 0).max;
+    int max = data.map((x) => x.data.values.map((y) => y as int).sum).max;
     var coeff = min(160 / max, 30.0);
 
     for (var d in data) {
-      var p = d.data;
-      if (p != null) {
         chartBars.add(Padding(
           padding: EdgeInsets.all(4.0 * width),
           child: Container(
@@ -50,11 +49,11 @@ class EventTimeline extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
-              children: map(p, tick, colorScheme.primary, coeff: coeff, widthCoeff: width),
+              children: map(d.data, tick, colorScheme.primary, coeff: coeff, widthCoeff: width),
             ),
           ),
         ));
-      }
+      
 
       tick++;
     }

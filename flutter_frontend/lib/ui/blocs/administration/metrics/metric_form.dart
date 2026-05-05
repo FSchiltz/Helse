@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/square_text_field.dart';
 
 import '../../../common/statefull_check.dart';
@@ -61,14 +61,14 @@ class MetricAddForm extends StatelessWidget {
         const SizedBox(height: 10),
         SquareTextField(controller: controllerUnit, icon: Icons.email_sharp, focusNode: focusNodeUnit, theme: theme, label: "Unit"),
         const SizedBox(height: 10),
-        TypeInput(
+        EnumInput(
           value: type,
           MetricDataType.values.map((x) => DropDownItem(x, x.name)).toList(),
           (value) => typeCallback.call(value),
           label: 'Type',
         ),
         const SizedBox(height: 10),
-        TypeInput(
+        EnumInput(
           value: summary,
           MetricSummary.values.map((x) => DropDownItem(x, x.name)).toList(),
           (value) => summaryCallback.call(value),

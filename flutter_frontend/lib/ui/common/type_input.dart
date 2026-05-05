@@ -8,13 +8,13 @@ class DropDownItem<T> {
   const DropDownItem(this.value, this.description);
 }
 
-class TypeInput<T> extends StatelessWidget {
+class EnumInput<T> extends StatelessWidget {
   final List<DropDownItem<T>> types;
   final void Function(T?) callback;
   final String? label;
   final T? value;
 
-  const TypeInput(this.types, this.callback, {super.key, this.label, this.value});
+  const EnumInput(this.types, this.callback, {super.key, this.label, this.value});
 
   @override
   Widget build(BuildContext context) {

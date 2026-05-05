@@ -14,7 +14,7 @@ public static class PersonLogic
 {
     /// <summary>
     /// Get the list of users/person with their rights
-    /// The caller needs to be an admin
+    /// The caller needs to be an adminInvalidType
     /// </summary>
     /// <param name="db"></param>
     /// <param name="context"></param>
@@ -200,16 +200,17 @@ public static class PersonLogic
     /// Needs adim right
     /// </summary>
     /// <param name="personId"></param>
-    /// <param name="role"></param>
+    /// <param name="roles"></param>
     /// <param name="db"></param>
     /// <returns></returns>
-    public static async Task<IResult> SetPersonRole(long personId, UserType role, IUserContext db, HttpContext context)
+    public static async Task<IResult> SetPersonRole(long personId, List<UserType> roles, IUserContext db, HttpContext context)
     {
         var admin = await db.IsAdmin(context.User);
         if (admin is not null)
             return admin;
 
-        await db.UpdateRole(personId, (int)role);
+
+        await db.UpdateRole(personId, (int)roles.Cast<Data.Models.UserType>().Aggregate((a, b) => a | b));
 
         return TypedResults.NoContent();
     }

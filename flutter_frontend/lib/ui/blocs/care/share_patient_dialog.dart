@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 import '../../../logic/d_i.dart';
 import '../../../logic/event.dart';
@@ -77,7 +77,7 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
   }
 
   List<Widget> _shareForm(List<Person> caregivers, Person patient) => [
-        TypeInput(
+        EnumInput(
             label: 'Caregiver',
             caregivers.map((x) => DropDownItem(x.id, x.userName ?? '')).toList(),
             (value) => setState(() {

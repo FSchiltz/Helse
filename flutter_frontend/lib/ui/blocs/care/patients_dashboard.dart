@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../helpers/date.dart';
-import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/date_range_picker.dart';
 import '../../patient_dashboard.dart';
 

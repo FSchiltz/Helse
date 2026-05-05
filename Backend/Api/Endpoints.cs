@@ -18,14 +18,12 @@ public static class Endpoints
         .AllowAnonymous()
         .WithDescription("Get a connection token")
         .Produces<TokenResponse>((int)HttpStatusCode.OK)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         api.MapGet("/status", AuthLogic.StatusAsync)
         .AllowAnonymous()
         .WithDescription("Check if the server install is ready")
-        .Produces<Status>((int)HttpStatusCode.OK)
-        .WithOpenApi();
+        .Produces<Status>((int)HttpStatusCode.OK);
     }
 
     public static void MapPerson(this RouteGroupBuilder api)
@@ -35,29 +33,24 @@ public static class Endpoints
         person.MapPost("/", PersonLogic.CreateAsync)
         .AllowAnonymous()
         .Produces((int)HttpStatusCode.NoContent)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         person.MapGet("/", PersonLogic.GetAsync)
         .Produces<List<Person>>((int)HttpStatusCode.OK)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         person.MapGet("/caregiver", PersonLogic.GetCaregiverAsync)
         .Produces<List<Person>>((int)HttpStatusCode.OK)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         person.MapPost("/role", PersonLogic.SetPersonRole)
             .Produces((int)HttpStatusCode.Unauthorized)
-            .Produces((int)HttpStatusCode.NoContent)
-            .WithOpenApi();
+            .Produces((int)HttpStatusCode.NoContent);
 
         var rights = person.MapGroup("/rights");
         rights.MapPost("/{personId}", PersonLogic.SetRight)
         .Produces((int)HttpStatusCode.NoContent)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        .Produces((int)HttpStatusCode.Unauthorized);
     }
 
     public static void MapPatients(this RouteGroupBuilder api)
@@ -65,18 +58,15 @@ public static class Endpoints
         var patients = api.MapGroup("/patients");
         patients.MapGet("/", PatientsLogic.GetPatientsAsync)
         .Produces<List<Person>>((int)HttpStatusCode.OK)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         patients.MapGet("/agenda", PatientsLogic.GetAgendaAsync)
         .Produces<List<Event>>((int)HttpStatusCode.OK)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         patients.MapGet("/share", PatientsLogic.SharePatient)
        .Produces((int)HttpStatusCode.NoContent)
-       .Produces((int)HttpStatusCode.Unauthorized)
-       .WithOpenApi();
+       .Produces((int)HttpStatusCode.Unauthorized);
     }
 
     public static void MapMetrics(this RouteGroupBuilder api)
@@ -85,49 +75,40 @@ public static class Endpoints
         var metrics = api.MapGroup("/metrics").RequireAuthorization();
         metrics.MapGet("/summary", MetricsLogic.GetSummaryAsync)
         .Produces<List<Metric>>((int)HttpStatusCode.OK)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         metrics.MapGet("/", MetricsLogic.GetAsync)
         .Produces<List<Metric>>((int)HttpStatusCode.OK)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         metrics.MapPost("/", MetricsLogic.CreateAsync)
         .Produces((int)HttpStatusCode.NoContent)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         metrics.MapPut("/", MetricsLogic.UpdateAsync)
         .Produces((int)HttpStatusCode.NoContent)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         metrics.MapDelete("/{id}", MetricsLogic.DeleteAsync)
         .Produces((int)HttpStatusCode.NoContent)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         var metricsType = metrics.MapGroup("/type").RequireAuthorization();
         metricsType.MapPost("/", MetricsLogic.CreateTypeAsync)
         .Produces((int)HttpStatusCode.NoContent)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         metricsType.MapPut("/", MetricsLogic.UpdateTypeAsync)
         .Produces((int)HttpStatusCode.NoContent)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         metricsType.MapDelete("/{id}", MetricsLogic.DeleteTypeAsync)
         .Produces((int)HttpStatusCode.NoContent)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         metricsType.MapGet("/", MetricsLogic.GetTypeAsync)
         .Produces<List<MetricType>>((int)HttpStatusCode.OK)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        .Produces((int)HttpStatusCode.Unauthorized);
     }
 
     public static void MapEvents(this RouteGroupBuilder api)
@@ -138,48 +119,48 @@ public static class Endpoints
         events.MapGet("/summary", EventsLogic.GetSummaryAsync)
         .Produces<EventSummary[]>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        ;
 
         events.MapGet("/", EventsLogic.GetAsync)
         .Produces<List<Event>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        ;
 
         events.MapPost("/", EventsLogic.CreateAsync)
         .Produces((int)HttpStatusCode.NoContent)
         .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        ;
 
         events.MapPut("/", EventsLogic.UpdateAsync)
         .Produces((int)HttpStatusCode.NoContent)
         .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        ;
 
         events.MapDelete("/{id}", EventsLogic.DeleteAsync)
         .Produces((int)HttpStatusCode.NoContent)
         .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        ;
 
         var eventsType = events.MapGroup("/type").RequireAuthorization();
         eventsType.MapPost("/", EventsLogic.CreateTypeAsync)
         .Produces((int)HttpStatusCode.NoContent)
         .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        ;
 
         eventsType.MapPut("/", EventsLogic.UpdateTypeAsync)
         .Produces((int)HttpStatusCode.NoContent)
         .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        ;
 
         eventsType.MapDelete("/{id}", EventsLogic.DeleteTypeAsync)
         .Produces((int)HttpStatusCode.NoContent)
         .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        ;
 
         eventsType.MapGet("/", EventsLogic.GetTypeAsync)
         .Produces<List<Api.Data.Models.EventType>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)
-        .WithOpenApi();
+        ;
     }
 
     public static void MapTreatments(this RouteGroupBuilder api)
@@ -188,19 +169,16 @@ public static class Endpoints
 
         treatment.MapPost("/", TreatmentLogic.PostAsync)
             .Produces((int)HttpStatusCode.NoContent)
-            .Produces((int)HttpStatusCode.Unauthorized)
-            .WithOpenApi();
+            .Produces((int)HttpStatusCode.Unauthorized);
 
         treatment.MapGet("/", TreatmentLogic.GetAsync)
             .Produces<List<Treatment>>((int)HttpStatusCode.OK)
-            .Produces((int)HttpStatusCode.Unauthorized)
-            .WithOpenApi();
+            .Produces((int)HttpStatusCode.Unauthorized);
 
         var eventsType = treatment.MapGroup("/type").RequireAuthorization();
         eventsType.MapGet("/", TreatmentLogic.GetTypeAsync)
             .Produces<List<Api.Data.Models.EventType>>((int)HttpStatusCode.OK)
-            .Produces((int)HttpStatusCode.Unauthorized)
-            .WithOpenApi();
+            .Produces((int)HttpStatusCode.Unauthorized);
     }
 
     public static void MapAdmin(this RouteGroupBuilder api)
@@ -210,23 +188,19 @@ public static class Endpoints
         var settings = admin.MapGroup("/settings").RequireAuthorization();
         settings.MapPost("/oauth", SettingsLogic.PostOauthAsync)
             .Produces((int)HttpStatusCode.NoContent)
-            .Produces((int)HttpStatusCode.Unauthorized)
-            .WithOpenApi();
+            .Produces((int)HttpStatusCode.Unauthorized);
 
         settings.MapGet("/oauth", SettingsLogic.GetOauthAsync)
             .Produces<Oauth>((int)HttpStatusCode.OK)
-            .Produces((int)HttpStatusCode.Unauthorized)
-            .WithOpenApi();
+            .Produces((int)HttpStatusCode.Unauthorized);
 
         settings.MapPost("/proxy", SettingsLogic.PostProxyAsync)
             .Produces((int)HttpStatusCode.NoContent)
-            .Produces((int)HttpStatusCode.Unauthorized)
-            .WithOpenApi();
+            .Produces((int)HttpStatusCode.Unauthorized);
 
         settings.MapGet("/proxy", SettingsLogic.GetProxyAsync)
             .Produces<Proxy>((int)HttpStatusCode.OK)
-            .Produces((int)HttpStatusCode.Unauthorized)
-            .WithOpenApi();
+            .Produces((int)HttpStatusCode.Unauthorized);
     }
 
     public static void MapEnpoints(this RouteGroupBuilder api)
@@ -246,17 +220,14 @@ public static class Endpoints
         var import = api.MapGroup("/import").RequireAuthorization();
         import.MapGet("/types", ImportLogic.GetImportTypes)
             .Produces<List<FileType>>((int)HttpStatusCode.OK)
-            .Produces((int)HttpStatusCode.Unauthorized)
-            .WithOpenApi();
+            .Produces((int)HttpStatusCode.Unauthorized);
 
         import.MapPost("/{type}", ImportLogic.PostFileAsync)
             .Produces((int)HttpStatusCode.NoContent)
-            .Produces((int)HttpStatusCode.Unauthorized)
-            .WithOpenApi();
+            .Produces((int)HttpStatusCode.Unauthorized);
 
         import.MapPost("/", ImportLogic.PostListAsync)
             .Produces((int)HttpStatusCode.NoContent)
-            .Produces((int)HttpStatusCode.Unauthorized)
-            .WithOpenApi();
+            .Produces((int)HttpStatusCode.Unauthorized);
     }
 }

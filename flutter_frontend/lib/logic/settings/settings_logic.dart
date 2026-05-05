@@ -8,7 +8,7 @@ import 'package:helse/logic/settings/health_settings.dart';
 import 'package:helse/logic/settings/metrics_settings.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
 import 'package:helse/logic/settings/theme_settings.dart';
-import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../services/account.dart';
@@ -126,10 +126,10 @@ class SettingsLogic {
       var existing = metrics.metrics.firstWhereOrNull((element) => element.name == metric.name);
       if (existing != null) {
         // already there, just update the name
-        existing.name = metric.name ?? '';
+        existing.name = metric.name;
       } else {
         if (metric.id != null) {
-          metrics.metrics.add(OrderedItem(metric.id!, metric.name ?? '', GraphKind.bar, GraphKind.line));
+          metrics.metrics.add(OrderedItem(metric.id!, metric.name, GraphKind.bar, GraphKind.line));
         }
       }
     }
@@ -143,10 +143,10 @@ class SettingsLogic {
       var existing = events.events.firstWhereOrNull((element) => element.name == event.name);
       if (existing != null) {
         // already there, just update the name
-        existing.name = event.name ?? '';
+        existing.name = event.name;
       } else {
         if (event.id != null) {
-          events.events.add(OrderedItem(event.id!, event.name ?? '', GraphKind.event, GraphKind.event));
+          events.events.add(OrderedItem(event.id!, event.name, GraphKind.event, GraphKind.event));
         }
       }
     }

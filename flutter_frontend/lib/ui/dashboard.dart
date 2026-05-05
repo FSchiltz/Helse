@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
 
-import '../helpers/users.dart';
 import '../services/swagger/generated_code/helseapi.swagger.dart';
 import 'care_dashboard.dart';
 import 'patient_dashboard.dart';
 
 class Dashboard extends StatelessWidget {
   final DateTimeRange date;
-  final UserType? type;
-  const Dashboard({super.key, required this.date, this.type});
+  final List<UserType> types;
+  const Dashboard({super.key, required this.date,required this.types});
 
   @override
   Widget build(BuildContext context) {
     List<Widget> tabs = [];
     List<IconData> icons = [];
 
-    if (type?.isUser() == true) {
+    if (types.contains(UserType.user)) {
       icons.add(Icons.monitor_heart_sharp);
       tabs.add(PatientDashboard(date: date));
     }
 
-    if (type?.isCare() == true) {
+    if (types.contains(UserType.caregiver)) {
       icons.add(Icons.personal_injury_sharp);
       tabs.add(CareDashBoard(date: date));
     }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../logic/d_i.dart';
 import '../../../logic/event.dart';
-import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/date_input.dart';
 import '../../common/notification.dart';
 import '../../common/square_dialog.dart';
@@ -35,7 +35,7 @@ class _MetricAddState extends State<MetricAdd> {
     var edit = widget.edit;
     if (edit != null) {
       if (edit.date != null) _date = edit.date!.toLocal();
-      _value.text = edit.$value ?? '';
+      _value.text = edit.value;
       _tag.text = edit.tag ?? '';
     }
   }
@@ -112,7 +112,7 @@ class _MetricAddState extends State<MetricAdd> {
             date: _date.toUtc(),
             type: widget.type.id,
             tag: _tag.text,
-            $value: _value.text,
+            value: _value.text,
             source: FileTypes.none,
           );
           await DI.metric.updateMetrics(metric);
@@ -121,7 +121,7 @@ class _MetricAddState extends State<MetricAdd> {
             date: _date.toUtc(),
             type: widget.type.id,
             tag: _tag.text,
-            $value: _value.text,
+            value: _value.text,
             source: FileTypes.none,
           );
           await DI.metric.addMetrics(metric, person: widget.person);

@@ -4,7 +4,7 @@ import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 
 import '../../../logic/event.dart';
-import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../administration/users/user_form.dart';
 import '../../common/loader.dart';
 
@@ -35,7 +35,7 @@ class _PatientAddState extends State<PatientAdd> {
         await DI.user.addPerson(PersonCreation(
           name: _controllerName.text,
           surname: _controllerSurname.text,
-          type: UserType.patient,
+          types: [],
         ));
 
         _formKey.currentState?.reset();
@@ -87,7 +87,7 @@ class _PatientAddState extends State<PatientAdd> {
                   Text("Add a new patient",
                       style: Theme.of(context).textTheme.bodyMedium),
                   const SizedBox(height: 10),
-                  UserForm(UserType.patient,
+                  UserForm([],
                       controllerName: _controllerName,
                       controllerSurname: _controllerSurname),
                 ],

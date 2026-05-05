@@ -98,7 +98,7 @@ public class UserContext(DataConnection db) : IUserContext
                     Phone = newUser.Phone,
                     Email = newUser.Email,
                     PersonId = id,
-                    Type = (int)newUser.Types.Aggregate((a, b) => a | b),
+                    Type = (int)newUser.Types.Cast<Models.UserType>().Aggregate((a, b) => a | b),
                 });
     }
 

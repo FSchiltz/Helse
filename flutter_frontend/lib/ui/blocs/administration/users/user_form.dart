@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:helse/ui/common/password_input.dart';
 
-import '../../../../services/swagger/generated_code/swagger.enums.swagger.dart';
+import '../../../../services/swagger/generated_code/helseapi.enums.swagger.dart';
 import '../../../common/square_text_field.dart';
 
 class UserForm extends StatefulWidget {
-  final UserType? type;
+  final List<UserType> types;
 
   final TextEditingController? controllerUsername;
   final TextEditingController? controllerEmail;
@@ -15,7 +15,7 @@ class UserForm extends StatefulWidget {
   final TextEditingController controllerSurname;
 
   const UserForm(
-    this.type, {
+    this.types, {
     super.key,
     this.controllerUsername,
     this.controllerEmail,
@@ -55,37 +55,35 @@ class _UserFormState extends State<UserForm> {
             label: "Surname",
             icon: Icons.person_sharp,
             theme: theme),
-        if (widget.type != null && widget.type != UserType.patient) ...[
-          const SizedBox(height: 10),
-          SquareTextField(
-            controller: widget.controllerEmail,
-            focusNode: _focusNodeEmail,
-            label: "Email",
-            icon: Icons.email_sharp,
-            theme: theme,
-            validator: validateEmail,
-            onEditingComplete: () => _focusNodePassword.requestFocus(),
-          ),
-          const SizedBox(height: 10),
-          UserNameInput(
-            controller: widget.controllerUsername,
-            nextFocus: _focusNodePassword,
-            validate: validateUser,
-          ),
-          const SizedBox(height: 10),
-          PasswordInput(
-            controller: widget.controllerPassword,
-            nextFocus: _focusNodeConfirmPassword,
-            validate: validatePassword,
-            focus: _focusNodePassword,
-          ),
-          const SizedBox(height: 10),
-          PasswordInput(
-              text: "Confirm Password",
-              controller: widget.controllerConFirmPassword,
-              focus: _focusNodeConfirmPassword,
-              validate: validateConfirmPassword),
-        ],
+        const SizedBox(height: 10),
+        SquareTextField(
+          controller: widget.controllerEmail,
+          focusNode: _focusNodeEmail,
+          label: "Email",
+          icon: Icons.email_sharp,
+          theme: theme,
+          validator: validateEmail,
+          onEditingComplete: () => _focusNodePassword.requestFocus(),
+        ),
+        const SizedBox(height: 10),
+        UserNameInput(
+          controller: widget.controllerUsername,
+          nextFocus: _focusNodePassword,
+          validate: validateUser,
+        ),
+        const SizedBox(height: 10),
+        PasswordInput(
+          controller: widget.controllerPassword,
+          nextFocus: _focusNodeConfirmPassword,
+          validate: validatePassword,
+          focus: _focusNodePassword,
+        ),
+        const SizedBox(height: 10),
+        PasswordInput(
+            text: "Confirm Password",
+            controller: widget.controllerConFirmPassword,
+            focus: _focusNodeConfirmPassword,
+            validate: validateConfirmPassword),
       ],
     );
   }
@@ -98,7 +96,7 @@ class _UserFormState extends State<UserForm> {
 
   String? validateConfirmPassword(String? value) {
     // patient don't have password
-    if (widget.type == UserType.patient) return null;
+    if (widget.types.isEmpty) return null;
 
     if (value == null || value.isEmpty) {
       return "Please enter password.";
@@ -110,7 +108,7 @@ class _UserFormState extends State<UserForm> {
 
   String? validatePassword(String? value) {
     // patient don't have password
-    if (widget.type == UserType.patient) return null;
+    if (widget.types.isEmpty) return null;
 
     if (value == null || value.isEmpty) {
       return "Please enter password.";

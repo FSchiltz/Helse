@@ -6,7 +6,7 @@ import 'package:helse/ui/common/loader.dart';
 import '../../../logic/d_i.dart';
 import '../../../logic/settings/ordered_item.dart';
 import '../../../logic/settings/settings_logic.dart';
-import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/notification.dart';
 import 'events_widget.dart';
 
