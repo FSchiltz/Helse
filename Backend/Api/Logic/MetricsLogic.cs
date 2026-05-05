@@ -1,6 +1,8 @@
 using Api.Data;
 using Api.Helpers;
 using Api.Models;
+using Api.Models.Metrics;
+using Api.Models.Settings;
 using CsvHelper;
 using LinqToDB;
 
@@ -157,7 +159,7 @@ public static class MetricsLogic
         UserEditable = metric.UserEditable,
     }));
 
-    public static async Task<IResult> CreateTypeAsync(Models.MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> CreateTypeAsync(MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
@@ -181,7 +183,7 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> UpdateTypeAsync(Models.MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> UpdateTypeAsync(MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)

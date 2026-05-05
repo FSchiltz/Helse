@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using Api.Data;
 using Api.Models;
+using Api.Models.Settings.Admin;
 
 namespace Api.Helpers.Auth;
 

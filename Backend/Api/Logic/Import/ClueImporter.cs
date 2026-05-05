@@ -2,6 +2,7 @@ using Api.Data;
 using Api.Data.Models;
 using Api.Logic.Import.Clue;
 using Api.Models;
+using Api.Models.Metrics;
 using Newtonsoft.Json;
 
 namespace Api.Logic.Import;

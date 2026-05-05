@@ -1,6 +1,6 @@
 import 'package:helse/services/api_service.dart';
 
-import 'swagger/generated_code/swagger.swagger.dart';
+import 'swagger/generated_code/helseapi.swagger.dart';
 
 class UserService extends ApiService {
   UserService(super.account);
@@ -13,7 +13,7 @@ class UserService extends ApiService {
   Future<void> addPerson(PersonCreation person) async {
     var api = await getService();
 
-    await call(() => api.apiPersonPost(body: person));
+    await call<void>(() => api.apiPersonPost(body: person));
   }
 
   Future<List<Person>?> patients() async {
@@ -23,12 +23,12 @@ class UserService extends ApiService {
 
   Future<void> updatePersonRole(int personId, UserType type) async {
     var api = await getService();
-    await call(() => api.apiPersonRolePost(personId: personId, role: type));
+    await call<void>(() => api.apiPersonRolePost(personId: personId, role: type));
   }
 
   Future<List<Person>> caregiver() async {
     var api = await getService();
-    return await call(api.apiPersonCaregiverGet) ?? [];
+    return await call<List<Person>>(api.apiPersonCaregiverGet) ?? [];
   }
 
   Future<void> sharePatient({required int patient, required int caregiver, required bool edit }) async {

@@ -1,5 +1,8 @@
+using System.Text.Json.Serialization;
+
 namespace Api.Models;
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
 [Flags]
 public enum UserType
 {

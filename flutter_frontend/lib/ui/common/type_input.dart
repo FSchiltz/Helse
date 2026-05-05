@@ -22,7 +22,7 @@ class TypeInput<T> extends StatelessWidget {
 
     return DropdownButtonFormField(
       onChanged: callback,
-      value: value,
+      initialValue: value,
       items: types.map((type) => DropdownMenuItem(value: type.value, child: Text(type.description))).toList(),
       decoration: InputDecoration(
         labelText: label ?? 'Type',

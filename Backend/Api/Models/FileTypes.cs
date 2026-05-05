@@ -1,11 +1,13 @@
 
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace Api.Models;
 
 /// <summary>
 /// Import file type supported by the app
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum FileTypes
 {
     /// <summary>

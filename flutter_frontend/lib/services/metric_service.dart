@@ -1,5 +1,5 @@
 import 'api_service.dart';
-import 'swagger/generated_code/swagger.swagger.dart';
+import 'swagger/generated_code/helseapi.swagger.dart';
 
 class MetricService extends ApiService {
   MetricService(super.account);

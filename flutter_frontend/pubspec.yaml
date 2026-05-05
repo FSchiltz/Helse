@@ -53,13 +53,13 @@ dependencies:
   fl_chart: ^1.2.0
   url_launcher: ^6.3.2
   app_links: ^7.0.0
-  fluttertoast: ^8.2.5
+  fluttertoast: ^9.0.0
   async: ^2.13.1
   toastification: ^3.0.3
   flutter_localizations:
     sdk: flutter
   bloc: ^9.2.0
-  health: ^12.0.1
+  health: ^13.3.1
   permission_handler: ^12.0.1
   table_calendar: ^3.1.2
   graphic: ^2.7.0

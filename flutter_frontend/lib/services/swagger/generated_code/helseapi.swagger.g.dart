@@ -1,14 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'swagger.swagger.dart';
+part of 'helseapi.swagger.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
 Connection _$ConnectionFromJson(Map<String, dynamic> json) => Connection(
-      user: json['user'] as String?,
-      password: json['password'] as String?,
+      user: json['user'] as String,
+      password: json['password'] as String,
       redirect: json['redirect'] as String?,
     );
 
@@ -42,19 +42,19 @@ Map<String, dynamic> _$CreateEventToJson(CreateEvent instance) =>
 CreateMetric _$CreateMetricFromJson(Map<String, dynamic> json) => CreateMetric(
       date:
           json['date'] == null ? null : DateTime.parse(json['date'] as String),
-      $value: json['value'] as String?,
+      value: json['value'] as String,
       tag: json['tag'] as String?,
       type: (json['type'] as num?)?.toInt(),
-      source: fileTypesNullableFromJson(json['source']),
+      source: (json['source'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$CreateMetricToJson(CreateMetric instance) =>
     <String, dynamic>{
       'date': instance.date?.toIso8601String(),
-      'value': instance.$value,
+      'value': instance.value,
       'tag': instance.tag,
       'type': instance.type,
-      'source': fileTypesNullableToJson(instance.source),
+      'source': instance.source,
     };
 
 CreateTreatment _$CreateTreatmentFromJson(Map<String, dynamic> json) =>
@@ -73,6 +73,13 @@ Map<String, dynamic> _$CreateTreatmentToJson(CreateTreatment instance) =>
     };
 
 Event _$EventFromJson(Map<String, dynamic> json) => Event(
+      user: (json['user'] as num?)?.toInt(),
+      file: (json['file'] as num?)?.toInt(),
+      treatment: (json['treatment'] as num?)?.toInt(),
+      id: (json['id'] as num?)?.toInt(),
+      person: (json['person'] as num?)?.toInt(),
+      valid: json['valid'] as bool?,
+      address: (json['address'] as num?)?.toInt(),
       type: (json['type'] as num?)?.toInt(),
       description: json['description'] as String?,
       start: json['start'] == null
@@ -81,21 +88,9 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       stop:
           json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
       tag: json['tag'] as String?,
-      user: (json['user'] as num?)?.toInt(),
-      file: (json['file'] as num?)?.toInt(),
-      treatment: (json['treatment'] as num?)?.toInt(),
-      id: (json['id'] as num?)?.toInt(),
-      person: (json['person'] as num?)?.toInt(),
-      valid: json['valid'] as bool?,
-      address: (json['address'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
-      'type': instance.type,
-      'description': instance.description,
-      'start': instance.start?.toIso8601String(),
-      'stop': instance.stop?.toIso8601String(),
-      'tag': instance.tag,
       'user': instance.user,
       'file': instance.file,
       'treatment': instance.treatment,
@@ -103,10 +98,15 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'person': instance.person,
       'valid': instance.valid,
       'address': instance.address,
+      'type': instance.type,
+      'description': instance.description,
+      'start': instance.start?.toIso8601String(),
+      'stop': instance.stop?.toIso8601String(),
+      'tag': instance.tag,
     };
 
 EventSummary _$EventSummaryFromJson(Map<String, dynamic> json) => EventSummary(
-      data: json['data'] as Map<String, dynamic>?,
+      data: json['data'] as Map<String, dynamic>,
     );
 
 Map<String, dynamic> _$EventSummaryToJson(EventSummary instance) =>
@@ -116,7 +116,7 @@ Map<String, dynamic> _$EventSummaryToJson(EventSummary instance) =>
 
 EventType _$EventTypeFromJson(Map<String, dynamic> json) => EventType(
       id: (json['id'] as num?)?.toInt(),
-      name: json['name'] as String?,
+      name: json['name'] as String,
       description: json['description'] as String?,
       standAlone: json['standAlone'] as bool?,
       userEditable: json['userEditable'] as bool?,
@@ -133,7 +133,7 @@ Map<String, dynamic> _$EventTypeToJson(EventType instance) => <String, dynamic>{
     };
 
 FileType _$FileTypeFromJson(Map<String, dynamic> json) => FileType(
-      type: (json['type'] as num?)?.toInt(),
+      type: (json['type'] as num).toInt(),
       name: json['name'] as String?,
     );
 
@@ -160,7 +160,7 @@ Map<String, dynamic> _$ImportDataToJson(ImportData instance) =>
     };
 
 ImportFile _$ImportFileFromJson(Map<String, dynamic> json) => ImportFile(
-      content: json['content'] as String?,
+      content: json['content'] as String,
     );
 
 Map<String, dynamic> _$ImportFileToJson(ImportFile instance) =>
@@ -169,34 +169,34 @@ Map<String, dynamic> _$ImportFileToJson(ImportFile instance) =>
     };
 
 Metric _$MetricFromJson(Map<String, dynamic> json) => Metric(
-      date:
-          json['date'] == null ? null : DateTime.parse(json['date'] as String),
-      $value: json['value'] as String?,
-      tag: json['tag'] as String?,
-      type: (json['type'] as num?)?.toInt(),
-      source: fileTypesNullableFromJson(json['source']),
       id: (json['id'] as num?)?.toInt(),
       person: (json['person'] as num?)?.toInt(),
       user: (json['user'] as num?)?.toInt(),
+      date:
+          json['date'] == null ? null : DateTime.parse(json['date'] as String),
+      value: json['value'] as String,
+      tag: json['tag'] as String?,
+      type: (json['type'] as num?)?.toInt(),
+      source: (json['source'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$MetricToJson(Metric instance) => <String, dynamic>{
-      'date': instance.date?.toIso8601String(),
-      'value': instance.$value,
-      'tag': instance.tag,
-      'type': instance.type,
-      'source': fileTypesNullableToJson(instance.source),
       'id': instance.id,
       'person': instance.person,
       'user': instance.user,
+      'date': instance.date?.toIso8601String(),
+      'value': instance.value,
+      'tag': instance.tag,
+      'type': instance.type,
+      'source': instance.source,
     };
 
 MetricType _$MetricTypeFromJson(Map<String, dynamic> json) => MetricType(
-      name: json['name'] as String?,
+      name: json['name'] as String,
       unit: json['unit'] as String?,
-      summaryType: metricSummaryNullableFromJson(json['summaryType']),
+      summaryType: (json['summaryType'] as num?)?.toInt(),
       description: json['description'] as String?,
-      type: metricDataTypeNullableFromJson(json['type']),
+      type: (json['type'] as num?)?.toInt(),
       id: (json['id'] as num?)?.toInt(),
       userEditable: json['userEditable'] as bool?,
       visible: json['visible'] as bool?,
@@ -206,9 +206,9 @@ Map<String, dynamic> _$MetricTypeToJson(MetricType instance) =>
     <String, dynamic>{
       'name': instance.name,
       'unit': instance.unit,
-      'summaryType': metricSummaryNullableToJson(instance.summaryType),
+      'summaryType': instance.summaryType,
       'description': instance.description,
-      'type': metricDataTypeNullableToJson(instance.type),
+      'type': instance.type,
       'id': instance.id,
       'userEditable': instance.userEditable,
       'visible': instance.visible,
@@ -235,6 +235,7 @@ Map<String, dynamic> _$OauthToJson(Oauth instance) => <String, dynamic>{
     };
 
 Person _$PersonFromJson(Map<String, dynamic> json) => Person(
+      id: (json['id'] as num?)?.toInt(),
       name: json['name'] as String?,
       surname: json['surname'] as String?,
       identifier: json['identifier'] as String?,
@@ -243,28 +244,27 @@ Person _$PersonFromJson(Map<String, dynamic> json) => Person(
           : DateTime.parse(json['birth'] as String),
       userName: json['userName'] as String?,
       password: json['password'] as String?,
-      type: userTypeNullableFromJson(json['type']),
+      type: (json['type'] as num?)?.toInt(),
       email: json['email'] as String?,
       phone: json['phone'] as String?,
       rights: (json['rights'] as List<dynamic>?)
               ?.map((e) => Right.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      id: (json['id'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$PersonToJson(Person instance) => <String, dynamic>{
+      'id': instance.id,
       'name': instance.name,
       'surname': instance.surname,
       'identifier': instance.identifier,
       'birth': instance.birth?.toIso8601String(),
       'userName': instance.userName,
       'password': instance.password,
-      'type': userTypeNullableToJson(instance.type),
+      'type': instance.type,
       'email': instance.email,
       'phone': instance.phone,
       'rights': instance.rights?.map((e) => e.toJson()).toList(),
-      'id': instance.id,
     };
 
 PersonCreation _$PersonCreationFromJson(Map<String, dynamic> json) =>
@@ -277,7 +277,7 @@ PersonCreation _$PersonCreationFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['birth'] as String),
       userName: json['userName'] as String?,
       password: json['password'] as String?,
-      type: userTypeNullableFromJson(json['type']),
+      type: (json['type'] as num?)?.toInt(),
       email: json['email'] as String?,
       phone: json['phone'] as String?,
       rights: (json['rights'] as List<dynamic>?)
@@ -294,7 +294,7 @@ Map<String, dynamic> _$PersonCreationToJson(PersonCreation instance) =>
       'birth': instance.birth?.toIso8601String(),
       'userName': instance.userName,
       'password': instance.password,
-      'type': userTypeNullableToJson(instance.type),
+      'type': instance.type,
       'email': instance.email,
       'phone': instance.phone,
       'rights': instance.rights?.map((e) => e.toJson()).toList(),
@@ -320,7 +320,7 @@ Right _$RightFromJson(Map<String, dynamic> json) => Right(
           : DateTime.parse(json['start'] as String),
       stop:
           json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
-      type: rightTypeNullableFromJson(json['type']),
+      type: (json['type'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$RightToJson(Right instance) => <String, dynamic>{
@@ -328,16 +328,16 @@ Map<String, dynamic> _$RightToJson(Right instance) => <String, dynamic>{
       'userId': instance.userId,
       'start': instance.start?.toIso8601String(),
       'stop': instance.stop?.toIso8601String(),
-      'type': rightTypeNullableToJson(instance.type),
+      'type': instance.type,
     };
 
 Status _$StatusFromJson(Map<String, dynamic> json) => Status(
-      init: json['init'] as bool?,
-      externalAuth: json['externalAuth'] as bool?,
+      init: json['init'] as bool,
+      externalAuth: json['externalAuth'] as bool,
       error: json['error'] as String?,
       oauth: json['oauth'] as String?,
       oauthId: json['oauthId'] as String?,
-      autoLogin: json['autoLogin'] as bool?,
+      autoLogin: json['autoLogin'] as bool,
     );
 
 Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
@@ -351,8 +351,8 @@ Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
 
 TokenResponse _$TokenResponseFromJson(Map<String, dynamic> json) =>
     TokenResponse(
-      accessToken: json['accessToken'] as String?,
-      refreshToken: json['refreshToken'] as String?,
+      accessToken: json['accessToken'] as String,
+      refreshToken: json['refreshToken'] as String,
     );
 
 Map<String, dynamic> _$TokenResponseToJson(TokenResponse instance) =>
@@ -366,16 +366,17 @@ Treatement _$TreatementFromJson(Map<String, dynamic> json) => Treatement(
               ?.map((e) => Event.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      type: treatmentTypeNullableFromJson(json['type']),
+      type: (json['type'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$TreatementToJson(Treatement instance) =>
     <String, dynamic>{
       'events': instance.events?.map((e) => e.toJson()).toList(),
-      'type': treatmentTypeNullableToJson(instance.type),
+      'type': instance.type,
     };
 
 UpdateEvent _$UpdateEventFromJson(Map<String, dynamic> json) => UpdateEvent(
+      id: (json['id'] as num?)?.toInt(),
       type: (json['type'] as num?)?.toInt(),
       description: json['description'] as String?,
       start: json['start'] == null
@@ -384,35 +385,34 @@ UpdateEvent _$UpdateEventFromJson(Map<String, dynamic> json) => UpdateEvent(
       stop:
           json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
       tag: json['tag'] as String?,
-      id: (json['id'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$UpdateEventToJson(UpdateEvent instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'type': instance.type,
       'description': instance.description,
       'start': instance.start?.toIso8601String(),
       'stop': instance.stop?.toIso8601String(),
       'tag': instance.tag,
-      'id': instance.id,
     };
 
 UpdateMetric _$UpdateMetricFromJson(Map<String, dynamic> json) => UpdateMetric(
+      id: (json['id'] as num?)?.toInt(),
       date:
           json['date'] == null ? null : DateTime.parse(json['date'] as String),
-      $value: json['value'] as String?,
+      value: json['value'] as String,
       tag: json['tag'] as String?,
       type: (json['type'] as num?)?.toInt(),
-      source: fileTypesNullableFromJson(json['source']),
-      id: (json['id'] as num?)?.toInt(),
+      source: (json['source'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$UpdateMetricToJson(UpdateMetric instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'date': instance.date?.toIso8601String(),
-      'value': instance.$value,
+      'value': instance.value,
       'tag': instance.tag,
       'type': instance.type,
-      'source': fileTypesNullableToJson(instance.source),
-      'id': instance.id,
+      'source': instance.source,
     };

@@ -1,6 +1,7 @@
 using Api.Data;
 using Api.Helpers.Auth;
-using Api.Models;
+using Api.Models.Persons;
+using Api.Models.Settings;
 
 namespace Api.Helpers;
 

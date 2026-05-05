@@ -2,6 +2,8 @@ using Api.Data;
 using Api.Helpers;
 using Api.Helpers.Auth;
 using Api.Models;
+using Api.Models.Persons;
+using Api.Models.Settings;
 using LinqToDB;
 
 namespace Api.Logic;
@@ -97,7 +99,7 @@ public static class PersonLogic
     /// <param name="users"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static async Task<IResult> SetRight(long personId, List<Models.Right> rights, IUserContext users, HttpContext context)
+    public static async Task<IResult> SetRight(long personId, List<Right> rights, IUserContext users, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
@@ -129,7 +131,7 @@ public static class PersonLogic
         return TypedResults.NoContent();
     }
 
-    private static void ValidateUser(Models.PersonCreation user)
+    private static void ValidateUser(PersonCreation user)
     {
         // validate Patient
         if (user.Name == null)
@@ -148,7 +150,7 @@ public static class PersonLogic
     /// Only admin role unless no user exists (App setup) or caregiver if the new person is only a patient(no connection)
     /// </summary>
     /// <returns></returns>
-    public static async Task<IResult> CreateAsync(Models.PersonCreation newUser, IUserContext db, HttpContext context, ILoggerFactory logger)
+    public static async Task<IResult> CreateAsync(PersonCreation newUser, IUserContext db, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger(nameof(PersonLogic));
 

@@ -9,45 +9,12 @@ using LinqToDB.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.AddEnumsWithValuesFixFilters();
-    // Configure swagger to use the jwt
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Helse Api",
-        Version = "v1"
-    });
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
-    });
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement {
-    {
-      new OpenApiSecurityScheme {
-          Reference = new OpenApiReference {
-              Type = ReferenceType.SecurityScheme,
-              Id = "Bearer"
-          }
-      },
-      Array.Empty<string>()
-    }
-  });
-});
+builder.Services.AddOpenApi("helseapi");
 
 //services cors
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder => builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader()));
@@ -107,9 +74,8 @@ builder.Services.AddAuthorizationBuilder()
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-app.UseSwagger();
-app.UseSwaggerUI();
+app.MapOpenApi("/openapi/{documentName}.json");
+app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/helseapi.json", "api"));
 
 app.UseCors("corsapp");
 app.UseAuthentication();
@@ -121,8 +87,7 @@ app.UseStaticFiles();
 var api = app.MapGroup("/api");
 api.MapEnpoints();
 
-var inMemory = app.Configuration.GetValue<bool>("InTest");
-MigrationHelper.Init(connection, inMemory, app.Logger);
+MigrationHelper.Init(connection, app.Logger);
 
 app.Run();
 

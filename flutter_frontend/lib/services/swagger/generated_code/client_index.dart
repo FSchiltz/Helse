@@ -1,2 +1,2 @@
-export 'swagger.swagger.dart' show Swagger;
-export 'swagger.swagger.dart' show Swagger;
+export 'helseapi.swagger.dart' show Helseapi;
+export 'helseapi.swagger.dart' show Helseapi;

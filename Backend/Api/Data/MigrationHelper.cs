@@ -5,18 +5,13 @@ namespace Api.Data;
 
 public static class MigrationHelper
 {
-    public static void Init(string connection, bool inMemory, ILogger logger)
+    public static void Init(string connection,ILogger logger)
     {
-        if (inMemory)
-        {
-            return;
-        }
-
         EnsureDatabase.For.PostgresqlDatabase(connection);
 
         var result = DeployChanges.To.PostgresqlDatabase(connection)
             .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
-            .LogToAutodetectedLog()
+            .LogTo(logger)
             .Build()
             .PerformUpgrade();
 

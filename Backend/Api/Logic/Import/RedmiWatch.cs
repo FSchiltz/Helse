@@ -2,6 +2,8 @@ using System.Globalization;
 using Api.Data;
 using Api.Logic.Import.Redmi;
 using Api.Models;
+using Api.Models.Events;
+using Api.Models.Metrics;
 using CsvHelper;
 using Newtonsoft.Json;
 

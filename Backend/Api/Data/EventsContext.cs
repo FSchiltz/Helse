@@ -1,5 +1,8 @@
 using System.Data;
 using Api.Data.Models;
+using Api.Models.Events;
+using Api.Models.Metrics;
+using Api.Models.Settings;
 using LinqToDB;
 using LinqToDB.Data;
 using LinqToDB.Mapping;
@@ -8,7 +11,7 @@ namespace Api.Data;
 
 public interface IHealthContext : IContext
 {
-    Task Insert(Api.Models.CreateEvent e, long person, long user);
+    Task Insert(CreateEvent e, long person, long user);
     Task<Event?> GetEvent(long id);
     Task<List<Event>> GetEvents(long id, int type, DateTime start, DateTime end);
     Task DeleteEvent(long id);
@@ -27,12 +30,12 @@ public interface IHealthContext : IContext
     Task DeleteMetric(long id);
     Task<Metric?> GetMetric(long id);
     Task<Metric[]> GetMetrics(long id, long type, DateTime start, DateTime end);
-    Task<Metric[]> GetSummaryMetrics(int tile, long id, int type, Api.Models.MetricSummary action, DateTime start, DateTime end);
-    Task Insert(Api.Models.CreateMetric metric, long person, long id);
-    Task Update(Api.Models.UpdateMetric metric);
+    Task<Metric[]> GetSummaryMetrics(int tile, long id, int type, MetricSummary action, DateTime start, DateTime end);
+    Task Insert(CreateMetric metric, long person, long id);
+    Task Update(UpdateMetric metric);
 
-    Task<List<Person>> GetPatients(long id, DateTime now, Api.Models.RightType view);
-    Task<List<Event>> GetEvents(long id, Api.Models.RightType view, DateTime start, DateTime end);
+    Task<List<Person>> GetPatients(long id, DateTime now, RightType view);
+    Task<List<Event>> GetEvents(long id, RightType view, DateTime start, DateTime end);
     Task<List<Event>> GetEvents(long id, DateTime start, DateTime end);
 
     Task<bool> ExistsEvent(long person, string tag);
@@ -87,7 +90,7 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task Insert(Api.Models.CreateEvent e, long person, long user)
+    public Task Insert(CreateEvent e, long person, long user)
     {
         return db.GetTable<Event>().InsertAsync(() => new Event
         {
@@ -141,7 +144,7 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task<List<Event>> GetEvents(long user, Api.Models.RightType view, DateTime start, DateTime end)
+    public Task<List<Event>> GetEvents(long user, RightType view, DateTime start, DateTime end)
     {
         return (from e in db.GetTable<Data.Models.Event>()
                 join r in db.GetTable<Data.Models.Right>() on e.PersonId equals r.PersonId
@@ -202,7 +205,7 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task<List<Person>> GetPatients(long user, DateTime now, Api.Models.RightType right)
+    public Task<List<Person>> GetPatients(long user, DateTime now, RightType right)
     {
         return (from u in db.GetTable<Person>()
                 join r in db.GetTable<Right>() on u.Id equals r.PersonId
@@ -260,7 +263,7 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task Insert(Api.Models.CreateMetric metric, long person, long user)
+    public Task Insert(CreateMetric metric, long person, long user)
     {
         return db.GetTable<Metric>().InsertAsync(() => new Metric
         {
@@ -317,7 +320,7 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public async Task<Metric[]> GetSummaryMetrics(int tile, long id, int type, Api.Models.MetricSummary action, DateTime start, DateTime end)
+    public async Task<Metric[]> GetSummaryMetrics(int tile, long id, int type, MetricSummary action, DateTime start, DateTime end)
     {
         // Use a manual command to use the SQL function NTILE
         var groups = db.FromSql<ChunkedMetric>($"SELECT NTILE({tile}) OVER (ORDER BY date) as chunk,* FROM health.metric m WHERE m.PersonId = {id} AND m.Type = {type} AND m.Date <= {end} AND m.Date >= {start}")
@@ -325,13 +328,13 @@ public class HealthContext(DataConnection db) : IHealthContext
          .GroupBy(x => x.Chunk);
         IQueryable<Chunked> query = action switch
         {
-            Api.Models.MetricSummary.Mean => groups.Select(x => new Chunked
+            MetricSummary.Mean => groups.Select(x => new Chunked
             {
                 Chunk = x.Key,
                 Date = x.Min(y => y.Date),
                 Value = x.Average(y => Sql.Convert<double, string>(y.Value)).ToString(),
             }),
-            Api.Models.MetricSummary.Sum => groups.Select(x => new Chunked
+            MetricSummary.Sum => groups.Select(x => new Chunked
             {
                 Chunk = x.Key,
                 Date = x.Min(y => y.Date),
@@ -368,7 +371,7 @@ public class HealthContext(DataConnection db) : IHealthContext
                 .SingleOrDefaultAsync();
     }
 
-    public Task Update(Api.Models.UpdateMetric metric)
+    public Task Update(UpdateMetric metric)
     {
         return db.GetTable<Metric>()
             .Where(x => x.Id == metric.Id)

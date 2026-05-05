@@ -1,6 +1,6 @@
 import 'package:helse/services/api_service.dart';
 
-import 'swagger/generated_code/swagger.swagger.dart';
+import 'swagger/generated_code/helseapi.swagger.dart';
 
 class SettingService extends ApiService {
   SettingService(super.account);

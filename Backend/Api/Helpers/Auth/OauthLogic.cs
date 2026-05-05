@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using Api.Data;
 using Api.Models;
+using Api.Models.Settings.Admin;
 
 namespace Api.Helpers.Auth;
 

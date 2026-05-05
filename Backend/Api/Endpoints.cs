@@ -1,7 +1,11 @@
 using System.Net;
 using Api.Logic;
 using Api.Logic.Auth;
-using Api.Models;
+using Api.Models.Events;
+using Api.Models.Metrics;
+using Api.Models.Persons;
+using Api.Models.Settings.Admin;
+using Api.Models.Treatments;
 
 namespace Api;
 
@@ -35,12 +39,12 @@ public static class Endpoints
         .WithOpenApi();
 
         person.MapGet("/", PersonLogic.GetAsync)
-        .Produces<List<Api.Models.Person>>((int)HttpStatusCode.OK)
+        .Produces<List<Person>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
 
         person.MapGet("/caregiver", PersonLogic.GetCaregiverAsync)
-        .Produces<List<Api.Models.Person>>((int)HttpStatusCode.OK)
+        .Produces<List<Person>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
 
@@ -60,12 +64,12 @@ public static class Endpoints
     {
         var patients = api.MapGroup("/patients");
         patients.MapGet("/", PatientsLogic.GetPatientsAsync)
-        .Produces<List<Api.Models.Person>>((int)HttpStatusCode.OK)
+        .Produces<List<Person>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
 
         patients.MapGet("/agenda", PatientsLogic.GetAgendaAsync)
-        .Produces<List<Api.Models.Event>>((int)HttpStatusCode.OK)
+        .Produces<List<Event>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
 
@@ -80,12 +84,12 @@ public static class Endpoints
         /* Metrics endpoints*/
         var metrics = api.MapGroup("/metrics").RequireAuthorization();
         metrics.MapGet("/summary", MetricsLogic.GetSummaryAsync)
-        .Produces<List<Api.Models.Metric>>((int)HttpStatusCode.OK)
+        .Produces<List<Metric>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
 
         metrics.MapGet("/", MetricsLogic.GetAsync)
-        .Produces<List<Api.Models.Metric>>((int)HttpStatusCode.OK)
+        .Produces<List<Metric>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
 
@@ -121,7 +125,7 @@ public static class Endpoints
         .WithOpenApi();
 
         metricsType.MapGet("/", MetricsLogic.GetTypeAsync)
-        .Produces<List<Api.Models.MetricType>>((int)HttpStatusCode.OK)
+        .Produces<List<MetricType>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
     }
@@ -137,7 +141,7 @@ public static class Endpoints
         .WithOpenApi();
 
         events.MapGet("/", EventsLogic.GetAsync)
-        .Produces<List<Api.Models.Event>>((int)HttpStatusCode.OK)
+        .Produces<List<Event>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)
         .WithOpenApi();
 
@@ -188,7 +192,7 @@ public static class Endpoints
             .WithOpenApi();
 
         treatment.MapGet("/", TreatmentLogic.GetAsync)
-            .Produces<List<Api.Models.Treatement>>((int)HttpStatusCode.OK)
+            .Produces<List<Treatment>>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized)
             .WithOpenApi();
 

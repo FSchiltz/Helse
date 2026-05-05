@@ -3,6 +3,7 @@ using Api.Data;
 using Api.Data.Models;
 using Api.Helpers.Auth;
 using Api.Models;
+using Api.Models.Settings;
 
 namespace Api.Helpers;
 

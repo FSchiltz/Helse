@@ -3,6 +3,7 @@ using Api.Data;
 using Api.Data.Models;
 using Api.Logic;
 using Api.Models;
+using Api.Models.Metrics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;

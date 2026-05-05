@@ -1,4 +1,4 @@
-using Api.Models;
+using Api.Models.Events;
 
 namespace Api.Helpers;
 

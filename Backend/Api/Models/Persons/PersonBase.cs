@@ -1,12 +1,6 @@
-namespace Api.Models;
+using Api.Models.Settings;
 
-public class Person : PersonBase
-{
-
-    public long Id { get; set; }
-}
-
-public class PersonCreation : PersonBase { }
+namespace Api.Models.Persons;
 
 public abstract class PersonBase
 {

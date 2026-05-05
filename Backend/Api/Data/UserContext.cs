@@ -1,5 +1,8 @@
 using Api.Data.Models;
-using Api.Models;
+using Api.Models.Events;
+using Api.Models.Persons;
+using Api.Models.Settings;
+using Api.Models.Treatments;
 using LinqToDB;
 using LinqToDB.Data;
 
@@ -15,7 +18,7 @@ public interface IUserContext : IContext
 
     Task<PersonFromDb?> Get(string? identifier);
 
-    Task<Api.Models.Right?> HasRightAsync(long id, long personId, RightType type, DateTime now);
+    Task<Api.Models.Settings.Right?> HasRightAsync(long id, long personId, RightType type, DateTime now);
     Task<long> InsertPerson(PersonCreation newUser);
     Task InsertUser(PersonCreation newUser, long id, string password);
     Task UpdatePassword(long user, string password);
@@ -37,7 +40,7 @@ public class UserContext(DataConnection db) : IUserContext
     /// <param name="type"></param>
     /// <param name="time"></param>
     /// <returns></returns>
-    public async Task<Api.Models.Right?> HasRightAsync(long user, long person, RightType type, DateTime time)
+    public async Task<Api.Models.Settings.Right?> HasRightAsync(long user, long person, RightType type, DateTime time)
      => (await db.GetTable<Data.Models.Right>()
         .Where(x => x.UserId == user
             && x.PersonId == person
