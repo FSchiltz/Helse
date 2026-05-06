@@ -4,6 +4,8 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using Api.Data;
 using Api.Models;
+using Api.Models.Persons;
+using Api.Models.Settings.Admin;
 
 namespace Api.Helpers.Auth;
 
@@ -37,7 +39,7 @@ public static class OauthHelper
                 {
                     UserName = token.User,
                     Password = RandomNumberGenerator.GetInt32(100000000, int.MaxValue).ToString(),
-                    Type = UserType.User,
+                    Types = [UserType.User],
                     Name = token.Name,
                 }, 0);
                 logged = true;

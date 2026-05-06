@@ -1,5 +1,5 @@
 # Build the backend on microsoft image
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
 # Building the backend
 WORKDIR /source
@@ -35,7 +35,7 @@ RUN flutter build web
 
 
 # final stage/image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
 WORKDIR /app
 ## Copy the backend
 COPY --from=build /backend ./

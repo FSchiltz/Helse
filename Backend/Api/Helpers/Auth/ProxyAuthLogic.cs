@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using Api.Data;
-using Api.Models;
+using Api.Models.Persons;
+using Api.Models.Settings.Admin;
 
 namespace Api.Helpers.Auth;
 
@@ -40,7 +41,7 @@ public static class ProxyAuthHelper
                 {
                     UserName = header,
                     Password = RandomNumberGenerator.GetInt32(100000000, int.MaxValue).ToString(),
-                    Type = UserType.User
+                    Types = [UserType.User],
                 }, 0);
                 logged = true;
                 fromDb = await db.TokenFromDb(header);

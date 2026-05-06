@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/common/password_input.dart';
 import '../logic/event.dart';
-import '../services/swagger/generated_code/swagger.swagger.dart';
+import '../services/swagger/generated_code/helseapi.swagger.dart';
 import 'blocs/administration/users/user_form.dart';
 import 'common/loader.dart';
 import 'common/notification.dart';
@@ -103,7 +103,7 @@ class _LoginState extends State<LoginPage> {
                                               Text("This is the admin account for the server", style: Theme.of(context).textTheme.bodyLarge),
                                               const SizedBox(height: 20),
                                               UserForm(
-                                                UserType.admin,
+                                                [UserType.admin],
                                                 controllerUsername: _controllerUsername,
                                                 controllerEmail: _controllerEmail,
                                                 controllerPassword: _controllerPassword,
@@ -308,7 +308,7 @@ class _LoginState extends State<LoginPage> {
         );
       } else {
         var person = PersonCreation(
-          type: UserType.admin,
+          types: [UserType.admin],
           userName: user,
           password: password,
           name: _controllerName.text,

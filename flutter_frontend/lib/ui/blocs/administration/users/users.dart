@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 
-import '../../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/loader.dart';
 import 'user_add.dart';
 import 'user_change_role.dart';
@@ -101,10 +101,10 @@ class _UsersViewState extends State<UsersView> {
                               child: Text("Surname"),
                             )),
                           ],
-                          rows: users.where((user) => user.type != UserType.patient)
+                          rows: users.where((user) => user.types?.isEmpty == false)
                               .map((user) => DataRow(cells: [
                                     DataCell(Row(children: [
-                                      Text((user.type ?? UserType.user).name),
+                                      Text(user.types?.map((x) => x.name).join(';') ?? '0'),
                                       IconButton(
                                           onPressed: () {
                                             var id = user.id;
@@ -112,7 +112,7 @@ class _UsersViewState extends State<UsersView> {
                                               showDialog<void>(
                                                   context: context,
                                                   builder: (BuildContext context) {
-                                                    return ChangeRole(_resetUsers, user.type ?? UserType.user, id);
+                                                    return ChangeRole(_resetUsers, user.types ?? [], id);
                                                   });
                                             }
                                           },

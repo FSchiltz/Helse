@@ -6,7 +6,7 @@ import 'package:helse/logic/settings/ordered_item.dart';
 import '../../../helpers/pair.dart';
 import '../../../logic/d_i.dart';
 import '../../../logic/settings/settings_logic.dart';
-import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
 import 'metric_widget.dart';
@@ -73,10 +73,10 @@ class _MetricsGridState extends State<MetricsGrid> {
 
   OrderedItem _getDefault(MetricType item) {
     if (item.type == MetricDataType.number) {
-      return OrderedItem(item.id ?? 0, item.name ?? '', GraphKind.bar, GraphKind.line);
+      return OrderedItem(item.id ?? 0, item.name, GraphKind.bar, GraphKind.line);
     }
 
-    return OrderedItem(item.id ?? 0, item.name ?? '', GraphKind.event, GraphKind.event);
+    return OrderedItem(item.id ?? 0, item.name, GraphKind.event, GraphKind.event);
   }
 
   StatelessWidget _getGrid(List<Pair<MetricType, OrderedItem>> cached) {

@@ -1,9 +1,11 @@
 using System.Globalization;
+using System.Text.Json;
 using Api.Data;
 using Api.Logic.Import.Redmi;
 using Api.Models;
+using Api.Models.Events;
+using Api.Models.Metrics;
 using CsvHelper;
-using Newtonsoft.Json;
 
 namespace Api.Logic.Import;
 
@@ -43,7 +45,7 @@ public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) :
                     if (record.Value == null)
                         continue;
 
-                    var sleep = JsonConvert.DeserializeObject<SleepRecord>(record.Value);
+                    var sleep = JsonSerializer.Deserialize<SleepRecord>(record.Value);
                     if (sleep?.Items == null)
                         continue;
 
@@ -63,7 +65,7 @@ public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) :
                     if (record.Value == null)
                         continue;
 
-                    var weight = JsonConvert.DeserializeObject<WeightRecord>(record.Value);
+                    var weight = JsonSerializer.Deserialize<WeightRecord>(record.Value);
                     if (weight?.Weight == null)
                         continue;
 
@@ -80,7 +82,7 @@ public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) :
                     if (record.Value == null)
                         continue;
 
-                    var steps = JsonConvert.DeserializeObject<StepRecord>(record.Value);
+                    var steps = JsonSerializer.Deserialize<StepRecord>(record.Value);
                     if (steps?.Steps == null)
                         continue;
 
@@ -97,7 +99,7 @@ public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) :
                     if (record.Value == null)
                         continue;
 
-                    var calorie = JsonConvert.DeserializeObject<CalorieRecord>(record.Value);
+                    var calorie = JsonSerializer.Deserialize<CalorieRecord>(record.Value);
                     if (calorie?.Calories == null)
                         continue;
 
@@ -118,7 +120,7 @@ public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) :
                     if (record.Value == null)
                         continue;
 
-                    var heart = JsonConvert.DeserializeObject<HeartRecord>(record.Value);
+                    var heart = JsonSerializer.Deserialize<HeartRecord>(record.Value);
                     if (heart?.Bpm == null)
                         continue;
 
@@ -138,7 +140,7 @@ public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) :
                     if (record.Value == null)
                         continue;
 
-                    var spo = JsonConvert.DeserializeObject<SpoRecord>(record.Value);
+                    var spo = JsonSerializer.Deserialize<SpoRecord>(record.Value);
                     if (spo?.Spo2 == null)
                         continue;
 
@@ -150,8 +152,6 @@ public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) :
                         Type = (long)MetricTypes.Oxygen,
                         Source = FileTypes.RedmiWatch,
                     });
-                    break;
-                default:
                     break;
             }
         }

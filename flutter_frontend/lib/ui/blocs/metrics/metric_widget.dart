@@ -4,7 +4,7 @@ import 'package:helse/logic/d_i.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
 import 'package:helse/ui/blocs/metrics/metric_detail_page.dart';
 
-import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/loader.dart';
 import 'metric_add.dart';
 import 'metric_condensed.dart';
@@ -99,7 +99,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Flexible(
-                                child: Text(widget.type.name ?? "", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.titleMedium),
+                                child: Text(widget.type.name, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.titleMedium),
                               ),
                               Flexible(
                                 child: SizedBox(
@@ -138,14 +138,14 @@ class _MetricWidgetState extends State<MetricWidget> {
     String? value;
     switch (type.summaryType) {
       case MetricSummary.sum:
-        value = metrics.map((metric) => double.parse(metric.$value ?? '0')).sum.toString();
+        value = metrics.map((metric) => double.parse(metric.value)).sum.toString();
         break;
       case MetricSummary.mean:
-        value = (metrics.map((metric) => double.parse(metric.$value ?? '0')).sum / metrics.length).round().toString();
+        value = (metrics.map((metric) => double.parse(metric.value)).sum / metrics.length).round().toString();
         break;
       case MetricSummary.latest:
       default:
-        value = metrics.last.$value ?? '';
+        value = metrics.last.value;
         break;
     }
 

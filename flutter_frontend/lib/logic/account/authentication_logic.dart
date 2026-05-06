@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:helse/services/login_service.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/services/user_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../../services/account.dart';
-import '../../services/swagger/generated_code/swagger.swagger.dart';
 import '../d_i.dart';
 
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
@@ -61,7 +61,7 @@ class AuthenticationLogic {
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
     var data = decodedToken["roles"] as String?;
     if (data == null) {
-      return const Person(type: UserType.swaggerGeneratedUnknown);
+      return const Person(types: [UserType.swaggerGeneratedUnknown]);
     }
 
     var name = decodedToken["name"] as String?;
@@ -71,9 +71,8 @@ class AuthenticationLogic {
 
     if (surname?.isEmpty ?? true) surname = null;
 
-    // the enum start at 0 so we add 1
-    UserType role = UserType.values.firstWhere((x) => x.value == int.parse(data));
-    return Person(type: role, name: name, surname: surname);
+    List<UserType> roles = data.split(';').map((e) => UserType.values.firstWhere((x) => x.name == e)).toList();
+    return Person(types: roles, name: name, surname: surname);
   }
 
   /// Init the account for a first connection

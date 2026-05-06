@@ -2,7 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 import '../../../logic/settings/ordered_item.dart';
-import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 
 class MetricCondensed extends StatelessWidget {
   final List<Metric> metrics;
@@ -35,7 +35,7 @@ class WidgetGraph extends StatelessWidget {
 
     for (final item in raw) {
       var x = double.parse(item.tag ?? "0");
-      var y = (double.parse(item.$value ?? "0") * 10).roundToDouble() / 10;
+      var y = (double.parse(item.value) * 10).roundToDouble() / 10;
       spots.add(FlSpot(x, y));
     }
 

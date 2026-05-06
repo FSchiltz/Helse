@@ -1,4 +1,4 @@
-namespace Api.Models;
+namespace Api.Models.Settings;
 
 public class Right
 {
@@ -15,12 +15,12 @@ public class Right
 
 public static class RightExtensions
 {
-    public static Right FromDb(this Api.Data.Models.Right x) => new()
+    public static Right FromDb(this Data.Models.Right x) => new()
     {
         Stop = x.Stop,
         PersonId = x.PersonId,
         Start = x.Start,
-        Type = (Models.RightType)x.Type,
+        Type = (RightType)x.Type,
         UserId = x.UserId
     };
 }

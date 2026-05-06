@@ -3,7 +3,7 @@ import 'package:helse/ui/common/square_text_field.dart';
 
 import '../../../logic/d_i.dart';
 import '../../../logic/event.dart';
-import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/date_input.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
@@ -91,7 +91,7 @@ class _EventAddState extends State<EventAdd> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
     return SquareDialog(
-      title: Text("Add a new ${widget.type.name ?? "Event"}"),
+      title: Text("Add a new ${widget.type.name}"),
       actions: [
         SizedBox(
           child: _status == SubmissionStatus.inProgress

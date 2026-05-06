@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 
-import '../../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/notification.dart';
 import 'event_form.dart';
 
@@ -30,7 +30,7 @@ class _EventTypeAddState extends State<EventTypeAdd> {
     if (edit != null) {
       // this is not a new addition, just an edit
       controllerDescription.text = edit.description ?? "";
-      controllerName.text = edit.name ?? "";
+      controllerName.text = edit.name;
     }
   }
 

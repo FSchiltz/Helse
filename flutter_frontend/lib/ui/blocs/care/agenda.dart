@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 
-import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../events/events_graph.dart';
 import '../../common/loader.dart';
 

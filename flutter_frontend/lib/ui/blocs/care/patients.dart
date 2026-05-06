@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/ui/blocs/care/share_patient_dialog.dart';
 
 import '../../../logic/d_i.dart';
-import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/loader.dart';
 import 'patient_add.dart';
 import 'patients_dashboard.dart';

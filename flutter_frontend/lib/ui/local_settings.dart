@@ -209,7 +209,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
       SizedBox(
         width: 200,
         child: DropdownButtonFormField(
-          value: _theme,
+          initialValue: _theme,
           onChanged: themeCallback,
           items: ThemeMode.values.map((type) => DropdownMenuItem(value: type, child: Text(type.name))).toList(),
           decoration: InputDecoration(
@@ -229,7 +229,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
         child: SizedBox(
           width: 200,
           child: DropdownButtonFormField(
-            value: _range,
+            initialValue: _range,
             onChanged: rangeCallback,
             items: DatePreset.values.map((type) => DropdownMenuItem(value: type, child: Text(Translation.get(type)))).toList(),
             decoration: InputDecoration(

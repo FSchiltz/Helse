@@ -4,7 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
-import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 import '../../../helpers/date.dart';
 
@@ -75,7 +75,7 @@ class _MetricGraphState extends State<MetricGraph> {
           ),
         ),
         'value': Variable(
-          accessor: (Metric datumn) => int.tryParse(datumn.$value ?? '0') ?? 0,
+          accessor: (Metric datumn) => int.tryParse(datumn.value) ?? 0,
           scale: LinearScale(),
         ),
       },

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 
-import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../events/events_graph.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
@@ -17,9 +17,9 @@ class TreatmentsGrid extends StatefulWidget {
 }
 
 class _TreatmentsGridState extends State<TreatmentsGrid> {
-  List<Treatement>? _treatments;
+  List<Treatment>? _treatments;
 
-  Future<List<Treatement>?> _getData() async {
+  Future<List<Treatment>?> _getData() async {
     try {
       if (_treatments != null) return _treatments;
 
@@ -58,8 +58,8 @@ class _TreatmentsGridState extends State<TreatmentsGrid> {
             }
 
             final events = (snapshot.hasData)
-                ? snapshot.data as List<Treatement>
-                : List<Treatement>.empty();
+                ? snapshot.data as List<Treatment>
+                : List<Treatment>.empty();
 
             return ListView(
               shrinkWrap: true,

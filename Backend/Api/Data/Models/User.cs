@@ -34,4 +34,9 @@ public class User
 
     [Column]
     public string? Phone { get; set; }
+
+    public bool HasRight(UserType type)
+    {
+        return ((UserType)Type).HasFlag(type);
+    }
 }

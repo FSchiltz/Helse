@@ -3,7 +3,7 @@ import 'package:helse/ui/blocs/events/delete_event.dart';
 
 import '../../../helpers/date.dart';
 import '../../../logic/d_i.dart';
-import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
 import 'events_add.dart';

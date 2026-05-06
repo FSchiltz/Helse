@@ -1,6 +1,7 @@
 using Api.Data;
 using Api.Helpers.Auth;
-using Api.Models;
+using Api.Models.Persons;
+using Api.Models.Settings;
 
 namespace Api.Helpers;
 
@@ -17,7 +18,7 @@ public static class UserHelper
         // create the user if needed
         // patient are non user of the app, only external people managed by a caregiver
         // TODO add patient account creation
-        if (newUser.Type != Api.Models.UserType.Patient)
+        if (newUser.Types.Any(x => x == UserType.User || x == UserType.Admin))
         {
             if (newUser.UserName is null)
                 throw new ArgumentException("Missing username", nameof(newUser));

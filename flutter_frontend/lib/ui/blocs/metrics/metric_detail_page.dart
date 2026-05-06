@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../helpers/date.dart';
 import '../../../logic/d_i.dart';
 import '../../../logic/settings/ordered_item.dart';
-import '../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/loader.dart';
 import '../calendar/calendar_view.dart';
 import 'metric_add.dart';
@@ -144,7 +144,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                                           Padding(
                                             padding: const EdgeInsets.all(4.0),
                                             child: Text(
-                                                '${metric.$value}${widget.type.unit} on ${DateHelper.format(metric.date?.toLocal(), context: ctx)}'),
+                                                '${metric.value}${widget.type.unit} on ${DateHelper.format(metric.date?.toLocal(), context: ctx)}'),
                                           ),
                                         if (metric != null)
                                           Padding(
