@@ -1,8 +1,9 @@
+using System.Text.Json;
 using Api.Data;
 using Api.Data.Models;
 using Api.Logic.Import.Clue;
 using Api.Models;
-using Newtonsoft.Json;
+using Api.Models.Metrics;
 
 namespace Api.Logic.Import;
 
@@ -11,7 +12,7 @@ public class ClueImporter(string file, IHealthContext db, User user) : FileImpor
     public override async Task Import()
     {
         // parse the file as an arry of json object
-        var json = JsonConvert.DeserializeObject<ClueItem[]>(File);
+        var json = JsonSerializer.Deserialize<ClueItem[]>(File);
         if (json is null)
         {
             return;

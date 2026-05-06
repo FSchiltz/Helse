@@ -1,9 +1,8 @@
-namespace Api.Models;
+namespace Api.Models.Events;
 
 public enum EventTypes
 {
     Sleep = 1,
     Care = 2,
     Workout = 3,
-
 }

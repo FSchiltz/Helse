@@ -2,6 +2,8 @@ using Api.Data;
 using Api.Helpers;
 using Api.Logic.Import;
 using Api.Models;
+using Api.Models.Events;
+using Api.Models.Metrics;
 using LinqToDB;
 using Microsoft.AspNetCore.Mvc;
 

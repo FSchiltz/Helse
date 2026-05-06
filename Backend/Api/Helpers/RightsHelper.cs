@@ -2,7 +2,8 @@ using System.Security.Claims;
 using Api.Data;
 using Api.Data.Models;
 using Api.Helpers.Auth;
-using Api.Models;
+using Api.Models.Settings;
+using Microsoft.OpenApi;
 
 namespace Api.Helpers;
 
@@ -30,13 +31,11 @@ public static class RightsHelper
         if (error is not null)
             return error;
 
-        if (!user.Type.HasRight(UserType.Admin))
+        if (!user.HasRight(UserType.Admin))
             return TypedResults.Forbid();
 
         return null;
     }
-
-    internal static bool HasRight(this int type, Models.UserType right) => ((Models.UserType)type).HasFlag(right);
 
     internal static async Task<(IResult?, User)> GetUser(this IUserContext db, ClaimsPrincipal context)
     {
@@ -57,9 +56,18 @@ public static class RightsHelper
         if (fromDb is null)
             return null;
 
-        return new TokenInfo(fromDb.User.Id, fromDb.User.Type.ToString(),
-         fromDb.User.Identifier, fromDb.User.Password,
-          fromDb.Person.Surname, fromDb.Person.Name,
-          fromDb.User.Email);
+        var types = string.Join(';', Enum.GetValues<UserType>()
+                      .Cast<UserType>()
+                      .Where(e => ((UserType)fromDb.User.Type).HasFlag(e))
+                      .Select(e => e.GetDisplayName()));
+
+        return new(
+            Id: fromDb.User.Id,
+            Role: types,
+            Identifier: fromDb.User.Identifier,
+            Password: fromDb.User.Password,
+            Surname: fromDb.Person.Surname,
+            Name: fromDb.Person.Name,
+            Email: fromDb.User.Email);
     }
 }

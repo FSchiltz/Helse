@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
-import 'package:helse/ui/common/type_input.dart';
+import 'package:helse/ui/blocs/administration/users/userright_input.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 
-import '../../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/notification.dart';
 import 'user_form.dart';
 
@@ -19,7 +19,7 @@ class UserAdd extends StatefulWidget {
 class _SignupState extends State<UserAdd> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
-  UserType? _type;
+  List<UserType> _type = [];
 
   final TextEditingController _controllerUsername = TextEditingController();
   final TextEditingController _controllerName = TextEditingController();
@@ -49,8 +49,9 @@ class _SignupState extends State<UserAdd> {
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
             children: [
-              TypeInput(
-                  UserType.values.map((x) => DropDownItem(x, x.name)).toList(),
+              UserRightInput(
+                value: _type,
+                  UserType.values.toList(),
                   (value) => setState(() {
                         _type = value;
                       })),
@@ -82,7 +83,7 @@ class _SignupState extends State<UserAdd> {
           surname: _controllerSurname.text,
           password: _controllerPassword.text,
           email: _controllerEmail.text,
-          type: _type,
+          types: _type,
         ));
 
         _formKey.currentState?.reset();

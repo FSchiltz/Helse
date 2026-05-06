@@ -1,7 +1,8 @@
 using Api.Data;
 using Api.Helpers;
 using Api.Models;
-using CsvHelper;
+using Api.Models.Metrics;
+using Api.Models.Settings;
 using LinqToDB;
 
 namespace Api.Logic;
@@ -145,7 +146,7 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> GetTypeAsync(bool? all, IHealthContext db) => TypedResults.Ok((await db.GetMetricTypes(all)).Select(metric => new Models.MetricType
+    public static async Task<IResult> GetTypeAsync(bool? all, IHealthContext db) => TypedResults.Ok((await db.GetMetricTypes(all)).Select(metric => new MetricType
     {
         Name = metric.Name,
         Description = metric.Description,
@@ -157,7 +158,7 @@ public static class MetricsLogic
         UserEditable = metric.UserEditable,
     }));
 
-    public static async Task<IResult> CreateTypeAsync(Models.MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> CreateTypeAsync(MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
@@ -181,7 +182,7 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> UpdateTypeAsync(Models.MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> UpdateTypeAsync(MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)

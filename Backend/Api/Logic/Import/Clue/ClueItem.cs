@@ -1,7 +1,5 @@
-
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Api.Logic.Import.Clue;
 
@@ -20,30 +18,43 @@ public class Value
     public string? Option { get; set; }
 }
 
-class SingleOrArrayConverter<T> : JsonConverter
+internal class SingleOrArrayConverter<T> : JsonConverter<List<T>>
 {
-    public override bool CanConvert(Type objectType)
+    public override List<T>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        return (objectType == typeof(List<T>));
-    }
+        List<T> items = [];
 
-    public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
-    {
-        JToken token = JToken.Load(reader);
-        if (token.Type == JTokenType.Array)
+        if (reader.TokenType == JsonTokenType.StartArray)
         {
-            return token.ToObject<List<T>>() ?? [];
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonTokenType.EndArray)
+                {
+                    break;
+                }
+
+                var item = JsonSerializer.Deserialize<T>(ref reader, options);
+                if (item is not null)
+                {
+                    items.Add(item);
+                }
+            }
+        }
+        else if(reader.TokenType == JsonTokenType.StartObject)
+        {
+            var item = JsonSerializer.Deserialize<T>(ref reader, options);
+            if (item is not null)
+            {
+                items.Add(item);
+            }
+        }
+        else
+        {
+            throw new JsonException();
         }
 
-        var item = token.ToObject<T>();
-
-        if (item is not null)
-            return new List<T> { item };
-        else
-            return new List<T>();
+        return items;
     }
 
-    public override bool CanWrite => false;
-
-    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer) => throw new NotImplementedException();
+    public override void Write(Utf8JsonWriter writer, List<T> value, JsonSerializerOptions options) => throw new NotImplementedException();
 }

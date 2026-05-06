@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../helpers/users.dart';
 import '../helpers/date.dart';
 import '../logic/d_i.dart';
 import '../logic/event.dart';
 import '../logic/fit/task_bloc.dart';
 import '../logic/settings/settings_logic.dart';
-import '../services/swagger/generated_code/swagger.swagger.dart';
+import '../services/swagger/generated_code/helseapi.swagger.dart';
 import 'administration.dart';
 import 'blocs/imports/file_import.dart';
 import 'common/date_range_picker.dart';
@@ -76,11 +75,20 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    Widget page = switch (user?.type ?? UserType.patient) {
-      UserType.patient => const Center(child: Text("Welcome")),
-      UserType.admin => const Center(child: Text("Logged in as only admin")),
-      _ => Dashboard(date: date, type: user?.type),
-    };
+    Widget page;
+    var types = user?.types ?? [];
+    if(types.isEmpty)
+    {
+      page = const Center(child: Text("Welcome"));
+    } else if(types.contains(UserType.admin))
+    {
+      page = const Center(child: Text("Logged in as only admin"));
+    }
+    else 
+    {
+      page = Dashboard(date: date, types: types);
+    }
+    
 
     return LayoutBuilder(builder: (context, constraints) {
       var theme = Theme.of(context);
@@ -127,7 +135,7 @@ class _HomeState extends State<Home> {
                         title: Text("Settings"),
                       ),
                     ),
-                    if (user?.type?.isAdmin() == true)
+                    if (user?.types?.contains(UserType.admin) == true)
                       const PopupMenuItem<int>(
                         value: 2,
                         child: ListTile(

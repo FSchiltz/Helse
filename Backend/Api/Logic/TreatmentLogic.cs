@@ -1,6 +1,8 @@
 using Api.Data;
 using Api.Helpers;
-using Api.Models;
+using Api.Models.Events;
+using Api.Models.Settings;
+using Api.Models.Treatments;
 using LinqToDB;
 
 namespace Api.Logic;
@@ -12,7 +14,7 @@ public static class TreatmentLogic
 {
     public static async Task<IResult> GetTypeAsync(IHealthContext db) => TypedResults.Ok(await db.GetEventTypes(false));
 
-    public async static Task<IResult> PostAsync(Models.CreateTreatment treatment, IUserContext db, HttpContext context)
+    public async static Task<IResult> PostAsync(CreateTreatment treatment, IUserContext db, HttpContext context)
     {
         var (error, user) = await db.GetUser(context.User);
         if (error is not null)
@@ -57,9 +59,9 @@ public static class TreatmentLogic
         var id = personId ?? user.PersonId;
         var events = await db.GetEvents(id, start, end);
 
-        return TypedResults.Ok(events.GroupBy(x => x.TreatmentId).Select(t => new Treatement
+        return TypedResults.Ok(events.GroupBy(x => x.TreatmentId).Select(t => new Treatment
         {
-            Events = t.Select(x => new Models.Event
+            Events = t.Select(x => new Event
             {
                 Id = x.Id,
                 Type = x.Type,

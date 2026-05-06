@@ -1,6 +1,7 @@
 using Api.Data;
 using Api.Data.Models;
-using Api.Models;
+using Api.Models.Events;
+using Api.Models.Metrics;
 
 namespace Api.Logic.Import;
 

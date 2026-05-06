@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:chopper/chopper.dart';
-import 'package:helse/services/swagger/generated_code/swagger.swagger.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import '../logic/d_i.dart';
 import 'account.dart';
@@ -32,7 +32,7 @@ abstract class ApiService {
     return result;
   }
 
-  Future<Swagger> getService({String? override}) async {
+  Future<Helseapi> getService({String? override}) async {
     var url = override ?? await _account.get(Account.url);
     if (url == null) throw Exception("Url missing");
 
@@ -41,7 +41,7 @@ abstract class ApiService {
     if (token != null && token.isNotEmpty) {
       if (JwtDecoder.isExpired(token)) {
         var refresh = await _account.get(Account.refresh);
-        var client = Swagger.create(baseUrl: Uri.parse(url), interceptors: [
+        var client = Helseapi.create(baseUrl: Uri.parse(url), interceptors: [
           HeadersInterceptor({'Authorization': 'Bearer $refresh'})
         ]);
         var response = await client.apiAuthPost(body: const Connection(user: "", password: ""));
@@ -50,7 +50,7 @@ abstract class ApiService {
       }
     }
 
-    return Swagger.create(baseUrl: Uri.parse(url), interceptors: [
+    return Helseapi.create(baseUrl: Uri.parse(url), interceptors: [
       HeadersInterceptor({'Authorization': 'Bearer $token'})
     ]);
   }

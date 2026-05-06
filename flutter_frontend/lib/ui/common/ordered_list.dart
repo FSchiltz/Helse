@@ -40,7 +40,7 @@ class OrderedList extends StatelessWidget {
                           SizedBox(
                             width: 160,
                             height: 45,
-                            child: TypeInput(
+                            child: EnumInput(
                               value: item.graph,
                               GraphKind.values.map((x) => DropDownItem(x, x.name)).toList(),
                               (value) => item.graph = value ?? item.graph,
@@ -60,7 +60,7 @@ class OrderedList extends StatelessWidget {
                           SizedBox(
                             width: 160,
                             height: 45,
-                            child: TypeInput(
+                            child: EnumInput(
                               value: item.detailGraph,
                               GraphKind.values.map((x) => DropDownItem(x, x.name)).toList(),
                               (value) => item.detailGraph = value ?? item.detailGraph,

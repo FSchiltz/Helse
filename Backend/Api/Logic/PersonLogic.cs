@@ -1,7 +1,8 @@
 using Api.Data;
 using Api.Helpers;
 using Api.Helpers.Auth;
-using Api.Models;
+using Api.Models.Persons;
+using Api.Models.Settings;
 using LinqToDB;
 
 namespace Api.Logic;
@@ -13,7 +14,7 @@ public static class PersonLogic
 {
     /// <summary>
     /// Get the list of users/person with their rights
-    /// The caller needs to be an admin
+    /// The caller needs to be an adminInvalidType
     /// </summary>
     /// <param name="db"></param>
     /// <param name="context"></param>
@@ -38,7 +39,16 @@ public static class PersonLogic
                 right = null;
             }
 
-            return new Models.Person
+            HashSet<UserType> types = [];
+            if (x.User is not null)
+            {
+                types = [.. Enum.GetValues<UserType>()
+                      .Cast<UserType>()
+                      .Where(e => ((UserType)x.User.Type).HasFlag(e))
+                      .Select(e => e)];
+            }
+
+            return new Person
             {
                 Id = x.User?.Id ?? 0,
                 Birth = x.Person.Birth,
@@ -48,7 +58,7 @@ public static class PersonLogic
                 UserName = x.User?.Identifier,
                 Email = x.User?.Email,
                 Phone = x.User?.Phone,
-                Type = (UserType)(x.User?.Type ?? 0),
+                Types = types,
                 Rights = right?.Select(x => x.FromDb()).ToList() ?? [],
             };
         });
@@ -78,7 +88,7 @@ public static class PersonLogic
 
         var models = users.Where(x => x.User is not null && ((UserType)x.User.Type).HasFlag(UserType.Caregiver)).Select(x =>
         {
-            return new Models.Person
+            return new Person
             {
                 Id = x.User?.Id ?? 0,
                 UserName = x.User?.Identifier,
@@ -97,7 +107,7 @@ public static class PersonLogic
     /// <param name="users"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static async Task<IResult> SetRight(long personId, List<Models.Right> rights, IUserContext users, HttpContext context)
+    public static async Task<IResult> SetRight(long personId, List<Right> rights, IUserContext users, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
@@ -129,14 +139,14 @@ public static class PersonLogic
         return TypedResults.NoContent();
     }
 
-    private static void ValidateUser(Models.PersonCreation user)
+    private static void ValidateUser(PersonCreation user)
     {
         // validate Patient
         if (user.Name == null)
             throw new ArgumentException("Missing name", nameof(user));
 
         // validate other user
-        if (user.Type == UserType.Patient)
+        if (!user.Types.Contains(UserType.User))
             return;
 
         if (user.Password == null)
@@ -148,7 +158,7 @@ public static class PersonLogic
     /// Only admin role unless no user exists (App setup) or caregiver if the new person is only a patient(no connection)
     /// </summary>
     /// <returns></returns>
-    public static async Task<IResult> CreateAsync(Models.PersonCreation newUser, IUserContext db, HttpContext context, ILoggerFactory logger)
+    public static async Task<IResult> CreateAsync(PersonCreation newUser, IUserContext db, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger(nameof(PersonLogic));
 
@@ -169,10 +179,10 @@ public static class PersonLogic
             // else check if user is admin
             userId = user?.User.Id ?? 0;
 
-            userHasRole = user?.User.Type.HasRight(Models.UserType.Admin) == true;
+            userHasRole = user?.User.HasRight(Data.Models.UserType.Admin) == true;
 
             // Care giver can add new patients without admin right
-            userHasRole = userHasRole || user?.User.Type.HasRight(Models.UserType.Caregiver) == true;
+            userHasRole = userHasRole || user?.User.HasRight(Data.Models.UserType.Caregiver) == true;
         }
 
         if (!userHasRole)
@@ -189,17 +199,16 @@ public static class PersonLogic
     /// Change the role of a user
     /// Needs adim right
     /// </summary>
-    /// <param name="personId"></param>
-    /// <param name="role"></param>
+    /// <param name="update"></param>
     /// <param name="db"></param>
     /// <returns></returns>
-    public static async Task<IResult> SetPersonRole(long personId, UserType role, IUserContext db, HttpContext context)
+    public static async Task<IResult> UpdatePersonAsync(UpdatePerson update, IUserContext db, HttpContext context)
     {
         var admin = await db.IsAdmin(context.User);
         if (admin is not null)
             return admin;
 
-        await db.UpdateRole(personId, (int)role);
+        await db.UpdatePerson(update);
 
         return TypedResults.NoContent();
     }

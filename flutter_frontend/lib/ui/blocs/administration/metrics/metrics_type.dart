@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/common/notification.dart';
 
-import '../../../../services/swagger/generated_code/swagger.swagger.dart';
+import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/loader.dart';
 import 'metric_add.dart';
 
@@ -113,7 +113,7 @@ class _MetricTypeViewState extends State<MetricTypeView> {
                           rows: types
                               .map((type) => DataRow(cells: [
                                     DataCell(Text((type.id).toString())),
-                                    DataCell(Text(type.name ?? "")),
+                                    DataCell(Text(type.name)),
                                     DataCell(Text(type.description ?? "")),
                                     DataCell(Text(type.unit ?? "")),
                                     DataCell(Text(type.type?.name ?? "")),

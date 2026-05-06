@@ -2,6 +2,7 @@ using Api.Data;
 using Api.Helpers;
 using Api.Helpers.Auth;
 using Api.Models;
+using Api.Models.Settings.Admin;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 

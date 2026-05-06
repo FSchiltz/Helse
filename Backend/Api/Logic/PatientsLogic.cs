@@ -1,6 +1,8 @@
 using Api.Data;
 using Api.Helpers;
-using Api.Models;
+using Api.Models.Events;
+using Api.Models.Persons;
+using Api.Models.Settings;
 using LinqToDB;
 
 namespace Api.Logic;
@@ -31,7 +33,7 @@ public static class PatientsLogic
                 Name = x.Name,
                 Surname = x.Surname,
                 Identifier = x.Identifier,
-                Type = UserType.Patient,
+                Types = [],
             };
         });
 
