@@ -62,7 +62,7 @@
         {
             "name": "Launch",
             "configurations": [
-                "Flutter web",
+                "Flutter",
                 ".NET Core Launch (web)"
             ],
             "stopAll": true
