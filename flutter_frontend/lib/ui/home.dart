@@ -135,7 +135,7 @@ class _HomeState extends State<Home> {
                         title: Text("Settings"),
                       ),
                     ),
-                    if (user?.types?.contains(UserType.admin) == true)
+                    if (types.contains(UserType.admin) == true)
                       const PopupMenuItem<int>(
                         value: 2,
                         child: ListTile(

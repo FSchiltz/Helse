@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:helse/services/login_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
@@ -39,9 +40,16 @@ class AuthenticationLogic {
   }
 
   /// Call the login service
-  Future<void> logIn({required String url, required String username, required String password, String? redirect}) async {
+  Future<void> logIn({
+    required String url,
+    required String username,
+    required String password,
+    String? redirect,
+  }) async {
     await _account.set(Account.url, url);
-    var token = await LoginService(_account).login(username, password, redirect);
+    var token = await LoginService(
+      _account,
+    ).login(username, password, redirect);
 
     if (token?.refreshToken != null) {
       await _account.set(Account.refresh, token?.refreshToken ?? '');
@@ -71,12 +79,22 @@ class AuthenticationLogic {
 
     if (surname?.isEmpty ?? true) surname = null;
 
-    List<UserType> roles = data.split(';').map((e) => UserType.values.firstWhere((x) => x.name == e)).toList();
+    var splitted = data.split(';');
+    List<UserType> roles = splitted
+        .map(
+          (e) =>
+              UserType.values.firstWhereOrNull((x) => x.value == e) ??
+              UserType.swaggerGeneratedUnknown,
+        )
+        .toList();
     return Person(types: roles, name: name, surname: surname);
   }
 
   /// Init the account for a first connection
-  Future<void> initAccount({required String url, required PersonCreation person}) async {
+  Future<void> initAccount({
+    required String url,
+    required PersonCreation person,
+  }) async {
     await _account.set(Account.url, url);
     await _api().addPerson(person);
   }
@@ -125,7 +143,8 @@ class AuthenticationLogic {
         port = null;
       }
 
-      url = "${Uri.base.scheme}://${Uri.base.host}${port != null ? ":$port" : ""}";
+      url =
+          "${Uri.base.scheme}://${Uri.base.host}${port != null ? ":$port" : ""}";
     }
 
     return url;
