@@ -25,7 +25,7 @@ RUN flutter config --enable-web
 RUN mkdir /app/
 COPY ./flutter_frontend/ /app/
 WORKDIR /app/
-RUN flutter build web --release --web-renderer html
+RUN flutter build web --release
 
 # final stage/image
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
