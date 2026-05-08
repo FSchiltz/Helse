@@ -29,8 +29,7 @@ class AuthenticationLogic {
   /// Check if the user is logged in
   Future<void> checkLogin() async {
     var token = await _account.get(Account.refresh);
-    if (token != null && token.isNotEmpty) {
-      // TODO check the validity
+    if (token != null && token.isNotEmpty && !JwtDecoder.isExpired(token)) {
       _controller.add(AuthenticationStatus.authenticated);
     }
   }

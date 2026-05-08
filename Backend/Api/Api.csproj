@@ -21,4 +21,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Data/Scripts/*.sql" />
   </ItemGroup>
+  <PropertyGroup>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+</PropertyGroup>
 </Project>
