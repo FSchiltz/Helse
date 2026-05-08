@@ -37,16 +37,7 @@ jobs:
       with:
         channel: stable
         cache: true
-        # optional parameters follow
-        pub-cache: true # optional, defaults to empty (falls back to cache value for backward compatibility)
-        
-    - run: flutter --version
-         
-     # Get Flutter project dependencies
-    - name: Get dependencies
-      run: flutter pub get
-      working-directory: 'flutter_frontend'
-    
+
     - name: Create certificat
       if: ${{ inputs.sign }}
       run: |
@@ -58,8 +49,7 @@ jobs:
     - name: Decoding base64 key into a file
       if: ${{ inputs.sign }}
       run: echo ${{ secrets.KEY_FILE }} | base64 --decode > flutter_frontend/android/app/key.jks
-  
-        
+    
     - name: Build release app bundle
       run: flutter build apk --${{inputs.mode}} --split-per-abi
       working-directory: 'flutter_frontend'   
