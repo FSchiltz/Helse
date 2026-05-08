@@ -22,11 +22,7 @@ class DataModel {
   const DataModel({required this.label, required this.icon});
 }
 
-enum DeviceType {
-  mobile,
-  tablet,
-  desktop,
-}
+enum DeviceType { mobile, tablet, desktop }
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -53,7 +49,9 @@ class _HomeState extends State<Home> {
   }
 
   DeviceType getDevice() {
-    return MediaQuery.of(context).size.width <= 800 ? DeviceType.mobile : DeviceType.desktop;
+    return MediaQuery.of(context).size.width <= 800
+        ? DeviceType.mobile
+        : DeviceType.desktop;
   }
 
   void _getUser() async {
@@ -75,50 +73,59 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    Widget page;
     var types = user?.types ?? [];
-    if(types.isEmpty)
-    {
-      page = const Center(child: Text("Welcome"));
-    } else if(types.contains(UserType.admin))
-    {
-      page = const Center(child: Text("Logged in as only admin"));
-    }
-    else 
-    {
-      page = Dashboard(date: date, types: types);
-    }
-    
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var theme = Theme.of(context);
 
-    return LayoutBuilder(builder: (context, constraints) {
-      var theme = Theme.of(context);
+        var isLargeScreen = MediaQuery.of(context).size.width > 600;
 
-      var isLargeScreen = MediaQuery.of(context).size.width > 600;
-
-      return Scaffold(
-        appBar: AppBar(
-          scrolledUnderElevation: 10,
-          elevation: 1,
-          centerTitle: true,
-          title: DateRangePicker(_setDate, date, isLargeScreen),
-          actions: [
-            BlocProvider<TaskBloc>.value(
-              value: DI.fit,
-              child: BlocBuilder<TaskBloc, SubmissionStatus>(builder: (context, state) {
-                switch (state) {
-                  case SubmissionStatus.success:
-                    return HelseLoader(static: true, color: Colors.green, size: 22, onTouch: () => _showTasks(context));
-                  case SubmissionStatus.failure:
-                    return HelseLoader(static: true, color: Colors.red, size: 22, onTouch: () => _showTasks(context));
-                  case SubmissionStatus.inProgress:
-                    return HelseLoader(size: 32, onTouch: () => _showTasks(context));
-                  default:
-                    return HelseLoader(size: 20, static: true, onTouch: () => _showTasks(context));
-                }
-              }),
-            ),
-            PopupMenuButton(
-                icon: Icon(Icons.menu_sharp, color: theme.colorScheme.onSurface),
+        return Scaffold(
+          appBar: AppBar(
+            scrolledUnderElevation: 10,
+            elevation: 1,
+            centerTitle: true,
+            title: DateRangePicker(_setDate, date, isLargeScreen),
+            actions: [
+              BlocProvider<TaskBloc>.value(
+                value: DI.fit,
+                child: BlocBuilder<TaskBloc, SubmissionStatus>(
+                  builder: (context, state) {
+                    switch (state) {
+                      case SubmissionStatus.success:
+                        return HelseLoader(
+                          static: true,
+                          color: Colors.green,
+                          size: 22,
+                          onTouch: () => _showTasks(context),
+                        );
+                      case SubmissionStatus.failure:
+                        return HelseLoader(
+                          static: true,
+                          color: Colors.red,
+                          size: 22,
+                          onTouch: () => _showTasks(context),
+                        );
+                      case SubmissionStatus.inProgress:
+                        return HelseLoader(
+                          size: 32,
+                          onTouch: () => _showTasks(context),
+                        );
+                      default:
+                        return HelseLoader(
+                          size: 20,
+                          static: true,
+                          onTouch: () => _showTasks(context),
+                        );
+                    }
+                  },
+                ),
+              ),
+              PopupMenuButton(
+                icon: Icon(
+                  Icons.menu_sharp,
+                  color: theme.colorScheme.onSurface,
+                ),
                 itemBuilder: (context) {
                   return [
                     const PopupMenuItem<int>(
@@ -135,7 +142,7 @@ class _HomeState extends State<Home> {
                         title: Text("Settings"),
                       ),
                     ),
-                    if (user?.types?.contains(UserType.admin) == true)
+                    if (types.contains(UserType.admin) == true)
                       const PopupMenuItem<int>(
                         value: 2,
                         child: ListTile(
@@ -156,33 +163,40 @@ class _HomeState extends State<Home> {
                   switch (value) {
                     case 0:
                       showDialog<void>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return const FileImport();
-                          });
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const FileImport();
+                        },
+                      );
                       break;
                     case 1:
                       Navigator.push(
                         context,
-                        MaterialPageRoute<void>(builder: (context) => const LocalSettingsPage()),
+                        MaterialPageRoute<void>(
+                          builder: (context) => const LocalSettingsPage(),
+                        ),
                       );
                       break;
                     case 2:
                       Navigator.push(
                         context,
-                        MaterialPageRoute<void>(builder: (context) => const AdministrationPage()),
+                        MaterialPageRoute<void>(
+                          builder: (context) => const AdministrationPage(),
+                        ),
                       );
                       break;
                     case 3:
                       DI.authentication.logOut();
                       break;
                   }
-                })
-          ],
-        ),
-        body: page,
-      );
-    });
+                },
+              ),
+            ],
+          ),
+          body: Dashboard(date: date, types: types),
+        );
+      },
+    );
   }
 
   Future<void> _startFitJob(TaskBloc fit) async {
@@ -194,7 +208,10 @@ class _HomeState extends State<Home> {
 
   void _showTasks(BuildContext context) {
     var tasks = DI.fit.executions;
-    showDialog<void>(context: context, builder: (context) => TaskStatusDialog(tasks));
+    showDialog<void>(
+      context: context,
+      builder: (context) => TaskStatusDialog(tasks),
+    );
   }
 
   Future<void> _setDefaultRange() async {

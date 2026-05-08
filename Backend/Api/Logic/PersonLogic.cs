@@ -208,6 +208,15 @@ public static class PersonLogic
         if (admin is not null)
             return admin;
 
+        var (error, user) = await db.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+        if (user.Id == update.Id && update.Types?.Contains(UserType.Admin) == false)
+        {
+            return TypedResults.BadRequest("Cannot remove your own admin right.");
+        }
+
         await db.UpdatePerson(update);
 
         return TypedResults.NoContent();

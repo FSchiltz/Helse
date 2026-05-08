@@ -1,5 +1,3 @@
 {
-    "dotnet.defaultSolution": "Backend/API.sln",
-    "java.compile.nullAnalysis.mode": "automatic",
-    "java.configuration.updateBuildConfiguration": "automatic"
+    "dotnet.defaultSolution": "Backend/API.sln"
 }

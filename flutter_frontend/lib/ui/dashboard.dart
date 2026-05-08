@@ -7,13 +7,14 @@ import 'patient_dashboard.dart';
 class Dashboard extends StatelessWidget {
   final DateTimeRange date;
   final List<UserType> types;
-  const Dashboard({super.key, required this.date,required this.types});
+  const Dashboard({super.key, required this.date, required this.types});
 
   @override
   Widget build(BuildContext context) {
     List<Widget> tabs = [];
     List<IconData> icons = [];
 
+    // TODO add a patient dashboard if the user is one.
     if (types.contains(UserType.user)) {
       icons.add(Icons.monitor_heart_sharp);
       tabs.add(PatientDashboard(date: date));
@@ -24,6 +25,11 @@ class Dashboard extends StatelessWidget {
       tabs.add(CareDashBoard(date: date));
     }
 
+    if (types.contains(UserType.admin)) {
+      icons.add(Icons.admin_panel_settings_sharp);
+      tabs.add(const Center(child: Text("TODO admin panel")));
+    }
+
     return DefaultTabController(
       length: tabs.length,
       child: (tabs.length == 1)
@@ -31,11 +37,7 @@ class Dashboard extends StatelessWidget {
           : Column(
               children: [
                 TabBar(tabs: icons.map((t) => Tab(icon: Icon(t))).toList()),
-                Expanded(
-                  child: TabBarView(
-                    children: tabs,
-                  ),
-                ),
+                Expanded(child: TabBarView(children: tabs)),
               ],
             ),
     );

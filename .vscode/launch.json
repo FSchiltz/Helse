@@ -41,7 +41,7 @@
             }
         },
         {
-            "name": "Flutter android",
+            "name": "Flutter",
             "type": "dart",
             "request": "launch",
             "program": "flutter_frontend/lib/main.dart",
@@ -62,7 +62,7 @@
         {
             "name": "Launch",
             "configurations": [
-                "Flutter web",
+                "Flutter",
                 ".NET Core Launch (web)"
             ],
             "stopAll": true
