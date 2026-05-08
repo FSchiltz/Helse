@@ -16,10 +16,10 @@ RUN apt install -y bash curl file git unzip zip xz-utils libglu1-mesa
 ## Download Flutter SDK
 RUN git clone https://github.com/flutter/flutter.git -b stable /flutter
 ENV PATH "$PATH:/flutter/bin"   
-RUN flutter doctor -v
 
 ## Run flutter doctor
 RUN flutter config --enable-web
+RUN flutter doctor -v
 
 # Copy files to container and build
 RUN mkdir /app/
