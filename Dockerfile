@@ -8,7 +8,6 @@ WORKDIR /source
 COPY ./Backend/Api .
 RUN  dotnet publish -o /backend -c release
 
-
 # build the flutter web app 
 # preparing the ubuntu container with all necessary tools
 RUN apt update -y
@@ -17,22 +16,16 @@ RUN apt install -y bash curl file git unzip zip xz-utils libglu1-mesa
 ## Download Flutter SDK
 RUN git clone https://github.com/flutter/flutter.git -b stable /flutter
 ENV PATH "$PATH:/flutter/bin"   
-RUN flutter precache
+RUN flutter doctor -v
 
 ## Run flutter doctor
 RUN flutter config --enable-web
-RUN flutter doctor -v
 
 # Copy files to container and build
 RUN mkdir /app/
 COPY ./flutter_frontend/ /app/
 WORKDIR /app/
-
-# run flutter clean, pub get and then build for web
-RUN flutter clean
-RUN flutter pub get
-RUN flutter build web
-
+RUN flutter build web --release --web-renderer html
 
 # final stage/image
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
