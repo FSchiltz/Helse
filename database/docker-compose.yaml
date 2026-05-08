@@ -6,6 +6,11 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: helse
+    volumes:
+      - pgdata:/var/lib/postgresql/
     ports:
       - 5432:5432
+
+volumes:
+  pgdata:
  
