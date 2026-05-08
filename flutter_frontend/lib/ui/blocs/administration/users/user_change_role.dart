@@ -60,7 +60,7 @@ class _ChangeRoleState extends State<ChangeRole> {
     var localContext = context;
     try {
       // save the user
-      await DI.user.updatePerson(UpdatePerson(id: widget.id, types: types));
+      await DI.user.updatePerson(UpdatePerson(id: widget.id, types: types.where((x)=> x != UserType.swaggerGeneratedUnknown).toList()));
 
       widget.callback.call();
 
