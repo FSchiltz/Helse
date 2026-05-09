@@ -107,38 +107,31 @@ class _PatientAddState extends State<PatientAdd> {
                   Center(
                     child: Column(
                       children: [
-                        CircleAvatar(
-                          radius: 40,
-                          backgroundColor: Theme.of(context).colorScheme.surface,
-                          child: _pictureData != null
-                              ? ClipOval(
-                                  child: Image.memory(
-                                    _pictureData!,
-                                    width: 80,
-                                    height: 80,
-                                    fit: BoxFit.cover,
+                        GestureDetector(
+                          onTap: _selectPicture,
+                          child: CircleAvatar(
+                            radius: 40,
+                            backgroundColor: Theme.of(context).colorScheme.surface,
+                            child: _pictureData != null
+                                ? ClipOval(
+                                    child: Image.memory(
+                                      _pictureData!,
+                                      width: 80,
+                                      height: 80,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : Icon(
+                                    Icons.image_sharp,
+                                    size: 40,
+                                    color: Theme.of(context).colorScheme.onSurface,
                                   ),
-                                )
-                              : Icon(
-                                  Icons.person_sharp,
-                                  size: 40,
-                                  color: Theme.of(context).colorScheme.onSurface,
-                                ),
+                          ),
                         ),
                         const SizedBox(height: 10),
                         Text(
                           _pictureName == null ? 'No picture selected' : _pictureName!,
                           style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        const SizedBox(height: 10),
-                        ElevatedButton.icon(
-                          onPressed: _selectPicture,
-                          icon: const Icon(Icons.image_sharp),
-                          label: const Text('Choose picture'),
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size.fromHeight(50),
-                            shape: const ContinuousRectangleBorder(),
-                          ),
                         ),
                         const SizedBox(height: 20),
                       ],
