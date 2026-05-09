@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/common/notification.dart';
@@ -24,6 +28,18 @@ class _PatientAddState extends State<PatientAdd> {
 
   final TextEditingController _controllerSurname = TextEditingController();
 
+  Uint8List? _pictureData;
+  String? _pictureName;
+
+  Future<void> _selectPicture() async {
+    final XFile? file = await openFile(acceptedTypeGroups: [XTypeGroup(label: 'images', extensions: ['png', 'jpg', 'jpeg', 'gif'])]);
+    if (file != null) {
+      _pictureData = await file.readAsBytes();
+      _pictureName = file.name;
+      setState(() {});
+    }
+  }
+
   void _submit() async {
     var localContext = context;
     try {
@@ -36,6 +52,7 @@ class _PatientAddState extends State<PatientAdd> {
           name: _controllerName.text,
           surname: _controllerSurname.text,
           types: [],
+          profilePicture: _pictureData != null ? base64Encode(_pictureData!) : null,
         ));
 
         _formKey.currentState?.reset();
@@ -87,6 +104,46 @@ class _PatientAddState extends State<PatientAdd> {
                   Text("Add a new patient",
                       style: Theme.of(context).textTheme.bodyMedium),
                   const SizedBox(height: 10),
+                  Center(
+                    child: Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 40,
+                          backgroundColor: Theme.of(context).colorScheme.surface,
+                          child: _pictureData != null
+                              ? ClipOval(
+                                  child: Image.memory(
+                                    _pictureData!,
+                                    width: 80,
+                                    height: 80,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : Icon(
+                                  Icons.person_sharp,
+                                  size: 40,
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          _pictureName == null ? 'No picture selected' : _pictureName!,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        const SizedBox(height: 10),
+                        ElevatedButton.icon(
+                          onPressed: _selectPicture,
+                          icon: const Icon(Icons.image_sharp),
+                          label: const Text('Choose picture'),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size.fromHeight(50),
+                            shape: const ContinuousRectangleBorder(),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
                   UserForm([],
                       controllerName: _controllerName,
                       controllerSurname: _controllerSurname),
