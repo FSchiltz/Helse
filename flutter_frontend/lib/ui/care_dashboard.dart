@@ -9,16 +9,23 @@ class CareDashBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Patients(),
-            Agenda(date: date),
-          ],
+    var theme = Theme.of(context).colorScheme;
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          color: theme.surfaceContainer,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: const Patients(),
+          ),
         ),
-      ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Agenda(date: date),
+        ),
+      ],
     );
   }
 }
