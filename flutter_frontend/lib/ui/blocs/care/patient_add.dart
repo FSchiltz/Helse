@@ -109,30 +109,42 @@ class _PatientAddState extends State<PatientAdd> {
                       children: [
                         GestureDetector(
                           onTap: _selectPicture,
-                          child: CircleAvatar(
-                            radius: 40,
-                            backgroundColor: Theme.of(context).colorScheme.surface,
-                            child: _pictureData != null
-                                ? ClipOval(
-                                    child: Image.memory(
-                                      _pictureData!,
-                                      width: 80,
-                                      height: 80,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                                : Icon(
-                                    Icons.image_sharp,
-                                    size: 40,
-                                    color: Theme.of(context).colorScheme.onSurface,
+                          child: Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: 40,
+                                backgroundColor: Theme.of(context).colorScheme.surface,
+                                child: _pictureData != null
+                                    ? ClipOval(
+                                        child: Image.memory(
+                                          _pictureData!,
+                                          width: 80,
+                                          height: 80,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                    : Icon(
+                                        Icons.image_sharp,
+                                        size: 40,
+                                        color: Theme.of(context).colorScheme.onSurface,
+                                      ),
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: CircleAvatar(
+                                  radius: 12,
+                                  backgroundColor: Theme.of(context).colorScheme.primary,
+                                  child: Icon(
+                                    Icons.add_sharp,
+                                    size: 18,
+                                    color: Theme.of(context).colorScheme.onPrimary,
                                   ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          _pictureName == null ? 'No picture selected' : _pictureName!,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
+                        ),                        
                         const SizedBox(height: 20),
                       ],
                     ),
