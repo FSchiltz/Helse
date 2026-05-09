@@ -10,26 +10,6 @@ namespace Api.Data;
 
 public record PersonFromDb(User User, Models.Person Person);
 
-public interface IUserContext : IContext
-{
-    Task UpdatePerson(UpdatePerson update);
-    Task AddRight(long userId, long id, RightType edit);
-    Task<long> Count();
-
-    Task<PersonFromDb?> Get(string? identifier);
-
-    Task<Api.Models.Settings.Right?> HasRightAsync(long id, long personId, RightType type, DateTime now);
-    Task<long> InsertPerson(PersonCreation newUser);
-    Task InsertUser(PersonCreation newUser, long id, string password);
-    Task UpdatePassword(long user, string password);
-    Task<List<PersonFromDb>> GetUsers();
-    Task<List<Models.Right>> GetRights(DateTime time);
-    Task SetExpiryRight(long personId, DateTime now);
-    Task InsertRights(IEnumerable<Models.Right> dbRights);
-    Task<long> InsertTreatment(long v, TreatmentType care);
-    Task InsertEvent(CreateEvent e, long person, long user, long? treatment);
-}
-
 public class UserContext(DataConnection db) : IUserContext
 {
     /// <summary>
@@ -52,16 +32,17 @@ public class UserContext(DataConnection db) : IUserContext
     public async Task UpdatePerson(UpdatePerson update)
     {
         await db.GetTable<Data.Models.Person>()
-        .Where(x => x.Id == update.Id)
-        .Set(x => x.Birth, update.Birth)
-        .Set(x => x.Identifier, update.Identifier)
-        .Set(x => x.Name, update.Name)
-        .Set(x => x.Surname, update.Surname)
-        .UpdateAsync();
+            .Where(x => x.Id == update.Id)
+            .Set(x => x.Birth, update.Birth)
+            .Set(x => x.Identifier, update.Identifier)
+            .Set(x => x.Name, update.Name)
+            .Set(x => x.Surname, update.Surname)
+            .Set(x => x.ProfilePicture, update.ProfilePicture)
+            .UpdateAsync();
 
         var userQuery = db.GetTable<Data.Models.User>()
-        .Where(x => x.PersonId == update.Id)
-        .AsUpdatable();
+            .Where(x => x.PersonId == update.Id)
+            .AsUpdatable();
 
         if (update.Email is not null)
             userQuery = userQuery.Set(x => x.Email, update.Email);
@@ -73,8 +54,16 @@ public class UserContext(DataConnection db) : IUserContext
             userQuery = userQuery.Set(x => x.Identifier, update.Identifier);
 
         if (update.Types is not null)
-            userQuery = userQuery.Set(x => x.Type, (int)update.Types.Cast<Models.UserType>().Aggregate((a, b) => a | b));
-
+        {
+            if (update.Types.Count == 0)
+            {
+                userQuery = userQuery.Set(x => x.Type, 0);
+            }
+            else
+            {
+                userQuery = userQuery.Set(x => x.Type, (int)update.Types.Cast<Models.UserType>().Aggregate((a, b) => a | b));
+            }
+        }
         await userQuery.UpdateAsync();
     }
 
@@ -106,6 +95,7 @@ public class UserContext(DataConnection db) : IUserContext
                 Identifier = newUser.Identifier,
                 Name = newUser.Name,
                 Surname = newUser.Surname,
+                ProfilePicture = newUser.ProfilePicture,
             });
     }
 

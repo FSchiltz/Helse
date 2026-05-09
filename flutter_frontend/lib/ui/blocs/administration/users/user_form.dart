@@ -13,6 +13,7 @@ class UserForm extends StatefulWidget {
   final TextEditingController? controllerConFirmPassword;
   final TextEditingController controllerName;
   final TextEditingController controllerSurname;
+  final TextEditingController? controllerIdentifier;
 
   const UserForm(
     this.types, {
@@ -23,6 +24,7 @@ class UserForm extends StatefulWidget {
     this.controllerConFirmPassword,
     required this.controllerName,
     required this.controllerSurname,
+    this.controllerIdentifier,
   });
 
   @override
@@ -51,12 +53,20 @@ class _UserFormState extends State<UserForm> {
         ),
         const SizedBox(height: 10),
         SquareTextField(
-            controller: widget.controllerSurname,
-            label: "Surname",
-            icon: Icons.person_sharp,
-            theme: theme),
-        const SizedBox(height: 10),
-        SquareTextField(
+          controller: widget.controllerSurname,
+          label: "Surname",
+          icon: Icons.person_sharp,
+          theme: theme,
+        ),
+        if(widget.controllerIdentifier != null)const SizedBox(height: 10),
+        if(widget.controllerIdentifier != null)SquareTextField(
+          controller: widget.controllerIdentifier,
+          label: "Identifier",
+          icon: Icons.person_sharp,
+          theme: theme,
+        ),
+        if(widget.controllerEmail != null)const SizedBox(height: 10),
+        if(widget.controllerEmail != null)SquareTextField(
           controller: widget.controllerEmail,
           focusNode: _focusNodeEmail,
           label: "Email",
@@ -65,25 +75,26 @@ class _UserFormState extends State<UserForm> {
           validator: validateEmail,
           onEditingComplete: () => _focusNodePassword.requestFocus(),
         ),
-        const SizedBox(height: 10),
-        UserNameInput(
+        if(widget.controllerUsername != null)const SizedBox(height: 10),
+        if(widget.controllerUsername != null)UserNameInput(
           controller: widget.controllerUsername,
           nextFocus: _focusNodePassword,
           validate: validateUser,
         ),
-        const SizedBox(height: 10),
-        PasswordInput(
+        if(widget.controllerPassword != null)const SizedBox(height: 10),
+        if(widget.controllerPassword != null)PasswordInput(
           controller: widget.controllerPassword,
           nextFocus: _focusNodeConfirmPassword,
           validate: validatePassword,
           focus: _focusNodePassword,
         ),
-        const SizedBox(height: 10),
-        PasswordInput(
-            text: "Confirm Password",
-            controller: widget.controllerConFirmPassword,
-            focus: _focusNodeConfirmPassword,
-            validate: validateConfirmPassword),
+        if(widget.controllerPassword != null)const SizedBox(height: 10),
+        if(widget.controllerPassword != null)PasswordInput(
+          text: "Confirm Password",
+          controller: widget.controllerConFirmPassword,
+          focus: _focusNodeConfirmPassword,
+          validate: validateConfirmPassword,
+        ),
       ],
     );
   }

@@ -54,7 +54,7 @@
             "flutterMode": "release",
             "args": [
                 "-d",
-                "web-server"
+                "chrome"
             ]
         }
     ],

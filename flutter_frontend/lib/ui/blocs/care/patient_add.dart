@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/common/notification.dart';
@@ -10,7 +14,8 @@ import '../../common/loader.dart';
 
 class PatientAdd extends StatefulWidget {
   final void Function() callback;
-  const PatientAdd(this.callback, {super.key});
+  final Person? edit;
+  const PatientAdd(this.callback, {super.key, this.edit});
 
   @override
   State<PatientAdd> createState() => _PatientAddState();
@@ -21,8 +26,38 @@ class _PatientAddState extends State<PatientAdd> {
   SubmissionStatus _status = SubmissionStatus.initial;
 
   final TextEditingController _controllerName = TextEditingController();
-
+  final TextEditingController _controllerNiss = TextEditingController();
   final TextEditingController _controllerSurname = TextEditingController();
+
+  Uint8List? _pictureData;
+
+  Future<void> _selectPicture() async {
+    final XFile? file = await openFile(
+      acceptedTypeGroups: [
+        XTypeGroup(label: 'images', extensions: ['png', 'jpg', 'jpeg', 'gif']),
+      ],
+    );
+    if (file != null) {
+      _pictureData = await file.readAsBytes();
+      setState(() {});
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    var edit = widget.edit;
+    if (edit != null) {
+      _controllerName.text = edit.name ?? '';
+      _controllerSurname.text = edit.surname ?? '';
+      _controllerNiss.text = edit.identifier ?? '';
+
+      if (edit.profilePicture != null) {
+        _pictureData = base64Decode(edit.profilePicture ?? '');
+      }
+    }
+  }
 
   void _submit() async {
     var localContext = context;
@@ -31,12 +66,34 @@ class _PatientAddState extends State<PatientAdd> {
         _status = SubmissionStatus.inProgress;
       });
       try {
+        if(widget.edit != null){
+          await DI.user.updatePerson(
+          UpdatePerson(
+            id: widget.edit?.id,
+            name: _controllerName.text,
+            surname: _controllerSurname.text,
+            identifier: _controllerNiss.text,
+            types: [],
+            profilePicture: _pictureData != null
+                ? base64Encode(_pictureData!)
+                : null,
+          ),
+        );
+        }
+        else{
         // save the user
-        await DI.user.addPerson(PersonCreation(
-          name: _controllerName.text,
-          surname: _controllerSurname.text,
-          types: [],
-        ));
+        await DI.user.addPerson(
+          PersonCreation(
+            name: _controllerName.text,
+            surname: _controllerSurname.text,
+            identifier: _controllerNiss.text,
+            types: [],
+            profilePicture: _pictureData != null
+                ? base64Encode(_pictureData!)
+                : null,
+          ),
+        );
+        }
 
         _formKey.currentState?.reset();
         widget.callback.call();
@@ -84,12 +141,65 @@ class _PatientAddState extends State<PatientAdd> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  Text("Add a new patient",
-                      style: Theme.of(context).textTheme.bodyMedium),
+                  Text(
+                    "Add a new patient",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                   const SizedBox(height: 10),
-                  UserForm([],
-                      controllerName: _controllerName,
-                      controllerSurname: _controllerSurname),
+                  Center(
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          onTap: _selectPicture,
+                          child: Stack(
+                            children: [
+                              Container(
+                                width: 80,
+                                height: 80,
+                                color: Theme.of(context).colorScheme.surface,
+                                child: _pictureData != null
+                                    ? Image.memory(
+                                        _pictureData!,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Icon(
+                                        Icons.image_sharp,
+                                        size: 40,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                      ),
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: CircleAvatar(
+                                  radius: 12,
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.primary,
+                                  child: Icon(
+                                    Icons.add_sharp,
+                                    size: 18,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                  UserForm(
+                    [],
+                    controllerName: _controllerName,
+                    controllerSurname: _controllerSurname,
+                    controllerIdentifier: _controllerNiss,
+                  ),
                 ],
               ),
             ),
