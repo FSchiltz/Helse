@@ -29,7 +29,7 @@ jobs:
       push: true
       platform: linux/amd64
       
- build-docker-arm:
+  build-docker-arm:
     permissions:
       contents: read 
       packages: write
