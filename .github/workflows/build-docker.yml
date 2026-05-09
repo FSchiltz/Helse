@@ -11,8 +11,9 @@ on:
       push:
         required: true
         type: boolean
-
-            
+      platform:
+        required: true
+        type: string            
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
@@ -47,7 +48,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
         with:
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ inputs.platform }}
           push: ${{ inputs.push }}
           tags: ${{ inputs.tags || steps.meta.outputs.tags }}
           labels: ${{ inputs.labels || steps.meta.outputs.labels }}
