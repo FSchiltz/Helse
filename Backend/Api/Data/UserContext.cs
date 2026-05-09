@@ -54,8 +54,16 @@ public class UserContext(DataConnection db) : IUserContext
             userQuery = userQuery.Set(x => x.Identifier, update.Identifier);
 
         if (update.Types is not null)
-            userQuery = userQuery.Set(x => x.Type, (int)update.Types.Cast<Models.UserType>().Aggregate((a, b) => a | b));
-
+        {
+            if (update.Types.Count == 0)
+            {
+                userQuery = userQuery.Set(x => x.Type, 0);
+            }
+            else
+            {
+                userQuery = userQuery.Set(x => x.Type, (int)update.Types.Cast<Models.UserType>().Aggregate((a, b) => a | b));
+            }
+        }
         await userQuery.UpdateAsync();
     }
 
