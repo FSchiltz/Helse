@@ -5,7 +5,6 @@ using Api.Models.Treatments;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using System.Security.Claims;
-using Xunit;
 using Api.Helpers;
 
 namespace Tests.Unit.Logic;
@@ -19,7 +18,7 @@ public class TreatmentLogicTests
         var db = Substitute.For<IHealthContext>();
         var types = new List<EventType>
         {
-            new EventType { Id = 1, Name = "Test" }
+            new() { Id = 1, Name = "Test" }
         };
         db.GetEventTypes(false).Returns(types);
 
@@ -39,12 +38,15 @@ public class TreatmentLogicTests
         // Arrange
         var db = Substitute.For<IUserContext>();
         var user = new Api.Data.Models.User { Id = 1, PersonId = 1, Identifier = "test", Password = "pass" };
-        db.GetUser(Arg.Any<ClaimsPrincipal>()).Returns((null, user));
+        db.Get(Arg.Any<string>()).Returns(new PersonFromDb(user, new()));
+        db.BeginTransactionAsync().Returns(Substitute.For<ITransaction>());
         db.HasRightAsync(1, 1, Api.Models.Settings.RightType.Edit, Arg.Any<DateTime>()).Returns(new Api.Models.Settings.Right());
         db.InsertTreatment(1, TreatmentType.Care).Returns(1L);
-        var treatment = new CreateTreatment { PersonId = 1, Events = new List<Api.Models.Events.CreateEvent>() };
-        var context = new DefaultHttpContext();
-        context.User = new ClaimsPrincipal(new ClaimsIdentity());
+        var treatment = new CreateTreatment { PersonId = 1, Events = [] };
+        var context = new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(new ClaimsIdentity())
+        };
 
         // Act
         var result = await TreatmentLogic.PostAsync(treatment, db, context);

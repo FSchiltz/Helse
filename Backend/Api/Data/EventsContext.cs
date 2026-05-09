@@ -6,7 +6,22 @@ using LinqToDB.Mapping;
 
 namespace Api.Data;
 
-public class HealthContext(DataConnection db) : IHealthContext
+public abstract class BaseContext(DataConnection db) : IContext
+{
+    protected DataConnection Db => db;
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public async Task<ITransaction> BeginTransactionAsync()
+    {
+        var fromDbTransaction = await Db.BeginTransactionAsync();
+        return new Transaction(fromDbTransaction);
+    }
+}
+
+
+public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
 {
     /// <summary>
     /// Chunked metric for the summary
@@ -32,14 +47,9 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task<DataConnectionTransaction> BeginTransactionAsync() => db.BeginTransactionAsync();
-
-    /// <summary>
-    /// <inheritdoc/>
-    /// </summary>
     public Task Insert(Api.Models.Events.CreateEvent e, long person, long user)
     {
-        return db.GetTable<Event>().InsertAsync(() => new Event
+        return Db.GetTable<Event>().InsertAsync(() => new Event
         {
             PersonId = person,
             UserId = user,
@@ -54,34 +64,34 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task DeleteEvent(long id) => db.GetTable<Event>().DeleteAsync(x => x.Id == id);
+    public Task DeleteEvent(long id) => Db.GetTable<Event>().DeleteAsync(x => x.Id == id);
 
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task<int> DeleteEventType(long id) => db.GetTable<EventType>().DeleteAsync(x => x.Id == id && x.UserEditable);
+    public Task<int> DeleteEventType(long id) => Db.GetTable<EventType>().DeleteAsync(x => x.Id == id && x.UserEditable);
 
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task DeleteMetric(long id) => db.GetTable<Data.Models.Metric>().DeleteAsync(x => x.Id == id);
+    public Task DeleteMetric(long id) => Db.GetTable<Data.Models.Metric>().DeleteAsync(x => x.Id == id);
 
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task<int> DeleteMetricType(long id) => db.GetTable<MetricType>().DeleteAsync(x => x.Id == id && x.UserEditable);
+    public Task<int> DeleteMetricType(long id) => Db.GetTable<MetricType>().DeleteAsync(x => x.Id == id && x.UserEditable);
 
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task<Event?> GetEvent(long id) => db.GetTable<Event>().FirstOrDefaultAsync(x => x.Id == id);
+    public Task<Event?> GetEvent(long id) => Db.GetTable<Event>().FirstOrDefaultAsync(x => x.Id == id);
 
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
     public Task<List<Event>> GetEvents(long id, int type, DateTime start, DateTime end)
     {
-        return db.GetTable<Event>()
+        return Db.GetTable<Event>()
             .Where(x => x.PersonId == id
                 && x.Type == type
                 && x.Start <= end && start <= x.Stop)
@@ -93,8 +103,8 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// </summary>
     public Task<List<Event>> GetEvents(long user, Api.Models.Settings.RightType view, DateTime start, DateTime end)
     {
-        return (from e in db.GetTable<Data.Models.Event>()
-                join r in db.GetTable<Data.Models.Right>() on e.PersonId equals r.PersonId
+        return (from e in Db.GetTable<Data.Models.Event>()
+                join r in Db.GetTable<Data.Models.Right>() on e.PersonId equals r.PersonId
                 where e.Start <= end && start <= e.Stop
                 where r.UserId == user && r.Type == (int)view
                 select e)
@@ -106,7 +116,7 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// </summary>
     public Task<List<Event>> GetEvents(long id, DateTime start, DateTime end)
     {
-        return db.GetTable<Data.Models.Event>()
+        return Db.GetTable<Data.Models.Event>()
             .Where(x => x.PersonId == id
                 && x.TreatmentId != null
                 && x.Start <= end && start <= x.Stop)
@@ -116,14 +126,14 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task<Metric?> GetMetric(long id) => db.GetTable<Metric>().FirstOrDefaultAsync(x => x.Id == id);
+    public Task<Metric?> GetMetric(long id) => Db.GetTable<Metric>().FirstOrDefaultAsync(x => x.Id == id);
 
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
     public Task<Metric[]> GetMetrics(long id, long type, DateTime start, DateTime end)
     {
-        return db.GetTable<Data.Models.Metric>()
+        return Db.GetTable<Data.Models.Metric>()
             .Where(x => x.PersonId == id
                 && x.Type == type
                 && x.Date <= end && x.Date >= start)
@@ -136,7 +146,7 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// </summary>
     public Task<List<MetricType>> GetMetricTypes(bool? all)
     {
-        IQueryable<MetricType> query = db.GetTable<MetricType>();
+        IQueryable<MetricType> query = Db.GetTable<MetricType>();
 
         if (all == false)
             query = query.Where(x => x.Visible);
@@ -147,15 +157,15 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task<MetricType?> GetMetricType(int type) => db.GetTable<MetricType>().FirstOrDefaultAsync(x => x.Id == type);
+    public Task<MetricType?> GetMetricType(int type) => Db.GetTable<MetricType>().FirstOrDefaultAsync(x => x.Id == type);
 
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
     public Task<List<Person>> GetPatients(long user, DateTime now, Api.Models.Settings.RightType right)
     {
-        return (from u in db.GetTable<Person>()
-                join r in db.GetTable<Right>() on u.Id equals r.PersonId
+        return (from u in Db.GetTable<Person>()
+                join r in Db.GetTable<Right>() on u.Id equals r.PersonId
                 where r.Stop == null || (r.Stop >= now && r.Start <= now)
                 where r.UserId == user
                 where r.Type == (int)right
@@ -167,7 +177,7 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// </summary>
     public Task<List<EventType>> GetEventTypes(bool? all)
     {
-        IQueryable<EventType> query = db.GetTable<EventType>();
+        IQueryable<EventType> query = Db.GetTable<EventType>();
 
         if (all == false)
             query = query.Where(x => x.Visible);
@@ -180,7 +190,7 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// </summary>
     public Task Insert(EventType eventType)
     {
-        return db.GetTable<EventType>().InsertAsync(() => new EventType
+        return Db.GetTable<EventType>().InsertAsync(() => new EventType
         {
             Name = eventType.Name,
             Description = eventType.Description,
@@ -195,7 +205,7 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// </summary>
     public Task Insert(MetricType metric)
     {
-        return db.GetTable<Data.Models.MetricType>().InsertAsync(() => new Data.Models.MetricType
+        return Db.GetTable<Data.Models.MetricType>().InsertAsync(() => new Data.Models.MetricType
         {
             Name = metric.Name,
             Description = metric.Description,
@@ -212,7 +222,7 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// </summary>
     public Task Insert(Api.Models.Metrics.CreateMetric metric, long person, long user)
     {
-        return db.GetTable<Metric>().InsertAsync(() => new Metric
+        return Db.GetTable<Metric>().InsertAsync(() => new Metric
         {
             PersonId = person,
             Value = metric.Value,
@@ -229,7 +239,7 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// </summary>
     public Task Update(EventType type)
     {
-        return db.GetTable<EventType>()
+        return Db.GetTable<EventType>()
             .Where(x => x.Id == type.Id)
             .Set(x => x.Name, type.Name)
             .Set(x => x.Description, type.Description)
@@ -242,7 +252,7 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// </summary>
     public Task Update(MetricType metric)
     {
-        return db.GetTable<MetricType>()
+        return Db.GetTable<MetricType>()
             .Where(x => x.Id == metric.Id)
             .Set(x => x.Name, metric.Name)
             .Set(x => x.Description, metric.Description)
@@ -256,13 +266,13 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task<bool> ExistsEvent(long person, string tag) => db.GetTable<Event>().AnyAsync(x => x.PersonId == person && x.Tag == tag);
+    public Task<bool> ExistsEvent(long person, string tag) => Db.GetTable<Event>().AnyAsync(x => x.PersonId == person && x.Tag == tag);
 
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
     public Task<bool> ExistsMetric(long person, string tag, Api.Models.FileTypes source)
-    => db.GetTable<Metric>().AnyAsync(x => x.PersonId == person && x.Tag == tag && x.Source == (int)source);
+    => Db.GetTable<Metric>().AnyAsync(x => x.PersonId == person && x.Tag == tag && x.Source == (int)source);
 
     /// <summary>
     /// <inheritdoc/>
@@ -270,7 +280,7 @@ public class HealthContext(DataConnection db) : IHealthContext
     public async Task<Metric[]> GetSummaryMetrics(int tile, long id, int type, Api.Models.Metrics.MetricSummary action, DateTime start, DateTime end)
     {
         // Use a manual command to use the SQL function NTILE
-        var groups = db.FromSql<ChunkedMetric>($"SELECT NTILE({tile}) OVER (ORDER BY date) as chunk,* FROM health.metric m WHERE m.PersonId = {id} AND m.Type = {type} AND m.Date <= {end} AND m.Date >= {start}")
+        var groups = Db.FromSql<ChunkedMetric>($"SELECT NTILE({tile}) OVER (ORDER BY date) as chunk,* FROM health.metric m WHERE m.PersonId = {id} AND m.Type = {type} AND m.Date <= {end} AND m.Date >= {start}")
          .AsSubQuery()
          .GroupBy(x => x.Chunk);
         IQueryable<Chunked> query = action switch
@@ -310,7 +320,7 @@ public class HealthContext(DataConnection db) : IHealthContext
     /// </summary>
     public Task<Metric?> GetLastMetrics(long id, int type, DateTime start, DateTime end)
     {
-        return db.GetTable<Metric>().Where(x => x.PersonId == id
+        return Db.GetTable<Metric>().Where(x => x.PersonId == id
                 && x.Type == type
                 && x.Date <= end && x.Date >= start)
                 .OrderByDescending(x => x.Date)
@@ -320,7 +330,7 @@ public class HealthContext(DataConnection db) : IHealthContext
 
     public Task Update(Api.Models.Metrics.UpdateMetric metric)
     {
-        return db.GetTable<Metric>()
+        return Db.GetTable<Metric>()
             .Where(x => x.Id == metric.Id)
             .Set(x => x.Date, metric.Date)
             .Set(x => x.Tag, metric.Tag)
@@ -331,12 +341,12 @@ public class HealthContext(DataConnection db) : IHealthContext
 
     public Task Update(Api.Models.Events.UpdateEvent e)
     {
-        return db.GetTable<Event>()
+        return Db.GetTable<Event>()
         .Where(x => x.Id == e.Id)
-        .Set(x => x.Start , e.Start)
-        .Set(x => x.Stop , e.Stop)
-        .Set(x => x.Description , e.Description)
-        .Set(x => x.Tag , e.Tag)
+        .Set(x => x.Start, e.Start)
+        .Set(x => x.Stop, e.Stop)
+        .Set(x => x.Description, e.Description)
+        .Set(x => x.Tag, e.Tag)
         .UpdateAsync();
     }
 }

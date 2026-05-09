@@ -4,8 +4,6 @@ using Api.Models.Persons;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using System.Security.Claims;
-using Xunit;
-using Api.Helpers;
 
 namespace Tests.Unit.Logic;
 

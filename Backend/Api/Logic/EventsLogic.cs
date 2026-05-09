@@ -101,7 +101,7 @@ public static class EventsLogic
 
         await events.DeleteEvent(id);
 
-        transaction.Commit();
+        await transaction.CommitAsync();
 
         return TypedResults.NoContent();
     }

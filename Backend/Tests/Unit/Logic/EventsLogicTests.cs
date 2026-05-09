@@ -2,7 +2,6 @@ using System.Security.Claims;
 using Api.Data;
 using Api.Data.Models;
 using Api.Logic;
-using Api.Models.Persons;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;

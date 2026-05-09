@@ -3,7 +3,6 @@ using Api.Data.Models;
 using Api.Models.Settings;
 using LinqToDB;
 using LinqToDB.Data;
-using Xunit;
 
 namespace Tests.Unit.Data;
 
@@ -14,7 +13,7 @@ public class UserContextTests : IAsyncLifetime
     public async Task InitializeAsync()
     {
         // Create in-memory SQLite database
-        _db = new DataConnection("SQLite.MS", new LinqToDB.DataOptions().UseSQLiteMs("Data Source=:memory:"));
+        _db = new DataConnection("SQLite.MS",  x=> new LinqToDB.DataOptions().UseSQLite("Data Source=:memory:"));
         await _db.CreateTableAsync<Person>();
         await _db.CreateTableAsync<User>();
         await _db.CreateTableAsync<Api.Data.Models.Right>();

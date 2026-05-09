@@ -4,7 +4,6 @@ using Api.Models.Settings.Admin;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Xunit;
 
 namespace Tests.Unit.Logic;
 

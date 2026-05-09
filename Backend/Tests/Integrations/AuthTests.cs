@@ -1,9 +1,7 @@
 using Api.Logic.Auth;
 using Api.Models;
 using Api.Models.Persons;
-using CsvHelper.Configuration.Attributes;
 using Microsoft.AspNetCore.Mvc.Testing;
-using NSubstitute;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;

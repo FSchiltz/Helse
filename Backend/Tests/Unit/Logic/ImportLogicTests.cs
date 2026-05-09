@@ -1,5 +1,4 @@
 using Api.Logic;
-using Xunit;
 
 namespace Tests.Unit.Logic;
 

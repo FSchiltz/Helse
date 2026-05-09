@@ -4,7 +4,6 @@ using Api.Models.Persons;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using System.Security.Claims;
-using Xunit;
 using Api.Helpers;
 
 namespace Tests.Unit.Logic;
@@ -17,15 +16,17 @@ public class PersonLogicTests
         // Arrange
         var db = Substitute.For<IUserContext>();
         var user = new Api.Data.Models.User { Id = 1, Identifier = "admin", Password = "pass", Type = 1 };
-        db.GetUser(Arg.Any<ClaimsPrincipal>()).Returns((null, user));
+        db.Get(Arg.Any<string>()).Returns(new PersonFromDb(user, new()));
         var users = new List<PersonFromDb>
         {
-            new PersonFromDb(new Api.Data.Models.User { Id = 1, Identifier = "test", Password = "pass" }, new Api.Data.Models.Person { Id = 1, Name = "Test" })
+            new(new Api.Data.Models.User { Id = 1, Identifier = "test", Password = "pass" }, new Api.Data.Models.Person { Id = 1, Name = "Test" })
         };
         db.GetUsers().Returns(users);
-        db.GetRights(Arg.Any<DateTime>()).Returns(new List<Api.Data.Models.Right>());
-        var context = new DefaultHttpContext();
-        context.User = new ClaimsPrincipal(new ClaimsIdentity());
+        db.GetRights(Arg.Any<DateTime>()).Returns([]);
+        var context = new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(new ClaimsIdentity())
+        };
 
         // Act
         var result = await PersonLogic.GetAsync(db, context);
@@ -41,9 +42,11 @@ public class PersonLogicTests
         // Arrange
         var db = Substitute.For<IUserContext>();
         var user = new Api.Data.Models.User { Id = 1, Identifier = "user", Password = "pass", Type = 0 };
-        db.GetUser(Arg.Any<ClaimsPrincipal>()).Returns((null, user));
-        var context = new DefaultHttpContext();
-        context.User = new ClaimsPrincipal(new ClaimsIdentity());
+       db.Get(Arg.Any<string>()).Returns(new PersonFromDb(user, new()));
+        var context = new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(new ClaimsIdentity())
+        };
 
         // Act
         var result = await PersonLogic.GetAsync(db, context);
