@@ -236,6 +236,7 @@ Person _$PersonFromJson(Map<String, dynamic> json) => Person(
   surname: json['surname'] as String?,
   identifier: json['identifier'] as String?,
   birth: json['birth'] == null ? null : DateTime.parse(json['birth'] as String),
+  profilePicture: json['profilePicture'] as String?,
   email: json['email'] as String?,
   phone: json['phone'] as String?,
 );
@@ -249,6 +250,7 @@ Map<String, dynamic> _$PersonToJson(Person instance) => <String, dynamic>{
   'surname': instance.surname,
   'identifier': instance.identifier,
   'birth': instance.birth?.toIso8601String(),
+  'profilePicture': instance.profilePicture,
   'email': instance.email,
   'phone': instance.phone,
 };
@@ -264,6 +266,7 @@ PersonCreation _$PersonCreationFromJson(Map<String, dynamic> json) =>
       birth: json['birth'] == null
           ? null
           : DateTime.parse(json['birth'] as String),
+      profilePicture: json['profilePicture'] as String?,
       email: json['email'] as String?,
       phone: json['phone'] as String?,
     );
@@ -277,6 +280,7 @@ Map<String, dynamic> _$PersonCreationToJson(PersonCreation instance) =>
       'surname': instance.surname,
       'identifier': instance.identifier,
       'birth': instance.birth?.toIso8601String(),
+      'profilePicture': instance.profilePicture,
       'email': instance.email,
       'phone': instance.phone,
     };
@@ -398,6 +402,7 @@ UpdatePerson _$UpdatePersonFromJson(Map<String, dynamic> json) => UpdatePerson(
   surname: json['surname'] as String?,
   identifier: json['identifier'] as String?,
   birth: json['birth'] == null ? null : DateTime.parse(json['birth'] as String),
+  profilePicture: json['profilePicture'] as String?,
   email: json['email'] as String?,
   phone: json['phone'] as String?,
 );
@@ -410,6 +415,7 @@ Map<String, dynamic> _$UpdatePersonToJson(UpdatePerson instance) =>
       'surname': instance.surname,
       'identifier': instance.identifier,
       'birth': instance.birth?.toIso8601String(),
+      'profilePicture': instance.profilePicture,
       'email': instance.email,
       'phone': instance.phone,
     };

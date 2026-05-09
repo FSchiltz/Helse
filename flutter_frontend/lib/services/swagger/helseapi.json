@@ -1828,6 +1828,13 @@
             ],
             "format": "date-time"
           },
+          "profilePicture": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "byte"
+          },
           "email": {
             "type": [
               "null",
@@ -1887,6 +1894,13 @@
               "string"
             ],
             "format": "date-time"
+          },
+          "profilePicture": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "byte"
           },
           "email": {
             "type": [
@@ -2160,6 +2174,13 @@
               "string"
             ],
             "format": "date-time"
+          },
+          "profilePicture": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "byte"
           },
           "email": {
             "type": [

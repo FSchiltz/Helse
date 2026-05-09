@@ -3,6 +3,7 @@
 // ignore_for_file: unused_element_parameter
 
 import 'package:json_annotation/json_annotation.dart';
+import 'package:json_annotation/json_annotation.dart' as json;
 import 'package:collection/collection.dart';
 import 'dart:convert';
 
@@ -11,6 +12,7 @@ import 'package:chopper/chopper.dart';
 import 'client_mapping.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart' show MultipartFile;
 import 'package:chopper/chopper.dart' as chopper;
 import 'helseapi.enums.swagger.dart' as enums;
 import 'helseapi.metadata.swagger.dart';
@@ -2284,6 +2286,7 @@ class Person {
     this.surname,
     this.identifier,
     this.birth,
+    this.profilePicture,
     this.email,
     this.phone,
   });
@@ -2313,6 +2316,8 @@ class Person {
   final String? identifier;
   @JsonKey(name: 'birth')
   final DateTime? birth;
+  @JsonKey(name: 'profilePicture')
+  final String? profilePicture;
   @JsonKey(name: 'email')
   final String? email;
   @JsonKey(name: 'phone')
@@ -2348,6 +2353,11 @@ class Person {
                 )) &&
             (identical(other.birth, birth) ||
                 const DeepCollectionEquality().equals(other.birth, birth)) &&
+            (identical(other.profilePicture, profilePicture) ||
+                const DeepCollectionEquality().equals(
+                  other.profilePicture,
+                  profilePicture,
+                )) &&
             (identical(other.email, email) ||
                 const DeepCollectionEquality().equals(other.email, email)) &&
             (identical(other.phone, phone) ||
@@ -2367,6 +2377,7 @@ class Person {
       const DeepCollectionEquality().hash(surname) ^
       const DeepCollectionEquality().hash(identifier) ^
       const DeepCollectionEquality().hash(birth) ^
+      const DeepCollectionEquality().hash(profilePicture) ^
       const DeepCollectionEquality().hash(email) ^
       const DeepCollectionEquality().hash(phone) ^
       runtimeType.hashCode;
@@ -2382,6 +2393,7 @@ extension $PersonExtension on Person {
     String? surname,
     String? identifier,
     DateTime? birth,
+    String? profilePicture,
     String? email,
     String? phone,
   }) {
@@ -2394,6 +2406,7 @@ extension $PersonExtension on Person {
       surname: surname ?? this.surname,
       identifier: identifier ?? this.identifier,
       birth: birth ?? this.birth,
+      profilePicture: profilePicture ?? this.profilePicture,
       email: email ?? this.email,
       phone: phone ?? this.phone,
     );
@@ -2408,6 +2421,7 @@ extension $PersonExtension on Person {
     Wrapped<String?>? surname,
     Wrapped<String?>? identifier,
     Wrapped<DateTime?>? birth,
+    Wrapped<String?>? profilePicture,
     Wrapped<String?>? email,
     Wrapped<String?>? phone,
   }) {
@@ -2420,6 +2434,9 @@ extension $PersonExtension on Person {
       surname: (surname != null ? surname.value : this.surname),
       identifier: (identifier != null ? identifier.value : this.identifier),
       birth: (birth != null ? birth.value : this.birth),
+      profilePicture: (profilePicture != null
+          ? profilePicture.value
+          : this.profilePicture),
       email: (email != null ? email.value : this.email),
       phone: (phone != null ? phone.value : this.phone),
     );
@@ -2436,6 +2453,7 @@ class PersonCreation {
     this.surname,
     this.identifier,
     this.birth,
+    this.profilePicture,
     this.email,
     this.phone,
   });
@@ -2464,6 +2482,8 @@ class PersonCreation {
   final String? identifier;
   @JsonKey(name: 'birth')
   final DateTime? birth;
+  @JsonKey(name: 'profilePicture')
+  final String? profilePicture;
   @JsonKey(name: 'email')
   final String? email;
   @JsonKey(name: 'phone')
@@ -2500,6 +2520,11 @@ class PersonCreation {
                 )) &&
             (identical(other.birth, birth) ||
                 const DeepCollectionEquality().equals(other.birth, birth)) &&
+            (identical(other.profilePicture, profilePicture) ||
+                const DeepCollectionEquality().equals(
+                  other.profilePicture,
+                  profilePicture,
+                )) &&
             (identical(other.email, email) ||
                 const DeepCollectionEquality().equals(other.email, email)) &&
             (identical(other.phone, phone) ||
@@ -2518,6 +2543,7 @@ class PersonCreation {
       const DeepCollectionEquality().hash(surname) ^
       const DeepCollectionEquality().hash(identifier) ^
       const DeepCollectionEquality().hash(birth) ^
+      const DeepCollectionEquality().hash(profilePicture) ^
       const DeepCollectionEquality().hash(email) ^
       const DeepCollectionEquality().hash(phone) ^
       runtimeType.hashCode;
@@ -2532,6 +2558,7 @@ extension $PersonCreationExtension on PersonCreation {
     String? surname,
     String? identifier,
     DateTime? birth,
+    String? profilePicture,
     String? email,
     String? phone,
   }) {
@@ -2543,6 +2570,7 @@ extension $PersonCreationExtension on PersonCreation {
       surname: surname ?? this.surname,
       identifier: identifier ?? this.identifier,
       birth: birth ?? this.birth,
+      profilePicture: profilePicture ?? this.profilePicture,
       email: email ?? this.email,
       phone: phone ?? this.phone,
     );
@@ -2556,6 +2584,7 @@ extension $PersonCreationExtension on PersonCreation {
     Wrapped<String?>? surname,
     Wrapped<String?>? identifier,
     Wrapped<DateTime?>? birth,
+    Wrapped<String?>? profilePicture,
     Wrapped<String?>? email,
     Wrapped<String?>? phone,
   }) {
@@ -2567,6 +2596,9 @@ extension $PersonCreationExtension on PersonCreation {
       surname: (surname != null ? surname.value : this.surname),
       identifier: (identifier != null ? identifier.value : this.identifier),
       birth: (birth != null ? birth.value : this.birth),
+      profilePicture: (profilePicture != null
+          ? profilePicture.value
+          : this.profilePicture),
       email: (email != null ? email.value : this.email),
       phone: (phone != null ? phone.value : this.phone),
     );
@@ -3182,6 +3214,7 @@ class UpdatePerson {
     this.surname,
     this.identifier,
     this.birth,
+    this.profilePicture,
     this.email,
     this.phone,
   });
@@ -3208,6 +3241,8 @@ class UpdatePerson {
   final String? identifier;
   @JsonKey(name: 'birth')
   final DateTime? birth;
+  @JsonKey(name: 'profilePicture')
+  final String? profilePicture;
   @JsonKey(name: 'email')
   final String? email;
   @JsonKey(name: 'phone')
@@ -3236,6 +3271,11 @@ class UpdatePerson {
                 )) &&
             (identical(other.birth, birth) ||
                 const DeepCollectionEquality().equals(other.birth, birth)) &&
+            (identical(other.profilePicture, profilePicture) ||
+                const DeepCollectionEquality().equals(
+                  other.profilePicture,
+                  profilePicture,
+                )) &&
             (identical(other.email, email) ||
                 const DeepCollectionEquality().equals(other.email, email)) &&
             (identical(other.phone, phone) ||
@@ -3253,6 +3293,7 @@ class UpdatePerson {
       const DeepCollectionEquality().hash(surname) ^
       const DeepCollectionEquality().hash(identifier) ^
       const DeepCollectionEquality().hash(birth) ^
+      const DeepCollectionEquality().hash(profilePicture) ^
       const DeepCollectionEquality().hash(email) ^
       const DeepCollectionEquality().hash(phone) ^
       runtimeType.hashCode;
@@ -3266,6 +3307,7 @@ extension $UpdatePersonExtension on UpdatePerson {
     String? surname,
     String? identifier,
     DateTime? birth,
+    String? profilePicture,
     String? email,
     String? phone,
   }) {
@@ -3276,6 +3318,7 @@ extension $UpdatePersonExtension on UpdatePerson {
       surname: surname ?? this.surname,
       identifier: identifier ?? this.identifier,
       birth: birth ?? this.birth,
+      profilePicture: profilePicture ?? this.profilePicture,
       email: email ?? this.email,
       phone: phone ?? this.phone,
     );
@@ -3288,6 +3331,7 @@ extension $UpdatePersonExtension on UpdatePerson {
     Wrapped<String?>? surname,
     Wrapped<String?>? identifier,
     Wrapped<DateTime?>? birth,
+    Wrapped<String?>? profilePicture,
     Wrapped<String?>? email,
     Wrapped<String?>? phone,
   }) {
@@ -3298,6 +3342,9 @@ extension $UpdatePersonExtension on UpdatePerson {
       surname: (surname != null ? surname.value : this.surname),
       identifier: (identifier != null ? identifier.value : this.identifier),
       birth: (birth != null ? birth.value : this.birth),
+      profilePicture: (profilePicture != null
+          ? profilePicture.value
+          : this.profilePicture),
       email: (email != null ? email.value : this.email),
       phone: (phone != null ? phone.value : this.phone),
     );
