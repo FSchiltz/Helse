@@ -1,13 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:helse/ui/blocs/care/share_patient_dialog.dart';
+import 'package:helse/ui/blocs/care/patients_card.dart';
 
 import '../../../logic/d_i.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/loader.dart';
 import 'patient_add.dart';
-import 'patients_dashboard.dart';
 
 class Patients extends StatefulWidget {
   const Patients({super.key});
@@ -64,126 +61,9 @@ class _PatientsState extends State<Patients> {
             final persons = snapshot.data as List<Person>;
             final cards = persons
                 .map(
-                  (p) => Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0),
-                    ),
-                    shadowColor: Theme.of(context).colorScheme.shadow,
-                    elevation: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 80,
-                                  height: 80,
-                                  child: p.profilePicture != null
-                                      ? Image.memory(
-                                          base64Decode(p.profilePicture!),
-                                          fit: BoxFit.cover,
-                                        )
-                                      : Icon(
-                                          Icons.person_sharp,
-                                          size: 40,
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onSurface,
-                                        ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  p.name ?? "",
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                                Text(
-                                  p.surname ?? "",
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (context) => PatientsDashboard(p),
-                                  ),
-                                ),
-                                icon: Icon(
-                                  Icons.visibility_sharp,
-                                  color: theme.primary,
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  showDialog<void>(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return PatientAdd(
-                                        _resetPatients,
-                                        edit: p,
-                                      );
-                                    },
-                                  );
-                                },
-                                icon: Icon(
-                                  Icons.edit_sharp,
-                                  color: theme.primary,
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  showDialog<void>(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return SharePatientDialog(p);
-                                    },
-                                  );
-                                },
-                                icon: Icon(
-                                  Icons.share_sharp,
-                                  color: theme.primary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  (p) => PatientsCard(p, _resetPatients),
                 )
                 .toList();
-            cards.add(
-              Card(
-                child: IconButton(
-                  onPressed: () {
-                    showDialog<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return PatientAdd(_resetPatients);
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.add_sharp),
-                  iconSize: 50,
-                  color: theme.primary,
-                ),
-              ),
-            );
 
             return Padding(
               padding: const EdgeInsets.all(8.0),
@@ -197,6 +77,19 @@ class _PatientsState extends State<Patients> {
                         Text(
                           "Patients",
                           style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            showDialog<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return PatientAdd(_resetPatients);
+                              },
+                            );
+                          },
+                          icon: const Icon(Icons.add_sharp),
+                          iconSize: 35,
+                          color: theme.primary,
                         ),
                       ],
                     ),

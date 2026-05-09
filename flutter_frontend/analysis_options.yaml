@@ -30,7 +30,11 @@ linter:
 # https://dart.dev/guides/language/analysis-options
 
 analyzer:
-  exclude: [ generated_code/**]
+  exclude:
+    - '**/*.g.dart'
+    - '**/*.freezed.dart'
+    - '**/generated_code/**'
+    - 'lib/services/swagger/generated_code/**'
   language:
     strict-casts: true
     strict-inference: true
