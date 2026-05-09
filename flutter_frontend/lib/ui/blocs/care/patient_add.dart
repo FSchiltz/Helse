@@ -29,13 +29,11 @@ class _PatientAddState extends State<PatientAdd> {
   final TextEditingController _controllerSurname = TextEditingController();
 
   Uint8List? _pictureData;
-  String? _pictureName;
 
   Future<void> _selectPicture() async {
     final XFile? file = await openFile(acceptedTypeGroups: [XTypeGroup(label: 'images', extensions: ['png', 'jpg', 'jpeg', 'gif'])]);
     if (file != null) {
       _pictureData = await file.readAsBytes();
-      _pictureName = file.name;
       setState(() {});
     }
   }
