@@ -19,8 +19,9 @@ class PatientsCard extends StatelessWidget {
         color: theme.surfaceContainerHigh,
         child: Row(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+            Container(
+              margin: EdgeInsets.all(8),
+              decoration: BoxDecoration(border:  BoxBorder.all(color: theme.onPrimary, width: 1)),
               child: SizedBox(
                 width: 60,
                 height: 60,
