@@ -13,15 +13,13 @@ public interface ISettingsContext : IContext
 /// <summary>
 /// Class for calling the database for the settings
 /// </summary>
-public class SettingsContext(DataConnection db) : ISettingsContext
+public class SettingsContext(DataConnection db) : BaseContext(db), ISettingsContext
 {
-    public Task<DataConnectionTransaction> BeginTransactionAsync() => db.BeginTransactionAsync();
-
-    public Task Delete(string name) => db.GetTable<Data.Models.Settings>().DeleteAsync(x => x.Name == name);
+    public Task Delete(string name) => Db.GetTable<Data.Models.Settings>().DeleteAsync(x => x.Name == name);
 
     public async Task<T> GetSettings<T>(string name) where T : new()
     {
-        var settings = await db.GetTable<Data.Models.Settings>().Where(x => x.Name == name).SingleOrDefaultAsync();
+        var settings = await Db.GetTable<Data.Models.Settings>().Where(x => x.Name == name).SingleOrDefaultAsync();
         if (settings?.Blob is null)
         {
             return new T();
@@ -32,7 +30,7 @@ public class SettingsContext(DataConnection db) : ISettingsContext
 
     public Task Upsert(string name, string data)
     {
-        return db.GetTable<Data.Models.Settings>().InsertOrUpdateAsync(() => new Data.Models.Settings
+        return Db.GetTable<Data.Models.Settings>().InsertOrUpdateAsync(() => new Data.Models.Settings
         {
             Name = name,
             Blob = data,

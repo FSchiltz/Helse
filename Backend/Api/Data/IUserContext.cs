@@ -15,7 +15,7 @@ public interface IUserContext : IContext
 
     Task<PersonFromDb?> Get(string? identifier);
 
-    Task<Api.Models.Settings.Right?> HasRightAsync(long id, long personId, RightType type, DateTime now);
+    Task<Right?> HasRightAsync(long id, long personId, RightType type, DateTime now);
     Task<long> InsertPerson(PersonCreation newUser);
     Task InsertUser(PersonCreation newUser, long id, string password);
     Task UpdatePassword(long user, string password);

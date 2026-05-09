@@ -141,7 +141,7 @@ public static class MetricsLogic
 
         await db.DeleteMetric(id);
 
-        transaction.Commit();
+        await transaction.CommitAsync();
 
         return TypedResults.NoContent();
     }

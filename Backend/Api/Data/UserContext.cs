@@ -10,7 +10,7 @@ namespace Api.Data;
 
 public record PersonFromDb(User User, Models.Person Person);
 
-public class UserContext(DataConnection db) : IUserContext
+public class UserContext(DataConnection db) : BaseContext(db), IUserContext
 {
     /// <summary>
     /// Check that a user has the given right over someone
@@ -21,7 +21,7 @@ public class UserContext(DataConnection db) : IUserContext
     /// <param name="time"></param>
     /// <returns></returns>
     public async Task<Api.Models.Settings.Right?> HasRightAsync(long user, long person, RightType type, DateTime time)
-     => (await db.GetTable<Data.Models.Right>()
+     => (await Db.GetTable<Data.Models.Right>()
         .Where(x => x.UserId == user
             && x.PersonId == person
             && x.Type == (int)type
@@ -31,7 +31,7 @@ public class UserContext(DataConnection db) : IUserContext
 
     public async Task UpdatePerson(UpdatePerson update)
     {
-        await db.GetTable<Data.Models.Person>()
+        await Db.GetTable<Data.Models.Person>()
             .Where(x => x.Id == update.Id)
             .Set(x => x.Birth, update.Birth)
             .Set(x => x.Identifier, update.Identifier)
@@ -40,7 +40,7 @@ public class UserContext(DataConnection db) : IUserContext
             .Set(x => x.ProfilePicture, update.ProfilePicture)
             .UpdateAsync();
 
-        var userQuery = db.GetTable<Data.Models.User>()
+        var userQuery = Db.GetTable<Data.Models.User>()
             .Where(x => x.PersonId == update.Id)
             .AsUpdatable();
 
@@ -67,28 +67,26 @@ public class UserContext(DataConnection db) : IUserContext
         await userQuery.UpdateAsync();
     }
 
-    public Task<long> Count() => db.GetTable<User>().LongCountAsync();
+    public Task<long> Count() => Db.GetTable<User>().LongCountAsync();
 
     public Task<PersonFromDb?> Get(string? identifier)
     {
         if (identifier is null)
             return Task.FromResult(default(PersonFromDb?));
 
-        return (from u in db.GetTable<User>()
-                join p in db.GetTable<Data.Models.Person>() on u.PersonId equals p.Id
+        return (from u in Db.GetTable<User>()
+                join p in Db.GetTable<Data.Models.Person>() on u.PersonId equals p.Id
                 where u.Identifier == identifier
                 select new PersonFromDb(u, p))
                                  .FirstOrDefaultAsync();
     }
 
     public Task UpdatePassword(long user, string password)
-        => db.GetTable<User>().Where(x => x.Id == user).Set(x => x.Password, password).UpdateAsync();
-
-    public Task<DataConnectionTransaction> BeginTransactionAsync() => db.BeginTransactionAsync();
+        => Db.GetTable<User>().Where(x => x.Id == user).Set(x => x.Password, password).UpdateAsync();
 
     public Task<long> InsertPerson(PersonCreation newUser)
     {
-        return db.GetTable<Data.Models.Person>().InsertWithInt64IdentityAsync(()
+        return Db.GetTable<Data.Models.Person>().InsertWithInt64IdentityAsync(()
             => new Data.Models.Person
             {
                 Birth = newUser.Birth,
@@ -101,7 +99,7 @@ public class UserContext(DataConnection db) : IUserContext
 
     public Task InsertUser(PersonCreation newUser, long id, string password)
     {
-        return db.GetTable<User>().InsertAsync(()
+        return Db.GetTable<User>().InsertAsync(()
                 => new User
                 {
                     Identifier = newUser.UserName ?? string.Empty,
@@ -115,7 +113,7 @@ public class UserContext(DataConnection db) : IUserContext
 
     public Task AddRight(long userId, long id, RightType right)
     {
-        return db.GetTable<Models.Right>().InsertAsync(() => new()
+        return Db.GetTable<Models.Right>().InsertAsync(() => new()
         {
             UserId = userId,
             Start = DateTime.UtcNow,
@@ -127,8 +125,8 @@ public class UserContext(DataConnection db) : IUserContext
     public Task<List<PersonFromDb>> GetUsers()
     {
         var query =
-        from u in db.GetTable<User>()
-        from p in db.GetTable<Models.Person>().RightJoin(pr => pr.Id == u.PersonId)
+        from u in Db.GetTable<User>()
+        from p in Db.GetTable<Models.Person>().RightJoin(pr => pr.Id == u.PersonId)
         select new PersonFromDb(u, p);
 
         return query.OrderBy(x => x.User.Id).ToListAsync();
@@ -136,7 +134,7 @@ public class UserContext(DataConnection db) : IUserContext
 
     public Task<List<Models.Right>> GetRights(DateTime time)
     {
-        return (from r in db.GetTable<Models.Right>()
+        return (from r in Db.GetTable<Models.Right>()
                 where r.Stop == null || (r.Stop >= time && r.Start <= time)
                 select r)
                 .ToListAsync();
@@ -144,17 +142,17 @@ public class UserContext(DataConnection db) : IUserContext
 
     public Task SetExpiryRight(long personId, DateTime now)
     {
-        return db.GetTable<Models.Right>()
+        return Db.GetTable<Models.Right>()
             .Where(x => x.UserId == personId)
             .Set(x => x.Stop, now)
             .UpdateAsync();
     }
 
-    public Task InsertRights(IEnumerable<Models.Right> dbRights) => db.GetTable<Models.Right>().BulkCopyAsync(dbRights);
+    public Task InsertRights(IEnumerable<Models.Right> dbRights) => Db.GetTable<Models.Right>().BulkCopyAsync(dbRights);
 
     public Task<long> InsertTreatment(long person, TreatmentType type)
     {
-        return db.GetTable<Models.Treatment>().InsertWithInt64IdentityAsync(() => new()
+        return Db.GetTable<Models.Treatment>().InsertWithInt64IdentityAsync(() => new()
         {
             PersonId = person,
             Type = (int)type,
@@ -163,7 +161,7 @@ public class UserContext(DataConnection db) : IUserContext
 
     public Task InsertEvent(CreateEvent e, long person, long user, long? treatment)
     {
-        return db.GetTable<Models.Event>().InsertAsync(() => new()
+        return Db.GetTable<Models.Event>().InsertAsync(() => new()
         {
             PersonId = person,
             UserId = user,

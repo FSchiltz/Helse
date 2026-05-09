@@ -5,7 +5,7 @@ namespace Api.Data.Models;
 [Table(Schema = "health")]
 public class Event
 {
-    [PrimaryKey]
+    [PrimaryKey, Identity]
     public long Id { get; set; }
 
     [Column, NotNull]
