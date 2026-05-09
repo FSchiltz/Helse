@@ -17,7 +17,7 @@ public static class RightsHelper
     /// <param name="personId"></param>
     /// <param name="type"></param>
     /// <returns></returns>
-    internal static async Task<bool> ValidateCaregiverAsync(this IUserContext db, User user, long personId, RightType type)
+    public static async Task<bool> ValidateCaregiverAsync(this IUserContext db, User user, long personId, RightType type)
     {
         var now = DateTime.UtcNow;
         // check if the user has the right 
@@ -25,7 +25,7 @@ public static class RightsHelper
         return right is not null;
     }
 
-    internal static async Task<IResult?> IsAdmin(this IUserContext db, ClaimsPrincipal context)
+    public static async Task<IResult?> IsAdmin(this IUserContext db, ClaimsPrincipal context)
     {
         var (error, user) = await db.GetUser(context);
         if (error is not null)
@@ -37,7 +37,7 @@ public static class RightsHelper
         return null;
     }
 
-    internal static async Task<(IResult?, User)> GetUser(this IUserContext db, ClaimsPrincipal context)
+    public static async Task<(IResult?, User)> GetUser(this IUserContext db, ClaimsPrincipal context)
     {
         // get the connected user
         var userName = context.GetUser();
