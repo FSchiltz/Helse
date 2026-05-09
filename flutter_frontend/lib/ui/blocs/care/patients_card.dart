@@ -18,23 +18,34 @@ class PatientsCard extends StatelessWidget {
       child: Container(
         color: theme.surfaceContainerHigh,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Container(
-              margin: EdgeInsets.all(8),
-              decoration: BoxDecoration(border:  BoxBorder.all(color: theme.onPrimary, width: 1)),
-              child: SizedBox(
-                width: 60,
-                height: 60,
-                child: person.profilePicture != null
-                    ? Image.memory(
-                        base64Decode(person.profilePicture!),
-                        fit: BoxFit.cover,
-                      )
-                    : Icon(
-                        Icons.person_sharp,
-                        size: 40,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
+            InkWell(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (context) => PatientsDashboard(person),
+                ),
+              ),
+              child: Container(
+                margin: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  border: BoxBorder.all(color: theme.onPrimary, width: 1),
+                ),
+                child: SizedBox(
+                  width: 60,
+                  height: 60,
+                  child: person.profilePicture != null
+                      ? Image.memory(
+                          base64Decode(person.profilePicture!),
+                          fit: BoxFit.cover,
+                        )
+                      : Icon(
+                          Icons.person_sharp,
+                          size: 40,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                ),
               ),
             ),
             Text(
@@ -48,15 +59,6 @@ class PatientsCard extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            IconButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (context) => PatientsDashboard(person),
-                ),
-              ),
-              icon: Icon(Icons.visibility_sharp, color: theme.primary),
             ),
             IconButton(
               onPressed: () {
