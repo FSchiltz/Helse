@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:helse/ui/blocs/care/share_patient_dialog.dart';
 
@@ -75,6 +77,27 @@ class _PatientsState extends State<Patients> {
                             children: [
                               Column(
                                 children: [
+                                  CircleAvatar(
+                                    radius: 35,
+                                    backgroundColor: Theme.of(context).colorScheme.surface,
+                                    child: p.profilePicture != null
+                                        ? ClipOval(
+                                            child: SizedBox(
+                                              width: 70,
+                                              height: 70,
+                                              child: Image.memory(
+                                                base64Decode(p.profilePicture!),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          )
+                                        : Icon(
+                                            Icons.person_sharp,
+                                            size: 35,
+                                            color: Theme.of(context).colorScheme.onSurface,
+                                          ),
+                                  ),
+                                  const SizedBox(height: 8),
                                   Text(p.name ?? "", maxLines: 1, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyMedium),
                                   Text(p.surname ?? "", maxLines: 1, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyMedium),
                                 ],

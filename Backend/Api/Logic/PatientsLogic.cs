@@ -33,6 +33,7 @@ public static class PatientsLogic
                 Name = x.Name,
                 Surname = x.Surname,
                 Identifier = x.Identifier,
+                ProfilePicture = x.ProfilePicture,
                 Types = [],
             };
         });
