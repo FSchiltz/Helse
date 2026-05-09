@@ -56,7 +56,7 @@ jobs:
             docker push ${{env.USER}}/${{ inputs.tags || steps.meta.outputs.tags }}:${{matrix.arch}}
               
     docker_manifest:
-      needs: docker_build
+      needs: build
       runs-on: ubuntu-latest      
       if: ${{ inputs.push }}
       steps:
