@@ -55,4 +55,4 @@ jobs:
       push: false
       tags: ci
       labels: ci
-      platform: linux/amd64
+
