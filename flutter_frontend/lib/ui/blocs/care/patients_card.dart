@@ -13,69 +13,75 @@ class PatientsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        SizedBox(
-          width: 80,
-          height: 80,
-          child: person.profilePicture != null
-              ? Image.memory(
-                  base64Decode(person.profilePicture!),
-                  fit: BoxFit.cover,
-                )
-              : Icon(
-                  Icons.person_sharp,
-                  size: 40,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-        ),
-        const SizedBox(width: 8),
-        Text(
-          person.name ?? "",
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        Text(
-          person.surname ?? "",
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        IconButton(
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute<void>(
-              builder: (context) => PatientsDashboard(person),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        color: theme.surfaceContainerHigh,
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                width: 60,
+                height: 60,
+                child: person.profilePicture != null
+                    ? Image.memory(
+                        base64Decode(person.profilePicture!),
+                        fit: BoxFit.cover,
+                      )
+                    : Icon(
+                        Icons.person_sharp,
+                        size: 40,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+              ),
             ),
-          ),
-          icon: Icon(Icons.visibility_sharp, color: theme.primary),
-        ),
-        IconButton(
-          onPressed: () {
-            showDialog<void>(
-              context: context,
-              builder: (BuildContext context) {
-                return PatientAdd(callback, edit: person);
+            Text(
+              person.name ?? "",
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            Text(
+              person.surname ?? "",
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            IconButton(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (context) => PatientsDashboard(person),
+                ),
+              ),
+              icon: Icon(Icons.visibility_sharp, color: theme.primary),
+            ),
+            IconButton(
+              onPressed: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return PatientAdd(callback, edit: person);
+                  },
+                );
               },
-            );
-          },
-          icon: Icon(Icons.edit_sharp, color: theme.primary),
-        ),
-        IconButton(
-          onPressed: () {
-            showDialog<void>(
-              context: context,
-              builder: (BuildContext context) {
-                return SharePatientDialog(person);
+              icon: Icon(Icons.edit_sharp, color: theme.primary),
+            ),
+            IconButton(
+              onPressed: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return SharePatientDialog(person);
+                  },
+                );
               },
-            );
-          },
-          icon: Icon(Icons.share_sharp, color: theme.primary),
+              icon: Icon(Icons.share_sharp, color: theme.primary),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

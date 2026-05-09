@@ -60,19 +60,15 @@ class _PatientsState extends State<Patients> {
             // Extracting data from snapshot object
             final persons = snapshot.data as List<Person>;
             final cards = persons
-                .map(
-                  (p) => PatientsCard(p, _resetPatients),
-                )
+                .map((p) => PatientsCard(p, _resetPatients))
                 .toList();
 
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
+            return Flexible(
+              child: SizedBox(
+                width: 320,
+                child: Column(
+                  children: [
+                    Row(
                       children: [
                         Text(
                           "Patients",
@@ -93,15 +89,9 @@ class _PatientsState extends State<Patients> {
                         ),
                       ],
                     ),
-                  ),
-                  GridView.extent(
-                    shrinkWrap: true,
-                    crossAxisSpacing: 4,
-                    mainAxisSpacing: 4,
-                    maxCrossAxisExtent: 180.0,
-                    children: cards,
-                  ),
-                ],
+                    ListView(shrinkWrap: true, children: cards),
+                  ],
+                ),
               ),
             );
           }
