@@ -68,6 +68,20 @@ jobs:
           cache-from: type=gha,scope=${{ github.repository }}-${{ github.ref_name }}-${{ matrix.arch }}
           cache-to: type=gha,scope=${{ github.repository }}-${{ github.ref_name }}-${{ matrix.arch }}
 
+      - name: Export digest
+        run: |
+          mkdir -p /tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - name: Upload digest    
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: digests-${{ matrix.arch }}
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
     merge:    
       # This job merges the Docker manifests for the different platforms built in the previous job.
       name: Merge Docker manifests
