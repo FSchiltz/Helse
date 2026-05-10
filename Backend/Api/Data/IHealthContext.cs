@@ -53,4 +53,6 @@ public interface IHealthContext : IContext
     /// <param name="end"></param>
     /// <returns></returns>
     Task<Metric?> GetLastMetrics(long id, int type, DateTime start, DateTime end);
+    
+    Task GetEventStats(DateTime start, DateTime end);
 }

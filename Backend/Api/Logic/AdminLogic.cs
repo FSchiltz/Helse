@@ -25,25 +25,15 @@ public static class AdminLogic
         return TypedResults.Ok(stats);
     }
 
-    public async static Task<IResult> GetEventStatsAsync(DateTime? start, DateTime? end, IUserContext users, IHealthContext health, HttpContext context)
+    public async static Task<IResult> GetEventStatsAsync(DateTime start, DateTime end, IUserContext users, IHealthContext health, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
             return admin;
 
-        var startDate = start ?? DateTime.UtcNow.AddDays(-30);
-        var endDate = end ?? DateTime.UtcNow;
-
         // Get all events in the date range
-        var events = await health.GetAllEvents(startDate, endDate);
-
-        // Group by date and count
-        var grouped = events
-            .GroupBy(e => e.Start.Date)
-            .Select(g => new EventDateSummary(g.Key, g.Count()))
-            .OrderBy(s => s.Date)
-            .ToList();
-
-        return TypedResults.Ok(grouped);
+        var events = await health.GetEventStats(start, end);
+        
+        return TypedResults.Ok(events);
     }
 }
