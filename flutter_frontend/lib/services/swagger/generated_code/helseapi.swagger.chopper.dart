@@ -966,6 +966,59 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
+  Future<Response<UserStats>> _apiAdminStatsUsersGet({
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["AdminLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/admin/stats/users');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      tag: swaggerMetaData,
+    );
+    return client.send<UserStats, UserStats>($request);
+  }
+
+  @override
+  Future<Response<List<EventDateSummary>>> _apiAdminStatsEventsGet({
+    DateTime? start,
+    DateTime? end,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["AdminLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/admin/stats/events');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'start': start,
+      'end': end,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<List<EventDateSummary>, EventDateSummary>($request);
+  }
+
+  @override
   Future<Response<List<FileType>>> _apiImportTypesGet({
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',

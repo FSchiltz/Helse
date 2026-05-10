@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/admin_dashboard.dart';
 
 import '../services/swagger/generated_code/helseapi.swagger.dart';
 import 'care_dashboard.dart';
@@ -26,7 +27,7 @@ class Dashboard extends StatelessWidget {
 
     if (types.contains(UserType.admin)) {
       icons.add(Icons.admin_panel_settings_sharp);
-      tabs.add(const Center(child: Text("TODO admin panel")));
+      tabs.add(AdminDashBoard());
     }
 
     return DefaultTabController(
