@@ -1,13 +1,6 @@
 name: Build docker
 on:
   workflow_call:
-    inputs:
-      tags:
-        required: false
-        type: string
-      labels:
-        required: false
-        type: string
       push:
         required: true
         type: boolean
@@ -46,12 +39,12 @@ jobs:
       
       - name: Build
         run: |
-            docker build --tag ${{ inputs.tags || steps.meta.outputs.tags }} ${{matrix.arch}}  .
+            docker build --tag ${{ steps.meta.outputs.tags }}-${{matrix.arch}}  .
             
       - name: Push
         if: ${{ inputs.push }}
         run: |
-            docker push ${{env.USER}}/${{ inputs.tags || steps.meta.outputs.tags }} ${{matrix.arch}} 
+            docker push ${{env.USER}}/${{ steps.meta.outputs.tags }}-${{matrix.arch}} 
               
     docker_manifest:
       needs: build
@@ -67,5 +60,5 @@ jobs:
             
         - name: Create and push manifest
           run: |
-              docker manifest create ${{env.USER}}/${{ inputs.tags || steps.meta.outputs.tags }} ${{env.USER}}/${{ inputs.tags || steps.meta.outputs.tags }}:amd64 ${{env.USER}}/${{ inputs.tags || steps.meta.outputs.tags }}:arm64
-              docker manifest push ${{env.USER}}/${{ inputs.tags || steps.meta.outputs.tags }}
+              docker manifest create ${{env.USER}}/${{ steps.meta.outputs.tags }} ${{env.USER}}/${{ steps.meta.outputs.tags }}-amd64 ${{env.USER}}/${{ steps.meta.outputs.tags }}-arm64
+              docker manifest push ${{env.USER}}/${{ steps.meta.outputs.tags }}
