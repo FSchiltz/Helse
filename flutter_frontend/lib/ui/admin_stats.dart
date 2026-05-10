@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
-class AdminStats extends StatefulWidget {
-  const AdminStats({super.key});
+class AdminDashBoard extends StatefulWidget {
+  const AdminDashBoard({super.key});
 
   @override
-  State<AdminStats> createState() => _AdminStatsState();
+  State<AdminDashBoard> createState() => _AdminDashBoardState();
 }
 
-class _AdminStatsState extends State<AdminStats> {
+class _AdminDashBoardState extends State<AdminDashBoard> {
   Map<String, int> _userCounts = {};
   List<EventDateSummary> _eventSummaries = [];
-  List<MetricType> _metricTypes = [];
   bool _loading = true;
 
   @override
@@ -25,28 +24,21 @@ class _AdminStatsState extends State<AdminStats> {
   Future<void> _loadData() async {
     setState(() => _loading = true);
 
-    try {
-      // Load user stats from admin endpoint
-      final userStats = await DI.admin.getUserStats();
-      if (userStats != null) {
-        _userCounts = {
-          'Total Users': userStats.totalUsers,
-          'Patients': userStats.patients,
-          'Caregivers': userStats.caregivers,
-          'Admins': userStats.admins,
-        };
-      }
-
-      // Load event summaries for the last 30 days
-      final end = DateTime.now();
-      final start = end.subtract(const Duration(days: 30));
-      _eventSummaries = await DI.admin.getEventStats(start, end) ?? [];
-
-      // Load metric types
-      _metricTypes = await DI.metric.metricsType(true) ?? [];
-    } catch (e) {
-      // Handle error
+    // Load user stats from admin endpoint
+    final userStats = await DI.admin.getUserStats();
+    if (userStats != null) {
+      _userCounts = {
+        'Total Users': userStats.totalUsers,
+        'Patients': userStats.patients,
+        'Caregivers': userStats.caregivers,
+        'Admins': userStats.admins,
+      };
     }
+
+    // Load event summaries for the last 30 days
+    final end = DateTime.now();
+    final start = end.subtract(const Duration(days: 30));
+    _eventSummaries = await DI.admin.getEventStats(start, end) ?? [];
 
     setState(() => _loading = false);
   }
@@ -62,17 +54,19 @@ class _AdminStatsState extends State<AdminStats> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('User Statistics', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          const Text(
+            'User Statistics',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 16),
           _buildUserStats(),
           const SizedBox(height: 32),
-          const Text('Events Over Time', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          const Text(
+            'Events Over Time',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 16),
           _buildEventsChart(),
-          const SizedBox(height: 32),
-          const Text('Metric Types', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          _buildMetricTypesList(),
         ],
       ),
     );
@@ -80,7 +74,7 @@ class _AdminStatsState extends State<AdminStats> {
 
   Widget _buildUserStats() {
     return GridView.count(
-      crossAxisCount: 2,
+      crossAxisCount: 6,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       children: _userCounts.entries.map((entry) {
@@ -90,7 +84,13 @@ class _AdminStatsState extends State<AdminStats> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(entry.value.toString(), style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+                Text(
+                  entry.value.toString(),
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 Text(entry.key, style: const TextStyle(fontSize: 16)),
               ],
             ),
@@ -130,24 +130,5 @@ class _AdminStatsState extends State<AdminStats> {
         ),
       ),
     );
-  }
-
-  Widget _buildMetricTypesList() {
-    if (_metricTypes.isEmpty) {
-      return const Text('No metric types available');
-    }
-
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: _metricTypes.length,
-      itemBuilder: (context, index) {
-        final type = _metricTypes[index];
-        return ListTile(
-          title: Text(type.name),
-          subtitle: Text(type.unit ?? ''),
-        );
-      },
-    );
-  }
+  } 
 }

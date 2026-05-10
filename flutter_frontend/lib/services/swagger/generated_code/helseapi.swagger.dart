@@ -1046,12 +1046,17 @@ abstract class Helseapi extends ChopperService {
     DateTime? start,
     DateTime? end,
   }) {
-    generatedMapping.putIfAbsent(EventDateSummary, () => EventDateSummary.fromJsonFactory);
+    generatedMapping.putIfAbsent(
+      EventDateSummary,
+      () => EventDateSummary.fromJsonFactory,
+    );
 
     return _apiAdminStatsEventsGet(start: start, end: end);
   }
 
   ///
+  ///@param start
+  ///@param end
   @GET(path: '/api/admin/stats/events')
   Future<chopper.Response<List<EventDateSummary>>> _apiAdminStatsEventsGet({
     @Query('start') DateTime? start,
@@ -1624,6 +1629,61 @@ extension $EventExtension on Event {
       start: (start != null ? start.value : this.start),
       stop: (stop != null ? stop.value : this.stop),
       tag: (tag != null ? tag.value : this.tag),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class EventDateSummary {
+  const EventDateSummary({required this.date, required this.count});
+
+  factory EventDateSummary.fromJson(Map<String, dynamic> json) =>
+      _$EventDateSummaryFromJson(json);
+
+  static const toJsonFactory = _$EventDateSummaryToJson;
+  Map<String, dynamic> toJson() => _$EventDateSummaryToJson(this);
+
+  @JsonKey(name: 'date')
+  final DateTime date;
+  @JsonKey(name: 'count')
+  final int count;
+  static const fromJsonFactory = _$EventDateSummaryFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is EventDateSummary &&
+            (identical(other.date, date) ||
+                const DeepCollectionEquality().equals(other.date, date)) &&
+            (identical(other.count, count) ||
+                const DeepCollectionEquality().equals(other.count, count)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(date) ^
+      const DeepCollectionEquality().hash(count) ^
+      runtimeType.hashCode;
+}
+
+extension $EventDateSummaryExtension on EventDateSummary {
+  EventDateSummary copyWith({DateTime? date, int? count}) {
+    return EventDateSummary(
+      date: date ?? this.date,
+      count: count ?? this.count,
+    );
+  }
+
+  EventDateSummary copyWithWrapped({
+    Wrapped<DateTime>? date,
+    Wrapped<int>? count,
+  }) {
+    return EventDateSummary(
+      date: (date != null ? date.value : this.date),
+      count: (count != null ? count.value : this.count),
     );
   }
 }
@@ -2492,146 +2552,6 @@ extension $PersonExtension on Person {
           : this.profilePicture),
       email: (email != null ? email.value : this.email),
       phone: (phone != null ? phone.value : this.phone),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
-class UserStats {
-  const UserStats({
-    required this.totalUsers,
-    required this.patients,
-    required this.caregivers,
-    required this.admins,
-  });
-
-  factory UserStats.fromJson(Map<String, dynamic> json) => _$UserStatsFromJson(json);
-
-  static const toJsonFactory = _$UserStatsToJson;
-  Map<String, dynamic> toJson() => _$UserStatsToJson(this);
-
-  @JsonKey(name: 'totalUsers')
-  final int totalUsers;
-  @JsonKey(name: 'patients')
-  final int patients;
-  @JsonKey(name: 'caregivers')
-  final int caregivers;
-  @JsonKey(name: 'admins')
-  final int admins;
-  static const fromJsonFactory = _$UserStatsFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is UserStats &&
-            (identical(other.totalUsers, totalUsers) ||
-                const DeepCollectionEquality().equals(other.totalUsers, totalUsers)) &&
-            (identical(other.patients, patients) ||
-                const DeepCollectionEquality().equals(other.patients, patients)) &&
-            (identical(other.caregivers, caregivers) ||
-                const DeepCollectionEquality().equals(other.caregivers, caregivers)) &&
-            (identical(other.admins, admins) ||
-                const DeepCollectionEquality().equals(other.admins, admins)));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(totalUsers) ^
-      const DeepCollectionEquality().hash(patients) ^
-      const DeepCollectionEquality().hash(caregivers) ^
-      const DeepCollectionEquality().hash(admins) ^
-      runtimeType.hashCode;
-}
-
-extension $UserStatsExtension on UserStats {
-  UserStats copyWith({
-    int? totalUsers,
-    int? patients,
-    int? caregivers,
-    int? admins,
-  }) {
-    return UserStats(
-      totalUsers: totalUsers ?? this.totalUsers,
-      patients: patients ?? this.patients,
-      caregivers: caregivers ?? this.caregivers,
-      admins: admins ?? this.admins,
-    );
-  }
-
-  UserStats copyWithWrapped({
-    Wrapped<int>? totalUsers,
-    Wrapped<int>? patients,
-    Wrapped<int>? caregivers,
-    Wrapped<int>? admins,
-  }) {
-    return UserStats(
-      totalUsers: (totalUsers != null ? totalUsers.value : this.totalUsers),
-      patients: (patients != null ? patients.value : this.patients),
-      caregivers: (caregivers != null ? caregivers.value : this.caregivers),
-      admins: (admins != null ? admins.value : this.admins),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
-class EventDateSummary {
-  const EventDateSummary({
-    required this.date,
-    required this.count,
-  });
-
-  factory EventDateSummary.fromJson(Map<String, dynamic> json) => _$EventDateSummaryFromJson(json);
-
-  static const toJsonFactory = _$EventDateSummaryToJson;
-  Map<String, dynamic> toJson() => _$EventDateSummaryToJson(this);
-
-  @JsonKey(name: 'date')
-  final DateTime date;
-  @JsonKey(name: 'count')
-  final int count;
-  static const fromJsonFactory = _$EventDateSummaryFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is EventDateSummary &&
-            (identical(other.date, date) ||
-                const DeepCollectionEquality().equals(other.date, date)) &&
-            (identical(other.count, count) ||
-                const DeepCollectionEquality().equals(other.count, count)));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(date) ^
-      const DeepCollectionEquality().hash(count) ^
-      runtimeType.hashCode;
-}
-
-extension $EventDateSummaryExtension on EventDateSummary {
-  EventDateSummary copyWith({
-    DateTime? date,
-    int? count,
-  }) {
-    return EventDateSummary(
-      date: date ?? this.date,
-      count: count ?? this.count,
-    );
-  }
-
-  EventDateSummary copyWithWrapped({
-    Wrapped<DateTime>? date,
-    Wrapped<int>? count,
-  }) {
-    return EventDateSummary(
-      date: (date != null ? date.value : this.date),
-      count: (count != null ? count.value : this.count),
     );
   }
 }
@@ -3540,6 +3460,96 @@ extension $UpdatePersonExtension on UpdatePerson {
           : this.profilePicture),
       email: (email != null ? email.value : this.email),
       phone: (phone != null ? phone.value : this.phone),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class UserStats {
+  const UserStats({
+    required this.totalUsers,
+    required this.patients,
+    required this.caregivers,
+    required this.admins,
+  });
+
+  factory UserStats.fromJson(Map<String, dynamic> json) =>
+      _$UserStatsFromJson(json);
+
+  static const toJsonFactory = _$UserStatsToJson;
+  Map<String, dynamic> toJson() => _$UserStatsToJson(this);
+
+  @JsonKey(name: 'totalUsers')
+  final int totalUsers;
+  @JsonKey(name: 'patients')
+  final int patients;
+  @JsonKey(name: 'caregivers')
+  final int caregivers;
+  @JsonKey(name: 'admins')
+  final int admins;
+  static const fromJsonFactory = _$UserStatsFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is UserStats &&
+            (identical(other.totalUsers, totalUsers) ||
+                const DeepCollectionEquality().equals(
+                  other.totalUsers,
+                  totalUsers,
+                )) &&
+            (identical(other.patients, patients) ||
+                const DeepCollectionEquality().equals(
+                  other.patients,
+                  patients,
+                )) &&
+            (identical(other.caregivers, caregivers) ||
+                const DeepCollectionEquality().equals(
+                  other.caregivers,
+                  caregivers,
+                )) &&
+            (identical(other.admins, admins) ||
+                const DeepCollectionEquality().equals(other.admins, admins)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(totalUsers) ^
+      const DeepCollectionEquality().hash(patients) ^
+      const DeepCollectionEquality().hash(caregivers) ^
+      const DeepCollectionEquality().hash(admins) ^
+      runtimeType.hashCode;
+}
+
+extension $UserStatsExtension on UserStats {
+  UserStats copyWith({
+    int? totalUsers,
+    int? patients,
+    int? caregivers,
+    int? admins,
+  }) {
+    return UserStats(
+      totalUsers: totalUsers ?? this.totalUsers,
+      patients: patients ?? this.patients,
+      caregivers: caregivers ?? this.caregivers,
+      admins: admins ?? this.admins,
+    );
+  }
+
+  UserStats copyWithWrapped({
+    Wrapped<int>? totalUsers,
+    Wrapped<int>? patients,
+    Wrapped<int>? caregivers,
+    Wrapped<int>? admins,
+  }) {
+    return UserStats(
+      totalUsers: (totalUsers != null ? totalUsers.value : this.totalUsers),
+      patients: (patients != null ? patients.value : this.patients),
+      caregivers: (caregivers != null ? caregivers.value : this.caregivers),
+      admins: (admins != null ? admins.value : this.admins),
     );
   }
 }

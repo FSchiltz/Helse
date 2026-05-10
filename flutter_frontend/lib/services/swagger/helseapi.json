@@ -1225,6 +1225,71 @@
         }
       }
     },
+    "/api/admin/stats/users": {
+      "get": {
+        "tags": [
+          "AdminLogic"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserStats"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/admin/stats/events": {
+      "get": {
+        "tags": [
+          "AdminLogic"
+        ],
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EventDateSummary"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/api/import/types": {
       "get": {
         "tags": [
@@ -1509,6 +1574,27 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "EventDateSummary": {
+        "required": [
+          "date",
+          "count"
+        ],
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "count": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
           }
         }
       },
@@ -2196,6 +2282,49 @@
           }
         }
       },
+      "UserStats": {
+        "required": [
+          "totalUsers",
+          "patients",
+          "caregivers",
+          "admins"
+        ],
+        "type": "object",
+        "properties": {
+          "totalUsers": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "patients": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "caregivers": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "admins": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
       "UserType": {
         "enum": [
           "Admin",
@@ -2226,6 +2355,9 @@
     },
     {
       "name": "SettingsLogic"
+    },
+    {
+      "name": "AdminLogic"
     },
     {
       "name": "ImportLogic"

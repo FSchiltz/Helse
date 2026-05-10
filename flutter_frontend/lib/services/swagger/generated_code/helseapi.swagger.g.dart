@@ -99,6 +99,18 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
   'tag': instance.tag,
 };
 
+EventDateSummary _$EventDateSummaryFromJson(Map<String, dynamic> json) =>
+    EventDateSummary(
+      date: DateTime.parse(json['date'] as String),
+      count: (json['count'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$EventDateSummaryToJson(EventDateSummary instance) =>
+    <String, dynamic>{
+      'date': instance.date.toIso8601String(),
+      'count': instance.count,
+    };
+
 EventSummary _$EventSummaryFromJson(Map<String, dynamic> json) =>
     EventSummary(data: json['data'] as Map<String, dynamic>);
 
@@ -419,3 +431,17 @@ Map<String, dynamic> _$UpdatePersonToJson(UpdatePerson instance) =>
       'email': instance.email,
       'phone': instance.phone,
     };
+
+UserStats _$UserStatsFromJson(Map<String, dynamic> json) => UserStats(
+  totalUsers: (json['totalUsers'] as num).toInt(),
+  patients: (json['patients'] as num).toInt(),
+  caregivers: (json['caregivers'] as num).toInt(),
+  admins: (json['admins'] as num).toInt(),
+);
+
+Map<String, dynamic> _$UserStatsToJson(UserStats instance) => <String, dynamic>{
+  'totalUsers': instance.totalUsers,
+  'patients': instance.patients,
+  'caregivers': instance.caregivers,
+  'admins': instance.admins,
+};
