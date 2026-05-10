@@ -11,7 +11,7 @@ on:
         
 env:  
   REGISTRY: ghcr.io
-  GHCR_IMAGE: ghcr.io/${{ github.repository }}
+  GHCR_IMAGE: ghcr.io/fschiltz/helse
   
 jobs:
     build:
