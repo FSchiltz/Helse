@@ -1,3 +1,4 @@
+using System.Text;
 using Api.Data;
 using Api.Helpers;
 using Api.Helpers.Auth;
@@ -5,6 +6,7 @@ using Api.Models;
 using Api.Models.Settings.Admin;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Logic.Auth;
 
@@ -99,7 +101,7 @@ public static class AuthLogic
                 log.LogInformation("Connexion by header");
                 (logged, fromDb) = await ProxyAuthHelper.ConnectHeader(users, context, proxy, log);
             }
-            
+
             if (!logged && oauth.Enabled && user.Redirect is not null)
             {
                 log.LogInformation("Logging from oauth using  {redirect}", user.Redirect);
@@ -124,5 +126,14 @@ public static class AuthLogic
         var refreshToken = needNewRefreshToken ? token.GetRefreshToken(fromDb, DateTime.UtcNow.AddDays(30)) : string.Empty;
 
         return TypedResults.Ok(new TokenResponse(accessToken, refreshToken));
+    }
+
+    internal static SymmetricSecurityKey GenerateKey(string keyConfig)
+    {
+        var keyText = Encoding.UTF8.GetBytes(keyConfig).Take(512).ToArray();
+        var generatedKey = new byte[512];
+        var startAt = generatedKey.Length - keyText.Length;
+        Array.Copy(keyText, 0, generatedKey, startAt, keyText.Length);
+        return new SymmetricSecurityKey(generatedKey);
     }
 }

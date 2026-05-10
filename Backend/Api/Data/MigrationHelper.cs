@@ -3,13 +3,15 @@ using DbUp;
 
 namespace Api.Data;
 
-public static class MigrationHelper
-{
-    public static void Init(string connection,ILogger logger)
-    {
-        EnsureDatabase.For.PostgresqlDatabase(connection);
+public record MigrationSettings(string ConnectionString);
 
-        var result = DeployChanges.To.PostgresqlDatabase(connection)
+public class MigrationHelper(MigrationSettings settings, ILogger<MigrationHelper> logger) : IHostedService
+{
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        EnsureDatabase.For.PostgresqlDatabase(settings.ConnectionString);
+
+        var result = DeployChanges.To.PostgresqlDatabase(settings.ConnectionString)
             .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
             .LogTo(logger)
             .Build()
@@ -24,4 +26,6 @@ public static class MigrationHelper
             throw new Exception("Migration error");
         }
     }
+
+    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }

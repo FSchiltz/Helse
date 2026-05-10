@@ -3,17 +3,16 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Identity;
 using Api.Data.Models;
+using Microsoft.Extensions.Options;
 
 namespace Api.Helpers.Auth;
 
+public record TokenConfig(string Issuer, string Audience, SymmetricSecurityKey Key);
+
 public record TokenInfo(long Id, string Role, string Identifier, string Password, string? Surname, string? Name, string? Email);
 
-public class TokenService(string issuer, string audience, SymmetricSecurityKey key)
+public class TokenService(TokenConfig config)
 {
-    private readonly string _issuer = issuer;
-    private readonly string _audience = audience;
-    private readonly SymmetricSecurityKey _key = key;
-
     public static string Hash(string password)
     {
         return new PasswordHasher<User>().HashPassword(User.Empty, password);
@@ -60,9 +59,9 @@ public class TokenService(string issuer, string audience, SymmetricSecurityKey k
         {
             Subject = new ClaimsIdentity(claims),
             Expires = expires,
-            Issuer = _issuer,
-            Audience = _audience,
-            SigningCredentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature)
+            Issuer = config.Issuer,
+            Audience = config.Audience,
+            SigningCredentials = new SigningCredentials(config.Key, SecurityAlgorithms.HmacSha512Signature)
         };
         var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.CreateToken(tokenDescriptor);

@@ -1,8 +1,8 @@
-using System.Text;
 using System.Text.Json.Serialization;
 using Api;
 using Api.Data;
 using Api.Helpers.Auth;
+using Api.Logic.Auth;
 using LinqToDB;
 using LinqToDB.AspNet;
 using LinqToDB.AspNet.Logging;
@@ -19,30 +19,29 @@ builder.Services.AddOpenApi("helseapi");
 
 //services cors
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder => builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader()));
-
 var connection = builder.Configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("Database configuration missing");
-builder.Services.AddLinqToDBContext<DataConnection>((provider, options)
-            => options
-                .UsePostgreSQL(connection, LinqToDB.DataProvider.PostgreSQL.PostgreSQLVersion.v15, (x) => new()
-                {
-                    IdentifierQuoteMode = LinqToDB.DataProvider.PostgreSQL.PostgreSQLIdentifierQuoteMode.None
-                })
-                //default logging will log everything using the ILoggerFactory configured in the provider
-                .UseDefaultLogging(provider));
 
-var issuer = builder.Configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("Jwt issuer missing");
-var audience = builder.Configuration["Jwt:Audience"] ?? throw new InvalidOperationException("Jwt audience missing");
-var keyConfig = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt key missing");
+builder.Services.AddLinqToDBContext<DataConnection>((provider, options) =>
+            {
+                return options
+                           .UsePostgreSQL(connection, LinqToDB.DataProvider.PostgreSQL.PostgreSQLVersion.v15, (x) => new()
+                           {
+                               IdentifierQuoteMode = LinqToDB.DataProvider.PostgreSQL.PostgreSQLIdentifierQuoteMode.None
+                           })
+                           //default logging will log everything using the ILoggerFactory configured in the provider
+                           .UseDefaultLogging(provider);
+            });
 
-var keyText = Encoding.UTF8.GetBytes(keyConfig).Take(512).ToArray();
-var generatedKey = new byte[512];
+var config = builder.Configuration.GetRequiredSection("Jwt");
+var issuer = config["Issuer"] ?? throw new InvalidOperationException("Jwt issuer missing");
+var audience = config["Audience"] ?? throw new InvalidOperationException("Jwt audience missing");
+var keyConfig = config["Key"] ?? throw new InvalidOperationException("Jwt key missing");
 
-var startAt = generatedKey.Length - keyText.Length;
-Array.Copy(keyText, 0, generatedKey, startAt, keyText.Length);
+SymmetricSecurityKey key = AuthLogic.GenerateKey(keyConfig);
 
-var key = new SymmetricSecurityKey(generatedKey);
+builder.Services.AddSingleton((_) => new TokenConfig(issuer, audience, key));
 
-builder.Services.AddSingleton(new TokenService(issuer, audience, key));
+builder.Services.AddSingleton<TokenService>();
 builder.Services.AddTransient<IUserContext, UserContext>();
 builder.Services.AddTransient<ISettingsContext, SettingsContext>();
 builder.Services.AddTransient<IHealthContext, HealthContext>();
@@ -53,7 +52,7 @@ builder.Services.AddAuthentication(options =>
       options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
       options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
   })
-  .AddJwtBearer(o =>
+  .AddJwtBearer((o) =>
   {
       o.TokenValidationParameters = new TokenValidationParameters
       {
@@ -73,6 +72,8 @@ builder.Services.AddAuthorizationBuilder()
             .RequireClaim("token", ["access"])
             .Build());
 
+builder.Services.AddSingleton(new MigrationSettings(connection));
+builder.Services.AddHostedService<MigrationHelper>();
 var app = builder.Build();
 
 app.MapOpenApi("/openapi/{documentName}.json");
@@ -87,8 +88,6 @@ app.UseStaticFiles();
 
 var api = app.MapGroup("/api");
 api.MapEnpoints();
-
-MigrationHelper.Init(connection, app.Logger);
 
 app.Run();
 
