@@ -42,7 +42,10 @@ class _CalendarViewState extends State<CalendarView> {
   void initState() {
     super.initState();
 
-    _focusedDay = widget.date.start;
+    if (_focusedDay.compareTo(widget.date.start) < 0) {
+      _focusedDay = widget.date.start;
+    }
+
     _onDaySelected(_focusedDay, _focusedDay);
   }
 
