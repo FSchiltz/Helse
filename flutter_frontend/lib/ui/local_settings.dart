@@ -40,7 +40,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
     _metrics = (await SettingsLogic.getMetrics()).metrics;
     _events = (await SettingsLogic.getEvents()).events;
     _lastRun = (await SettingsLogic.getLastRun());
-    _range = await SettingsLogic.getDateRange();
+    _range = await DI.settings.getDateRange();
 
     return 1;
   }

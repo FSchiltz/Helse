@@ -38,14 +38,12 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   Person? user;
   var selectedIndex = 0;
-  DateTimeRange date = DateHelper.now();
 
   @override
   void initState() {
     super.initState();
     _getUser();
     _startFitJob(DI.fit);
-    _setDefaultRange();
   }
 
   DeviceType getDevice() {
@@ -65,12 +63,6 @@ class _HomeState extends State<Home> {
     }
   }
 
-  void _setDate(DateTimeRange value) {
-    setState(() {
-      date = value;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     var types = user?.types ?? [];
@@ -78,14 +70,11 @@ class _HomeState extends State<Home> {
       builder: (context, constraints) {
         var theme = Theme.of(context);
 
-        var isLargeScreen = MediaQuery.of(context).size.width > 600;
-
         return Scaffold(
           appBar: AppBar(
             scrolledUnderElevation: 10,
             elevation: 1,
             centerTitle: true,
-            title: DateRangePicker(_setDate, date, isLargeScreen),
             actions: [
               BlocProvider<TaskBloc>.value(
                 value: DI.fit,
@@ -193,7 +182,7 @@ class _HomeState extends State<Home> {
               ),
             ],
           ),
-          body: Dashboard(date: date, types: types),
+          body: Dashboard(types: types),
         );
       },
     );
@@ -212,12 +201,5 @@ class _HomeState extends State<Home> {
       context: context,
       builder: (context) => TaskStatusDialog(tasks),
     );
-  }
-
-  Future<void> _setDefaultRange() async {
-    var range = await SettingsLogic.getDateRange();
-    setState(() {
-      date = DateHelper.getRange(range);
-    });
   }
 }

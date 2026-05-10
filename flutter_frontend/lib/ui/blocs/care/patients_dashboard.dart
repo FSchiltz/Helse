@@ -15,39 +15,20 @@ class PatientsDashboard extends StatefulWidget {
 }
 
 class _PatientDashboardState extends State<PatientsDashboard> {
-  DateTimeRange date = DateHelper.now();
-
-  void _setDate(DateTimeRange value) {
-    setState(() {
-      date = value;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    var isLargeScreen = MediaQuery.of(context).size.width > 600;
     return Scaffold(
       appBar: AppBar(
         title: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text(widget.person.name ?? "", style: Theme.of(context).textTheme.displayMedium),
-        ),
-        actions: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: DateRangePicker(_setDate, date, isLargeScreen),
+          child: Text(
+            widget.person.name ?? "",
+            style: Theme.of(context).textTheme.displayMedium,
           ),
-        ],
+        ),
       ),
       body: Row(
-        children: [
-          Expanded(
-            child: PatientDashboard(
-              date: date,
-              person: widget.person.id,
-            ),
-          ),
-        ],
+        children: [Expanded(child: PatientDashboard(person: widget.person.id))],
       ),
     );
   }

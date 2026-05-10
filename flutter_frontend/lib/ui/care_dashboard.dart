@@ -4,8 +4,7 @@ import 'blocs/care/agenda.dart';
 import 'blocs/care/patients.dart';
 
 class CareDashBoard extends StatelessWidget {
-  final DateTimeRange date;
-  const CareDashBoard({super.key, required this.date});
+  const CareDashBoard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +23,7 @@ class CareDashBoard extends StatelessWidget {
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Agenda(date: date),
+            child: Agenda(),
           ),
         ),
       ],
