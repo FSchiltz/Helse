@@ -4,7 +4,10 @@ on:
      inputs:
        push:
           required: true
-          type: boolean
+          type: boolean          
+      tags:
+        required: false
+        type: string
         
 env:
   REGISTRY: ghcr.io
@@ -40,7 +43,7 @@ jobs:
       
       - name: Build
         run: |
-            docker build --tag ${{ steps.meta.outputs.tags }}-${{matrix.arch}}  .
+            docker build --tag ${{ inputs.tags || steps.meta.outputs.tags }}-${{matrix.arch}}  .
             
       - name: Push
         if: ${{ inputs.push }}
