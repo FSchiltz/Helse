@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/admin_dashboard.dart';
+import 'package:helse/ui/admin_stats.dart';
 
 import '../services/swagger/generated_code/helseapi.swagger.dart';
 import 'care_dashboard.dart';
