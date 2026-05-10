@@ -48,7 +48,7 @@ jobs:
       - name: Push
         if: ${{ inputs.push }}
         run: |
-            docker push ${{env.USER}}/${{ steps.meta.outputs.tags }}-${{matrix.arch}} 
+            docker push "${{env.USER}}/${{ steps.meta.outputs.tags }}-${{matrix.arch}}"
               
     docker_manifest:
       needs: build
