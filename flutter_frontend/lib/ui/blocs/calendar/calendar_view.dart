@@ -27,12 +27,13 @@ class _CalendarViewState extends State<CalendarView> {
   List<CalendarEvent> _selectedEvents = [];
   CalendarFormat _calendarFormat = CalendarFormat.month;
 
-  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+  Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     if (!isSameDay(_selectedDay, selectedDay)) {
-      setState(() async {
+      var events = await widget.getEventsForDay(selectedDay);
+      setState(() {
         _focusedDay = focusedDay;
         _selectedDay = selectedDay;
-        _selectedEvents = await widget.getEventsForDay(selectedDay);
+        _selectedEvents = events;
       });
     }
   }
@@ -42,6 +43,7 @@ class _CalendarViewState extends State<CalendarView> {
     super.initState();
 
     _focusedDay = widget.date.start;
+    _onDaySelected(_focusedDay, _focusedDay);
   }
 
   @override
@@ -61,7 +63,7 @@ class _CalendarViewState extends State<CalendarView> {
           calendarFormat: _calendarFormat,
           onFormatChanged: (format) => setState(() {
             _calendarFormat = format;
-          }),          
+          }),
           availableGestures: AvailableGestures.all,
           calendarStyle: const CalendarStyle(
             isTodayHighlighted: true,

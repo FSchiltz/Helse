@@ -46,7 +46,10 @@ class _PatientDashboardState extends State<PatientDashboard> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            DateRangePicker(_setDate, date, isLargeScreen),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: DateRangePicker(_setDate, date, isLargeScreen),
+            ),
             MetricsGrid(date: date, person: widget.person),
             const SizedBox(
               height: 10,
