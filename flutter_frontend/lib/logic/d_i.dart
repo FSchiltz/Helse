@@ -1,9 +1,10 @@
+import 'package:helse/services/account.dart';
 import 'package:health/health.dart';
 import 'package:helse/helpers/oauth.dart';
 import 'package:helse/logic/account/authentication_logic.dart';
 import 'package:helse/logic/fit/task_bloc.dart';
 import 'package:helse/logic/settings/settings_logic.dart';
-import 'package:helse/services/account.dart';
+import 'package:helse/services/admin_service.dart';
 import 'package:helse/services/event_service.dart';
 import 'package:helse/services/helper_service.dart';
 import 'package:helse/services/metric_service.dart';
@@ -51,6 +52,15 @@ class DI {
     return a;
   }
 
+  static AdminService? _admin;
+  static AdminService get admin {
+    var a = _admin;
+    if (a == null) {
+      throw Exception("Invalid access");
+    }
+    return a;
+  }
+
   static TreatmentService? treatement;
   static SettingsLogic? _settings;
   static SettingsLogic get settings {
@@ -91,6 +101,7 @@ class DI {
     _helper = HelperService(account);
     _event = EventService(account);
     _user = UserService(account);
+    _admin = AdminService(account);
     treatement = TreatmentService(account);
     _settings = SettingsLogic(account);
 

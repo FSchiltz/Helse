@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'admin_stats.dart';
 import 'dashboard.dart';
 
 class AdminDashBoard extends StatelessWidget {
@@ -22,9 +23,7 @@ class AdminDashBoard extends StatelessWidget {
             child: TabBarView(
               children: [
                 Dashboard(types: []),
-                const SingleChildScrollView(
-                  child: Center(child: Text("Stats")),
-                ),
+                const AdminStats(),
               ],
             ),
           ),

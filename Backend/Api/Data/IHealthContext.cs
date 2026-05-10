@@ -31,6 +31,9 @@ public interface IHealthContext : IContext
     Task<List<Event>> GetEvents(long id, Api.Models.Settings.RightType view, DateTime start, DateTime end);
     Task<List<Event>> GetEvents(long id, DateTime start, DateTime end);
 
+    Task<List<Event>> GetAllEvents(DateTime start, DateTime end);
+    Task<List<Person>> GetAllPatients();
+
     Task<bool> ExistsEvent(long person, string tag);
     Task<bool> ExistsMetric(long person, string tag, Api.Models.FileTypes source);
 

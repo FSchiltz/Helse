@@ -126,6 +126,16 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
+    public Task<List<Event>> GetAllEvents(DateTime start, DateTime end)
+    {
+        return Db.GetTable<Data.Models.Event>()
+            .Where(x => x.Start <= end && start <= x.Stop)
+            .ToListAsync();
+    }
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
     public Task<Metric?> GetMetric(long id) => Db.GetTable<Metric>().FirstOrDefaultAsync(x => x.Id == id);
 
     /// <summary>
@@ -170,6 +180,14 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
                 where r.UserId == user
                 where r.Type == (int)right
                 select u).Distinct().ToListAsync();
+    }
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public Task<List<Person>> GetAllPatients()
+    {
+        return Db.GetTable<Person>().ToListAsync();
     }
 
     /// <summary>

@@ -6,6 +6,7 @@ using Api.Models.Metrics;
 using Api.Models.Persons;
 using Api.Models.Settings.Admin;
 using Api.Models.Treatments;
+using Api.Models.Admin;
 
 namespace Api;
 
@@ -200,6 +201,15 @@ public static class Endpoints
 
         settings.MapGet("/proxy", SettingsLogic.GetProxyAsync)
             .Produces<Proxy>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
+        var stats = admin.MapGroup("/stats").RequireAuthorization();
+        stats.MapGet("/users", AdminLogic.GetUserStatsAsync)
+            .Produces<UserStats>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
+        stats.MapGet("/events", AdminLogic.GetEventStatsAsync)
+            .Produces<List<EventDateSummary>>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
     }
 
