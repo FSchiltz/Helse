@@ -1,9 +1,10 @@
 name: Build docker
 on:
   workflow_call:
-      push:
-        required: true
-        type: boolean
+     inputs:
+       push:
+          required: true
+          type: boolean
         
 env:
   REGISTRY: ghcr.io
