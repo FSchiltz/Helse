@@ -12,7 +12,7 @@ class CareDashBoard extends StatelessWidget {
     var theme = Theme.of(context).colorScheme;
     return Row(
       mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,      
       children: [
         Container(
           color: theme.surfaceContainer,
@@ -21,9 +21,11 @@ class CareDashBoard extends StatelessWidget {
             child: const Patients(),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Agenda(date: date),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Agenda(date: date),
+          ),
         ),
       ],
     );

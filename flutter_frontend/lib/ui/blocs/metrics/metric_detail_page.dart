@@ -121,7 +121,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                         ? SizedBox.expand(
                             child: Padding(
                                 padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 16.0, top: 60.0),
-                                child: CalendarView(metrics, widget.date)))
+                                child: CalendarView(metrics.map((x)=> CalendarEvent(from: x.date?? DateTime.now(), to: x.date ?? DateTime.now(), value: x.value)).toList(), widget.date)))
                         : Padding(
                             padding: const EdgeInsets.all(8),
                             child: Column(

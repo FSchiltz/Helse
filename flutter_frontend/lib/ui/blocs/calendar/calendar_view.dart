@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/date.dart';
-import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+class CalendarEvent {
+  final DateTime from;
+  final DateTime to;
+  final String value;
+
+  CalendarEvent({required this.from, required this.to, required this.value});
+}
+
 class CalendarView extends StatefulWidget {
-  final List<Metric> metrics;
+  final List<CalendarEvent> events;
   final DateTimeRange date;
 
-  const CalendarView(
-    this.metrics,
-    this.date, {
-    super.key,
-  });
+  const CalendarView(this.events, this.date, {super.key});
 
   @override
   State<CalendarView> createState() => _CalendarViewState();
@@ -20,11 +23,15 @@ class CalendarView extends StatefulWidget {
 class _CalendarViewState extends State<CalendarView> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  List<Metric> _selectedEvents = [];
+  List<CalendarEvent> _selectedEvents = [];
   CalendarFormat _calendarFormat = CalendarFormat.month;
 
-  List<Metric> _getEventsForDay(DateTime day) {
-    return widget.metrics.where((x) => x.date != null && x.date!.day == day.day && x.date!.month == day.month && x.date!.year == day.year).toList();
+  List<CalendarEvent> _getEventsForDay(DateTime day) {
+    return widget.events.where((x) {
+      var from = DateTime(x.from.year, x.from.month, x.from.day);
+      var to = DateTime(x.to.year, x.to.month, x.to.day);
+      return from.compareTo(day) <= 0 && to.compareTo(day) >= 0;
+    }).toList();
   }
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
@@ -41,7 +48,7 @@ class _CalendarViewState extends State<CalendarView> {
   void initState() {
     super.initState();
 
-    var firstDay = widget.metrics.firstOrNull?.date;
+    var firstDay = widget.events.firstOrNull?.to;
     if (firstDay != null) {
       _onDaySelected(firstDay, firstDay);
     } else {
@@ -51,10 +58,10 @@ class _CalendarViewState extends State<CalendarView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Column(        
       children: [
         Expanded(
-          child: TableCalendar<Metric>(
+          child: TableCalendar<CalendarEvent>(
             firstDay: widget.date.start,
             lastDay: widget.date.end,
             focusedDay: _focusedDay,
@@ -81,17 +88,21 @@ class _CalendarViewState extends State<CalendarView> {
             onDaySelected: _onDaySelected,
           ),
         ),
-        Text("Showing events of ${DateHelper.formatDate(_selectedDay, context: context)}"),
+        Text(
+          "Showing events of ${DateHelper.formatDate(_selectedDay, context: context)}",
+        ),
         Flexible(
           child: ListView.builder(
             itemCount: _selectedEvents.length,
             itemBuilder: (x, index) => Row(
               children: [
-                Text("${_selectedEvents[index].value} at ${DateHelper.formatTime(_selectedEvents[index].date, context: x)}"),
+                Text(
+                  "${_selectedEvents[index].value} at ${DateHelper.formatTime(_selectedEvents[index].to, context: x)}",
+                ),
               ],
             ),
           ),
-        )
+        ),
       ],
     );
   }
