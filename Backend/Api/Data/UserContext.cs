@@ -31,7 +31,7 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
 
     public async Task UpdatePerson(UpdatePerson update)
     {
-        await Db.GetTable<Data.Models.Person>()
+        await Db.GetTable<Models.Person>()
             .Where(x => x.Id == update.Id)
             .Set(x => x.Birth, update.Birth)
             .Set(x => x.Identifier, update.Identifier)
@@ -40,7 +40,7 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
             .Set(x => x.ProfilePicture, update.ProfilePicture)
             .UpdateAsync();
 
-        var userQuery = Db.GetTable<Data.Models.User>()
+        var userQuery = Db.GetTable<User>()
             .Where(x => x.PersonId == update.Id)
             .AsUpdatable();
 
@@ -75,7 +75,7 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
             return Task.FromResult(default(PersonFromDb?));
 
         return (from u in Db.GetTable<User>()
-                join p in Db.GetTable<Data.Models.Person>() on u.PersonId equals p.Id
+                join p in Db.GetTable<Models.Person>() on u.PersonId equals p.Id
                 where u.Identifier == identifier
                 select new PersonFromDb(u, p))
                                  .FirstOrDefaultAsync();
@@ -86,8 +86,8 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
 
     public Task<long> InsertPerson(PersonCreation newUser)
     {
-        return Db.GetTable<Data.Models.Person>().InsertWithInt64IdentityAsync(()
-            => new Data.Models.Person
+        return Db.GetTable<Models.Person>().InsertWithInt64IdentityAsync(()
+            => new Models.Person
             {
                 Birth = newUser.Birth,
                 Identifier = newUser.Identifier,
