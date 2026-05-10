@@ -111,7 +111,7 @@ class SettingsLogic {
     await (await storage).setString(Account.dateRange, run.name);
   }
 
-  static Future<DatePreset> getDateRange() async {
+  Future<DatePreset> getDateRange() async {
     var encoded = (await storage).getString(Account.dateRange);
     if (encoded == null) {
       return DatePreset.today;

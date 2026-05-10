@@ -63,35 +63,33 @@ class _PatientsState extends State<Patients> {
                 .map((p) => PatientsCard(p, _resetPatients))
                 .toList();
 
-            return Flexible(
-              child: SizedBox(
-                width: 320,
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          "Patients",
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            showDialog<void>(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return PatientAdd(_resetPatients);
-                              },
-                            );
-                          },
-                          icon: const Icon(Icons.add_sharp),
-                          iconSize: 35,
-                          color: theme.primary,
-                        ),
-                      ],
-                    ),
-                    ListView(shrinkWrap: true, children: cards),
-                  ],
-                ),
+            return SizedBox(
+              width: 320,
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        "Patients",
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          showDialog<void>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return PatientAdd(_resetPatients);
+                            },
+                          );
+                        },
+                        icon: const Icon(Icons.add_sharp),
+                        iconSize: 35,
+                        color: theme.primary,
+                      ),
+                    ],
+                  ),
+                  ListView(shrinkWrap: true, children: cards),
+                ],
               ),
             );
           }

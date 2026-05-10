@@ -50,9 +50,19 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
     var date = widget.date;
 
     var start = DateTime(date.start.year, date.start.month, date.start.day);
-    var end = DateTime(date.end.year, date.end.month, date.end.day).add(const Duration(days: 1));
+    var end = DateTime(
+      date.end.year,
+      date.end.month,
+      date.end.day,
+    ).add(const Duration(days: 1));
 
-    _metrics = await DI.metric.metrics(id, start, end, person: widget.person, simple: false);
+    _metrics = await DI.metric.metrics(
+      id,
+      start,
+      end,
+      person: widget.person,
+      simple: false,
+    );
 
     return _metrics;
   }
@@ -81,47 +91,86 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
             child: SizedBox(
               width: 32,
               child: IconButton(
-                  onPressed: () {
-                    showDialog<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return MetricAdd(widget.type, _resetMetric, person: widget.person);
-                        });
-                  },
-                  icon: const Icon(Icons.add_sharp)),
+                onPressed: () {
+                  showDialog<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return MetricAdd(
+                        widget.type,
+                        _resetMetric,
+                        person: widget.person,
+                      );
+                    },
+                  );
+                },
+                icon: const Icon(Icons.add_sharp),
+              ),
             ),
           ),
         ],
-        title: Text('Detail of ${widget.type.name}', style: Theme.of(context).textTheme.headlineMedium),
+        title: Text(
+          'Detail of ${widget.type.name}',
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
       ),
       body: FutureBuilder(
-          future: _dataFuture,
-          builder: (ctx, snapshot) {
-            // Checking if future is resolved
-            if (snapshot.connectionState == ConnectionState.done) {
-              // If we got an error
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    '${snapshot.error} occurred',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                );
+        future: _dataFuture,
+        builder: (ctx, snapshot) {
+          // Checking if future is resolved
+          if (snapshot.connectionState == ConnectionState.done) {
+            // If we got an error
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  '${snapshot.error} occurred',
+                  style: const TextStyle(fontSize: 18),
+                ),
+              );
 
-                // if we got our data
-              } else if (snapshot.hasData) {
-                // Extracting data from snapshot object
-                final metrics = snapshot.data as List<Metric>;
-                final metric = _metric;
-                return metrics.isEmpty
-                    ? Center(
-                        child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
-                      )
-                    : (widget.type.type == MetricDataType.text
+              // if we got our data
+            } else if (snapshot.hasData) {
+              // Extracting data from snapshot object
+              final metrics = snapshot.data as List<Metric>;
+              final metric = _metric;
+
+              Future<List<CalendarEvent>> getEventsForDay(DateTime day) async {
+                return metrics
+                    .where(
+                      (x) =>
+                          x.date != null &&
+                          day.year == x.date!.year &&
+                          day.month == x.date!.month &&
+                          day.day == x.date!.day,
+                    )
+                    .map(
+                      (x) => CalendarEvent(
+                        from: x.date ?? DateTime.now(),
+                        to: x.date ?? DateTime.now(),
+                        value: x.value,
+                      ),
+                    )
+                    .toList();
+              }
+
+              return metrics.isEmpty
+                  ? Center(
+                      child: Text(
+                        "No data",
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
+                    )
+                  : (widget.type.type == MetricDataType.text
                         ? SizedBox.expand(
                             child: Padding(
-                                padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 16.0, top: 60.0),
-                                child: CalendarView(metrics, widget.date)))
+                              padding: const EdgeInsets.only(
+                                left: 8.0,
+                                right: 8.0,
+                                bottom: 16.0,
+                                top: 60.0,
+                              ),
+                              child: CalendarView(getEventsForDay, widget.date),
+                            ),
+                          )
                         : Padding(
                             padding: const EdgeInsets.all(8),
                             child: Column(
@@ -130,7 +179,9 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(0),
                                   ),
-                                  shadowColor: Theme.of(context).colorScheme.shadow,
+                                  shadowColor: Theme.of(
+                                    context,
+                                  ).colorScheme.shadow,
                                   elevation: 2,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -138,20 +189,24 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                                       children: [
                                         Padding(
                                           padding: const EdgeInsets.all(4.0),
-                                          child: Text('Selected${metric != null ? ' (${metric.id})' : ''} :'),
+                                          child: Text(
+                                            'Selected${metric != null ? ' (${metric.id})' : ''} :',
+                                          ),
                                         ),
                                         if (metric != null)
                                           Padding(
                                             padding: const EdgeInsets.all(4.0),
                                             child: Text(
-                                                '${metric.value}${widget.type.unit} on ${DateHelper.format(metric.date?.toLocal(), context: ctx)}'),
+                                              '${metric.value}${widget.type.unit} on ${DateHelper.format(metric.date?.toLocal(), context: ctx)}',
+                                            ),
                                           ),
                                         if (metric != null)
                                           Padding(
                                             padding: const EdgeInsets.all(4.0),
                                             child: Text(metric.tag.toString()),
                                           ),
-                                        if (metric != null && metric.source != FileTypes.none)
+                                        if (metric != null &&
+                                            metric.source != FileTypes.none)
                                           Padding(
                                             padding: const EdgeInsets.all(4.0),
                                             child: Text('by ${metric.source}'),
@@ -160,47 +215,79 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                                           SizedBox(
                                             width: 40,
                                             child: IconButton(
-                                                onPressed: () {
-                                                  showDialog<void>(
-                                                      context: context,
-                                                      builder: (BuildContext context) {
-                                                        return MetricAdd(widget.type, _resetMetric, person: widget.person, edit: metric);
-                                                      });
-                                                },
-                                                icon: const Icon(Icons.edit_sharp)),
+                                              onPressed: () {
+                                                showDialog<void>(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                        return MetricAdd(
+                                                          widget.type,
+                                                          _resetMetric,
+                                                          person: widget.person,
+                                                          edit: metric,
+                                                        );
+                                                      },
+                                                );
+                                              },
+                                              icon: const Icon(
+                                                Icons.edit_sharp,
+                                              ),
+                                            ),
                                           ),
                                         if (id != null)
                                           SizedBox(
                                             width: 40,
                                             child: IconButton(
-                                                onPressed: () {
-                                                  showDialog<void>(
-                                                      context: context,
-                                                      builder: (BuildContext context) {
-                                                        return DeleteMetric(() async {
-                                                          await DI.metric.deleteMetrics(id);
-                                                          _resetMetric();
-                                                          setState(() {
-                                                            _metric = null;
-                                                          });
-                                                        }, person: widget.person);
-                                                      });
-                                                },
-                                                icon: const Icon(Icons.delete_sharp)),
+                                              onPressed: () {
+                                                showDialog<void>(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                        return DeleteMetric(
+                                                          () async {
+                                                            await DI.metric
+                                                                .deleteMetrics(
+                                                                  id,
+                                                                );
+                                                            _resetMetric();
+                                                            setState(() {
+                                                              _metric = null;
+                                                            });
+                                                          },
+                                                          person: widget.person,
+                                                        );
+                                                      },
+                                                );
+                                              },
+                                              icon: const Icon(
+                                                Icons.delete_sharp,
+                                              ),
+                                            ),
                                           ),
                                       ],
                                     ),
                                   ),
                                 ),
-                                Flexible(fit: FlexFit.tight, child: MetricGraph(metrics, widget.date, widget.settings, _selectionChanged)),
+                                Flexible(
+                                  fit: FlexFit.tight,
+                                  child: MetricGraph(
+                                    metrics,
+                                    widget.date,
+                                    widget.settings,
+                                    _selectionChanged,
+                                  ),
+                                ),
                               ],
                             ),
                           ));
-              }
             }
+          }
 
-            return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
-          }),
+          return const Center(
+            child: SizedBox(width: 50, height: 50, child: HelseLoader()),
+          );
+        },
+      ),
     );
   }
 }

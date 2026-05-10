@@ -5,9 +5,8 @@ import 'care_dashboard.dart';
 import 'patient_dashboard.dart';
 
 class Dashboard extends StatelessWidget {
-  final DateTimeRange date;
   final List<UserType> types;
-  const Dashboard({super.key, required this.date, required this.types});
+  const Dashboard({super.key, required this.types});
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +16,12 @@ class Dashboard extends StatelessWidget {
     // TODO add a patient dashboard if the user is one.
     if (types.contains(UserType.user)) {
       icons.add(Icons.monitor_heart_sharp);
-      tabs.add(PatientDashboard(date: date));
+      tabs.add(PatientDashboard());
     }
 
     if (types.contains(UserType.caregiver)) {
       icons.add(Icons.personal_injury_sharp);
-      tabs.add(CareDashBoard(date: date));
+      tabs.add(CareDashBoard());
     }
 
     if (types.contains(UserType.admin)) {
