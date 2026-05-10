@@ -54,5 +54,4 @@ jobs:
     with:
       push: false
       tags: ci
-      labels: ci
 
