@@ -29,7 +29,7 @@ class Agenda extends StatelessWidget {
   Widget build(BuildContext context) {
     return CalendarView(
       _getData,
-      DateTimeRange<DateTime>(start: DateTime.now(), end: DateTime.now()),
+      DateTimeRange<DateTime>(start: DateTime(1900), end: DateTime(3000)),
     );
   }
 }

@@ -15,16 +15,15 @@ class PatientDashboard extends StatefulWidget {
 }
 
 class _PatientDashboardState extends State<PatientDashboard> {
-
   DateTimeRange date = DateHelper.now();
 
-    void _setDate(DateTimeRange value) {
+  void _setDate(DateTimeRange value) {
     setState(() {
       date = value;
     });
   }
 
-    Future<void> _setDefaultRange() async {
+  Future<void> _setDefaultRange() async {
     var range = await DI.settings.getDateRange();
     setState(() {
       date = DateHelper.getRange(range);
@@ -39,8 +38,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
 
   @override
   Widget build(BuildContext context) {
-
-        var isLargeScreen = MediaQuery.of(context).size.width > 600;
+    var isLargeScreen = MediaQuery.of(context).size.width > 600;
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -51,9 +49,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
               child: DateRangePicker(_setDate, date, isLargeScreen),
             ),
             MetricsGrid(date: date, person: widget.person),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             EventsGrid(date: date, person: widget.person),
           ],
         ),
