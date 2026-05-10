@@ -1,4 +1,5 @@
 using Api.Data.Models;
+using Api.Models.Admin;
 
 namespace Api.Data;
 
@@ -31,7 +32,6 @@ public interface IHealthContext : IContext
     Task<List<Event>> GetEvents(long id, Api.Models.Settings.RightType view, DateTime start, DateTime end);
     Task<List<Event>> GetEvents(long id, DateTime start, DateTime end);
 
-    Task<List<Event>> GetAllEvents(DateTime start, DateTime end);
     Task<List<Person>> GetAllPatients();
 
     Task<bool> ExistsEvent(long person, string tag);
@@ -53,6 +53,6 @@ public interface IHealthContext : IContext
     /// <param name="end"></param>
     /// <returns></returns>
     Task<Metric?> GetLastMetrics(long id, int type, DateTime start, DateTime end);
-    
-    Task GetEventStats(DateTime start, DateTime end);
+
+    Task<EventDateSummary[]> GetEventStats(DateTime start, DateTime end);
 }

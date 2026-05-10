@@ -1,25 +1,11 @@
 using System.Data;
 using Api.Data.Models;
+using Api.Models.Admin;
 using LinqToDB;
 using LinqToDB.Data;
 using LinqToDB.Mapping;
 
 namespace Api.Data;
-
-public abstract class BaseContext(DataConnection db) : IContext
-{
-    protected DataConnection Db => db;
-
-    /// <summary>
-    /// <inheritdoc/>
-    /// </summary>
-    public async Task<ITransaction> BeginTransactionAsync()
-    {
-        var fromDbTransaction = await Db.BeginTransactionAsync();
-        return new Transaction(fromDbTransaction);
-    }
-}
-
 
 public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
 {
@@ -120,16 +106,6 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
             .Where(x => x.PersonId == id
                 && x.TreatmentId != null
                 && x.Start <= end && start <= x.Stop)
-            .ToListAsync();
-    }
-
-    /// <summary>
-    /// <inheritdoc/>
-    /// </summary>
-    public Task<List<Event>> GetAllEvents(DateTime start, DateTime end)
-    {
-        return Db.GetTable<Data.Models.Event>()
-            .Where(x => x.Start <= end && start <= x.Stop)
             .ToListAsync();
     }
 
@@ -366,5 +342,15 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
         .Set(x => x.Description, e.Description)
         .Set(x => x.Tag, e.Tag)
         .UpdateAsync();
+    }
+
+    public Task<EventDateSummary[]> GetEventStats(DateTime start, DateTime end)
+    {
+        return Db.GetTable<Data.Models.Event>()
+            .Where(x => x.Start <= end && start <= x.Stop)
+            .GroupBy(e => e.Start.Date)
+            .Select(g => new EventDateSummary(g.Key, g.Count()))
+            .OrderBy(s => s.Date)
+            .ToArrayAsync();
     }
 }
