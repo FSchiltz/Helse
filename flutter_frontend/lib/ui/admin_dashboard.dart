@@ -13,6 +13,7 @@ class AdminDashBoard extends StatefulWidget {
 class _AdminDashBoardState extends State<AdminDashBoard> {
   Map<String, int> _userCounts = {};
   List<EventDateSummary> _eventSummaries = [];
+  List<Person> _recentUsers = [];
   bool _loading = true;
 
   @override
@@ -40,6 +41,18 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
     final start = end.subtract(const Duration(days: 30));
     _eventSummaries = await DI.admin.getEventStats(start, end) ?? [];
 
+    // Load users created in the last 7 days
+    final allPersons = await DI.user.persons() ?? [];
+    _recentUsers = allPersons
+        .where(
+          (p) =>
+              p.birth != null &&
+              p.birth!.isAfter(
+                DateTime.now().subtract(const Duration(days: 7)),
+              ),
+        )
+        .toList();
+
     setState(() => _loading = false);
   }
 
@@ -59,33 +72,164 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          _buildUserStats(),
+          Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            children: [
+              SizedBox(
+                width: 420,
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Quick Counts',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        _buildUserStats(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 420,
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'User Distribution',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        _buildUserDistributionChart(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 32),
           const Text(
             'Events Over Time',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          _buildEventsChart(),
+          Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            children: [
+              SizedBox(
+                width: 420,
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Trend',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        _buildEventsChart(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 420,
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Daily Volume',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        _buildEventsBarChart(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 32),
+          const Text(
+            'Users Created in Last 7 Days',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          _buildRecentUsers(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildRecentUsers() {
+    if (_recentUsers.isEmpty) {
+      return const Text('No users created in the last 7 days');
+    }
+
+    return SizedBox(
+      height: 200,
+      child: ListView.builder(
+        itemCount: _recentUsers.length,
+        itemBuilder: (context, index) {
+          final user = _recentUsers[index];
+          return ListTile(
+            title: Text(
+              '${user.name ?? ''} ${user.surname ?? ''}'.trim().isEmpty
+                  ? 'Unknown'
+                  : '${user.name ?? ''} ${user.surname ?? ''}'.trim(),
+            ),
+            subtitle: Text(
+              'Born: ${user.birth?.toLocal().toString().split(' ')[0] ?? 'N/A'}',
+            ),
+          );
+        },
       ),
     );
   }
 
   Widget _buildUserStats() {
     return GridView.count(
-      crossAxisCount: 6,
+      crossAxisCount: 2,
       shrinkWrap: true,
+      childAspectRatio: 3,
+      physics: const NeverScrollableScrollPhysics(),
       children: _userCounts.entries.map((entry) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               entry.value.toString(),
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             Text(entry.key, style: const TextStyle(fontSize: 16)),
           ],
@@ -94,23 +238,153 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
     );
   }
 
+  Widget _buildUserDistributionChart() {
+    if (_userCounts.isEmpty) {
+      return const Text('No user distribution data');
+    }
+
+    final colors = [Colors.blue, Colors.green, Colors.orange, Colors.purple];
+    final sections = _userCounts.entries
+        .where((entry) => entry.value > 0)
+        .toList()
+        .asMap()
+        .entries
+        .map((entry) {
+          final value = entry.value.value.toDouble();
+          return PieChartSectionData(
+            color: colors[entry.key % colors.length],
+            value: value,
+            title: '${value.toInt()}',
+            radius: 70,
+            titleStyle: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          );
+        })
+        .toList();
+
+    return SizedBox(
+      height: 260,
+      child: PieChart(
+        PieChartData(
+          sections: sections,
+          sectionsSpace: 4,
+          centerSpaceRadius: 24,
+          borderData: FlBorderData(show: false),
+          pieTouchData: PieTouchData(enabled: true),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEventsBarChart() {
+    if (_eventSummaries.isEmpty) {
+      return const Text('No event data available');
+    }
+
+    final barGroups = _eventSummaries.asMap().entries.map((entry) {
+      final index = entry.key;
+      final summary = entry.value;
+      return BarChartGroupData(
+        x: index,
+        barRods: [
+          BarChartRodData(
+            toY: summary.count.toDouble(),
+            color: Colors.teal,
+            width: 18,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ],
+      );
+    }).toList();
+
+    String _labelForIndex(double value) {
+      final index = value.toInt();
+      if (index < 0 || index >= _eventSummaries.length) {
+        return '';
+      }
+      final date = _eventSummaries[index].date;
+      return '${date.month}/${date.day}';
+    }
+
+    return SizedBox(
+      height: 300,
+      child: BarChart(
+        BarChartData(
+          barGroups: barGroups,
+          gridData: const FlGridData(show: true),
+          borderData: FlBorderData(show: true),
+          titlesData: FlTitlesData(
+            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true)),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 36,
+                getTitlesWidget: (value, meta) {
+                  return SideTitleWidget(
+                    meta: meta,
+                    child: Text(
+                      _labelForIndex(value),
+                      style: const TextStyle(fontSize: 10),
+                    ),
+                  );
+                },
+              ),
+            ),
+            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildEventsChart() {
     if (_eventSummaries.isEmpty) {
       return const Text('No event data available');
     }
 
-    // The event summaries are already grouped by date
     final spots = _eventSummaries.asMap().entries.map((entry) {
-      final summary = _eventSummaries[entry.key];
+      final summary = entry.value;
       return FlSpot(entry.key.toDouble(), summary.count.toDouble());
     }).toList();
+
+    String _labelForIndex(double value) {
+      final index = value.toInt();
+      if (index < 0 || index >= _eventSummaries.length) {
+        return '';
+      }
+      final date = _eventSummaries[index].date;
+      return '${date.month}/${date.day}';
+    }
 
     return SizedBox(
       height: 300,
       child: LineChart(
         LineChartData(
           gridData: const FlGridData(show: true),
-          titlesData: const FlTitlesData(show: true),
+          titlesData: FlTitlesData(
+            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true)),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 36,
+                getTitlesWidget: (value, meta) {
+                  return SideTitleWidget(
+                    meta: meta,
+                    child: Text(
+                      _labelForIndex(value),
+                      style: const TextStyle(fontSize: 10),
+                    ),
+                  );
+                },
+              ),
+            ),
+            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          ),
           borderData: FlBorderData(show: true),
           lineBarsData: [
             LineChartBarData(
@@ -119,10 +393,11 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
               color: Colors.blue,
               barWidth: 3,
               belowBarData: BarAreaData(show: false),
+              dotData: FlDotData(show: false),
             ),
           ],
         ),
       ),
     );
-  } 
+  }
 }
