@@ -19,6 +19,25 @@ Map<String, dynamic> _$ConnectionToJson(Connection instance) =>
       'redirect': instance.redirect,
     };
 
+CountByDate _$CountByDateFromJson(Map<String, dynamic> json) => CountByDate(
+  date: DateTime.parse(json['date'] as String),
+  count: (json['count'] as num).toInt(),
+);
+
+Map<String, dynamic> _$CountByDateToJson(CountByDate instance) =>
+    <String, dynamic>{
+      'date': instance.date.toIso8601String(),
+      'count': instance.count,
+    };
+
+CountRecord _$CountRecordFromJson(Map<String, dynamic> json) => CountRecord(
+  id: json['id'] as String,
+  count: (json['count'] as num).toInt(),
+);
+
+Map<String, dynamic> _$CountRecordToJson(CountRecord instance) =>
+    <String, dynamic>{'id': instance.id, 'count': instance.count};
+
 CreateEvent _$CreateEventFromJson(Map<String, dynamic> json) => CreateEvent(
   type: (json['type'] as num?)?.toInt(),
   description: json['description'] as String?,
@@ -98,18 +117,6 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
   'stop': instance.stop?.toIso8601String(),
   'tag': instance.tag,
 };
-
-EventDateSummary _$EventDateSummaryFromJson(Map<String, dynamic> json) =>
-    EventDateSummary(
-      date: DateTime.parse(json['date'] as String),
-      count: (json['count'] as num).toInt(),
-    );
-
-Map<String, dynamic> _$EventDateSummaryToJson(EventDateSummary instance) =>
-    <String, dynamic>{
-      'date': instance.date.toIso8601String(),
-      'count': instance.count,
-    };
 
 EventSummary _$EventSummaryFromJson(Map<String, dynamic> json) =>
     EventSummary(data: json['data'] as Map<String, dynamic>);
@@ -244,6 +251,9 @@ Person _$PersonFromJson(Map<String, dynamic> json) => Person(
           .toList() ??
       [],
   types: userTypeListFromJson(json['types'] as List?),
+  created: json['created'] == null
+      ? null
+      : DateTime.parse(json['created'] as String),
   name: json['name'] as String?,
   surname: json['surname'] as String?,
   identifier: json['identifier'] as String?,
@@ -258,6 +268,7 @@ Map<String, dynamic> _$PersonToJson(Person instance) => <String, dynamic>{
   'userName': instance.userName,
   'rights': instance.rights?.map((e) => e.toJson()).toList(),
   'types': userTypeListToJson(instance.types),
+  'created': instance.created?.toIso8601String(),
   'name': instance.name,
   'surname': instance.surname,
   'identifier': instance.identifier,
@@ -434,14 +445,14 @@ Map<String, dynamic> _$UpdatePersonToJson(UpdatePerson instance) =>
 
 UserStats _$UserStatsFromJson(Map<String, dynamic> json) => UserStats(
   totalUsers: (json['totalUsers'] as num).toInt(),
-  patients: (json['patients'] as num).toInt(),
-  caregivers: (json['caregivers'] as num).toInt(),
-  admins: (json['admins'] as num).toInt(),
+  userCount:
+      (json['userCount'] as List<dynamic>?)
+          ?.map((e) => CountRecord.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
 );
 
 Map<String, dynamic> _$UserStatsToJson(UserStats instance) => <String, dynamic>{
   'totalUsers': instance.totalUsers,
-  'patients': instance.patients,
-  'caregivers': instance.caregivers,
-  'admins': instance.admins,
+  'userCount': instance.userCount.map((e) => e.toJson()).toList(),
 };

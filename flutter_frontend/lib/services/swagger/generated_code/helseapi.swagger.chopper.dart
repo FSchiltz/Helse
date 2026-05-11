@@ -989,9 +989,9 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<List<EventDateSummary>>> _apiAdminStatsEventsGet({
-    DateTime? start,
-    DateTime? end,
+  Future<Response<List<CountByDate>>> _apiAdminStatsEventsGet({
+    required DateTime? start,
+    required DateTime? end,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
       summary: '',
@@ -1015,7 +1015,7 @@ final class _$Helseapi extends Helseapi {
       parameters: $params,
       tag: swaggerMetaData,
     );
-    return client.send<List<EventDateSummary>, EventDateSummary>($request);
+    return client.send<List<CountByDate>, CountByDate>($request);
   }
 
   @override

@@ -1,3 +1,3 @@
 namespace Api.Models.Admin;
 
-public record UserStats(int TotalUsers, Dictionary<string, int> UserCount);
+public record UserStats(int TotalUsers, CountRecord[] UserCount);

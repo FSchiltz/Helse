@@ -11,9 +11,9 @@ class AdminDashBoard extends StatefulWidget {
 }
 
 class _AdminDashBoardState extends State<AdminDashBoard> {
-  Map<String, int> _userCounts = {};
-  Map<String, int> _eventTypeCounts = {};
-  List<EventDateSummary> _eventSummaries = [];
+  List<CountRecord>_userCounts = [];
+  List<CountRecord> _eventTypeCounts = [];
+  List<CountByDate> _eventSummaries = [];
   List<Person> _recentUsers = [];
   bool _loading = true;
 
@@ -29,18 +29,14 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
     // Load user stats from admin endpoint
     final userStats = await DI.admin.getUserStats();
     if (userStats != null) {
-      _userCounts = {
-        'Total Users': userStats.totalUsers,
-        'Patients': userStats.patients,
-        'Caregivers': userStats.caregivers,
-        'Admins': userStats.admins,
-      };
+      _userCounts = [        CountRecord(id:'Total Users',count: userStats.totalUsers)];
+      _userCounts.addAll(userStats.userCount);
     }
 
     // Load event summaries for the last 30 days
     final end = DateTime.now();
     final start = end.subtract(const Duration(days: 30));
-    _eventSummaries = await DI.admin.getEventStats(start, end) ?? [];
+    _eventSummaries = await DI.admin.getEventStats(start, end);
 
     // Load users created in the last 7 days
     final allPersons = await DI.user.persons() ?? [];
@@ -204,8 +200,8 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
       return const Text('No events created in the last 7 days');
     }
 
-    final sortedTypes = _eventTypeCounts.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
+    final sortedTypes = _eventTypeCounts.toList()
+      ..sort((a, b) => b.count.compareTo(a.count));
 
     return SizedBox(
       height: 200,
@@ -214,9 +210,9 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
         itemBuilder: (context, index) {
           final entry = sortedTypes[index];
           return ListTile(
-            title: Text(entry.key),
+            title: Text(entry.id),
             trailing: Text(
-              entry.value.toString(),
+              entry.count.toString(),
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           );
@@ -231,16 +227,16 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
       shrinkWrap: true,
       childAspectRatio: 3,
       physics: const NeverScrollableScrollPhysics(),
-      children: _userCounts.entries.map((entry) {
+      children: _userCounts.map((entry) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              entry.value.toString(),
+              entry.count.toString(),
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            Text(entry.key, style: const TextStyle(fontSize: 12)),
+            Text(entry.id, style: const TextStyle(fontSize: 12)),
           ],
         );
       }).toList(),

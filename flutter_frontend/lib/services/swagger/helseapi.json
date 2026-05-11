@@ -1256,6 +1256,7 @@
           {
             "name": "start",
             "in": "query",
+            "required": true,
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -1264,6 +1265,7 @@
           {
             "name": "end",
             "in": "query",
+            "required": true,
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -1278,7 +1280,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/EventDateSummary"
+                    "$ref": "#/components/schemas/CountByDate"
                   }
                 }
               }
@@ -1402,6 +1404,47 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "CountByDate": {
+        "required": [
+          "date",
+          "count"
+        ],
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "count": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "CountRecord": {
+        "required": [
+          "id",
+          "count"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "count": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
           }
         }
       },
@@ -1574,27 +1617,6 @@
               "null",
               "string"
             ]
-          }
-        }
-      },
-      "EventDateSummary": {
-        "required": [
-          "date",
-          "count"
-        ],
-        "type": "object",
-        "properties": {
-          "date": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "count": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
           }
         }
       },
@@ -1888,6 +1910,10 @@
             "items": {
               "$ref": "#/components/schemas/UserType"
             }
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
           },
           "name": {
             "type": [
@@ -2285,9 +2311,7 @@
       "UserStats": {
         "required": [
           "totalUsers",
-          "patients",
-          "caregivers",
-          "admins"
+          "userCount"
         ],
         "type": "object",
         "properties": {
@@ -2299,29 +2323,11 @@
             ],
             "format": "int32"
           },
-          "patients": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
-          "caregivers": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
-          "admins": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
+          "userCount": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountRecord"
+            }
           }
         }
       },
