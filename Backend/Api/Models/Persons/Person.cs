@@ -11,4 +11,6 @@ public class Person : PersonBase
     public List<Right> Rights { get; set; } = [];
 
     public HashSet<UserType> Types { get; set; } = [];
+
+    public DateTime Created { get; set; }
 }

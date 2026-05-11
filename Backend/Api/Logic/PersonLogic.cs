@@ -60,6 +60,7 @@ public static class PersonLogic
                 Phone = x.User?.Phone,
                 Types = types,
                 Rights = right?.Select(x => x.FromDb()).ToList() ?? [],
+                Created = x.Person.Created,
             };
         });
 

@@ -12,6 +12,7 @@ class AdminDashBoard extends StatefulWidget {
 
 class _AdminDashBoardState extends State<AdminDashBoard> {
   Map<String, int> _userCounts = {};
+  Map<String, int> _eventTypeCounts = {};
   List<EventDateSummary> _eventSummaries = [];
   List<Person> _recentUsers = [];
   bool _loading = true;
@@ -53,6 +54,22 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
         )
         .toList();
 
+    // Load event type counts for the last 7 days
+    final recentEvents =
+        await DI.event.events(
+          null,
+          DateTime.now().subtract(const Duration(days: 7)),
+          end,
+        ) ??
+        [];
+    final allEventTypes = await DI.event.eventsType(false) ?? [];
+    final typeNameById = {for (var type in allEventTypes) type.id: type.name};
+    _eventTypeCounts = {};
+    for (final event in recentEvents) {
+      final typeName = typeNameById[event.type] ?? 'Unknown';
+      _eventTypeCounts[typeName] = (_eventTypeCounts[typeName] ?? 0) + 1;
+    }
+
     setState(() => _loading = false);
   }
 
@@ -90,13 +107,32 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      const SizedBox(height: 12),
                       _buildUserStats(),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-              _buildRecentUsers(),
+              SizedBox(
+                width: 420,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Recent Users',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildRecentUsers(),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 32),
@@ -108,48 +144,43 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
           Wrap(
             spacing: 16,
             runSpacing: 16,
-            children: [
+            children: [              
               SizedBox(
                 width: 420,
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Trend',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Daily Volume',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 12),
-                        _buildEventsChart(),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildEventsBarChart(),
+                    ],
                   ),
                 ),
-              ),
-              SizedBox(
+              ),SizedBox(
                 width: 420,
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Daily Volume',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Events by Type (last 7 days)',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 12),
-                        _buildEventsBarChart(),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildEventTypeCounts(),
+                    ],
                   ),
                 ),
               ),
@@ -171,14 +202,37 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
         itemCount: _recentUsers.length,
         itemBuilder: (context, index) {
           final user = _recentUsers[index];
+          final fullName = '${user.name ?? ''} ${user.surname ?? ''}'.trim();
           return ListTile(
-            title: Text(
-              '${user.name ?? ''} ${user.surname ?? ''}'.trim().isEmpty
-                  ? 'Unknown'
-                  : '${user.name ?? ''} ${user.surname ?? ''}'.trim(),
-            ),
+            title: Text(fullName.isEmpty ? 'Unknown' : fullName),
             subtitle: Text(
               'Born: ${user.birth?.toLocal().toString().split(' ')[0] ?? 'N/A'}',
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildEventTypeCounts() {
+    if (_eventTypeCounts.isEmpty) {
+      return const Text('No events created in the last 7 days');
+    }
+
+    final sortedTypes = _eventTypeCounts.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    return SizedBox(
+      height: 200,
+      child: ListView.builder(
+        itemCount: sortedTypes.length,
+        itemBuilder: (context, index) {
+          final entry = sortedTypes[index];
+          return ListTile(
+            title: Text(entry.key),
+            trailing: Text(
+              entry.value.toString(),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           );
         },
@@ -205,47 +259,6 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
           ],
         );
       }).toList(),
-    );
-  }
-
-  Widget _buildUserDistributionChart() {
-    if (_userCounts.isEmpty) {
-      return const Text('No user distribution data');
-    }
-
-    final colors = [Colors.blue, Colors.green, Colors.orange, Colors.purple];
-    final sections = _userCounts.entries
-        .where((entry) => entry.value > 0)
-        .toList()
-        .asMap()
-        .entries
-        .map((entry) {
-          final value = entry.value.value.toDouble();
-          return PieChartSectionData(
-            color: colors[entry.key % colors.length],
-            value: value,
-            title: '${value.toInt()}',
-            radius: 70,
-            titleStyle: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          );
-        })
-        .toList();
-
-    return SizedBox(
-      height: 260,
-      child: PieChart(
-        PieChartData(
-          sections: sections,
-          sectionsSpace: 4,
-          centerSpaceRadius: 24,
-          borderData: FlBorderData(show: false),
-          pieTouchData: PieTouchData(enabled: true),
-        ),
-      ),
     );
   }
 
@@ -306,66 +319,6 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
             topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
             rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEventsChart() {
-    if (_eventSummaries.isEmpty) {
-      return const Text('No event data available');
-    }
-
-    final spots = _eventSummaries.asMap().entries.map((entry) {
-      final summary = entry.value;
-      return FlSpot(entry.key.toDouble(), summary.count.toDouble());
-    }).toList();
-
-    String _labelForIndex(double value) {
-      final index = value.toInt();
-      if (index < 0 || index >= _eventSummaries.length) {
-        return '';
-      }
-      final date = _eventSummaries[index].date;
-      return '${date.month}/${date.day}';
-    }
-
-    return SizedBox(
-      height: 300,
-      child: LineChart(
-        LineChartData(
-          gridData: const FlGridData(show: true),
-          titlesData: FlTitlesData(
-            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true)),
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                reservedSize: 36,
-                getTitlesWidget: (value, meta) {
-                  return SideTitleWidget(
-                    meta: meta,
-                    child: Text(
-                      _labelForIndex(value),
-                      style: const TextStyle(fontSize: 10),
-                    ),
-                  );
-                },
-              ),
-            ),
-            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          ),
-          borderData: FlBorderData(show: true),
-          lineBarsData: [
-            LineChartBarData(
-              spots: spots,
-              isCurved: true,
-              color: Colors.blue,
-              barWidth: 3,
-              belowBarData: BarAreaData(show: false),
-              dotData: FlDotData(show: false),
-            ),
-          ],
         ),
       ),
     );

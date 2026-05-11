@@ -39,4 +39,7 @@ public class User
     {
         return ((UserType)Type).HasFlag(type);
     }
+
+    [Column]
+    public DateTime Created { get; set; }
 }

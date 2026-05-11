@@ -22,4 +22,7 @@ public class Treatment
 
     [Association(ThisKey = nameof(PersonId), OtherKey = nameof(Data.Models.Person.Id))]
     public Person? Person { get; set; }
+
+    [Column]
+    public DateTime Created { get; set; }
 }
