@@ -49,8 +49,8 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
 
     var metrics = await DI.admin.getmetricStats(start, end);
     if (metrics != null) {
-      _eventSummaries = metrics.events;
-      _eventTypeCounts = metrics.eventCounts;
+      _metricSummaries = metrics.events;
+      _metricTypeCounts = metrics.eventCounts;
     }
 
     // Load users created in the last 7 days
@@ -210,7 +210,7 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
           BarChartRodData(
             toY: summary.count.toDouble(),
             color: Colors.teal,
-            width: 18,
+            width: 8,
             borderRadius: BorderRadius.circular(4),
           ),
         ],
@@ -238,7 +238,7 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
                   borderData: FlBorderData(show: true),
                   titlesData: FlTitlesData(
                     leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true),
+                      sideTitles: SideTitles(showTitles: true, reservedSize: 36),
                     ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
