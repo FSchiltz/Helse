@@ -120,6 +120,8 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
+              _buildRecentUsers(),
             ],
           ),
           const SizedBox(height: 32),
@@ -178,13 +180,6 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
               ),
             ],
           ),
-          const SizedBox(height: 32),
-          const Text(
-            'Users Created in Last 7 Days',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          _buildRecentUsers(),
         ],
       ),
     );
