@@ -463,7 +463,6 @@ Map<String, dynamic> _$UpdatePersonToJson(UpdatePerson instance) =>
     };
 
 UserStats _$UserStatsFromJson(Map<String, dynamic> json) => UserStats(
-  totalUsers: (json['totalUsers'] as num).toInt(),
   userCount:
       (json['userCount'] as List<dynamic>?)
           ?.map((e) => CountRecord.fromJson(e as Map<String, dynamic>))
@@ -472,6 +471,5 @@ UserStats _$UserStatsFromJson(Map<String, dynamic> json) => UserStats(
 );
 
 Map<String, dynamic> _$UserStatsToJson(UserStats instance) => <String, dynamic>{
-  'totalUsers': instance.totalUsers,
   'userCount': instance.userCount.map((e) => e.toJson()).toList(),
 };

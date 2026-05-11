@@ -17,7 +17,6 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
 
   List<CountRecord> _metricTypeCounts = [];
   List<CountByDate> _metricSummaries = [];
-  List<Person> _recentUsers = [];
   bool _loading = true;
 
   @override
@@ -32,10 +31,7 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
     // Load user stats from admin endpoint
     final userStats = await DI.admin.getUserStats();
     if (userStats != null) {
-      _userCounts = [
-        CountRecord(id: 'Total Users', count: userStats.totalUsers),
-      ];
-      _userCounts.addAll(userStats.userCount);
+      _userCounts = userStats.userCount;
     }
 
     // Load event summaries for the last 30 days
@@ -53,8 +49,6 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
       _metricTypeCounts = metrics.eventCounts;
     }
 
-    // Load users created in the last 7 days
-    _recentUsers = await DI.user.persons() ?? [];
     setState(() => _loading = false);
   }
 
@@ -82,40 +76,7 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
                 width: 420,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Quick Counts',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      _buildUserStats(),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 420,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Recent Users',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      _buildRecentUsers(),
-                    ],
-                  ),
+                  child: _buildUserStats(),
                 ),
               ),
             ],
@@ -238,7 +199,10 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
                   borderData: FlBorderData(show: true),
                   titlesData: FlTitlesData(
                     leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true, reservedSize: 36),
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 36,
+                      ),
                     ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
@@ -267,29 +231,6 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildRecentUsers() {
-    if (_recentUsers.isEmpty) {
-      return const Text('No users created in the last 7 days');
-    }
-
-    return SizedBox(
-      height: 200,
-      child: ListView.builder(
-        itemCount: _recentUsers.length,
-        itemBuilder: (context, index) {
-          final user = _recentUsers[index];
-          final fullName = '${user.name ?? ''} ${user.surname ?? ''}'.trim();
-          return ListTile(
-            title: Text(fullName.isEmpty ? 'Unknown' : fullName),
-            subtitle: Text(
-              'Born: ${user.birth?.toLocal().toString().split(' ')[0] ?? 'N/A'}',
-            ),
-          );
-        },
       ),
     );
   }

@@ -3612,7 +3612,7 @@ extension $UpdatePersonExtension on UpdatePerson {
 
 @JsonSerializable(explicitToJson: true)
 class UserStats {
-  const UserStats({required this.totalUsers, required this.userCount});
+  const UserStats({required this.userCount});
 
   factory UserStats.fromJson(Map<String, dynamic> json) =>
       _$UserStatsFromJson(json);
@@ -3620,8 +3620,6 @@ class UserStats {
   static const toJsonFactory = _$UserStatsToJson;
   Map<String, dynamic> toJson() => _$UserStatsToJson(this);
 
-  @JsonKey(name: 'totalUsers')
-  final int totalUsers;
   @JsonKey(name: 'userCount', defaultValue: <CountRecord>[])
   final List<CountRecord> userCount;
   static const fromJsonFactory = _$UserStatsFromJson;
@@ -3630,11 +3628,6 @@ class UserStats {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is UserStats &&
-            (identical(other.totalUsers, totalUsers) ||
-                const DeepCollectionEquality().equals(
-                  other.totalUsers,
-                  totalUsers,
-                )) &&
             (identical(other.userCount, userCount) ||
                 const DeepCollectionEquality().equals(
                   other.userCount,
@@ -3647,25 +3640,16 @@ class UserStats {
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(totalUsers) ^
-      const DeepCollectionEquality().hash(userCount) ^
-      runtimeType.hashCode;
+      const DeepCollectionEquality().hash(userCount) ^ runtimeType.hashCode;
 }
 
 extension $UserStatsExtension on UserStats {
-  UserStats copyWith({int? totalUsers, List<CountRecord>? userCount}) {
-    return UserStats(
-      totalUsers: totalUsers ?? this.totalUsers,
-      userCount: userCount ?? this.userCount,
-    );
+  UserStats copyWith({List<CountRecord>? userCount}) {
+    return UserStats(userCount: userCount ?? this.userCount);
   }
 
-  UserStats copyWithWrapped({
-    Wrapped<int>? totalUsers,
-    Wrapped<List<CountRecord>>? userCount,
-  }) {
+  UserStats copyWithWrapped({Wrapped<List<CountRecord>>? userCount}) {
     return UserStats(
-      totalUsers: (totalUsers != null ? totalUsers.value : this.totalUsers),
       userCount: (userCount != null ? userCount.value : this.userCount),
     );
   }

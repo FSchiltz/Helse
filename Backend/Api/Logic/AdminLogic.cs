@@ -13,20 +13,9 @@ public static class AdminLogic
         if (admin is not null)
             return admin;
 
-        var allUsers = await users.GetUsers();
-        var patients = await health.GetAllPatients();
+        var allUsers = await users.GetUserSumary();
 
-        var totalUsers = allUsers.Count;
-        var patientsCount = patients.Count;
-        var caregiversCount = allUsers.Count(u => u.User != null && ((UserType)u.User.Type).HasFlag(UserType.Caregiver));
-        var adminsCount = allUsers.Count(u => u.User != null && ((UserType)u.User.Type).HasFlag(UserType.Admin));
-
-        var stats = new UserStats(totalUsers,
-            [
-                new("Patients",patientsCount),
-                new(nameof(UserType.Caregiver), caregiversCount),
-                new(nameof(UserType.Admin ), adminsCount)
-            ]);
+        var stats = new UserStats(allUsers);
 
         return TypedResults.Ok(stats);
     }
