@@ -78,45 +78,20 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
             children: [
               SizedBox(
                 width: 420,
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Quick Counts',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Quick Counts',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 12),
-                        _buildUserStats(),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 420,
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'User Distribution',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        _buildUserDistributionChart(),
-                      ],
-                    ),
+                      ),
+                      _buildUserStats(),
+                    ],
                   ),
                 ),
               ),
@@ -226,7 +201,7 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
               entry.value.toString(),
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            Text(entry.key, style: const TextStyle(fontSize: 16)),
+            Text(entry.key, style: const TextStyle(fontSize: 12)),
           ],
         );
       }).toList(),
