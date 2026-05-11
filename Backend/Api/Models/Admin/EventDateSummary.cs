@@ -1,3 +1,3 @@
 namespace Api.Models.Admin;
 
-public record EventDateSummary(DateTime Date, int Count);
+public record CountByDate(DateTime Date, int Count);

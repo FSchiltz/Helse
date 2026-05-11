@@ -209,7 +209,7 @@ public static class Endpoints
             .Produces((int)HttpStatusCode.Unauthorized);
 
         stats.MapGet("/events", AdminLogic.GetEventStatsAsync)
-            .Produces<List<EventDateSummary>>((int)HttpStatusCode.OK)
+            .Produces<List<CountByDate>>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
     }
 

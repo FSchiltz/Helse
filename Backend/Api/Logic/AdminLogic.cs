@@ -21,7 +21,11 @@ public static class AdminLogic
         var caregiversCount = allUsers.Count(u => u.User != null && ((UserType)u.User.Type).HasFlag(UserType.Caregiver));
         var adminsCount = allUsers.Count(u => u.User != null && ((UserType)u.User.Type).HasFlag(UserType.Admin));
 
-        var stats = new UserStats(totalUsers, patientsCount, caregiversCount, adminsCount);
+        var stats = new UserStats(totalUsers, new(){
+             {"Patients",patientsCount},
+             {nameof(UserType.Caregiver), caregiversCount},
+             {nameof(UserType.Admin ), adminsCount}});
+
         return TypedResults.Ok(stats);
     }
 
@@ -33,7 +37,13 @@ public static class AdminLogic
 
         // Get all events in the date range
         var events = await health.GetEventStats(start, end);
-        
-        return TypedResults.Ok(events);
+
+        var counts = await health.CountEventsByType(start, end);
+        var eventTypes = await health.GetEventTypes(true);
+        var countWithDescription = counts
+            .Select(x => new { Type = eventTypes.First(t => t.Id == x.Key).Name, Count = x.Value })
+            .ToDictionary(x => x.Type, x => x.Count);
+
+        return TypedResults.Ok(new EventStats(events, countWithDescription));
     }
 }

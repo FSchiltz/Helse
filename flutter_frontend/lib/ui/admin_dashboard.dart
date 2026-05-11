@@ -54,22 +54,6 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
         )
         .toList();
 
-    // Load event type counts for the last 7 days
-    final recentEvents =
-        await DI.event.events(
-          null,
-          DateTime.now().subtract(const Duration(days: 7)),
-          end,
-        ) ??
-        [];
-    final allEventTypes = await DI.event.eventsType(false) ?? [];
-    final typeNameById = {for (var type in allEventTypes) type.id: type.name};
-    _eventTypeCounts = {};
-    for (final event in recentEvents) {
-      final typeName = typeNameById[event.type] ?? 'Unknown';
-      _eventTypeCounts[typeName] = (_eventTypeCounts[typeName] ?? 0) + 1;
-    }
-
     setState(() => _loading = false);
   }
 
@@ -144,7 +128,7 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
           Wrap(
             spacing: 16,
             runSpacing: 16,
-            children: [              
+            children: [
               SizedBox(
                 width: 420,
                 child: Padding(
@@ -164,7 +148,8 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
                     ],
                   ),
                 ),
-              ),SizedBox(
+              ),
+              SizedBox(
                 width: 420,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
