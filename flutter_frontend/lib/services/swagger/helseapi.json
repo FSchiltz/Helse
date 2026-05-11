@@ -1278,10 +1278,49 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CountByDate"
-                  }
+                  "$ref": "#/components/schemas/EventStats"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/admin/stats/metrics": {
+      "get": {
+        "tags": [
+          "AdminLogic"
+        ],
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventStats"
                 }
               }
             }
@@ -1617,6 +1656,27 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "EventStats": {
+        "required": [
+          "events",
+          "eventCounts"
+        ],
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountByDate"
+            }
+          },
+          "eventCounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountRecord"
+            }
           }
         }
       },

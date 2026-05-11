@@ -989,7 +989,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<List<CountByDate>>> _apiAdminStatsEventsGet({
+  Future<Response<EventStats>> _apiAdminStatsEventsGet({
     required DateTime? start,
     required DateTime? end,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -1015,7 +1015,37 @@ final class _$Helseapi extends Helseapi {
       parameters: $params,
       tag: swaggerMetaData,
     );
-    return client.send<List<CountByDate>, CountByDate>($request);
+    return client.send<EventStats, EventStats>($request);
+  }
+
+  @override
+  Future<Response<EventStats>> _apiAdminStatsMetricsGet({
+    required DateTime? start,
+    required DateTime? end,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["AdminLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/admin/stats/metrics');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'start': start,
+      'end': end,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<EventStats, EventStats>($request);
   }
 
   @override

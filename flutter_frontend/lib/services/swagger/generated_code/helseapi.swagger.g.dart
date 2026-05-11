@@ -118,6 +118,25 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
   'tag': instance.tag,
 };
 
+EventStats _$EventStatsFromJson(Map<String, dynamic> json) => EventStats(
+  events:
+      (json['events'] as List<dynamic>?)
+          ?.map((e) => CountByDate.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
+  eventCounts:
+      (json['eventCounts'] as List<dynamic>?)
+          ?.map((e) => CountRecord.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
+);
+
+Map<String, dynamic> _$EventStatsToJson(EventStats instance) =>
+    <String, dynamic>{
+      'events': instance.events.map((e) => e.toJson()).toList(),
+      'eventCounts': instance.eventCounts.map((e) => e.toJson()).toList(),
+    };
+
 EventSummary _$EventSummaryFromJson(Map<String, dynamic> json) =>
     EventSummary(data: json['data'] as Map<String, dynamic>);
 

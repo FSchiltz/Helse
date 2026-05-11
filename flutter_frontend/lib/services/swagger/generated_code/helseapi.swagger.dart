@@ -1042,14 +1042,11 @@ abstract class Helseapi extends ChopperService {
   ///
   ///@param start
   ///@param end
-  Future<chopper.Response<List<CountByDate>>> apiAdminStatsEventsGet({
+  Future<chopper.Response<EventStats>> apiAdminStatsEventsGet({
     required DateTime? start,
     required DateTime? end,
   }) {
-    generatedMapping.putIfAbsent(
-      CountByDate,
-      () => CountByDate.fromJsonFactory,
-    );
+    generatedMapping.putIfAbsent(EventStats, () => EventStats.fromJsonFactory);
 
     return _apiAdminStatsEventsGet(start: start, end: end);
   }
@@ -1058,7 +1055,39 @@ abstract class Helseapi extends ChopperService {
   ///@param start
   ///@param end
   @GET(path: '/api/admin/stats/events')
-  Future<chopper.Response<List<CountByDate>>> _apiAdminStatsEventsGet({
+  Future<chopper.Response<EventStats>> _apiAdminStatsEventsGet({
+    @Query('start') required DateTime? start,
+    @Query('end') required DateTime? end,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["AdminLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param start
+  ///@param end
+  Future<chopper.Response<EventStats>> apiAdminStatsMetricsGet({
+    required DateTime? start,
+    required DateTime? end,
+  }) {
+    generatedMapping.putIfAbsent(EventStats, () => EventStats.fromJsonFactory);
+
+    return _apiAdminStatsMetricsGet(start: start, end: end);
+  }
+
+  ///
+  ///@param start
+  ///@param end
+  @GET(path: '/api/admin/stats/metrics')
+  Future<chopper.Response<EventStats>> _apiAdminStatsMetricsGet({
     @Query('start') required DateTime? start,
     @Query('end') required DateTime? end,
     @chopper.Tag()
@@ -1727,6 +1756,67 @@ extension $EventExtension on Event {
       start: (start != null ? start.value : this.start),
       stop: (stop != null ? stop.value : this.stop),
       tag: (tag != null ? tag.value : this.tag),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class EventStats {
+  const EventStats({required this.events, required this.eventCounts});
+
+  factory EventStats.fromJson(Map<String, dynamic> json) =>
+      _$EventStatsFromJson(json);
+
+  static const toJsonFactory = _$EventStatsToJson;
+  Map<String, dynamic> toJson() => _$EventStatsToJson(this);
+
+  @JsonKey(name: 'events', defaultValue: <CountByDate>[])
+  final List<CountByDate> events;
+  @JsonKey(name: 'eventCounts', defaultValue: <CountRecord>[])
+  final List<CountRecord> eventCounts;
+  static const fromJsonFactory = _$EventStatsFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is EventStats &&
+            (identical(other.events, events) ||
+                const DeepCollectionEquality().equals(other.events, events)) &&
+            (identical(other.eventCounts, eventCounts) ||
+                const DeepCollectionEquality().equals(
+                  other.eventCounts,
+                  eventCounts,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(events) ^
+      const DeepCollectionEquality().hash(eventCounts) ^
+      runtimeType.hashCode;
+}
+
+extension $EventStatsExtension on EventStats {
+  EventStats copyWith({
+    List<CountByDate>? events,
+    List<CountRecord>? eventCounts,
+  }) {
+    return EventStats(
+      events: events ?? this.events,
+      eventCounts: eventCounts ?? this.eventCounts,
+    );
+  }
+
+  EventStats copyWithWrapped({
+    Wrapped<List<CountByDate>>? events,
+    Wrapped<List<CountRecord>>? eventCounts,
+  }) {
+    return EventStats(
+      events: (events != null ? events.value : this.events),
+      eventCounts: (eventCounts != null ? eventCounts.value : this.eventCounts),
     );
   }
 }

@@ -10,9 +10,15 @@ class AdminService extends ApiService {
     return response.body;
   }
 
-  Future<EventStats> getEventStats(DateTime? start, DateTime? end) async {
+  Future<EventStats?> getEventStats(DateTime? start, DateTime? end) async {
     var api = await getService();
     var response = await api.apiAdminStatsEventsGet(start: start, end: end);
-    return response.body ?? [];
+    return response.body;
+  }
+
+    Future<EventStats?> getmetricStats(DateTime? start, DateTime? end) async {
+    var api = await getService();
+    var response = await api.apiAdminStatsMetricsGet(start: start, end: end);
+    return response.body;
   }
 }

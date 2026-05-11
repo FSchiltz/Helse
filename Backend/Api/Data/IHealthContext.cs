@@ -57,7 +57,7 @@ public interface IHealthContext : IContext
     Task<CountByDate[]> GetEventStats(DateTime start, DateTime end);
 
     Task<Dictionary<int, int>> CountEventsByType(DateTime start, DateTime end);
-    
+
     Task<CountByDate[]> GetMetricStats(DateTime start, DateTime end);
 
     Task<Dictionary<int, int>> CountMetricsByType(DateTime start, DateTime end);
