@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/blocs/administration/events/event_settings.dart';
-import 'package:helse/ui/blocs/administration/events/event_type.dart';
-import 'package:helse/ui/blocs/administration/metrics/metrics_type.dart';
-import 'package:helse/ui/blocs/administration/settings/gotify.dart';
+import 'package:helse/ui/blocs/administration/event_settings.dart';
+import 'package:helse/ui/blocs/administration/general_settings.dart';
+import 'package:helse/ui/blocs/administration/metric_settings.dart';
+import 'package:helse/ui/blocs/administration/user_settings.dart';
 
-import 'blocs/administration/metrics/metrics_settings.dart';
-import 'blocs/administration/settings/oauth.dart';
-import 'blocs/administration/settings/proxy.dart';
-import 'blocs/administration/settings/smtp.dart';
-import 'blocs/administration/users/users.dart';
-
-class AdministrationPage extends StatelessWidget {
+class AdministrationPage extends StatefulWidget {
   const AdministrationPage({super.key});
 
   static Route<void> route() {
@@ -18,76 +12,72 @@ class AdministrationPage extends StatelessWidget {
   }
 
   @override
+  State<AdministrationPage> createState() => _AdministrationPageState();
+}
+
+class _AdministrationPageState extends State<AdministrationPage> {
+  int _selectedIndex = 0;
+
+  static const List<NavigationRailDestination> _destinations = [
+    NavigationRailDestination(
+      icon: Icon(Icons.settings_sharp),
+      selectedIcon: Icon(Icons.settings),
+      label: Text('General'),
+    ),
+    NavigationRailDestination(
+      icon: Icon(Icons.person_search_sharp),
+      selectedIcon: Icon(Icons.person),
+      label: Text('Users'),
+    ),
+    NavigationRailDestination(
+      icon: Icon(Icons.post_add_sharp),
+      selectedIcon: Icon(Icons.analytics),
+      label: Text('Metrics'),
+    ),
+    NavigationRailDestination(
+      icon: Icon(Icons.event_repeat_sharp),
+      selectedIcon: Icon(Icons.event),
+      label: Text('Events'),
+    ),
+  ];
+
+  static final List<Widget> _pages = [
+    const GeneralSettings(),
+    const UserSettings(),
+    const MetricSettings(),
+    const EventSettings(),
+  ];
+
+  @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Administrations', style: Theme.of(context).textTheme.displaySmall),
-          bottom: const TabBar(
-            tabs: [
-              Tab(icon: Icon(Icons.settings_sharp)),
-              Tab(icon: Icon(Icons.person_search_sharp)),
-              Tab(icon: Icon(Icons.post_add_sharp)),
-              Tab(icon: Icon(Icons.event_repeat_sharp)),
-            ],
-          ),
+    var theme = Theme.of(context).colorScheme;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Administrations',
+          style: Theme.of(context).textTheme.displaySmall,
         ),
-        body: TabBarView(
+      ),
+      body: SafeArea(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("General Settings", style: Theme.of(context).textTheme.displaySmall),
-                  const SizedBox(height: 20),
-                  const ProxyView(),
-                  const SizedBox(height: 20),
-                  const OauthView(),
-                  const SizedBox(height: 20),
-                  const SmtpView(),
-                  const SizedBox(height: 20),
-                  const GotifyView(),
-                ],
+            Container(
+              color: theme.primary,
+              child: NavigationRail(
+                selectedIndex: _selectedIndex,
+                onDestinationSelected: (index) {
+                  setState(() {
+                    _selectedIndex = index;
+                  });
+                },
+                labelType: NavigationRailLabelType.all,
+                destinations: _destinations,
               ),
             ),
-            SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Users Settings", style: Theme.of(context).textTheme.displaySmall),
-                  const SizedBox(height: 20),
-                  const UsersView(),
-                ],
-              ),
-            ),
-            SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Metric Settings", style: Theme.of(context).textTheme.displaySmall),
-                  const SizedBox(height: 20),
-                  const MetricSettingsView(),
-                  const SizedBox(height: 20),
-                  const MetricTypeView(),
-                ],
-              ),
-            ),
-              SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Events Settings", style: Theme.of(context).textTheme.displaySmall),
-                  const SizedBox(height: 20),
-                  const EventSettingsView(),
-                  const SizedBox(height: 20),
-                  const EventTypeView(),
-                ],
-              ),
+            const VerticalDivider(width: 1),
+            Expanded(
+              child: _pages[_selectedIndex],
             ),
           ],
         ),
