@@ -121,12 +121,19 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     }
 
     /// <inheritdoc/>
-    public Task<MetricType[]> GetMetricTypes(bool? all)
+    public Task<MetricType[]> GetMetricTypes(bool? all, long? group)
     {
         IQueryable<MetricType> query = Db.GetTable<MetricType>();
 
         if (all == false)
+        {
             query = query.Where(x => x.Visible);
+        }
+
+        if (group is not null)
+        {
+            query = query.Where(x => x.GroupId == group);
+        }
 
         return query.OrderBy(x => x.Id).ToArrayAsync();
     }

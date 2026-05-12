@@ -1,23 +1,16 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:helse/logic/settings/ordered_item.dart';
+import 'package:helse/ui/blocs/metrics/metrics_group.dart';
 
-import '../../../helpers/pair.dart';
 import '../../../logic/d_i.dart';
 import '../../../logic/settings/settings_logic.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
-import 'metric_widget.dart';
 
 class MetricsGrid extends StatefulWidget {
   final int? person;
-  const MetricsGrid({
-    super.key,
-    required this.date,
-    this.person,
-  });
+  const MetricsGrid({super.key, required this.date, this.person});
 
   final DateTimeRange date;
 
@@ -26,7 +19,8 @@ class MetricsGrid extends StatefulWidget {
 }
 
 class _MetricsGridState extends State<MetricsGrid> {
-  List<Pair<MetricType, OrderedItem>>? types;
+  List<MetricGroup>? types;
+
   @override
   void initState() {
     super.initState();
@@ -35,22 +29,13 @@ class _MetricsGridState extends State<MetricsGrid> {
 
   void _getData() async {
     try {
-      var model = await DI.metric.metricsType(false);
+      var model = await DI.metric.metricsGroup();
       if (model != null) {
-        var settings = await SettingsLogic.getMetrics();
         // filter using the user settings
 
-        List<Pair<MetricType, OrderedItem>> filtered = [];
-        for (var item in model) {
-          OrderedItem setting = settings.metrics.firstWhereOrNull((element) => element.id == item.id) ?? _getDefault(item);
-
-          if (setting.visible) filtered.add(Pair(item, setting));
-        }
-
         setState(() {
-          types = filtered;
+          types = model;
         });
-        SettingsLogic.updateMetrics(model);
       }
     } catch (ex) {
       Notify.showError("$ex");
@@ -71,15 +56,7 @@ class _MetricsGridState extends State<MetricsGrid> {
           );
   }
 
-  OrderedItem _getDefault(MetricType item) {
-    if (item.type == MetricDataType.number) {
-      return OrderedItem(item.id ?? 0, item.name, GraphKind.bar, GraphKind.line);
-    }
-
-    return OrderedItem(item.id ?? 0, item.name, GraphKind.event, GraphKind.event);
-  }
-
-  StatelessWidget _getGrid(List<Pair<MetricType, OrderedItem>> cached) {
+  StatelessWidget _getGrid(List<MetricGroup> cached) {
     if (cached.isEmpty) {
       return const Text("No metrics");
     } else {
@@ -89,8 +66,16 @@ class _MetricsGridState extends State<MetricsGrid> {
         mainAxisSpacing: 2,
         physics: const BouncingScrollPhysics(),
         maxCrossAxisExtent: 200.0,
-        children:
-            cached.map((type) => MetricWidget(type.a, type.b, widget.date, key: Key(type.a.id?.toString() ?? ""), person: widget.person)).toList(),
+        children: cached
+            .map(
+              (type) => MetricsGroup(
+                date: widget.date,
+                key: Key(type.id?.toString() ?? ""),
+                person: widget.person,
+                group: type.id ?? 0,
+              ),
+            )
+            .toList(),
       );
     }
   }

@@ -61,7 +61,8 @@ public interface IHealthContext : IContext
     Task Update(EventType type);
     Task<int> DeleteEventType(long id);
 
-    Task<MetricType[]> GetMetricTypes(bool? all);
+    Task<MetricType[]> GetMetricTypes(bool? all, long? group);
+    
     Task<int> DeleteMetricType(long id);
     Task Update(Api.Models.Metrics.MetricType  metric);
     Task Insert(Api.Models.Metrics.MetricType metric);

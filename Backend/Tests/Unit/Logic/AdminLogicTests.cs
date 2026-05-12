@@ -90,7 +90,7 @@ public class AdminLogicTests : LogicTests
         stats.CountMetricsByType(start, end).Returns(metricCounts);
 
         MetricType[] metricTypes = [new() { Id = 1, Name = "Blood Pressure" }];
-        health.GetMetricTypes(true).Returns(metricTypes);
+        health.GetMetricTypes(true, null).Returns(metricTypes);
 
         // Act
         var result = await AdminLogic.GetMetricStatsAsync(start, end, users, health, stats, context);

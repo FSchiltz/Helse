@@ -4,9 +4,9 @@ import 'swagger/generated_code/helseapi.swagger.dart';
 class MetricService extends ApiService {
   MetricService(super.account);
 
-  Future<List<MetricType>?> metricsType(bool all) async {
+  Future<List<MetricType>?> metricsType(bool all, int group) async {
     var api = await getService();
-    return await call(() => api.apiMetricsTypeGet(all: all));
+    return await call(() => api.apiMetricsTypeGet(all: all, group: group));
   }
 
   Future<void> deleteMetrics(int id) async {
