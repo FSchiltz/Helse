@@ -58,7 +58,7 @@ class _SyncSettingsState extends State<SyncSettings> {
   @override
   Widget build(BuildContext context) {
     if (!_isSupported) {
-      return Text("Not supported");
+      return Center(child: Text("Not supported"));
     }
 
     return FutureBuilder(
@@ -76,58 +76,62 @@ class _SyncSettingsState extends State<SyncSettings> {
             );
             // if we got our data
           } else if (snapshot.hasData) {
-            return Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  Text(
-                    "Sync Health",
-                    style: Theme.of(context).textTheme.headlineLarge,
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    height: 50,
-                    child: Row(
-                      children: [
-                        const Text("Enable"),
-                        CustomSwitch(
-                          value: _healthEnabled,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              _healthEnabled = value!;
-                              _submitHealth();
-
-                              // Stop or start
-                              if (value) {
-                                DI.fit.start();
-                              } else {
-                                DI.fit.cancel();
-                              }
-                            });
-                          },
-                        ),
-                      ],
+            return Padding(
+              padding: const EdgeInsets.all(32),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Sync from Google Health",
+                      style: Theme.of(context).textTheme.headlineSmall,
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Last run: $_lastRun",
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    width: 160,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(40),
-                        shape: const ContinuousRectangleBorder(),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      height: 50,
+                      child: Row(
+                        children: [
+                          const Text("Enable"),
+                          CustomSwitch(
+                            value: _healthEnabled,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _healthEnabled = value!;
+                                _submitHealth();
+              
+                                // Stop or start
+                                if (value) {
+                                  DI.fit.start();
+                                } else {
+                                  DI.fit.cancel();
+                                }
+                              });
+                            },
+                          ),
+                        ],
                       ),
-                      onPressed: _resetLastRun,
-                      child: const Text("Rest last run"),
                     ),
-                  ),
-                  const SizedBox(height: 40),
-                ],
+                    const SizedBox(height: 10),
+                    Text(
+                      "Last run: $_lastRun",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: 160,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(40),
+                          shape: const ContinuousRectangleBorder(),
+                        ),
+                        onPressed: _resetLastRun,
+                        child: const Text("Rest last run"),
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                  ],
+                ),
               ),
             );
           }

@@ -77,58 +77,33 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             );
             // if we got our data
           } else if (snapshot.hasData) {
-            return Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  Text(
-                    'Interface',
-                    style: Theme.of(context).textTheme.headlineLarge,
-                  ),
-                  SizedBox(
-                    width: 200,
-                    child: DropdownButtonFormField(
-                      initialValue: _theme,
-                      onChanged: themeCallback,
-                      items: ThemeMode.values
-                          .map(
-                            (type) => DropdownMenuItem(
-                              value: type,
-                              child: Text(type.name),
-                            ),
-                          )
-                          .toList(),
-                      decoration: InputDecoration(
-                        labelText: 'Theme',
-                        prefixIcon: const Icon(Icons.list_sharp),
-                        prefixIconColor: theme.primary,
-                        filled: true,
-                        fillColor: theme.surface,
-                        border: SquareOutlineInputBorder(theme.primary),
-                      ),
+            return Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Interface',
+                      style: Theme.of(context).textTheme.headlineSmall,
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    "Default range for the date. This may be overidden by the last used range",
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: SizedBox(
+                    SizedBox(height: 32,),
+                    SizedBox(
                       width: 200,
                       child: DropdownButtonFormField(
-                        initialValue: _range,
-                        onChanged: rangeCallback,
-                        items: DatePreset.values
+                        initialValue: _theme,
+                        onChanged: themeCallback,
+                        items: ThemeMode.values
                             .map(
                               (type) => DropdownMenuItem(
                                 value: type,
-                                child: Text(Translation.get(type)),
+                                child: Text(type.name),
                               ),
                             )
                             .toList(),
                         decoration: InputDecoration(
-                          labelText: 'Date range',
+                          labelText: 'Theme',
                           prefixIcon: const Icon(Icons.list_sharp),
                           prefixIconColor: theme.primary,
                           filled: true,
@@ -137,8 +112,38 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                         ),
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 20),
+                    const Text(
+                      "Default range for the date. This may be overidden by the last used range",
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: SizedBox(
+                        width: 200,
+                        child: DropdownButtonFormField(
+                          initialValue: _range,
+                          onChanged: rangeCallback,
+                          items: DatePreset.values
+                              .map(
+                                (type) => DropdownMenuItem(
+                                  value: type,
+                                  child: Text(Translation.get(type)),
+                                ),
+                              )
+                              .toList(),
+                          decoration: InputDecoration(
+                            labelText: 'Date range',
+                            prefixIcon: const Icon(Icons.list_sharp),
+                            prefixIconColor: theme.primary,
+                            filled: true,
+                            fillColor: theme.surface,
+                            border: SquareOutlineInputBorder(theme.primary),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           }

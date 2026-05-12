@@ -56,20 +56,21 @@ class _EventSettingsState extends State<EventSettings> {
             );
             // if we got our data
           } else if (snapshot.hasData) {
-            return Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        "Events",
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SizedBox(
-                          width: 80,
+            return Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          "Events",
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                        SizedBox(width: 32),
+                        SizedBox(
+                          width: 120,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               minimumSize: const Size.fromHeight(40),
@@ -79,14 +80,14 @@ class _EventSettingsState extends State<EventSettings> {
                             child: const Text("Save"),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    height: 300,
-                    child: OrderedList(_events)),
-                ],
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Expanded(
+                      child: SingleChildScrollView(child: OrderedList(_events)),
+                    ),
+                  ],
+                ),
               ),
             );
           }

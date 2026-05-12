@@ -17,61 +17,93 @@ class OrderedList extends StatelessWidget {
       shrinkWrap: true,
       physics: const BouncingScrollPhysics(),
       children: items
-          .map((item) => Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Column(
-                  children: [
-                    Row(children: [Text(item.name, style: theme.textTheme.titleLarge)]),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(children: [
-                        Text("Visible: ", style: theme.textTheme.bodyLarge),
-                        StatefullCheck(item.visible, (value) => item.visible = value),
-                      ]),
-                    ),
-                    if (withGraph)
+          .map(
+            (item) => Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Row(
+                    children: [
+                      Row(
+                        children: [
+                          Text(item.name, style: theme.textTheme.titleLarge),
+                        ],
+                      ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Row(children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: Text("Graph type", style: theme.textTheme.bodyLarge),
-                          ),
-                          SizedBox(
-                            width: 160,
-                            height: 45,
-                            child: EnumInput(
-                              value: item.graph,
-                              GraphKind.values.map((x) => DropDownItem(x, x.name)).toList(),
-                              (value) => item.graph = value ?? item.graph,
-                              label: 'Type',
+                        child: Row(
+                          children: [
+                            Text("Visible: ", style: theme.textTheme.bodyLarge),
+                            StatefullCheck(
+                              item.visible,
+                              (value) => item.visible = value,
                             ),
-                          ),
-                        ]),
+                          ],
+                        ),
                       ),
-                    if (withGraph)
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: Text("Detail graph type", style: theme.textTheme.bodyLarge),
+                      if (withGraph)
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Text(
+                                  "Graph type",
+                                  style: theme.textTheme.bodyLarge,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 160,
+                                height: 45,
+                                child: EnumInput(
+                                  value: item.graph,
+                                  GraphKind.values
+                                      .map((x) => DropDownItem(x, x.name))
+                                      .toList(),
+                                  (value) => item.graph = value ?? item.graph,
+                                  label: 'Type',
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(
-                            width: 160,
-                            height: 45,
-                            child: EnumInput(
-                              value: item.detailGraph,
-                              GraphKind.values.map((x) => DropDownItem(x, x.name)).toList(),
-                              (value) => item.detailGraph = value ?? item.detailGraph,
-                              label: 'Type',
-                            ),
+                        ),
+                      if (withGraph)
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Text(
+                                  "Detail graph type",
+                                  style: theme.textTheme.bodyLarge,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 160,
+                                height: 45,
+                                child: EnumInput(
+                                  value: item.detailGraph,
+                                  GraphKind.values
+                                      .map((x) => DropDownItem(x, x.name))
+                                      .toList(),
+                                  (value) => item.detailGraph =
+                                      value ?? item.detailGraph,
+                                  label: 'Type',
+                                ),
+                              ),
+                            ],
                           ),
-                        ]),
-                      ),
-                  ],
+                        ),
+                    ],
+                  ),
                 ),
-              ))
+
+                Divider(height: 4),
+              ],
+            ),
+          )
           .toList(),
     );
   }
