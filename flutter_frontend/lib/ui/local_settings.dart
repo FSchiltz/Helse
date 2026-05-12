@@ -51,48 +51,67 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Local Settings', style: Theme.of(context).textTheme.displaySmall),
+        elevation: 10,
+        title: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Text(
+            'Local Settings',
+            style: Theme.of(context).textTheme.displaySmall,
+          ),
+        ),
       ),
       body: FutureBuilder(
-          future: _getData(),
-          builder: (context, snapshot) {
-            // Checking if future is resolved
-            if (snapshot.connectionState == ConnectionState.done) {
-              // If we got an error
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    '${snapshot.error} occurred',
-                    style: const TextStyle(fontSize: 18),
+        future: _getData(),
+        builder: (context, snapshot) {
+          // Checking if future is resolved
+          if (snapshot.connectionState == ConnectionState.done) {
+            // If we got an error
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  '${snapshot.error} occurred',
+                  style: const TextStyle(fontSize: 18),
+                ),
+              );
+              // if we got our data
+            } else if (snapshot.hasData) {
+              return Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30.0,
+                    vertical: 10.0,
                   ),
-                );
-                // if we got our data
-              } else if (snapshot.hasData) {
-                return Form(
-                  key: _formKey,
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Interface', style: Theme.of(context).textTheme.headlineLarge),
-                        const SizedBox(height: 10),
-                        ...general(theme),
-                        const SizedBox(height: 40),
-                        ...syncHealth(theme, _lastRun ?? 'Never'),
-                        Text('Dashboard', style: Theme.of(context).textTheme.headlineLarge),
-                        const SizedBox(height: 10),
-                        ...metrics(theme),
-                        const SizedBox(height: 20),
-                        ...events(theme),
-                      ],
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Interface',
+                        style: Theme.of(context).textTheme.headlineLarge,
+                      ),
+                      const SizedBox(height: 10),
+                      ...general(theme),
+                      const SizedBox(height: 40),
+                      ...syncHealth(theme, _lastRun ?? 'Never'),
+                      Text(
+                        'Dashboard',
+                        style: Theme.of(context).textTheme.headlineLarge,
+                      ),
+                      const SizedBox(height: 10),
+                      ...metrics(theme),
+                      const SizedBox(height: 20),
+                      ...events(theme),
+                    ],
                   ),
-                );
-              }
+                ),
+              );
             }
-            return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
-          }),
+          }
+          return const Center(
+            child: SizedBox(width: 50, height: 50, child: HelseLoader()),
+          );
+        },
+      ),
     );
   }
 
@@ -211,7 +230,11 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
         child: DropdownButtonFormField(
           initialValue: _theme,
           onChanged: themeCallback,
-          items: ThemeMode.values.map((type) => DropdownMenuItem(value: type, child: Text(type.name))).toList(),
+          items: ThemeMode.values
+              .map(
+                (type) => DropdownMenuItem(value: type, child: Text(type.name)),
+              )
+              .toList(),
           decoration: InputDecoration(
             labelText: 'Theme',
             prefixIcon: const Icon(Icons.list_sharp),
@@ -223,7 +246,9 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
         ),
       ),
       const SizedBox(height: 20),
-      const Text("Default range for the date. This may be overidden by the last used range"),
+      const Text(
+        "Default range for the date. This may be overidden by the last used range",
+      ),
       Padding(
         padding: const EdgeInsets.only(top: 8.0),
         child: SizedBox(
@@ -231,7 +256,14 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
           child: DropdownButtonFormField(
             initialValue: _range,
             onChanged: rangeCallback,
-            items: DatePreset.values.map((type) => DropdownMenuItem(value: type, child: Text(Translation.get(type)))).toList(),
+            items: DatePreset.values
+                .map(
+                  (type) => DropdownMenuItem(
+                    value: type,
+                    child: Text(Translation.get(type)),
+                  ),
+                )
+                .toList(),
             decoration: InputDecoration(
               labelText: 'Date range',
               prefixIcon: const Icon(Icons.list_sharp),
@@ -242,7 +274,7 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
             ),
           ),
         ),
-      )
+      ),
     ];
   }
 
@@ -274,25 +306,29 @@ class _LocalSettingsPageState extends State<LocalSettingsPage> {
             children: [
               const Text("Enable"),
               CustomSwitch(
-                  value: _healthEnabled,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _healthEnabled = value!;
-                      _submitHealth();
+                value: _healthEnabled,
+                onChanged: (bool? value) {
+                  setState(() {
+                    _healthEnabled = value!;
+                    _submitHealth();
 
-                      // Stop or start
-                      if (value) {
-                        DI.fit.start();
-                      } else {
-                        DI.fit.cancel();
-                      }
-                    });
-                  })
+                    // Stop or start
+                    if (value) {
+                      DI.fit.start();
+                    } else {
+                      DI.fit.cancel();
+                    }
+                  });
+                },
+              ),
             ],
           ),
         ),
         const SizedBox(height: 10),
-        Text("Last run: $lastRun", style: Theme.of(context).textTheme.bodyMedium),
+        Text(
+          "Last run: $lastRun",
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
         const SizedBox(height: 10),
         SizedBox(
           width: 160,
