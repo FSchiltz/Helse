@@ -16,6 +16,7 @@ import 'theme_helper.dart';
 
 class DI {
   static OauthClient? authService;
+  
   static MetricService? _metric;
   static MetricService get metric {
     var a = _metric;
@@ -62,6 +63,7 @@ class DI {
   }
 
   static TreatmentService? treatement;
+
   static SettingsLogic? _settings;
   static SettingsLogic get settings {
     var a = _settings;

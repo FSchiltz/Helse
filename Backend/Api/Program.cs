@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Api;
 using Api.Data;
+using Api.Helpers;
 using Api.Helpers.Auth;
 using Api.Logic.Auth;
 using LinqToDB;
@@ -45,6 +46,8 @@ builder.Services.AddSingleton<TokenService>();
 builder.Services.AddTransient<IUserContext, UserContext>();
 builder.Services.AddTransient<ISettingsContext, SettingsContext>();
 builder.Services.AddTransient<IHealthContext, HealthContext>();
+
+builder.Services.AddHostedService<EventNotificationService>();
 
 builder.Services.AddAuthentication(options =>
   {

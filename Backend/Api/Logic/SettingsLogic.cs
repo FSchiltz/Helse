@@ -1,4 +1,5 @@
 using Api.Data;
+using Api.Data.Models;
 using Api.Helpers;
 using Api.Models.Settings.Admin;
 
@@ -10,37 +11,31 @@ namespace Api.Logic;
 public static class SettingsLogic
 {
     /// <summary>
-    /// 
+    /// Get the Oauth settings
     /// </summary>
-    /// <param name="users"></param>
-    /// <param name="context"></param>
-    /// <returns></returns>
+    /// <param name="users">The user context</param>
+    /// <param name="context">The settings context</param>
+    /// <returns>The settings</returns>
     public static async Task<IResult> GetOauthAsync(IUserContext users, ISettingsContext settings, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
-        if (admin is not null)
-            return admin;
-
-        return TypedResults.Ok(await settings.GetSettings<Oauth>(Oauth.Name));
+        return admin ?? TypedResults.Ok(await settings.GetSettings<Oauth>(Oauth.Name));
     }
 
     /// <summary>
-    /// 
+    /// Get the proxy auth settings
     /// </summary>
-    /// <param name="settings"></param>
-    /// <param name="context"></param>
-    /// <returns></returns>
+    /// <param name="users">The user context</param>
+    /// <param name="context">The settings context</param>
+    /// <returns>The settings</returns>
     public static async Task<IResult> GetProxyAsync(IUserContext users, ISettingsContext settings, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
-        if (admin is not null)
-            return admin;
-
-        return TypedResults.Ok(await settings.GetSettings<Proxy>(Proxy.Name));
+        return admin ?? TypedResults.Ok(await settings.GetSettings<Proxy>(Proxy.Name));
     }
 
     /// <summary>
-    /// 
+    /// Update the Oauth settings
     /// </summary>
     /// <param name="settings"></param>
     /// <param name="users"></param>
@@ -62,7 +57,7 @@ public static class SettingsLogic
     }
 
     /// <summary>
-    /// 
+    /// Update the auth proxy settings
     /// </summary>
     /// <param name="settings"></param>
     /// <param name="users"></param>
@@ -79,6 +74,40 @@ public static class SettingsLogic
         await db.SaveSettingsAsync(Proxy.Name, settings);
 
         log.LogInformation("Proxy settings saved");
+
+        return TypedResults.Created();
+    }
+
+    /// <summary>
+    /// Get the smtp settings
+    /// </summary>
+    /// <param name="users">The user context</param>
+    /// <param name="context">The settings context</param>
+    /// <returns>The settings</returns>
+    public static async Task<IResult> GetSmtpAsync(IUserContext users, ISettingsContext settings, HttpContext context)
+    {
+        var admin = await users.IsAdmin(context.User);
+        return admin ?? TypedResults.Ok(await settings.GetSettings<SmtpSettings>("smtp"));
+    }
+
+    /// <summary>
+    /// Update the smtp settings
+    /// </summary>
+    /// <param name="settings"></param>
+    /// <param name="users"></param>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public static async Task<IResult> PostSmtpAsync(SmtpSettings settings, IUserContext users, ISettingsContext db, HttpContext context, ILoggerFactory logger)
+    {
+        var log = logger.CreateLogger(nameof(SettingsLogic));
+
+        var admin = await users.IsAdmin(context.User);
+        if (admin is not null)
+            return admin;
+
+        await db.SaveSettingsAsync("smtp", settings);
+
+        log.LogInformation("SMTP settings saved");
 
         return TypedResults.Created();
     }

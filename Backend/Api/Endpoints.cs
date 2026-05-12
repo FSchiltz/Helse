@@ -203,6 +203,14 @@ public static class Endpoints
             .Produces<Proxy>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
 
+        settings.MapPost("/smtp", SettingsLogic.PostSmtpAsync)
+            .Produces((int)HttpStatusCode.NoContent)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
+        settings.MapGet("/smtp", SettingsLogic.GetSmtpAsync)
+            .Produces<Api.Data.Models.SmtpSettings>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
         var stats = admin.MapGroup("/stats").RequireAuthorization();
         stats.MapGet("/users", AdminLogic.GetUserStatsAsync)
             .Produces<UserStats>((int)HttpStatusCode.OK)
