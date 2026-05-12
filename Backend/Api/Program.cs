@@ -42,10 +42,11 @@ SymmetricSecurityKey key = AuthLogic.GenerateKey(keyConfig);
 
 builder.Services.AddSingleton((_) => new TokenConfig(issuer, audience, key));
 
-builder.Services.AddSingleton<TokenService>();
-builder.Services.AddTransient<IUserContext, UserContext>();
-builder.Services.AddTransient<ISettingsContext, SettingsContext>();
-builder.Services.AddTransient<IHealthContext, HealthContext>();
+builder.Services.AddSingleton<TokenService>()
+    .AddTransient<IUserContext, UserContext>()
+    .AddTransient<ISettingsContext, SettingsContext>()
+    .AddTransient<IHealthContext, HealthContext>()
+    .AddTransient<IStatsContext, StatsContext>();
 
 builder.Services.AddHostedService<EventNotificationService>();
 
