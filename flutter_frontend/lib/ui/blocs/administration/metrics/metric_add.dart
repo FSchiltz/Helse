@@ -33,14 +33,6 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
   @override
   void initState() {
     super.initState();
-    _type = widget.edit?.type;
-    _metricSummary = widget.edit?.summaryType;
-    _visible = widget.edit?.visible ?? true;
-    _loadGroup();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     var edit = widget.edit;
     if (edit != null) {
       // this is not a new addition, just an edit
@@ -51,7 +43,11 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
       _showDashboard = edit.showOnDashboard ?? false;
       _groupId = edit.groupId ?? 0;
     }
+    _loadGroup();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return SquareDialog(
       title: const Text("Add a new metric type"),
       actions: [
