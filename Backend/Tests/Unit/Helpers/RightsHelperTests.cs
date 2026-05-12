@@ -50,11 +50,11 @@ public class RightsHelperTests
         var person = new Person { Id = 1, Name = "Test", Surname = "User" };
         var personFromDb = new PersonFromDb(user, person);
         db.Get("testuser").Returns(personFromDb);
-        
-        var claims = new ClaimsIdentity(new[]
-        {
+
+        var claims = new ClaimsIdentity(
+        [
             new Claim(ClaimTypes.NameIdentifier, "testuser")
-        });
+        ]);
         var claimsPrincipal = new ClaimsPrincipal(claims);
 
         // Act
@@ -71,11 +71,11 @@ public class RightsHelperTests
         // Arrange
         var db = Substitute.For<IUserContext>();
         db.Get("unknownuser").Returns((PersonFromDb?)null);
-        
-        var claims = new ClaimsIdentity(new[]
-        {
+
+        var claims = new ClaimsIdentity(
+        [
             new Claim(ClaimTypes.NameIdentifier, "unknownuser")
-        });
+        ]);
         var claimsPrincipal = new ClaimsPrincipal(claims);
 
         // Act

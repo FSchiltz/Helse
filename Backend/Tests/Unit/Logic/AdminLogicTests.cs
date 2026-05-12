@@ -36,7 +36,7 @@ public class AdminLogicTests
         var result = await AdminLogic.GetUserStatsAsync(users, health, context);
 
         // Assert
-        var forbidResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.ForbidHttpResult>(result);
+        var forbidResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.UnauthorizedHttpResult>(result);
         Assert.NotNull(forbidResult);
     }
 
@@ -105,7 +105,7 @@ public class AdminLogicTests
         var result = await AdminLogic.GetMetricStatsAsync(start, end, users, health, context);
 
         // Assert
-        var forbidResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.ForbidHttpResult>(result);
+        var forbidResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.UnauthorizedHttpResult>(result);
         Assert.NotNull(forbidResult);
     }
 
@@ -187,7 +187,7 @@ public class AdminLogicTests
         var result = await AdminLogic.GetEventStatsAsync(start, end, users, health, context);
 
         // Assert
-        var forbidResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.ForbidHttpResult>(result);
+        var forbidResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.UnauthorizedHttpResult>(result);
         Assert.NotNull(forbidResult);
     }
 
@@ -220,10 +220,10 @@ public class AdminLogicTests
         var eventTypes = new List<EventType> { new() { Id = 1, Name = "Doctor Visit" } };
         health.GetEventTypes(true).Returns(eventTypes);
 
-        var claims = new ClaimsIdentity(new[]
-        {
+        var claims = new ClaimsIdentity(
+        [
             new Claim(ClaimTypes.NameIdentifier, "admin")
-        });
+        ]);
         var context = new DefaultHttpContext
         {
             User = new ClaimsPrincipal(claims)
