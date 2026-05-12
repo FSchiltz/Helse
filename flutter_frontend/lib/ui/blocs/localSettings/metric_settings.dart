@@ -83,7 +83,8 @@ class _MetricSettingsState extends State<MetricSettings> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  OrderedList(_metrics, withGraph: true),
+                  SizedBox(
+                    height: 300, child: OrderedList(_metrics, withGraph: true)),
                 ],
               ),
             );

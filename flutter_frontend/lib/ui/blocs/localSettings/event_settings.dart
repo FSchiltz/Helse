@@ -83,7 +83,9 @@ class _EventSettingsState extends State<EventSettings> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  OrderedList(_events),
+                  SizedBox(
+                    height: 300,
+                    child: OrderedList(_events)),
                 ],
               ),
             );
