@@ -1,0 +1,145 @@
+import 'package:flutter/material.dart';
+import 'package:helse/logic/d_i.dart';
+import 'package:helse/logic/fit/fit_logic.dart';
+import 'package:helse/logic/settings/health_settings.dart';
+import 'package:helse/logic/settings/settings_logic.dart';
+import 'package:helse/ui/common/custom_switch.dart';
+import 'package:helse/ui/common/loader.dart';
+import 'package:helse/ui/common/notification.dart';
+
+class SyncSettings extends StatefulWidget {
+  const SyncSettings({super.key});
+
+  @override
+  State<SyncSettings> createState() => _SyncSettingsState();
+}
+
+class _SyncSettingsState extends State<SyncSettings> {
+  bool _isSupported = false;
+  String? _lastRun;
+  bool _healthEnabled = false;
+  final GlobalKey<FormState> _formKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _isSupported = FitLogic.isSupported();
+  }
+
+  Future<int> _getData() async {
+    _healthEnabled = (await SettingsLogic.getHealth()).syncHealth;
+    _lastRun = (await SettingsLogic.getLastRun());
+
+    return 1;
+  }
+
+  void _submitHealth() async {
+    try {
+      if (_formKey.currentState?.validate() ?? false) {
+        // save the user's settings
+        await SettingsLogic.saveHealth(HealthSettings(_healthEnabled));
+
+        Notify.show("Saved Successfully");
+        _getData();
+      }
+    } catch (ex) {
+      Notify.showError("Error: $ex");
+    }
+  }
+
+  Future<void> _resetLastRun() async {
+    await SettingsLogic.removeLastRun();
+    setState(() {
+      _lastRun = null;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_isSupported) {
+      return Center(child: Text("Not supported"));
+    }
+
+    return FutureBuilder(
+      future: _getData(),
+      builder: (context, snapshot) {
+        // Checking if future is resolved
+        if (snapshot.connectionState == ConnectionState.done) {
+          // If we got an error
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                '${snapshot.error} occurred',
+                style: const TextStyle(fontSize: 18),
+              ),
+            );
+            // if we got our data
+          } else if (snapshot.hasData) {
+            return Padding(
+              padding: const EdgeInsets.all(32),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Sync from Google Health",
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      height: 50,
+                      child: Row(
+                        children: [
+                          const Text("Enable"),
+                          CustomSwitch(
+                            value: _healthEnabled,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _healthEnabled = value!;
+                                _submitHealth();
+              
+                                // Stop or start
+                                if (value) {
+                                  DI.fit.start();
+                                } else {
+                                  DI.fit.cancel();
+                                }
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      "Last run: $_lastRun",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: 160,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(40),
+                          shape: const ContinuousRectangleBorder(),
+                        ),
+                        onPressed: _resetLastRun,
+                        child: const Text("Rest last run"),
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                  ],
+                ),
+              ),
+            );
+          }
+        }
+        return const Center(
+          child: SizedBox(width: 50, height: 50, child: HelseLoader()),
+        );
+      },
+    );
+  }
+}
