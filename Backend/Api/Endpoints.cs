@@ -208,7 +208,7 @@ public static class Endpoints
             .Produces((int)HttpStatusCode.Unauthorized);
 
         settings.MapGet("/smtp", SettingsLogic.GetSmtpAsync)
-            .Produces<Api.Data.Models.SmtpSettings>((int)HttpStatusCode.OK)
+            .Produces<Smtp>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
 
         var stats = admin.MapGroup("/stats").RequireAuthorization();

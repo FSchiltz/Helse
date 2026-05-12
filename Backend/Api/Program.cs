@@ -48,8 +48,6 @@ builder.Services.AddSingleton<TokenService>()
     .AddTransient<IHealthContext, HealthContext>()
     .AddTransient<IStatsContext, StatsContext>();
 
-builder.Services.AddHostedService<EventNotificationService>();
-
 builder.Services.AddAuthentication(options =>
   {
       options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -78,6 +76,7 @@ builder.Services.AddAuthorizationBuilder()
 
 builder.Services.AddSingleton(new MigrationSettings(connection));
 builder.Services.AddHostedService<MigrationHelper>();
+builder.Services.AddHostedService<EventNotificationService>();
 var app = builder.Build();
 
 app.MapOpenApi("/openapi/{documentName}.json");

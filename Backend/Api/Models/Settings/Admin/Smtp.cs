@@ -1,7 +1,9 @@
-namespace Api.Data.Models;
+namespace Api.Models.Settings.Admin;
 
-public sealed record SmtpSettings
+public sealed record Smtp
 {
+    public const string Name = "smtp";
+    
     public string SmtpHost { get; init; } = string.Empty;
     public int SmtpPort { get; init; } = 587;
     public bool EnableSsl { get; init; } = true;

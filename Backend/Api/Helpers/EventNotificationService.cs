@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Mail;
 using Api.Data;
 using Api.Data.Models;
+using Api.Models.Settings.Admin;
 
 namespace Api.Helpers;
 
@@ -29,11 +30,11 @@ public class EventNotificationService(IServiceProvider serviceProvider, ILogger<
         }
     }
 
-    private async Task<SmtpSettings> LoadSmtpSettingsAsync()
+    private async Task<Smtp> LoadSmtpSettingsAsync()
     {
         using var scope = serviceProvider.CreateScope();
         var settings = scope.ServiceProvider.GetRequiredService<ISettingsContext>();
-        return await settings.GetSettings<SmtpSettings>("smtp");
+        return await settings.GetSettings<Smtp>("smtp");
     }
 
     private async Task<int> CheckEventsAsync(CancellationToken cancellationToken)
@@ -100,7 +101,7 @@ Description: {@event.Description ?? "(no description)"}
 Please open the application to review the event details.";
     }
 
-    private static async Task SendEmailAsync(SmtpSettings smtpSettings, string recipient, string subject, string body)
+    private static async Task SendEmailAsync(Smtp smtpSettings, string recipient, string subject, string body)
     {
         using var message = new MailMessage(smtpSettings.FromEmail, recipient, subject, body)
         {

@@ -14,7 +14,6 @@ class Dashboard extends StatelessWidget {
     List<Widget> tabs = [];
     List<IconData> icons = [];
 
-    // TODO add a patient dashboard if the user is one.
     if (types.contains(UserType.user)) {
       icons.add(Icons.monitor_heart_sharp);
       tabs.add(PatientDashboard());

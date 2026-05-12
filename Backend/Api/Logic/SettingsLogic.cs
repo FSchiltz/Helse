@@ -1,5 +1,4 @@
 using Api.Data;
-using Api.Data.Models;
 using Api.Helpers;
 using Api.Models.Settings.Admin;
 
@@ -87,7 +86,7 @@ public static class SettingsLogic
     public static async Task<IResult> GetSmtpAsync(IUserContext users, ISettingsContext settings, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
-        return admin ?? TypedResults.Ok(await settings.GetSettings<SmtpSettings>("smtp"));
+        return admin ?? TypedResults.Ok(await settings.GetSettings<Smtp>(Smtp.Name));
     }
 
     /// <summary>
@@ -97,7 +96,7 @@ public static class SettingsLogic
     /// <param name="users"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static async Task<IResult> PostSmtpAsync(SmtpSettings settings, IUserContext users, ISettingsContext db, HttpContext context, ILoggerFactory logger)
+    public static async Task<IResult> PostSmtpAsync(Smtp settings, IUserContext users, ISettingsContext db, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger(nameof(SettingsLogic));
 
@@ -105,7 +104,7 @@ public static class SettingsLogic
         if (admin is not null)
             return admin;
 
-        await db.SaveSettingsAsync("smtp", settings);
+        await db.SaveSettingsAsync(Smtp.Name, settings);
 
         log.LogInformation("SMTP settings saved");
 

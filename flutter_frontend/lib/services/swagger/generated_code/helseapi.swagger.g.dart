@@ -355,6 +355,28 @@ Map<String, dynamic> _$RightToJson(Right instance) => <String, dynamic>{
   'type': rightTypeNullableToJson(instance.type),
 };
 
+Smtp _$SmtpFromJson(Map<String, dynamic> json) => Smtp(
+  smtpHost: json['smtpHost'] as String?,
+  smtpPort: (json['smtpPort'] as num?)?.toInt(),
+  enableSsl: json['enableSsl'] as bool?,
+  fromEmail: json['fromEmail'] as String?,
+  userName: json['userName'] as String?,
+  password: json['password'] as String?,
+  pollingSeconds: (json['pollingSeconds'] as num?)?.toInt(),
+  startingWindowMinutes: (json['startingWindowMinutes'] as num?)?.toInt(),
+);
+
+Map<String, dynamic> _$SmtpToJson(Smtp instance) => <String, dynamic>{
+  'smtpHost': instance.smtpHost,
+  'smtpPort': instance.smtpPort,
+  'enableSsl': instance.enableSsl,
+  'fromEmail': instance.fromEmail,
+  'userName': instance.userName,
+  'password': instance.password,
+  'pollingSeconds': instance.pollingSeconds,
+  'startingWindowMinutes': instance.startingWindowMinutes,
+};
+
 Status _$StatusFromJson(Map<String, dynamic> json) => Status(
   init: json['init'] as bool,
   externalAuth: json['externalAuth'] as bool,

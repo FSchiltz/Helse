@@ -14,14 +14,21 @@ class ChangeRole extends StatefulWidget {
   const ChangeRole(this.callback, this.types, this.id, {super.key});
 
   @override
-  State<ChangeRole> createState() => _ChangeRoleState(types);
+  State<ChangeRole> createState() => _ChangeRoleState();
 }
 
 class _ChangeRoleState extends State<ChangeRole> {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  List<UserType> types;
+  List<UserType> types = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    types = widget.types;
+  }
   
-  _ChangeRoleState(this.types);
+  _ChangeRoleState();
 
   @override
   Widget build(BuildContext context) {
