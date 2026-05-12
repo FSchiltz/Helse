@@ -51,8 +51,11 @@ public class Event
     public long? AddressId { get; set; }
 
     [Association(ThisKey = nameof(AddressId), OtherKey = nameof(Data.Models.Address.Id))]
-    public Treatment? Address { get; set; }
+    public Address? Address { get; set; }
 
     [Column]
     public string? Tag { get; set; }
+
+    [Column]
+    public DateTime Created { get; set; }
 }

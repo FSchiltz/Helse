@@ -1,0 +1,38 @@
+using Api.Data;
+using Api.Data.Models;
+using Microsoft.AspNetCore.Http;
+using NSubstitute;
+using System.Security.Claims;
+
+namespace Tests.Unit.Logic;
+
+public abstract class LogicTests
+{
+    protected static DefaultHttpContext SetupContext()
+    {
+        var claims = new ClaimsIdentity(
+        [
+            new Claim(ClaimTypes.NameIdentifier, "test"),
+            new Claim("token", "access"),
+        ]);
+
+        return new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(claims)
+        };
+    }
+
+    protected static IUserContext SetupUser(UserType user)
+    {
+        var users = Substitute.For<IUserContext>();
+        users.Get("test").Returns(new PersonFromDb(new()
+        {
+            Id = 1,
+            Identifier = "",
+            Password = "",
+            Type = (int)user,
+        }, new()));
+
+        return users;
+    }
+}

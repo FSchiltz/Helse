@@ -10,4 +10,7 @@ public class Files
 
     [Column, NotNull]
     public DateTime Creation { get; set; }
+
+    [Column]
+    public DateTime Created { get; set; }
 }

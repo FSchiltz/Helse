@@ -7,6 +7,7 @@ namespace Api.Data;
 public interface ISettingsContext : IContext
 {
     Task<T> GetSettings<T>(string name) where T : new();
+
     Task Upsert(string name, string data);
 }
 

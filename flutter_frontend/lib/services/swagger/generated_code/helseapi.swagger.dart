@@ -1042,14 +1042,11 @@ abstract class Helseapi extends ChopperService {
   ///
   ///@param start
   ///@param end
-  Future<chopper.Response<List<EventDateSummary>>> apiAdminStatsEventsGet({
-    DateTime? start,
-    DateTime? end,
+  Future<chopper.Response<EventStats>> apiAdminStatsEventsGet({
+    required DateTime? start,
+    required DateTime? end,
   }) {
-    generatedMapping.putIfAbsent(
-      EventDateSummary,
-      () => EventDateSummary.fromJsonFactory,
-    );
+    generatedMapping.putIfAbsent(EventStats, () => EventStats.fromJsonFactory);
 
     return _apiAdminStatsEventsGet(start: start, end: end);
   }
@@ -1058,9 +1055,41 @@ abstract class Helseapi extends ChopperService {
   ///@param start
   ///@param end
   @GET(path: '/api/admin/stats/events')
-  Future<chopper.Response<List<EventDateSummary>>> _apiAdminStatsEventsGet({
-    @Query('start') DateTime? start,
-    @Query('end') DateTime? end,
+  Future<chopper.Response<EventStats>> _apiAdminStatsEventsGet({
+    @Query('start') required DateTime? start,
+    @Query('end') required DateTime? end,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["AdminLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param start
+  ///@param end
+  Future<chopper.Response<EventStats>> apiAdminStatsMetricsGet({
+    required DateTime? start,
+    required DateTime? end,
+  }) {
+    generatedMapping.putIfAbsent(EventStats, () => EventStats.fromJsonFactory);
+
+    return _apiAdminStatsMetricsGet(start: start, end: end);
+  }
+
+  ///
+  ///@param start
+  ///@param end
+  @GET(path: '/api/admin/stats/metrics')
+  Future<chopper.Response<EventStats>> _apiAdminStatsMetricsGet({
+    @Query('start') required DateTime? start,
+    @Query('end') required DateTime? end,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -1213,6 +1242,104 @@ extension $ConnectionExtension on Connection {
       user: (user != null ? user.value : this.user),
       password: (password != null ? password.value : this.password),
       redirect: (redirect != null ? redirect.value : this.redirect),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class CountByDate {
+  const CountByDate({required this.date, required this.count});
+
+  factory CountByDate.fromJson(Map<String, dynamic> json) =>
+      _$CountByDateFromJson(json);
+
+  static const toJsonFactory = _$CountByDateToJson;
+  Map<String, dynamic> toJson() => _$CountByDateToJson(this);
+
+  @JsonKey(name: 'date')
+  final DateTime date;
+  @JsonKey(name: 'count')
+  final int count;
+  static const fromJsonFactory = _$CountByDateFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is CountByDate &&
+            (identical(other.date, date) ||
+                const DeepCollectionEquality().equals(other.date, date)) &&
+            (identical(other.count, count) ||
+                const DeepCollectionEquality().equals(other.count, count)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(date) ^
+      const DeepCollectionEquality().hash(count) ^
+      runtimeType.hashCode;
+}
+
+extension $CountByDateExtension on CountByDate {
+  CountByDate copyWith({DateTime? date, int? count}) {
+    return CountByDate(date: date ?? this.date, count: count ?? this.count);
+  }
+
+  CountByDate copyWithWrapped({Wrapped<DateTime>? date, Wrapped<int>? count}) {
+    return CountByDate(
+      date: (date != null ? date.value : this.date),
+      count: (count != null ? count.value : this.count),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class CountRecord {
+  const CountRecord({required this.id, required this.count});
+
+  factory CountRecord.fromJson(Map<String, dynamic> json) =>
+      _$CountRecordFromJson(json);
+
+  static const toJsonFactory = _$CountRecordToJson;
+  Map<String, dynamic> toJson() => _$CountRecordToJson(this);
+
+  @JsonKey(name: 'id')
+  final String id;
+  @JsonKey(name: 'count')
+  final int count;
+  static const fromJsonFactory = _$CountRecordFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is CountRecord &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.count, count) ||
+                const DeepCollectionEquality().equals(other.count, count)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(count) ^
+      runtimeType.hashCode;
+}
+
+extension $CountRecordExtension on CountRecord {
+  CountRecord copyWith({String? id, int? count}) {
+    return CountRecord(id: id ?? this.id, count: count ?? this.count);
+  }
+
+  CountRecord copyWithWrapped({Wrapped<String>? id, Wrapped<int>? count}) {
+    return CountRecord(
+      id: (id != null ? id.value : this.id),
+      count: (count != null ? count.value : this.count),
     );
   }
 }
@@ -1634,29 +1761,32 @@ extension $EventExtension on Event {
 }
 
 @JsonSerializable(explicitToJson: true)
-class EventDateSummary {
-  const EventDateSummary({required this.date, required this.count});
+class EventStats {
+  const EventStats({required this.events, required this.eventCounts});
 
-  factory EventDateSummary.fromJson(Map<String, dynamic> json) =>
-      _$EventDateSummaryFromJson(json);
+  factory EventStats.fromJson(Map<String, dynamic> json) =>
+      _$EventStatsFromJson(json);
 
-  static const toJsonFactory = _$EventDateSummaryToJson;
-  Map<String, dynamic> toJson() => _$EventDateSummaryToJson(this);
+  static const toJsonFactory = _$EventStatsToJson;
+  Map<String, dynamic> toJson() => _$EventStatsToJson(this);
 
-  @JsonKey(name: 'date')
-  final DateTime date;
-  @JsonKey(name: 'count')
-  final int count;
-  static const fromJsonFactory = _$EventDateSummaryFromJson;
+  @JsonKey(name: 'events', defaultValue: <CountByDate>[])
+  final List<CountByDate> events;
+  @JsonKey(name: 'eventCounts', defaultValue: <CountRecord>[])
+  final List<CountRecord> eventCounts;
+  static const fromJsonFactory = _$EventStatsFromJson;
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other is EventDateSummary &&
-            (identical(other.date, date) ||
-                const DeepCollectionEquality().equals(other.date, date)) &&
-            (identical(other.count, count) ||
-                const DeepCollectionEquality().equals(other.count, count)));
+        (other is EventStats &&
+            (identical(other.events, events) ||
+                const DeepCollectionEquality().equals(other.events, events)) &&
+            (identical(other.eventCounts, eventCounts) ||
+                const DeepCollectionEquality().equals(
+                  other.eventCounts,
+                  eventCounts,
+                )));
   }
 
   @override
@@ -1664,26 +1794,29 @@ class EventDateSummary {
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(date) ^
-      const DeepCollectionEquality().hash(count) ^
+      const DeepCollectionEquality().hash(events) ^
+      const DeepCollectionEquality().hash(eventCounts) ^
       runtimeType.hashCode;
 }
 
-extension $EventDateSummaryExtension on EventDateSummary {
-  EventDateSummary copyWith({DateTime? date, int? count}) {
-    return EventDateSummary(
-      date: date ?? this.date,
-      count: count ?? this.count,
+extension $EventStatsExtension on EventStats {
+  EventStats copyWith({
+    List<CountByDate>? events,
+    List<CountRecord>? eventCounts,
+  }) {
+    return EventStats(
+      events: events ?? this.events,
+      eventCounts: eventCounts ?? this.eventCounts,
     );
   }
 
-  EventDateSummary copyWithWrapped({
-    Wrapped<DateTime>? date,
-    Wrapped<int>? count,
+  EventStats copyWithWrapped({
+    Wrapped<List<CountByDate>>? events,
+    Wrapped<List<CountRecord>>? eventCounts,
   }) {
-    return EventDateSummary(
-      date: (date != null ? date.value : this.date),
-      count: (count != null ? count.value : this.count),
+    return EventStats(
+      events: (events != null ? events.value : this.events),
+      eventCounts: (eventCounts != null ? eventCounts.value : this.eventCounts),
     );
   }
 }
@@ -2395,6 +2528,7 @@ class Person {
     this.userName,
     this.rights,
     this.types,
+    this.created,
     this.name,
     this.surname,
     this.identifier,
@@ -2421,6 +2555,8 @@ class Person {
     fromJson: userTypeListFromJson,
   )
   final List<enums.UserType>? types;
+  @JsonKey(name: 'created')
+  final DateTime? created;
   @JsonKey(name: 'name')
   final String? name;
   @JsonKey(name: 'surname')
@@ -2452,6 +2588,11 @@ class Person {
                 const DeepCollectionEquality().equals(other.rights, rights)) &&
             (identical(other.types, types) ||
                 const DeepCollectionEquality().equals(other.types, types)) &&
+            (identical(other.created, created) ||
+                const DeepCollectionEquality().equals(
+                  other.created,
+                  created,
+                )) &&
             (identical(other.name, name) ||
                 const DeepCollectionEquality().equals(other.name, name)) &&
             (identical(other.surname, surname) ||
@@ -2486,6 +2627,7 @@ class Person {
       const DeepCollectionEquality().hash(userName) ^
       const DeepCollectionEquality().hash(rights) ^
       const DeepCollectionEquality().hash(types) ^
+      const DeepCollectionEquality().hash(created) ^
       const DeepCollectionEquality().hash(name) ^
       const DeepCollectionEquality().hash(surname) ^
       const DeepCollectionEquality().hash(identifier) ^
@@ -2502,6 +2644,7 @@ extension $PersonExtension on Person {
     String? userName,
     List<Right>? rights,
     List<enums.UserType>? types,
+    DateTime? created,
     String? name,
     String? surname,
     String? identifier,
@@ -2515,6 +2658,7 @@ extension $PersonExtension on Person {
       userName: userName ?? this.userName,
       rights: rights ?? this.rights,
       types: types ?? this.types,
+      created: created ?? this.created,
       name: name ?? this.name,
       surname: surname ?? this.surname,
       identifier: identifier ?? this.identifier,
@@ -2530,6 +2674,7 @@ extension $PersonExtension on Person {
     Wrapped<String?>? userName,
     Wrapped<List<Right>?>? rights,
     Wrapped<List<enums.UserType>?>? types,
+    Wrapped<DateTime?>? created,
     Wrapped<String?>? name,
     Wrapped<String?>? surname,
     Wrapped<String?>? identifier,
@@ -2543,6 +2688,7 @@ extension $PersonExtension on Person {
       userName: (userName != null ? userName.value : this.userName),
       rights: (rights != null ? rights.value : this.rights),
       types: (types != null ? types.value : this.types),
+      created: (created != null ? created.value : this.created),
       name: (name != null ? name.value : this.name),
       surname: (surname != null ? surname.value : this.surname),
       identifier: (identifier != null ? identifier.value : this.identifier),
@@ -3466,12 +3612,7 @@ extension $UpdatePersonExtension on UpdatePerson {
 
 @JsonSerializable(explicitToJson: true)
 class UserStats {
-  const UserStats({
-    required this.totalUsers,
-    required this.patients,
-    required this.caregivers,
-    required this.admins,
-  });
+  const UserStats({required this.userCount});
 
   factory UserStats.fromJson(Map<String, dynamic> json) =>
       _$UserStatsFromJson(json);
@@ -3479,37 +3620,19 @@ class UserStats {
   static const toJsonFactory = _$UserStatsToJson;
   Map<String, dynamic> toJson() => _$UserStatsToJson(this);
 
-  @JsonKey(name: 'totalUsers')
-  final int totalUsers;
-  @JsonKey(name: 'patients')
-  final int patients;
-  @JsonKey(name: 'caregivers')
-  final int caregivers;
-  @JsonKey(name: 'admins')
-  final int admins;
+  @JsonKey(name: 'userCount', defaultValue: <CountRecord>[])
+  final List<CountRecord> userCount;
   static const fromJsonFactory = _$UserStatsFromJson;
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is UserStats &&
-            (identical(other.totalUsers, totalUsers) ||
+            (identical(other.userCount, userCount) ||
                 const DeepCollectionEquality().equals(
-                  other.totalUsers,
-                  totalUsers,
-                )) &&
-            (identical(other.patients, patients) ||
-                const DeepCollectionEquality().equals(
-                  other.patients,
-                  patients,
-                )) &&
-            (identical(other.caregivers, caregivers) ||
-                const DeepCollectionEquality().equals(
-                  other.caregivers,
-                  caregivers,
-                )) &&
-            (identical(other.admins, admins) ||
-                const DeepCollectionEquality().equals(other.admins, admins)));
+                  other.userCount,
+                  userCount,
+                )));
   }
 
   @override
@@ -3517,39 +3640,17 @@ class UserStats {
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(totalUsers) ^
-      const DeepCollectionEquality().hash(patients) ^
-      const DeepCollectionEquality().hash(caregivers) ^
-      const DeepCollectionEquality().hash(admins) ^
-      runtimeType.hashCode;
+      const DeepCollectionEquality().hash(userCount) ^ runtimeType.hashCode;
 }
 
 extension $UserStatsExtension on UserStats {
-  UserStats copyWith({
-    int? totalUsers,
-    int? patients,
-    int? caregivers,
-    int? admins,
-  }) {
-    return UserStats(
-      totalUsers: totalUsers ?? this.totalUsers,
-      patients: patients ?? this.patients,
-      caregivers: caregivers ?? this.caregivers,
-      admins: admins ?? this.admins,
-    );
+  UserStats copyWith({List<CountRecord>? userCount}) {
+    return UserStats(userCount: userCount ?? this.userCount);
   }
 
-  UserStats copyWithWrapped({
-    Wrapped<int>? totalUsers,
-    Wrapped<int>? patients,
-    Wrapped<int>? caregivers,
-    Wrapped<int>? admins,
-  }) {
+  UserStats copyWithWrapped({Wrapped<List<CountRecord>>? userCount}) {
     return UserStats(
-      totalUsers: (totalUsers != null ? totalUsers.value : this.totalUsers),
-      patients: (patients != null ? patients.value : this.patients),
-      caregivers: (caregivers != null ? caregivers.value : this.caregivers),
-      admins: (admins != null ? admins.value : this.admins),
+      userCount: (userCount != null ? userCount.value : this.userCount),
     );
   }
 }

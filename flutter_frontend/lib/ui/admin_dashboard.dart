@@ -11,8 +11,12 @@ class AdminDashBoard extends StatefulWidget {
 }
 
 class _AdminDashBoardState extends State<AdminDashBoard> {
-  Map<String, int> _userCounts = {};
-  List<EventDateSummary> _eventSummaries = [];
+  List<CountRecord> _userCounts = [];
+  List<CountRecord> _eventTypeCounts = [];
+  List<CountByDate> _eventSummaries = [];
+
+  List<CountRecord> _metricTypeCounts = [];
+  List<CountByDate> _metricSummaries = [];
   bool _loading = true;
 
   @override
@@ -27,18 +31,23 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
     // Load user stats from admin endpoint
     final userStats = await DI.admin.getUserStats();
     if (userStats != null) {
-      _userCounts = {
-        'Total Users': userStats.totalUsers,
-        'Patients': userStats.patients,
-        'Caregivers': userStats.caregivers,
-        'Admins': userStats.admins,
-      };
+      _userCounts = userStats.userCount;
     }
 
     // Load event summaries for the last 30 days
     final end = DateTime.now();
     final start = end.subtract(const Duration(days: 30));
-    _eventSummaries = await DI.admin.getEventStats(start, end) ?? [];
+    var events = await DI.admin.getEventStats(start, end);
+    if (events != null) {
+      _eventSummaries = events.events;
+      _eventTypeCounts = events.eventCounts;
+    }
+
+    var metrics = await DI.admin.getmetricStats(start, end);
+    if (metrics != null) {
+      _metricSummaries = metrics.events;
+      _metricTypeCounts = metrics.eventCounts;
+    }
 
     setState(() => _loading = false);
   }
@@ -59,70 +68,192 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          _buildUserStats(),
+          Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            children: [
+              SizedBox(
+                width: 420,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: _buildUserStats(),
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 32),
           const Text(
-            'Events Over Time',
+            'Metrics',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          _buildEventsChart(),
+          Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            children: [
+              countGraph(_metricSummaries),
+              countTypeGraph(_metricTypeCounts),
+            ],
+          ),
+          const SizedBox(height: 32),
+          const Text(
+            'Events',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            children: [
+              countGraph(_eventSummaries),
+              countTypeGraph(_eventTypeCounts),
+            ],
+          ),
         ],
+      ),
+    );
+  }
+
+  SizedBox countTypeGraph(List<CountRecord> counts) {
+    final sortedTypes = counts.toList()
+      ..sort((a, b) => b.count.compareTo(a.count));
+
+    return SizedBox(
+      width: 420,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Count by Type (last 7 days)',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 200,
+              child: ListView.builder(
+                itemCount: sortedTypes.length,
+                itemBuilder: (context, index) {
+                  final entry = sortedTypes[index];
+                  return ListTile(
+                    title: Text(entry.id),
+                    trailing: Text(
+                      entry.count.toString(),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String labelForIndex(double value, List<CountByDate> counts) {
+    final index = value.toInt();
+    if (index < 0 || index >= counts.length) {
+      return '';
+    }
+    final date = counts[index].date;
+    return '${date.month}/${date.day}';
+  }
+
+  SizedBox countGraph(List<CountByDate> counts) {
+    final barGroups = counts.asMap().entries.map((entry) {
+      final index = entry.key;
+      final summary = entry.value;
+      return BarChartGroupData(
+        x: index,
+        barRods: [
+          BarChartRodData(
+            toY: summary.count.toDouble(),
+            color: Colors.teal,
+            width: 8,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ],
+      );
+    }).toList();
+
+    return SizedBox(
+      width: 420,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Record added',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 300,
+              child: BarChart(
+                BarChartData(
+                  barGroups: barGroups,
+                  gridData: const FlGridData(show: true),
+                  borderData: FlBorderData(show: true),
+                  titlesData: FlTitlesData(
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 36,
+                      ),
+                    ),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 36,
+                        getTitlesWidget: (value, meta) {
+                          return SideTitleWidget(
+                            meta: meta,
+                            child: Text(
+                              labelForIndex(value, counts),
+                              style: const TextStyle(fontSize: 10),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    topTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    rightTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildUserStats() {
     return GridView.count(
-      crossAxisCount: 6,
+      crossAxisCount: 2,
       shrinkWrap: true,
-      children: _userCounts.entries.map((entry) {
+      childAspectRatio: 3,
+      physics: const NeverScrollableScrollPhysics(),
+      children: _userCounts.map((entry) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              entry.value.toString(),
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              entry.count.toString(),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            Text(entry.key, style: const TextStyle(fontSize: 16)),
+            Text(entry.id, style: const TextStyle(fontSize: 12)),
           ],
         );
       }).toList(),
     );
   }
-
-  Widget _buildEventsChart() {
-    if (_eventSummaries.isEmpty) {
-      return const Text('No event data available');
-    }
-
-    // The event summaries are already grouped by date
-    final spots = _eventSummaries.asMap().entries.map((entry) {
-      final summary = _eventSummaries[entry.key];
-      return FlSpot(entry.key.toDouble(), summary.count.toDouble());
-    }).toList();
-
-    return SizedBox(
-      height: 300,
-      child: LineChart(
-        LineChartData(
-          gridData: const FlGridData(show: true),
-          titlesData: const FlTitlesData(show: true),
-          borderData: FlBorderData(show: true),
-          lineBarsData: [
-            LineChartBarData(
-              spots: spots,
-              isCurved: true,
-              color: Colors.blue,
-              barWidth: 3,
-              belowBarData: BarAreaData(show: false),
-            ),
-          ],
-        ),
-      ),
-    );
-  } 
 }

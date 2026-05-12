@@ -25,4 +25,7 @@ public class Prescription
 
     [Column, NotNull]
     public DateTime End { get; set; }
+
+    [Column]
+    public DateTime Created { get; set; }
 }

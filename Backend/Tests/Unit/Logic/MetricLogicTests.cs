@@ -8,9 +8,8 @@ using NSubstitute;
 
 namespace Tests.Unit.Logic;
 
-public class MetricLogicTests
+public class MetricLogicTests : LogicTests
 {
-    private readonly IUserContext _users = Substitute.For<IUserContext>();
     private readonly IHealthContext _db = Substitute.For<IHealthContext>();
 
     [Fact]
@@ -22,18 +21,11 @@ public class MetricLogicTests
             Type = MetricDataType.Text,
             SummaryType = MetricSummary.Sum,
         };
-        var context = new DefaultHttpContext
-        {
-            User = new([new()])
-        };
-        _users.Get(default).ReturnsForAnyArgs(new PersonFromDb(new()
-        {
-            Identifier = "",
-            Password = "",
-            Type = 0,
-        }, new()));
 
-        var result = await MetricsLogic.CreateTypeAsync(type, _users, _db, context);
+        var users = SetupUser(Api.Data.Models.UserType.User);
+        var context = SetupContext();
+
+        var result = await MetricsLogic.CreateTypeAsync(type, users, _db, context);
         Assert.IsType<ForbidHttpResult>(result);
     }
 
@@ -46,18 +38,11 @@ public class MetricLogicTests
             Type = MetricDataType.Text,
             SummaryType = MetricSummary.Sum,
         };
-        var context = new DefaultHttpContext
-        {
-            User = new([new()])
-        };
-        _users.Get(default).ReturnsForAnyArgs(new PersonFromDb(new()
-        {
-            Identifier = "",
-            Password = "",
-            Type = (int)UserType.Admin,
-        }, new()));
 
-        await Assert.ThrowsAsync<InvalidDataException>(() => MetricsLogic.CreateTypeAsync(type, _users, _db, context));
+        var users = SetupUser(Api.Data.Models.UserType.Admin);
+        var context = SetupContext();
+
+        await Assert.ThrowsAsync<InvalidDataException>(() => MetricsLogic.CreateTypeAsync(type, users, _db, context));
     }
 
     [Fact]
@@ -69,18 +54,11 @@ public class MetricLogicTests
             Type = MetricDataType.Text,
             SummaryType = MetricSummary.Sum,
         };
-        var context = new DefaultHttpContext
-        {
-            User = new([new()])
-        };
-        _users.Get(default).ReturnsForAnyArgs(new PersonFromDb(new()
-        {
-            Identifier = "",
-            Password = "",
-            Type = (int)UserType.Admin,
-        }, new()));
 
-        await Assert.ThrowsAsync<InvalidDataException>(() => MetricsLogic.CreateTypeAsync(type, _users, _db, context));
+        var users = SetupUser(Api.Data.Models.UserType.Admin);
+        var context = SetupContext();
+
+        await Assert.ThrowsAsync<InvalidDataException>(() => MetricsLogic.CreateTypeAsync(type, users, _db, context));
     }
 
     [Fact]
@@ -92,18 +70,11 @@ public class MetricLogicTests
             Type = MetricDataType.Text,
             SummaryType = MetricSummary.Latest,
         };
-        var context = new DefaultHttpContext
-        {
-            User = new([new()])
-        };
-        _users.Get(default).ReturnsForAnyArgs(new PersonFromDb(new()
-        {
-            Identifier = "",
-            Password = "",
-            Type = (int)UserType.Admin,
-        }, new()));
 
-        var result = await MetricsLogic.CreateTypeAsync(type, _users, _db, context);
+        var users = SetupUser(Api.Data.Models.UserType.Admin);
+        var context = SetupContext();
+
+        var result = await MetricsLogic.CreateTypeAsync(type, users, _db, context);
         Assert.IsType<NoContent>(result);
     }
 
@@ -116,18 +87,11 @@ public class MetricLogicTests
             Type = MetricDataType.Number,
             SummaryType = MetricSummary.Mean,
         };
-        var context = new DefaultHttpContext
-        {
-            User = new([new()])
-        };
-        _users.Get(default).ReturnsForAnyArgs(new PersonFromDb(new()
-        {
-            Identifier = "",
-            Password = "",
-            Type = (int)UserType.Admin,
-        }, new()));
 
-        var result = await MetricsLogic.CreateTypeAsync(type, _users, _db, context);
+        var users = SetupUser(Api.Data.Models.UserType.Admin);
+        var context = SetupContext();
+
+        var result = await MetricsLogic.CreateTypeAsync(type, users, _db, context);
         Assert.IsType<NoContent>(result);
     }
 }

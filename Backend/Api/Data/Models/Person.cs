@@ -23,4 +23,7 @@ public class Person
 
     [Column]
     public byte[]? ProfilePicture { get; set; }
+
+    [Column]
+    public DateTime Created { get; set; }
 }

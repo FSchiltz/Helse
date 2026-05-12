@@ -37,4 +37,7 @@ public class Metric
 
     [Column]
     public int Source { get; set; }
+
+    [Column]
+    public DateTime Created { get; set; }
 }

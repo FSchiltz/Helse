@@ -344,13 +344,41 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
         .UpdateAsync();
     }
 
-    public Task<EventDateSummary[]> GetEventStats(DateTime start, DateTime end)
+    public Task<CountByDate[]> GetEventStats(DateTime start, DateTime end)
     {
         return Db.GetTable<Data.Models.Event>()
-            .Where(x => x.Start <= end && start <= x.Stop)
-            .GroupBy(e => e.Start.Date)
-            .Select(g => new EventDateSummary(g.Key, g.Count()))
+            .Where(x => x.Created <= end && x.Created >= start)
+            .GroupBy(e => e.Created.Date)
+            .Select(g => new CountByDate(g.Key, g.Count()))
             .OrderBy(s => s.Date)
             .ToArrayAsync();
+    }
+
+    public Task<Dictionary<int, int>> CountEventsByType(DateTime start, DateTime end)
+    {
+        return Db.GetTable<Event>()
+            .Where(x => x.Created <= end && x.Created >= start)
+            .GroupBy(x => x.Type)
+            .Select(x => new { x.Key, Count= x.Count() })
+            .ToDictionaryAsync(x => x.Key, x => x.Count);
+    }
+
+    public Task<CountByDate[]> GetMetricStats(DateTime start, DateTime end)
+    {
+        return Db.GetTable<Data.Models.Event>()
+            .Where(x => x.Created <= end && x.Created >= start)
+            .GroupBy(e => e.Created.Date)
+            .Select(g => new CountByDate(g.Key, g.Count()))
+            .OrderBy(s => s.Date)
+            .ToArrayAsync();
+    }
+
+    public Task<Dictionary<int, int>> CountMetricsByType(DateTime start, DateTime end)
+    {
+        return Db.GetTable<Event>()
+            .Where(x => x.Created <= end && x.Created >= start)
+            .GroupBy(x => x.Type)
+            .Select(x => new { x.Key, Count= x.Count() })
+            .ToDictionaryAsync(x => x.Key, x => x.Count);
     }
 }
