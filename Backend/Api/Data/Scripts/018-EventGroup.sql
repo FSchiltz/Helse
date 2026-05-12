@@ -25,6 +25,6 @@ ADD
     COLUMN ShowOnDashboard BOOL NOT NULL DEFAULT false;
 
 ALTER TABLE
-    health.EventType
+    health.MetricType
 ADD
     CONSTRAINT FK_EventType_TO_Group FOREIGN KEY (GroupId) REFERENCES health.EventGroup (Id);
