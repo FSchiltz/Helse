@@ -66,11 +66,12 @@ public class TokenServiceTests
     public void GetRefreshToken_ReturnsValidJwtToken()
     {
         // Arrange
-        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(new string('a', 32)));
+        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(new string('a', 256)));
         var config = new TokenConfig("issuer", "audience", key);
         var service = new TokenService(config);
 
-        var tokenInfo = new TokenInfo(1, "User", "testuser", "pass", "Doe", "John", "test@example.com");
+        var hash = TokenService.Hash("pass");
+        var tokenInfo = new TokenInfo(1, "User", "testuser", hash, "Doe", "John", "test@example.com");
         var expires = DateTime.UtcNow.AddHours(1);
 
         // Act
@@ -85,7 +86,7 @@ public class TokenServiceTests
     public void GetAccessToken_ReturnsValidJwtToken()
     {
         // Arrange
-        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(new string('a', 32)));
+        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(new string('a', 256)));
         var config = new TokenConfig("issuer", "audience", key);
         var service = new TokenService(config);
 
@@ -104,7 +105,7 @@ public class TokenServiceTests
     public void GetRefreshToken_IncludesEmailClaim_WhenEmailIsNotNull()
     {
         // Arrange
-        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(new string('a', 32)));
+        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(new string('a', 256)));
         var config = new TokenConfig("issuer", "audience", key);
         var service = new TokenService(config);
 
@@ -123,7 +124,7 @@ public class TokenServiceTests
     public void GetRefreshToken_ExcludesEmailClaim_WhenEmailIsNull()
     {
         // Arrange
-        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(new string('a', 32)));
+        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(new string('a', 256)));
         var config = new TokenConfig("issuer", "audience", key);
         var service = new TokenService(config);
 
