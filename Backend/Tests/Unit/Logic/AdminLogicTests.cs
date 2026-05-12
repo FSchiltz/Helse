@@ -1,9 +1,7 @@
 using Api.Data;
 using Api.Data.Models;
-using Api.Helpers;
 using Api.Logic;
 using Api.Models.Admin;
-using Api.Models.Persons;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using System.Security.Claims;
@@ -18,7 +16,12 @@ public class AdminLogicTests
         // Arrange
         var users = Substitute.For<IUserContext>();
         var health = Substitute.For<IHealthContext>();
-        users.IsAdmin(Arg.Any<ClaimsPrincipal>()).Returns((IResult?)TypedResults.Forbid());
+        users.Get("admin").Returns(new PersonFromDb(new()
+        {
+            Identifier = "",
+            Password = "",
+            Type = (int)Api.Data.Models.UserType.User,
+        }, new()));
 
         var claims = new ClaimsIdentity(
         [
@@ -81,12 +84,16 @@ public class AdminLogicTests
         // Arrange
         var users = Substitute.For<IUserContext>();
         var health = Substitute.For<IHealthContext>();
-        users.IsAdmin(Arg.Any<ClaimsPrincipal>()).Returns((IResult?)TypedResults.Forbid());
-
-        var claims = new ClaimsIdentity(new[]
+        users.Get("admin").Returns(new PersonFromDb(new()
         {
+            Identifier = "",
+            Password = "",
+            Type = (int)Api.Data.Models.UserType.User,
+        }, new()));
+        var claims = new ClaimsIdentity(
+        [
             new Claim(ClaimTypes.NameIdentifier, "test")
-        });
+        ]);
         var context = new DefaultHttpContext
         {
             User = new ClaimsPrincipal(claims)
@@ -108,7 +115,12 @@ public class AdminLogicTests
         // Arrange
         var users = Substitute.For<IUserContext>();
         var health = Substitute.For<IHealthContext>();
-        users.IsAdmin(Arg.Any<ClaimsPrincipal>()).Returns((IResult?)null);
+        users.Get("admin").Returns(new PersonFromDb(new()
+        {
+            Identifier = "",
+            Password = "",
+            Type = (int)Api.Data.Models.UserType.Admin,
+        }, new()));
 
         var start = DateTime.UtcNow.AddMonths(-1);
         var end = DateTime.UtcNow;
@@ -126,10 +138,10 @@ public class AdminLogicTests
         var metricTypes = new List<MetricType> { new() { Id = 1, Name = "Blood Pressure" } };
         health.GetMetricTypes(true).Returns(metricTypes);
 
-        var claims = new ClaimsIdentity(new[]
-        {
+        var claims = new ClaimsIdentity(
+        [
             new Claim(ClaimTypes.NameIdentifier, "admin")
-        });
+        ]);
         var context = new DefaultHttpContext
         {
             User = new ClaimsPrincipal(claims)
@@ -153,12 +165,17 @@ public class AdminLogicTests
         // Arrange
         var users = Substitute.For<IUserContext>();
         var health = Substitute.For<IHealthContext>();
-        users.IsAdmin(Arg.Any<ClaimsPrincipal>()).Returns((IResult?)TypedResults.Forbid());
-
-        var claims = new ClaimsIdentity(new[]
+        users.Get("admin").Returns(new PersonFromDb(new()
         {
+            Identifier = "",
+            Password = "",
+            Type = (int)Api.Data.Models.UserType.Admin,
+        }, new()));
+
+        var claims = new ClaimsIdentity(
+        [
             new Claim(ClaimTypes.NameIdentifier, "test")
-        });
+        ]);
         var context = new DefaultHttpContext
         {
             User = new ClaimsPrincipal(claims)
@@ -180,7 +197,12 @@ public class AdminLogicTests
         // Arrange
         var users = Substitute.For<IUserContext>();
         var health = Substitute.For<IHealthContext>();
-        users.IsAdmin(Arg.Any<ClaimsPrincipal>()).Returns((IResult?)null);
+        users.Get("admin").Returns(new PersonFromDb(new()
+        {
+            Identifier = "",
+            Password = "",
+            Type = (int)Api.Data.Models.UserType.Admin,
+        }, new()));
 
         var start = DateTime.UtcNow.AddMonths(-1);
         var end = DateTime.UtcNow;
