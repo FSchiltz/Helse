@@ -16,10 +16,10 @@ public class PatientsLogicTests : LogicTests
         var users = SetupUser(Api.Data.Models.UserType.Admin);
         var context = SetupContext();
         var db = Substitute.For<IHealthContext>();
-        var persons = new List<Api.Data.Models.Person>
-        {
+        Api.Data.Models.Person[] persons =
+        [
             new() { Id = 1, Name = "Test", Surname = "User" }
-        };
+        ];
         db.GetPatients(1, Arg.Any<DateTime>(), Api.Models.Settings.RightType.View).Returns(persons);
 
         // Act

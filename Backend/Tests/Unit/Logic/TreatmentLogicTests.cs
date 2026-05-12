@@ -16,10 +16,10 @@ public class TreatmentLogicTests
     {
         // Arrange
         var db = Substitute.For<IHealthContext>();
-        var types = new List<EventType>
-        {
+        EventType[] types =
+        [
             new() { Id = 1, Name = "Test" }
-        };
+        ];
         db.GetEventTypes(false).Returns(types);
 
         // Act

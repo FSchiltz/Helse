@@ -7,16 +7,16 @@ namespace Api.Helpers;
 
 public class EventNotificationService(IServiceProvider serviceProvider, ILogger<EventNotificationService> logger) : BackgroundService
 {
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken token)
     {
         logger.LogInformation("Event notification service started.");
 
-        while (!stoppingToken.IsCancellationRequested)
+        while (!token.IsCancellationRequested)
         {
             try
             {
-                var wait = await CheckEventsAsync(stoppingToken);
-                await Task.Delay(TimeSpan.FromSeconds(wait), stoppingToken);
+                var wait = await CheckEventsAsync(token);
+                await Task.Delay(TimeSpan.FromSeconds(wait), token);
             }
             catch (OperationCanceledException)
             {
