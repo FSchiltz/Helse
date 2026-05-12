@@ -104,6 +104,12 @@ class _MetricTypeViewState extends State<MetricTypeView> {
                             DataColumn(
                                 label: Expanded(
                               child: Text("Visible"),
+                            )), DataColumn(
+                                label: Expanded(
+                              child: Text("Show on dashboard"),
+                            )), DataColumn(
+                                label: Expanded(
+                              child: Text("Group"),
                             )),
                             DataColumn(
                                 label: Expanded(
@@ -119,6 +125,8 @@ class _MetricTypeViewState extends State<MetricTypeView> {
                                     DataCell(Text(type.type?.name ?? "")),
                                     DataCell(Text(type.summaryType?.name ?? "")),
                                     DataCell(Checkbox(value: type.visible ?? false, onChanged: null)),
+                                    DataCell(Checkbox(value: type.showOnDashboard ?? false, onChanged: null)),
+                                    DataCell(Text(type.groupId?.toString() ?? "")),
                                     DataCell(
                                       Row(
                                         children: [

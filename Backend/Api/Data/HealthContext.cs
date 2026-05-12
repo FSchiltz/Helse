@@ -178,17 +178,19 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task Insert(MetricType metric)
+    public Task Insert(Api.Models.Metrics.MetricType metric)
     {
         return Db.GetTable<MetricType>().InsertAsync(() => new MetricType
         {
             Name = metric.Name,
             Description = metric.Description,
             Unit = metric.Unit,
-            SummaryType = metric.SummaryType,
-            Type = metric.Type,
+            SummaryType = (long)metric.SummaryType,
+            Type = (long)metric.Type,
             UserEditable = true,
             Visible = metric.Visible,
+            GroupId = metric.GroupId,
+            ShowOnDashboard = metric.ShowOnDashboard,
         });
     }
 
@@ -225,16 +227,18 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task Update(MetricType metric)
+    public Task Update(Api.Models.Metrics.MetricType metric)
     {
         return Db.GetTable<MetricType>()
             .Where(x => x.Id == metric.Id)
             .Set(x => x.Name, metric.Name)
             .Set(x => x.Description, metric.Description)
             .Set(x => x.Unit, metric.Unit)
-            .Set(x => x.Type, metric.Type)
-            .Set(x => x.SummaryType, metric.SummaryType)
+            .Set(x => x.Type, (long)metric.Type)
+            .Set(x => x.SummaryType, (long)metric.SummaryType)
             .Set(x => x.Visible, metric.Visible)
+            .Set(x => x.ShowOnDashboard, metric.ShowOnDashboard)
+            .Set(x => x.GroupId, metric.GroupId)
             .UpdateAsync();
     }
 
@@ -328,7 +332,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
 
     public Task<int> DeleteMetricGroup(long id) => Db.GetTable<MetricGroup>().DeleteAsync(x => x.Id == id);
 
-    public Task Update(MetricGroup metricGroup)
+    public Task Update(Api.Models.Metrics.MetricGroup metricGroup)
     {
         return Db.GetTable<MetricGroup>()
             .Where(x => x.Id == metricGroup.Id)
@@ -339,7 +343,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
             .UpdateAsync();
     }
 
-    public Task Insert(MetricGroup metricGroup)
+    public Task Insert(Api.Models.Metrics.MetricGroup metricGroup)
     {
         return Db.GetTable<MetricGroup>().InsertAsync(() => new MetricGroup
         {

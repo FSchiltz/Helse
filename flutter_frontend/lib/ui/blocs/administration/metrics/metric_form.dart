@@ -13,13 +13,19 @@ class MetricAddForm extends StatelessWidget {
   final void Function(MetricDataType? value) typeCallback;
   final MetricSummary? summary;
   final MetricDataType? type;
+  final List<MetricGroup> groups;
 
   final void Function(bool value) visibleCallback;
+  final void Function(bool value) showCallback;
   final bool visible;
+  final bool showDashboard;
 
   final FocusNode focusNodeName = FocusNode();
   final FocusNode focusNodeDescription = FocusNode();
   final FocusNode focusNodeUnit = FocusNode();
+
+  final int group;
+  final void Function(int value) groupCallback;
 
   MetricAddForm({
     super.key,
@@ -32,6 +38,11 @@ class MetricAddForm extends StatelessWidget {
     required this.type,
     required this.visible,
     required this.visibleCallback,
+    required this.group,
+    required this.groupCallback,
+    required this.groups,
+    required this.showDashboard,
+    required this.showCallback
   });
 
   @override
@@ -59,7 +70,13 @@ class MetricAddForm extends StatelessWidget {
           onEditingComplete: () => focusNodeUnit.requestFocus(),
         ),
         const SizedBox(height: 10),
-        SquareTextField(controller: controllerUnit, icon: Icons.email_sharp, focusNode: focusNodeUnit, theme: theme, label: "Unit"),
+        SquareTextField(
+          controller: controllerUnit,
+          icon: Icons.email_sharp,
+          focusNode: focusNodeUnit,
+          theme: theme,
+          label: "Unit",
+        ),
         const SizedBox(height: 10),
         EnumInput(
           value: type,
@@ -77,11 +94,28 @@ class MetricAddForm extends StatelessWidget {
         const SizedBox(height: 10),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Row(children: [
-            const Text("Visible: "),
-            StatefullCheck(visible, visibleCallback),
-          ]),
+          child: Row(
+            children: [
+              const Text("Visible: "),
+              StatefullCheck(visible, visibleCallback),
+            ],
+          ),
+        ),const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              const Text("Show on dashboard: "),
+              StatefullCheck(showDashboard, showCallback),
+            ],
+          ),
         ),
+        SizedBox(height: 10,),
+        EnumInput(
+          value: group,
+          groups.map((x) => DropDownItem(x.id, x.name)).toList(),
+          (value) => groupCallback.call(value ?? 0),
+          label: 'Summary',)
       ],
     );
   }

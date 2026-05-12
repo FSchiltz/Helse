@@ -171,15 +171,7 @@ public static class MetricsLogic
             throw new InvalidDataException("Text can only be summarized with latest");
         }
 
-        await db.Insert(new Data.Models.MetricType
-        {
-            Name = metric.Name,
-            Description = metric.Description,
-            SummaryType = (long)metric.SummaryType,
-            Type = (long)metric.Type,
-            Unit = metric.Unit,
-            Visible = metric.Visible,
-        });
+        await db.Insert(metric);
 
         return TypedResults.NoContent();
     }
@@ -195,16 +187,7 @@ public static class MetricsLogic
             throw new InvalidDataException("Text can only be summarized with latest");
         }
 
-        await db.Update(new Data.Models.MetricType
-        {
-            Id = metric.Id,
-            Name = metric.Name,
-            Description = metric.Description,
-            SummaryType = (long)metric.SummaryType,
-            Type = (long)metric.Type,
-            Unit = metric.Unit,
-            Visible = metric.Visible,
-        });
+        await db.Update(metric);
 
         return TypedResults.NoContent();
     }
@@ -238,13 +221,7 @@ public static class MetricsLogic
         if (admin is not null)
             return admin;
 
-        await db.Insert(new Data.Models.MetricGroup
-        {
-            Name = metric.Name,
-            Description = metric.Description,
-            ShowOnDashboard = metric.ShowOnDashboard,
-            ShowTitle = metric.ShowTitle,
-        });
+        await db.Insert(metric);
 
         return TypedResults.NoContent();
     }
@@ -255,14 +232,7 @@ public static class MetricsLogic
         if (admin is not null)
             return admin;
 
-        await db.Update(new Data.Models.MetricGroup
-        {
-            Id = metric.Id,
-            Name = metric.Name,
-            Description = metric.Description,
-            ShowOnDashboard = metric.ShowOnDashboard,
-            ShowTitle = metric.ShowTitle,
-        });
+        await db.Update(metric);
 
         return TypedResults.NoContent();
     }

@@ -23,7 +23,7 @@ public class MigrationHelper(MigrationSettings settings, ILogger<MigrationHelper
         }
         else
         {
-            throw new Exception("Migration error");
+            throw new Exception("Migration error" + result.Error);
         }
     }
 

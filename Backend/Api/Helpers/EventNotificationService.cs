@@ -88,11 +88,11 @@ public class EventNotificationService(IServiceProvider serviceProvider, ILogger<
 
                     await health.MarkEventNotificationSent(e.Id);
                 }
-                logger.LogInformation("Sent event notification for event {EventId} to {Email}.", e.Id, e.User.Email);
+                logger.LogInformation("Sent event notification for event {EventId} to {Email}.", e.Id, e.User?.Email);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to send event notification for event {EventId} to {Email}.", e.Id, e.User.Email);
+                logger.LogError(ex, "Failed to send event notification for event {EventId} to {Email}.", e.Id, e.User?.Email);
             }
         }
     }

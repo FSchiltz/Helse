@@ -531,6 +531,105 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
+  Future<Response<dynamic>> _apiMetricsTypeGroupsPost({
+    required MetricGroup? body,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["MetricsLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/metrics/type/groups');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiMetricsTypeGroupsPut({
+    required MetricGroup? body,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["MetricsLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/metrics/type/groups');
+    final $body = body;
+    final Request $request = Request(
+      'PUT',
+      $url,
+      client.baseUrl,
+      body: $body,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<List<MetricGroup>>> _apiMetricsTypeGroupsGet({
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["MetricsLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/metrics/type/groups');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      tag: swaggerMetaData,
+    );
+    return client.send<List<MetricGroup>, MetricGroup>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiMetricsTypeGroupsIdDelete({
+    required int? id,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["MetricsLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/metrics/type/groups/${id}');
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
   Future<Response<List<EventSummary>>> _apiEventsSummaryGet({
     required int? type,
     required DateTime? start,

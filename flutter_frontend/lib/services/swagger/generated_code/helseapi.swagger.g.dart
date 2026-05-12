@@ -238,6 +238,23 @@ Map<String, dynamic> _$MetricToJson(Metric instance) => <String, dynamic>{
   'source': fileTypesNullableToJson(instance.source),
 };
 
+MetricGroup _$MetricGroupFromJson(Map<String, dynamic> json) => MetricGroup(
+  name: json['name'] as String,
+  description: json['description'] as String,
+  showOnDashboard: json['showOnDashboard'] as bool?,
+  showTitle: json['showTitle'] as bool?,
+  id: (json['id'] as num?)?.toInt(),
+);
+
+Map<String, dynamic> _$MetricGroupToJson(MetricGroup instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'description': instance.description,
+      'showOnDashboard': instance.showOnDashboard,
+      'showTitle': instance.showTitle,
+      'id': instance.id,
+    };
+
 MetricType _$MetricTypeFromJson(Map<String, dynamic> json) => MetricType(
   name: json['name'] as String,
   unit: json['unit'] as String?,
@@ -247,6 +264,8 @@ MetricType _$MetricTypeFromJson(Map<String, dynamic> json) => MetricType(
   id: (json['id'] as num?)?.toInt(),
   userEditable: json['userEditable'] as bool?,
   visible: json['visible'] as bool?,
+  showOnDashboard: json['showOnDashboard'] as bool?,
+  groupId: (json['groupId'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$MetricTypeToJson(MetricType instance) =>
@@ -259,6 +278,8 @@ Map<String, dynamic> _$MetricTypeToJson(MetricType instance) =>
       'id': instance.id,
       'userEditable': instance.userEditable,
       'visible': instance.visible,
+      'showOnDashboard': instance.showOnDashboard,
+      'groupId': instance.groupId,
     };
 
 Oauth _$OauthFromJson(Map<String, dynamic> json) => Oauth(

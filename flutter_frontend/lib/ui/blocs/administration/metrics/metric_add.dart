@@ -25,6 +25,10 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
   MetricSummary? _metricSummary;
   MetricDataType? _type;
   bool _visible = true;
+  bool _showDashboard = true;
+  int _groupId = 0;
+
+  List<MetricGroup> _groups = [];
 
   @override
   void initState() {
@@ -32,6 +36,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
     _type = widget.edit?.type;
     _metricSummary = widget.edit?.summaryType;
     _visible = widget.edit?.visible ?? true;
+    _loadGroup();
   }
 
   @override
@@ -42,6 +47,9 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
       controllerDescription.text = edit.description ?? "";
       controllerName.text = edit.name;
       controllerUnit.text = edit.unit ?? "";
+      _visible = edit.visible ?? false;
+      _showDashboard = edit.showOnDashboard ?? false;
+      _groupId = edit.groupId ?? 0;
     }
 
     return SquareDialog(
@@ -78,6 +86,15 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
                 visibleCallback: (bool value) => setState(() {
                   _visible = value;
                 }),
+                group: _groupId,
+                groupCallback: (int value) => setState(() {
+                  _groupId = value;
+                }),
+                groups: _groups,
+                showDashboard: _showDashboard,
+                showCallback: (bool value) => setState(() {
+                  _showDashboard = value;
+                }),
               ),
             ],
           ),
@@ -98,6 +115,8 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
           type: _type,
           id: widget.edit?.id ?? 0,
           visible: _visible,
+          showOnDashboard: _showDashboard,
+          groupId: _groupId,
           userEditable: true,
         );
         String text;
@@ -129,5 +148,13 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
     controllerName.dispose();
     controllerUnit.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadGroup() async {
+    var result = (await DI.metric.metricsGroup()) ?? [];
+    result.add(MetricGroup(name: "Choose", description: '', id: 0));
+    setState(() {
+      _groups = result;
+    });
   }
 }

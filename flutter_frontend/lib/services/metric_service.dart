@@ -29,13 +29,34 @@ class MetricService extends ApiService {
     await call(() => api.apiMetricsTypeIdDelete(id: metric));
   }
 
-  Future<List<Metric>> metrics(int? type, DateTime? start, DateTime? end, {int? person, bool simple = false}) async {
+  Future<List<Metric>> metrics(
+    int? type,
+    DateTime? start,
+    DateTime? end, {
+    int? person,
+    bool simple = false,
+  }) async {
     var api = await getService();
     List<Metric>? metrics;
     if (simple) {
-      metrics = await call(() => api.apiMetricsSummaryGet(tile: 16, type: type, start: start?.toUtc(), end: end?.toUtc(), personId: person));
+      metrics = await call(
+        () => api.apiMetricsSummaryGet(
+          tile: 16,
+          type: type,
+          start: start?.toUtc(),
+          end: end?.toUtc(),
+          personId: person,
+        ),
+      );
     } else {
-      metrics = await call(() => api.apiMetricsGet(type: type, start: start?.toUtc(), end: end?.toUtc(), personId: person));
+      metrics = await call(
+        () => api.apiMetricsGet(
+          type: type,
+          start: start?.toUtc(),
+          end: end?.toUtc(),
+          personId: person,
+        ),
+      );
     }
 
     return metrics ?? [];
@@ -49,5 +70,25 @@ class MetricService extends ApiService {
   Future<void> updateMetrics(UpdateMetric metric) async {
     var api = await getService();
     await call(() => api.apiMetricsPut(body: metric));
+  }
+
+  Future<void> addMetricsGroup(MetricGroup metric) async {
+    var api = await getService();
+    await call(() => api.apiMetricsTypeGroupsPost(body: metric));
+  }
+
+  Future<void> updateMetricsGroup(MetricGroup metric) async {
+    var api = await getService();
+    await call(() => api.apiMetricsTypeGroupsPut(body: metric));
+  }
+
+  Future<void> deleteMetricsGroup(int metric) async {
+    var api = await getService();
+    await call(() => api.apiMetricsTypeGroupsIdDelete(id: metric));
+  }
+
+  Future<List<MetricGroup>?> metricsGroup() async {
+    var api = await getService();
+    return await call(() => api.apiMetricsTypeGroupsGet());
   }
 }

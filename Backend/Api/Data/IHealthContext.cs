@@ -57,14 +57,14 @@ public interface IHealthContext : IContext
     Task Update(Api.Models.Events.UpdateEvent e);
 
     Task<EventType[]> GetEventTypes(bool? all);
-    Task Insert(EventType metric);
+    Task Insert(EventType  metric);
     Task Update(EventType type);
     Task<int> DeleteEventType(long id);
 
     Task<MetricType[]> GetMetricTypes(bool? all);
     Task<int> DeleteMetricType(long id);
-    Task Update(MetricType metric);
-    Task Insert(MetricType metric);
+    Task Update(Api.Models.Metrics.MetricType  metric);
+    Task Insert(Api.Models.Metrics.MetricType metric);
 
     Task DeleteMetric(long id);
     Task<Metric?> GetMetric(long id);
@@ -101,9 +101,9 @@ public interface IHealthContext : IContext
 
     Task<int> DeleteMetricGroup(long id);
 
-    Task Update(MetricGroup metricGroup);
+    Task Update(Api.Models.Metrics.MetricGroup metricGroup);
 
-    Task Insert(MetricGroup metricGroup);
+    Task Insert(Api.Models.Metrics.MetricGroup metricGroup);
 
     Task<MetricGroup[]> GetMetricGroups();
 }

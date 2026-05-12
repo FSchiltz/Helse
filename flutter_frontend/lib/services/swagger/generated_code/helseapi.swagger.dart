@@ -579,6 +579,104 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
+  Future<chopper.Response> apiMetricsTypeGroupsPost({
+    required MetricGroup? body,
+  }) {
+    return _apiMetricsTypeGroupsPost(body: body);
+  }
+
+  ///
+  @POST(path: '/api/metrics/type/groups', optionalBody: true)
+  Future<chopper.Response> _apiMetricsTypeGroupsPost({
+    @Body() required MetricGroup? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["MetricsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  Future<chopper.Response> apiMetricsTypeGroupsPut({
+    required MetricGroup? body,
+  }) {
+    return _apiMetricsTypeGroupsPut(body: body);
+  }
+
+  ///
+  @PUT(path: '/api/metrics/type/groups', optionalBody: true)
+  Future<chopper.Response> _apiMetricsTypeGroupsPut({
+    @Body() required MetricGroup? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["MetricsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  Future<chopper.Response<List<MetricGroup>>> apiMetricsTypeGroupsGet() {
+    generatedMapping.putIfAbsent(
+      MetricGroup,
+      () => MetricGroup.fromJsonFactory,
+    );
+
+    return _apiMetricsTypeGroupsGet();
+  }
+
+  ///
+  @GET(path: '/api/metrics/type/groups')
+  Future<chopper.Response<List<MetricGroup>>> _apiMetricsTypeGroupsGet({
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["MetricsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param id
+  Future<chopper.Response> apiMetricsTypeGroupsIdDelete({required int? id}) {
+    return _apiMetricsTypeGroupsIdDelete(id: id);
+  }
+
+  ///
+  ///@param id
+  @DELETE(path: '/api/metrics/type/groups/{id}')
+  Future<chopper.Response> _apiMetricsTypeGroupsIdDelete({
+    @Path('id') required int? id,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["MetricsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
   ///@param type
   ///@param start
   ///@param end
@@ -2435,6 +2533,108 @@ extension $MetricExtension on Metric {
 }
 
 @JsonSerializable(explicitToJson: true)
+class MetricGroup {
+  const MetricGroup({
+    required this.name,
+    required this.description,
+    this.showOnDashboard,
+    this.showTitle,
+    this.id,
+  });
+
+  factory MetricGroup.fromJson(Map<String, dynamic> json) =>
+      _$MetricGroupFromJson(json);
+
+  static const toJsonFactory = _$MetricGroupToJson;
+  Map<String, dynamic> toJson() => _$MetricGroupToJson(this);
+
+  @JsonKey(name: 'name')
+  final String name;
+  @JsonKey(name: 'description')
+  final String description;
+  @JsonKey(name: 'showOnDashboard')
+  final bool? showOnDashboard;
+  @JsonKey(name: 'showTitle')
+  final bool? showTitle;
+  @JsonKey(name: 'id')
+  final int? id;
+  static const fromJsonFactory = _$MetricGroupFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is MetricGroup &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )) &&
+            (identical(other.showOnDashboard, showOnDashboard) ||
+                const DeepCollectionEquality().equals(
+                  other.showOnDashboard,
+                  showOnDashboard,
+                )) &&
+            (identical(other.showTitle, showTitle) ||
+                const DeepCollectionEquality().equals(
+                  other.showTitle,
+                  showTitle,
+                )) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(showOnDashboard) ^
+      const DeepCollectionEquality().hash(showTitle) ^
+      const DeepCollectionEquality().hash(id) ^
+      runtimeType.hashCode;
+}
+
+extension $MetricGroupExtension on MetricGroup {
+  MetricGroup copyWith({
+    String? name,
+    String? description,
+    bool? showOnDashboard,
+    bool? showTitle,
+    int? id,
+  }) {
+    return MetricGroup(
+      name: name ?? this.name,
+      description: description ?? this.description,
+      showOnDashboard: showOnDashboard ?? this.showOnDashboard,
+      showTitle: showTitle ?? this.showTitle,
+      id: id ?? this.id,
+    );
+  }
+
+  MetricGroup copyWithWrapped({
+    Wrapped<String>? name,
+    Wrapped<String>? description,
+    Wrapped<bool?>? showOnDashboard,
+    Wrapped<bool?>? showTitle,
+    Wrapped<int?>? id,
+  }) {
+    return MetricGroup(
+      name: (name != null ? name.value : this.name),
+      description: (description != null ? description.value : this.description),
+      showOnDashboard: (showOnDashboard != null
+          ? showOnDashboard.value
+          : this.showOnDashboard),
+      showTitle: (showTitle != null ? showTitle.value : this.showTitle),
+      id: (id != null ? id.value : this.id),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class MetricType {
   const MetricType({
     required this.name,
@@ -2445,6 +2645,8 @@ class MetricType {
     this.id,
     this.userEditable,
     this.visible,
+    this.showOnDashboard,
+    this.groupId,
   });
 
   factory MetricType.fromJson(Map<String, dynamic> json) =>
@@ -2477,6 +2679,10 @@ class MetricType {
   final bool? userEditable;
   @JsonKey(name: 'visible')
   final bool? visible;
+  @JsonKey(name: 'showOnDashboard')
+  final bool? showOnDashboard;
+  @JsonKey(name: 'groupId')
+  final int? groupId;
   static const fromJsonFactory = _$MetricTypeFromJson;
 
   @override
@@ -2507,7 +2713,17 @@ class MetricType {
                   userEditable,
                 )) &&
             (identical(other.visible, visible) ||
-                const DeepCollectionEquality().equals(other.visible, visible)));
+                const DeepCollectionEquality().equals(
+                  other.visible,
+                  visible,
+                )) &&
+            (identical(other.showOnDashboard, showOnDashboard) ||
+                const DeepCollectionEquality().equals(
+                  other.showOnDashboard,
+                  showOnDashboard,
+                )) &&
+            (identical(other.groupId, groupId) ||
+                const DeepCollectionEquality().equals(other.groupId, groupId)));
   }
 
   @override
@@ -2523,6 +2739,8 @@ class MetricType {
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(userEditable) ^
       const DeepCollectionEquality().hash(visible) ^
+      const DeepCollectionEquality().hash(showOnDashboard) ^
+      const DeepCollectionEquality().hash(groupId) ^
       runtimeType.hashCode;
 }
 
@@ -2536,6 +2754,8 @@ extension $MetricTypeExtension on MetricType {
     int? id,
     bool? userEditable,
     bool? visible,
+    bool? showOnDashboard,
+    int? groupId,
   }) {
     return MetricType(
       name: name ?? this.name,
@@ -2546,6 +2766,8 @@ extension $MetricTypeExtension on MetricType {
       id: id ?? this.id,
       userEditable: userEditable ?? this.userEditable,
       visible: visible ?? this.visible,
+      showOnDashboard: showOnDashboard ?? this.showOnDashboard,
+      groupId: groupId ?? this.groupId,
     );
   }
 
@@ -2558,6 +2780,8 @@ extension $MetricTypeExtension on MetricType {
     Wrapped<int?>? id,
     Wrapped<bool?>? userEditable,
     Wrapped<bool?>? visible,
+    Wrapped<bool?>? showOnDashboard,
+    Wrapped<int?>? groupId,
   }) {
     return MetricType(
       name: (name != null ? name.value : this.name),
@@ -2570,6 +2794,10 @@ extension $MetricTypeExtension on MetricType {
           ? userEditable.value
           : this.userEditable),
       visible: (visible != null ? visible.value : this.visible),
+      showOnDashboard: (showOnDashboard != null
+          ? showOnDashboard.value
+          : this.showOnDashboard),
+      groupId: (groupId != null ? groupId.value : this.groupId),
     );
   }
 }
