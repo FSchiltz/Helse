@@ -41,6 +41,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
             Stop = e.Stop,
             Start = e.Start,
             Tag = e.Tag,
+            NotificationTime = e.NotificationTime,            
         });
     }
 
@@ -90,10 +91,10 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
             .ToArrayAsync();
     }
 
-    public Task<Event[]> GetEventsStartingSoon(DateTime start, DateTime end)
+    public Task<Event[]> GetEventToPublish(DateTime start, DateTime end)
     {
         return Db.GetTable<Event>()
-            .Where(x => x.Start > start && x.Start <= end && !x.NotificationSent)
+            .Where(x => x.NotificationTime != null && x.NotificationTime > start && x.NotificationTime <= end && !x.NotificationSent)
             .ToArrayAsync();
     }
 
@@ -321,6 +322,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
         .Set(x => x.Stop, e.Stop)
         .Set(x => x.Description, e.Description)
         .Set(x => x.Tag, e.Tag)
+        .Set(x => x.NotificationTime, e.NotificationTime)
         .UpdateAsync();
     }
 }

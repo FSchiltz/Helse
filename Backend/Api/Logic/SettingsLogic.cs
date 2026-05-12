@@ -1,6 +1,7 @@
 using Api.Data;
 using Api.Helpers;
 using Api.Models.Settings.Admin;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Api.Logic;
 
@@ -43,16 +44,8 @@ public static class SettingsLogic
     public static async Task<IResult> PostOauthAsync(Oauth settings, IUserContext users, ISettingsContext db, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger(nameof(SettingsLogic));
-
         var admin = await users.IsAdmin(context.User);
-        if (admin is not null)
-            return admin;
-
-        await db.SaveSettingsAsync(Oauth.Name, settings);
-
-        log.LogInformation("Oauth settings saved");
-
-        return TypedResults.Created();
+        return admin ?? await db.Save(Smtp.Name, settings, log);
     }
 
     /// <summary>
@@ -65,16 +58,8 @@ public static class SettingsLogic
     public static async Task<IResult> PostProxyAsync(Proxy settings, IUserContext users, ISettingsContext db, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger(nameof(SettingsLogic));
-
         var admin = await users.IsAdmin(context.User);
-        if (admin is not null)
-            return admin;
-
-        await db.SaveSettingsAsync(Proxy.Name, settings);
-
-        log.LogInformation("Proxy settings saved");
-
-        return TypedResults.Created();
+        return admin ?? await db.Save(Smtp.Name, settings, log);
     }
 
     /// <summary>
@@ -99,15 +84,42 @@ public static class SettingsLogic
     public static async Task<IResult> PostSmtpAsync(Smtp settings, IUserContext users, ISettingsContext db, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger(nameof(SettingsLogic));
-
         var admin = await users.IsAdmin(context.User);
-        if (admin is not null)
-            return admin;
+        return admin ?? await db.Save(Smtp.Name, settings, log);
+    }
 
-        await db.SaveSettingsAsync(Smtp.Name, settings);
+    /// <summary>
+    /// Get the gotify settings
+    /// </summary>
+    /// <param name="users">The user context</param>
+    /// <param name="context">The settings context</param>
+    /// <returns>The settings</returns>
+    public static async Task<IResult> GetGotifyAsync(IUserContext users, ISettingsContext settings, HttpContext context)
+    {
+        var admin = await users.IsAdmin(context.User);
+        return admin ?? TypedResults.Ok(await settings.GetSettings<Gotify>(Gotify.Name));
+    }
+
+    /// <summary>
+    /// Update the gotify settings
+    /// </summary>
+    /// <param name="settings"></param>
+    /// <param name="users"></param>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public static async Task<IResult> PostGotifyAsync(Gotify settings, IUserContext users, ISettingsContext db, HttpContext context, ILoggerFactory logger)
+    {
+        var log = logger.CreateLogger(nameof(SettingsLogic));
+        var admin = await users.IsAdmin(context.User);
+        return admin ?? await db.Save(Gotify.Name, settings, log);
+    }
+
+    private static async Task<Created> Save<T>(this ISettingsContext db, string name, T settings, ILogger log)
+    where T : class
+    {
+        await db.SaveSettingsAsync(name, settings);
 
         log.LogInformation("SMTP settings saved");
-
         return TypedResults.Created();
     }
 }

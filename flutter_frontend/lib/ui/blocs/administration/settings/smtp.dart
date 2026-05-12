@@ -71,11 +71,8 @@ class _SmtpFormViewState extends State<SmtpFormView> {
   final TextEditingController _controllerFromEmail = TextEditingController();
   final TextEditingController _controllerUserName = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
-  final TextEditingController _controllerPollingSeconds =
-      TextEditingController();
-  final TextEditingController _controllerStartingWindowMinutes =
-      TextEditingController();
   bool _enableSsl = true;
+  bool _enabled = false;
 
   @override
   void initState() {
@@ -85,10 +82,8 @@ class _SmtpFormViewState extends State<SmtpFormView> {
     _controllerFromEmail.text = widget.data.fromEmail ?? '';
     _controllerUserName.text = widget.data.userName ?? '';
     _controllerPassword.text = widget.data.password ?? '';
-    _controllerPollingSeconds.text = widget.data.pollingSeconds.toString();
-    _controllerStartingWindowMinutes.text = widget.data.startingWindowMinutes
-        .toString();
     _enableSsl = widget.data.enableSsl ?? false;
+    _enabled = widget.data.enabled ?? false;
   }
 
   @override
@@ -104,153 +99,129 @@ class _SmtpFormViewState extends State<SmtpFormView> {
           const SizedBox(height: 5),
           Row(
             children: [
-              const Text('Enable SSL'),
+              const Text('Enable'),
               CustomSwitch(
-                value: _enableSsl,
+                value: _enabled,
                 onChanged: (bool? value) {
                   setState(() {
-                    _enableSsl = value!;
+                    _enabled = value!;
                   });
                 },
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          if (_enabled) ..._fields(theme),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _fields(ColorScheme theme) {
+    return [
+      const SizedBox(height: 5),
+      Row(
+        children: [
+          const Text('Enable SSL'),
+          CustomSwitch(
+            value: _enableSsl,
+            onChanged: (bool? value) {
+              setState(() {
+                _enableSsl = value!;
+              });
+            },
+          ),
+        ],
+      ),
+      const SizedBox(height: 10),
+      SizedBox(
+        width: 400,
+        child: SquareTextField(
+          controller: _controllerHost,
+          label: 'SMTP host',
+          icon: Icons.mail_sharp,
+          theme: theme,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'SMTP host is required';
+            }
+            return null;
+          },
+        ),
+      ),
+      const SizedBox(height: 10),
+      Row(
+        children: [
           SizedBox(
-            width: 400,
+            width: 150,
             child: SquareTextField(
-              controller: _controllerHost,
-              label: 'SMTP host',
-              icon: Icons.mail_sharp,
+              controller: _controllerPort,
+              label: 'SMTP port',
+              icon: Icons.numbers,
               theme: theme,
+              type: TextInputType.number,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'SMTP host is required';
+                  return 'Port is required';
+                }
+                if (int.tryParse(value) == null) {
+                  return 'Invalid port';
                 }
                 return null;
               },
             ),
           ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              SizedBox(
-                width: 150,
-                child: SquareTextField(
-                  controller: _controllerPort,
-                  label: 'SMTP port',
-                  icon: Icons.numbers,
-                  theme: theme,
-                  type: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Port is required';
-                    }
-                    if (int.tryParse(value) == null) {
-                      return 'Invalid port';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(width: 20),
-              SizedBox(
-                width: 250,
-                child: SquareTextField(
-                  controller: _controllerFromEmail,
-                  label: 'From email',
-                  icon: Icons.alternate_email_sharp,
-                  theme: theme,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'From email is required';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
+          const SizedBox(width: 20),
           SizedBox(
-            width: 400,
+            width: 250,
             child: SquareTextField(
-              controller: _controllerUserName,
-              label: 'Username',
-              icon: Icons.person_sharp,
+              controller: _controllerFromEmail,
+              label: 'From email',
+              icon: Icons.alternate_email_sharp,
               theme: theme,
-            ),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            width: 400,
-            child: SquareTextField(
-              controller: _controllerPassword,
-              label: 'Password',
-              icon: Icons.password_sharp,
-              theme: theme,
-              obscureText: true,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              SizedBox(
-                width: 150,
-                child: SquareTextField(
-                  controller: _controllerPollingSeconds,
-                  label: 'Polling seconds',
-                  icon: Icons.timer_sharp,
-                  theme: theme,
-                  type: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Required';
-                    }
-                    if (int.tryParse(value) == null) {
-                      return 'Must be a number';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(width: 20),
-              SizedBox(
-                width: 200,
-                child: SquareTextField(
-                  controller: _controllerStartingWindowMinutes,
-                  label: 'Window minutes',
-                  icon: Icons.schedule_sharp,
-                  theme: theme,
-                  type: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Required';
-                    }
-                    if (int.tryParse(value) == null) {
-                      return 'Must be a number';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: 200,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(50),
-                shape: const ContinuousRectangleBorder(),
-              ),
-              onPressed: submit,
-              child: const Text('Save'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'From email is required';
+                }
+                return null;
+              },
             ),
           ),
         ],
       ),
-    );
+      const SizedBox(height: 10),
+      SizedBox(
+        width: 400,
+        child: SquareTextField(
+          controller: _controllerUserName,
+          label: 'Username',
+          icon: Icons.person_sharp,
+          theme: theme,
+        ),
+      ),
+      const SizedBox(height: 10),
+      SizedBox(
+        width: 400,
+        child: SquareTextField(
+          controller: _controllerPassword,
+          label: 'Password',
+          icon: Icons.password_sharp,
+          theme: theme,
+          obscureText: true,
+        ),
+      ),
+      const SizedBox(height: 20),
+      SizedBox(
+        width: 200,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size.fromHeight(50),
+            shape: const ContinuousRectangleBorder(),
+          ),
+          onPressed: submit,
+          child: const Text('Save'),
+        ),
+      ),
+    ];
   }
 
   void submit() async {
@@ -267,9 +238,7 @@ class _SmtpFormViewState extends State<SmtpFormView> {
           password: _controllerPassword.text.isNotEmpty
               ? _controllerPassword.text
               : null,
-          pollingSeconds: int.tryParse(_controllerPollingSeconds.text) ?? 60,
-          startingWindowMinutes:
-              int.tryParse(_controllerStartingWindowMinutes.text) ?? 15,
+          enabled: _enabled,
         );
 
         await DI.settings.api().updateSmtp(smtp);

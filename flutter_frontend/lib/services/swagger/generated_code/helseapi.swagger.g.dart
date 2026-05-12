@@ -44,6 +44,9 @@ CreateEvent _$CreateEventFromJson(Map<String, dynamic> json) => CreateEvent(
   start: json['start'] == null ? null : DateTime.parse(json['start'] as String),
   stop: json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
   tag: json['tag'] as String?,
+  notificationTime: json['notificationTime'] == null
+      ? null
+      : DateTime.parse(json['notificationTime'] as String),
 );
 
 Map<String, dynamic> _$CreateEventToJson(CreateEvent instance) =>
@@ -53,6 +56,7 @@ Map<String, dynamic> _$CreateEventToJson(CreateEvent instance) =>
       'start': instance.start?.toIso8601String(),
       'stop': instance.stop?.toIso8601String(),
       'tag': instance.tag,
+      'notificationTime': instance.notificationTime?.toIso8601String(),
     };
 
 CreateMetric _$CreateMetricFromJson(Map<String, dynamic> json) => CreateMetric(
@@ -101,6 +105,9 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
   start: json['start'] == null ? null : DateTime.parse(json['start'] as String),
   stop: json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
   tag: json['tag'] as String?,
+  notificationTime: json['notificationTime'] == null
+      ? null
+      : DateTime.parse(json['notificationTime'] as String),
 );
 
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
@@ -116,6 +123,7 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
   'start': instance.start?.toIso8601String(),
   'stop': instance.stop?.toIso8601String(),
   'tag': instance.tag,
+  'notificationTime': instance.notificationTime?.toIso8601String(),
 };
 
 EventStats _$EventStatsFromJson(Map<String, dynamic> json) => EventStats(
@@ -169,6 +177,18 @@ FileType _$FileTypeFromJson(Map<String, dynamic> json) => FileType(
 Map<String, dynamic> _$FileTypeToJson(FileType instance) => <String, dynamic>{
   'type': instance.type,
   'name': instance.name,
+};
+
+Gotify _$GotifyFromJson(Map<String, dynamic> json) => Gotify(
+  enabled: json['enabled'] as bool?,
+  url: json['url'] as String?,
+  token: json['token'] as String?,
+);
+
+Map<String, dynamic> _$GotifyToJson(Gotify instance) => <String, dynamic>{
+  'enabled': instance.enabled,
+  'url': instance.url,
+  'token': instance.token,
 };
 
 ImportData _$ImportDataFromJson(Map<String, dynamic> json) => ImportData(
@@ -356,25 +376,23 @@ Map<String, dynamic> _$RightToJson(Right instance) => <String, dynamic>{
 };
 
 Smtp _$SmtpFromJson(Map<String, dynamic> json) => Smtp(
+  enabled: json['enabled'] as bool?,
   smtpHost: json['smtpHost'] as String?,
   smtpPort: (json['smtpPort'] as num?)?.toInt(),
   enableSsl: json['enableSsl'] as bool?,
   fromEmail: json['fromEmail'] as String?,
   userName: json['userName'] as String?,
   password: json['password'] as String?,
-  pollingSeconds: (json['pollingSeconds'] as num?)?.toInt(),
-  startingWindowMinutes: (json['startingWindowMinutes'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$SmtpToJson(Smtp instance) => <String, dynamic>{
+  'enabled': instance.enabled,
   'smtpHost': instance.smtpHost,
   'smtpPort': instance.smtpPort,
   'enableSsl': instance.enableSsl,
   'fromEmail': instance.fromEmail,
   'userName': instance.userName,
   'password': instance.password,
-  'pollingSeconds': instance.pollingSeconds,
-  'startingWindowMinutes': instance.startingWindowMinutes,
 };
 
 Status _$StatusFromJson(Map<String, dynamic> json) => Status(
@@ -428,6 +446,9 @@ UpdateEvent _$UpdateEventFromJson(Map<String, dynamic> json) => UpdateEvent(
   start: json['start'] == null ? null : DateTime.parse(json['start'] as String),
   stop: json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
   tag: json['tag'] as String?,
+  notificationTime: json['notificationTime'] == null
+      ? null
+      : DateTime.parse(json['notificationTime'] as String),
 );
 
 Map<String, dynamic> _$UpdateEventToJson(UpdateEvent instance) =>
@@ -438,6 +459,7 @@ Map<String, dynamic> _$UpdateEventToJson(UpdateEvent instance) =>
       'start': instance.start?.toIso8601String(),
       'stop': instance.stop?.toIso8601String(),
       'tag': instance.tag,
+      'notificationTime': instance.notificationTime?.toIso8601String(),
     };
 
 UpdateMetric _$UpdateMetricFromJson(Map<String, dynamic> json) => UpdateMetric(

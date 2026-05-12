@@ -36,7 +36,7 @@ public interface IHealthContext : IContext
     /// </summary>
     /// <param name="start">The start of the time frame</param>
     /// <param name="end">The end of the time frame</param>
-    Task<Event[]> GetEventsStartingSoon(DateTime start, DateTime end);
+    Task<Event[]> GetEventToPublish(DateTime start, DateTime end);
 
     /// <summary>
     /// Mark an event as having had its notification sent

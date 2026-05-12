@@ -1270,6 +1270,51 @@
         }
       }
     },
+    "/api/admin/settings/gotify": {
+      "get": {
+        "tags": [
+          "SettingsLogic"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gotify"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SettingsLogic"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Gotify"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/api/admin/stats/users": {
       "get": {
         "tags": [
@@ -1562,6 +1607,13 @@
               "null",
               "string"
             ]
+          },
+          "notificationTime": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           }
         }
       },
@@ -1701,6 +1753,13 @@
               "null",
               "string"
             ]
+          },
+          "notificationTime": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           }
         }
       },
@@ -1808,6 +1867,26 @@
           "GoogleHealthConnect",
           "Clue"
         ]
+      },
+      "Gotify": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "url": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "token": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
       },
       "ImportData": {
         "type": "object",
@@ -2195,6 +2274,9 @@
       "Smtp": {
         "type": "object",
         "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
           "smtpHost": {
             "type": "string"
           },
@@ -2223,22 +2305,6 @@
               "null",
               "string"
             ]
-          },
-          "pollingSeconds": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
-          "startingWindowMinutes": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
           }
         }
       },
@@ -2354,6 +2420,13 @@
               "null",
               "string"
             ]
+          },
+          "notificationTime": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           }
         }
       },

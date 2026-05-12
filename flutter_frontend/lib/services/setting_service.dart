@@ -34,4 +34,14 @@ class SettingService extends ApiService {
     var api = await getService();
     await call(() => api.apiAdminSettingsSmtpPost(body: settings));
   }
+
+  Future<Gotify> gotify() async {
+    var api = await getService();
+    return await call(api.apiAdminSettingsGotifyGet) ?? const Gotify();
+  }
+
+  Future<void> updateGotify(Gotify settings) async {
+    var api = await getService();
+    await call(() => api.apiAdminSettingsGotifyPost(body: settings));
+  }
 }

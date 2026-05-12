@@ -32,6 +32,7 @@ public static class EventsLogic
             File = x.FileId,
             Start = DateTime.SpecifyKind(x.Start, DateTimeKind.Utc),
             Valid = x.Valid,
+            NotificationTime = x.NotificationTime,
         });
 
         return TypedResults.Ok(result);

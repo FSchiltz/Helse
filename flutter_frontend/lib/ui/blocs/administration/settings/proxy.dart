@@ -32,26 +32,29 @@ class _ProxyViewState extends State<ProxyView> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _getData(),
-        builder: (context, snapshot) {
-          // Checking if future is resolved
-          if (snapshot.connectionState == ConnectionState.done) {
-            // If we got an error
-            if (snapshot.hasError) {
-              return Center(
-                child: Text(
-                  '${snapshot.error} occurred',
-                  style: const TextStyle(fontSize: 18),
-                ),
-              );
+      future: _getData(),
+      builder: (context, snapshot) {
+        // Checking if future is resolved
+        if (snapshot.connectionState == ConnectionState.done) {
+          // If we got an error
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                '${snapshot.error} occurred',
+                style: const TextStyle(fontSize: 18),
+              ),
+            );
 
-              // if we got our data
-            } else if (snapshot.hasData) {
-              return ProxyFormView(snapshot.data, callback: _resetSettings);
-            }
+            // if we got our data
+          } else if (snapshot.hasData) {
+            return ProxyFormView(snapshot.data, callback: _resetSettings);
           }
-          return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
-        });
+        }
+        return const Center(
+          child: SizedBox(width: 50, height: 50, child: HelseLoader()),
+        );
+      },
+    );
   }
 }
 
@@ -93,51 +96,18 @@ class _ProxyFormViewState extends State<ProxyFormView> {
           const SizedBox(height: 5),
           Row(
             children: [
-              const Text("Proxy auth"),
+              const Text("Enabled"),
               CustomSwitch(
-                  value: _proxyAuth,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _proxyAuth = value!;
-                    });
-                  })
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              const Text("Auto register"),
-              CustomSwitch(
-                  value: _proxyAutoRegister,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _proxyAutoRegister = value!;
-                    });
-                  })
-            ],
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: 400,
-            child: SquareTextField(
-              controller: _controllerHeader,
-              label: "Header name",
-              icon: Icons.text_fields_sharp,
-              theme: theme,
-            ),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: 200,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(50),
-                shape: const ContinuousRectangleBorder(),
+                value: _proxyAuth,
+                onChanged: (bool? value) {
+                  setState(() {
+                    _proxyAuth = value!;
+                  });
+                },
               ),
-              onPressed: submit,
-              child: const Text("Save"),
-            ),
+            ],
           ),
+          if (_proxyAuth) ..._fields(theme),
         ],
       ),
     );
@@ -148,12 +118,12 @@ class _ProxyFormViewState extends State<ProxyFormView> {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
         await DI.settings.api().updateProxy(
-              Proxy(
-                autoRegister: _proxyAutoRegister,
-                proxyAuth: _proxyAuth,
-                header: _controllerHeader.text,
-              ),
-            );
+          Proxy(
+            autoRegister: _proxyAutoRegister,
+            proxyAuth: _proxyAuth,
+            header: _controllerHeader.text,
+          ),
+        );
 
         Notify.show("Saved Successfully");
 
@@ -162,5 +132,46 @@ class _ProxyFormViewState extends State<ProxyFormView> {
     } catch (ex) {
       Notify.showError("$ex");
     }
+  }
+
+  List<Widget> _fields(ColorScheme theme) {
+    return [
+      const SizedBox(height: 10),
+      Row(
+        children: [
+          const Text("Auto register"),
+          CustomSwitch(
+            value: _proxyAutoRegister,
+            onChanged: (bool? value) {
+              setState(() {
+                _proxyAutoRegister = value!;
+              });
+            },
+          ),
+        ],
+      ),
+      const SizedBox(height: 20),
+      SizedBox(
+        width: 400,
+        child: SquareTextField(
+          controller: _controllerHeader,
+          label: "Header name",
+          icon: Icons.text_fields_sharp,
+          theme: theme,
+        ),
+      ),
+      const SizedBox(height: 20),
+      SizedBox(
+        width: 200,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size.fromHeight(50),
+            shape: const ContinuousRectangleBorder(),
+          ),
+          onPressed: submit,
+          child: const Text("Save"),
+        ),
+      ),
+    ];
   }
 }

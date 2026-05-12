@@ -61,4 +61,7 @@ public class Event
 
     [Column]
     public DateTime Created { get; set; }
+
+    [Column]
+    public DateTime? NotificationTime { get; set; }
 }

@@ -207,6 +207,14 @@ public static class Endpoints
             .Produces((int)HttpStatusCode.NoContent)
             .Produces((int)HttpStatusCode.Unauthorized);
 
+        settings.MapGet("/gotify", SettingsLogic.GetGotifyAsync)
+            .Produces<Gotify>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
+        settings.MapPost("/gotify", SettingsLogic.PostGotifyAsync)
+            .Produces((int)HttpStatusCode.NoContent)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
         settings.MapGet("/smtp", SettingsLogic.GetSmtpAsync)
             .Produces<Smtp>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);

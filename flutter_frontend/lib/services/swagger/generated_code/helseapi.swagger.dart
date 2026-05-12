@@ -1062,6 +1062,51 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
+  Future<chopper.Response<Gotify>> apiAdminSettingsGotifyGet() {
+    generatedMapping.putIfAbsent(Gotify, () => Gotify.fromJsonFactory);
+
+    return _apiAdminSettingsGotifyGet();
+  }
+
+  ///
+  @GET(path: '/api/admin/settings/gotify')
+  Future<chopper.Response<Gotify>> _apiAdminSettingsGotifyGet({
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["SettingsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  Future<chopper.Response> apiAdminSettingsGotifyPost({required Gotify? body}) {
+    return _apiAdminSettingsGotifyPost(body: body);
+  }
+
+  ///
+  @POST(path: '/api/admin/settings/gotify', optionalBody: true)
+  Future<chopper.Response> _apiAdminSettingsGotifyPost({
+    @Body() required Gotify? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["SettingsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
   Future<chopper.Response<UserStats>> apiAdminStatsUsersGet() {
     generatedMapping.putIfAbsent(UserStats, () => UserStats.fromJsonFactory);
 
@@ -1397,6 +1442,7 @@ class CreateEvent {
     this.start,
     this.stop,
     this.tag,
+    this.notificationTime,
   });
 
   factory CreateEvent.fromJson(Map<String, dynamic> json) =>
@@ -1415,6 +1461,8 @@ class CreateEvent {
   final DateTime? stop;
   @JsonKey(name: 'tag')
   final String? tag;
+  @JsonKey(name: 'notificationTime')
+  final DateTime? notificationTime;
   static const fromJsonFactory = _$CreateEventFromJson;
 
   @override
@@ -1433,7 +1481,12 @@ class CreateEvent {
             (identical(other.stop, stop) ||
                 const DeepCollectionEquality().equals(other.stop, stop)) &&
             (identical(other.tag, tag) ||
-                const DeepCollectionEquality().equals(other.tag, tag)));
+                const DeepCollectionEquality().equals(other.tag, tag)) &&
+            (identical(other.notificationTime, notificationTime) ||
+                const DeepCollectionEquality().equals(
+                  other.notificationTime,
+                  notificationTime,
+                )));
   }
 
   @override
@@ -1446,6 +1499,7 @@ class CreateEvent {
       const DeepCollectionEquality().hash(start) ^
       const DeepCollectionEquality().hash(stop) ^
       const DeepCollectionEquality().hash(tag) ^
+      const DeepCollectionEquality().hash(notificationTime) ^
       runtimeType.hashCode;
 }
 
@@ -1456,6 +1510,7 @@ extension $CreateEventExtension on CreateEvent {
     DateTime? start,
     DateTime? stop,
     String? tag,
+    DateTime? notificationTime,
   }) {
     return CreateEvent(
       type: type ?? this.type,
@@ -1463,6 +1518,7 @@ extension $CreateEventExtension on CreateEvent {
       start: start ?? this.start,
       stop: stop ?? this.stop,
       tag: tag ?? this.tag,
+      notificationTime: notificationTime ?? this.notificationTime,
     );
   }
 
@@ -1472,6 +1528,7 @@ extension $CreateEventExtension on CreateEvent {
     Wrapped<DateTime?>? start,
     Wrapped<DateTime?>? stop,
     Wrapped<String?>? tag,
+    Wrapped<DateTime?>? notificationTime,
   }) {
     return CreateEvent(
       type: (type != null ? type.value : this.type),
@@ -1479,6 +1536,9 @@ extension $CreateEventExtension on CreateEvent {
       start: (start != null ? start.value : this.start),
       stop: (stop != null ? stop.value : this.stop),
       tag: (tag != null ? tag.value : this.tag),
+      notificationTime: (notificationTime != null
+          ? notificationTime.value
+          : this.notificationTime),
     );
   }
 }
@@ -1651,6 +1711,7 @@ class Event {
     this.start,
     this.stop,
     this.tag,
+    this.notificationTime,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
@@ -1682,6 +1743,8 @@ class Event {
   final DateTime? stop;
   @JsonKey(name: 'tag')
   final String? tag;
+  @JsonKey(name: 'notificationTime')
+  final DateTime? notificationTime;
   static const fromJsonFactory = _$EventFromJson;
 
   @override
@@ -1720,7 +1783,12 @@ class Event {
             (identical(other.stop, stop) ||
                 const DeepCollectionEquality().equals(other.stop, stop)) &&
             (identical(other.tag, tag) ||
-                const DeepCollectionEquality().equals(other.tag, tag)));
+                const DeepCollectionEquality().equals(other.tag, tag)) &&
+            (identical(other.notificationTime, notificationTime) ||
+                const DeepCollectionEquality().equals(
+                  other.notificationTime,
+                  notificationTime,
+                )));
   }
 
   @override
@@ -1740,6 +1808,7 @@ class Event {
       const DeepCollectionEquality().hash(start) ^
       const DeepCollectionEquality().hash(stop) ^
       const DeepCollectionEquality().hash(tag) ^
+      const DeepCollectionEquality().hash(notificationTime) ^
       runtimeType.hashCode;
 }
 
@@ -1757,6 +1826,7 @@ extension $EventExtension on Event {
     DateTime? start,
     DateTime? stop,
     String? tag,
+    DateTime? notificationTime,
   }) {
     return Event(
       user: user ?? this.user,
@@ -1771,6 +1841,7 @@ extension $EventExtension on Event {
       start: start ?? this.start,
       stop: stop ?? this.stop,
       tag: tag ?? this.tag,
+      notificationTime: notificationTime ?? this.notificationTime,
     );
   }
 
@@ -1787,6 +1858,7 @@ extension $EventExtension on Event {
     Wrapped<DateTime?>? start,
     Wrapped<DateTime?>? stop,
     Wrapped<String?>? tag,
+    Wrapped<DateTime?>? notificationTime,
   }) {
     return Event(
       user: (user != null ? user.value : this.user),
@@ -1801,6 +1873,9 @@ extension $EventExtension on Event {
       start: (start != null ? start.value : this.start),
       stop: (stop != null ? stop.value : this.stop),
       tag: (tag != null ? tag.value : this.tag),
+      notificationTime: (notificationTime != null
+          ? notificationTime.value
+          : this.notificationTime),
     );
   }
 }
@@ -2063,6 +2138,71 @@ extension $FileTypeExtension on FileType {
     return FileType(
       type: (type != null ? type.value : this.type),
       name: (name != null ? name.value : this.name),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class Gotify {
+  const Gotify({this.enabled, this.url, this.token});
+
+  factory Gotify.fromJson(Map<String, dynamic> json) => _$GotifyFromJson(json);
+
+  static const toJsonFactory = _$GotifyToJson;
+  Map<String, dynamic> toJson() => _$GotifyToJson(this);
+
+  @JsonKey(name: 'enabled')
+  final bool? enabled;
+  @JsonKey(name: 'url')
+  final String? url;
+  @JsonKey(name: 'token')
+  final String? token;
+  static const fromJsonFactory = _$GotifyFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is Gotify &&
+            (identical(other.enabled, enabled) ||
+                const DeepCollectionEquality().equals(
+                  other.enabled,
+                  enabled,
+                )) &&
+            (identical(other.url, url) ||
+                const DeepCollectionEquality().equals(other.url, url)) &&
+            (identical(other.token, token) ||
+                const DeepCollectionEquality().equals(other.token, token)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(enabled) ^
+      const DeepCollectionEquality().hash(url) ^
+      const DeepCollectionEquality().hash(token) ^
+      runtimeType.hashCode;
+}
+
+extension $GotifyExtension on Gotify {
+  Gotify copyWith({bool? enabled, String? url, String? token}) {
+    return Gotify(
+      enabled: enabled ?? this.enabled,
+      url: url ?? this.url,
+      token: token ?? this.token,
+    );
+  }
+
+  Gotify copyWithWrapped({
+    Wrapped<bool?>? enabled,
+    Wrapped<String?>? url,
+    Wrapped<String?>? token,
+  }) {
+    return Gotify(
+      enabled: (enabled != null ? enabled.value : this.enabled),
+      url: (url != null ? url.value : this.url),
+      token: (token != null ? token.value : this.token),
     );
   }
 }
@@ -3073,14 +3213,13 @@ extension $RightExtension on Right {
 @JsonSerializable(explicitToJson: true)
 class Smtp {
   const Smtp({
+    this.enabled,
     this.smtpHost,
     this.smtpPort,
     this.enableSsl,
     this.fromEmail,
     this.userName,
     this.password,
-    this.pollingSeconds,
-    this.startingWindowMinutes,
   });
 
   factory Smtp.fromJson(Map<String, dynamic> json) => _$SmtpFromJson(json);
@@ -3088,6 +3227,8 @@ class Smtp {
   static const toJsonFactory = _$SmtpToJson;
   Map<String, dynamic> toJson() => _$SmtpToJson(this);
 
+  @JsonKey(name: 'enabled')
+  final bool? enabled;
   @JsonKey(name: 'smtpHost')
   final String? smtpHost;
   @JsonKey(name: 'smtpPort')
@@ -3100,16 +3241,17 @@ class Smtp {
   final String? userName;
   @JsonKey(name: 'password')
   final String? password;
-  @JsonKey(name: 'pollingSeconds')
-  final int? pollingSeconds;
-  @JsonKey(name: 'startingWindowMinutes')
-  final int? startingWindowMinutes;
   static const fromJsonFactory = _$SmtpFromJson;
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is Smtp &&
+            (identical(other.enabled, enabled) ||
+                const DeepCollectionEquality().equals(
+                  other.enabled,
+                  enabled,
+                )) &&
             (identical(other.smtpHost, smtpHost) ||
                 const DeepCollectionEquality().equals(
                   other.smtpHost,
@@ -3139,16 +3281,6 @@ class Smtp {
                 const DeepCollectionEquality().equals(
                   other.password,
                   password,
-                )) &&
-            (identical(other.pollingSeconds, pollingSeconds) ||
-                const DeepCollectionEquality().equals(
-                  other.pollingSeconds,
-                  pollingSeconds,
-                )) &&
-            (identical(other.startingWindowMinutes, startingWindowMinutes) ||
-                const DeepCollectionEquality().equals(
-                  other.startingWindowMinutes,
-                  startingWindowMinutes,
                 )));
   }
 
@@ -3157,64 +3289,54 @@ class Smtp {
 
   @override
   int get hashCode =>
+      const DeepCollectionEquality().hash(enabled) ^
       const DeepCollectionEquality().hash(smtpHost) ^
       const DeepCollectionEquality().hash(smtpPort) ^
       const DeepCollectionEquality().hash(enableSsl) ^
       const DeepCollectionEquality().hash(fromEmail) ^
       const DeepCollectionEquality().hash(userName) ^
       const DeepCollectionEquality().hash(password) ^
-      const DeepCollectionEquality().hash(pollingSeconds) ^
-      const DeepCollectionEquality().hash(startingWindowMinutes) ^
       runtimeType.hashCode;
 }
 
 extension $SmtpExtension on Smtp {
   Smtp copyWith({
+    bool? enabled,
     String? smtpHost,
     int? smtpPort,
     bool? enableSsl,
     String? fromEmail,
     String? userName,
     String? password,
-    int? pollingSeconds,
-    int? startingWindowMinutes,
   }) {
     return Smtp(
+      enabled: enabled ?? this.enabled,
       smtpHost: smtpHost ?? this.smtpHost,
       smtpPort: smtpPort ?? this.smtpPort,
       enableSsl: enableSsl ?? this.enableSsl,
       fromEmail: fromEmail ?? this.fromEmail,
       userName: userName ?? this.userName,
       password: password ?? this.password,
-      pollingSeconds: pollingSeconds ?? this.pollingSeconds,
-      startingWindowMinutes:
-          startingWindowMinutes ?? this.startingWindowMinutes,
     );
   }
 
   Smtp copyWithWrapped({
+    Wrapped<bool?>? enabled,
     Wrapped<String?>? smtpHost,
     Wrapped<int?>? smtpPort,
     Wrapped<bool?>? enableSsl,
     Wrapped<String?>? fromEmail,
     Wrapped<String?>? userName,
     Wrapped<String?>? password,
-    Wrapped<int?>? pollingSeconds,
-    Wrapped<int?>? startingWindowMinutes,
   }) {
     return Smtp(
+      enabled: (enabled != null ? enabled.value : this.enabled),
       smtpHost: (smtpHost != null ? smtpHost.value : this.smtpHost),
       smtpPort: (smtpPort != null ? smtpPort.value : this.smtpPort),
       enableSsl: (enableSsl != null ? enableSsl.value : this.enableSsl),
       fromEmail: (fromEmail != null ? fromEmail.value : this.fromEmail),
       userName: (userName != null ? userName.value : this.userName),
       password: (password != null ? password.value : this.password),
-      pollingSeconds: (pollingSeconds != null
-          ? pollingSeconds.value
-          : this.pollingSeconds),
-      startingWindowMinutes: (startingWindowMinutes != null
-          ? startingWindowMinutes.value
-          : this.startingWindowMinutes),
     );
   }
 }
@@ -3458,6 +3580,7 @@ class UpdateEvent {
     this.start,
     this.stop,
     this.tag,
+    this.notificationTime,
   });
 
   factory UpdateEvent.fromJson(Map<String, dynamic> json) =>
@@ -3478,6 +3601,8 @@ class UpdateEvent {
   final DateTime? stop;
   @JsonKey(name: 'tag')
   final String? tag;
+  @JsonKey(name: 'notificationTime')
+  final DateTime? notificationTime;
   static const fromJsonFactory = _$UpdateEventFromJson;
 
   @override
@@ -3498,7 +3623,12 @@ class UpdateEvent {
             (identical(other.stop, stop) ||
                 const DeepCollectionEquality().equals(other.stop, stop)) &&
             (identical(other.tag, tag) ||
-                const DeepCollectionEquality().equals(other.tag, tag)));
+                const DeepCollectionEquality().equals(other.tag, tag)) &&
+            (identical(other.notificationTime, notificationTime) ||
+                const DeepCollectionEquality().equals(
+                  other.notificationTime,
+                  notificationTime,
+                )));
   }
 
   @override
@@ -3512,6 +3642,7 @@ class UpdateEvent {
       const DeepCollectionEquality().hash(start) ^
       const DeepCollectionEquality().hash(stop) ^
       const DeepCollectionEquality().hash(tag) ^
+      const DeepCollectionEquality().hash(notificationTime) ^
       runtimeType.hashCode;
 }
 
@@ -3523,6 +3654,7 @@ extension $UpdateEventExtension on UpdateEvent {
     DateTime? start,
     DateTime? stop,
     String? tag,
+    DateTime? notificationTime,
   }) {
     return UpdateEvent(
       id: id ?? this.id,
@@ -3531,6 +3663,7 @@ extension $UpdateEventExtension on UpdateEvent {
       start: start ?? this.start,
       stop: stop ?? this.stop,
       tag: tag ?? this.tag,
+      notificationTime: notificationTime ?? this.notificationTime,
     );
   }
 
@@ -3541,6 +3674,7 @@ extension $UpdateEventExtension on UpdateEvent {
     Wrapped<DateTime?>? start,
     Wrapped<DateTime?>? stop,
     Wrapped<String?>? tag,
+    Wrapped<DateTime?>? notificationTime,
   }) {
     return UpdateEvent(
       id: (id != null ? id.value : this.id),
@@ -3549,6 +3683,9 @@ extension $UpdateEventExtension on UpdateEvent {
       start: (start != null ? start.value : this.start),
       stop: (stop != null ? stop.value : this.stop),
       tag: (tag != null ? tag.value : this.tag),
+      notificationTime: (notificationTime != null
+          ? notificationTime.value
+          : this.notificationTime),
     );
   }
 }

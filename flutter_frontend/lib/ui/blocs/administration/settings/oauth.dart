@@ -34,26 +34,29 @@ class _OauthViewState extends State<OauthView> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _getData(_dummy),
-        builder: (context, snapshot) {
-          // Checking if future is resolved
-          if (snapshot.connectionState == ConnectionState.done) {
-            // If we got an error
-            if (snapshot.hasError) {
-              return Center(
-                child: Text(
-                  '${snapshot.error} occurred',
-                  style: const TextStyle(fontSize: 18),
-                ),
-              );
+      future: _getData(_dummy),
+      builder: (context, snapshot) {
+        // Checking if future is resolved
+        if (snapshot.connectionState == ConnectionState.done) {
+          // If we got an error
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                '${snapshot.error} occurred',
+                style: const TextStyle(fontSize: 18),
+              ),
+            );
 
-              // if we got our data
-            } else if (snapshot.hasData) {
-              return OauthFormView(snapshot.data, callback: _resetSettings);
-            }
+            // if we got our data
+          } else if (snapshot.hasData) {
+            return OauthFormView(snapshot.data, callback: _resetSettings);
           }
-          return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
-        });
+        }
+        return const Center(
+          child: SizedBox(width: 50, height: 50, child: HelseLoader()),
+        );
+      },
+    );
   }
 }
 
@@ -107,80 +110,16 @@ class _OauthFormViewState extends State<OauthFormView> {
             children: [
               const Text("Enabled"),
               CustomSwitch(
-                  value: _enabled,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _enabled = value!;
-                    });
-                  })
-            ],
-          ),
-          const SizedBox(height: 5),
-          SquareTextField(
-            controller: _controllerId,
-            label: "Client id",
-            icon: Icons.person_sharp,
-            theme: theme,
-          ),
-          const SizedBox(height: 10),
-          SquareTextField(
-            theme: theme,
-            controller: _controllerSecret,
-            label: "Client secret",
-            icon: Icons.password_sharp,
-          ),
-          const SizedBox(height: 10),
-          SquareTextField(
-            controller: _controllerAuth,
-            label: "Auth url",
-            icon: Icons.connect_without_contact_sharp,
-            theme: theme,
-          ),
-          const SizedBox(height: 10),
-          SquareTextField(
-            controller: _controllerToken,
-            label: "Token url",
-            icon: Icons.token_sharp,
-            theme: theme,
-          ),
-          const SizedBox(height: 5),
-          Row(
-            children: [
-              const Text("Auto register"),
-              CustomSwitch(
-                  value: _autoregister,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _autoregister = value!;
-                    });
-                  })
-            ],
-          ),
-          const SizedBox(height: 5),
-          Row(
-            children: [
-              const Text("Auto login"),
-              CustomSwitch(
-                  value: _autoLogin,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _autoLogin = value!;
-                    });
-                  })
-            ],
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: 200,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(50),
-                shape: const ContinuousRectangleBorder(),
+                value: _enabled,
+                onChanged: (bool? value) {
+                  setState(() {
+                    _enabled = value!;
+                  });
+                },
               ),
-              onPressed: submit,
-              child: const Text("Save"),
-            ),
+            ],
           ),
+          if (_enabled) ..._fields(theme),
         ],
       ),
     );
@@ -191,16 +130,16 @@ class _OauthFormViewState extends State<OauthFormView> {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
         await DI.settings.api().updateOauth(
-              Oauth(
-                clientId: _controllerId.text,
-                clientSecret: _controllerSecret.text,
-                enabled: _enabled,
-                autoRegister: _autoregister,
-                autoLogin: _autoLogin,
-                tokenurl: _controllerToken.text,
-                url: _controllerAuth.text,
-              ),
-            );
+          Oauth(
+            clientId: _controllerId.text,
+            clientSecret: _controllerSecret.text,
+            enabled: _enabled,
+            autoRegister: _autoregister,
+            autoLogin: _autoLogin,
+            tokenurl: _controllerToken.text,
+            url: _controllerAuth.text,
+          ),
+        );
 
         Notify.show("Saved Successfully");
 
@@ -209,5 +148,78 @@ class _OauthFormViewState extends State<OauthFormView> {
     } catch (ex) {
       Notify.showError("$ex");
     }
+  }
+
+  List<Widget> _fields(ColorScheme theme) {
+    return [
+      const SizedBox(height: 5),
+      SquareTextField(
+        controller: _controllerId,
+        label: "Client id",
+        icon: Icons.person_sharp,
+        theme: theme,
+      ),
+      const SizedBox(height: 10),
+      SquareTextField(
+        theme: theme,
+        controller: _controllerSecret,
+        label: "Client secret",
+        icon: Icons.password_sharp,
+      ),
+      const SizedBox(height: 10),
+      SquareTextField(
+        controller: _controllerAuth,
+        label: "Auth url",
+        icon: Icons.connect_without_contact_sharp,
+        theme: theme,
+      ),
+      const SizedBox(height: 10),
+      SquareTextField(
+        controller: _controllerToken,
+        label: "Token url",
+        icon: Icons.token_sharp,
+        theme: theme,
+      ),
+      const SizedBox(height: 5),
+      Row(
+        children: [
+          const Text("Auto register"),
+          CustomSwitch(
+            value: _autoregister,
+            onChanged: (bool? value) {
+              setState(() {
+                _autoregister = value!;
+              });
+            },
+          ),
+        ],
+      ),
+      const SizedBox(height: 5),
+      Row(
+        children: [
+          const Text("Auto login"),
+          CustomSwitch(
+            value: _autoLogin,
+            onChanged: (bool? value) {
+              setState(() {
+                _autoLogin = value!;
+              });
+            },
+          ),
+        ],
+      ),
+      const SizedBox(height: 20),
+      SizedBox(
+        width: 200,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size.fromHeight(50),
+            shape: const ContinuousRectangleBorder(),
+          ),
+          onPressed: submit,
+          child: const Text("Save"),
+        ),
+      ),
+    ];
   }
 }

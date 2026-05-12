@@ -1015,6 +1015,55 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
+  Future<Response<Gotify>> _apiAdminSettingsGotifyGet({
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["SettingsLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/admin/settings/gotify');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      tag: swaggerMetaData,
+    );
+    return client.send<Gotify, Gotify>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiAdminSettingsGotifyPost({
+    required Gotify? body,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["SettingsLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/admin/settings/gotify');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
   Future<Response<UserStats>> _apiAdminStatsUsersGet({
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',

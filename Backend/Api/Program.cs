@@ -77,6 +77,8 @@ builder.Services.AddAuthorizationBuilder()
 builder.Services.AddSingleton(new MigrationSettings(connection));
 builder.Services.AddHostedService<MigrationHelper>();
 builder.Services.AddHostedService<EventNotificationService>();
+builder.Services.AddHttpClient();
+
 var app = builder.Build();
 
 app.MapOpenApi("/openapi/{documentName}.json");

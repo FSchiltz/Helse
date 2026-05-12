@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/ui/blocs/administration/events/event_settings.dart';
 import 'package:helse/ui/blocs/administration/events/event_type.dart';
 import 'package:helse/ui/blocs/administration/metrics/metrics_type.dart';
+import 'package:helse/ui/blocs/administration/settings/gotify.dart';
 
 import 'blocs/administration/metrics/metrics_settings.dart';
 import 'blocs/administration/settings/oauth.dart';
@@ -46,6 +47,8 @@ class AdministrationPage extends StatelessWidget {
                   const OauthView(),
                   const SizedBox(height: 20),
                   const SmtpView(),
+                  const SizedBox(height: 20),
+                  const GotifyView(),
                 ],
               ),
             ),
