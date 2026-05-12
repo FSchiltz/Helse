@@ -23,21 +23,25 @@ class _AdministrationPageState extends State<AdministrationPage> {
       icon: Icon(Icons.settings_sharp),
       selectedIcon: Icon(Icons.settings),
       label: Text('General'),
+      padding: EdgeInsetsDirectional.all(12),
     ),
     NavigationRailDestination(
       icon: Icon(Icons.person_search_sharp),
       selectedIcon: Icon(Icons.person),
       label: Text('Users'),
+      padding: EdgeInsetsDirectional.all(12),
     ),
     NavigationRailDestination(
       icon: Icon(Icons.post_add_sharp),
       selectedIcon: Icon(Icons.analytics),
       label: Text('Metrics'),
+      padding: EdgeInsetsDirectional.all(12),
     ),
     NavigationRailDestination(
       icon: Icon(Icons.event_repeat_sharp),
       selectedIcon: Icon(Icons.event),
       label: Text('Events'),
+      padding: EdgeInsetsDirectional.all(12),
     ),
   ];
 
@@ -53,29 +57,30 @@ class _AdministrationPageState extends State<AdministrationPage> {
     var theme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Administrations',
-          style: Theme.of(context).textTheme.displaySmall,
+        elevation: 10,        
+        title: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Text(
+            'Administrations',
+            style: Theme.of(context).textTheme.displaySmall,
+          ),
         ),
       ),
       body: SafeArea(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              color: theme.primary,
-              child: NavigationRail(
-                selectedIndex: _selectedIndex,
-                onDestinationSelected: (index) {
-                  setState(() {
-                    _selectedIndex = index;
-                  });
-                },
-                labelType: NavigationRailLabelType.all,
-                destinations: _destinations,
-              ),
+            NavigationRail(
+              backgroundColor: theme.surfaceContainerHigh,
+              selectedIndex: _selectedIndex,
+              onDestinationSelected: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+              labelType: NavigationRailLabelType.all,
+              destinations: _destinations,                
             ),
-            const VerticalDivider(width: 1),
             Expanded(
               child: _pages[_selectedIndex],
             ),

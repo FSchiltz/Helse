@@ -11,20 +11,51 @@ class GeneralSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+    return DefaultTabController(
+      length: 4,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text("General Settings", style: Theme.of(context).textTheme.displaySmall),
-          const SizedBox(height: 20),
-          const ProxyView(),
-          const SizedBox(height: 20),
-          const OauthView(),
-          const SizedBox(height: 20),
-          const SmtpView(),
-          const SizedBox(height: 20),
-          const GotifyView(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+            child: Text(
+              'General Settings',
+              style: Theme.of(context).textTheme.displaySmall,
+            ),
+          ),
+          const TabBar(
+            isScrollable: true,
+            dividerHeight: 4,
+            labelPadding: EdgeInsetsGeometry.directional(start: 32, end: 32),
+            tabs: [
+              Tab(icon: Icon(Icons.vpn_lock), text: 'Proxy'),
+              Tab(icon: Icon(Icons.lock_open), text: 'OAuth'),
+              Tab(icon: Icon(Icons.email), text: 'SMTP'),
+              Tab(icon: Icon(Icons.notifications), text: 'Gotify'),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              children: [
+                SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                  child: const ProxyView(),
+                ),
+                SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                  child: const OauthView(),
+                ),
+                SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                  child: const SmtpView(),
+                ),
+                SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                  child: const GotifyView(),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
