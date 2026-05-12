@@ -12,12 +12,12 @@ public class AdminLogicTests : LogicTests
     public async Task GetUserStatsAsync_ReturnsForbidden_WhenUserIsNotAdmin()
     {
         // Arrange
-        var health = Substitute.For<IHealthContext>();
+        var stats = Substitute.For<IStatsContext>();
         var users = SetupUser(UserType.User);
         var context = SetupContext();
 
         // Act
-        var result = await AdminLogic.GetUserStatsAsync(users, health, context);
+        var result = await AdminLogic.GetUserStatsAsync(users, stats, context);
 
         // Assert
         var forbidResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.ForbidHttpResult>(result);
@@ -28,7 +28,7 @@ public class AdminLogicTests : LogicTests
     public async Task GetUserStatsAsync_ReturnsUserStats_WhenUserIsAdmin()
     {
         // Arrange
-        var health = Substitute.For<IHealthContext>();
+        var stats = Substitute.For<IStatsContext>();
         var users = SetupUser(UserType.Admin);
         var context = SetupContext();
         var userSummaries = new[]
@@ -36,10 +36,10 @@ public class AdminLogicTests : LogicTests
             new CountRecord("User", 5),
             new CountRecord("Admin", 1)
         };
-        users.GetUserSumary().Returns(userSummaries);
+        stats.GetUserSumary().Returns(userSummaries);
 
         // Act
-        var result = await AdminLogic.GetUserStatsAsync(users, health, context);
+        var result = await AdminLogic.GetUserStatsAsync(users, stats, context);
 
         // Assert
         var okResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<UserStats>>(result);
@@ -52,6 +52,7 @@ public class AdminLogicTests : LogicTests
     {
         // Arrange
         var health = Substitute.For<IHealthContext>();
+        var stats = Substitute.For<IStatsContext>();
         var users = SetupUser(UserType.User);
         var context = SetupContext();
 
@@ -59,7 +60,7 @@ public class AdminLogicTests : LogicTests
         var end = DateTime.UtcNow;
 
         // Act
-        var result = await AdminLogic.GetMetricStatsAsync(start, end, users, health, context);
+        var result = await AdminLogic.GetMetricStatsAsync(start, end, users, health, stats, context);
 
         // Assert
         var forbidResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.ForbidHttpResult>(result);
@@ -73,6 +74,7 @@ public class AdminLogicTests : LogicTests
         var users = SetupUser(UserType.Admin);
         var context = SetupContext();
         var health = Substitute.For<IHealthContext>();
+        var stats = Substitute.For<IStatsContext>();
 
         var start = DateTime.UtcNow.AddMonths(-1);
         var end = DateTime.UtcNow;
@@ -82,16 +84,16 @@ public class AdminLogicTests : LogicTests
             new CountByDate(start, 5),
             new CountByDate(start.AddDays(1), 3)
         };
-        health.GetMetricStats(start, end).Returns(metricStats);
+        stats.GetMetricStats(start, end).Returns(metricStats);
 
         var metricCounts = new Dictionary<int, int> { { 1, 8 } };
-        health.CountMetricsByType(start, end).Returns(metricCounts);
+        stats.CountMetricsByType(start, end).Returns(metricCounts);
 
-        var metricTypes = new List<MetricType> { new() { Id = 1, Name = "Blood Pressure" } };
+        MetricType[] metricTypes = [new() { Id = 1, Name = "Blood Pressure" }];
         health.GetMetricTypes(true).Returns(metricTypes);
 
         // Act
-        var result = await AdminLogic.GetMetricStatsAsync(start, end, users, health, context);
+        var result = await AdminLogic.GetMetricStatsAsync(start, end, users, health, stats, context);
 
         // Assert
         var okResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<MetricStats>>(result);
@@ -107,6 +109,7 @@ public class AdminLogicTests : LogicTests
     {
         // Arrange
         var health = Substitute.For<IHealthContext>();
+        var stats = Substitute.For<IStatsContext>();
         var users = SetupUser(UserType.User);
         var context = SetupContext();
 
@@ -114,7 +117,7 @@ public class AdminLogicTests : LogicTests
         var end = DateTime.UtcNow;
 
         // Act
-        var result = await AdminLogic.GetEventStatsAsync(start, end, users, health, context);
+        var result = await AdminLogic.GetEventStatsAsync(start, end, users, health, stats, context);
 
         // Assert
         var forbidResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.ForbidHttpResult>(result);
@@ -128,6 +131,7 @@ public class AdminLogicTests : LogicTests
         var users = SetupUser(UserType.Admin);
         var context = SetupContext();
         var health = Substitute.For<IHealthContext>();
+        var stats = Substitute.For<IStatsContext>();
 
         var start = DateTime.UtcNow.AddMonths(-1);
         var end = DateTime.UtcNow;
@@ -137,16 +141,16 @@ public class AdminLogicTests : LogicTests
             new CountByDate(start, 10),
             new CountByDate(start.AddDays(1), 7)
         };
-        health.GetEventStats(start, end).Returns(eventStats);
+        stats.GetEventStats(start, end).Returns(eventStats);
 
         var eventCounts = new Dictionary<int, int> { { 1, 17 } };
-        health.CountEventsByType(start, end).Returns(eventCounts);
+        stats.CountEventsByType(start, end).Returns(eventCounts);
 
-        var eventTypes = new List<EventType> { new() { Id = 1, Name = "Doctor Visit" } };
+        EventType[] eventTypes =[new() { Id = 1, Name = "Doctor Visit" } ];
         health.GetEventTypes(true).Returns(eventTypes);
 
         // Act
-        var result = await AdminLogic.GetEventStatsAsync(start, end, users, health, context);
+        var result = await AdminLogic.GetEventStatsAsync(start, end, users, health, stats, context);
 
         // Assert
         var okResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<EventStats>>(result);

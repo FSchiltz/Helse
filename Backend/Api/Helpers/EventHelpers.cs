@@ -14,7 +14,7 @@ public static class EventHelpers
         Years,
     }
 
-    public static EventSummary[] Summarize(this List<Data.Models.Event> events, DateTime start, DateTime end)
+    public static EventSummary[] Summarize(this IEnumerable<Data.Models.Event> events, DateTime start, DateTime end)
     {
         // first find the number of steps
         var (kind, count) = GetSteps(start, end);
