@@ -98,4 +98,12 @@ public interface IHealthContext : IContext
     /// <param name="end"></param>
     /// <returns></returns>
     Task<Metric?> GetLastMetrics(long id, int type, DateTime start, DateTime end);
+
+    Task<int> DeleteMetricGroup(long id);
+
+    Task Update(MetricGroup metricGroup);
+
+    Task Insert(MetricGroup metricGroup);
+
+    Task<MetricGroup[]> GetMetricGroups();
 }

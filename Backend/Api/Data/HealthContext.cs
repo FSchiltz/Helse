@@ -41,7 +41,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
             Stop = e.Stop,
             Start = e.Start,
             Tag = e.Tag,
-            NotificationTime = e.NotificationTime,            
+            NotificationTime = e.NotificationTime,
         });
     }
 
@@ -325,4 +325,30 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
         .Set(x => x.NotificationTime, e.NotificationTime)
         .UpdateAsync();
     }
+
+    public Task<int> DeleteMetricGroup(long id) => Db.GetTable<MetricGroup>().DeleteAsync(x => x.Id == id);
+
+    public Task Update(MetricGroup metricGroup)
+    {
+        return Db.GetTable<MetricGroup>()
+            .Where(x => x.Id == metricGroup.Id)
+            .Set(x => x.Name, metricGroup.Name)
+            .Set(x => x.Description, metricGroup.Description)
+            .Set(x => x.ShowOnDashboard, metricGroup.ShowOnDashboard)
+            .Set(x => x.ShowTitle, metricGroup.ShowTitle)
+            .UpdateAsync();
+    }
+
+    public Task Insert(MetricGroup metricGroup)
+    {
+        return Db.GetTable<MetricGroup>().InsertAsync(() => new MetricGroup
+        {
+            Name = metricGroup.Name,
+            Description = metricGroup.Description,
+            ShowOnDashboard = metricGroup.ShowOnDashboard,
+            ShowTitle = metricGroup.ShowTitle,
+        });
+    }
+
+    public Task<MetricGroup[]> GetMetricGroups() => Db.GetTable<MetricGroup>().OrderBy(x => x.Id).ToArrayAsync();
 }
