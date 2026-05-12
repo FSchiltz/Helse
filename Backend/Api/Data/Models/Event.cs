@@ -47,6 +47,9 @@ public class Event
     [Column, NotNull]
     public bool Valid { get; set; }
 
+    [Column, NotNull]
+    public bool NotificationSent { get; set; }
+
     [Column]
     public long? AddressId { get; set; }
 

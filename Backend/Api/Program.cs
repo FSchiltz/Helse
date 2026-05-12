@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Api;
 using Api.Data;
+using Api.Helpers;
 using Api.Helpers.Auth;
 using Api.Logic.Auth;
 using LinqToDB;
@@ -41,10 +42,11 @@ SymmetricSecurityKey key = AuthLogic.GenerateKey(keyConfig);
 
 builder.Services.AddSingleton((_) => new TokenConfig(issuer, audience, key));
 
-builder.Services.AddSingleton<TokenService>();
-builder.Services.AddTransient<IUserContext, UserContext>();
-builder.Services.AddTransient<ISettingsContext, SettingsContext>();
-builder.Services.AddTransient<IHealthContext, HealthContext>();
+builder.Services.AddSingleton<TokenService>()
+    .AddTransient<IUserContext, UserContext>()
+    .AddTransient<ISettingsContext, SettingsContext>()
+    .AddTransient<IHealthContext, HealthContext>()
+    .AddTransient<IStatsContext, StatsContext>();
 
 builder.Services.AddAuthentication(options =>
   {
@@ -74,6 +76,7 @@ builder.Services.AddAuthorizationBuilder()
 
 builder.Services.AddSingleton(new MigrationSettings(connection));
 builder.Services.AddHostedService<MigrationHelper>();
+builder.Services.AddHostedService<EventNotificationService>();
 var app = builder.Build();
 
 app.MapOpenApi("/openapi/{documentName}.json");

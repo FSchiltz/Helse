@@ -91,7 +91,7 @@ public class EventHelpersTests
         Assert.NotNull(result);
         Assert.NotEmpty(result);
         // Should use empty string for null descriptions
-        Assert.True(result.Any(s => s.Data.ContainsKey(string.Empty)));
+        Assert.Contains(result, s => s.Data.ContainsKey(string.Empty));
     }
 
     [Fact]

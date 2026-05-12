@@ -37,7 +37,7 @@ public static class EventsLogic
         return TypedResults.Ok(result);
     }
 
-     public async static Task<IResult> GetSummaryAsync(int type, DateTime start, DateTime end, long? personId, IUserContext users, IHealthContext events, HttpContext context)
+    public async static Task<IResult> GetSummaryAsync(int type, DateTime start, DateTime end, long? personId, IUserContext users, IHealthContext events, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -48,8 +48,8 @@ public static class EventsLogic
 
         var id = personId ?? user.PersonId;
 
-        var data = await events.GetEvents(id, type, start, end);       
-        
+        var data = await events.GetEvents(id, type, start, end);
+
         return TypedResults.Ok(data.Summarize(start, end));
     }
 
@@ -67,13 +67,13 @@ public static class EventsLogic
         return TypedResults.NoContent();
     }
 
-     public static async Task<IResult> UpdateAsync(UpdateEvent e, long? personId, IUserContext users, IHealthContext events, HttpContext context)
+    public static async Task<IResult> UpdateAsync(UpdateEvent e, long? personId, IUserContext users, IHealthContext events, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
             return error;
 
-            var existing = await events.GetEvent(e.Id) ?? throw new InvalidDataException("Id not found");
+        var existing = await events.GetEvent(e.Id) ?? throw new InvalidDataException("Id not found");
 
         if (existing.PersonId != user.PersonId && !await users.ValidateCaregiverAsync(user, existing.PersonId, RightType.Edit))
             return TypedResults.Forbid();

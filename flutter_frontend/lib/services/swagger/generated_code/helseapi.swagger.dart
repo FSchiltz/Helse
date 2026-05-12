@@ -1017,6 +1017,51 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
+  Future<chopper.Response> apiAdminSettingsSmtpPost({required Smtp? body}) {
+    return _apiAdminSettingsSmtpPost(body: body);
+  }
+
+  ///
+  @POST(path: '/api/admin/settings/smtp', optionalBody: true)
+  Future<chopper.Response> _apiAdminSettingsSmtpPost({
+    @Body() required Smtp? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["SettingsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  Future<chopper.Response<Smtp>> apiAdminSettingsSmtpGet() {
+    generatedMapping.putIfAbsent(Smtp, () => Smtp.fromJsonFactory);
+
+    return _apiAdminSettingsSmtpGet();
+  }
+
+  ///
+  @GET(path: '/api/admin/settings/smtp')
+  Future<chopper.Response<Smtp>> _apiAdminSettingsSmtpGet({
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["SettingsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
   Future<chopper.Response<UserStats>> apiAdminStatsUsersGet() {
     generatedMapping.putIfAbsent(UserStats, () => UserStats.fromJsonFactory);
 
@@ -3021,6 +3066,155 @@ extension $RightExtension on Right {
       start: (start != null ? start.value : this.start),
       stop: (stop != null ? stop.value : this.stop),
       type: (type != null ? type.value : this.type),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class Smtp {
+  const Smtp({
+    this.smtpHost,
+    this.smtpPort,
+    this.enableSsl,
+    this.fromEmail,
+    this.userName,
+    this.password,
+    this.pollingSeconds,
+    this.startingWindowMinutes,
+  });
+
+  factory Smtp.fromJson(Map<String, dynamic> json) => _$SmtpFromJson(json);
+
+  static const toJsonFactory = _$SmtpToJson;
+  Map<String, dynamic> toJson() => _$SmtpToJson(this);
+
+  @JsonKey(name: 'smtpHost')
+  final String? smtpHost;
+  @JsonKey(name: 'smtpPort')
+  final int? smtpPort;
+  @JsonKey(name: 'enableSsl')
+  final bool? enableSsl;
+  @JsonKey(name: 'fromEmail')
+  final String? fromEmail;
+  @JsonKey(name: 'userName')
+  final String? userName;
+  @JsonKey(name: 'password')
+  final String? password;
+  @JsonKey(name: 'pollingSeconds')
+  final int? pollingSeconds;
+  @JsonKey(name: 'startingWindowMinutes')
+  final int? startingWindowMinutes;
+  static const fromJsonFactory = _$SmtpFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is Smtp &&
+            (identical(other.smtpHost, smtpHost) ||
+                const DeepCollectionEquality().equals(
+                  other.smtpHost,
+                  smtpHost,
+                )) &&
+            (identical(other.smtpPort, smtpPort) ||
+                const DeepCollectionEquality().equals(
+                  other.smtpPort,
+                  smtpPort,
+                )) &&
+            (identical(other.enableSsl, enableSsl) ||
+                const DeepCollectionEquality().equals(
+                  other.enableSsl,
+                  enableSsl,
+                )) &&
+            (identical(other.fromEmail, fromEmail) ||
+                const DeepCollectionEquality().equals(
+                  other.fromEmail,
+                  fromEmail,
+                )) &&
+            (identical(other.userName, userName) ||
+                const DeepCollectionEquality().equals(
+                  other.userName,
+                  userName,
+                )) &&
+            (identical(other.password, password) ||
+                const DeepCollectionEquality().equals(
+                  other.password,
+                  password,
+                )) &&
+            (identical(other.pollingSeconds, pollingSeconds) ||
+                const DeepCollectionEquality().equals(
+                  other.pollingSeconds,
+                  pollingSeconds,
+                )) &&
+            (identical(other.startingWindowMinutes, startingWindowMinutes) ||
+                const DeepCollectionEquality().equals(
+                  other.startingWindowMinutes,
+                  startingWindowMinutes,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(smtpHost) ^
+      const DeepCollectionEquality().hash(smtpPort) ^
+      const DeepCollectionEquality().hash(enableSsl) ^
+      const DeepCollectionEquality().hash(fromEmail) ^
+      const DeepCollectionEquality().hash(userName) ^
+      const DeepCollectionEquality().hash(password) ^
+      const DeepCollectionEquality().hash(pollingSeconds) ^
+      const DeepCollectionEquality().hash(startingWindowMinutes) ^
+      runtimeType.hashCode;
+}
+
+extension $SmtpExtension on Smtp {
+  Smtp copyWith({
+    String? smtpHost,
+    int? smtpPort,
+    bool? enableSsl,
+    String? fromEmail,
+    String? userName,
+    String? password,
+    int? pollingSeconds,
+    int? startingWindowMinutes,
+  }) {
+    return Smtp(
+      smtpHost: smtpHost ?? this.smtpHost,
+      smtpPort: smtpPort ?? this.smtpPort,
+      enableSsl: enableSsl ?? this.enableSsl,
+      fromEmail: fromEmail ?? this.fromEmail,
+      userName: userName ?? this.userName,
+      password: password ?? this.password,
+      pollingSeconds: pollingSeconds ?? this.pollingSeconds,
+      startingWindowMinutes:
+          startingWindowMinutes ?? this.startingWindowMinutes,
+    );
+  }
+
+  Smtp copyWithWrapped({
+    Wrapped<String?>? smtpHost,
+    Wrapped<int?>? smtpPort,
+    Wrapped<bool?>? enableSsl,
+    Wrapped<String?>? fromEmail,
+    Wrapped<String?>? userName,
+    Wrapped<String?>? password,
+    Wrapped<int?>? pollingSeconds,
+    Wrapped<int?>? startingWindowMinutes,
+  }) {
+    return Smtp(
+      smtpHost: (smtpHost != null ? smtpHost.value : this.smtpHost),
+      smtpPort: (smtpPort != null ? smtpPort.value : this.smtpPort),
+      enableSsl: (enableSsl != null ? enableSsl.value : this.enableSsl),
+      fromEmail: (fromEmail != null ? fromEmail.value : this.fromEmail),
+      userName: (userName != null ? userName.value : this.userName),
+      password: (password != null ? password.value : this.password),
+      pollingSeconds: (pollingSeconds != null
+          ? pollingSeconds.value
+          : this.pollingSeconds),
+      startingWindowMinutes: (startingWindowMinutes != null
+          ? startingWindowMinutes.value
+          : this.startingWindowMinutes),
     );
   }
 }

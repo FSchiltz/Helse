@@ -966,6 +966,55 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
+  Future<Response<dynamic>> _apiAdminSettingsSmtpPost({
+    required Smtp? body,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["SettingsLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/admin/settings/smtp');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<Smtp>> _apiAdminSettingsSmtpGet({
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["SettingsLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/admin/settings/smtp');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      tag: swaggerMetaData,
+    );
+    return client.send<Smtp, Smtp>($request);
+  }
+
+  @override
   Future<Response<UserStats>> _apiAdminStatsUsersGet({
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',

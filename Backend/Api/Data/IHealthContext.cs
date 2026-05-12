@@ -1,22 +1,67 @@
 using Api.Data.Models;
-using Api.Models.Admin;
 
 namespace Api.Data;
 
+/// <summary>
+/// Interface for the health context?
+/// </summary>
 public interface IHealthContext : IContext
 {
+    /// <summary>
+    /// Insert a new event into the database
+    /// </summary> 
+    /// <param name="e">The event</param>
+    /// <param name="person">The person to which add the event to</param>
+    /// <param name="user">The user making the addition</param>
     Task Insert(Api.Models.Events.CreateEvent e, long person, long user);
+
+    /// <summary>
+    /// Get a single event by id
+    /// </summary>
+    /// <param name="id">The event id</param>
+    /// <returns>The event if found, null otherwise</returns>
     Task<Event?> GetEvent(long id);
-    Task<List<Models.Event>> GetEvents(long id, int type, DateTime start, DateTime end);
+
+    /// <summary>
+    /// Get events for a person in a given time frame
+    /// </summary>
+    /// <param name="id">The person id</param>
+    /// <param name="start">The start of the time frame</param>
+    /// <param name="end">The end of the time frame</param>
+    /// <returns>The events matching the criteria</returns>
+    Task<Event[]> GetEvents(long id, int type, DateTime start, DateTime end);
+
+    /// <summary>
+    /// Get the events to notify
+    /// </summary>
+    /// <param name="start">The start of the time frame</param>
+    /// <param name="end">The end of the time frame</param>
+    Task<Event[]> GetEventsStartingSoon(DateTime start, DateTime end);
+
+    /// <summary>
+    /// Mark an event as having had its notification sent
+    /// </summary>
+    /// <param name="id">The event id</param>
+    Task MarkEventNotificationSent(long id);
+
+    /// <summary>
+    /// Delete an event by id
+    /// </summary>
+    /// <param name="id">The event id</param>
     Task DeleteEvent(long id);
+
+    /// <summary>
+    /// Update an event
+    /// </summary>
+    /// <param name="e">The event to update</param>
     Task Update(Api.Models.Events.UpdateEvent e);
 
-    Task<List<EventType>> GetEventTypes(bool? all);
+    Task<EventType[]> GetEventTypes(bool? all);
     Task Insert(EventType metric);
     Task Update(EventType type);
     Task<int> DeleteEventType(long id);
 
-    Task<List<MetricType>> GetMetricTypes(bool? all);
+    Task<MetricType[]> GetMetricTypes(bool? all);
     Task<int> DeleteMetricType(long id);
     Task Update(MetricType metric);
     Task Insert(MetricType metric);
@@ -28,11 +73,11 @@ public interface IHealthContext : IContext
     Task Insert(Api.Models.Metrics.CreateMetric metric, long person, long id);
     Task Update(Api.Models.Metrics.UpdateMetric metric);
 
-    Task<List<Person>> GetPatients(long id, DateTime now, Api.Models.Settings.RightType view);
-    Task<List<Event>> GetEvents(long id, Api.Models.Settings.RightType view, DateTime start, DateTime end);
-    Task<List<Event>> GetEvents(long id, DateTime start, DateTime end);
+    Task<Person[]> GetPatients(long id, DateTime now, Api.Models.Settings.RightType view);
+    Task<Event[]> GetEvents(long id, Api.Models.Settings.RightType view, DateTime start, DateTime end);
+    Task<Event[]> GetEvents(long id, DateTime start, DateTime end);
 
-    Task<List<Person>> GetAllPatients();
+    Task<Person[]> GetAllPatients();
 
     Task<bool> ExistsEvent(long person, string tag);
     Task<bool> ExistsMetric(long person, string tag, Api.Models.FileTypes source);
@@ -53,12 +98,4 @@ public interface IHealthContext : IContext
     /// <param name="end"></param>
     /// <returns></returns>
     Task<Metric?> GetLastMetrics(long id, int type, DateTime start, DateTime end);
-
-    Task<CountByDate[]> GetEventStats(DateTime start, DateTime end);
-
-    Task<Dictionary<int, int>> CountEventsByType(DateTime start, DateTime end);
-
-    Task<CountByDate[]> GetMetricStats(DateTime start, DateTime end);
-
-    Task<Dictionary<int, int>> CountMetricsByType(DateTime start, DateTime end);
 }

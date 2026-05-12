@@ -24,4 +24,14 @@ class SettingService extends ApiService {
     var api = await getService();
     await call(() => api.apiAdminSettingsProxyPost(body: settings));
   }
+
+  Future<Smtp> smtp() async {
+    var api = await getService();
+    return await call(api.apiAdminSettingsSmtpGet) ?? const Smtp();
+  }
+
+  Future<void> updateSmtp(Smtp settings) async {
+    var api = await getService();
+    await call(() => api.apiAdminSettingsSmtpPost(body: settings));
+  }
 }

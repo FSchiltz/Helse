@@ -57,7 +57,7 @@ public class HealthContextTests : IAsyncLifetime
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(2, result.Count);
+        Assert.Equal(2, result.Length);
     }
 
     [Fact(Skip = "Not working")]

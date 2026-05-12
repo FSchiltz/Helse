@@ -16,17 +16,17 @@ public class TreatmentLogicTests
     {
         // Arrange
         var db = Substitute.For<IHealthContext>();
-        var types = new List<EventType>
-        {
+        EventType[] types =
+        [
             new() { Id = 1, Name = "Test" }
-        };
+        ];
         db.GetEventTypes(false).Returns(types);
 
         // Act
         var result = await TreatmentLogic.GetTypeAsync(db);
 
         // Assert
-        var okResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<List<EventType>>>(result);
+        var okResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<EventType[]>>(result);
         Assert.NotNull(okResult.Value);
         var type = Assert.Single(okResult.Value);
         Assert.Equal("Test", type.Name);

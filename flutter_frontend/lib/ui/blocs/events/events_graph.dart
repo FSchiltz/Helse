@@ -229,7 +229,6 @@ class _EventTimelineState extends State<EventTimeline> {
                   width: width.toDouble(),
                   decoration: BoxDecoration(
                     color: color.withAlpha(100),
-                    // TODO make round only when inside the date range
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                   ),
                   height: 25.0,

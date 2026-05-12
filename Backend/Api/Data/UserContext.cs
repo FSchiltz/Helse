@@ -173,16 +173,4 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
             TreatmentId = treatment,
         });
     }
-
-    public async Task<CountRecord[]> GetUserSumary()
-    {
-        var query =
-        from u in Db.GetTable<User>()
-        from p in Db.GetTable<Models.Person>().RightJoin(pr => pr.Id == u.PersonId)
-        group u by u.Type into q
-        select new { q.Key, Count = q.Count() };
-
-        var results = await query.ToArrayAsync();
-        return [.. results.Select(x => new CountRecord(((Models.UserType)x.Key).ToString(), x.Count))];
-    }
 }

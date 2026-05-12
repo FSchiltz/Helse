@@ -1,6 +1,5 @@
 using System.Data;
 using Api.Data.Models;
-using Api.Models.Admin;
 using LinqToDB;
 using LinqToDB.Data;
 using LinqToDB.Mapping;
@@ -30,9 +29,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
         public string? Value { get; set; }
     }
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
     public Task Insert(Api.Models.Events.CreateEvent e, long person, long user)
     {
         return Db.GetTable<Event>().InsertAsync(() => new Event
@@ -47,79 +44,74 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
         });
     }
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
     public Task DeleteEvent(long id) => Db.GetTable<Event>().DeleteAsync(x => x.Id == id);
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
     public Task<int> DeleteEventType(long id) => Db.GetTable<EventType>().DeleteAsync(x => x.Id == id && x.UserEditable);
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
-    public Task DeleteMetric(long id) => Db.GetTable<Data.Models.Metric>().DeleteAsync(x => x.Id == id);
+    public Task DeleteMetric(long id) => Db.GetTable<Metric>().DeleteAsync(x => x.Id == id);
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
     public Task<int> DeleteMetricType(long id) => Db.GetTable<MetricType>().DeleteAsync(x => x.Id == id && x.UserEditable);
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
     public Task<Event?> GetEvent(long id) => Db.GetTable<Event>().FirstOrDefaultAsync(x => x.Id == id);
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
-    public Task<List<Event>> GetEvents(long id, int type, DateTime start, DateTime end)
+    public Task<Event[]> GetEvents(long id, int type, DateTime start, DateTime end)
     {
         return Db.GetTable<Event>()
             .Where(x => x.PersonId == id
                 && x.Type == type
                 && x.Start <= end && start <= x.Stop)
-            .ToListAsync();
+            .ToArrayAsync();
     }
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
-    public Task<List<Event>> GetEvents(long user, Api.Models.Settings.RightType view, DateTime start, DateTime end)
+    public Task<Event[]> GetEvents(long user, Api.Models.Settings.RightType view, DateTime start, DateTime end)
     {
-        return (from e in Db.GetTable<Data.Models.Event>()
-                join r in Db.GetTable<Data.Models.Right>() on e.PersonId equals r.PersonId
+        return (from e in Db.GetTable<Event>()
+                join r in Db.GetTable<Right>() on e.PersonId equals r.PersonId
                 where e.Start <= end && start <= e.Stop
                 where r.UserId == user && r.Type == (int)view
                 select e)
-            .ToListAsync();
+            .ToArrayAsync();
     }
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
-    public Task<List<Event>> GetEvents(long id, DateTime start, DateTime end)
+    public Task<Event[]> GetEvents(long id, DateTime start, DateTime end)
     {
-        return Db.GetTable<Data.Models.Event>()
+        return Db.GetTable<Event>()
             .Where(x => x.PersonId == id
                 && x.TreatmentId != null
                 && x.Start <= end && start <= x.Stop)
-            .ToListAsync();
+            .ToArrayAsync();
     }
 
-    /// <summary>
+    public Task<Event[]> GetEventsStartingSoon(DateTime start, DateTime end)
+    {
+        return Db.GetTable<Event>()
+            .Where(x => x.Start > start && x.Start <= end && !x.NotificationSent)
+            .ToArrayAsync();
+    }
+
+    public Task MarkEventNotificationSent(long id)
+    {
+        return Db.GetTable<Event>().Where(
+                x => x.Id == id)
+            .Set(x => x.NotificationSent, true)
+            .UpdateAsync();
+    }
+
     /// <inheritdoc/>
-    /// </summary>
     public Task<Metric?> GetMetric(long id) => Db.GetTable<Metric>().FirstOrDefaultAsync(x => x.Id == id);
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
     public Task<Metric[]> GetMetrics(long id, long type, DateTime start, DateTime end)
     {
-        return Db.GetTable<Data.Models.Metric>()
+        return Db.GetTable<Metric>()
             .Where(x => x.PersonId == id
                 && x.Type == type
                 && x.Date <= end && x.Date >= start)
@@ -127,61 +119,49 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
             .ToArrayAsync();
     }
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
-    public Task<List<MetricType>> GetMetricTypes(bool? all)
+    public Task<MetricType[]> GetMetricTypes(bool? all)
     {
         IQueryable<MetricType> query = Db.GetTable<MetricType>();
 
         if (all == false)
             query = query.Where(x => x.Visible);
 
-        return query.OrderBy(x => x.Id).ToListAsync();
+        return query.OrderBy(x => x.Id).ToArrayAsync();
     }
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
     public Task<MetricType?> GetMetricType(int type) => Db.GetTable<MetricType>().FirstOrDefaultAsync(x => x.Id == type);
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
-    public Task<List<Person>> GetPatients(long user, DateTime now, Api.Models.Settings.RightType right)
+    public Task<Person[]> GetPatients(long user, DateTime now, Api.Models.Settings.RightType right)
     {
         return (from u in Db.GetTable<Person>()
                 join r in Db.GetTable<Right>() on u.Id equals r.PersonId
                 where r.Stop == null || (r.Stop >= now && r.Start <= now)
                 where r.UserId == user
                 where r.Type == (int)right
-                select u).Distinct().ToListAsync();
+                select u).Distinct().ToArrayAsync();
     }
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
-    public Task<List<Person>> GetAllPatients()
+    public Task<Person[]> GetAllPatients()
     {
-        return Db.GetTable<Person>().ToListAsync();
+        return Db.GetTable<Person>().ToArrayAsync();
     }
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
-    public Task<List<EventType>> GetEventTypes(bool? all)
+    public Task<EventType[]> GetEventTypes(bool? all)
     {
         IQueryable<EventType> query = Db.GetTable<EventType>();
 
         if (all == false)
             query = query.Where(x => x.Visible);
 
-        return query.OrderBy(x => x.Id).ToListAsync();
+        return query.OrderBy(x => x.Id).ToArrayAsync();
     }
 
-    /// <summary>
     /// <inheritdoc/>
-    /// </summary>
     public Task Insert(EventType eventType)
     {
         return Db.GetTable<EventType>().InsertAsync(() => new EventType
@@ -199,7 +179,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     /// </summary>
     public Task Insert(MetricType metric)
     {
-        return Db.GetTable<Data.Models.MetricType>().InsertAsync(() => new Data.Models.MetricType
+        return Db.GetTable<MetricType>().InsertAsync(() => new MetricType
         {
             Name = metric.Name,
             Description = metric.Description,
@@ -299,7 +279,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
             }),
         };
         var chunks = await query.OrderBy(x => x.Chunk)
-       .ToListAsync();
+       .ToArrayAsync();
 
         return [.. chunks.Select(x => new Metric
         {
@@ -342,43 +322,5 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
         .Set(x => x.Description, e.Description)
         .Set(x => x.Tag, e.Tag)
         .UpdateAsync();
-    }
-
-    public Task<CountByDate[]> GetEventStats(DateTime start, DateTime end)
-    {
-        return Db.GetTable<Data.Models.Event>()
-            .Where(x => x.Created <= end && x.Created >= start)
-            .GroupBy(e => e.Created.Date)
-            .Select(g => new CountByDate(g.Key, g.Count()))
-            .OrderBy(s => s.Date)
-            .ToArrayAsync();
-    }
-
-    public Task<Dictionary<int, int>> CountEventsByType(DateTime start, DateTime end)
-    {
-        return Db.GetTable<Event>()
-            .Where(x => x.Created <= end && x.Created >= start)
-            .GroupBy(x => x.Type)
-            .Select(x => new { x.Key, Count= x.Count() })
-            .ToDictionaryAsync(x => x.Key, x => x.Count);
-    }
-
-    public Task<CountByDate[]> GetMetricStats(DateTime start, DateTime end)
-    {
-        return Db.GetTable<Data.Models.Event>()
-            .Where(x => x.Created <= end && x.Created >= start)
-            .GroupBy(e => e.Created.Date)
-            .Select(g => new CountByDate(g.Key, g.Count()))
-            .OrderBy(s => s.Date)
-            .ToArrayAsync();
-    }
-
-    public Task<Dictionary<int, int>> CountMetricsByType(DateTime start, DateTime end)
-    {
-        return Db.GetTable<Event>()
-            .Where(x => x.Created <= end && x.Created >= start)
-            .GroupBy(x => x.Type)
-            .Select(x => new { x.Key, Count= x.Count() })
-            .ToDictionaryAsync(x => x.Key, x => x.Count);
     }
 }
