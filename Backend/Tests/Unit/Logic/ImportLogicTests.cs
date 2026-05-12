@@ -2,7 +2,7 @@ using Api.Logic;
 
 namespace Tests.Unit.Logic;
 
-public class ImportLogicTests
+public class ImportLogicTests : LogicTests
 {
     [Fact]
     public void GetImportTypes_ReturnsFileTypes()

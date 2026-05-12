@@ -1,16 +1,13 @@
-using System.Security.Claims;
 using Api.Data;
 using Api.Data.Models;
 using Api.Logic;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;
 
 namespace Tests.Unit.Logic;
 
-public class EventsLogicTests
+public class EventsLogicTests : LogicTests
 {
-    private readonly IUserContext _users = Substitute.For<IUserContext>();
     private readonly IHealthContext _db = Substitute.For<IHealthContext>();
 
     [Fact]
@@ -21,20 +18,11 @@ public class EventsLogicTests
             Name = "",
             Description = "",
         };
-        var context = new DefaultHttpContext
-        {
-            User = new System.Security.Claims.ClaimsPrincipal([
-                new ClaimsIdentity(),
-            ])
-        };
-        _users.Get(default).ReturnsForAnyArgs(new PersonFromDb(new User
-        {
-            Identifier = "",
-            Password = "",
-            Type = 0,
-        }, new Api.Data.Models.Person()));
 
-        var result = await EventsLogic.CreateTypeAsync(type, _users, _db, context);
+        var users = SetupUser(UserType.User);
+        var context = SetupContext();
+
+        var result = await EventsLogic.CreateTypeAsync(type, users, _db, context);
         Assert.IsType<ForbidHttpResult>(result);
     }
 
@@ -46,20 +34,11 @@ public class EventsLogicTests
             Name = "",
             Description = "",
         };
-        var context = new DefaultHttpContext
-        {
-            User = new System.Security.Claims.ClaimsPrincipal([
-                new ClaimsIdentity(),
-            ])
-        };
-        _users.Get(default).ReturnsForAnyArgs(new PersonFromDb(new User
-        {
-            Identifier = "",
-            Password = "",
-            Type = (int)Api.Data.Models.UserType.Admin,
-        }, new Api.Data.Models.Person()));
 
-        var result = await EventsLogic.CreateTypeAsync(type, _users, _db, context);
+        var users = SetupUser(UserType.Admin);
+        var context = SetupContext();
+
+        var result = await EventsLogic.CreateTypeAsync(type, users, _db, context);
         Assert.IsType<NoContent>(result);
     }
 }

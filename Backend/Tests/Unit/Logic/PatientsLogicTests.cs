@@ -7,33 +7,20 @@ using System.Security.Claims;
 
 namespace Tests.Unit.Logic;
 
-public class PatientsLogicTests
+public class PatientsLogicTests : LogicTests
 {
     [Fact]
     public async Task GetPatientsAsync_ReturnsPatients_WhenValidUser()
     {
         // Arrange
-        var users = Substitute.For<IUserContext>();
-        var user = new Api.Data.Models.User { Id = 1, Identifier = "test", Password = "pass" };
-        var personFromDb = new PersonFromDb(user, new Api.Data.Models.Person { Id = 1 });
-        users.Get("test").Returns(personFromDb);
-        
+        var users = SetupUser(Api.Data.Models.UserType.Admin);
+        var context = SetupContext();
         var db = Substitute.For<IHealthContext>();
         var persons = new List<Api.Data.Models.Person>
         {
             new() { Id = 1, Name = "Test", Surname = "User" }
         };
         db.GetPatients(1, Arg.Any<DateTime>(), Api.Models.Settings.RightType.View).Returns(persons);
-        
-        var claims = new ClaimsIdentity(new[]
-        {
-            new Claim("token", "access"),
-            new Claim(ClaimTypes.NameIdentifier, "test")
-        });
-        var context = new DefaultHttpContext
-        {
-            User = new ClaimsPrincipal(claims)
-        };
 
         // Act
         var result = await PatientsLogic.GetPatientsAsync(users, db, context);
