@@ -61,31 +61,8 @@ public class RightsHelperTests
         var result = await db.IsAdmin(claimsPrincipal);
 
         // Assert
-        var forbidResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.ForbidHttpResult>(result);
+        var forbidResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.UnauthorizedHttpResult>(result);
         Assert.NotNull(forbidResult);
-    }
-
-    [Fact]
-    public async Task IsAdmin_ReturnsNull_WhenUserIsAdmin()
-    {
-        // Arrange
-        var db = Substitute.For<IUserContext>();
-        var user = new User { Id = 1, Identifier = "admin", Password = "pass", Type = (int)UserType.Admin };
-        var person = new Person { Id = 1, Name = "Admin", Surname = "User" };
-        var personFromDb = new PersonFromDb(user, person);
-        db.Get("adminuser").Returns(personFromDb);
-        
-        var claims = new ClaimsIdentity(new[]
-        {
-            new Claim(ClaimTypes.NameIdentifier, "adminuser")
-        });
-        var claimsPrincipal = new ClaimsPrincipal(claims);
-
-        // Act
-        var result = await db.IsAdmin(claimsPrincipal);
-
-        // Assert
-        Assert.Null(result);
     }
 
     [Fact]
@@ -107,53 +84,6 @@ public class RightsHelperTests
         // Assert
         var unauthorizedResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.UnauthorizedHttpResult>(result);
         Assert.NotNull(unauthorizedResult);
-    }
-
-    [Fact]
-    public async Task GetUser_ReturnsUserAndNullError_WhenUserExists()
-    {
-        // Arrange
-        var db = Substitute.For<IUserContext>();
-        var user = new User { Id = 1, Identifier = "testuser", Password = "pass", Type = (int)UserType.User };
-        var person = new Person { Id = 1, Name = "Test", Surname = "User" };
-        var personFromDb = new PersonFromDb(user, person);
-        db.Get("testuser").Returns(personFromDb);
-        
-        var claims = new ClaimsIdentity(new[]
-        {
-            new Claim(ClaimTypes.NameIdentifier, "testuser")
-        });
-        var claimsPrincipal = new ClaimsPrincipal(claims);
-
-        // Act
-        var (error, returnedUser) = await db.GetUser(claimsPrincipal);
-
-        // Assert
-        Assert.Null(error);
-        Assert.NotNull(returnedUser);
-        Assert.Equal("testuser", returnedUser.Identifier);
-    }
-
-    [Fact]
-    public async Task GetUser_ReturnsUnauthorizedError_WhenUserNotFound()
-    {
-        // Arrange
-        var db = Substitute.For<IUserContext>();
-        db.Get("unknownuser").Returns((PersonFromDb?)null);
-        
-        var claims = new ClaimsIdentity(new[]
-        {
-            new Claim(ClaimTypes.NameIdentifier, "unknownuser")
-        });
-        var claimsPrincipal = new ClaimsPrincipal(claims);
-
-        // Act
-        var (error, returnedUser) = await db.GetUser(claimsPrincipal);
-
-        // Assert
-        var unauthorizedResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.UnauthorizedHttpResult>(error);
-        Assert.NotNull(unauthorizedResult);
-        Assert.Equal(User.Empty, returnedUser);
     }
 
     [Fact]

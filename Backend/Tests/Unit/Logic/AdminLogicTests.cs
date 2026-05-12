@@ -19,11 +19,11 @@ public class AdminLogicTests
         var users = Substitute.For<IUserContext>();
         var health = Substitute.For<IHealthContext>();
         users.IsAdmin(Arg.Any<ClaimsPrincipal>()).Returns((IResult?)TypedResults.Forbid());
-        
-        var claims = new ClaimsIdentity(new[]
-        {
+
+        var claims = new ClaimsIdentity(
+        [
             new Claim(ClaimTypes.NameIdentifier, "test")
-        });
+        ]);
         var context = new DefaultHttpContext
         {
             User = new ClaimsPrincipal(claims)
@@ -43,19 +43,24 @@ public class AdminLogicTests
         // Arrange
         var users = Substitute.For<IUserContext>();
         var health = Substitute.For<IHealthContext>();
-        users.IsAdmin(Arg.Any<ClaimsPrincipal>()).Returns((IResult?)null);
-        
+        users.Get("admin").Returns(new PersonFromDb(new()
+        {
+            Identifier = "",
+            Password = "",
+            Type = (int)Api.Data.Models.UserType.Admin,
+        }, new()));
+
         var userSummaries = new[]
         {
             new CountRecord("User", 5),
             new CountRecord("Admin", 1)
         };
         users.GetUserSumary().Returns(userSummaries);
-        
-        var claims = new ClaimsIdentity(new[]
-        {
+
+        var claims = new ClaimsIdentity(
+        [
             new Claim(ClaimTypes.NameIdentifier, "admin")
-        });
+        ]);
         var context = new DefaultHttpContext
         {
             User = new ClaimsPrincipal(claims)
@@ -77,7 +82,7 @@ public class AdminLogicTests
         var users = Substitute.For<IUserContext>();
         var health = Substitute.For<IHealthContext>();
         users.IsAdmin(Arg.Any<ClaimsPrincipal>()).Returns((IResult?)TypedResults.Forbid());
-        
+
         var claims = new ClaimsIdentity(new[]
         {
             new Claim(ClaimTypes.NameIdentifier, "test")
@@ -104,23 +109,23 @@ public class AdminLogicTests
         var users = Substitute.For<IUserContext>();
         var health = Substitute.For<IHealthContext>();
         users.IsAdmin(Arg.Any<ClaimsPrincipal>()).Returns((IResult?)null);
-        
+
         var start = DateTime.UtcNow.AddMonths(-1);
         var end = DateTime.UtcNow;
-        
+
         var metricStats = new[]
         {
             new CountByDate(start, 5),
             new CountByDate(start.AddDays(1), 3)
         };
         health.GetMetricStats(start, end).Returns(metricStats);
-        
+
         var metricCounts = new Dictionary<int, int> { { 1, 8 } };
         health.CountMetricsByType(start, end).Returns(metricCounts);
-        
+
         var metricTypes = new List<MetricType> { new() { Id = 1, Name = "Blood Pressure" } };
         health.GetMetricTypes(true).Returns(metricTypes);
-        
+
         var claims = new ClaimsIdentity(new[]
         {
             new Claim(ClaimTypes.NameIdentifier, "admin")
@@ -149,7 +154,7 @@ public class AdminLogicTests
         var users = Substitute.For<IUserContext>();
         var health = Substitute.For<IHealthContext>();
         users.IsAdmin(Arg.Any<ClaimsPrincipal>()).Returns((IResult?)TypedResults.Forbid());
-        
+
         var claims = new ClaimsIdentity(new[]
         {
             new Claim(ClaimTypes.NameIdentifier, "test")
@@ -176,23 +181,23 @@ public class AdminLogicTests
         var users = Substitute.For<IUserContext>();
         var health = Substitute.For<IHealthContext>();
         users.IsAdmin(Arg.Any<ClaimsPrincipal>()).Returns((IResult?)null);
-        
+
         var start = DateTime.UtcNow.AddMonths(-1);
         var end = DateTime.UtcNow;
-        
+
         var eventStats = new[]
         {
             new CountByDate(start, 10),
             new CountByDate(start.AddDays(1), 7)
         };
         health.GetEventStats(start, end).Returns(eventStats);
-        
+
         var eventCounts = new Dictionary<int, int> { { 1, 17 } };
         health.CountEventsByType(start, end).Returns(eventCounts);
-        
+
         var eventTypes = new List<EventType> { new() { Id = 1, Name = "Doctor Visit" } };
         health.GetEventTypes(true).Returns(eventTypes);
-        
+
         var claims = new ClaimsIdentity(new[]
         {
             new Claim(ClaimTypes.NameIdentifier, "admin")
