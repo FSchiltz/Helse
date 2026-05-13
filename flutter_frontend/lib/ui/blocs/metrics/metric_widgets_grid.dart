@@ -10,10 +10,12 @@ class MetricWidgetsGrid extends StatelessWidget {
     required this.cached,
     required this.date,
     this.person,
+    this.extend,
   });
   final DateTimeRange<DateTime> date;
   final int? person;
   final List<Pair<MetricType, OrderedItem>> cached;
+  final double? extend;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class MetricWidgetsGrid extends StatelessWidget {
       return const Text("No metrics");
     } else {
       return GridView.extent(
-        maxCrossAxisExtent: 200,
+        maxCrossAxisExtent: extend??200,
         shrinkWrap: true,
         crossAxisSpacing: 2,
         mainAxisSpacing: 2,

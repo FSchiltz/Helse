@@ -72,6 +72,7 @@ class _MetricGroupDetailState extends State<MetricGroupDetail> {
                 cached: cached,
                 person: widget.person,
                 date: widget.date,
+                extend: 400,
               ),
             ),
     );
