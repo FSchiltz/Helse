@@ -270,11 +270,14 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                                 ),
                                 Flexible(
                                   fit: FlexFit.tight,
-                                  child: MetricGraph(
-                                    metrics,
-                                    widget.date,
-                                    widget.settings,
-                                    _selectionChanged,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(32.0),
+                                    child: MetricGraph(
+                                      metrics,
+                                      widget.date,
+                                      widget.settings,
+                                      _selectionChanged,
+                                    ),
                                   ),
                                 ),
                               ],

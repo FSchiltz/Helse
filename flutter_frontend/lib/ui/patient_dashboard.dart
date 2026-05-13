@@ -51,7 +51,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
               child: DateRangePicker(_setDate, date, isLargeScreen),
             ),
             MetricsGrid(date: date, person: widget.person),
-            const SizedBox(height: 32),
+            const SizedBox(height: 8),
             EventsGrid(date: date, person: widget.person),
           ],
         ),
