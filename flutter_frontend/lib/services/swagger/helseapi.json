@@ -624,6 +624,18 @@
             "schema": {
               "type": "boolean"
             }
+          },
+          {
+            "name": "group",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
           }
         ],
         "responses": {

@@ -530,17 +530,23 @@ abstract class Helseapi extends ChopperService {
 
   ///
   ///@param all
-  Future<chopper.Response<List<MetricType>>> apiMetricsTypeGet({bool? all}) {
+  ///@param group
+  Future<chopper.Response<List<MetricType>>> apiMetricsTypeGet({
+    bool? all,
+    int? group,
+  }) {
     generatedMapping.putIfAbsent(MetricType, () => MetricType.fromJsonFactory);
 
-    return _apiMetricsTypeGet(all: all);
+    return _apiMetricsTypeGet(all: all, group: group);
   }
 
   ///
   ///@param all
+  ///@param group
   @GET(path: '/api/metrics/type')
   Future<chopper.Response<List<MetricType>>> _apiMetricsTypeGet({
     @Query('all') bool? all,
+    @Query('group') int? group,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',

@@ -62,7 +62,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
 
   Future<void> _initSettings() async {
     try {
-      var model = await DI.metric.metricsType(false);
+      var model = await DI.metric.metricsType(false, null);
       if (model != null) {
         SettingsLogic.updateMetrics(model);
       }

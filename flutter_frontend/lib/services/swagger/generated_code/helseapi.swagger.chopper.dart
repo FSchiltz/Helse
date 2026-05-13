@@ -483,6 +483,7 @@ final class _$Helseapi extends Helseapi {
   @override
   Future<Response<List<MetricType>>> _apiMetricsTypeGet({
     bool? all,
+    int? group,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
       summary: '',
@@ -495,7 +496,10 @@ final class _$Helseapi extends Helseapi {
     ),
   }) {
     final Uri $url = Uri.parse('/api/metrics/type');
-    final Map<String, dynamic> $params = <String, dynamic>{'all': all};
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'all': all,
+      'group': group,
+    };
     final Request $request = Request(
       'GET',
       $url,

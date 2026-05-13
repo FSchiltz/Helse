@@ -30,7 +30,7 @@ ADD
 ALTER TABLE
     health.MetricType
 ADD
-    COLUMN ShowOnDashboard BOOL NOT NULL DEFAULT false;
+    COLUMN ShowOnDashboard BOOL NOT NULL DEFAULT true;
 
 ALTER TABLE
     health.MetricType
