@@ -37,7 +37,7 @@ class _EventsGridState extends State<EventsGrid> {
     try {
       var model = await DI.event.eventsType(false);
       if (model != null) {
-        var settings = await SettingsLogic.getEvents();
+        var settings = await DI.settings.getEvents();
 
         // filter using the user settings
         List<EventType> filtered = [];
@@ -50,7 +50,7 @@ class _EventsGridState extends State<EventsGrid> {
         setState(() {
           types = filtered;
         });
-        SettingsLogic.updateEvents(model);
+        DI.settings.updateEvents(model);
       }
     } catch (ex) {
       Notify.showError("$ex");

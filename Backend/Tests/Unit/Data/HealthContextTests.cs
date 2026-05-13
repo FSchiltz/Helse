@@ -67,7 +67,7 @@ public class HealthContextTests : IAsyncLifetime
         var context = new HealthContext(_db);
 
         // Act
-        var result = await context.GetMetricTypes(false);
+        var result = await context.GetMetricTypes(false, null);
 
         // Assert
         Assert.NotNull(result);
@@ -89,7 +89,7 @@ public class HealthContextTests : IAsyncLifetime
         var context = new HealthContext(_db);
 
         // Act
-        var result = await context.GetMetricTypes(false);
+        var result = await context.GetMetricTypes(false, null);
 
         // Assert
         Assert.NotNull(result);

@@ -28,8 +28,8 @@ class _SyncSettingsState extends State<SyncSettings> {
   }
 
   Future<int> _getData() async {
-    _healthEnabled = (await SettingsLogic.getHealth()).syncHealth;
-    _lastRun = (await SettingsLogic.getLastRun());
+    _healthEnabled = (await DI.settings.getHealth()).syncHealth;
+    _lastRun = (await DI.settings.getLastRun());
 
     return 1;
   }
@@ -38,7 +38,7 @@ class _SyncSettingsState extends State<SyncSettings> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
-        await SettingsLogic.saveHealth(HealthSettings(_healthEnabled));
+        await DI.settings.saveHealth(HealthSettings(_healthEnabled));
 
         Notify.show("Saved Successfully");
         _getData();
@@ -49,7 +49,7 @@ class _SyncSettingsState extends State<SyncSettings> {
   }
 
   Future<void> _resetLastRun() async {
-    await SettingsLogic.removeLastRun();
+    await DI.settings.removeLastRun();
     setState(() {
       _lastRun = null;
     });

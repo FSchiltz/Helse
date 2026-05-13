@@ -35,7 +35,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
-        await SettingsLogic.saveTheme(ThemeSettings(_theme));
+        await DI.settings.saveTheme(ThemeSettings(_theme));
 
         Notify.show("Saved Successfully");
         _getData();
@@ -46,7 +46,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   Future<int> _getData() async {
-    _theme = (await SettingsLogic.getTheme()).theme;
+    _theme = (await DI.settings.getTheme()).theme;
     _range = await DI.settings.getDateRange();
 
     return 1;
@@ -56,7 +56,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     if (value == null) return;
 
     _range = value;
-    await SettingsLogic.setDateRange(value);
+    await DI.settings.setDateRange(value);
   }
 
   @override
@@ -88,7 +88,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       'Interface',
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
-                    SizedBox(height: 32,),
+                    SizedBox(height: 32),
                     SizedBox(
                       width: 200,
                       child: DropdownButtonFormField(

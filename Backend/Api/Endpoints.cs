@@ -110,6 +110,24 @@ public static class Endpoints
         metricsType.MapGet("/", MetricsLogic.GetTypeAsync)
         .Produces<List<MetricType>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
+
+
+        var metricsGroup = metricsType.MapGroup("/groups").RequireAuthorization();
+        metricsGroup.MapPost("/", MetricsLogic.CreateGroupAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        metricsGroup.MapPut("/", MetricsLogic.UpdateGroupAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        metricsGroup.MapDelete("/{id}", MetricsLogic.DeleteGroupAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        metricsGroup.MapGet("/", MetricsLogic.GetGroupsAsync)
+        .Produces<List<MetricGroup>>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
     }
 
     public static void MapEvents(this RouteGroupBuilder api)

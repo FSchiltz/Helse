@@ -33,10 +33,12 @@ class FitLogic {
     // TODO use a background task
 
     // Get the last run
-    var run = await SettingsLogic.getLastRun();
+    var run = await DI.settings.getLastRun();
 
     var now = DateTime.now();
-    var start = run == null ? now.add(const Duration(days: -35)) : DateTime.parse(run);
+    var start = run == null
+        ? now.add(const Duration(days: -35))
+        : DateTime.parse(run);
 
     int events = 0;
     int metrics = 0;
@@ -64,14 +66,19 @@ class FitLogic {
     }
 
     // fetch health data from the last 24 hours
-    List<HealthDataPoint> healthData = await Health().getHealthDataFromTypes(startTime: start, endTime: now, types: types);
+    List<HealthDataPoint> healthData = await Health().getHealthDataFromTypes(
+      startTime: start,
+      endTime: now,
+      types: types,
+    );
 
     // convert to import data
     ImportData converted = _convert(healthData);
 
     // import to the server
     // TODO add a loop here if too much events
-    if (converted.metrics?.isNotEmpty == true || converted.events?.isNotEmpty == true) {
+    if (converted.metrics?.isNotEmpty == true ||
+        converted.events?.isNotEmpty == true) {
       DI.helper.importData(converted);
     }
     events += converted.events?.length ?? 0;
@@ -79,7 +86,8 @@ class FitLogic {
 
     await account.set(Account.fitRun, now.toString());
 
-    var text = "Sync sucessful with $metrics metrics and $events events of interval $difference";
+    var text =
+        "Sync sucessful with $metrics metrics and $events events of interval $difference";
     if (firstRun || metrics > 0 || events > 0) {
       firstRun = false;
       Notify.show(text);

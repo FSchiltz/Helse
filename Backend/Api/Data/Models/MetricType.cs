@@ -28,4 +28,10 @@ public class MetricType
 
     [Column]
     public bool Visible { get; set; }
+
+    [Column]
+    public long GroupId { get; set; }
+
+    [Column]
+    public bool ShowOnDashboard { get; set; }
 }

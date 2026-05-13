@@ -146,7 +146,7 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> GetTypeAsync(bool? all, IHealthContext db) => TypedResults.Ok((await db.GetMetricTypes(all)).Select(metric => new MetricType
+    public static async Task<IResult> GetTypeAsync(bool? all, long? group, IHealthContext db) => TypedResults.Ok((await db.GetMetricTypes(all, group)).Select(metric => new MetricType
     {
         Name = metric.Name,
         Description = metric.Description,
@@ -156,6 +156,8 @@ public static class MetricsLogic
         Id = metric.Id,
         Visible = metric.Visible,
         UserEditable = metric.UserEditable,
+        ShowOnDashboard = metric.ShowOnDashboard,
+        GroupId = metric.GroupId
     }));
 
     public static async Task<IResult> CreateTypeAsync(MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
@@ -169,15 +171,7 @@ public static class MetricsLogic
             throw new InvalidDataException("Text can only be summarized with latest");
         }
 
-        await db.Insert(new Data.Models.MetricType
-        {
-            Name = metric.Name,
-            Description = metric.Description,
-            SummaryType = (long)metric.SummaryType,
-            Type = (long)metric.Type,
-            Unit = metric.Unit,
-            Visible = metric.Visible,
-        });
+        await db.Insert(metric);
 
         return TypedResults.NoContent();
     }
@@ -193,16 +187,7 @@ public static class MetricsLogic
             throw new InvalidDataException("Text can only be summarized with latest");
         }
 
-        await db.Update(new Data.Models.MetricType
-        {
-            Id = metric.Id,
-            Name = metric.Name,
-            Description = metric.Description,
-            SummaryType = (long)metric.SummaryType,
-            Type = (long)metric.Type,
-            Unit = metric.Unit,
-            Visible = metric.Visible,
-        });
+        await db.Update(metric);
 
         return TypedResults.NoContent();
     }
@@ -214,6 +199,51 @@ public static class MetricsLogic
             return admin;
 
         var count = await db.DeleteMetricType(id);
+
+        if (count == 1)
+            return TypedResults.NoContent();
+        else
+            return TypedResults.BadRequest();
+    }
+
+    public static async Task<IResult> GetGroupsAsync(IHealthContext db) => TypedResults.Ok((await db.GetMetricGroups()).Select(metric => new MetricGroup
+    {
+        Name = metric.Name,
+        Description = metric.Description,
+        ShowOnDashboard = metric.ShowOnDashboard,
+        ShowTitle = metric.ShowTitle,
+        Id = metric.Id,
+    }));
+
+    public static async Task<IResult> CreateGroupAsync(MetricGroup metric, IUserContext users, IHealthContext db, HttpContext context)
+    {
+        var admin = await users.IsAdmin(context.User);
+        if (admin is not null)
+            return admin;
+
+        await db.Insert(metric);
+
+        return TypedResults.NoContent();
+    }
+
+    public static async Task<IResult> UpdateGroupAsync(MetricGroup metric, IUserContext users, IHealthContext db, HttpContext context)
+    {
+        var admin = await users.IsAdmin(context.User);
+        if (admin is not null)
+            return admin;
+
+        await db.Update(metric);
+
+        return TypedResults.NoContent();
+    }
+
+    public async static Task<IResult> DeleteGroupAsync(long id, IUserContext users, IHealthContext db, HttpContext context)
+    {
+        var admin = await users.IsAdmin(context.User);
+        if (admin is not null)
+            return admin;
+
+        var count = await db.DeleteMetricGroup(id);
 
         if (count == 1)
             return TypedResults.NoContent();

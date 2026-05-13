@@ -28,7 +28,7 @@ public static class AdminLogic
         var events = await stats.GetMetricStats(start, end);
 
         var counts = await stats.CountMetricsByType(start, end);
-        var eventTypes = await health.GetMetricTypes(true);
+        var eventTypes = await health.GetMetricTypes(true, null);
         var countWithDescription = counts
             .Select(x => new CountRecord(eventTypes.First(t => t.Id == x.Key).Name, x.Value))
             .ToArray();

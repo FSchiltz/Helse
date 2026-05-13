@@ -33,7 +33,7 @@ class SettingsLogic {
 
   SettingService api() => SettingService(_account);
 
-  static Future<HealthSettings> getHealth() async {
+  Future<HealthSettings> getHealth() async {
     var encoded = (await storage).getString(Account.health);
     if (encoded == null) {
       return HealthSettings(false);
@@ -42,11 +42,14 @@ class SettingsLogic {
     return HealthSettings.fromJson(json.decode(encoded));
   }
 
-  static Future<void> saveHealth(HealthSettings localSettings) async {
-    await (await storage).setString(Account.health, json.encode(localSettings.toJson()));
+  Future<void> saveHealth(HealthSettings localSettings) async {
+    await (await storage).setString(
+      Account.health,
+      json.encode(localSettings.toJson()),
+    );
   }
 
-  static Future<ThemeSettings> getTheme() async {
+  Future<ThemeSettings> getTheme() async {
     var encoded = (await storage).getString(Account.theme);
     if (encoded == null) {
       return ThemeSettings(ThemeMode.system);
@@ -55,11 +58,14 @@ class SettingsLogic {
     return ThemeSettings.fromJson(json.decode(encoded));
   }
 
-  static Future<void> saveTheme(ThemeSettings localSettings) async {
-    await (await storage).setString(Account.theme, json.encode(localSettings.toJson()));
+  Future<void> saveTheme(ThemeSettings localSettings) async {
+    await (await storage).setString(
+      Account.theme,
+      json.encode(localSettings.toJson()),
+    );
   }
 
-  static Future<MetricsSettings> getMetrics() async {
+  Future<MetricsSettings> getMetrics() async {
     var encoded = (await storage).getString(Account.metrics);
     if (encoded == null) {
       return MetricsSettings([]);
@@ -73,11 +79,14 @@ class SettingsLogic {
     metrics.changed();
   }
 
-  static Future<void> _saveMetrics(MetricsSettings localSettings) async {
-    await (await storage).setString(Account.metrics, json.encode(localSettings.toJson()));
+  Future<void> _saveMetrics(MetricsSettings localSettings) async {
+    await (await storage).setString(
+      Account.metrics,
+      json.encode(localSettings.toJson()),
+    );
   }
 
-  static Future<EventsSettings> getEvents() async {
+  Future<EventsSettings> getEvents() async {
     var encoded = (await storage).getString(Account.events);
     if (encoded == null) {
       return EventsSettings([]);
@@ -91,23 +100,26 @@ class SettingsLogic {
     events.changed();
   }
 
-  static Future<void> _saveEvents(EventsSettings localSettings) async {
-    await (await storage).setString(Account.events, json.encode(localSettings.toJson()));
+  Future<void> _saveEvents(EventsSettings localSettings) async {
+    await (await storage).setString(
+      Account.events,
+      json.encode(localSettings.toJson()),
+    );
   }
 
-  static Future<void> setLastRun(String run) async {
+  Future<void> setLastRun(String run) async {
     await (await storage).setString(Account.fitRun, run);
   }
 
-  static Future<void> removeLastRun() async {
+  Future<void> removeLastRun() async {
     await (await storage).remove(Account.fitRun);
   }
 
-  static Future<String?> getLastRun() async {
+  Future<String?> getLastRun() async {
     return (await storage).getString(Account.fitRun);
   }
 
-  static Future<void> setDateRange(DatePreset run) async {
+  Future<void> setDateRange(DatePreset run) async {
     await (await storage).setString(Account.dateRange, run.name);
   }
 
@@ -117,19 +129,26 @@ class SettingsLogic {
       return DatePreset.today;
     }
 
-    return DatePreset.values.firstWhereOrNull((value) => value.name == encoded) ?? DatePreset.today;
+    return DatePreset.values.firstWhereOrNull(
+          (value) => value.name == encoded,
+        ) ??
+        DatePreset.today;
   }
 
-  static Future<void> updateMetrics(List<MetricType> model) async {
+  Future<void> updateMetrics(List<MetricType> model) async {
     var metrics = await getMetrics();
     for (var metric in model) {
-      var existing = metrics.metrics.firstWhereOrNull((element) => element.name == metric.name);
+      var existing = metrics.metrics.firstWhereOrNull(
+        (element) => element.name == metric.name,
+      );
       if (existing != null) {
         // already there, just update the name
         existing.name = metric.name;
       } else {
         if (metric.id != null) {
-          metrics.metrics.add(OrderedItem(metric.id!, metric.name, GraphKind.bar, GraphKind.line));
+          metrics.metrics.add(
+            OrderedItem(metric.id!, metric.name, GraphKind.bar, GraphKind.line),
+          );
         }
       }
     }
@@ -137,19 +156,46 @@ class SettingsLogic {
     await _saveMetrics(metrics);
   }
 
-  static Future<void> updateEvents(List<EventType> model) async {
+  Future<void> updateEvents(List<EventType> model) async {
     var events = await getEvents();
     for (var event in model) {
-      var existing = events.events.firstWhereOrNull((element) => element.name == event.name);
+      var existing = events.events.firstWhereOrNull(
+        (element) => element.name == event.name,
+      );
       if (existing != null) {
         // already there, just update the name
         existing.name = event.name;
       } else {
         if (event.id != null) {
-          events.events.add(OrderedItem(event.id!, event.name, GraphKind.event, GraphKind.event));
+          events.events.add(
+            OrderedItem(
+              event.id!,
+              event.name,
+              GraphKind.event,
+              GraphKind.event,
+            ),
+          );
         }
       }
     }
     await _saveEvents(events);
+  }
+
+  OrderedItem getDefault(MetricType item) {
+    if (item.type == MetricDataType.number) {
+      return OrderedItem(
+        item.id ?? 0,
+        item.name,
+        GraphKind.bar,
+        GraphKind.line,
+      );
+    }
+
+    return OrderedItem(
+      item.id ?? 0,
+      item.name,
+      GraphKind.event,
+      GraphKind.event,
+    );
   }
 }

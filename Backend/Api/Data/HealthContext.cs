@@ -41,7 +41,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
             Stop = e.Stop,
             Start = e.Start,
             Tag = e.Tag,
-            NotificationTime = e.NotificationTime,            
+            NotificationTime = e.NotificationTime,
         });
     }
 
@@ -121,12 +121,19 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     }
 
     /// <inheritdoc/>
-    public Task<MetricType[]> GetMetricTypes(bool? all)
+    public Task<MetricType[]> GetMetricTypes(bool? all, long? group)
     {
         IQueryable<MetricType> query = Db.GetTable<MetricType>();
 
         if (all == false)
+        {
             query = query.Where(x => x.Visible);
+        }
+
+        if (group is not null)
+        {
+            query = query.Where(x => x.GroupId == group);
+        }
 
         return query.OrderBy(x => x.Id).ToArrayAsync();
     }
@@ -178,17 +185,19 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task Insert(MetricType metric)
+    public Task Insert(Api.Models.Metrics.MetricType metric)
     {
         return Db.GetTable<MetricType>().InsertAsync(() => new MetricType
         {
             Name = metric.Name,
             Description = metric.Description,
             Unit = metric.Unit,
-            SummaryType = metric.SummaryType,
-            Type = metric.Type,
+            SummaryType = (long)metric.SummaryType,
+            Type = (long)metric.Type,
             UserEditable = true,
             Visible = metric.Visible,
+            GroupId = metric.GroupId,
+            ShowOnDashboard = metric.ShowOnDashboard,
         });
     }
 
@@ -225,16 +234,18 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task Update(MetricType metric)
+    public Task Update(Api.Models.Metrics.MetricType metric)
     {
         return Db.GetTable<MetricType>()
             .Where(x => x.Id == metric.Id)
             .Set(x => x.Name, metric.Name)
             .Set(x => x.Description, metric.Description)
             .Set(x => x.Unit, metric.Unit)
-            .Set(x => x.Type, metric.Type)
-            .Set(x => x.SummaryType, metric.SummaryType)
+            .Set(x => x.Type, (long)metric.Type)
+            .Set(x => x.SummaryType, (long)metric.SummaryType)
             .Set(x => x.Visible, metric.Visible)
+            .Set(x => x.ShowOnDashboard, metric.ShowOnDashboard)
+            .Set(x => x.GroupId, metric.GroupId)
             .UpdateAsync();
     }
 
@@ -325,4 +336,30 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
         .Set(x => x.NotificationTime, e.NotificationTime)
         .UpdateAsync();
     }
+
+    public Task<int> DeleteMetricGroup(long id) => Db.GetTable<MetricGroup>().DeleteAsync(x => x.Id == id);
+
+    public Task Update(Api.Models.Metrics.MetricGroup metricGroup)
+    {
+        return Db.GetTable<MetricGroup>()
+            .Where(x => x.Id == metricGroup.Id)
+            .Set(x => x.Name, metricGroup.Name)
+            .Set(x => x.Description, metricGroup.Description)
+            .Set(x => x.ShowOnDashboard, metricGroup.ShowOnDashboard)
+            .Set(x => x.ShowTitle, metricGroup.ShowTitle)
+            .UpdateAsync();
+    }
+
+    public Task Insert(Api.Models.Metrics.MetricGroup metricGroup)
+    {
+        return Db.GetTable<MetricGroup>().InsertAsync(() => new MetricGroup
+        {
+            Name = metricGroup.Name,
+            Description = metricGroup.Description,
+            ShowOnDashboard = metricGroup.ShowOnDashboard,
+            ShowTitle = metricGroup.ShowTitle,
+        });
+    }
+
+    public Task<MetricGroup[]> GetMetricGroups() => Db.GetTable<MetricGroup>().OrderBy(x => x.Id).ToArrayAsync();
 }
