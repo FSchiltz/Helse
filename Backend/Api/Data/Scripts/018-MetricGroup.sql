@@ -19,7 +19,7 @@ INSERT INTO
 VALUES
     (1, 'Other', '', false, false),
     (2, 'Measure', '', false, true),
-    (3, 'Women Health', '', true, true),
+    (3, 'Women Health', '', true, false),
     (4, 'Activity', '', true, true);
 
 ALTER TABLE
@@ -36,5 +36,37 @@ ALTER TABLE
     health.MetricType
 ADD
     CONSTRAINT FK_EventType_TO_Group FOREIGN KEY (GroupId) REFERENCES health.MetricGroup (Id);
+
+UPDATE
+    health.MetricType
+SET
+    GroupId = 2
+WHERE
+    Id IN(1, 2, 3, 4, 5)
+    AND UserEditable IS false;
+
+UPDATE
+    health.MetricType
+SET
+    GroupId = 3
+WHERE
+    Id IN(9, 10, 11, 16)
+    AND UserEditable IS false;
+
+UPDATE
+    health.MetricType
+SET
+    GroupId = 4
+WHERE
+    Id IN(6, 7, 8)
+    AND UserEditable IS false;
+
+UPDATE
+    health.MetricType
+SET
+    ShowOnDashboard = true
+WHERE
+    Id IN(1, 2, 3, 4, 6, 7)
+    AND UserEditable IS false;
 
 COMMIT;
