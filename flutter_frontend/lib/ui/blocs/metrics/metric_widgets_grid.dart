@@ -21,11 +21,11 @@ class MetricWidgetsGrid extends StatelessWidget {
       return const Text("No metrics");
     } else {
       return GridView.extent(
+        maxCrossAxisExtent: 200,
         shrinkWrap: true,
         crossAxisSpacing: 2,
         mainAxisSpacing: 2,
         physics: const BouncingScrollPhysics(),
-        maxCrossAxisExtent: 200.0,
         children: cached
             .map(
               (type) => MetricWidget(
