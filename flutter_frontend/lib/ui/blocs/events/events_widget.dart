@@ -56,66 +56,68 @@ class _EventWidgetState extends State<EventWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(shape: const ContinuousRectangleBorder()),
-                    onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                              builder: (context) => EventDetailPage(
-                                    date: widget.date,
-                                    type: widget.type,
-                                    person: widget.person,
-                                    summary: _events ?? [],
-                                  )),
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(shape: const ContinuousRectangleBorder()),
+                      onPressed: () => Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                                builder: (context) => EventDetailPage(
+                                      date: widget.date,
+                                      type: widget.type,
+                                      person: widget.person,
+                                      summary: _events ?? [],
+                                    )),
+                          ),
+                      child: Text(widget.type.name, style: Theme.of(context).textTheme.titleLarge)),
+                ),
+                IconButton(
+                    onPressed: () {
+                      showDialog<void>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return EventAdd(_resetEvents, widget.type, person: widget.person);
+                          });
+                    },
+                    icon: const Icon(Icons.add_sharp))
+              ],
+            ),
+            FutureBuilder(
+                future: _getData(),
+                builder: (ctx, snapshot) {
+                  // Checking if future is resolved
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    // If we got an error
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text(
+                          '${snapshot.error} occurred',
+                          style: const TextStyle(fontSize: 18),
                         ),
-                    child: Text(widget.type.name, style: Theme.of(context).textTheme.titleLarge)),
-              ),
-              IconButton(
-                  onPressed: () {
-                    showDialog<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return EventAdd(_resetEvents, widget.type, person: widget.person);
-                        });
-                  },
-                  icon: const Icon(Icons.add_sharp))
-            ],
-          ),
-          FutureBuilder(
-              future: _getData(),
-              builder: (ctx, snapshot) {
-                // Checking if future is resolved
-                if (snapshot.connectionState == ConnectionState.done) {
-                  // If we got an error
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        '${snapshot.error} occurred',
-                        style: const TextStyle(fontSize: 18),
-                      ),
+                      );
+        
+                      // if we got our data
+                    }
+        
+                    final events = (snapshot.hasData) ? snapshot.data as List<EventSummary> : List<EventSummary>.empty();
+                    return Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: EventsSummary(events, widget.date),
                     );
-      
-                    // if we got our data
                   }
-      
-                  final events = (snapshot.hasData) ? snapshot.data as List<EventSummary> : List<EventSummary>.empty();
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: EventsSummary(events, widget.date),
-                  );
-                }
-                return const HelseLoader();
-              }),
-        ],
+                  return const HelseLoader();
+                }),
+          ],
+        ),
       ),
     );
   }

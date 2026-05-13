@@ -36,21 +36,16 @@ class EventTimeline extends StatelessWidget {
     List<Widget> chartBars = [];
 
     int tick = 0;
-    int max = data.map((x) => x.data.values.map((y) => y as int).sum).max;
-    var coeff = min(160 / max, 30.0);
+
+    int max = userData.map((x) => x.data.values.map((y) => y as int).sum).max;
+    var coeff = min(160 / max, 60.0);
 
     for (var d in data) {
         chartBars.add(Padding(
           padding: EdgeInsets.all(4.0 * width),
-          child: Container(
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              color: null,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              children: map(d.data, tick, colorScheme.primary, coeff: coeff, widthCoeff: width),
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: map(d.data, tick, colorScheme.primary, coeff: coeff, widthCoeff: width),
           ),
         ));
       
@@ -69,7 +64,7 @@ class EventTimeline extends StatelessWidget {
       builder: (b, constraints) {
         var widthCoeff = min(1.0, constraints.maxWidth / maxWidth);
         return SizedBox(
-          width: min(constraints.maxWidth, maxWidth),
+          height: 160,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.end,
