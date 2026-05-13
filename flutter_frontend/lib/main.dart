@@ -8,7 +8,6 @@ import 'package:toastification/toastification.dart';
 import 'helpers/url_dummy.dart' if (dart.library.html) 'helpers/url.dart';
 import 'logic/account/authentication_logic.dart';
 import 'logic/account/authentication_bloc.dart';
-import 'logic/settings/settings_logic.dart';
 import 'ui/home.dart';
 import 'ui/login.dart';
 import 'ui/splash.dart';

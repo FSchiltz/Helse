@@ -24,7 +24,7 @@ class PatientsCard extends StatelessWidget {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute<void>(
-                  builder: (context) => PatientsDashboard(person),
+                  builder: (context) => PatientsDashboard(person, 0),
                 ),
               ),
               child: Container(

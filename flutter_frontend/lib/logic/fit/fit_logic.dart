@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:health/health.dart';
-import 'package:helse/logic/settings/settings_logic.dart';
 import 'package:helse/services/account.dart';
 import 'package:helse/ui/common/notification.dart';
 

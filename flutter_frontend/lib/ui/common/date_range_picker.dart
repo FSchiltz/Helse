@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/date.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/d_i.dart';
-import 'package:helse/logic/settings/settings_logic.dart';
 import 'package:helse/ui/common/date_range_input.dart';
 
 enum DatePreset {

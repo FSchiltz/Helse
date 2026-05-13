@@ -4,7 +4,7 @@ import 'package:helse/logic/settings/events_settings.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
 import 'package:helse/ui/common/loader.dart';
 import 'package:helse/ui/common/notification.dart';
-import 'package:helse/ui/common/ordered_list.dart';
+import 'package:helse/ui/common/statefull_check.dart';
 
 class EventSettings extends StatefulWidget {
   const EventSettings({super.key});
@@ -40,6 +40,7 @@ class _EventSettingsState extends State<EventSettings> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     return FutureBuilder(
       future: _getData(),
       builder: (context, snapshot) {
@@ -60,6 +61,7 @@ class _EventSettingsState extends State<EventSettings> {
               child: Form(
                 key: _formKey,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
@@ -83,7 +85,34 @@ class _EventSettingsState extends State<EventSettings> {
                     ),
                     const SizedBox(height: 20),
                     Expanded(
-                      child: SingleChildScrollView(child: OrderedList(_events)),
+                      child: SingleChildScrollView(
+                        child: DataTable(
+                          columns: [
+                            DataColumn(label: Expanded(child: Text("Name"))),
+                            DataColumn(label: Expanded(child: Text("Visible"))),
+                          ],
+                          rows: _events
+                              .map(
+                                (item) => DataRow(
+                                  cells: [
+                                    DataCell(
+                                      Text(
+                                        item.name,
+                                        style: theme.textTheme.titleLarge,
+                                      ),
+                                    ),
+                                    DataCell(
+                                      StatefullCheck(
+                                        item.visible,
+                                        (value) => item.visible = value,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ),
                     ),
                   ],
                 ),

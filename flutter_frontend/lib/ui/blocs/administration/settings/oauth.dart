@@ -105,7 +105,7 @@ class _OauthFormViewState extends State<OauthFormView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("Oauth", style: Theme.of(context).textTheme.headlineMedium),
-          const SizedBox(height: 5),
+          const SizedBox(height: 32),
           Row(
             children: [
               const Text("Enabled"),

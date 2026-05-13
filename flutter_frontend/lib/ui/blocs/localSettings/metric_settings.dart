@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/logic/settings/metrics_settings.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
-import 'package:helse/logic/settings/settings_logic.dart';
 import 'package:helse/ui/common/loader.dart';
 import 'package:helse/ui/common/notification.dart';
-import 'package:helse/ui/common/ordered_list.dart';
+import 'package:helse/ui/common/statefull_check.dart';
+import 'package:helse/ui/common/type_input.dart';
 
 class MetricSettings extends StatefulWidget {
   const MetricSettings({super.key});
@@ -41,6 +41,7 @@ class _MetricSettingsState extends State<MetricSettings> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     return FutureBuilder(
       future: _getData(),
       builder: (context, snapshot) {
@@ -61,6 +62,7 @@ class _MetricSettingsState extends State<MetricSettings> {
               child: Form(
                 key: _formKey,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
@@ -85,7 +87,72 @@ class _MetricSettingsState extends State<MetricSettings> {
                     const SizedBox(height: 20),
                     Expanded(
                       child: SingleChildScrollView(
-                        child: OrderedList(_metrics, withGraph: true),
+                        child: DataTable(
+                          columns: [
+                            DataColumn(label: Expanded(child: Text("Name"))),
+                            DataColumn(label: Expanded(child: Text("Visible"))),
+                            DataColumn(
+                              label: Expanded(child: Text("Widget tyoe")),
+                            ),
+                            DataColumn(
+                              label: Expanded(child: Text("Detail type")),
+                            ),
+                          ],
+                          rows: _metrics
+                              .map(
+                                (item) => DataRow(
+                                  cells: [
+                                    DataCell(
+                                      Text(
+                                        item.name,
+                                        style: theme.textTheme.titleLarge,
+                                      ),
+                                    ),
+                                    DataCell(
+                                      StatefullCheck(
+                                        item.visible,
+                                        (value) => item.visible = value,
+                                      ),
+                                    ),
+                                    DataCell(
+                                      SizedBox(
+                                        width: 160,
+                                        height: 45,
+                                        child: EnumInput(
+                                          value: item.graph,
+                                          GraphKind.values
+                                              .map(
+                                                (x) => DropDownItem(x, x.name),
+                                              )
+                                              .toList(),
+                                          (value) =>
+                                              item.graph = value ?? item.graph,
+                                          label: 'Type',
+                                        ),
+                                      ),
+                                    ),
+                                    DataCell(
+                                      SizedBox(
+                                        width: 160,
+                                        height: 45,
+                                        child: EnumInput(
+                                          value: item.detailGraph,
+                                          GraphKind.values
+                                              .map(
+                                                (x) => DropDownItem(x, x.name),
+                                              )
+                                              .toList(),
+                                          (value) => item.detailGraph =
+                                              value ?? item.detailGraph,
+                                          label: 'Type',
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                              .toList(),
+                        ),
                       ),
                     ),
                   ],

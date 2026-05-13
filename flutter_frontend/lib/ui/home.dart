@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../logic/d_i.dart';
 import '../logic/event.dart';
 import '../logic/fit/task_bloc.dart';
-import '../logic/settings/settings_logic.dart';
 import '../services/swagger/generated_code/helseapi.swagger.dart';
 import 'administration.dart';
 import 'blocs/imports/file_import.dart';
@@ -36,6 +35,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   Person? user;
   var selectedIndex = 0;
+  Key _refreshKey = UniqueKey();
 
   @override
   void initState() {
@@ -162,6 +162,10 @@ class _HomeState extends State<Home> {
                         MaterialPageRoute<void>(
                           builder: (context) => const LocalSettingsPage(),
                         ),
+                      ).then(
+                        (c) => setState(() {
+                          _refreshKey = UniqueKey();
+                        }),
                       );
                       break;
                     case 2:
@@ -170,6 +174,11 @@ class _HomeState extends State<Home> {
                         MaterialPageRoute<void>(
                           builder: (context) => const AdministrationPage(),
                         ),
+                      ).then(
+                        (c) => setState(() {
+                          _refreshKey = UniqueKey();
+                        })
+                        ,
                       );
                       break;
                     case 3:
@@ -180,14 +189,14 @@ class _HomeState extends State<Home> {
               ),
             ],
           ),
-          body: Dashboard(types: types),
+          body: Dashboard(types: types, key: _refreshKey),
         );
       },
     );
   }
 
   Future<void> _startFitJob(TaskBloc fit) async {
-    var settings = await  DI.settings.getHealth();
+    var settings = await DI.settings.getHealth();
     if (settings.syncHealth) {
       fit.start();
     }

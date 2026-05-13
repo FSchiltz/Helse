@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/date.dart';
 import 'package:helse/logic/d_i.dart';
-import 'package:helse/logic/settings/settings_logic.dart';
 import 'package:helse/ui/common/date_range_picker.dart';
 import 'package:helse/ui/common/notification.dart';
 
@@ -64,7 +63,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
     try {
       var model = await DI.metric.metricsType(false, null);
       if (model != null) {
-         DI.settings.updateMetrics(model);
+        DI.settings.updateMetrics(model);
       }
     } catch (ex) {
       Notify.showError("$ex");

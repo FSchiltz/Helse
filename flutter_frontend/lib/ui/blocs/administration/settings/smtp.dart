@@ -96,7 +96,7 @@ class _SmtpFormViewState extends State<SmtpFormView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('SMTP', style: Theme.of(context).textTheme.headlineMedium),
-          const SizedBox(height: 5),
+          const SizedBox(height: 32),
           Row(
             children: [
               const Text('Enable'),
