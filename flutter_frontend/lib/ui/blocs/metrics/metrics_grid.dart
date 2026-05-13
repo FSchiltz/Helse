@@ -19,7 +19,7 @@ class MetricsGrid extends StatefulWidget {
 }
 
 class _MetricsGridState extends State<MetricsGrid> {
-  List<MetricGroup>? types;
+  List<MetricGroup>? groups;
 
   @override
   void initState() {
@@ -34,7 +34,7 @@ class _MetricsGridState extends State<MetricsGrid> {
         // filter using the user settings
 
         setState(() {
-          types = model;
+          groups = model;
         });
       }
     } catch (ex) {
@@ -44,7 +44,7 @@ class _MetricsGridState extends State<MetricsGrid> {
 
   @override
   Widget build(BuildContext context) {
-    var cached = types;
+    var cached = groups;
     return cached == null
         ? const HelseLoader()
         : BlocListener<SettingsBloc, bool>(
@@ -56,23 +56,18 @@ class _MetricsGridState extends State<MetricsGrid> {
           );
   }
 
-  StatelessWidget _getGrid(List<MetricGroup> cached) {
+  Widget _getGrid(List<MetricGroup> cached) {
     if (cached.isEmpty) {
       return const Text("No metrics");
     } else {
-      return GridView.extent(
-        shrinkWrap: true,
-        crossAxisSpacing: 2,
-        mainAxisSpacing: 2,
-        physics: const BouncingScrollPhysics(),
-        maxCrossAxisExtent: 200.0,
+      return Column(
         children: cached
             .map(
               (type) => MetricsGroup(
                 date: widget.date,
                 key: Key(type.id?.toString() ?? ""),
                 person: widget.person,
-                group: type.id ?? 0,
+                group: type,
               ),
             )
             .toList(),

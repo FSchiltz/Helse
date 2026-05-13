@@ -3,11 +3,9 @@ import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 import 'package:helse/ui/common/square_text_field.dart';
 import 'package:helse/ui/common/statefull_check.dart';
-import 'package:helse/ui/common/type_input.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/notification.dart';
-import 'metric_form.dart';
 
 class MetricGroupAdd extends StatefulWidget {
   final void Function()? callback;

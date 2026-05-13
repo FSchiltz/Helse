@@ -20,7 +20,7 @@ class _MetricSettingsState extends State<MetricSettings> {
   List<OrderedItem> _metrics = [];
 
   Future<int> _getData() async {
-    _metrics = (await SettingsLogic.getMetrics()).metrics;
+    _metrics = (await DI.settings.getMetrics()).metrics;
 
     return 1;
   }

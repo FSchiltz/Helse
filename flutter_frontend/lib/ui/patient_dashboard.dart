@@ -52,7 +52,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
               child: DateRangePicker(_setDate, date, isLargeScreen),
             ),
             MetricsGrid(date: date, person: widget.person),
-            const SizedBox(height: 10),
+            const SizedBox(height: 32),
             EventsGrid(date: date, person: widget.person),
           ],
         ),
@@ -64,7 +64,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
     try {
       var model = await DI.metric.metricsType(false, null);
       if (model != null) {
-        SettingsLogic.updateMetrics(model);
+         DI.settings.updateMetrics(model);
       }
     } catch (ex) {
       Notify.showError("$ex");

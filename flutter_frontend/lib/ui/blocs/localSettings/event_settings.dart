@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/logic/settings/events_settings.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
-import 'package:helse/logic/settings/settings_logic.dart';
 import 'package:helse/ui/common/loader.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/ordered_list.dart';
@@ -20,7 +19,7 @@ class _EventSettingsState extends State<EventSettings> {
   List<OrderedItem> _events = [];
 
   Future<int> _getData() async {
-    _events = (await SettingsLogic.getEvents()).events;
+    _events = (await DI.settings.getEvents()).events;
 
     return 1;
   }

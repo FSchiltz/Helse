@@ -76,7 +76,7 @@ class AppState extends State<AppView> {
   @override
   void initState() {
     super.initState();
-    SettingsLogic.getTheme().then((value) => changeTheme(value.theme));
+     DI.settings.getTheme().then((value) => changeTheme(value.theme));
   }
 
   void changeTheme(ThemeMode themeMode) {
