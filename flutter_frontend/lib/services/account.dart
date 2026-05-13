@@ -13,6 +13,7 @@ class Account {
   static const theme = 'theme';
   static const health = 'health';
   static const metrics = 'metrics';
+  static const metricGroups = 'metricgroups';
   static const events = 'events';
   static const dateRange = 'dateRange';
 

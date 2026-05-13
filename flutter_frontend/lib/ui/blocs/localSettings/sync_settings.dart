@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/logic/fit/fit_logic.dart';
 import 'package:helse/logic/settings/health_settings.dart';
-import 'package:helse/logic/settings/settings_logic.dart';
 import 'package:helse/ui/common/custom_switch.dart';
 import 'package:helse/ui/common/loader.dart';
 import 'package:helse/ui/common/notification.dart';

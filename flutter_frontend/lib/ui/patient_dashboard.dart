@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/date.dart';
 import 'package:helse/logic/d_i.dart';
-import 'package:helse/logic/settings/settings_logic.dart';
 import 'package:helse/ui/common/date_range_picker.dart';
 import 'package:helse/ui/common/notification.dart';
 
@@ -52,7 +51,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
               child: DateRangePicker(_setDate, date, isLargeScreen),
             ),
             MetricsGrid(date: date, person: widget.person),
-            const SizedBox(height: 32),
+            const SizedBox(height: 8),
             EventsGrid(date: date, person: widget.person),
           ],
         ),
@@ -64,7 +63,12 @@ class _PatientDashboardState extends State<PatientDashboard> {
     try {
       var model = await DI.metric.metricsType(false, null);
       if (model != null) {
-         DI.settings.updateMetrics(model);
+        DI.settings.updateMetrics(model);
+      }
+
+      var groups = await DI.metric.metricsGroup();
+      if (groups != null) {
+        DI.settings.updateMetricGroups(groups);
       }
     } catch (ex) {
       Notify.showError("$ex");

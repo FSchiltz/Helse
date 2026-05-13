@@ -92,8 +92,10 @@ class _ProxyFormViewState extends State<ProxyFormView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Proxy", style: Theme.of(context).textTheme.headlineMedium),
+          Text("Proxy Authentification", style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 5),
+          Text("Only enable if you are behind a trusted proxy", style: Theme.of(context).textTheme.bodyLarge),
+          const SizedBox(height: 32),
           Row(
             children: [
               const Text("Enabled"),

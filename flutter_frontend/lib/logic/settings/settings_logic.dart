@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/logic/settings/events_settings.dart';
 import 'package:helse/logic/settings/health_settings.dart';
+import 'package:helse/logic/settings/metric_groups_settings.dart';
 import 'package:helse/logic/settings/metrics_settings.dart';
 import 'package:helse/logic/settings/ordered_item.dart';
 import 'package:helse/logic/settings/theme_settings.dart';
@@ -197,5 +198,47 @@ class SettingsLogic {
       GraphKind.event,
       GraphKind.event,
     );
+  }
+
+  Future<void> saveMetricGroups(MetricGroupsSettings localSettings) async {
+    await _saveMetricGroups(localSettings);
+    metrics.changed();
+  }
+
+  Future<void> _saveMetricGroups(MetricGroupsSettings localSettings) async {
+    await (await storage).setString(
+      Account.metricGroups,
+      json.encode(localSettings.toJson()),
+    );
+  }
+
+  Future<MetricGroupsSettings> getMetricGroups() async {
+    var encoded = (await storage).getString(Account.metricGroups);
+    if (encoded == null) {
+      return MetricGroupsSettings([]);
+    }
+
+    return MetricGroupsSettings.fromJson(json.decode(encoded));
+  }
+
+  Future<void> updateMetricGroups(List<MetricGroup> model) async {
+    var metrics = await getMetricGroups();
+    for (var metric in model) {
+      var existing = metrics.metrics.firstWhereOrNull(
+        (element) => element.name == metric.name,
+      );
+      if (existing != null) {
+        // already there, just update the name
+        existing.name = metric.name;
+      } else {
+        if (metric.id != null) {
+          metrics.metrics.add(
+            OrderedItem(metric.id!, metric.name, GraphKind.bar, GraphKind.line),
+          );
+        }
+      }
+    }
+
+    await _saveMetricGroups(metrics);
   }
 }

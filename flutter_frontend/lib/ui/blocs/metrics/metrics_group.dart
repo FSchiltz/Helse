@@ -60,7 +60,6 @@ class _MetricsGroupState extends State<MetricsGroup> {
         setState(() {
           types = filtered;
         });
-        DI.settings.updateMetrics(model);
       }
     } catch (ex) {
       Notify.showError("$ex");
@@ -85,6 +84,18 @@ class _MetricsGroupState extends State<MetricsGroup> {
                 date: widget.date,
                 person: widget.person,
                 cached: cached,
+                button: IconButton(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (context) => MetricGroupDetail(
+                        widget.date,
+                        widget.person,
+                        widget.group,
+                      ),
+                    ),
+                  ),
+                  icon: const Icon(Icons.open_in_new_sharp),
+                ),
               ),
             );
     } else {
@@ -93,28 +104,12 @@ class _MetricsGroupState extends State<MetricsGroup> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            if (widget.group.showTitle == true ||
-                widget.group.showOnDashboard != true)
-              Text(
-                widget.group.name,
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-            IconButton(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (context) => MetricGroupDetail(
-                    widget.date,
-                    widget.person,
-                    widget.group,
-                  ),
-                ),
-              ),
-              icon: const Icon(Icons.open_in_new_sharp),
-            ),
-          ],
-        ),
+        if (widget.group.showTitle == true ||
+            widget.group.showOnDashboard != true)
+          Text(
+            widget.group.name,
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
         body,
         SizedBox(height: 12),
         Divider(height: 4),

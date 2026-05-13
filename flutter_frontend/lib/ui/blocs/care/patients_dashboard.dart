@@ -5,8 +5,9 @@ import '../../patient_dashboard.dart';
 
 class PatientsDashboard extends StatefulWidget {
   final Person person;
+  final int version;
 
-  const PatientsDashboard(this.person, {super.key});
+  const PatientsDashboard(this.person, this.version, {super.key});
 
   @override
   State<PatientsDashboard> createState() => _PatientDashboardState();
@@ -26,7 +27,13 @@ class _PatientDashboardState extends State<PatientsDashboard> {
         ),
       ),
       body: Row(
-        children: [Expanded(child: PatientDashboard(person: widget.person.id))],
+        children: [
+          Expanded(
+            child: PatientDashboard(
+              person: widget.person.id,
+            ),
+          ),
+        ],
       ),
     );
   }
