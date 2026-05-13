@@ -55,83 +55,76 @@ class _MetricWidgetState extends State<MetricWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(0),
-      ),
-      shadowColor: Theme.of(context).colorScheme.shadow,
-      elevation: 2,
-      child: FutureBuilder(
-          future: _getData(),
-          builder: (ctx, snapshot) {
-            // Checking if future is resolved
-            if (snapshot.connectionState == ConnectionState.done) {
-              // If we got an error
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    '${snapshot.error} occurred',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                );
-
-                // if we got our data
-              } else if (snapshot.hasData) {
-                // Extracting data from snapshot object
-                final metrics = snapshot.data as List<Metric>;
-                return InkWell(
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                        builder: (context) => MetricDetailPage(
-                              date: widget.date,
-                              type: widget.type,
-                              person: widget.person,
-                              summary: metrics,
-                              settings: widget.settings.detailGraph,
-                            )),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16, top: 1, right: 1),
-                    child: Column(
-                      children: [
-                        Flexible(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                child: Text(widget.type.name, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.titleMedium),
+    return FutureBuilder(
+        future: _getData(),
+        builder: (ctx, snapshot) {
+          // Checking if future is resolved
+          if (snapshot.connectionState == ConnectionState.done) {
+            // If we got an error
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  '${snapshot.error} occurred',
+                  style: const TextStyle(fontSize: 18),
+                ),
+              );
+    
+              // if we got our data
+            } else if (snapshot.hasData) {
+              // Extracting data from snapshot object
+              final metrics = snapshot.data as List<Metric>;
+              return InkWell(
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                      builder: (context) => MetricDetailPage(
+                            date: widget.date,
+                            type: widget.type,
+                            person: widget.person,
+                            summary: metrics,
+                            settings: widget.settings.detailGraph,
+                          )),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16, top: 1, right: 1),
+                  child: Column(
+                    children: [
+                      Flexible(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Text(widget.type.name, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.titleMedium),
+                            ),
+                            Flexible(
+                              child: SizedBox(
+                                width: 40,
+                                child: IconButton(
+                                    onPressed: () {
+                                      showDialog<void>(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return MetricAdd(widget.type, _resetMetric, person: widget.person);
+                                          });
+                                    },
+                                    icon: const Icon(Icons.add_sharp)),
                               ),
-                              Flexible(
-                                child: SizedBox(
-                                  width: 40,
-                                  child: IconButton(
-                                      onPressed: () {
-                                        showDialog<void>(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return MetricAdd(widget.type, _resetMetric, person: widget.person);
-                                            });
-                                      },
-                                      icon: const Icon(Icons.add_sharp)),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        if (metrics.isNotEmpty)
-                          Expanded(
-                            child: Text(_getTextInfo(metrics, widget.type), style: Theme.of(context).textTheme.bodyLarge),
-                          ),
-                        Flexible(child: MetricCondensed(metrics, widget.type, widget.settings, widget.date)),
-                      ],
-                    ),
+                      ),
+                      if (metrics.isNotEmpty)
+                        Expanded(
+                          child: Text(_getTextInfo(metrics, widget.type), style: Theme.of(context).textTheme.bodyLarge),
+                        ),
+                      Flexible(child: MetricCondensed(metrics, widget.type, widget.settings, widget.date)),
+                    ],
                   ),
-                );
-              }
+                ),
+              );
             }
-            return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
-          }),
-    );
+          }
+          return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
+        });
   }
 
   String _getTextInfo(List<Metric> metrics, MetricType type) {

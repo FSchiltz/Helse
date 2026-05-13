@@ -11,11 +11,48 @@ class MetricWidgetsGrid extends StatelessWidget {
     required this.date,
     this.person,
     this.extend,
+    this.button,
   });
   final DateTimeRange<DateTime> date;
   final int? person;
   final List<Pair<MetricType, OrderedItem>> cached;
   final double? extend;
+  final Widget? button;
+
+  List<Widget> _buildGrid() {
+    List<Widget> items = cached
+        .map(
+          (type) => Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0),
+            ),
+            elevation: 2,
+            child: MetricWidget(
+              type.a,
+              type.b,
+              date,
+              key: Key(type.a.id?.toString() ?? ""),
+              person: person,
+            ),
+          ),
+        )
+        .toList();
+
+    if (button != null) {
+      items.add(
+        Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+          elevation: 0,
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: button,
+          ),
+        ),
+      );
+    }
+
+    return items;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,22 +60,12 @@ class MetricWidgetsGrid extends StatelessWidget {
       return const Text("No metrics");
     } else {
       return GridView.extent(
-        maxCrossAxisExtent: extend??200,
+        maxCrossAxisExtent: extend ?? 200,
         shrinkWrap: true,
         crossAxisSpacing: 2,
         mainAxisSpacing: 2,
         physics: const BouncingScrollPhysics(),
-        children: cached
-            .map(
-              (type) => MetricWidget(
-                type.a,
-                type.b,
-                date,
-                key: Key(type.a.id?.toString() ?? ""),
-                person: person,
-              ),
-            )
-            .toList(),
+        children: _buildGrid(),
       );
     }
   }
