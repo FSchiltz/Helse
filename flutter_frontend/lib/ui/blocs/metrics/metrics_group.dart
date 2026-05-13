@@ -60,7 +60,6 @@ class _MetricsGroupState extends State<MetricsGroup> {
         setState(() {
           types = filtered;
         });
-        DI.settings.updateMetrics(model);
       }
     } catch (ex) {
       Notify.showError("$ex");

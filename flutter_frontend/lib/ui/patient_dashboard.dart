@@ -65,6 +65,11 @@ class _PatientDashboardState extends State<PatientDashboard> {
       if (model != null) {
         DI.settings.updateMetrics(model);
       }
+
+      var groups = await DI.metric.metricsGroup();
+      if (groups != null) {
+        DI.settings.updateMetricGroups(groups);
+      }
     } catch (ex) {
       Notify.showError("$ex");
     }
