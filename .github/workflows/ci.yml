@@ -23,12 +23,12 @@ jobs:
   build-net:
     runs-on: ubuntu-latest
     steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v6
 
         - name: Setup dotnet
           uses: actions/setup-dotnet@v4
           with:
-            dotnet-version: '8.0.x'
+            dotnet-version: '10.0.x'
 
         - name: Install dependencies
           run: dotnet restore
@@ -43,7 +43,7 @@ jobs:
           working-directory: 'Backend'   
 
         - name: Codecov    
-          uses: codecov/codecov-action@v4.0.1
+          uses: codecov/codecov-action@v6
           with:
             token: ${{ secrets.CODECOV_TOKEN }}        
  
