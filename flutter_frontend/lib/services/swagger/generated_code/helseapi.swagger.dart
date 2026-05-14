@@ -172,16 +172,16 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  ///@param personId
-  Future<chopper.Response> apiPersonPersonIdDelete({required int? personId}) {
-    return _apiPersonPersonIdDelete(personId: personId);
+  ///@param userId
+  Future<chopper.Response> apiPersonPersonIdDelete({required int? userId}) {
+    return _apiPersonPersonIdDelete(userId: userId);
   }
 
   ///
-  ///@param personId
+  ///@param userId
   @DELETE(path: '/api/person/{personId}')
   Future<chopper.Response> _apiPersonPersonIdDelete({
-    @Path('personId') required int? personId,
+    @Query('userId') required int? userId,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -256,6 +256,28 @@ abstract class Helseapi extends ChopperService {
   ///
   @GET(path: '/api/patients')
   Future<chopper.Response<List<Person>>> _apiPatientsGet({
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["PatientsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  Future<chopper.Response> apiPatientsPut({required UpdatePatient? body}) {
+    return _apiPatientsPut(body: body);
+  }
+
+  ///
+  @PUT(path: '/api/patients', optionalBody: true)
+  Future<chopper.Response> _apiPatientsPut({
+    @Body() required UpdatePatient? body,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -4062,6 +4084,118 @@ extension $UpdateMetricExtension on UpdateMetric {
       tag: (tag != null ? tag.value : this.tag),
       type: (type != null ? type.value : this.type),
       source: (source != null ? source.value : this.source),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class UpdatePatient {
+  const UpdatePatient({
+    this.id,
+    this.birth,
+    this.profilePicture,
+    this.name,
+    this.surname,
+    this.identifier,
+  });
+
+  factory UpdatePatient.fromJson(Map<String, dynamic> json) =>
+      _$UpdatePatientFromJson(json);
+
+  static const toJsonFactory = _$UpdatePatientToJson;
+  Map<String, dynamic> toJson() => _$UpdatePatientToJson(this);
+
+  @JsonKey(name: 'id')
+  final int? id;
+  @JsonKey(name: 'birth')
+  final DateTime? birth;
+  @JsonKey(name: 'profilePicture')
+  final String? profilePicture;
+  @JsonKey(name: 'name')
+  final String? name;
+  @JsonKey(name: 'surname')
+  final String? surname;
+  @JsonKey(name: 'identifier')
+  final String? identifier;
+  static const fromJsonFactory = _$UpdatePatientFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is UpdatePatient &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.birth, birth) ||
+                const DeepCollectionEquality().equals(other.birth, birth)) &&
+            (identical(other.profilePicture, profilePicture) ||
+                const DeepCollectionEquality().equals(
+                  other.profilePicture,
+                  profilePicture,
+                )) &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.surname, surname) ||
+                const DeepCollectionEquality().equals(
+                  other.surname,
+                  surname,
+                )) &&
+            (identical(other.identifier, identifier) ||
+                const DeepCollectionEquality().equals(
+                  other.identifier,
+                  identifier,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(birth) ^
+      const DeepCollectionEquality().hash(profilePicture) ^
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(surname) ^
+      const DeepCollectionEquality().hash(identifier) ^
+      runtimeType.hashCode;
+}
+
+extension $UpdatePatientExtension on UpdatePatient {
+  UpdatePatient copyWith({
+    int? id,
+    DateTime? birth,
+    String? profilePicture,
+    String? name,
+    String? surname,
+    String? identifier,
+  }) {
+    return UpdatePatient(
+      id: id ?? this.id,
+      birth: birth ?? this.birth,
+      profilePicture: profilePicture ?? this.profilePicture,
+      name: name ?? this.name,
+      surname: surname ?? this.surname,
+      identifier: identifier ?? this.identifier,
+    );
+  }
+
+  UpdatePatient copyWithWrapped({
+    Wrapped<int?>? id,
+    Wrapped<DateTime?>? birth,
+    Wrapped<String?>? profilePicture,
+    Wrapped<String?>? name,
+    Wrapped<String?>? surname,
+    Wrapped<String?>? identifier,
+  }) {
+    return UpdatePatient(
+      id: (id != null ? id.value : this.id),
+      birth: (birth != null ? birth.value : this.birth),
+      profilePicture: (profilePicture != null
+          ? profilePicture.value
+          : this.profilePicture),
+      name: (name != null ? name.value : this.name),
+      surname: (surname != null ? surname.value : this.surname),
+      identifier: (identifier != null ? identifier.value : this.identifier),
     );
   }
 }

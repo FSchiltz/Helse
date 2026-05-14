@@ -141,8 +141,8 @@
         ],
         "parameters": [
           {
-            "name": "personId",
-            "in": "path",
+            "name": "userId",
+            "in": "query",
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -250,6 +250,29 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "PatientsLogic"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePatient"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
           },
           "401": {
             "description": "Unauthorized"
@@ -2656,6 +2679,51 @@
           },
           "source": {
             "$ref": "#/components/schemas/FileTypes"
+          }
+        }
+      },
+      "UpdatePatient": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "birth": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "profilePicture": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "byte"
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "surname": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "identifier": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },

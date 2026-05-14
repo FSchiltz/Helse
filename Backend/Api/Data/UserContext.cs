@@ -187,16 +187,24 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
 
     public async Task DeletePersonAsync(long personId)
     {
-        await using var transaction = await Db.BeginTransactionAsync();
-
-        await Db.GetTable<User>()
-        .Where(x => x.PersonId == personId)
-        .DeleteAsync();
-
         await Db.GetTable<Models.Person>()
             .Where(x => x.Id == personId)
             .DeleteAsync();
+    }
 
-        transaction.Commit();
+    public async Task DeleteUserAsync(long userId)
+    {
+        await Db.GetTable<User>()
+        .Where(x => x.Id == userId)
+        .DeleteAsync();
+    }
+
+    public Task<PersonFromDb?> Get(long id)
+    {
+        return (from u in Db.GetTable<User>()
+                join p in Db.GetTable<Models.Person>() on u.PersonId equals p.Id
+                where u.Id == id
+                select new PersonFromDb(u, p))
+                                 .FirstOrDefaultAsync();
     }
 }

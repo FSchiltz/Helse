@@ -504,6 +504,28 @@ Map<String, dynamic> _$UpdateMetricToJson(UpdateMetric instance) =>
       'source': fileTypesNullableToJson(instance.source),
     };
 
+UpdatePatient _$UpdatePatientFromJson(Map<String, dynamic> json) =>
+    UpdatePatient(
+      id: (json['id'] as num?)?.toInt(),
+      birth: json['birth'] == null
+          ? null
+          : DateTime.parse(json['birth'] as String),
+      profilePicture: json['profilePicture'] as String?,
+      name: json['name'] as String?,
+      surname: json['surname'] as String?,
+      identifier: json['identifier'] as String?,
+    );
+
+Map<String, dynamic> _$UpdatePatientToJson(UpdatePatient instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'birth': instance.birth?.toIso8601String(),
+      'profilePicture': instance.profilePicture,
+      'name': instance.name,
+      'surname': instance.surname,
+      'identifier': instance.identifier,
+    };
+
 UpdatePerson _$UpdatePersonFromJson(Map<String, dynamic> json) => UpdatePerson(
   id: (json['id'] as num?)?.toInt(),
   types: userTypeListFromJson(json['types'] as List?),

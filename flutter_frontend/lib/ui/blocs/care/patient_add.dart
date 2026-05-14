@@ -67,13 +67,12 @@ class _PatientAddState extends State<PatientAdd> {
       });
       try {
         if(widget.edit != null){
-          await DI.user.updatePerson(
-          UpdatePerson(
+          await DI.user.updatePatient(
+          UpdatePatient(
             id: widget.edit?.id,
             name: _controllerName.text,
             surname: _controllerSurname.text,
             identifier: _controllerNiss.text,
-            types: [],
             profilePicture: _pictureData != null
                 ? base64Encode(_pictureData!)
                 : null,

@@ -65,6 +65,10 @@ public static class Endpoints
         .Produces<List<Person>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
+        patients.MapPut("/", PatientsLogic.UpdatePatient)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
         patients.MapGet("/agenda", PatientsLogic.GetAgendaAsync)
         .Produces<List<Event>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);

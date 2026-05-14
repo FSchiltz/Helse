@@ -183,6 +183,7 @@ public static class PersonLogic
             userHasRole = user?.User.HasRight(Data.Models.UserType.Admin) == true;
 
             // Care giver can add new patients without admin right
+            // TODO move to a create patien endpoint
             userHasRole = userHasRole || user?.User.HasRight(Data.Models.UserType.Caregiver) == true;
         }
 
@@ -196,13 +197,20 @@ public static class PersonLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> DeleteAsync(long personId, IUserContext db, HttpContext context)
+    public static async Task<IResult> DeleteAsync(long userId, IUserContext db, HttpContext context)
     {
         var admin = await db.IsAdmin(context.User);
         if (admin is not null)
             return admin;
 
-        await db.DeletePersonAsync(personId);
+        var user = await db.Get(userId);
+        if (user is null)
+            return TypedResults.NotFound();
+
+        await using var transaction = await db.BeginTransactionAsync();
+        await db.DeleteUserAsync(userId);
+        await db.DeletePersonAsync(user.Person.Id);
+        await transaction.CommitAsync();
 
         return TypedResults.NoContent();
     }

@@ -17,6 +17,8 @@ public interface IUserContext : IContext
 
     Task<PersonFromDb?> Get(string? identifier);
 
+    Task<PersonFromDb?> Get(long id);
+
     Task<Right?> HasRightAsync(long id, long personId, RightType type, DateTime now);
 
     Task<long> InsertPerson(PersonCreation newUser);
@@ -38,4 +40,6 @@ public interface IUserContext : IContext
     Task InsertEvent(CreateEvent e, long person, long user, long? treatment);
 
     Task DeletePersonAsync(long personId);
+
+    Task DeleteUserAsync(long userId);
 }
