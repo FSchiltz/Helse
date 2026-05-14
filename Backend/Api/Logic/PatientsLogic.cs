@@ -83,4 +83,19 @@ public static class PatientsLogic
             Valid = x.Valid,
         }));
     }
+
+    public async static Task<IResult> UpdatePatient(UpdatePatient update, IUserContext users, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+        // to update a patient, the user need to have write access to it
+        if (!await users.ValidateCaregiverAsync(user, update.Id, RightType.Edit))
+            return TypedResults.Forbid();
+
+        await users.UpdatePatient(update);
+
+        return TypedResults.NoContent();
+    }
 }

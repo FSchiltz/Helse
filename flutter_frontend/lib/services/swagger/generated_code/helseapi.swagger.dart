@@ -172,6 +172,30 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
+  ///@param personId
+  Future<chopper.Response> apiPersonPersonIdDelete({required int? personId}) {
+    return _apiPersonPersonIdDelete(personId: personId);
+  }
+
+  ///
+  ///@param personId
+  @DELETE(path: '/api/person/{personId}')
+  Future<chopper.Response> _apiPersonPersonIdDelete({
+    @Path('personId') required int? personId,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["PersonLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
   Future<chopper.Response<List<Person>>> apiPersonCaregiverGet() {
     generatedMapping.putIfAbsent(Person, () => Person.fromJsonFactory);
 

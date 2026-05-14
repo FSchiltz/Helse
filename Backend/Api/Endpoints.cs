@@ -40,6 +40,10 @@ public static class Endpoints
         .Produces<List<Person>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
+        person.MapDelete("/{personId}", PersonLogic.DeleteAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
         person.MapGet("/caregiver", PersonLogic.GetCaregiverAsync)
         .Produces<List<Person>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);

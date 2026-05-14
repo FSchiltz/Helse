@@ -9,6 +9,8 @@ public interface IUserContext : IContext
 {
     Task UpdatePerson(UpdatePerson update);
 
+    Task UpdatePatient(UpdatePatient update);
+
     Task AddRight(long userId, long id, RightType edit);
 
     Task<long> Count();
@@ -34,4 +36,6 @@ public interface IUserContext : IContext
     Task<long> InsertTreatment(long v, TreatmentType care);
 
     Task InsertEvent(CreateEvent e, long person, long user, long? treatment);
+
+    Task DeletePersonAsync(long personId);
 }

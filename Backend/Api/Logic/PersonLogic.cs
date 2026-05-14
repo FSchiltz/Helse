@@ -196,6 +196,17 @@ public static class PersonLogic
         return TypedResults.NoContent();
     }
 
+    public static async Task<IResult> DeleteAsync(long personId, IUserContext db, HttpContext context)
+    {
+        var admin = await db.IsAdmin(context.User);
+        if (admin is not null)
+            return admin;
+
+        await db.DeletePersonAsync(personId);
+
+        return TypedResults.NoContent();
+    }
+
     /// <summary>
     /// Change the role of a user
     /// Needs adim right
@@ -218,8 +229,18 @@ public static class PersonLogic
             return TypedResults.BadRequest("Cannot remove your own admin right.");
         }
 
+        await using var transaction = await db.BeginTransactionAsync();
         await db.UpdatePerson(update);
-
+        await db.UpdatePatient(new UpdatePatient
+        {
+            Id = user.PersonId,
+            Birth = update.Birth,
+            Identifier = update.Identifier,
+            Name = update.Name,
+            Surname = update.Surname,
+            ProfilePicture = update.ProfilePicture,
+        });
+        await transaction.CommitAsync();
         return TypedResults.NoContent();
     }
 }

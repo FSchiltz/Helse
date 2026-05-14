@@ -1,5 +1,4 @@
 using Api.Data.Models;
-using Api.Models.Admin;
 using Api.Models.Events;
 using Api.Models.Persons;
 using Api.Models.Settings;
@@ -30,19 +29,34 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
             && (x.Stop == null || x.Stop >= time))
         .FirstOrDefaultAsync())?.FromDb();
 
+    public async Task UpdatePatient(UpdatePatient update)
+    {
+        var personQuery = Db.GetTable<Models.Person>()
+            .Where(x => x.Id == update.Id)
+            .AsUpdatable();
+
+        if (update.Birth is not null)
+            personQuery = personQuery.Set(x => x.Birth, update.Birth);
+
+        if (update.Identifier is not null)
+            personQuery = personQuery.Set(x => x.Identifier, update.Identifier);
+
+        if (update.Name is not null)
+            personQuery = personQuery.Set(x => x.Name, update.Name);
+
+        if (update.Surname is not null)
+            personQuery = personQuery.Set(x => x.Surname, update.Surname);
+
+        if (update.ProfilePicture is not null)
+            personQuery = personQuery.Set(x => x.ProfilePicture, update.ProfilePicture);
+
+        await personQuery.UpdateAsync();
+    }
+
     public async Task UpdatePerson(UpdatePerson update)
     {
-        await Db.GetTable<Models.Person>()
-            .Where(x => x.Id == update.Id)
-            .Set(x => x.Birth, update.Birth)
-            .Set(x => x.Identifier, update.Identifier)
-            .Set(x => x.Name, update.Name)
-            .Set(x => x.Surname, update.Surname)
-            .Set(x => x.ProfilePicture, update.ProfilePicture)
-            .UpdateAsync();
-
         var userQuery = Db.GetTable<User>()
-            .Where(x => x.PersonId == update.Id)
+            .Where(x => x.Id == update.Id)
             .AsUpdatable();
 
         if (update.Email is not null)
@@ -50,9 +64,6 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
 
         if (update.Phone is not null)
             userQuery = userQuery.Set(x => x.Phone, update.Phone);
-
-        if (update.Identifier is not null)
-            userQuery = userQuery.Set(x => x.Identifier, update.Identifier);
 
         if (update.Types is not null)
         {
@@ -172,5 +183,20 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
             Start = e.Start,
             TreatmentId = treatment,
         });
+    }
+
+    public async Task DeletePersonAsync(long personId)
+    {
+        await using var transaction = await Db.BeginTransactionAsync();
+
+        await Db.GetTable<User>()
+        .Where(x => x.PersonId == personId)
+        .DeleteAsync();
+
+        await Db.GetTable<Models.Person>()
+            .Where(x => x.Id == personId)
+            .DeleteAsync();
+
+        transaction.Commit();
     }
 }

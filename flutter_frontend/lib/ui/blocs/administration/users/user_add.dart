@@ -9,8 +9,9 @@ import 'user_form.dart';
 
 class UserAdd extends StatefulWidget {
   final void Function()? callback;
+  final Person? edit;
 
-  const UserAdd(this.callback, {super.key});
+  const UserAdd(this.callback, {super.key, this.edit});
 
   @override
   State<UserAdd> createState() => _SignupState();
@@ -28,6 +29,19 @@ class _SignupState extends State<UserAdd> {
   final TextEditingController _controllerPassword = TextEditingController();
   final TextEditingController _controllerConFirmPassword =
       TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    var edit = widget.edit;
+    if (edit != null) {
+      _controllerUsername.text = edit.userName ?? '';
+      _controllerEmail.text = edit.email ?? '';
+      _controllerName.text = edit.name ?? '';
+      _controllerSurname.text = edit.surname ?? '';
+      _type = edit.types ?? [];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,17 +65,22 @@ class _SignupState extends State<UserAdd> {
             children: [
               UserRightInput(
                 value: _type,
-                  UserType.values.toList(),
-                  (value) => setState(() {
-                        _type = value;
-                      })),
+                UserType.values.toList(),
+                (value) => setState(() {
+                  _type = value;
+                }),
+              ),
               const SizedBox(height: 10),
               UserForm(
                 _type,
-                controllerConFirmPassword: _controllerConFirmPassword,
+                controllerConFirmPassword: (widget.edit != null)
+                    ? null
+                    : _controllerConFirmPassword,
                 controllerEmail: _controllerEmail,
                 controllerName: _controllerName,
-                controllerPassword: _controllerPassword,
+                controllerPassword: (widget.edit != null)
+                    ? null
+                    : _controllerPassword,
                 controllerSurname: _controllerSurname,
                 controllerUsername: _controllerUsername,
               ),
@@ -76,15 +95,30 @@ class _SignupState extends State<UserAdd> {
     var localContext = context;
     try {
       if (_formKey.currentState?.validate() ?? false) {
-        // save the user
-        await DI.user.addPerson(PersonCreation(
-          userName: _controllerUsername.text,
-          name: _controllerName.text,
-          surname: _controllerSurname.text,
-          password: _controllerPassword.text,
-          email: _controllerEmail.text,
-          types: _type,
-        ));
+        var edit = widget.edit;
+        if (edit != null) {
+          await DI.user.updatePerson(
+            UpdatePerson(
+              id: edit.id,
+              types: _type,
+              name: _controllerName.text,
+              surname: _controllerSurname.text,
+              email: _controllerEmail.text,
+            ),
+          );
+        } else {
+          // save the user
+          await DI.user.addPerson(
+            PersonCreation(
+              userName: _controllerUsername.text,
+              name: _controllerName.text,
+              surname: _controllerSurname.text,
+              password: _controllerPassword.text,
+              email: _controllerEmail.text,
+              types: _type,
+            ),
+          );
+        }
 
         _formKey.currentState?.reset();
         widget.callback?.call();
