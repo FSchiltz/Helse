@@ -290,6 +290,7 @@ Oauth _$OauthFromJson(Map<String, dynamic> json) => Oauth(
   clientSecret: json['clientSecret'] as String?,
   url: json['url'] as String?,
   tokenurl: json['tokenurl'] as String?,
+  claimsUrl: json['claimsUrl'] as String?,
 );
 
 Map<String, dynamic> _$OauthToJson(Oauth instance) => <String, dynamic>{
@@ -300,6 +301,7 @@ Map<String, dynamic> _$OauthToJson(Oauth instance) => <String, dynamic>{
   'clientSecret': instance.clientSecret,
   'url': instance.url,
   'tokenurl': instance.tokenurl,
+  'claimsUrl': instance.claimsUrl,
 };
 
 Person _$PersonFromJson(Map<String, dynamic> json) => Person(

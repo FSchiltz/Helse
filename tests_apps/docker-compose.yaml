@@ -11,6 +11,13 @@ services:
     ports:
       - 5432:5432
 
+  gotify:
+    image: gotify/server
+    ports:
+      - 5433:80
+    environment:
+      GOTIFY_DEFAULTUSER_PASS: 'admin'
+
 volumes:
   pgdata:
  

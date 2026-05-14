@@ -1,12 +1,12 @@
 namespace Api.Models.Settings.Admin;
 
-public class Gotify
+public class Gotify : IJsonSettings
 {
-    public const string Name = "Gotify";
+    public static string Name => "Gotify";
 
-    public bool Enabled { get; set; }
+    public bool Enabled { get; init; }
 
-    public string? Url { get; set; }
+    public string? Url { get; init; }
 
-    public string? Token { get; set; }
+    public string? Token { get; init; }
 }

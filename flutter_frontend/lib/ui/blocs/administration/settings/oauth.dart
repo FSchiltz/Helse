@@ -77,6 +77,7 @@ class _OauthFormViewState extends State<OauthFormView> {
   final TextEditingController _controllerSecret = TextEditingController();
   final TextEditingController _controllerAuth = TextEditingController();
   final TextEditingController _controllerToken = TextEditingController();
+  final TextEditingController _controllerClaims = TextEditingController();
   bool _enabled = false;
   bool _autoregister = false;
   bool _autoLogin = false;
@@ -89,7 +90,7 @@ class _OauthFormViewState extends State<OauthFormView> {
     _controllerSecret.text = data?.clientSecret ?? "";
     _controllerAuth.text = data?.url ?? "";
     _controllerToken.text = data?.tokenurl ?? "";
-
+    _controllerClaims.text = data?.claimsUrl ?? "";
     _enabled = data?.enabled ?? false;
     _autoregister = data?.autoRegister ?? false;
     _autoLogin = data?.autoLogin ?? false;
@@ -138,6 +139,7 @@ class _OauthFormViewState extends State<OauthFormView> {
             autoLogin: _autoLogin,
             tokenurl: _controllerToken.text,
             url: _controllerAuth.text,
+            claimsUrl: _controllerClaims.text,
           ),
         );
 
@@ -177,6 +179,13 @@ class _OauthFormViewState extends State<OauthFormView> {
       SquareTextField(
         controller: _controllerToken,
         label: "Token url",
+        icon: Icons.token_sharp,
+        theme: theme,
+      ),
+      const SizedBox(height: 10),
+      SquareTextField(
+        controller: _controllerClaims,
+        label: "Claims url",
         icon: Icons.token_sharp,
         theme: theme,
       ),

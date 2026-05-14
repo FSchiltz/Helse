@@ -2216,6 +2216,12 @@
               "null",
               "string"
             ]
+          },
+          "claimsUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },

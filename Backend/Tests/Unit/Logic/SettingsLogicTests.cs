@@ -1,9 +1,7 @@
 using Api.Data;
 using Api.Logic;
 using Api.Models.Settings.Admin;
-using Microsoft.AspNetCore.Http;
 using NSubstitute;
-using System.Security.Claims;
 
 namespace Tests.Unit.Logic;
 
@@ -17,7 +15,7 @@ public class SettingsLogicTests : LogicTests
         var context = SetupContext();
         var settings = Substitute.For<ISettingsContext>();
         var oauth = new Oauth { Enabled = true };
-        settings.GetSettings<Oauth>(Oauth.Name).Returns(oauth);      
+        settings.GetSettings<Oauth>(Oauth.Name).Returns(oauth);
 
         // Act
         var result = await SettingsLogic.GetOauthAsync(users, settings, context);

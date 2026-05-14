@@ -16,10 +16,21 @@ public static class OauthHelper
         PropertyNameCaseInsensitive = true
     };
 
-    private record Token(string User, string? Name);
+    private record Token(string User, string IdToken, string AccessToken);
+
+    private record Claims(string User, string Email, string Name, string Surname);
+
     private class OauthToken
     {
         public string? Access_token { get; set; }
+
+        public int Expires_in { get; set; }
+
+        public string? Id_token { get; set; }
+
+        public string? Scope { get; set; }
+
+        public string? Token_type { get; set; }
     }
 
     public static async Task<(bool logged, TokenInfo? fromDb)> ConnectOauth(IUserContext db, Oauth oauth, Connection user, ILogger log)
@@ -33,6 +44,9 @@ public static class OauthHelper
         {
             if (oauth.AutoRegister)
             {
+                // get the claims from the claims endpoint.
+                var claims = await GetClaimsAsync(oauth, token.AccessToken);
+
                 log.LogInformation("User created for {header}", user.Redirect);
                 // If auto register and not found, we create it
                 await db.CreateUserAsync(new PersonCreation
@@ -40,7 +54,7 @@ public static class OauthHelper
                     UserName = token.User,
                     Password = RandomNumberGenerator.GetInt32(100000000, int.MaxValue).ToString(),
                     Types = [UserType.User],
-                    Name = token.Name,
+                    Name = "Name",
                 }, 0);
                 logged = true;
                 fromDb = await db.TokenFromDb(token.User);
@@ -52,6 +66,19 @@ public static class OauthHelper
         }
 
         return (logged, fromDb);
+    }
+
+    private static async Task<Claims> GetClaimsAsync(Oauth oauth, string accessToken)
+    {
+        using var client = new HttpClient();
+        var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes(accessToken));
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString);
+        var response = await client.GetAsync(oauth.Tokenurl);
+
+        var contentString = await response.Content.ReadAsStringAsync();
+        response.EnsureSuccessStatusCode();
+        return new Claims("user", "email", "name", "surname");
     }
 
     private static async Task<Token> GetOauthTokenAsync(this Oauth oauth, Connection user)
@@ -66,7 +93,7 @@ public static class OauthHelper
         ]);
 
         var authenticationString = $"{oauth.ClientId}:{oauth.ClientSecret}";
-        var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(authenticationString));
+        var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes(authenticationString));
 
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString);
         var response = await client.PostAsync(oauth.Tokenurl, content);
@@ -80,12 +107,12 @@ public static class OauthHelper
     {
         var auth = JsonSerializer.Deserialize<OauthToken>(content, _options);
 
-        var jwt = auth?.Access_token ?? throw new InvalidOperationException("Incorrect token");
+        var access = auth?.Access_token ?? throw new InvalidOperationException("Incorrect token");
+        var id = auth.Id_token ?? throw new InvalidOperationException("Incorrect token");
 
-        var token = new JwtSecurityTokenHandler().ReadJwtToken(jwt);
+        var token = new JwtSecurityTokenHandler().ReadJwtToken(id);
 
-        var claim = token.Payload.Claims.First(x => x.Type == "preferred_username" || x.Type == JwtRegisteredClaimNames.UniqueName);
-        var name = token.Payload.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Name || x.Type == JwtRegisteredClaimNames.FamilyName);
-        return new Token(claim.Value, name?.Value ?? claim.Value);
+        var claim = token.Payload.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub);
+        return new Token(claim.Value, id, access);
     }
 }

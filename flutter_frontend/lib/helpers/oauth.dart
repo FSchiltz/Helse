@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:core';
+import 'dart:math';
 import 'package:app_links/app_links.dart';
 import 'package:helse/logic/account/authentication_logic.dart';
 import 'package:helse/logic/d_i.dart';
@@ -25,12 +27,15 @@ class OauthClient {
     }
   }
 
-  void init({
-    required String auth,
-    required String clientId,
-  }) async {
+  void init({required String auth, required String clientId}) async {
     _auth = auth;
     _clientId = clientId;
+  }
+
+  String getRandomString(int len) {
+    var random = Random.secure();
+    var values = List<int>.generate(len, (i) => random.nextInt(255));
+    return base64UrlEncode(values);
   }
 
   Future<String?> login(String url) async {
@@ -38,9 +43,10 @@ class OauthClient {
 
     var grant = await account.get(Account.grant);
     if (grant == null) {
+      var state = getRandomString(24);
       var redirect = redirectUrl.toString();
       final authUrl =
-          '$_auth?client_id=$_clientId&response_type=code&scope=openid+profile+offline_access&state=STATE&redirect_uri=$redirect';
+          '$_auth?client_id=$_clientId&response_type=code&scope=openid+profile+offline_access&state=$state&redirect_uri=$redirect';
 
       await account.set(Account.redirect, redirect);
 
@@ -65,11 +71,13 @@ class OauthClient {
     var links = AppLinks();
     links.uriLinkStream.listen((uri) {
       if (uri.toString().startsWith(redirect)) {
-        getCode(uri.queryParameters).then((value) =>
-            DI.authentication.set(AuthenticationStatus.unauthenticated));
+        getCode(uri.queryParameters).then(
+          (value) =>
+              DI.authentication.set(AuthenticationStatus.unauthenticated),
+        );
       }
     });
-    
+
     DI.authentication.set(AuthenticationStatus.unknown);
     var uri = Uri.parse(result);
     if (await canLaunchUrl(uri)) {

@@ -2818,6 +2818,7 @@ class Oauth {
     this.clientSecret,
     this.url,
     this.tokenurl,
+    this.claimsUrl,
   });
 
   factory Oauth.fromJson(Map<String, dynamic> json) => _$OauthFromJson(json);
@@ -2839,6 +2840,8 @@ class Oauth {
   final String? url;
   @JsonKey(name: 'tokenurl')
   final String? tokenurl;
+  @JsonKey(name: 'claimsUrl')
+  final String? claimsUrl;
   static const fromJsonFactory = _$OauthFromJson;
 
   @override
@@ -2876,6 +2879,11 @@ class Oauth {
                 const DeepCollectionEquality().equals(
                   other.tokenurl,
                   tokenurl,
+                )) &&
+            (identical(other.claimsUrl, claimsUrl) ||
+                const DeepCollectionEquality().equals(
+                  other.claimsUrl,
+                  claimsUrl,
                 )));
   }
 
@@ -2891,6 +2899,7 @@ class Oauth {
       const DeepCollectionEquality().hash(clientSecret) ^
       const DeepCollectionEquality().hash(url) ^
       const DeepCollectionEquality().hash(tokenurl) ^
+      const DeepCollectionEquality().hash(claimsUrl) ^
       runtimeType.hashCode;
 }
 
@@ -2903,6 +2912,7 @@ extension $OauthExtension on Oauth {
     String? clientSecret,
     String? url,
     String? tokenurl,
+    String? claimsUrl,
   }) {
     return Oauth(
       enabled: enabled ?? this.enabled,
@@ -2912,6 +2922,7 @@ extension $OauthExtension on Oauth {
       clientSecret: clientSecret ?? this.clientSecret,
       url: url ?? this.url,
       tokenurl: tokenurl ?? this.tokenurl,
+      claimsUrl: claimsUrl ?? this.claimsUrl,
     );
   }
 
@@ -2923,6 +2934,7 @@ extension $OauthExtension on Oauth {
     Wrapped<String?>? clientSecret,
     Wrapped<String?>? url,
     Wrapped<String?>? tokenurl,
+    Wrapped<String?>? claimsUrl,
   }) {
     return Oauth(
       enabled: (enabled != null ? enabled.value : this.enabled),
@@ -2936,6 +2948,7 @@ extension $OauthExtension on Oauth {
           : this.clientSecret),
       url: (url != null ? url.value : this.url),
       tokenurl: (tokenurl != null ? tokenurl.value : this.tokenurl),
+      claimsUrl: (claimsUrl != null ? claimsUrl.value : this.claimsUrl),
     );
   }
 }
