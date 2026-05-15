@@ -247,7 +247,8 @@ class _LoginState extends State<LoginPage> {
               _submit(
                 noUser: true,
                 oAuth: grant,
-                issuer: await DI.authentication.getRedirect(),
+                redirect: await DI.authentication.getRedirect(),
+                issuer: await DI.authentication.getClientId(),
               );
             } else if (autologin != null) {
               _connectOauth(url, autologin);
@@ -302,6 +303,7 @@ class _LoginState extends State<LoginPage> {
           noUser: true,
           oAuth: grant,
           issuer: await DI.authentication.getClientId(),
+          redirect: await DI.authentication.getRedirect(),
         );
       }
     } else {
@@ -314,6 +316,7 @@ class _LoginState extends State<LoginPage> {
     bool noUser = false,
     String? oAuth,
     String? issuer,
+    String? redirect,
   }) async {
     var init = _initStatus?.init;
     var url = _url;
@@ -336,9 +339,12 @@ class _LoginState extends State<LoginPage> {
       if (init || noUser) {
         await DI.authentication.logIn(
           url: url,
-          username: user,
-          password: password,
-          issuer: issuer,
+          connection: Connection(
+            user: user,
+            password: password,
+            issuer: issuer,
+            redirect: redirect,
+          ),
         );
       } else {
         var person = PersonCreation(
@@ -353,8 +359,7 @@ class _LoginState extends State<LoginPage> {
         // after a succes, we auto login
         await DI.authentication.logIn(
           url: url,
-          username: user,
-          password: password,
+          connection: Connection(user: user, password: password),
         );
 
         await DI.authentication.clean();

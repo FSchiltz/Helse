@@ -1419,7 +1419,12 @@ abstract class Helseapi extends ChopperService {
 
 @JsonSerializable(explicitToJson: true)
 class Connection {
-  const Connection({required this.user, required this.password, this.issuer});
+  const Connection({
+    required this.user,
+    required this.password,
+    this.issuer,
+    this.redirect,
+  });
 
   factory Connection.fromJson(Map<String, dynamic> json) =>
       _$ConnectionFromJson(json);
@@ -1433,6 +1438,8 @@ class Connection {
   final String password;
   @JsonKey(name: 'issuer')
   final String? issuer;
+  @JsonKey(name: 'redirect')
+  final String? redirect;
   static const fromJsonFactory = _$ConnectionFromJson;
 
   @override
@@ -1447,7 +1454,12 @@ class Connection {
                   password,
                 )) &&
             (identical(other.issuer, issuer) ||
-                const DeepCollectionEquality().equals(other.issuer, issuer)));
+                const DeepCollectionEquality().equals(other.issuer, issuer)) &&
+            (identical(other.redirect, redirect) ||
+                const DeepCollectionEquality().equals(
+                  other.redirect,
+                  redirect,
+                )));
   }
 
   @override
@@ -1458,15 +1470,22 @@ class Connection {
       const DeepCollectionEquality().hash(user) ^
       const DeepCollectionEquality().hash(password) ^
       const DeepCollectionEquality().hash(issuer) ^
+      const DeepCollectionEquality().hash(redirect) ^
       runtimeType.hashCode;
 }
 
 extension $ConnectionExtension on Connection {
-  Connection copyWith({String? user, String? password, String? issuer}) {
+  Connection copyWith({
+    String? user,
+    String? password,
+    String? issuer,
+    String? redirect,
+  }) {
     return Connection(
       user: user ?? this.user,
       password: password ?? this.password,
       issuer: issuer ?? this.issuer,
+      redirect: redirect ?? this.redirect,
     );
   }
 
@@ -1474,11 +1493,13 @@ extension $ConnectionExtension on Connection {
     Wrapped<String>? user,
     Wrapped<String>? password,
     Wrapped<String?>? issuer,
+    Wrapped<String?>? redirect,
   }) {
     return Connection(
       user: (user != null ? user.value : this.user),
       password: (password != null ? password.value : this.password),
       issuer: (issuer != null ? issuer.value : this.issuer),
+      redirect: (redirect != null ? redirect.value : this.redirect),
     );
   }
 }

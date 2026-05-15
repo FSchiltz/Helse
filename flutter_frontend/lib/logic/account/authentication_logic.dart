@@ -41,12 +41,10 @@ class AuthenticationLogic {
   /// Call the login service
   Future<void> logIn({
     required String url,
-    required String username,
-    required String password,
-    String? issuer,
+    required Connection connection,
   }) async {
     await _account.set(Account.url, url);
-    var token = await LoginService(_account).login(username, password, issuer);
+    var token = await LoginService(_account).login(connection);
 
     if (token?.refreshToken != null) {
       await _account.set(Account.refresh, token?.refreshToken ?? '');

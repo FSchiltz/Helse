@@ -66,8 +66,6 @@ public static class OauthHelper
                     Types = [Api.Models.Persons.UserType.User],
                     Name = claims.Name,
                 }, 0);
-                logged = true;
-                fromDb = await db.TokenFromDb(token.User);
 
                 await db.LinkOauth(new OauthUser
                 {
@@ -77,6 +75,9 @@ public static class OauthHelper
                 });
 
                 await transaction.CommitAsync();
+
+                logged = true;
+                fromDb = await db.TokenFromDb(token.User, provider.ClientId);
             }
         }
         else
@@ -108,6 +109,7 @@ public static class OauthHelper
         using var content = new FormUrlEncodedContent([
             new ("grant_type","authorization_code"),
             new ("code", user.Password),
+            new ("redirect_uri", user.Redirect),
         ]);
 
         var authenticationString = $"{oauth.ClientId}:{oauth.ClientSecret}";

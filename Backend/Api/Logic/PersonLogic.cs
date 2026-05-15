@@ -237,11 +237,14 @@ public static class PersonLogic
             return TypedResults.BadRequest("Cannot remove your own admin right.");
         }
 
+        var userToUpdate =await db.Get(update.Id)?? throw new InvalidDataException();
+
         await using var transaction = await db.BeginTransactionAsync();
         await db.UpdatePerson(update);
+
         await db.UpdatePatient(new UpdatePatient
         {
-            Id = user.PersonId,
+            Id = userToUpdate.Person.Id,
             Birth = update.Birth,
             Identifier = update.Identifier,
             Name = update.Name,

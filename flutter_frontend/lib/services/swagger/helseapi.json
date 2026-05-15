@@ -1684,7 +1684,8 @@
         "required": [
           "user",
           "password",
-          "issuer"
+          "issuer",
+          "redirect"
         ],
         "type": "object",
         "properties": {
@@ -1695,6 +1696,12 @@
             "type": "string"
           },
           "issuer": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "redirect": {
             "type": [
               "null",
               "string"

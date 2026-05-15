@@ -10,6 +10,7 @@ Connection _$ConnectionFromJson(Map<String, dynamic> json) => Connection(
   user: json['user'] as String,
   password: json['password'] as String,
   issuer: json['issuer'] as String?,
+  redirect: json['redirect'] as String?,
 );
 
 Map<String, dynamic> _$ConnectionToJson(Connection instance) =>
@@ -17,6 +18,7 @@ Map<String, dynamic> _$ConnectionToJson(Connection instance) =>
       'user': instance.user,
       'password': instance.password,
       'issuer': instance.issuer,
+      'redirect': instance.redirect,
     };
 
 CountByDate _$CountByDateFromJson(Map<String, dynamic> json) => CountByDate(

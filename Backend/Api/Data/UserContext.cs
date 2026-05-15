@@ -207,6 +207,10 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
 
     public async Task DeleteUserAsync(long userId)
     {
+        await Db.GetTable<OauthUser>()
+        .Where(x => x.UserId == userId)
+        .DeleteAsync();
+
         await Db.GetTable<User>()
         .Where(x => x.Id == userId)
         .DeleteAsync();

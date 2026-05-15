@@ -26,7 +26,7 @@ public class PasswordHelperTests
             Type = 1,
         }, new()));
 
-        var user = new Connection("testuser", password,  null);
+        var user = new Connection("testuser", password,  null, null);
 
         // Act
         var (success, token) = await PasswordHelper.ConnectPassword(user, db, logger);
@@ -54,7 +54,7 @@ public class PasswordHelperTests
             Type = 1,
         }, new()));
 
-        var user = new Connection("testuser", wrongPassword, null);
+        var user = new Connection("testuser", wrongPassword, null, null);
 
         // Act
         var (success, token) = await PasswordHelper.ConnectPassword(user, db, logger);
@@ -72,7 +72,7 @@ public class PasswordHelperTests
         var logger = Substitute.For<ILogger<object>>();
 
         db.Get("unknownuser").Returns(default(PersonFromDb?));
-        var user = new Connection("unknownuser", "password",  null);
+        var user = new Connection("unknownuser", "password",  null, null);
 
         // Act
         var (success, token) = await PasswordHelper.ConnectPassword(user, db, logger);
