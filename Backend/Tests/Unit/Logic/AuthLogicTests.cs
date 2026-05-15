@@ -39,6 +39,18 @@ public class AuthLogicTests
         var context = new DefaultHttpContext();
         var loggerFactory = Substitute.For<ILoggerFactory>();
 
+        var oauth = new Oauth
+        {
+            Enabled = true,
+            Providers = [ new OauthProvider() { Name = "TestProvider",
+            ClaimsUrl = "",
+            ClientSecret = "",
+            Tokenurl = "",
+             AutoRegister = true,
+         Url = "http://oauth.com", ClientId = "client123", AutoLogin = true }],
+        };
+        settings.GetSettings<Oauth>(Oauth.Name).Returns(oauth);
+
         // Act
         var result = await AuthLogic.StatusAsync(settings, users, context, loggerFactory);
 

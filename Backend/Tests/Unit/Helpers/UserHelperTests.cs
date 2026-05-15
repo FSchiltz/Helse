@@ -16,18 +16,18 @@ public class UserHelperTests
         var users = Substitute.For<IUserContext>();
         var transaction = Substitute.For<ITransaction>();
         users.BeginTransactionAsync().Returns(transaction);
-        
+
         var newUser = new PersonCreation
         {
             Name = "John",
             Surname = "Doe",
             UserName = "johndoe",
             Password = "password123",
-            Types = new HashSet<UserType> { UserType.User }
+            Types = [UserType.User]
         };
-        
+
         users.InsertPerson(newUser).Returns(1L);
-        users.InsertUser(newUser, 1L, Arg.Any<string>()).Returns(Task.CompletedTask);
+        users.InsertUser(newUser, 1L, Arg.Any<string>()).Returns(1L);
 
         // Act
         await users.CreateUserAsync(newUser, 1L);
@@ -45,7 +45,7 @@ public class UserHelperTests
         var users = Substitute.For<IUserContext>();
         var transaction = Substitute.For<ITransaction>();
         users.BeginTransactionAsync().Returns(transaction);
-        
+
         var newUser = new PersonCreation
         {
             Name = "Admin",
@@ -54,9 +54,9 @@ public class UserHelperTests
             Password = "adminpass",
             Types = new HashSet<UserType> { UserType.Admin }
         };
-        
+
         users.InsertPerson(newUser).Returns(2L);
-        users.InsertUser(newUser, 2L, Arg.Any<string>()).Returns(Task.CompletedTask);
+        users.InsertUser(newUser, 2L, Arg.Any<string>()).Returns(1L);
 
         // Act
         await users.CreateUserAsync(newUser, 1L);
@@ -74,14 +74,14 @@ public class UserHelperTests
         var users = Substitute.For<IUserContext>();
         var transaction = Substitute.For<ITransaction>();
         users.BeginTransactionAsync().Returns(transaction);
-        
+
         var newUser = new PersonCreation
         {
             Name = "Caregiver",
             Surname = "User",
             Types = new HashSet<UserType> { UserType.Caregiver }
         };
-        
+
         users.InsertPerson(newUser).Returns(3L);
         users.AddRight(Arg.Any<long>(), Arg.Any<long>(), Arg.Any<RightType>()).Returns(Task.CompletedTask);
 
@@ -102,7 +102,7 @@ public class UserHelperTests
         var users = Substitute.For<IUserContext>();
         var transaction = Substitute.For<ITransaction>();
         users.BeginTransactionAsync().Returns(transaction);
-        
+
         var newUser = new PersonCreation
         {
             Name = "John",
@@ -111,7 +111,7 @@ public class UserHelperTests
             Password = "password123",
             Types = new HashSet<UserType> { UserType.User }
         };
-        
+
         users.InsertPerson(newUser).Returns(1L);
 
         // Act & Assert
@@ -125,7 +125,7 @@ public class UserHelperTests
         var users = Substitute.For<IUserContext>();
         var transaction = Substitute.For<ITransaction>();
         users.BeginTransactionAsync().Returns(transaction);
-        
+
         var newUser = new PersonCreation
         {
             Name = "John",
@@ -134,7 +134,7 @@ public class UserHelperTests
             Password = null,
             Types = new HashSet<UserType> { UserType.User }
         };
-        
+
         users.InsertPerson(newUser).Returns(1L);
 
         // Act & Assert
@@ -148,7 +148,7 @@ public class UserHelperTests
         var users = Substitute.For<IUserContext>();
         var transaction = Substitute.For<ITransaction>();
         users.BeginTransactionAsync().Returns(transaction);
-        
+
         var newUser = new PersonCreation
         {
             Name = "John",
@@ -157,7 +157,7 @@ public class UserHelperTests
             Password = "password123",
             Types = new HashSet<UserType> { UserType.User }
         };
-        
+
         users.InsertPerson(newUser).Returns(1L);
 
         // Act
