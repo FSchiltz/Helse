@@ -58,20 +58,30 @@ public static class OauthHelper
 
                 log.LogInformation("User created for {header}", user.Issuer);
                 await using var transaction = await db.BeginTransactionAsync();
-                // If auto register and not found, we create it
-                var id = await db.CreateUserAsync(new PersonCreation
+                var existing = await db.Get(claims.Preferred_username);
+                long? id = null;
+                if (existing != null)
                 {
-                    UserName = claims.Preferred_username,
-                    Password = RandomNumberGenerator.GetInt32(100000000, int.MaxValue).ToString(),
-                    Types = [Api.Models.Persons.UserType.User],
-                    Name = claims.Name,
-                }, 0);
+                    id = existing.User.Id;
+                }
+                else
+                {
+                    // If auto register and not found, we create it
+                    var newUser = await db.CreateUserAsync(new PersonCreation
+                    {
+                        UserName = claims.Preferred_username,
+                        Password = RandomNumberGenerator.GetInt32(100000000, int.MaxValue).ToString(),
+                        Types = [Api.Models.Persons.UserType.User],
+                        Name = claims.Name,
+                    }, 0);
+                    id = newUser.User;
+                }
 
                 await db.LinkOauth(new OauthUser
                 {
                     Provider = provider.ClientId,
                     OauthSub = token.User,
-                    UserId = id.User ?? throw new InvalidOperationException("User creation failed"),
+                    UserId = id ?? throw new InvalidOperationException("User creation failed"),
                 });
 
                 await transaction.CommitAsync();
