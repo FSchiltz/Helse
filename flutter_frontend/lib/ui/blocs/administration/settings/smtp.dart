@@ -111,6 +111,18 @@ class _SmtpFormViewState extends State<SmtpFormView> {
             ],
           ),
           if (_enabled) ..._fields(theme),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: 200,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(50),
+                shape: const ContinuousRectangleBorder(),
+              ),
+              onPressed: submit,
+              child: const Text('Save'),
+            ),
+          ),
         ],
       ),
     );
@@ -207,18 +219,6 @@ class _SmtpFormViewState extends State<SmtpFormView> {
           icon: Icons.password_sharp,
           theme: theme,
           obscureText: true,
-        ),
-      ),
-      const SizedBox(height: 20),
-      SizedBox(
-        width: 200,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size.fromHeight(50),
-            shape: const ContinuousRectangleBorder(),
-          ),
-          onPressed: submit,
-          child: const Text('Save'),
         ),
       ),
     ];

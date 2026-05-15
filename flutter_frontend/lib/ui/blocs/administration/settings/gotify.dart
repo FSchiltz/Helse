@@ -102,65 +102,7 @@ class _SmtpFormViewState extends State<GotifyFormView> {
               ),
             ],
           ),
-          if(_enabled)..._fields(theme),          
-        ],
-      ),
-    );
-  }
-
-  void submit() async {
-    try {
-      if (_formKey.currentState?.validate() ?? false) {
-        final smtp = Gotify(
-          url: _controllerUrl.text,
-          token:_controllerToken.text,
-          enabled: _enabled,
-        );
-
-        await DI.settings.api().updateGotify(smtp);
-
-        Notify.show('Saved Successfully');
-        widget.callback();
-      }
-    } catch (ex) {
-      Notify.showError('$ex');
-    }
-  }
-  
-  List<Widget> _fields(ColorScheme theme) {
-    return [
-      const SizedBox(height: 10),
-          SizedBox(
-            width: 400,
-            child: SquareTextField(
-              controller: _controllerUrl,
-              label: 'host',
-              icon: Icons.mail_sharp,
-              theme: theme,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'host is required';
-                }
-                return null;
-              },
-            ),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            width: 400,
-            child: SquareTextField(
-              controller: _controllerToken,
-              label: 'Token',
-              icon: Icons.password_sharp,
-              theme: theme,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Token is required';
-                }
-                return null;
-              },
-            ),
-          ),
+          if (_enabled) ..._fields(theme),
           const SizedBox(height: 20),
           SizedBox(
             width: 200,
@@ -173,6 +115,64 @@ class _SmtpFormViewState extends State<GotifyFormView> {
               child: const Text('Save'),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  void submit() async {
+    try {
+      if (_formKey.currentState?.validate() ?? false) {
+        final smtp = Gotify(
+          url: _controllerUrl.text,
+          token: _controllerToken.text,
+          enabled: _enabled,
+        );
+
+        await DI.settings.api().updateGotify(smtp);
+
+        Notify.show('Saved Successfully');
+        widget.callback();
+      }
+    } catch (ex) {
+      Notify.showError('$ex');
+    }
+  }
+
+  List<Widget> _fields(ColorScheme theme) {
+    return [
+      const SizedBox(height: 10),
+      SizedBox(
+        width: 400,
+        child: SquareTextField(
+          controller: _controllerUrl,
+          label: 'host',
+          icon: Icons.mail_sharp,
+          theme: theme,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'host is required';
+            }
+            return null;
+          },
+        ),
+      ),
+      const SizedBox(height: 10),
+      SizedBox(
+        width: 400,
+        child: SquareTextField(
+          controller: _controllerToken,
+          label: 'Token',
+          icon: Icons.password_sharp,
+          theme: theme,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Token is required';
+            }
+            return null;
+          },
+        ),
+      ),
     ];
   }
 }
