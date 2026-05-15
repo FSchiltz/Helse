@@ -92,9 +92,15 @@ class _ProxyFormViewState extends State<ProxyFormView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Proxy Authentification", style: Theme.of(context).textTheme.headlineMedium),
+          Text(
+            "Proxy Authentification",
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
           const SizedBox(height: 5),
-          Text("Only enable if you are behind a trusted proxy", style: Theme.of(context).textTheme.bodyLarge),
+          Text(
+            "Only enable if you are behind a trusted proxy",
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
           const SizedBox(height: 32),
           Row(
             children: [
@@ -110,6 +116,18 @@ class _ProxyFormViewState extends State<ProxyFormView> {
             ],
           ),
           if (_proxyAuth) ..._fields(theme),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: 200,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(50),
+                shape: const ContinuousRectangleBorder(),
+              ),
+              onPressed: submit,
+              child: const Text("Save"),
+            ),
+          ),
         ],
       ),
     );
@@ -160,18 +178,6 @@ class _ProxyFormViewState extends State<ProxyFormView> {
           label: "Header name",
           icon: Icons.text_fields_sharp,
           theme: theme,
-        ),
-      ),
-      const SizedBox(height: 20),
-      SizedBox(
-        width: 200,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size.fromHeight(50),
-            shape: const ContinuousRectangleBorder(),
-          ),
-          onPressed: submit,
-          child: const Text("Save"),
         ),
       ),
     ];
