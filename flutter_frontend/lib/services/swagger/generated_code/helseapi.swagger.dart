@@ -1419,7 +1419,7 @@ abstract class Helseapi extends ChopperService {
 
 @JsonSerializable(explicitToJson: true)
 class Connection {
-  const Connection({required this.user, required this.password, this.redirect});
+  const Connection({required this.user, required this.password, this.issuer});
 
   factory Connection.fromJson(Map<String, dynamic> json) =>
       _$ConnectionFromJson(json);
@@ -1431,8 +1431,8 @@ class Connection {
   final String user;
   @JsonKey(name: 'password')
   final String password;
-  @JsonKey(name: 'redirect')
-  final String? redirect;
+  @JsonKey(name: 'issuer')
+  final String? issuer;
   static const fromJsonFactory = _$ConnectionFromJson;
 
   @override
@@ -1446,11 +1446,8 @@ class Connection {
                   other.password,
                   password,
                 )) &&
-            (identical(other.redirect, redirect) ||
-                const DeepCollectionEquality().equals(
-                  other.redirect,
-                  redirect,
-                )));
+            (identical(other.issuer, issuer) ||
+                const DeepCollectionEquality().equals(other.issuer, issuer)));
   }
 
   @override
@@ -1460,28 +1457,28 @@ class Connection {
   int get hashCode =>
       const DeepCollectionEquality().hash(user) ^
       const DeepCollectionEquality().hash(password) ^
-      const DeepCollectionEquality().hash(redirect) ^
+      const DeepCollectionEquality().hash(issuer) ^
       runtimeType.hashCode;
 }
 
 extension $ConnectionExtension on Connection {
-  Connection copyWith({String? user, String? password, String? redirect}) {
+  Connection copyWith({String? user, String? password, String? issuer}) {
     return Connection(
       user: user ?? this.user,
       password: password ?? this.password,
-      redirect: redirect ?? this.redirect,
+      issuer: issuer ?? this.issuer,
     );
   }
 
   Connection copyWithWrapped({
     Wrapped<String>? user,
     Wrapped<String>? password,
-    Wrapped<String?>? redirect,
+    Wrapped<String?>? issuer,
   }) {
     return Connection(
       user: (user != null ? user.value : this.user),
       password: (password != null ? password.value : this.password),
-      redirect: (redirect != null ? redirect.value : this.redirect),
+      issuer: (issuer != null ? issuer.value : this.issuer),
     );
   }
 }

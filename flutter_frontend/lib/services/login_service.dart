@@ -3,9 +3,19 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class LoginService extends ApiService {
   LoginService(super.account);
-  Future<TokenResponse?> login(String username, String password, String? redirect) async {
+  Future<TokenResponse?> login(
+    String username,
+    String password,
+    String? issuer,
+  ) async {
     var api = await getService();
-    var response = await api.apiAuthPost(body: Connection(user: username, password: password, redirect: redirect));
+    var response = await api.apiAuthPost(
+      body: Connection(
+        user: username,
+        password: password,
+        issuer: issuer,
+      ),
+    );
 
     switch (response.statusCode) {
       case 401:

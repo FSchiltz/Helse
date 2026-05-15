@@ -78,6 +78,7 @@ class _OauthFormViewState extends State<OauthFormView> {
   final TextEditingController _controllerAuth = TextEditingController();
   final TextEditingController _controllerToken = TextEditingController();
   final TextEditingController _controllerClaims = TextEditingController();
+  final TextEditingController _controllerName = TextEditingController();
   bool _enabled = false;
   bool _autoregister = false;
   bool _autoLogin = false;
@@ -86,14 +87,16 @@ class _OauthFormViewState extends State<OauthFormView> {
   void initState() {
     super.initState();
     var data = widget.data;
-    _controllerId.text = data?.clientId ?? "";
-    _controllerSecret.text = data?.clientSecret ?? "";
-    _controllerAuth.text = data?.url ?? "";
-    _controllerToken.text = data?.tokenurl ?? "";
-    _controllerClaims.text = data?.claimsUrl ?? "";
+    var provider = data?.providers?.firstOrNull;
+    _controllerId.text = provider?.clientId ?? "";
+    _controllerSecret.text = provider?.clientSecret ?? "";
+    _controllerAuth.text = provider?.url ?? "";
+    _controllerToken.text = provider?.tokenurl ?? "";
+    _controllerClaims.text = provider?.claimsUrl ?? "";
     _enabled = data?.enabled ?? false;
-    _autoregister = data?.autoRegister ?? false;
-    _autoLogin = data?.autoLogin ?? false;
+    _autoregister = provider?.autoRegister ?? false;
+    _autoLogin = provider?.autoLogin ?? false;
+    _controllerName.text = provider?.name ?? "";
   }
 
   @override
@@ -129,18 +132,24 @@ class _OauthFormViewState extends State<OauthFormView> {
   void submit() async {
     try {
       if (_formKey.currentState?.validate() ?? false) {
-        // save the user
+        List<OauthProvider> providers = [];
+        if (_enabled) {
+          providers.add(
+            OauthProvider(
+              clientId: _controllerId.text,
+              clientSecret: _controllerSecret.text,
+              autoRegister: _autoregister,
+              autoLogin: _autoLogin,
+              tokenurl: _controllerToken.text,
+              url: _controllerAuth.text,
+              claimsUrl: _controllerClaims.text,
+              name: _controllerName.text,
+            ),
+          );
+        }
+        // save the oauth
         await DI.settings.api().updateOauth(
-          Oauth(
-            clientId: _controllerId.text,
-            clientSecret: _controllerSecret.text,
-            enabled: _enabled,
-            autoRegister: _autoregister,
-            autoLogin: _autoLogin,
-            tokenurl: _controllerToken.text,
-            url: _controllerAuth.text,
-            claimsUrl: _controllerClaims.text,
-          ),
+          Oauth(enabled: _enabled, providers: providers),
         );
 
         Notify.show("Saved Successfully");
@@ -160,6 +169,13 @@ class _OauthFormViewState extends State<OauthFormView> {
         label: "Client id",
         icon: Icons.person_sharp,
         theme: theme,
+      ),
+      const SizedBox(height: 10),
+      SquareTextField(
+        theme: theme,
+        controller: _controllerName,
+        label: "Name",
+        icon: Icons.connect_without_contact,
       ),
       const SizedBox(height: 10),
       SquareTextField(

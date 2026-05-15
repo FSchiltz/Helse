@@ -1,4 +1,5 @@
 import 'package:async/async.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/common/password_input.dart';
@@ -9,9 +10,7 @@ import 'common/loader.dart';
 import 'common/notification.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({
-    super.key,
-  });
+  const LoginPage({super.key});
 
   static Route<void> route() {
     return MaterialPageRoute<void>(builder: (_) => const LoginPage());
@@ -30,7 +29,8 @@ class _LoginState extends State<LoginPage> {
   final TextEditingController _controllerSurname = TextEditingController();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
-  final TextEditingController _controllerConFirmPassword = TextEditingController();
+  final TextEditingController _controllerConFirmPassword =
+      TextEditingController();
 
   SubmissionStatus _status = SubmissionStatus.initial;
   SubmissionStatus _loaded = SubmissionStatus.initial;
@@ -48,109 +48,134 @@ class _LoginState extends State<LoginPage> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
     return Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        body: SafeArea(
-          top: true,
-          child: SingleChildScrollView(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  constraints: const BoxConstraints(maxWidth: 500),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        Text("Welcome ${_initStatus?.init == true ? "Back" : ""}", style: Theme.of(context).textTheme.headlineLarge),
-                        const SizedBox(height: 20),
-                        TextField(
-                          controller: textController,
-                          keyboardType: TextInputType.url,
-                          onChanged: _urlTextChanged,
-                          key: const Key('loginForm_urlInput_textField'),
-                          decoration: InputDecoration(
-                            labelText: 'Server url',
-                            prefixIcon: const Icon(Icons.home_sharp),
-                            prefixIconColor: theme.primary,
-                            filled: true,
-                            fillColor: theme.surface,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(0),
-                              borderSide: BorderSide(color: theme.primary),
-                            ),
-                            errorText: _status == SubmissionStatus.failure ? 'invalid url' : null,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      body: SafeArea(
+        top: true,
+        child: SingleChildScrollView(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 500),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Text(
+                        "Welcome ${_initStatus?.init == true ? "Back" : ""}",
+                        style: Theme.of(context).textTheme.headlineLarge,
+                      ),
+                      const SizedBox(height: 20),
+                      TextField(
+                        controller: textController,
+                        keyboardType: TextInputType.url,
+                        onChanged: _urlTextChanged,
+                        key: const Key('loginForm_urlInput_textField'),
+                        decoration: InputDecoration(
+                          labelText: 'Server url',
+                          prefixIcon: const Icon(Icons.home_sharp),
+                          prefixIconColor: theme.primary,
+                          filled: true,
+                          fillColor: theme.surface,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(0),
+                            borderSide: BorderSide(color: theme.primary),
                           ),
+                          errorText: _status == SubmissionStatus.failure
+                              ? 'invalid url'
+                              : null,
                         ),
-                        const SizedBox(height: 20),
-                        (_loaded == SubmissionStatus.inProgress)
-                            ? const HelseLoader()
-                            : (_loaded == SubmissionStatus.success)
-                                ? Column(children: [
-                                    (_initStatus?.init == true)
-                                        ? Column(
-                                            children: [
-                                              UserNameInput(
-                                                controller: _controllerUsername,
-                                                validate: validateUserName,
-                                              ),
-                                              const SizedBox(height: 10),
-                                              PasswordInput(controller: _controllerPassword),
-                                            ],
-                                          )
-                                        : Column(
-                                            children: [
-                                              Text("Create your account", style: Theme.of(context).textTheme.headlineLarge),
-                                              Text("This is the admin account for the server", style: Theme.of(context).textTheme.bodyLarge),
-                                              const SizedBox(height: 20),
-                                              UserForm(
-                                                [UserType.admin],
-                                                controllerUsername: _controllerUsername,
-                                                controllerEmail: _controllerEmail,
-                                                controllerPassword: _controllerPassword,
-                                                controllerConFirmPassword: _controllerConFirmPassword,
-                                                controllerName: _controllerName,
-                                                controllerSurname: _controllerSurname,
-                                              )
-                                            ],
+                      ),
+                      const SizedBox(height: 20),
+                      (_loaded == SubmissionStatus.inProgress)
+                          ? const HelseLoader()
+                          : (_loaded == SubmissionStatus.success)
+                          ? Column(
+                              children: [
+                                (_initStatus?.init == true)
+                                    ? Column(
+                                        children: [
+                                          UserNameInput(
+                                            controller: _controllerUsername,
+                                            validate: validateUserName,
                                           ),
-                                    const SizedBox(height: 60),
-                                    _status == SubmissionStatus.inProgress
-                                        ? const HelseLoader()
-                                        : Column(
-                                            children: [
-                                              ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                  minimumSize: const Size.fromHeight(50),
-                                                  shape: const ContinuousRectangleBorder(),
-                                                ),
-                                                onPressed: _submit,
-                                                child: Text(
-                                                  _initStatus?.init == true ? 'Login' : 'Create',
-                                                  style: Theme.of(context).textTheme.titleLarge,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 20),
-                                              if (_initStatus?.oauth != null)
-                                                ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                    minimumSize: const Size.fromHeight(50),
-                                                    shape: const ContinuousRectangleBorder(),
-                                                  ),
-                                                  onPressed: _submitOauth,
-                                                  child: Text('Login with Oauth', style: Theme.of(context).textTheme.titleLarge),
-                                                )
-                                            ],
-                                          )
-                                  ])
-                                : Container(),
-                      ],
-                    ),
+                                          const SizedBox(height: 10),
+                                          PasswordInput(
+                                            controller: _controllerPassword,
+                                          ),
+                                        ],
+                                      )
+                                    : Column(
+                                        children: [
+                                          Text(
+                                            "Create your account",
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.headlineLarge,
+                                          ),
+                                          Text(
+                                            "This is the admin account for the server",
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.bodyLarge,
+                                          ),
+                                          const SizedBox(height: 20),
+                                          UserForm(
+                                            [UserType.admin],
+                                            controllerUsername:
+                                                _controllerUsername,
+                                            controllerEmail: _controllerEmail,
+                                            controllerPassword:
+                                                _controllerPassword,
+                                            controllerConFirmPassword:
+                                                _controllerConFirmPassword,
+                                            controllerName: _controllerName,
+                                            controllerSurname:
+                                                _controllerSurname,
+                                          ),
+                                        ],
+                                      ),
+                                const SizedBox(height: 60),
+                                _status == SubmissionStatus.inProgress
+                                    ? const HelseLoader()
+                                    : Column(
+                                        children: [
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              minimumSize:
+                                                  const Size.fromHeight(50),
+                                              shape:
+                                                  const ContinuousRectangleBorder(),
+                                            ),
+                                            onPressed: _submit,
+                                            child: Text(
+                                              _initStatus?.init == true
+                                                  ? 'Login'
+                                                  : 'Create',
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.titleLarge,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 20),
+                                          ..._providers(
+                                            _initStatus?.oauths,
+                                            Theme.of(context).textTheme,
+                                          ),
+                                        ],
+                                      ),
+                              ],
+                            )
+                          : Container(),
+                    ],
                   ),
                 ),
               ),
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   String? validateUserName(String? value) {
@@ -183,7 +208,9 @@ class _LoginState extends State<LoginPage> {
     } else {
       // Launch the urlchanged handler with a delay
       // To only call when the user has finished typing and allows giving feedback
-      var operation = CancelableOperation.fromFuture(Future<void>.delayed(Durations.extralong3));
+      var operation = CancelableOperation.fromFuture(
+        Future<void>.delayed(Durations.extralong3),
+      );
 
       operation.value.then((value) async => await _urlChanged(url));
       setState(() {
@@ -203,26 +230,27 @@ class _LoginState extends State<LoginPage> {
 
     try {
       var isInit = await DI.helper.isInit(url);
-      
+
       setState(() {
-          _initStatus = isInit;
-        });
+        _initStatus = isInit;
+      });
 
       // If the server is init or not
       // Todo use stream
       if (mounted) {
         if (isInit != null && isInit.init == true) {
-          if (isInit.oauth != null) {
+          if (isInit.oauths.isNotEmpty) {
             // Start the oauth login procedure
             var grant = await DI.authentication.getGrant();
+            var autologin = isInit.oauths.firstWhereOrNull((x) => x.autoLogin);
             if (grant != null) {
               _submit(
                 noUser: true,
                 oAuth: grant,
-                redirect: await DI.authentication.getRedirect(),
+                issuer: await DI.authentication.getRedirect(),
               );
-            } else if (isInit.autoLogin == true) {
-              _connectOauth(isInit, url);
+            } else if (autologin != null) {
+              _connectOauth(url, autologin);
             }
           } else if (isInit.externalAuth == true) {
             // Todo read from config
@@ -233,7 +261,9 @@ class _LoginState extends State<LoginPage> {
         }
 
         setState(() {
-          _loaded = ((isInit?.init == null) ? SubmissionStatus.failure : SubmissionStatus.success);
+          _loaded = ((isInit?.init == null)
+              ? SubmissionStatus.failure
+              : SubmissionStatus.success);
         });
       }
     } catch (ex) {
@@ -262,16 +292,16 @@ class _LoginState extends State<LoginPage> {
     }
   }
 
-  Future<void> _submitOauth() async {
+  Future<void> _submitOauth(OauthConnection oauth) async {
     var init = _initStatus;
     var url = _url;
     if (init != null && url != null) {
-      var grant = await _connectOauth(init, url);
+      var grant = await _connectOauth(url, oauth);
       if (grant != null) {
         _submit(
           noUser: true,
           oAuth: grant,
-          redirect: await DI.authentication.getRedirect(),
+          issuer: await DI.authentication.getClientId(),
         );
       }
     } else {
@@ -280,7 +310,11 @@ class _LoginState extends State<LoginPage> {
     }
   }
 
-  Future<void> _submit({bool noUser = false, String? oAuth, String? redirect}) async {
+  Future<void> _submit({
+    bool noUser = false,
+    String? oAuth,
+    String? issuer,
+  }) async {
     var init = _initStatus?.init;
     var url = _url;
     if (init == null || url == null) return;
@@ -304,7 +338,7 @@ class _LoginState extends State<LoginPage> {
           url: url,
           username: user,
           password: password,
-          redirect: redirect,
+          issuer: issuer,
         );
       } else {
         var person = PersonCreation(
@@ -344,12 +378,9 @@ class _LoginState extends State<LoginPage> {
     }
   }
 
-  Future<String?> _connectOauth(Status isInit, String url) async {
+  Future<String?> _connectOauth(String url, OauthConnection oauth) async {
     try {
-      DI.authService?.init(
-        auth: isInit.oauth ?? '',
-        clientId: isInit.oauthId ?? '',
-      );
+      DI.authService?.init(auth: oauth.url, clientId: oauth.clientId);
 
       return await DI.authService?.login(url);
     } catch (ex) {
@@ -364,5 +395,24 @@ class _LoginState extends State<LoginPage> {
     }
 
     return null;
+  }
+
+  List<Widget> _providers(List<OauthConnection>? oauths, TextTheme theme) {
+    if (oauths == null) {
+      return [];
+    }
+
+    return oauths
+        .map(
+          (o) => ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size.fromHeight(50),
+              shape: const ContinuousRectangleBorder(),
+            ),
+            onPressed: () => _submitOauth(o),
+            child: Text('Login with ${o.name}', style: theme.titleLarge),
+          ),
+        )
+        .toList();
   }
 }

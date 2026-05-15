@@ -43,10 +43,10 @@ public static class OauthHelper
 
     public static async Task<(bool logged, TokenInfo? fromDb)> ConnectOauth(IUserContext db, Oauth oauth, Connection user, ILogger log)
     {
-        var provider = oauth.Providers.First(p => p.Url == user.Redirect);
+        var provider = oauth.Providers.First(p => p.ClientId == user.Issuer);
         var token = await provider.GetOauthTokenAsync(user);
 
-        var fromDb = await db.TokenFromDb(token.User);
+        var fromDb = await db.TokenFromDb(token.User, provider.ClientId);
 
         var logged = false;
         if (fromDb is null)
@@ -56,7 +56,7 @@ public static class OauthHelper
                 // get the claims from the claims endpoint.
                 var claims = await GetClaimsAsync(provider, token.AccessToken);
 
-                log.LogInformation("User created for {header}", user.Redirect);
+                log.LogInformation("User created for {header}", user.Issuer);
                 await using var transaction = await db.BeginTransactionAsync();
                 // If auto register and not found, we create it
                 var id = await db.CreateUserAsync(new PersonCreation
@@ -71,7 +71,7 @@ public static class OauthHelper
 
                 await db.LinkOauth(new OauthUser
                 {
-                    Provider = token.Issuer,
+                    Provider = provider.ClientId,
                     OauthSub = token.User,
                     UserId = id.User ?? throw new InvalidOperationException("User creation failed"),
                 });
@@ -108,7 +108,6 @@ public static class OauthHelper
         using var content = new FormUrlEncodedContent([
             new ("grant_type","authorization_code"),
             new ("code", user.Password),
-            new ("redirect_uri", user.Redirect),
         ]);
 
         var authenticationString = $"{oauth.ClientId}:{oauth.ClientSecret}";

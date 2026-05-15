@@ -102,9 +102,9 @@ public static class AuthLogic
                 (logged, fromDb) = await ProxyAuthHelper.ConnectHeader(users, context, proxy, log);
             }
 
-            if (!logged && oauth.Enabled && user.Redirect is not null)
+            if (!logged && oauth.Enabled && user.Issuer is not null)
             {
-                log.LogInformation("Logging from oauth using  {redirect}", user.Redirect);
+                log.LogInformation("Logging from oauth using {client}", user.Issuer);
                 (logged, fromDb) = await OauthHelper.ConnectOauth(users, oauth, user, log);
             }
 

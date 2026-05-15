@@ -8,6 +8,7 @@ class Account {
   static const token = "sessionToken";
   static const grant = "grant";
   static const redirect = "redirect";
+  static const clientid = "clientid";
   static const refresh = "refresh";
   static const fitRun = "fitLastRun";
   static const theme = 'theme';
@@ -34,6 +35,7 @@ class Account {
     await s.remove(token);
     await s.remove(grant);
     await s.remove(redirect);
+    await s.remove(clientid);
     await s.remove(refresh);
     await s.remove(fitRun);
     await s.remove(theme);

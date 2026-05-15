@@ -49,6 +49,7 @@ class OauthClient {
           '$_auth?client_id=$_clientId&response_type=code&scope=openid+profile+offline_access&state=$state&redirect_uri=$redirect';
 
       await account.set(Account.redirect, redirect);
+      await account.set(Account.clientid, _clientId ?? '');
 
       if (kIsWeb) {
         window.location.assign(authUrl);

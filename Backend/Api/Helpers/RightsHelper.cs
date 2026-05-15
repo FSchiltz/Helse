@@ -49,10 +49,14 @@ public static class RightsHelper
         return (null, user.User);
     }
 
-    public static async Task<TokenInfo?> TokenFromDb(this IUserContext db, string user)
+    public static async Task<TokenInfo?> TokenFromDb(this IUserContext db, string user, string issuer)
     {
-        var fromDb = await db.Get(user);
+        var fromDb = await db.Get(user, issuer);
+        return Token(fromDb);
+    }
 
+    private static TokenInfo? Token(PersonFromDb? fromDb)
+    {
         if (fromDb is null)
             return null;
 
@@ -69,5 +73,12 @@ public static class RightsHelper
             Surname: fromDb.Person.Surname,
             Name: fromDb.Person.Name,
             Email: fromDb.User.Email);
+    }
+
+    public static async Task<TokenInfo?> TokenFromDb(this IUserContext db, string user)
+    {
+        var fromDb = await db.Get(user);
+
+        return Token(fromDb);
     }
 }

@@ -93,6 +93,19 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
                                  .FirstOrDefaultAsync();
     }
 
+    public Task<PersonFromDb?> Get(string? identifier, string issuer)
+    {
+        if (identifier is null)
+            return Task.FromResult(default(PersonFromDb?));
+
+        return (from o in Db.GetTable<OauthUser>()
+                join u in Db.GetTable<User>() on o.UserId equals u.Id
+                join p in Db.GetTable<Models.Person>() on u.PersonId equals p.Id
+                where o.OauthSub == identifier && o.Provider == issuer
+                select new PersonFromDb(u, p))
+                                 .FirstOrDefaultAsync();
+    }
+
     public Task UpdatePassword(long user, string password)
         => Db.GetTable<User>().Where(x => x.Id == user).Set(x => x.Password, password).UpdateAsync();
 

@@ -9,14 +9,14 @@ part of 'helseapi.swagger.dart';
 Connection _$ConnectionFromJson(Map<String, dynamic> json) => Connection(
   user: json['user'] as String,
   password: json['password'] as String,
-  redirect: json['redirect'] as String?,
+  issuer: json['issuer'] as String?,
 );
 
 Map<String, dynamic> _$ConnectionToJson(Connection instance) =>
     <String, dynamic>{
       'user': instance.user,
       'password': instance.password,
-      'redirect': instance.redirect,
+      'issuer': instance.issuer,
     };
 
 CountByDate _$CountByDateFromJson(Map<String, dynamic> json) => CountByDate(

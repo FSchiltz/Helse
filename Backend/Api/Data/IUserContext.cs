@@ -44,4 +44,6 @@ public interface IUserContext : IContext
     Task DeleteUserAsync(long userId);
 
     Task LinkOauth(Models.OauthUser oauthUser);
+
+    Task<PersonFromDb?> Get(string user, string issuer);
 }
