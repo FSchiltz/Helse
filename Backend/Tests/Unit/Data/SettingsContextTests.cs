@@ -41,7 +41,20 @@ public class SettingsContextTests : IAsyncLifetime
     public async Task GetSettings_ReturnsSettings_WhenFound()
     {
         // Arrange
-        var settings = new Oauth { Enabled = true, Url = "http://example.com", ClientId = "test-client" };
+        var settings = new Oauth
+        {
+            Enabled = true,
+            Providers = [ new OauthProvider()
+            {
+                Url = "http://example.com",
+                ClientId = "test-client",
+                ClaimsUrl = "",
+                Name = "TestProvider",
+                AutoRegister = false,
+                ClientSecret = "",
+                Tokenurl = "",
+                }],
+        };
         var json = System.Text.Json.JsonSerializer.Serialize(settings);
         await _db.GetTable<Settings>().InsertAsync(() => new Settings { Name = "oauth", Blob = json });
 
@@ -53,8 +66,8 @@ public class SettingsContextTests : IAsyncLifetime
         // Assert
         Assert.NotNull(result);
         Assert.True(result.Enabled);
-        Assert.Equal("http://example.com", result.Url);
-        Assert.Equal("test-client", result.ClientId);
+        Assert.Equal("http://example.com", result.Providers[0].Url);
+        Assert.Equal("test-client", result.Providers[0].ClientId);
     }
 
     [Fact]

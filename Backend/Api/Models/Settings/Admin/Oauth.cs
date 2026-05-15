@@ -6,17 +6,5 @@ public class Oauth : IJsonSettings
 
     public bool Enabled { get; init; }
 
-    public bool AutoRegister { get; init; }
-
-    public bool AutoLogin { get; init; }
-
-    public string? ClientId { get; init; }
-
-    public string? ClientSecret { get; init; }
-
-    public string? Url { get; init; }
-
-    public string? Tokenurl { get; init; }
-
-    public string? ClaimsUrl { get; init; }
+    public OauthProvider[] Providers { get; init; } = [];
 }

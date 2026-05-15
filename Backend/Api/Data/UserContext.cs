@@ -109,9 +109,9 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
             });
     }
 
-    public Task InsertUser(PersonCreation newUser, long id, string password)
+    public Task<long> InsertUser(PersonCreation newUser, long id, string password)
     {
-        return Db.GetTable<User>().InsertAsync(()
+        return Db.GetTable<User>().InsertWithInt64IdentityAsync(()
                 => new User
                 {
                     Identifier = newUser.UserName ?? string.Empty,
@@ -206,5 +206,15 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
                 where u.Id == id
                 select new PersonFromDb(u, p))
                                  .FirstOrDefaultAsync();
+    }
+
+    public Task LinkOauth(OauthUser oauthUser)
+    {
+        return Db.GetTable<Models.OauthUser>().InsertAsync(() => new()
+        {
+            UserId = oauthUser.UserId,
+            OauthSub = oauthUser.OauthSub,
+            Provider = oauthUser.Provider,
+        });
     }
 }

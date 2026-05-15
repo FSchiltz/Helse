@@ -23,7 +23,7 @@ public interface IUserContext : IContext
 
     Task<long> InsertPerson(PersonCreation newUser);
 
-    Task InsertUser(PersonCreation newUser, long id, string password);
+    Task<long> InsertUser(PersonCreation newUser, long id, string password);
 
     Task UpdatePassword(long user, string password);
 
@@ -42,4 +42,6 @@ public interface IUserContext : IContext
     Task DeletePersonAsync(long personId);
 
     Task DeleteUserAsync(long userId);
+
+    Task LinkOauth(Models.OauthUser oauthUser);
 }

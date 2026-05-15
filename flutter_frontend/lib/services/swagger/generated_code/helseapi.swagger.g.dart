@@ -284,25 +284,57 @@ Map<String, dynamic> _$MetricTypeToJson(MetricType instance) =>
 
 Oauth _$OauthFromJson(Map<String, dynamic> json) => Oauth(
   enabled: json['enabled'] as bool?,
-  autoRegister: json['autoRegister'] as bool?,
-  autoLogin: json['autoLogin'] as bool?,
-  clientId: json['clientId'] as String?,
-  clientSecret: json['clientSecret'] as String?,
-  url: json['url'] as String?,
-  tokenurl: json['tokenurl'] as String?,
-  claimsUrl: json['claimsUrl'] as String?,
+  providers:
+      (json['providers'] as List<dynamic>?)
+          ?.map((e) => OauthProvider.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
 );
 
 Map<String, dynamic> _$OauthToJson(Oauth instance) => <String, dynamic>{
   'enabled': instance.enabled,
-  'autoRegister': instance.autoRegister,
-  'autoLogin': instance.autoLogin,
-  'clientId': instance.clientId,
-  'clientSecret': instance.clientSecret,
-  'url': instance.url,
-  'tokenurl': instance.tokenurl,
-  'claimsUrl': instance.claimsUrl,
+  'providers': instance.providers?.map((e) => e.toJson()).toList(),
 };
+
+OauthConnection _$OauthConnectionFromJson(Map<String, dynamic> json) =>
+    OauthConnection(
+      name: json['name'] as String,
+      url: json['url'] as String,
+      clientId: json['clientId'] as String,
+      autoLogin: json['autoLogin'] as bool,
+    );
+
+Map<String, dynamic> _$OauthConnectionToJson(OauthConnection instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'url': instance.url,
+      'clientId': instance.clientId,
+      'autoLogin': instance.autoLogin,
+    };
+
+OauthProvider _$OauthProviderFromJson(Map<String, dynamic> json) =>
+    OauthProvider(
+      name: json['name'] as String,
+      autoRegister: json['autoRegister'] as bool?,
+      autoLogin: json['autoLogin'] as bool?,
+      clientId: json['clientId'] as String,
+      clientSecret: json['clientSecret'] as String,
+      url: json['url'] as String,
+      tokenurl: json['tokenurl'] as String,
+      claimsUrl: json['claimsUrl'] as String,
+    );
+
+Map<String, dynamic> _$OauthProviderToJson(OauthProvider instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'autoRegister': instance.autoRegister,
+      'autoLogin': instance.autoLogin,
+      'clientId': instance.clientId,
+      'clientSecret': instance.clientSecret,
+      'url': instance.url,
+      'tokenurl': instance.tokenurl,
+      'claimsUrl': instance.claimsUrl,
+    };
 
 Person _$PersonFromJson(Map<String, dynamic> json) => Person(
   id: (json['id'] as num?)?.toInt(),
@@ -422,18 +454,18 @@ Status _$StatusFromJson(Map<String, dynamic> json) => Status(
   init: json['init'] as bool,
   externalAuth: json['externalAuth'] as bool,
   error: json['error'] as String?,
-  oauth: json['oauth'] as String?,
-  oauthId: json['oauthId'] as String?,
-  autoLogin: json['autoLogin'] as bool,
+  oauths:
+      (json['oauths'] as List<dynamic>?)
+          ?.map((e) => OauthConnection.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
 );
 
 Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
   'init': instance.init,
   'externalAuth': instance.externalAuth,
   'error': instance.error,
-  'oauth': instance.oauth,
-  'oauthId': instance.oauthId,
-  'autoLogin': instance.autoLogin,
+  'oauths': instance.oauths.map((e) => e.toJson()).toList(),
 };
 
 TokenResponse _$TokenResponseFromJson(Map<String, dynamic> json) =>

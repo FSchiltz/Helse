@@ -2240,6 +2240,51 @@
           "enabled": {
             "type": "boolean"
           },
+          "providers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OauthProvider"
+            }
+          }
+        }
+      },
+      "OauthConnection": {
+        "required": [
+          "name",
+          "url",
+          "clientId",
+          "autoLogin"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "clientId": {
+            "type": "string"
+          },
+          "autoLogin": {
+            "type": "boolean"
+          }
+        }
+      },
+      "OauthProvider": {
+        "required": [
+          "name",
+          "clientId",
+          "clientSecret",
+          "url",
+          "tokenurl",
+          "claimsUrl"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
           "autoRegister": {
             "type": "boolean"
           },
@@ -2247,34 +2292,19 @@
             "type": "boolean"
           },
           "clientId": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string"
           },
           "clientSecret": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string"
           },
           "url": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string"
           },
           "tokenurl": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string"
           },
           "claimsUrl": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string"
           }
         }
       },
@@ -2525,9 +2555,7 @@
           "init",
           "externalAuth",
           "error",
-          "oauth",
-          "oauthId",
-          "autoLogin"
+          "oauths"
         ],
         "type": "object",
         "properties": {
@@ -2543,20 +2571,11 @@
               "string"
             ]
           },
-          "oauth": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "oauthId": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "autoLogin": {
-            "type": "boolean"
+          "oauths": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OauthConnection"
+            }
           }
         }
       },

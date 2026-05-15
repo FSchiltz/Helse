@@ -7,13 +7,14 @@ namespace Api.Helpers;
 
 public static class UserHelper
 {
-    public static async Task CreateUserAsync(this IUserContext users, PersonCreation newUser, long userId)
+    public static async Task<(long Person, long? User)> CreateUserAsync(this IUserContext users, PersonCreation newUser, long userId)
     {
         // Open a transaction
         await using var transaction = await users.BeginTransactionAsync();
 
         // create the person
         var id = await users.InsertPerson(newUser);
+        long? newUserId = null;
 
         // create the user if needed
         // patient are non user of the app, only external people managed by a caregiver
@@ -27,7 +28,7 @@ public static class UserHelper
                 throw new ArgumentException("Missing password", nameof(newUser));
 
             var password = TokenService.Hash(newUser.Password);
-            await users.InsertUser(newUser, id, password);
+            newUserId = await users.InsertUser(newUser, id, password);
         }
         else
         {
@@ -37,5 +38,7 @@ public static class UserHelper
         }
 
         await transaction.CommitAsync();
+
+        return (id, newUserId);
     }
 }
