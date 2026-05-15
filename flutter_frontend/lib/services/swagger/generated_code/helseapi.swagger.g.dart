@@ -212,12 +212,6 @@ Map<String, dynamic> _$ImportDataToJson(ImportData instance) =>
       'events': instance.events?.map((e) => e.toJson()).toList(),
     };
 
-ImportFile _$ImportFileFromJson(Map<String, dynamic> json) =>
-    ImportFile(content: json['content'] as String);
-
-Map<String, dynamic> _$ImportFileToJson(ImportFile instance) =>
-    <String, dynamic>{'content': instance.content};
-
 Metric _$MetricFromJson(Map<String, dynamic> json) => Metric(
   id: (json['id'] as num?)?.toInt(),
   person: (json['person'] as num?)?.toInt(),
@@ -596,3 +590,11 @@ UserStats _$UserStatsFromJson(Map<String, dynamic> json) => UserStats(
 Map<String, dynamic> _$UserStatsToJson(UserStats instance) => <String, dynamic>{
   'userCount': instance.userCount.map((e) => e.toJson()).toList(),
 };
+
+ApiImportTypePost$RequestBody _$ApiImportTypePost$RequestBodyFromJson(
+  Map<String, dynamic> json,
+) => ApiImportTypePost$RequestBody(file: json['file'] as String);
+
+Map<String, dynamic> _$ApiImportTypePost$RequestBodyToJson(
+  ApiImportTypePost$RequestBody instance,
+) => <String, dynamic>{'file': instance.file};

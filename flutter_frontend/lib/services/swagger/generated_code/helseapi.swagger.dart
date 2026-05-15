@@ -1370,17 +1370,18 @@ abstract class Helseapi extends ChopperService {
   ///@param type
   Future<chopper.Response> apiImportTypePost({
     required int? type,
-    required ImportFile? body,
+    required dynamic file,
   }) {
-    return _apiImportTypePost(type: type, body: body);
+    return _apiImportTypePost(type: type, file: file);
   }
 
   ///
   ///@param type
   @POST(path: '/api/import/{type}', optionalBody: true)
+  @Multipart()
   Future<chopper.Response> _apiImportTypePost({
     @Path('type') required int? type,
-    @Body() required ImportFile? body,
+    @Part('file') required dynamic file,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -2432,48 +2433,6 @@ extension $ImportDataExtension on ImportData {
     return ImportData(
       metrics: (metrics != null ? metrics.value : this.metrics),
       events: (events != null ? events.value : this.events),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
-class ImportFile {
-  const ImportFile({required this.content});
-
-  factory ImportFile.fromJson(Map<String, dynamic> json) =>
-      _$ImportFileFromJson(json);
-
-  static const toJsonFactory = _$ImportFileToJson;
-  Map<String, dynamic> toJson() => _$ImportFileToJson(this);
-
-  @JsonKey(name: 'content')
-  final String content;
-  static const fromJsonFactory = _$ImportFileFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is ImportFile &&
-            (identical(other.content, content) ||
-                const DeepCollectionEquality().equals(other.content, content)));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(content) ^ runtimeType.hashCode;
-}
-
-extension $ImportFileExtension on ImportFile {
-  ImportFile copyWith({String? content}) {
-    return ImportFile(content: content ?? this.content);
-  }
-
-  ImportFile copyWithWrapped({Wrapped<String>? content}) {
-    return ImportFile(
-      content: (content != null ? content.value : this.content),
     );
   }
 }
@@ -4524,6 +4483,49 @@ extension $UserStatsExtension on UserStats {
   UserStats copyWithWrapped({Wrapped<List<CountRecord>>? userCount}) {
     return UserStats(
       userCount: (userCount != null ? userCount.value : this.userCount),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class ApiImportTypePost$RequestBody {
+  const ApiImportTypePost$RequestBody({required this.file});
+
+  factory ApiImportTypePost$RequestBody.fromJson(Map<String, dynamic> json) =>
+      _$ApiImportTypePost$RequestBodyFromJson(json);
+
+  static const toJsonFactory = _$ApiImportTypePost$RequestBodyToJson;
+  Map<String, dynamic> toJson() => _$ApiImportTypePost$RequestBodyToJson(this);
+
+  @JsonKey(name: 'file')
+  final String file;
+  static const fromJsonFactory = _$ApiImportTypePost$RequestBodyFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is ApiImportTypePost$RequestBody &&
+            (identical(other.file, file) ||
+                const DeepCollectionEquality().equals(other.file, file)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(file) ^ runtimeType.hashCode;
+}
+
+extension $ApiImportTypePost$RequestBodyExtension
+    on ApiImportTypePost$RequestBody {
+  ApiImportTypePost$RequestBody copyWith({String? file}) {
+    return ApiImportTypePost$RequestBody(file: file ?? this.file);
+  }
+
+  ApiImportTypePost$RequestBody copyWithWrapped({Wrapped<String>? file}) {
+    return ApiImportTypePost$RequestBody(
+      file: (file != null ? file.value : this.file),
     );
   }
 }

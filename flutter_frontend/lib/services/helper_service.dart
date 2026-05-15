@@ -13,7 +13,7 @@ class HelperService extends ApiService {
   Future<void> import(String file, int type) async {
     var api = await getService();
 
-    await call(() => api.apiImportTypePost(body: ImportFile(content: file), type: type));
+    await call(() => api.apiImportTypePost(file: ImportFile(content: file), type: type));
   }
 
   Future<void> importData(ImportData file) async {
