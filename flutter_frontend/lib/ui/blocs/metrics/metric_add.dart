@@ -87,7 +87,7 @@ class _MetricAddState extends State<MetricAdd> {
                       "Date",
                       _date,
                       (value) => setState(() {
-                            _date = value;
+                            _date = value ?? DateTime.now();
                           })),
                 ],
               ),

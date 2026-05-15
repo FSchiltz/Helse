@@ -25,6 +25,7 @@ class _EventAddState extends State<EventAdd> {
   SubmissionStatus _status = SubmissionStatus.initial;
   DateTime _start = DateTime.now();
   DateTime _stop = DateTime.now();
+  DateTime? _notification;
   final TextEditingController _description = TextEditingController();
 
   void _submit() async {
@@ -42,6 +43,7 @@ class _EventAddState extends State<EventAdd> {
             type: widget.type.id,
             description: _description.text,
             id: widget.edit?.id,
+            notificationTime: _notification?.toUtc(),
           );
           await DI.event.updateEvent(event, person: widget.person);
         } else {
@@ -50,6 +52,7 @@ class _EventAddState extends State<EventAdd> {
             stop: _stop.toUtc(),
             type: widget.type.id,
             description: _description.text,
+            notificationTime: _notification?.toUtc(),
           );
           await DI.event.addEvent(event, person: widget.person);
         }
@@ -104,7 +107,7 @@ class _EventAddState extends State<EventAdd> {
                   onPressed: _submit,
                   child: const Text('Submit'),
                 ),
-        )
+        ),
       ],
       content: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -120,18 +123,28 @@ class _EventAddState extends State<EventAdd> {
                 ),
                 const SizedBox(height: 20),
                 DateInput(
-                    "start",
-                    _start,
-                    (date) => setState(() {
-                          _start = date;
-                        })),
+                  "start",
+                  _start,
+                  (date) => setState(() {
+                    _start = date ?? DateTime.now();
+                  }),
+                ),
                 const SizedBox(height: 20),
                 DateInput(
-                    "end",
-                    _stop,
-                    (date) => setState(() {
-                          _stop = date;
-                        })),
+                  "end",
+                  _stop,
+                  (date) => setState(() {
+                    _stop = date ?? DateTime.now();
+                  }),
+                ),
+                const SizedBox(height: 20),
+                DateInput(
+                  "notification time",
+                  _notification,
+                  (date) => setState(() {
+                    _notification = date;
+                  }),
+                ),
               ],
             ),
           ),

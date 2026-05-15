@@ -3,9 +3,9 @@ import 'package:helse/helpers/date.dart';
 
 class DateInput extends StatefulWidget {
   final String label;
-  final DateTime initdate;
+  final DateTime? initdate;
 
-  final void Function(DateTime time) callback;
+  final void Function(DateTime? time) callback;
 
   const DateInput(this.label, this.initdate, this.callback, {super.key});
 

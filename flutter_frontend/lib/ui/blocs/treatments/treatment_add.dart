@@ -129,14 +129,14 @@ class _TreatementState extends State<TreatmentAdd> {
                     "start",
                     _start,
                     (date) => setState(() {
-                          _start = date;
+                          _start = date ?? DateTime.now();
                         })),
                 const SizedBox(height: 10),
                 DateInput(
                     "end",
                     _stop,
                     (date) => setState(() {
-                          _stop = date;
+                          _stop = date ?? DateTime.now();
                         })),
               ],
             ),
