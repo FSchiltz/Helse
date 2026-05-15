@@ -5,4 +5,4 @@ namespace Api.Models;
 /// </summary>
 /// <param name="User"></param>
 /// <param name="Password"></param>
-public record Connection(string User, string Password, string? Redirect);
+public record Connection(string User, string Password, string? Issuer, string? Redirect);

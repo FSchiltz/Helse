@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/blocs/metrics/delete_metric.dart';
 
 import '../../../helpers/date.dart';
 import '../../../logic/d_i.dart';
@@ -291,32 +292,6 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
           );
         },
       ),
-    );
-  }
-}
-
-class DeleteMetric extends StatelessWidget {
-  final Function callback;
-  const DeleteMetric(this.callback, {super.key, int? person});
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      icon: const Icon(Icons.delete_sharp),
-      title: const Text('Delete the metric ?'),
-      actions: <Widget>[
-        TextButton(
-          onPressed: () => Navigator.pop(context, 'Cancel'),
-          child: const Text('Cancel'),
-        ),
-        TextButton(
-          onPressed: () async {
-            await callback();
-            Navigator.pop(context, 'OK');
-          },
-          child: const Text('OK'),
-        ),
-      ],
     );
   }
 }

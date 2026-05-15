@@ -9,17 +9,21 @@ public interface IUserContext : IContext
 {
     Task UpdatePerson(UpdatePerson update);
 
+    Task UpdatePatient(UpdatePatient update);
+
     Task AddRight(long userId, long id, RightType edit);
 
     Task<long> Count();
 
     Task<PersonFromDb?> Get(string? identifier);
 
+    Task<PersonFromDb?> Get(long id);
+
     Task<Right?> HasRightAsync(long id, long personId, RightType type, DateTime now);
 
     Task<long> InsertPerson(PersonCreation newUser);
 
-    Task InsertUser(PersonCreation newUser, long id, string password);
+    Task<long> InsertUser(PersonCreation newUser, long id, string password);
 
     Task UpdatePassword(long user, string password);
 
@@ -34,4 +38,12 @@ public interface IUserContext : IContext
     Task<long> InsertTreatment(long v, TreatmentType care);
 
     Task InsertEvent(CreateEvent e, long person, long user, long? treatment);
+
+    Task DeletePersonAsync(long personId);
+
+    Task DeleteUserAsync(long userId);
+
+    Task LinkOauth(Models.OauthUser oauthUser);
+
+    Task<PersonFromDb?> Get(string user, string issuer);
 }

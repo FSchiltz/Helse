@@ -134,6 +134,36 @@
         }
       }
     },
+    "/api/person/{personId}": {
+      "delete": {
+        "tags": [
+          "PersonLogic"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/api/person/caregiver": {
       "get": {
         "tags": [
@@ -220,6 +250,29 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "PatientsLogic"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePatient"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
           },
           "401": {
             "description": "Unauthorized"
@@ -1631,6 +1684,7 @@
         "required": [
           "user",
           "password",
+          "issuer",
           "redirect"
         ],
         "type": "object",
@@ -1640,6 +1694,12 @@
           },
           "password": {
             "type": "string"
+          },
+          "issuer": {
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "redirect": {
             "type": [
@@ -2187,6 +2247,51 @@
           "enabled": {
             "type": "boolean"
           },
+          "providers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OauthProvider"
+            }
+          }
+        }
+      },
+      "OauthConnection": {
+        "required": [
+          "name",
+          "url",
+          "clientId",
+          "autoLogin"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "clientId": {
+            "type": "string"
+          },
+          "autoLogin": {
+            "type": "boolean"
+          }
+        }
+      },
+      "OauthProvider": {
+        "required": [
+          "name",
+          "clientId",
+          "clientSecret",
+          "url",
+          "tokenurl",
+          "claimsUrl"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
           "autoRegister": {
             "type": "boolean"
           },
@@ -2194,28 +2299,19 @@
             "type": "boolean"
           },
           "clientId": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string"
           },
           "clientSecret": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string"
           },
           "url": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string"
           },
           "tokenurl": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string"
+          },
+          "claimsUrl": {
+            "type": "string"
           }
         }
       },
@@ -2466,9 +2562,7 @@
           "init",
           "externalAuth",
           "error",
-          "oauth",
-          "oauthId",
-          "autoLogin"
+          "oauths"
         ],
         "type": "object",
         "properties": {
@@ -2484,20 +2578,11 @@
               "string"
             ]
           },
-          "oauth": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "oauthId": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "autoLogin": {
-            "type": "boolean"
+          "oauths": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OauthConnection"
+            }
           }
         }
       },
@@ -2620,6 +2705,51 @@
           },
           "source": {
             "$ref": "#/components/schemas/FileTypes"
+          }
+        }
+      },
+      "UpdatePatient": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "birth": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "profilePicture": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "byte"
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "surname": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "identifier": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },

@@ -89,7 +89,7 @@ public class AuthTests(WebApplicationFactory<Program> factory) : IntegrationTest
         Assert.False(wrongPerson.IsSuccessStatusCode);
 
         // Connect 
-        var auth = await _client.PostAsJsonAsync(authUrl, new Connection(admin.UserName, admin.Password, null));
+        var auth = await _client.PostAsJsonAsync(authUrl, new Connection(admin.UserName, admin.Password, null, null));
         Assert.NotNull(auth);
 
         var token = JsonSerializer.Deserialize<TokenResponse>(await auth.Content.ReadAsStringAsync());

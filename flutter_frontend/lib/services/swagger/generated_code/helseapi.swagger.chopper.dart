@@ -143,6 +143,32 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
+  Future<Response<dynamic>> _apiPersonPersonIdDelete({
+    required int? userId,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["PersonLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/person/{personId}');
+    final Map<String, dynamic> $params = <String, dynamic>{'userId': userId};
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
   Future<Response<List<Person>>> _apiPersonCaregiverGet({
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -213,6 +239,32 @@ final class _$Helseapi extends Helseapi {
       tag: swaggerMetaData,
     );
     return client.send<List<Person>, Person>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiPatientsPut({
+    required UpdatePatient? body,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["PatientsLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/patients');
+    final $body = body;
+    final Request $request = Request(
+      'PUT',
+      $url,
+      client.baseUrl,
+      body: $body,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
   }
 
   @override

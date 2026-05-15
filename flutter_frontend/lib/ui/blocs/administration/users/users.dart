@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
+import 'package:helse/ui/blocs/administration/users/delete_user.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/loader.dart';
 import 'user_add.dart';
-import 'user_change_role.dart';
 
 class UsersView extends StatefulWidget {
   const UsersView({super.key});
@@ -36,103 +36,135 @@ class _UsersViewState extends State<UsersView> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _getData(_dummy),
-        builder: (context, snapshot) {
-          // Checking if future is resolved
-          if (snapshot.connectionState == ConnectionState.done) {
-            // If we got an error
-            if (snapshot.hasError) {
-              return Center(
-                child: Text(
-                  '${snapshot.error} occurred',
-                  style: const TextStyle(fontSize: 18),
-                ),
-              );
+      future: _getData(_dummy),
+      builder: (context, snapshot) {
+        // Checking if future is resolved
+        if (snapshot.connectionState == ConnectionState.done) {
+          // If we got an error
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                '${snapshot.error} occurred',
+                style: const TextStyle(fontSize: 18),
+              ),
+            );
 
-              // if we got our data
-            } else if (snapshot.hasData) {
-              // Extracting data from snapshot object
-              final users = snapshot.data as List<Person>;
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      Text("Users", style: Theme.of(context).textTheme.headlineMedium),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      IconButton(
-                          onPressed: () {
-                            showDialog<void>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return UserAdd(_resetUsers);
-                                });
+            // if we got our data
+          } else if (snapshot.hasData) {
+            // Extracting data from snapshot object
+            final users = snapshot.data as List<Person>;
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      "Users",
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                    const SizedBox(width: 10),
+                    IconButton(
+                      onPressed: () {
+                        showDialog<void>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return UserAdd(_resetUsers);
                           },
-                          icon: const Icon(Icons.add_sharp)),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Row(
-                      children: [
-                        DataTable(
-                          columns: const [
-                            DataColumn(
-                                label: Expanded(
-                              child: Text("Type"),
-                            )),
-                            DataColumn(
-                                label: Expanded(
-                              child: Text("Username"),
-                            )),
-                            DataColumn(
-                                label: Expanded(
-                              child: Text("Email"),
-                            )),
-                            DataColumn(
-                                label: Expanded(
-                              child: Text("Name"),
-                            )),
-                            DataColumn(
-                                label: Expanded(
-                              child: Text("Surname"),
-                            )),
-                          ],
-                          rows: users.where((user) => user.types?.isEmpty == false)
-                              .map((user) => DataRow(cells: [
-                                    DataCell(Row(children: [
-                                      Text(user.types?.map((x) => x.name).join(';') ?? '0'),
-                                      IconButton(
+                        );
+                      },
+                      icon: const Icon(Icons.add_sharp),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Row(
+                    children: [
+                      DataTable(
+                        columns: const [
+                          DataColumn(label: Expanded(child: Text("Id"))),
+                          DataColumn(label: Expanded(child: Text("Type"))),
+                          DataColumn(label: Expanded(child: Text("Username"))),
+                          DataColumn(label: Expanded(child: Text("Email"))),
+                          DataColumn(label: Expanded(child: Text("Name"))),
+                          DataColumn(label: Expanded(child: Text("Surname"))),
+                          DataColumn(label: Expanded(child: Text(""))),
+                        ],
+                        rows: users
+                            .where((user) => user.types?.isEmpty == false)
+                            .map(
+                              (user) => DataRow(
+                                cells: [
+                                  DataCell(Text(user.id?.toString() ?? '')),
+                                  DataCell(
+                                    Text(
+                                      user.types
+                                              ?.map((x) => x.name)
+                                              .join(';') ??
+                                          '0',
+                                    ),
+                                  ),
+                                  DataCell(Text(user.userName ?? "")),
+                                  DataCell(Text(user.email ?? "")),
+                                  DataCell(Text(user.name ?? "")),
+                                  DataCell(Text(user.surname ?? "")),
+                                  DataCell(
+                                    Row(
+                                      children: [
+                                        IconButton(
                                           onPressed: () {
                                             var id = user.id;
                                             if (id != null) {
                                               showDialog<void>(
-                                                  context: context,
-                                                  builder: (BuildContext context) {
-                                                    return ChangeRole(_resetUsers, user.types ?? [], id);
-                                                  });
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                      return UserAdd(
+                                                        _resetUsers,
+                                                        edit: user,
+                                                      );
+                                                    },
+                                              );
                                             }
                                           },
-                                          icon: const Icon(Icons.edit_sharp)),
-                                    ])),
-                                    DataCell(Text(user.userName ?? "")),
-                                    DataCell(Text(user.email ?? "")),
-                                    DataCell(Text(user.name ?? "")),
-                                    DataCell(Text(user.surname ?? "")),
-                                  ]))
-                              .toList(),
-                        ),
-                      ],
-                    ),
+                                          icon: const Icon(Icons.edit_sharp),
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
+                                            showDialog<void>(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return DeleteUser(() async {
+                                                  await DI.user.deletePerson(
+                                                    user.id ?? 0,
+                                                  );
+                                                  _resetUsers();
+                                                }, person: user);
+                                              },
+                                            );
+                                          },
+                                          icon: const Icon(Icons.delete_sharp),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ],
                   ),
-                ],
-              );
-            }
+                ),
+              ],
+            );
           }
-          return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
-        });
+        }
+        return const Center(
+          child: SizedBox(width: 50, height: 50, child: HelseLoader()),
+        );
+      },
+    );
   }
 }

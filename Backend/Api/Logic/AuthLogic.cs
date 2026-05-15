@@ -10,7 +10,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Logic.Auth;
 
-public record Status(bool Init, bool ExternalAuth, string? Error, string? Oauth, string? OauthId, bool AutoLogin);
+public record OauthConnection(string Name, string Url, string ClientId, bool AutoLogin);
+
+public record Status(bool Init, bool ExternalAuth, string? Error, OauthConnection[] Oauths);
 
 public record TokenResponse(string AccessToken, string RefreshToken);
 
@@ -38,18 +40,16 @@ public static class AuthLogic
         if (count == 0)
         {
             log.LogInformation("First connexion");
-            return TypedResults.Ok(new Status(false, false, null, null, null, false));
+            return TypedResults.Ok(new Status(false, false, null, []));
         }
 
         var isAuth = false;
 
-        string? oauthUrl = null;
-        string? oauthId = null;
+        OauthConnection[] oauths = [];
         var oauth = await settings.GetSettings<Oauth>(Oauth.Name);
-        if (oauth?.Enabled == true)
+        if (oauth.Enabled == true)
         {
-            oauthUrl = oauth.Url;
-            oauthId = oauth.ClientId;
+            oauths = [.. oauth.Providers.Select(p => new OauthConnection(p.Name, p.Url, p.ClientId, p.AutoLogin))];
         }
         else
         {
@@ -62,7 +62,7 @@ public static class AuthLogic
         }
 
         log.LogInformation("Status asked");
-        return TypedResults.Ok(new Status(true, isAuth, null, oauthUrl, oauthId, oauth?.AutoLogin ?? false));
+        return TypedResults.Ok(new Status(true, isAuth, null, oauths));
     }
 
     /// <summary>
@@ -102,9 +102,9 @@ public static class AuthLogic
                 (logged, fromDb) = await ProxyAuthHelper.ConnectHeader(users, context, proxy, log);
             }
 
-            if (!logged && oauth.Enabled && user.Redirect is not null)
+            if (!logged && oauth.Enabled && user.Issuer is not null)
             {
-                log.LogInformation("Logging from oauth using  {redirect}", user.Redirect);
+                log.LogInformation("Logging from oauth using {client}", user.Issuer);
                 (logged, fromDb) = await OauthHelper.ConnectOauth(users, oauth, user, log);
             }
 

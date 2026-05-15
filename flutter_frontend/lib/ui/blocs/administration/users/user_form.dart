@@ -58,43 +58,48 @@ class _UserFormState extends State<UserForm> {
           icon: Icons.person_sharp,
           theme: theme,
         ),
-        if(widget.controllerIdentifier != null)const SizedBox(height: 10),
-        if(widget.controllerIdentifier != null)SquareTextField(
-          controller: widget.controllerIdentifier,
-          label: "Identifier",
-          icon: Icons.person_sharp,
-          theme: theme,
-        ),
-        if(widget.controllerEmail != null)const SizedBox(height: 10),
-        if(widget.controllerEmail != null)SquareTextField(
-          controller: widget.controllerEmail,
-          focusNode: _focusNodeEmail,
-          label: "Email",
-          icon: Icons.email_sharp,
-          theme: theme,
-          validator: validateEmail,
-          onEditingComplete: () => _focusNodePassword.requestFocus(),
-        ),
-        if(widget.controllerUsername != null)const SizedBox(height: 10),
-        if(widget.controllerUsername != null)UserNameInput(
-          controller: widget.controllerUsername,
-          nextFocus: _focusNodePassword,
-          validate: validateUser,
-        ),
-        if(widget.controllerPassword != null)const SizedBox(height: 10),
-        if(widget.controllerPassword != null)PasswordInput(
-          controller: widget.controllerPassword,
-          nextFocus: _focusNodeConfirmPassword,
-          validate: validatePassword,
-          focus: _focusNodePassword,
-        ),
-        if(widget.controllerPassword != null)const SizedBox(height: 10),
-        if(widget.controllerPassword != null)PasswordInput(
-          text: "Confirm Password",
-          controller: widget.controllerConFirmPassword,
-          focus: _focusNodeConfirmPassword,
-          validate: validateConfirmPassword,
-        ),
+        if (widget.controllerIdentifier != null) const SizedBox(height: 10),
+        if (widget.controllerIdentifier != null)
+          SquareTextField(
+            controller: widget.controllerIdentifier,
+            label: "Identifier",
+            icon: Icons.person_sharp,
+            theme: theme,
+          ),
+        if (widget.controllerEmail != null) const SizedBox(height: 10),
+        if (widget.controllerEmail != null)
+          SquareTextField(
+            controller: widget.controllerEmail,
+            focusNode: _focusNodeEmail,
+            label: "Email",
+            icon: Icons.email_sharp,
+            theme: theme,
+            validator: validateEmail,
+            onEditingComplete: () => _focusNodePassword.requestFocus(),
+          ),
+        if (widget.controllerUsername != null) const SizedBox(height: 10),
+        if (widget.controllerUsername != null)
+          UserNameInput(
+            controller: widget.controllerUsername,
+            nextFocus: _focusNodePassword,
+            validate: validateUser,
+          ),
+        if (widget.controllerPassword != null) const SizedBox(height: 10),
+        if (widget.controllerPassword != null)
+          PasswordInput(
+            controller: widget.controllerPassword,
+            nextFocus: _focusNodeConfirmPassword,
+            validate: validatePassword,
+            focus: _focusNodePassword,
+          ),
+        if (widget.controllerPassword != null) const SizedBox(height: 10),
+        if (widget.controllerPassword != null)
+          PasswordInput(
+            text: "Confirm Password",
+            controller: widget.controllerConFirmPassword,
+            focus: _focusNodeConfirmPassword,
+            validate: validateConfirmPassword,
+          ),
       ],
     );
   }

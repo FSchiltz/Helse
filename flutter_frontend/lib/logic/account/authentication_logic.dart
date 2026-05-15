@@ -41,14 +41,10 @@ class AuthenticationLogic {
   /// Call the login service
   Future<void> logIn({
     required String url,
-    required String username,
-    required String password,
-    String? redirect,
+    required Connection connection,
   }) async {
     await _account.set(Account.url, url);
-    var token = await LoginService(
-      _account,
-    ).login(username, password, redirect);
+    var token = await LoginService(_account).login(connection);
 
     if (token?.refreshToken != null) {
       await _account.set(Account.refresh, token?.refreshToken ?? '');
@@ -108,6 +104,7 @@ class AuthenticationLogic {
   Future<void> clean() async {
     await _account.remove(Account.redirect);
     await _account.remove(Account.grant);
+    await _account.remove(Account.clientid);
   }
 
   void dispose() => _controller.close();
@@ -124,6 +121,10 @@ class AuthenticationLogic {
 
   Future<String?> getRedirect() {
     return _account.get(Account.redirect);
+  }
+
+  Future<String?> getClientId() {
+    return _account.get(Account.clientid);
   }
 
   Future<String?> getUrl() async {

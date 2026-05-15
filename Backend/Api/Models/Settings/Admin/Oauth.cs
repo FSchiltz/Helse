@@ -1,20 +1,10 @@
 namespace Api.Models.Settings.Admin;
 
-public class Oauth
+public class Oauth : IJsonSettings
 {
-    public const string Name = "Oauth";
+    public static string Name => "Oauth";
 
-    public bool Enabled { get; set; }
+    public bool Enabled { get; init; }
 
-    public bool AutoRegister { get; set; }
-
-    public bool AutoLogin { get; set; }
-
-    public string? ClientId { get; set; }
-
-    public string? ClientSecret { get; set; }
-
-    public string? Url { get; set; }
-
-    public string? Tokenurl { get; set; }
+    public OauthProvider[] Providers { get; init; } = [];
 }

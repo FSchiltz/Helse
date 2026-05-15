@@ -183,6 +183,7 @@ public static class PersonLogic
             userHasRole = user?.User.HasRight(Data.Models.UserType.Admin) == true;
 
             // Care giver can add new patients without admin right
+            // TODO move to a create patien endpoint
             userHasRole = userHasRole || user?.User.HasRight(Data.Models.UserType.Caregiver) == true;
         }
 
@@ -192,6 +193,24 @@ public static class PersonLogic
         log.LogInformation("User creation of {user}", newUser.UserName);
 
         await db.CreateUserAsync(newUser, userId);
+
+        return TypedResults.NoContent();
+    }
+
+    public static async Task<IResult> DeleteAsync(long userId, IUserContext db, HttpContext context)
+    {
+        var admin = await db.IsAdmin(context.User);
+        if (admin is not null)
+            return admin;
+
+        var user = await db.Get(userId);
+        if (user is null)
+            return TypedResults.NotFound();
+
+        await using var transaction = await db.BeginTransactionAsync();
+        await db.DeleteUserAsync(userId);
+        await db.DeletePersonAsync(user.Person.Id);
+        await transaction.CommitAsync();
 
         return TypedResults.NoContent();
     }
@@ -218,8 +237,21 @@ public static class PersonLogic
             return TypedResults.BadRequest("Cannot remove your own admin right.");
         }
 
+        var userToUpdate =await db.Get(update.Id)?? throw new InvalidDataException();
+
+        await using var transaction = await db.BeginTransactionAsync();
         await db.UpdatePerson(update);
 
+        await db.UpdatePatient(new UpdatePatient
+        {
+            Id = userToUpdate.Person.Id,
+            Birth = update.Birth,
+            Identifier = update.Identifier,
+            Name = update.Name,
+            Surname = update.Surname,
+            ProfilePicture = update.ProfilePicture,
+        });
+        await transaction.CommitAsync();
         return TypedResults.NoContent();
     }
 }

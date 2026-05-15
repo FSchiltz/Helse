@@ -44,17 +44,19 @@
             "name": "Flutter",
             "type": "dart",
             "request": "launch",
-            "program": "flutter_frontend/lib/main.dart",
+            "program": "flutter_frontend/lib/main.dart", "args": [               
+                "--web-port=8000"
+            ]
         },
         {
             "name": "Flutter web",
             "type": "dart",
             "request": "launch",
-            "program": "flutter_frontend/lib/main.dart",
-            "flutterMode": "release",
+            "cwd": "flutter_frontend",
             "args": [
                 "-d",
-                "chrome"
+                "chrome",
+                "--web-port=8000"
             ]
         }
     ],

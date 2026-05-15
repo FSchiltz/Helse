@@ -99,12 +99,14 @@ public class EventNotificationService(IServiceProvider serviceProvider, ILogger<
 
     private record EventMessage(string Message, string Title, int Priority);
 
-    private static Task SendGotifyAsync(IHttpClientFactory builder, Gotify gotifySettings, EventMessage message)
+    private static async Task SendGotifyAsync(IHttpClientFactory builder, Gotify gotifySettings, EventMessage message)
     {
         using var client = builder.CreateClient();
         client.BaseAddress = new Uri(gotifySettings.Url ?? throw new InvalidOperationException());
 
-        return client.PostAsJsonAsync($"/message?token={gotifySettings.Token}", message);
+        var response = await client.PostAsJsonAsync($"/message?token={gotifySettings.Token}", message);
+        var content = await response.Content.ReadAsStringAsync();
+        response.EnsureSuccessStatusCode();
     }
 
     private static string BuildBody(Event e)

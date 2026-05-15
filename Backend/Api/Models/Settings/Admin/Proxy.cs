@@ -1,12 +1,12 @@
 namespace Api.Models.Settings.Admin;
 
-public class Proxy
+public class Proxy : IJsonSettings
 {
-    public const string Name = "proxy";
+    public static string Name => "proxy";
 
-    public bool ProxyAuth { get; set; }
+    public bool ProxyAuth { get; init; }
 
-    public bool AutoRegister { get; set; }
+    public bool AutoRegister { get; init; }
 
-    public string? Header { get; set; }
+    public string? Header { get; init; }
 }

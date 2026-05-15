@@ -1,5 +1,4 @@
 using Api.Data.Models;
-using Api.Models.Admin;
 using Api.Models.Events;
 using Api.Models.Persons;
 using Api.Models.Settings;
@@ -30,19 +29,34 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
             && (x.Stop == null || x.Stop >= time))
         .FirstOrDefaultAsync())?.FromDb();
 
+    public async Task UpdatePatient(UpdatePatient update)
+    {
+        var personQuery = Db.GetTable<Models.Person>()
+            .Where(x => x.Id == update.Id)
+            .AsUpdatable();
+
+        if (update.Birth is not null)
+            personQuery = personQuery.Set(x => x.Birth, update.Birth);
+
+        if (update.Identifier is not null)
+            personQuery = personQuery.Set(x => x.Identifier, update.Identifier);
+
+        if (update.Name is not null)
+            personQuery = personQuery.Set(x => x.Name, update.Name);
+
+        if (update.Surname is not null)
+            personQuery = personQuery.Set(x => x.Surname, update.Surname);
+
+        if (update.ProfilePicture is not null)
+            personQuery = personQuery.Set(x => x.ProfilePicture, update.ProfilePicture);
+
+        await personQuery.UpdateAsync();
+    }
+
     public async Task UpdatePerson(UpdatePerson update)
     {
-        await Db.GetTable<Models.Person>()
-            .Where(x => x.Id == update.Id)
-            .Set(x => x.Birth, update.Birth)
-            .Set(x => x.Identifier, update.Identifier)
-            .Set(x => x.Name, update.Name)
-            .Set(x => x.Surname, update.Surname)
-            .Set(x => x.ProfilePicture, update.ProfilePicture)
-            .UpdateAsync();
-
         var userQuery = Db.GetTable<User>()
-            .Where(x => x.PersonId == update.Id)
+            .Where(x => x.Id == update.Id)
             .AsUpdatable();
 
         if (update.Email is not null)
@@ -50,9 +64,6 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
 
         if (update.Phone is not null)
             userQuery = userQuery.Set(x => x.Phone, update.Phone);
-
-        if (update.Identifier is not null)
-            userQuery = userQuery.Set(x => x.Identifier, update.Identifier);
 
         if (update.Types is not null)
         {
@@ -82,6 +93,19 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
                                  .FirstOrDefaultAsync();
     }
 
+    public Task<PersonFromDb?> Get(string? identifier, string issuer)
+    {
+        if (identifier is null)
+            return Task.FromResult(default(PersonFromDb?));
+
+        return (from o in Db.GetTable<OauthUser>()
+                join u in Db.GetTable<User>() on o.UserId equals u.Id
+                join p in Db.GetTable<Models.Person>() on u.PersonId equals p.Id
+                where o.OauthSub == identifier && o.Provider == issuer
+                select new PersonFromDb(u, p))
+                                 .FirstOrDefaultAsync();
+    }
+
     public Task UpdatePassword(long user, string password)
         => Db.GetTable<User>().Where(x => x.Id == user).Set(x => x.Password, password).UpdateAsync();
 
@@ -98,9 +122,9 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
             });
     }
 
-    public Task InsertUser(PersonCreation newUser, long id, string password)
+    public Task<long> InsertUser(PersonCreation newUser, long id, string password)
     {
-        return Db.GetTable<User>().InsertAsync(()
+        return Db.GetTable<User>().InsertWithInt64IdentityAsync(()
                 => new User
                 {
                     Identifier = newUser.UserName ?? string.Empty,
@@ -171,6 +195,43 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
             Stop = e.Stop,
             Start = e.Start,
             TreatmentId = treatment,
+        });
+    }
+
+    public async Task DeletePersonAsync(long personId)
+    {
+        await Db.GetTable<Models.Person>()
+            .Where(x => x.Id == personId)
+            .DeleteAsync();
+    }
+
+    public async Task DeleteUserAsync(long userId)
+    {
+        await Db.GetTable<OauthUser>()
+        .Where(x => x.UserId == userId)
+        .DeleteAsync();
+
+        await Db.GetTable<User>()
+        .Where(x => x.Id == userId)
+        .DeleteAsync();
+    }
+
+    public Task<PersonFromDb?> Get(long id)
+    {
+        return (from u in Db.GetTable<User>()
+                join p in Db.GetTable<Models.Person>() on u.PersonId equals p.Id
+                where u.Id == id
+                select new PersonFromDb(u, p))
+                                 .FirstOrDefaultAsync();
+    }
+
+    public Task LinkOauth(OauthUser oauthUser)
+    {
+        return Db.GetTable<Models.OauthUser>().InsertAsync(() => new()
+        {
+            UserId = oauthUser.UserId,
+            OauthSub = oauthUser.OauthSub,
+            Provider = oauthUser.Provider,
         });
     }
 }

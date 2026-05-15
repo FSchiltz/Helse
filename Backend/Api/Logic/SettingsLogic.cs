@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Api.Data;
 using Api.Helpers;
 using Api.Models.Settings.Admin;
@@ -45,7 +46,7 @@ public static class SettingsLogic
     {
         var log = logger.CreateLogger(nameof(SettingsLogic));
         var admin = await users.IsAdmin(context.User);
-        return admin ?? await db.Save(Smtp.Name, settings, log);
+        return admin ?? await db.Save(settings, log);
     }
 
     /// <summary>
@@ -59,7 +60,7 @@ public static class SettingsLogic
     {
         var log = logger.CreateLogger(nameof(SettingsLogic));
         var admin = await users.IsAdmin(context.User);
-        return admin ?? await db.Save(Smtp.Name, settings, log);
+        return admin ?? await db.Save(settings, log);
     }
 
     /// <summary>
@@ -85,7 +86,7 @@ public static class SettingsLogic
     {
         var log = logger.CreateLogger(nameof(SettingsLogic));
         var admin = await users.IsAdmin(context.User);
-        return admin ?? await db.Save(Smtp.Name, settings, log);
+        return admin ?? await db.Save(settings, log);
     }
 
     /// <summary>
@@ -111,15 +112,16 @@ public static class SettingsLogic
     {
         var log = logger.CreateLogger(nameof(SettingsLogic));
         var admin = await users.IsAdmin(context.User);
-        return admin ?? await db.Save(Gotify.Name, settings, log);
+        return admin ?? await db.Save(settings, log);
     }
 
-    private static async Task<Created> Save<T>(this ISettingsContext db, string name, T settings, ILogger log)
-    where T : class
+    private static async Task<Created> Save<T>(this ISettingsContext db, T settings, ILogger log)
+    where T : IJsonSettings
     {
-        await db.SaveSettingsAsync(name, settings);
+        var data = JsonSerializer.Serialize(settings);
+        await db.Upsert(T.Name, data);
 
-        log.LogInformation("SMTP settings saved");
+        log.LogInformation("Settings saved");
         return TypedResults.Created();
     }
 }

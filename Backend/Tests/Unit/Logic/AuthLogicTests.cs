@@ -39,6 +39,18 @@ public class AuthLogicTests
         var context = new DefaultHttpContext();
         var loggerFactory = Substitute.For<ILoggerFactory>();
 
+        var oauth = new Oauth
+        {
+            Enabled = true,
+            Providers = [ new OauthProvider() { Name = "TestProvider",
+            ClaimsUrl = "",
+            ClientSecret = "",
+            Tokenurl = "",
+             AutoRegister = true,
+         Url = "http://oauth.com", ClientId = "client123", AutoLogin = true }],
+        };
+        settings.GetSettings<Oauth>(Oauth.Name).Returns(oauth);
+
         // Act
         var result = await AuthLogic.StatusAsync(settings, users, context, loggerFactory);
 
@@ -54,7 +66,16 @@ public class AuthLogicTests
     {
         // Arrange
         var settings = Substitute.For<ISettingsContext>();
-        var oauth = new Oauth { Enabled = true, Url = "http://oauth.com", ClientId = "client123", AutoLogin = true };
+        var oauth = new Oauth
+        {
+            Enabled = true,
+            Providers = [ new OauthProvider() { Name = "TestProvider",
+            ClaimsUrl = "",
+            ClientSecret = "",
+            Tokenurl = "",
+             AutoRegister = true,
+         Url = "http://oauth.com", ClientId = "client123", AutoLogin = true }],
+        };
         settings.GetSettings<Oauth>(Oauth.Name).Returns(oauth);
         var users = Substitute.For<IUserContext>();
         users.Count().Returns(1);
@@ -68,8 +89,8 @@ public class AuthLogicTests
         var statusResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<Status>>(result);
         Assert.NotNull(statusResult.Value);
         Assert.True(statusResult.Value.Init);
-        Assert.Equal("http://oauth.com", statusResult.Value.Oauth);
-        Assert.Equal("client123", statusResult.Value.OauthId);
-        Assert.True(statusResult.Value.AutoLogin);
+        Assert.Equal("http://oauth.com", statusResult.Value.Oauths[0].Url);
+        Assert.Equal("client123", statusResult.Value.Oauths[0].ClientId);
+        Assert.True(statusResult.Value.Oauths[0].AutoLogin);
     }
 }
