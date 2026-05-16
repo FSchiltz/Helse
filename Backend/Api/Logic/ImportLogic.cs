@@ -26,7 +26,7 @@ public static class ImportLogic
     public static IResult GetImportTypes()
       => TypedResults.Ok(Enum.GetValues<FileTypes>().Select(x => new FileType((int)x, x.DescriptionAttr())));
 
-    public static async Task<IResult> PostFileAsync(IFormFile file, int type, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> PostFileAsync([FromForm]IFormFile file, [FromRoute]int type, IUserContext users, IHealthContext db, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
