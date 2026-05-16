@@ -279,6 +279,7 @@ public static class Endpoints
             .Produces((int)HttpStatusCode.Unauthorized);
 
         import.MapPost("/{type}", ImportLogic.PostFileAsync)
+            .DisableAntiforgery()
             .Produces((int)HttpStatusCode.NoContent)
             .Produces((int)HttpStatusCode.Unauthorized);
 

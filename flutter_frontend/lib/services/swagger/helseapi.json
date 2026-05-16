@@ -1634,9 +1634,17 @@
         ],
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/ImportFile"
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "$ref": "#/components/schemas/IFormFile"
+                  }
+                }
               }
             }
           },
@@ -2061,6 +2069,10 @@
           }
         }
       },
+      "IFormFile": {
+        "type": "string",
+        "format": "binary"
+      },
       "ImportData": {
         "type": "object",
         "properties": {
@@ -2075,17 +2087,6 @@
             "items": {
               "$ref": "#/components/schemas/CreateEvent"
             }
-          }
-        }
-      },
-      "ImportFile": {
-        "required": [
-          "content"
-        ],
-        "type": "object",
-        "properties": {
-          "content": {
-            "type": "string"
           }
         }
       },

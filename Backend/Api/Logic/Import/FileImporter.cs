@@ -5,9 +5,9 @@ using Api.Models.Metrics;
 
 namespace Api.Logic.Import;
 
-public abstract class FileImporter(string file, IHealthContext db, User user) : Importer(db, user)
+public abstract class FileImporter(IFormFile file, IHealthContext db, User user) : Importer(db, user)
 {
-    public string File { get; } = file;
+    public IFormFile File { get; } = file;
 }
 
 public abstract class Importer(IHealthContext db, Data.Models.User user)

@@ -1,4 +1,5 @@
 import 'package:helse/services/api_service.dart';
+import 'package:http/http.dart';
 
 import 'swagger/generated_code/helseapi.swagger.dart';
 
@@ -13,7 +14,8 @@ class HelperService extends ApiService {
   Future<void> import(String file, int type) async {
     var api = await getService();
 
-    await call(() => api.apiImportTypePost(body: ImportFile(content: file), type: type));
+    var part = MultipartFile.fromString("file", file, filename: 'upload');
+    await call(() => api.apiImportTypePost(file: part, type: type));
   }
 
   Future<void> importData(ImportData file) async {

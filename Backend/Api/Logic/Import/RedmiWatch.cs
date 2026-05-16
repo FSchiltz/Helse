@@ -1,4 +1,6 @@
+using System.Buffers;
 using System.Globalization;
+using System.Text;
 using System.Text.Json;
 using Api.Data;
 using Api.Logic.Import.Redmi;
@@ -9,7 +11,7 @@ using CsvHelper;
 
 namespace Api.Logic.Import;
 
-public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) : FileImporter(file, db, user)
+public class RedmiWatch(IFormFile file, IHealthContext db, Data.Models.User user) : FileImporter(file, db, user)
 {
     private const string MaxSpo = "max_spo2";
     private const string MinSpo = "min_spo2";
@@ -30,10 +32,36 @@ public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) :
 
     private const string Weight = "weight";
 
+    private readonly JsonSerializerOptions _options = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        Converters = { new ForgivingStringConverter() }
+    };
+
+    public sealed class ForgivingStringConverter : System.Text.Json.Serialization.JsonConverter<string>
+    {
+        public override string? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            return reader.TokenType switch
+            {
+                JsonTokenType.False => "false",
+                JsonTokenType.True => "true",
+                JsonTokenType.Number => Encoding.UTF8.GetString(reader.HasValueSequence ? reader.ValueSequence.ToArray() : reader.ValueSpan),
+                _ => reader.GetString(),
+            };
+        }
+
+        public override void Write(Utf8JsonWriter writer, string value, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(value);
+        }
+    }
+
     public override async Task Import()
     {
         // Remdi fiel are csv, we first convert them
-        using var reader = new StringReader(File);
+        await using var stream = File.OpenReadStream();
+        using var reader = new StreamReader(stream);
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
         // for each record, find the type
@@ -45,7 +73,7 @@ public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) :
                     if (record.Value == null)
                         continue;
 
-                    var sleep = JsonSerializer.Deserialize<SleepRecord>(record.Value);
+                    var sleep = JsonSerializer.Deserialize<SleepRecord>(record.Value, _options);
                     if (sleep?.Items == null)
                         continue;
 
@@ -65,7 +93,7 @@ public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) :
                     if (record.Value == null)
                         continue;
 
-                    var weight = JsonSerializer.Deserialize<WeightRecord>(record.Value);
+                    var weight = JsonSerializer.Deserialize<WeightRecord>(record.Value, _options);
                     if (weight?.Weight == null)
                         continue;
 
@@ -82,14 +110,14 @@ public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) :
                     if (record.Value == null)
                         continue;
 
-                    var steps = JsonSerializer.Deserialize<StepRecord>(record.Value);
+                    var steps = JsonSerializer.Deserialize<StepRecord>(record.Value, _options);
                     if (steps?.Steps == null)
                         continue;
 
                     await ImportMetric(new CreateMetric()
                     {
                         Tag = record.GetKey(),
-                        Value = steps.Steps,
+                        Value = steps.Steps.ToString(),
                         Date = DateTimeOffset.FromUnixTimeSeconds(steps.Time ?? steps.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Steps,
                         Source = FileTypes.RedmiWatch,
@@ -99,14 +127,14 @@ public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) :
                     if (record.Value == null)
                         continue;
 
-                    var calorie = JsonSerializer.Deserialize<CalorieRecord>(record.Value);
+                    var calorie = JsonSerializer.Deserialize<CalorieRecord>(record.Value, _options);
                     if (calorie?.Calories == null)
                         continue;
 
                     await ImportMetric(new CreateMetric()
                     {
                         Tag = record.GetKey(),
-                        Value = calorie.Calories,
+                        Value = calorie.Calories.ToString(),
                         Date = DateTimeOffset.FromUnixTimeSeconds(calorie.Time ?? calorie.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Calories,
                         Source = FileTypes.RedmiWatch,
@@ -120,14 +148,14 @@ public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) :
                     if (record.Value == null)
                         continue;
 
-                    var heart = JsonSerializer.Deserialize<HeartRecord>(record.Value);
+                    var heart = JsonSerializer.Deserialize<HeartRecord>(record.Value, _options);
                     if (heart?.Bpm == null)
                         continue;
 
                     await ImportMetric(new CreateMetric()
                     {
                         Tag = record.GetKey(),
-                        Value = heart.Bpm,
+                        Value = heart.Bpm.ToString(),
                         Date = DateTimeOffset.FromUnixTimeSeconds(heart.Time ?? heart.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Heart,
                         Source = FileTypes.RedmiWatch,
@@ -140,14 +168,14 @@ public class RedmiWatch(string file, IHealthContext db, Data.Models.User user) :
                     if (record.Value == null)
                         continue;
 
-                    var spo = JsonSerializer.Deserialize<SpoRecord>(record.Value);
+                    var spo = JsonSerializer.Deserialize<SpoRecord>(record.Value, _options);
                     if (spo?.Spo2 == null)
                         continue;
 
                     await ImportMetric(new CreateMetric()
                     {
                         Tag = record.GetKey(),
-                        Value = spo.Spo2,
+                        Value = spo.Spo2.ToString(),
                         Date = DateTimeOffset.FromUnixTimeSeconds(spo.Time ?? spo.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Oxygen,
                         Source = FileTypes.RedmiWatch,

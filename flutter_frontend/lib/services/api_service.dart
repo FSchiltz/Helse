@@ -41,17 +41,25 @@ abstract class ApiService {
     if (token != null && token.isNotEmpty) {
       if (JwtDecoder.isExpired(token)) {
         var refresh = await _account.get(Account.refresh);
-        var client = Helseapi.create(baseUrl: Uri.parse(url), interceptors: [
-          HeadersInterceptor({'Authorization': 'Bearer $refresh'})
-        ]);
-        var response = await client.apiAuthPost(body: const Connection(user: "", password: ""));
+        var client = Helseapi.create(
+          baseUrl: Uri.parse(url),
+          interceptors: [
+            HeadersInterceptor({'Authorization': 'Bearer $refresh'}),
+          ],
+        );
+        var response = await client.apiAuthPost(
+          body: const Connection(user: "", password: ""),
+        );
         token = response.body?.accessToken ?? '';
         await _account.set(Account.token, token);
       }
     }
 
-    return Helseapi.create(baseUrl: Uri.parse(url), interceptors: [
-      HeadersInterceptor({'Authorization': 'Bearer $token'})
-    ]);
+    return Helseapi.create(
+      baseUrl: Uri.parse(url),
+      interceptors: [
+        HeadersInterceptor({'Authorization': 'Bearer $token'}),
+      ],
+    );
   }
 }

@@ -7,12 +7,19 @@ using Api.Models.Metrics;
 
 namespace Api.Logic.Import;
 
-public class ClueImporter(string file, IHealthContext db, User user) : FileImporter(file, db, user)
+public class ClueImporter(IFormFile file, IHealthContext db, User user) : FileImporter(file, db, user)
 {
+    private readonly JsonSerializerOptions _options = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
     public override async Task Import()
     {
+        await using var stream = File.OpenReadStream();
+
         // parse the file as an arry of json object
-        var json = JsonSerializer.Deserialize<ClueItem[]>(File);
+        var json = await JsonSerializer.DeserializeAsync<ClueItem[]>(stream, _options);
         if (json is null)
         {
             return;

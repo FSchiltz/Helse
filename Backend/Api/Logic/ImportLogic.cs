@@ -11,11 +11,6 @@ namespace Api.Logic;
 
 public record FileType(int Type, string? Name);
 
-public class ImportFile
-{
-    public required string Content { get; set; }
-}
-
 public class ImportData
 {
     public List<CreateMetric> Metrics { get; set; } = [];
@@ -31,18 +26,16 @@ public static class ImportLogic
     public static IResult GetImportTypes()
       => TypedResults.Ok(Enum.GetValues<FileTypes>().Select(x => new FileType((int)x, x.DescriptionAttr())));
 
-    public static async Task<IResult> PostFileAsync([FromBody] ImportFile file, int type, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> PostFileAsync([FromForm]IFormFile file, [FromRoute]int type, IUserContext users, IHealthContext db, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
             return error;
 
-            var content = file.Content;
-
         Importer importer = (FileTypes)type switch
         {
-            FileTypes.Clue => new ClueImporter(content, db, user),
-            FileTypes.RedmiWatch => new RedmiWatch(content, db, user),
+            FileTypes.Clue => new ClueImporter(file, db, user),
+            FileTypes.RedmiWatch => new RedmiWatch(file, db, user),
             _ => throw new NotSupportedException("Invalid file type"),
         };
 

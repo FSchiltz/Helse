@@ -1327,7 +1327,7 @@ final class _$Helseapi extends Helseapi {
   @override
   Future<Response<dynamic>> _apiImportTypePost({
     required int? type,
-    required ImportFile? body,
+    required dynamic file,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
       summary: '',
@@ -1340,12 +1340,15 @@ final class _$Helseapi extends Helseapi {
     ),
   }) {
     final Uri $url = Uri.parse('/api/import/${type}');
-    final $body = body;
+    final List<PartValue> $parts = <PartValue>[
+      PartValue<dynamic>('file', file),
+    ];
     final Request $request = Request(
       'POST',
       $url,
       client.baseUrl,
-      body: $body,
+      parts: $parts,
+      multipart: true,
       tag: swaggerMetaData,
     );
     return client.send<dynamic, dynamic>($request);
