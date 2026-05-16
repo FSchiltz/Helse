@@ -973,14 +973,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
-  simple_chopper_logger:
-    dependency: "direct main"
-    description:
-      name: simple_chopper_logger
-      sha256: cf19d46c8c1d82657f80f4ef814965659dd13dc150554c6cba456ccb7e22e123
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
   simple_gesture_detector:
     dependency: transitive
     description:

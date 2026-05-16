@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:chopper/chopper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:simple_chopper_logger/simple_chopper_logger.dart';
 import '../logic/d_i.dart';
 import 'account.dart';
 
@@ -60,7 +59,6 @@ abstract class ApiService {
       baseUrl: Uri.parse(url),
       interceptors: [
         HeadersInterceptor({'Authorization': 'Bearer $token'}),
-        SimpleChopperLogger(),
       ],
     );
   }
