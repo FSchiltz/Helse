@@ -41,7 +41,7 @@ dependencies:
   hive_flutter: ^1.1.0
   flutter_bloc: ^9.1.1
   chopper: ^8.5.1
-  json_annotation: ^4.11.0
+  json_annotation: ^4.12.0
   intl: any
   shared_preferences: ^2.5.5
   file_selector: ^1.1.0
