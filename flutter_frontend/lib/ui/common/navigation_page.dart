@@ -86,7 +86,7 @@ class _NavigationPageState extends State<NavigationPage> {
                   )
                   .toList(),
             ),
-      body: SafeArea(child: Expanded(child: widget.pages[_selectedIndex])),
+      body: SafeArea(child: widget.pages[_selectedIndex]),
     );
   }
 }

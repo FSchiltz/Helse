@@ -1,49 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/blocs/administration/metrics/metric_group_add.dart';
+import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../../../common/loader.dart';
 import 'metric_add.dart';
 
-class MetricTypeView extends StatefulWidget {
+class MetricTypeView extends StatelessWidget {
   const MetricTypeView({super.key});
 
-  @override
-  State<MetricTypeView> createState() => _MetricTypeViewState();
-}
-
-class _MetricTypeViewState extends State<MetricTypeView> {
-  List<MetricType>? _types;
-  List<MetricGroup>? _groups;
-
-  void _resetMetricType() {
-    setState(() {
-      _types = null;
-    });
+  Future<List<MetricType>> _getData(bool refresh) async {
+    return await DI.metric.metricsType(true, null) ?? [];
   }
 
-  void _resetMetricGroups() {
-    setState(() {
-      _groups = null;
-    });
-  }
-
-  Future<List<MetricType>?> _getData() async {
-    // if the users has not changed, no call to the backend
-    if (_types != null) return _types;
-
-    _types = await DI.metric.metricsType(true, null);
-    return _types;
-  }
-
-  Future<List<MetricGroup>?> _getGroupData() async {
-    // if the users has not changed, no call to the backend
-    if (_groups != null) return _groups;
-
-    _groups = await DI.metric.metricsGroup();
-    return _groups;
+  Future<List<MetricGroup>> _getGroupData(bool refresh) async {
+    return await DI.metric.metricsGroup() ?? [];
   }
 
   @override
@@ -51,289 +23,229 @@ class _MetricTypeViewState extends State<MetricTypeView> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          FutureBuilder(
-            future: _getGroupData(),
-            builder: (context, snapshot) {
-              // Checking if future is resolved
-              if (snapshot.connectionState == ConnectionState.done) {
-                // If we got an error
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      '${snapshot.error} occurred',
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                  );
-
-                  // if we got our data
-                } else if (snapshot.hasData) {
-                  // Extracting data from snapshot object
-                  final types = snapshot.data as List<MetricGroup>;
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+          LoadingBuilder(
+            _getGroupData,
+            builder: (context, data, reset) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            "Metric Groups",
-                            style: Theme.of(context).textTheme.headlineMedium,
-                          ),
-                          const SizedBox(width: 10),
-                          IconButton(
-                            onPressed: () {
-                              showDialog<void>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return MetricGroupAdd(_resetMetricGroups);
-                                },
-                              );
-                            },
-                            icon: const Icon(Icons.add_sharp),
-                          ),
-                        ],
+                      Text(
+                        "Metric Groups",
+                        style: Theme.of(context).textTheme.headlineMedium,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Row(
-                          children: [
-                            DataTable(
-                              columns: const [
-                                DataColumn(label: Expanded(child: Text("Id"))),
-                                DataColumn(
-                                  label: Expanded(child: Text("Name")),
-                                ),
-                                DataColumn(
-                                  label: Expanded(child: Text("Description")),
-                                ),
-                                DataColumn(
-                                  label: Expanded(child: Text("Show title")),
-                                ),
-                                DataColumn(
-                                  label: Expanded(
-                                    child: Text("Show on dashboard"),
-                                  ),
-                                ),
-                                DataColumn(label: Expanded(child: Text(""))),
-                              ],
-                              rows: types
-                                  .map(
-                                    (type) => DataRow(
-                                      cells: [
-                                        DataCell(Text((type.id).toString())),
-                                        DataCell(Text(type.name)),
-                                        DataCell(Text(type.description)),
-                                        DataCell(
-                                          Checkbox(
-                                            value: type.showTitle ?? false,
-                                            onChanged: null,
-                                          ),
-                                        ),
-                                        DataCell(
-                                          Checkbox(
-                                            value:
-                                                type.showOnDashboard ?? false,
-                                            onChanged: null,
-                                          ),
-                                        ),
-
-                                        DataCell(
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                onPressed: () {
-                                                  showDialog<void>(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                          return MetricGroupAdd(
-                                                            _resetMetricGroups,
-                                                            edit: type,
-                                                          );
-                                                        },
-                                                  );
-                                                },
-                                                icon: const Icon(
-                                                  Icons.edit_sharp,
-                                                ),
-                                              ),
-                                              IconButton(
-                                                onPressed: () async =>
-                                                    deleteGroup(type),
-                                                icon: const Icon(
-                                                  Icons.delete_sharp,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                  .toList(),
-                            ),
-                          ],
-                        ),
+                      const SizedBox(width: 10),
+                      IconButton(
+                        onPressed: () {
+                          showDialog<void>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return MetricGroupAdd(reset);
+                            },
+                          );
+                        },
+                        icon: const Icon(Icons.add_sharp),
                       ),
                     ],
-                  );
-                }
-              }
-              return const Center(
-                child: SizedBox(width: 50, height: 50, child: HelseLoader()),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Row(
+                      children: [
+                        DataTable(
+                          columns: const [
+                            DataColumn(label: Expanded(child: Text("Id"))),
+                            DataColumn(label: Expanded(child: Text("Name"))),
+                            DataColumn(
+                              label: Expanded(child: Text("Description")),
+                            ),
+                            DataColumn(
+                              label: Expanded(child: Text("Show title")),
+                            ),
+                            DataColumn(
+                              label: Expanded(child: Text("Show on dashboard")),
+                            ),
+                            DataColumn(label: Expanded(child: Text(""))),
+                          ],
+                          rows: data
+                              .map(
+                                (type) => DataRow(
+                                  cells: [
+                                    DataCell(Text((type.id).toString())),
+                                    DataCell(Text(type.name)),
+                                    DataCell(Text(type.description)),
+                                    DataCell(
+                                      Checkbox(
+                                        value: type.showTitle ?? false,
+                                        onChanged: null,
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Checkbox(
+                                        value: type.showOnDashboard ?? false,
+                                        onChanged: null,
+                                      ),
+                                    ),
+
+                                    DataCell(
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            onPressed: () {
+                                              showDialog<void>(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                      return MetricGroupAdd(
+                                                        reset,
+                                                        edit: type,
+                                                      );
+                                                    },
+                                              );
+                                            },
+                                            icon: const Icon(Icons.edit_sharp),
+                                          ),
+                                          IconButton(
+                                            onPressed: () async {
+                                              await deleteGroup(type);
+                                              reset();
+                                            },
+                                            icon: const Icon(
+                                              Icons.delete_sharp,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               );
             },
           ),
-          FutureBuilder(
-            future: _getData(),
-            builder: (context, snapshot) {
-              // Checking if future is resolved
-              if (snapshot.connectionState == ConnectionState.done) {
-                // If we got an error
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      '${snapshot.error} occurred',
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                  );
-
-                  // if we got our data
-                } else if (snapshot.hasData) {
-                  // Extracting data from snapshot object
-                  final types = snapshot.data as List<MetricType>;
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+          LoadingBuilder(
+            _getData,
+            builder: (context, data, reset) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            "Metric Types",
-                            style: Theme.of(context).textTheme.headlineMedium,
-                          ),
-                          const SizedBox(width: 10),
-                          IconButton(
-                            onPressed: () {
-                              showDialog<void>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return MetricTypeAdd(_resetMetricType);
-                                },
-                              );
-                            },
-                            icon: const Icon(Icons.add_sharp),
-                          ),
-                        ],
+                      Text(
+                        "Metric Types",
+                        style: Theme.of(context).textTheme.headlineMedium,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Row(
-                          children: [
-                            DataTable(
-                              columns: const [
-                                DataColumn(label: Expanded(child: Text("Id"))),
-                                DataColumn(
-                                  label: Expanded(child: Text("Name")),
-                                ),
-                                DataColumn(
-                                  label: Expanded(child: Text("Description")),
-                                ),
-                                DataColumn(
-                                  label: Expanded(child: Text("Unit")),
-                                ),
-                                DataColumn(
-                                  label: Expanded(child: Text("Type")),
-                                ),
-                                DataColumn(
-                                  label: Expanded(child: Text("Summary")),
-                                ),
-                                DataColumn(
-                                  label: Expanded(child: Text("Visible")),
-                                ),
-                                DataColumn(
-                                  label: Expanded(
-                                    child: Text("Show on dashboard"),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Expanded(child: Text("Group")),
-                                ),
-                                DataColumn(label: Expanded(child: Text(""))),
-                              ],
-                              rows: types
-                                  .map(
-                                    (type) => DataRow(
-                                      cells: [
-                                        DataCell(Text((type.id).toString())),
-                                        DataCell(Text(type.name)),
-                                        DataCell(Text(type.description ?? "")),
-                                        DataCell(Text(type.unit ?? "")),
-                                        DataCell(Text(type.type?.name ?? "")),
-                                        DataCell(
-                                          Text(type.summaryType?.name ?? ""),
-                                        ),
-                                        DataCell(
-                                          Checkbox(
-                                            value: type.visible ?? false,
-                                            onChanged: null,
-                                          ),
-                                        ),
-                                        DataCell(
-                                          Checkbox(
-                                            value:
-                                                type.showOnDashboard ?? false,
-                                            onChanged: null,
-                                          ),
-                                        ),
-                                        DataCell(
-                                          Text(type.groupId?.toString() ?? ""),
-                                        ),
-                                        DataCell(
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                onPressed: () {
-                                                  showDialog<void>(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                          return MetricTypeAdd(
-                                                            _resetMetricType,
-                                                            edit: type,
-                                                          );
-                                                        },
-                                                  );
-                                                },
-                                                icon: const Icon(
-                                                  Icons.edit_sharp,
-                                                ),
-                                              ),
-                                              if (type.userEditable == true)
-                                                IconButton(
-                                                  onPressed: () async =>
-                                                      deleteType(type),
-                                                  icon: const Icon(
-                                                    Icons.delete_sharp,
-                                                  ),
-                                                ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                  .toList(),
-                            ),
-                          ],
-                        ),
+                      const SizedBox(width: 10),
+                      IconButton(
+                        onPressed: () {
+                          showDialog<void>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return MetricTypeAdd(reset);
+                            },
+                          );
+                        },
+                        icon: const Icon(Icons.add_sharp),
                       ),
                     ],
-                  );
-                }
-              }
-              return const Center(
-                child: SizedBox(width: 50, height: 50, child: HelseLoader()),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Row(
+                      children: [
+                        DataTable(
+                          columns: const [
+                            DataColumn(label: Expanded(child: Text("Id"))),
+                            DataColumn(label: Expanded(child: Text("Name"))),
+                            DataColumn(
+                              label: Expanded(child: Text("Description")),
+                            ),
+                            DataColumn(label: Expanded(child: Text("Unit"))),
+                            DataColumn(label: Expanded(child: Text("Type"))),
+                            DataColumn(label: Expanded(child: Text("Summary"))),
+                            DataColumn(label: Expanded(child: Text("Visible"))),
+                            DataColumn(
+                              label: Expanded(child: Text("Show on dashboard")),
+                            ),
+                            DataColumn(label: Expanded(child: Text("Group"))),
+                            DataColumn(label: Expanded(child: Text(""))),
+                          ],
+                          rows: data
+                              .map(
+                                (type) => DataRow(
+                                  cells: [
+                                    DataCell(Text((type.id).toString())),
+                                    DataCell(Text(type.name)),
+                                    DataCell(Text(type.description ?? "")),
+                                    DataCell(Text(type.unit ?? "")),
+                                    DataCell(Text(type.type?.name ?? "")),
+                                    DataCell(
+                                      Text(type.summaryType?.name ?? ""),
+                                    ),
+                                    DataCell(
+                                      Checkbox(
+                                        value: type.visible ?? false,
+                                        onChanged: null,
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Checkbox(
+                                        value: type.showOnDashboard ?? false,
+                                        onChanged: null,
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Text(type.groupId?.toString() ?? ""),
+                                    ),
+                                    DataCell(
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            onPressed: () {
+                                              showDialog<void>(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                      return MetricTypeAdd(
+                                                        reset,
+                                                        edit: type,
+                                                      );
+                                                    },
+                                              );
+                                            },
+                                            icon: const Icon(Icons.edit_sharp),
+                                          ),
+                                          if (type.userEditable == true)
+                                            IconButton(
+                                              onPressed: () async {
+                                                await deleteType(type);
+                                                reset();
+                                              },
+                                              icon: const Icon(
+                                                Icons.delete_sharp,
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               );
             },
           ),
@@ -348,8 +260,6 @@ class _MetricTypeViewState extends State<MetricTypeView> {
       if (id != null) {
         await DI.metric.deleteMetricsGroup(id);
         Notify.show('Metric group ${type.name} deleted');
-
-        _resetMetricType();
       }
     } catch (ex) {
       Notify.showError('Error deleting metric group ${type.name}');
@@ -362,8 +272,6 @@ class _MetricTypeViewState extends State<MetricTypeView> {
       if (id != null) {
         await DI.metric.deleteMetricsType(id);
         Notify.show('Metric ${type.name} deleted');
-
-        _resetMetricType();
       }
     } catch (ex) {
       Notify.showError('Error deleting metric ${type.name}');

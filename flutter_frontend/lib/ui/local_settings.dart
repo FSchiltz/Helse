@@ -24,12 +24,12 @@ class LocalSettingsPage extends StatelessWidget {
     ),
     MenuDestination(
       icon: Icon(Icons.person_search_sharp),
-      selectedIcon: Icon(Icons.person),
+      selectedIcon: Icon(Icons.person_search),
       label: 'Health sync',
     ),
     MenuDestination(
       icon: Icon(Icons.post_add_sharp),
-      selectedIcon: Icon(Icons.analytics),
+      selectedIcon: Icon(Icons.post_add),
       label: 'Metrics',
     ),
     MenuDestination(

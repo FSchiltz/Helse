@@ -2,53 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/custom_switch.dart';
-import 'package:helse/ui/common/loader.dart';
+import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import '../../../common/square_text_field.dart';
 
-class GotifyView extends StatefulWidget {
+class GotifyView extends StatelessWidget {
   const GotifyView({super.key});
 
-  @override
-  State<GotifyView> createState() => _GotifyViewState();
-}
-
-class _GotifyViewState extends State<GotifyView> {
-  Gotify? _settings;
-  bool _refresh = false;
-
-  void _resetSettings() {
-    setState(() {
-      _settings = null;
-      _refresh = !_refresh;
-    });
-  }
-
-  Future<Gotify?> _getData(bool reset) async {
-    _settings = await DI.settings.api().gotify();
-    return _settings;
+  Future<Gotify> _getData(bool reset) async {
+    return await DI.settings.api().gotify();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _getData(_refresh),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                '${snapshot.error} occurred',
-                style: const TextStyle(fontSize: 18),
-              ),
-            );
-          } else if (snapshot.hasData) {
-            return GotifyFormView(snapshot.data!, callback: _resetSettings);
-          }
-        }
-        return const Center(
-          child: SizedBox(width: 50, height: 50, child: HelseLoader()),
-        );
+    return LoadingBuilder(
+      _getData,
+      builder: (context, data, reset) {
+        return GotifyFormView(data, callback: reset);
       },
     );
   }

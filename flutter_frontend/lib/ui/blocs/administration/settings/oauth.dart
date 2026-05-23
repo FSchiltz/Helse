@@ -1,60 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
+import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/custom_switch.dart';
 import '../../../common/square_text_field.dart';
-import '../../../common/loader.dart';
 
-class OauthView extends StatefulWidget {
+class OauthView extends StatelessWidget {
   const OauthView({super.key});
 
-  @override
-  State<OauthView> createState() => _OauthViewState();
-}
-
-class _OauthViewState extends State<OauthView> {
-  Oauth? _settings;
-
-  void _resetSettings() {
-    setState(() {
-      _settings = null;
-      _dummy = !_dummy;
-    });
-  }
-
-  bool _dummy = false;
-
-  Future<Oauth?> _getData(bool reset) async {
-    _settings = await DI.settings.api().oauth();
-    return _settings;
+  Future<Oauth> _getData(bool reset) async {
+    return await DI.settings.api().oauth();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _getData(_dummy),
-      builder: (context, snapshot) {
-        // Checking if future is resolved
-        if (snapshot.connectionState == ConnectionState.done) {
-          // If we got an error
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                '${snapshot.error} occurred',
-                style: const TextStyle(fontSize: 18),
-              ),
-            );
-
-            // if we got our data
-          } else if (snapshot.hasData) {
-            return OauthFormView(snapshot.data, callback: _resetSettings);
-          }
-        }
-        return const Center(
-          child: SizedBox(width: 50, height: 50, child: HelseLoader()),
-        );
+    return LoadingBuilder(
+      _getData,
+      builder: (context, data, reset) {
+        return OauthFormView(data, callback: reset);
       },
     );
   }
