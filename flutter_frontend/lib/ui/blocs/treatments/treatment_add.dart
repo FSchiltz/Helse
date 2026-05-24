@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/common/loading_builder.dart';
 
 import '../../../logic/d_i.dart';
 import '../../../logic/event.dart';
@@ -24,15 +25,9 @@ class _TreatementState extends State<TreatmentAdd> {
   DateTime _stop = DateTime.now();
   final TextEditingController _description = TextEditingController();
   int? _type;
-  List<EventType>? _types;
 
-  Future<List<EventType>?> _getTypes() async {
-    if (_types != null) return _types;
-
-    var model = await DI.treatement?.treatmentTypes();
-    _types = model;
-
-    return _types;
+  Future<List<EventType>> _getTypes(bool refresh) async {
+    return await DI.treatement?.treatmentTypes() ?? [];
   }
 
   void _submit() async {
@@ -43,8 +38,16 @@ class _TreatementState extends State<TreatmentAdd> {
         _status = SubmissionStatus.inProgress;
       });
       try {
-        var event = CreateEvent(start: _start, stop: _stop, type: _type, description: _description.text);
-        var treatment = CreateTreatment(events: [event], personId: widget.person);
+        var event = CreateEvent(
+          start: _start,
+          stop: _stop,
+          type: _type,
+          description: _description.text,
+        );
+        var treatment = CreateTreatment(
+          events: [event],
+          personId: widget.person,
+        );
         await DI.treatement?.addTreatment(treatment);
 
         setState(() {
@@ -81,7 +84,7 @@ class _TreatementState extends State<TreatmentAdd> {
                   onPressed: _submit,
                   child: const Text('Submit'),
                 ),
-        )
+        ),
       ],
       content: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -89,34 +92,22 @@ class _TreatementState extends State<TreatmentAdd> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Text("Manually add a new event", style: Theme.of(context).textTheme.bodyMedium),
+                Text(
+                  "Manually add a new event",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
                 const SizedBox(height: 10),
-                FutureBuilder(
-                    future: _getTypes(),
-                    builder: (ctx, snapshot) {
-                      // Checking if future is resolved
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        // If we got an error
-                        if (snapshot.hasError) {
-                          return Center(
-                            child: Text(
-                              '${snapshot.error} occurred',
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                          );
-
-                          // if we got our data
-                        } else if (snapshot.hasData) {
-                          var types = snapshot.data as List<EventType>;
-                          return _TypeInput(
-                              types,
-                              (type) => setState(() {
-                                    _type = type;
-                                  }));
-                        }
-                      }
-                      return const HelseLoader();
-                    }),
+                LoadingBuilder(
+                  _getTypes,
+                  builder: (ctx, data, reset) {
+                    return _TypeInput(
+                      data,
+                      (type) => setState(() {
+                        _type = type;
+                      }),
+                    );
+                  },
+                ),
                 const SizedBox(height: 10),
                 SquareTextField(
                   theme: theme,
@@ -126,18 +117,20 @@ class _TreatementState extends State<TreatmentAdd> {
                 ),
                 const SizedBox(height: 10),
                 DateInput(
-                    "start",
-                    _start,
-                    (date) => setState(() {
-                          _start = date ?? DateTime.now();
-                        })),
+                  "start",
+                  _start,
+                  (date) => setState(() {
+                    _start = date ?? DateTime.now();
+                  }),
+                ),
                 const SizedBox(height: 10),
                 DateInput(
-                    "end",
-                    _stop,
-                    (date) => setState(() {
-                          _stop = date ?? DateTime.now();
-                        })),
+                  "end",
+                  _stop,
+                  (date) => setState(() {
+                    _stop = date ?? DateTime.now();
+                  }),
+                ),
               ],
             ),
           ),
@@ -158,14 +151,20 @@ class _TypeInput extends StatelessWidget {
     var theme = Theme.of(context).colorScheme;
     return DropdownButtonFormField(
       onChanged: callback,
-      items: types.map((type) => DropdownMenuItem(value: type.id, child: Text(type.name))).toList(),
+      items: types
+          .map(
+            (type) => DropdownMenuItem(value: type.id, child: Text(type.name)),
+          )
+          .toList(),
       decoration: InputDecoration(
         labelText: 'Type',
         prefixIcon: const Icon(Icons.list_sharp),
         prefixIconColor: theme.primary,
         filled: true,
         fillColor: theme.surface,
-        border: OutlineInputBorder(borderSide: BorderSide(color: theme.primary)),
+        border: OutlineInputBorder(
+          borderSide: BorderSide(color: theme.primary),
+        ),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/ui/common/loading_builder.dart';
 
 import '../../../logic/d_i.dart';
 import '../../../logic/event.dart';
@@ -19,80 +20,67 @@ class SharePatientDialog extends StatefulWidget {
 }
 
 class _SharePatientDialogState extends State<SharePatientDialog> {
-  Future<List<Person>>? _caregivers;
   int caregiver = 0;
   bool edit = false;
   SubmissionStatus _status = SubmissionStatus.initial;
 
-  Future<List<Person>> _getCaregiver() {
+  Future<List<Person>> _getCaregiver(bool refresh) {
     return DI.user.caregiver();
   }
 
   @override
   void initState() {
     super.initState();
-    _caregivers = _getCaregiver();
   }
 
   @override
   Widget build(BuildContext context) {
     return SquareDialog(
       title: Text("Share ${widget.patient.name} ${widget.patient.surname}"),
-      content: FutureBuilder(
-          future: _caregivers,
-          builder: (context, snapshot) {
-            // Checking if future is resolved
-            if (snapshot.connectionState == ConnectionState.done) {
-              // If we got an error
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    '${snapshot.error} occurred',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                );
-                // if we got our data
-              } else if (snapshot.hasData) {
-                var caregivers = snapshot.data as List<Person>;
-
-                return Column(children: [
-                  ..._shareForm(caregivers, widget.patient),
-                  _status == SubmissionStatus.inProgress
-                      ? const HelseLoader()
-                      : ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size.fromHeight(50),
-                            shape: const ContinuousRectangleBorder(),
-                          ),
-                          onPressed: _submit,
-                          child: const Text('Share'),
-                        ),
-                ]);
-              }
-            }
-
-            return const Center(child: SizedBox(width: 50, height: 50, child: HelseLoader()));
-          }),
+      content: LoadingBuilder(
+        _getCaregiver,
+        builder: (context, data, reset) {
+          return Column(
+            children: [
+              ..._shareForm(data, widget.patient),
+              _status == SubmissionStatus.inProgress
+                  ? const HelseLoader()
+                  : ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(50),
+                        shape: const ContinuousRectangleBorder(),
+                      ),
+                      onPressed: _submit,
+                      child: const Text('Share'),
+                    ),
+            ],
+          );
+        },
+      ),
     );
   }
 
   List<Widget> _shareForm(List<Person> caregivers, Person patient) => [
-        EnumInput(
-            label: 'Caregiver',
-            caregivers.map((x) => DropDownItem(x.id, x.userName ?? '')).toList(),
-            (value) => setState(() {
-                  caregiver = value ?? 0;
-                })),
-        const SizedBox(height: 10),
-        Row(children: [
-          const Text("With edit right: "),
-          StatefullCheck(
-              edit,
-              (value) => setState(() {
-                    edit = value;
-                  }))
-        ])
-      ];
+    EnumInput(
+      label: 'Caregiver',
+      caregivers.map((x) => DropDownItem(x.id, x.userName ?? '')).toList(),
+      (value) => setState(() {
+        caregiver = value ?? 0;
+      }),
+    ),
+    const SizedBox(height: 10),
+    Row(
+      children: [
+        const Text("With edit right: "),
+        StatefullCheck(
+          edit,
+          (value) => setState(() {
+            edit = value;
+          }),
+        ),
+      ],
+    ),
+  ];
 
   void _submit() async {
     var localContext = context;
@@ -108,7 +96,11 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
           throw Exception();
         }
 
-        await DI.user.sharePatient(patient: patient, caregiver: caregiver, edit: edit);
+        await DI.user.sharePatient(
+          patient: patient,
+          caregiver: caregiver,
+          edit: edit,
+        );
 
         if (localContext.mounted) {
           Navigator.of(localContext).pop();

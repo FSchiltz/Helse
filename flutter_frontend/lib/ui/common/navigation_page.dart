@@ -1,0 +1,131 @@
+import 'package:flutter/material.dart';
+import 'package:helse/ui/common/menu_destination.dart';
+import 'package:helse/ui/common/ui_constants.dart';
+
+class NavigationPage extends StatefulWidget {
+  final String title;
+  final List<Widget> pages;
+  final List<MenuDestination> menu;
+
+  const NavigationPage(
+    this.title, {
+    super.key,
+    required this.pages,
+    required this.menu,
+  });
+
+  @override
+  State<NavigationPage> createState() => _NavigationPageState();
+}
+
+class _NavigationPageState extends State<NavigationPage> {
+  int _selectedIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
+    var media = MediaQuery.of(context);
+    double screenWidth = media.size.width;
+    var aspectRatio = media.size.aspectRatio;
+
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 10,
+        title: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Text(
+            widget.title,
+            style: Theme.of(context).textTheme.displaySmall,
+          ),
+        ),
+      ),
+      drawer: (screenWidth < UIConstants.displaymedium && aspectRatio > 1)
+          ? Drawer(
+              child: NavigationRail(
+                backgroundColor: theme.surfaceContainerHigh,
+                selectedIndex: _selectedIndex,
+                onDestinationSelected: (index) {
+                  setState(() {
+                    _selectedIndex = index;
+                  });
+                },
+                labelType: NavigationRailLabelType.all,
+                destinations: widget.menu
+                    .map(
+                      (e) => NavigationRailDestination(
+                        icon: e.icon,
+                        label: Text(e.label),
+                        selectedIcon: e.selectedIcon,
+                        padding: EdgeInsetsDirectional.all(12),
+                      ),
+                    )
+                    .toList(),
+              ),
+            )
+          : null,
+
+      bottomNavigationBar: (screenWidth < UIConstants.displaymedium && aspectRatio <= 1)
+          ? BottomNavigationBar(
+              backgroundColor: theme.surfaceContainerHigh,
+              onTap: (index) {
+                {
+                  setState(() {
+                    _selectedIndex = index;
+                  });
+                }
+              },
+              unselectedItemColor: theme.onSurface,
+              selectedItemColor: theme.secondary,
+              currentIndex: _selectedIndex,
+              items: widget.menu
+                  .map(
+                    (e) => BottomNavigationBarItem(
+                      icon: e.icon,
+                      label: e.label,
+                      activeIcon: e.selectedIcon,
+                      backgroundColor: theme.surfaceBright,
+                    ),
+                  )
+                  .toList(),
+            )
+          : null,
+      body: SafeArea(
+        child: (screenWidth >= UIConstants.displaymedium)
+            ? _menuBar(
+                widget.menu,
+                widget.pages[_selectedIndex],
+                theme.surfaceContainerHigh,
+              )
+            : widget.pages[_selectedIndex],
+      ),
+    );
+  }
+
+  Widget _menuBar(List<MenuDestination> menu, Widget content, Color color) {
+    return Row(
+      children: [
+        NavigationRail(
+          backgroundColor: color,
+          selectedIndex: _selectedIndex,
+          onDestinationSelected: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          labelType: NavigationRailLabelType.all,
+          destinations: menu
+              .map(
+                (e) => NavigationRailDestination(
+                  icon: e.icon,
+                  label: Text(e.label),
+                  padding: EdgeInsetsDirectional.all(12),
+                  selectedIcon: e.selectedIcon,
+                ),
+              )
+              .toList(),
+        ),
+        Expanded(child: content),
+      ],
+    );
+  }
+}

@@ -2,53 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/custom_switch.dart';
-import 'package:helse/ui/common/loader.dart';
+import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import '../../../common/square_text_field.dart';
 
-class SmtpView extends StatefulWidget {
+class SmtpView extends StatelessWidget {
   const SmtpView({super.key});
 
-  @override
-  State<SmtpView> createState() => _SmtpViewState();
-}
-
-class _SmtpViewState extends State<SmtpView> {
-  Smtp? _settings;
-  bool _refresh = false;
-
-  void _resetSettings() {
-    setState(() {
-      _settings = null;
-      _refresh = !_refresh;
-    });
-  }
-
-  Future<Smtp?> _getData(bool reset) async {
-    _settings = await DI.settings.api().smtp();
-    return _settings;
+  Future<Smtp> _getData(bool reset) async {
+    return await DI.settings.api().smtp();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _getData(_refresh),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                '${snapshot.error} occurred',
-                style: const TextStyle(fontSize: 18),
-              ),
-            );
-          } else if (snapshot.hasData) {
-            return SmtpFormView(snapshot.data!, callback: _resetSettings);
-          }
-        }
-        return const Center(
-          child: SizedBox(width: 50, height: 50, child: HelseLoader()),
-        );
+    return LoadingBuilder(
+      _getData,
+      builder: (context, data, reset) {
+        return SmtpFormView(data, callback: reset);
       },
     );
   }

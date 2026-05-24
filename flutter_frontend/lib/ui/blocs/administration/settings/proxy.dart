@@ -1,58 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/common/custom_switch.dart';
+import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/square_text_field.dart';
-import '../../../common/loader.dart';
 
-class ProxyView extends StatefulWidget {
+class ProxyView extends StatelessWidget {
   const ProxyView({super.key});
 
-  @override
-  State<ProxyView> createState() => _ProxyViewState();
-}
-
-class _ProxyViewState extends State<ProxyView> {
-  Proxy? _settings;
-
-  void _resetSettings() {
-    setState(() {
-      _settings = null;
-    });
-  }
-
-  Future<Proxy?> _getData() async {
-    _settings = await DI.settings.api().proxy();
-
-    return _settings;
+  Future<Proxy> _getData(bool refresh) async {
+    return await DI.settings.api().proxy();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _getData(),
-      builder: (context, snapshot) {
-        // Checking if future is resolved
-        if (snapshot.connectionState == ConnectionState.done) {
-          // If we got an error
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                '${snapshot.error} occurred',
-                style: const TextStyle(fontSize: 18),
-              ),
-            );
-
-            // if we got our data
-          } else if (snapshot.hasData) {
-            return ProxyFormView(snapshot.data, callback: _resetSettings);
-          }
-        }
-        return const Center(
-          child: SizedBox(width: 50, height: 50, child: HelseLoader()),
-        );
+    return LoadingBuilder(
+      _getData,
+      builder: (context, data, reset) {
+        return ProxyFormView(data, callback: reset);
       },
     );
   }

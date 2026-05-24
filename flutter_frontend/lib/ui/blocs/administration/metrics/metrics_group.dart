@@ -1,46 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
+import 'package:helse/ui/blocs/administration/metrics/metric_group_add.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
-import 'event_add.dart';
 
-class EventTypeView extends StatelessWidget {
-  const EventTypeView({super.key});
+class MetricGroupView extends StatelessWidget {
+  const MetricGroupView({super.key});
 
-  Future<List<EventType>> _getData(bool reset) async {
-    return await DI.event.eventsType(true) ?? [];
+  Future<List<MetricGroup>> _getGroupData(bool refresh) async {
+    return await DI.metric.metricsGroup() ?? [];
   }
 
   @override
   Widget build(BuildContext context) {
     return LoadingBuilder(
-      _getData,
+      _getGroupData,
       builder: (context, data, reset) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              children: [
-                Text(
-                  "Event Types",
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(width: 10),
-                IconButton(
-                  onPressed: () {
-                    showDialog<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return EventTypeAdd(reset);
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.add_sharp),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Text(
+                    "Metric Groups",
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  const SizedBox(width: 10),
+                  IconButton(
+                    onPressed: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return MetricGroupAdd(reset);
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.add_sharp),
+                  ),
+                ],
+              ),
             ),
             SingleChildScrollView(
               child: FittedBox(
@@ -49,10 +52,10 @@ class EventTypeView extends StatelessWidget {
                     DataColumn(label: Expanded(child: Text("Id"))),
                     DataColumn(label: Expanded(child: Text("Name"))),
                     DataColumn(label: Expanded(child: Text("Description"))),
+                    DataColumn(label: Expanded(child: Text("Show title"))),
                     DataColumn(
-                      label: Expanded(child: Text("Is standalone")),
+                      label: Expanded(child: Text("Show on dashboard")),
                     ),
-                    DataColumn(label: Expanded(child: Text("Visible"))),
                     DataColumn(label: Expanded(child: Text(""))),
                   ],
                   rows: data
@@ -61,19 +64,20 @@ class EventTypeView extends StatelessWidget {
                           cells: [
                             DataCell(Text((type.id).toString())),
                             DataCell(Text(type.name)),
-                            DataCell(Text(type.description ?? "")),
+                            DataCell(Text(type.description)),
                             DataCell(
                               Checkbox(
-                                value: type.standAlone ?? true,
+                                value: type.showTitle ?? false,
                                 onChanged: null,
                               ),
                             ),
                             DataCell(
                               Checkbox(
-                                value: type.visible ?? false,
+                                value: type.showOnDashboard ?? false,
                                 onChanged: null,
                               ),
                             ),
+                
                             DataCell(
                               Row(
                                 children: [
@@ -82,7 +86,7 @@ class EventTypeView extends StatelessWidget {
                                       showDialog<void>(
                                         context: context,
                                         builder: (BuildContext context) {
-                                          return EventTypeAdd(
+                                          return MetricGroupAdd(
                                             reset,
                                             edit: type,
                                           );
@@ -91,14 +95,13 @@ class EventTypeView extends StatelessWidget {
                                     },
                                     icon: const Icon(Icons.edit_sharp),
                                   ),
-                                  if (type.userEditable == true)
-                                    IconButton(
-                                      onPressed: () async {
-                                        await deleteType(type);
-                                        reset();
-                                      },
-                                      icon: const Icon(Icons.delete_sharp),
-                                    ),
+                                  IconButton(
+                                    onPressed: () async {
+                                      await _deleteGroup(type);
+                                      reset();
+                                    },
+                                    icon: const Icon(Icons.delete_sharp),
+                                  ),
                                 ],
                               ),
                             ),
@@ -115,15 +118,15 @@ class EventTypeView extends StatelessWidget {
     );
   }
 
-  Future<void> deleteType(EventType type) async {
+  Future<void> _deleteGroup(MetricGroup type) async {
     var id = type.id;
     try {
       if (id != null) {
-        await DI.event.deleteEventsType(id);
-        Notify.show('Event ${type.name} deleted');
+        await DI.metric.deleteMetricsGroup(id);
+        Notify.show('Metric group ${type.name} deleted');
       }
     } catch (ex) {
-      Notify.showError('Error deleting event ${type.name}');
+      Notify.showError('Error deleting metric group ${type.name}');
     }
   }
 }
