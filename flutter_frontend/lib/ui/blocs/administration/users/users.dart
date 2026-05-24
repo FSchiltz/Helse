@@ -47,83 +47,78 @@ class _UsersViewState extends State<UsersView> {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Row(
-                children: [
-                  SingleChildScrollView(
-                    child: DataTable(
-                      columns: const [
-                        DataColumn(label: Expanded(child: Text("Id"))),
-                        DataColumn(label: Expanded(child: Text("Type"))),
-                        DataColumn(label: Expanded(child: Text("Username"))),
-                        DataColumn(label: Expanded(child: Text("Email"))),
-                        DataColumn(label: Expanded(child: Text("Name"))),
-                        DataColumn(label: Expanded(child: Text("Surname"))),
-                        DataColumn(label: Expanded(child: Text(""))),
-                      ],
-                      rows: data
-                          .where((user) => user.types?.isEmpty == false)
-                          .map(
-                            (user) => DataRow(
-                              cells: [
-                                DataCell(Text(user.id?.toString() ?? '')),
-                                DataCell(
-                                  Text(
-                                    user.types?.map((x) => x.name).join(';') ??
-                                        '0',
-                                  ),
-                                ),
-                                DataCell(Text(user.userName ?? "")),
-                                DataCell(Text(user.email ?? "")),
-                                DataCell(Text(user.name ?? "")),
-                                DataCell(Text(user.surname ?? "")),
-                                DataCell(
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        onPressed: () {
-                                          var id = user.id;
-                                          if (id != null) {
-                                            showDialog<void>(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return UserAdd(
-                                                  reset,
-                                                  edit: user,
-                                                );
-                                              },
-                                            );
-                                          }
-                                        },
-                                        icon: const Icon(Icons.edit_sharp),
-                                      ),
-                                      IconButton(
-                                        onPressed: () {
-                                          showDialog<void>(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return DeleteUser(() async {
-                                                await DI.user.deletePerson(
-                                                  user.id ?? 0,
-                                                );
-                                                reset();
-                                              }, person: user);
-                                            },
-                                          );
-                                        },
-                                        icon: const Icon(Icons.delete_sharp),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+            SingleChildScrollView(
+              child: FittedBox(
+                child: DataTable(
+                  columns: const [
+                    DataColumn(label: Expanded(child: Text("Id"))),
+                    DataColumn(label: Expanded(child: Text("Type"))),
+                    DataColumn(label: Expanded(child: Text("Username"))),
+                    DataColumn(label: Expanded(child: Text("Email"))),
+                    DataColumn(label: Expanded(child: Text("Name"))),
+                    DataColumn(label: Expanded(child: Text("Surname"))),
+                    DataColumn(label: Expanded(child: Text(""))),
+                  ],
+                  rows: data
+                      .where((user) => user.types?.isEmpty == false)
+                      .map(
+                        (user) => DataRow(
+                          cells: [
+                            DataCell(Text(user.id?.toString() ?? '')),
+                            DataCell(
+                              Text(
+                                user.types?.map((x) => x.name).join(';') ??
+                                    '0',
+                              ),
                             ),
-                          )
-                          .toList(),
-                    ),
-                  ),
-                ],
+                            DataCell(Text(user.userName ?? "")),
+                            DataCell(Text(user.email ?? "")),
+                            DataCell(Text(user.name ?? "")),
+                            DataCell(Text(user.surname ?? "")),
+                            DataCell(
+                              Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      var id = user.id;
+                                      if (id != null) {
+                                        showDialog<void>(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return UserAdd(
+                                              reset,
+                                              edit: user,
+                                            );
+                                          },
+                                        );
+                                      }
+                                    },
+                                    icon: const Icon(Icons.edit_sharp),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      showDialog<void>(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return DeleteUser(() async {
+                                            await DI.user.deletePerson(
+                                              user.id ?? 0,
+                                            );
+                                            reset();
+                                          }, person: user);
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.delete_sharp),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                      .toList(),
+                ),
               ),
             ),
           ],

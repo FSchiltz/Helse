@@ -72,31 +72,33 @@ class _EventSettingsState extends State<EventSettings> {
                 const SizedBox(height: 20),
                 Expanded(
                   child: SingleChildScrollView(
-                    child: DataTable(
-                      columns: [
-                        DataColumn(label: Expanded(child: Text("Name"))),
-                        DataColumn(label: Expanded(child: Text("Visible"))),
-                      ],
-                      rows: data
-                          .map(
-                            (item) => DataRow(
-                              cells: [
-                                DataCell(
-                                  Text(
-                                    item.name,
-                                    style: theme.textTheme.titleLarge,
+                    child: FittedBox(
+                      child: DataTable(
+                        columns: [
+                          DataColumn(label: Expanded(child: Text("Name"))),
+                          DataColumn(label: Expanded(child: Text("Visible"))),
+                        ],
+                        rows: data
+                            .map(
+                              (item) => DataRow(
+                                cells: [
+                                  DataCell(
+                                    Text(
+                                      item.name,
+                                      style: theme.textTheme.titleLarge,
+                                    ),
                                   ),
-                                ),
-                                DataCell(
-                                  StatefullCheck(
-                                    item.visible,
-                                    (value) => item.visible = value,
+                                  DataCell(
+                                    StatefullCheck(
+                                      item.visible,
+                                      (value) => item.visible = value,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          )
-                          .toList(),
+                                ],
+                              ),
+                            )
+                            .toList(),
+                      ),
                     ),
                   ),
                 ),
