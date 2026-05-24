@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/blocs/metrics/delete_metric.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
-import '../../../helpers/date.dart';
 import '../../../logic/d_i.dart';
 import '../../../logic/settings/ordered_item.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -31,8 +29,6 @@ class MetricDetailPage extends StatefulWidget {
 }
 
 class _MetricDetailPageState extends State<MetricDetailPage> {
-  Metric? _metric;
-
   @override
   void initState() {
     super.initState();
@@ -62,12 +58,6 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
     );
   }
 
-  void _selectionChanged(Metric metric) {
-    setState(() {
-      _metric = metric;
-    });
-  }
-
   void _resetMetric() {
     setState(() {
       _dummy = !_dummy;
@@ -78,7 +68,6 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    var id = _metric?.id;
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -112,9 +101,6 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
       body: LoadingBuilder(
         _getData,
         builder: (ctx, data, reset) {
-          // Extracting data from snapshot object
-          final metric = _metric;
-
           Future<List<CalendarEvent>> getEventsForDay(DateTime day) async {
             return data
                 .where(
@@ -141,117 +127,15 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                 )
-              : (widget.type.type == MetricDataType.text
-                    ? SizedBox.expand(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 8.0,
-                            right: 8.0,
-                            bottom: 16.0,
-                            top: 60.0,
-                          ),
-                          child: CalendarView(getEventsForDay, widget.date),
-                        ),
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Column(
-                          children: [
-                            Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(0),
-                              ),
-                              shadowColor: Theme.of(context).colorScheme.shadow,
-                              elevation: 2,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Wrap(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: Text(
-                                        'Selected${metric != null ? ' (${metric.id})' : ''} :',
-                                      ),
-                                    ),
-                                    if (metric != null)
-                                      Padding(
-                                        padding: const EdgeInsets.all(4.0),
-                                        child: Text(
-                                          '${metric.value}${widget.type.unit} on ${DateHelper.format(metric.date?.toLocal(), context: ctx)}',
-                                        ),
-                                      ),
-                                    if (metric != null)
-                                      Padding(
-                                        padding: const EdgeInsets.all(4.0),
-                                        child: Text(metric.tag.toString()),
-                                      ),
-                                    if (metric != null &&
-                                        metric.source != FileTypes.none)
-                                      Padding(
-                                        padding: const EdgeInsets.all(4.0),
-                                        child: Text('by ${metric.source}'),
-                                      ),
-                                    if (metric != null)
-                                      SizedBox(
-                                        width: 40,
-                                        child: IconButton(
-                                          onPressed: () {
-                                            showDialog<void>(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return MetricAdd(
-                                                  widget.type,
-                                                  _resetMetric,
-                                                  person: widget.person,
-                                                  edit: metric,
-                                                );
-                                              },
-                                            );
-                                          },
-                                          icon: const Icon(Icons.edit_sharp),
-                                        ),
-                                      ),
-                                    if (id != null)
-                                      SizedBox(
-                                        width: 40,
-                                        child: IconButton(
-                                          onPressed: () {
-                                            showDialog<void>(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return DeleteMetric(() async {
-                                                  await DI.metric.deleteMetrics(
-                                                    id,
-                                                  );
-                                                  _resetMetric();
-                                                  setState(() {
-                                                    _metric = null;
-                                                  });
-                                                }, person: widget.person);
-                                              },
-                                            );
-                                          },
-                                          icon: const Icon(Icons.delete_sharp),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Flexible(
-                              fit: FlexFit.tight,
-                              child: Padding(
-                                padding: const EdgeInsets.all(32.0),
-                                child: MetricGraph(
-                                  data,
-                                  widget.date,
-                                  widget.settings,
-                                  _selectionChanged,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+              : (widget.type.type == MetricDataType.text || widget.settings == GraphKind.event
+                    ? CalendarView(getEventsForDay, widget.date)
+                    : MetricGraph(
+                        data,
+                        widget.date,
+                        widget.settings,
+                        reset,
+                        person: widget.person,
+                        type: widget.type,
                       ));
         },
       ),

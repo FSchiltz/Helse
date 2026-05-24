@@ -37,7 +37,7 @@ public interface IStatsContext : IContext
     /// <param name="start"></param>
     /// <param name="end"></param>
     /// <returns></returns>
-    Task<Dictionary<int, int>> CountMetricsByType(DateTime start, DateTime end);
+    Task<Dictionary<long, int>> CountMetricsByType(DateTime start, DateTime end);
 
     /// <summary>
     /// Get a summary of the users in the system, with their rights and treatments

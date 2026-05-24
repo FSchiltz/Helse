@@ -38,14 +38,14 @@ class EventTimeline extends StatelessWidget {
     int tick = 0;
 
     int max = userData.map((x) => x.data.values.map((y) => y as int).sum).max;
-    var coeff = min(160 / max, 60.0);
+    var coeff = min(150 / max, 60.0);
 
     for (var d in data) {
         chartBars.add(Padding(
           padding: EdgeInsets.all(4.0 * width),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
-            children: map(d.data, tick, colorScheme.primary, coeff: coeff, widthCoeff: width),
+            children: _map(d.data, tick, colorScheme.primary, coeff: coeff, widthCoeff: width),
           ),
         ));
       
@@ -75,7 +75,7 @@ class EventTimeline extends StatelessWidget {
     );
   }
 
-  List<Widget> map(Map<String, dynamic> p, int tick, Color empty, {required double coeff, required double widthCoeff}) {
+  List<Widget> _map(Map<String, dynamic> p, int tick, Color empty, {required double coeff, required double widthCoeff}) {
     List<Widget> widgets = [];
 
     for (var entry in p.entries) {
