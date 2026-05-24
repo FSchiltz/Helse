@@ -9,12 +9,16 @@ class MetricSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+      padding: const EdgeInsets.all(16.0),
       child: DefaultTabController(
         length: 2,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            Text(
+              "Metrics Settings",
+              style: Theme.of(context).textTheme.displaySmall,
+            ),
             MetricSettingsView(),
             TabBar(
               tabs: [

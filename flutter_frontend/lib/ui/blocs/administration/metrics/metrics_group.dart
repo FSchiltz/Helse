@@ -22,25 +22,28 @@ class MetricGroupView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              children: [
-                Text(
-                  "Metric Groups",
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(width: 10),
-                IconButton(
-                  onPressed: () {
-                    showDialog<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return MetricGroupAdd(reset);
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.add_sharp),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Text(
+                    "Metric Groups",
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  const SizedBox(width: 10),
+                  IconButton(
+                    onPressed: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return MetricGroupAdd(reset);
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.add_sharp),
+                  ),
+                ],
+              ),
             ),
             SingleChildScrollView(
               child: FittedBox(

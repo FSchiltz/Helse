@@ -103,64 +103,66 @@ class _MetricSettingsState extends State<MetricSettings> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                DataTable(
-                  dataRowMinHeight: 48,
-                  dataRowMaxHeight: 60,
-                  columns: [
-                    DataColumn(label: Expanded(child: Text("Name"))),
-                    DataColumn(label: Expanded(child: Text("Visible"))),
-                    DataColumn(label: Expanded(child: Text("Widget tyoe"))),
-                    DataColumn(label: Expanded(child: Text("Detail type"))),
-                  ],
-                  rows: data
-                      .map(
-                        (item) => DataRow(
-                          cells: [
-                            DataCell(
-                              Text(
-                                item.name,
-                                style: theme.textTheme.titleLarge,
-                              ),
-                            ),
-                            DataCell(
-                              StatefullCheck(
-                                item.visible,
-                                (value) => item.visible = value,
-                              ),
-                            ),
-                            DataCell(
-                              SizedBox(
-                                width: 160,
-                                height: 45,
-                                child: EnumInput(
-                                  value: item.graph,
-                                  GraphKind.values
-                                      .map((x) => DropDownItem(x, x.name))
-                                      .toList(),
-                                  (value) => item.graph = value ?? item.graph,
-                                  label: 'Type',
+                FittedBox(
+                  child: DataTable(
+                    dataRowMinHeight: 48,
+                    dataRowMaxHeight: 60,
+                    columns: [
+                      DataColumn(label: Expanded(child: Text("Name"))),
+                      DataColumn(label: Expanded(child: Text("Visible"))),
+                      DataColumn(label: Expanded(child: Text("Widget tyoe"))),
+                      DataColumn(label: Expanded(child: Text("Detail type"))),
+                    ],
+                    rows: data
+                        .map(
+                          (item) => DataRow(
+                            cells: [
+                              DataCell(
+                                Text(
+                                  item.name,
+                                  style: theme.textTheme.titleLarge,
                                 ),
                               ),
-                            ),
-                            DataCell(
-                              SizedBox(
-                                width: 160,
-                                height: 45,
-                                child: EnumInput(
-                                  value: item.detailGraph,
-                                  GraphKind.values
-                                      .map((x) => DropDownItem(x, x.name))
-                                      .toList(),
-                                  (value) => item.detailGraph =
-                                      value ?? item.detailGraph,
-                                  label: 'Type',
+                              DataCell(
+                                StatefullCheck(
+                                  item.visible,
+                                  (value) => item.visible = value,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                      .toList(),
+                              DataCell(
+                                SizedBox(
+                                  width: 160,
+                                  height: 45,
+                                  child: EnumInput(
+                                    value: item.graph,
+                                    GraphKind.values
+                                        .map((x) => DropDownItem(x, x.name))
+                                        .toList(),
+                                    (value) => item.graph = value ?? item.graph,
+                                    label: 'Type',
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                SizedBox(
+                                  width: 160,
+                                  height: 45,
+                                  child: EnumInput(
+                                    value: item.detailGraph,
+                                    GraphKind.values
+                                        .map((x) => DropDownItem(x, x.name))
+                                        .toList(),
+                                    (value) => item.detailGraph =
+                                        value ?? item.detailGraph,
+                                    label: 'Type',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                        .toList(),
+                  ),
                 ),
               ],
             ),
@@ -197,31 +199,33 @@ class _MetricSettingsState extends State<MetricSettings> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  DataTable(
-                    columns: [
-                      DataColumn(label: Expanded(child: Text("Name"))),
-                      DataColumn(label: Expanded(child: Text("Visible"))),
-                    ],
-                    rows: data
-                        .map(
-                          (item) => DataRow(
-                            cells: [
-                              DataCell(
-                                Text(
-                                  item.name,
-                                  style: theme.textTheme.titleLarge,
+                  FittedBox(
+                    child: DataTable(
+                      columns: [
+                        DataColumn(label: Expanded(child: Text("Name"))),
+                        DataColumn(label: Expanded(child: Text("Visible"))),
+                      ],
+                      rows: data
+                          .map(
+                            (item) => DataRow(
+                              cells: [
+                                DataCell(
+                                  Text(
+                                    item.name,
+                                    style: theme.textTheme.titleLarge,
+                                  ),
                                 ),
-                              ),
-                              DataCell(
-                                StatefullCheck(
-                                  item.visible,
-                                  (value) => item.visible = value,
+                                DataCell(
+                                  StatefullCheck(
+                                    item.visible,
+                                    (value) => item.visible = value,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        )
-                        .toList(),
+                              ],
+                            ),
+                          )
+                          .toList(),
+                    ),
                   ),
                 ],
               ),

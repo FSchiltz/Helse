@@ -17,7 +17,7 @@ class GeneralSettings extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+            padding: const EdgeInsets.all(16),
             child: Text(
               'General Settings',
               style: Theme.of(context).textTheme.displaySmall,

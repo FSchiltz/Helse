@@ -22,25 +22,28 @@ class MetricTypeView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              children: [
-                Text(
-                  "Metric Types",
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(width: 10),
-                IconButton(
-                  onPressed: () {
-                    showDialog<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return MetricTypeAdd(reset);
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.add_sharp),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Text(
+                    "Metric Types",
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  const SizedBox(width: 10),
+                  IconButton(
+                    onPressed: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return MetricTypeAdd(reset);
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.add_sharp),
+                  ),
+                ],
+              ),
             ),
             Flexible(
               child: SingleChildScrollView(
