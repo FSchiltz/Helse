@@ -5,20 +5,19 @@ import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
-import 'metric_add.dart';
 
-class MetricTypeView extends StatelessWidget {
-  const MetricTypeView({super.key});
+class MetricGroupView extends StatelessWidget {
+  const MetricGroupView({super.key});
 
-  Future<List<MetricType>> _getData(bool refresh) async {
-    return await DI.metric.metricsType(true, null) ?? [];
+  Future<List<MetricGroup>> _getGroupData(bool refresh) async {
+    return await DI.metric.metricsGroup() ?? [];
   }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: LoadingBuilder(
-        _getData,
+        _getGroupData,
         builder: (context, data, reset) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -27,7 +26,7 @@ class MetricTypeView extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    "Metric Types",
+                    "Metric Groups",
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(width: 10),
@@ -36,7 +35,7 @@ class MetricTypeView extends StatelessWidget {
                       showDialog<void>(
                         context: context,
                         builder: (BuildContext context) {
-                          return MetricTypeAdd(reset);
+                          return MetricGroupAdd(reset);
                         },
                       );
                     },
@@ -52,17 +51,11 @@ class MetricTypeView extends StatelessWidget {
                       columns: const [
                         DataColumn(label: Expanded(child: Text("Id"))),
                         DataColumn(label: Expanded(child: Text("Name"))),
-                        DataColumn(
-                          label: Expanded(child: Text("Description")),
-                        ),
-                        DataColumn(label: Expanded(child: Text("Unit"))),
-                        DataColumn(label: Expanded(child: Text("Type"))),
-                        DataColumn(label: Expanded(child: Text("Summary"))),
-                        DataColumn(label: Expanded(child: Text("Visible"))),
+                        DataColumn(label: Expanded(child: Text("Description"))),
+                        DataColumn(label: Expanded(child: Text("Show title"))),
                         DataColumn(
                           label: Expanded(child: Text("Show on dashboard")),
                         ),
-                        DataColumn(label: Expanded(child: Text("Group"))),
                         DataColumn(label: Expanded(child: Text(""))),
                       ],
                       rows: data
@@ -71,15 +64,10 @@ class MetricTypeView extends StatelessWidget {
                               cells: [
                                 DataCell(Text((type.id).toString())),
                                 DataCell(Text(type.name)),
-                                DataCell(Text(type.description ?? "")),
-                                DataCell(Text(type.unit ?? "")),
-                                DataCell(Text(type.type?.name ?? "")),
-                                DataCell(
-                                  Text(type.summaryType?.name ?? ""),
-                                ),
+                                DataCell(Text(type.description)),
                                 DataCell(
                                   Checkbox(
-                                    value: type.visible ?? false,
+                                    value: type.showTitle ?? false,
                                     onChanged: null,
                                   ),
                                 ),
@@ -89,9 +77,7 @@ class MetricTypeView extends StatelessWidget {
                                     onChanged: null,
                                   ),
                                 ),
-                                DataCell(
-                                  Text(type.groupId?.toString() ?? ""),
-                                ),
+
                                 DataCell(
                                   Row(
                                     children: [
@@ -99,27 +85,23 @@ class MetricTypeView extends StatelessWidget {
                                         onPressed: () {
                                           showDialog<void>(
                                             context: context,
-                                            builder:
-                                                (BuildContext context) {
-                                                  return MetricTypeAdd(
-                                                    reset,
-                                                    edit: type,
-                                                  );
-                                                },
+                                            builder: (BuildContext context) {
+                                              return MetricGroupAdd(
+                                                reset,
+                                                edit: type,
+                                              );
+                                            },
                                           );
                                         },
                                         icon: const Icon(Icons.edit_sharp),
                                       ),
-                                      if (type.userEditable == true)
-                                        IconButton(
-                                          onPressed: () async {
-                                            await _deleteType(type);
-                                            reset();
-                                          },
-                                          icon: const Icon(
-                                            Icons.delete_sharp,
-                                          ),
-                                        ),
+                                      IconButton(
+                                        onPressed: () async {
+                                          await _deleteGroup(type);
+                                          reset();
+                                        },
+                                        icon: const Icon(Icons.delete_sharp),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -138,15 +120,15 @@ class MetricTypeView extends StatelessWidget {
     );
   }
 
-  Future<void> _deleteType(MetricType type) async {
+  Future<void> _deleteGroup(MetricGroup type) async {
     var id = type.id;
     try {
       if (id != null) {
-        await DI.metric.deleteMetricsType(id);
-        Notify.show('Metric ${type.name} deleted');
+        await DI.metric.deleteMetricsGroup(id);
+        Notify.show('Metric group ${type.name} deleted');
       }
     } catch (ex) {
-      Notify.showError('Error deleting metric ${type.name}');
+      Notify.showError('Error deleting metric group ${type.name}');
     }
   }
 }

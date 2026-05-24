@@ -20,7 +20,7 @@ class EventTypeView extends StatelessWidget {
       builder: (context, data, reset) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
@@ -42,72 +42,69 @@ class EventTypeView extends StatelessWidget {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Row(
-                children: [
-                  DataTable(
-                    columns: const [
-                      DataColumn(label: Expanded(child: Text("Id"))),
-                      DataColumn(label: Expanded(child: Text("Name"))),
-                      DataColumn(label: Expanded(child: Text("Description"))),
-                      DataColumn(label: Expanded(child: Text("Is standalone"))),
-                      DataColumn(label: Expanded(child: Text("Visible"))),
-                      DataColumn(label: Expanded(child: Text(""))),
-                    ],
-                    rows: data
-                        .map(
-                          (type) => DataRow(
-                            cells: [
-                              DataCell(Text((type.id).toString())),
-                              DataCell(Text(type.name)),
-                              DataCell(Text(type.description ?? "")),
-                              DataCell(
-                                Checkbox(
-                                  value: type.standAlone ?? true,
-                                  onChanged: null,
-                                ),
-                              ),
-                              DataCell(
-                                Checkbox(
-                                  value: type.visible ?? false,
-                                  onChanged: null,
-                                ),
-                              ),
-                              DataCell(
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {
-                                        showDialog<void>(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return EventTypeAdd(
-                                              reset,
-                                              edit: type,
-                                            );
-                                          },
+            SingleChildScrollView(
+              child: DataTable(
+                columns: const [
+                  DataColumn(label: Expanded(child: Text("Id"))),
+                  DataColumn(label: Expanded(child: Text("Name"))),
+                  DataColumn(label: Expanded(child: Text("Description"))),
+                  DataColumn(
+                    label: Expanded(child: Text("Is standalone")),
+                  ),
+                  DataColumn(label: Expanded(child: Text("Visible"))),
+                  DataColumn(label: Expanded(child: Text(""))),
+                ],
+                rows: data
+                    .map(
+                      (type) => DataRow(
+                        cells: [
+                          DataCell(Text((type.id).toString())),
+                          DataCell(Text(type.name)),
+                          DataCell(Text(type.description ?? "")),
+                          DataCell(
+                            Checkbox(
+                              value: type.standAlone ?? true,
+                              onChanged: null,
+                            ),
+                          ),
+                          DataCell(
+                            Checkbox(
+                              value: type.visible ?? false,
+                              onChanged: null,
+                            ),
+                          ),
+                          DataCell(
+                            Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    showDialog<void>(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return EventTypeAdd(
+                                          reset,
+                                          edit: type,
                                         );
                                       },
-                                      icon: const Icon(Icons.edit_sharp),
-                                    ),
-                                    if (type.userEditable == true)
-                                      IconButton(
-                                        onPressed: () async {
-                                          await deleteType(type);
-                                          reset();
-                                        },
-                                        icon: const Icon(Icons.delete_sharp),
-                                      ),
-                                  ],
+                                    );
+                                  },
+                                  icon: const Icon(Icons.edit_sharp),
                                 ),
-                              ),
-                            ],
+                                if (type.userEditable == true)
+                                  IconButton(
+                                    onPressed: () async {
+                                      await deleteType(type);
+                                      reset();
+                                    },
+                                    icon: const Icon(Icons.delete_sharp),
+                                  ),
+                              ],
+                            ),
                           ),
-                        )
-                        .toList(),
-                  ),
-                ],
+                        ],
+                      ),
+                    )
+                    .toList(),
               ),
             ),
           ],

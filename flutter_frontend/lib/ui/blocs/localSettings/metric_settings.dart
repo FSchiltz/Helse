@@ -59,6 +59,7 @@ class _MetricSettingsState extends State<MetricSettings> {
     return DefaultTabController(
       length: 2,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           TabBar(
             tabs: [
@@ -66,7 +67,11 @@ class _MetricSettingsState extends State<MetricSettings> {
               Tab(icon: Icon(Icons.group_add_sharp), text: 'Metric Groups'),
             ],
           ),
-          TabBarView(children: [_metricsGrid(theme), _metricGroupsGrid(theme)]),
+          Flexible(
+            child: TabBarView(
+              children: [_metricsGrid(theme), _metricGroupsGrid(theme)],
+            ),
+          ),
         ],
       ),
     );
@@ -77,97 +82,9 @@ class _MetricSettingsState extends State<MetricSettings> {
       _getData,
       builder: (context, data, reset) => Padding(
         padding: const EdgeInsets.all(32.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 120,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(40),
-                    shape: const ContinuousRectangleBorder(),
-                  ),
-                  onPressed: () async {
-                    await _submitMetrics(data);
-                    reset();
-                  },
-                  child: const Text("Save"),
-                ),
-              ),
-              const SizedBox(height: 20),
-              DataTable(
-                dataRowMinHeight: 48,
-                dataRowMaxHeight: 60,
-                columns: [
-                  DataColumn(label: Expanded(child: Text("Name"))),
-                  DataColumn(label: Expanded(child: Text("Visible"))),
-                  DataColumn(label: Expanded(child: Text("Widget tyoe"))),
-                  DataColumn(label: Expanded(child: Text("Detail type"))),
-                ],
-                rows: data
-                    .map(
-                      (item) => DataRow(
-                        cells: [
-                          DataCell(
-                            Text(item.name, style: theme.textTheme.titleLarge),
-                          ),
-                          DataCell(
-                            StatefullCheck(
-                              item.visible,
-                              (value) => item.visible = value,
-                            ),
-                          ),
-                          DataCell(
-                            SizedBox(
-                              width: 160,
-                              height: 45,
-                              child: EnumInput(
-                                value: item.graph,
-                                GraphKind.values
-                                    .map((x) => DropDownItem(x, x.name))
-                                    .toList(),
-                                (value) => item.graph = value ?? item.graph,
-                                label: 'Type',
-                              ),
-                            ),
-                          ),
-                          DataCell(
-                            SizedBox(
-                              width: 160,
-                              height: 45,
-                              child: EnumInput(
-                                value: item.detailGraph,
-                                GraphKind.values
-                                    .map((x) => DropDownItem(x, x.name))
-                                    .toList(),
-                                (value) => item.detailGraph =
-                                    value ?? item.detailGraph,
-                                label: 'Type',
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                    .toList(),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _metricGroupsGrid(ThemeData theme) {
-    return LoadingBuilder(
-      _getGroupData,
-      builder: (context, data, reset) {
-        return Padding(
-          padding: const EdgeInsets.all(32.0),
+        child: SingleChildScrollView(
           child: Form(
-            key: _formGroupKey,
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -179,7 +96,7 @@ class _MetricSettingsState extends State<MetricSettings> {
                       shape: const ContinuousRectangleBorder(),
                     ),
                     onPressed: () async {
-                      await _submitMetricGroups(data);
+                      await _submitMetrics(data);
                       reset();
                     },
                     child: const Text("Save"),
@@ -187,9 +104,13 @@ class _MetricSettingsState extends State<MetricSettings> {
                 ),
                 const SizedBox(height: 20),
                 DataTable(
+                  dataRowMinHeight: 48,
+                  dataRowMaxHeight: 60,
                   columns: [
                     DataColumn(label: Expanded(child: Text("Name"))),
                     DataColumn(label: Expanded(child: Text("Visible"))),
+                    DataColumn(label: Expanded(child: Text("Widget tyoe"))),
+                    DataColumn(label: Expanded(child: Text("Detail type"))),
                   ],
                   rows: data
                       .map(
@@ -207,12 +128,103 @@ class _MetricSettingsState extends State<MetricSettings> {
                                 (value) => item.visible = value,
                               ),
                             ),
+                            DataCell(
+                              SizedBox(
+                                width: 160,
+                                height: 45,
+                                child: EnumInput(
+                                  value: item.graph,
+                                  GraphKind.values
+                                      .map((x) => DropDownItem(x, x.name))
+                                      .toList(),
+                                  (value) => item.graph = value ?? item.graph,
+                                  label: 'Type',
+                                ),
+                              ),
+                            ),
+                            DataCell(
+                              SizedBox(
+                                width: 160,
+                                height: 45,
+                                child: EnumInput(
+                                  value: item.detailGraph,
+                                  GraphKind.values
+                                      .map((x) => DropDownItem(x, x.name))
+                                      .toList(),
+                                  (value) => item.detailGraph =
+                                      value ?? item.detailGraph,
+                                  label: 'Type',
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       )
                       .toList(),
                 ),
               ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _metricGroupsGrid(ThemeData theme) {
+    return LoadingBuilder(
+      _getGroupData,
+      builder: (context, data, reset) {
+        return Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formGroupKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 120,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(40),
+                        shape: const ContinuousRectangleBorder(),
+                      ),
+                      onPressed: () async {
+                        await _submitMetricGroups(data);
+                        reset();
+                      },
+                      child: const Text("Save"),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  DataTable(
+                    columns: [
+                      DataColumn(label: Expanded(child: Text("Name"))),
+                      DataColumn(label: Expanded(child: Text("Visible"))),
+                    ],
+                    rows: data
+                        .map(
+                          (item) => DataRow(
+                            cells: [
+                              DataCell(
+                                Text(
+                                  item.name,
+                                  style: theme.textTheme.titleLarge,
+                                ),
+                              ),
+                              DataCell(
+                                StatefullCheck(
+                                  item.visible,
+                                  (value) => item.visible = value,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ],
+              ),
             ),
           ),
         );

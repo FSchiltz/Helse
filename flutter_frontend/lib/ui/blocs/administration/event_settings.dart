@@ -7,7 +7,7 @@ class EventSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
