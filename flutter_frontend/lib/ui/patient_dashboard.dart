@@ -3,6 +3,7 @@ import 'package:helse/helpers/date.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/common/date_range_picker.dart';
 import 'package:helse/ui/common/notification.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import 'blocs/events/events_grid.dart';
 import 'blocs/metrics/metrics_grid.dart';
@@ -40,7 +41,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    var isLargeScreen = MediaQuery.of(context).size.width > 600;
+    var isLargeScreen = MediaQuery.of(context).size.width > UIConstants.displaySmall;
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),

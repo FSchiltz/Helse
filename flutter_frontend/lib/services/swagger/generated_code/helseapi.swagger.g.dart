@@ -62,7 +62,7 @@ Map<String, dynamic> _$CreateEventToJson(CreateEvent instance) =>
     };
 
 CreateMetric _$CreateMetricFromJson(Map<String, dynamic> json) => CreateMetric(
-  date: json['date'] == null ? null : DateTime.parse(json['date'] as String),
+  date: DateTime.parse(json['date'] as String),
   value: json['value'] as String,
   tag: json['tag'] as String?,
   type: (json['type'] as num?)?.toInt(),
@@ -71,7 +71,7 @@ CreateMetric _$CreateMetricFromJson(Map<String, dynamic> json) => CreateMetric(
 
 Map<String, dynamic> _$CreateMetricToJson(CreateMetric instance) =>
     <String, dynamic>{
-      'date': instance.date?.toIso8601String(),
+      'date': instance.date.toIso8601String(),
       'value': instance.value,
       'tag': instance.tag,
       'type': instance.type,
@@ -213,10 +213,10 @@ Map<String, dynamic> _$ImportDataToJson(ImportData instance) =>
     };
 
 Metric _$MetricFromJson(Map<String, dynamic> json) => Metric(
-  id: (json['id'] as num?)?.toInt(),
-  person: (json['person'] as num?)?.toInt(),
+  id: (json['id'] as num).toInt(),
+  person: (json['person'] as num).toInt(),
   user: (json['user'] as num?)?.toInt(),
-  date: json['date'] == null ? null : DateTime.parse(json['date'] as String),
+  date: DateTime.parse(json['date'] as String),
   value: json['value'] as String,
   tag: json['tag'] as String?,
   type: (json['type'] as num?)?.toInt(),
@@ -227,7 +227,7 @@ Map<String, dynamic> _$MetricToJson(Metric instance) => <String, dynamic>{
   'id': instance.id,
   'person': instance.person,
   'user': instance.user,
-  'date': instance.date?.toIso8601String(),
+  'date': instance.date.toIso8601String(),
   'value': instance.value,
   'tag': instance.tag,
   'type': instance.type,
@@ -515,7 +515,7 @@ Map<String, dynamic> _$UpdateEventToJson(UpdateEvent instance) =>
 
 UpdateMetric _$UpdateMetricFromJson(Map<String, dynamic> json) => UpdateMetric(
   id: (json['id'] as num?)?.toInt(),
-  date: json['date'] == null ? null : DateTime.parse(json['date'] as String),
+  date: DateTime.parse(json['date'] as String),
   value: json['value'] as String,
   tag: json['tag'] as String?,
   type: (json['type'] as num?)?.toInt(),
@@ -525,7 +525,7 @@ UpdateMetric _$UpdateMetricFromJson(Map<String, dynamic> json) => UpdateMetric(
 Map<String, dynamic> _$UpdateMetricToJson(UpdateMetric instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'date': instance.date?.toIso8601String(),
+      'date': instance.date.toIso8601String(),
       'value': instance.value,
       'tag': instance.tag,
       'type': instance.type,

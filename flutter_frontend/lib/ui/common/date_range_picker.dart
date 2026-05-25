@@ -4,25 +4,19 @@ import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/common/date_range_input.dart';
 
-enum DatePreset {
-  today,
-  week,
-  month,
-  trimestre,
-  halfYear,
-  year,
-  yearToDate,
-}
+enum DatePreset { today, week, month, trimestre, halfYear, year, yearToDate }
 
 class DateRangePicker extends StatelessWidget {
   final void Function(DateTimeRange value) setDate;
   final DateTimeRange initial;
+  final DateTimeRange? range;
   final bool large;
 
   const DateRangePicker(
     this.setDate,
     this.initial,
     this.large, {
+    this.range,
     super.key,
   });
 
@@ -33,10 +27,20 @@ class DateRangePicker extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
-          child: IconButton(onPressed: _previousPeriod, icon: const Icon(Icons.skip_previous_sharp)),
+          child: IconButton(
+            onPressed: _previousPeriod,
+            icon: const Icon(Icons.skip_previous_sharp),
+          ),
         ),
         MenuAnchor(
-          menuChildren: DatePreset.values.map((v) => MenuItemButton(onPressed: () => _setPreset(v), child: Text(Translation.get(v)))).toList(),
+          menuChildren: DatePreset.values
+              .map(
+                (v) => MenuItemButton(
+                  onPressed: () => _setPreset(v),
+                  child: Text(Translation.get(v)),
+                ),
+              )
+              .toList(),
           builder: (context, controller, child) => IconButton(
             iconSize: large ? 24 : 22,
             icon: const Icon(Icons.calendar_month_sharp),
@@ -49,9 +53,18 @@ class DateRangePicker extends StatelessWidget {
             },
           ),
         ),
-        DateRangeInput(_callBack, initial, large, showIcon: false),
+        DateRangeInput(
+          _callBack,
+          initial,
+          large,
+          showIcon: false,
+          range: range,
+        ),
         SizedBox(
-          child: IconButton(onPressed: _nextPeriod, icon: const Icon(Icons.skip_next_sharp)),
+          child: IconButton(
+            onPressed: _nextPeriod,
+            icon: const Icon(Icons.skip_next_sharp),
+          ),
         ),
       ],
     );
@@ -84,8 +97,10 @@ class DateRangePicker extends StatelessWidget {
 
     setDate(DateHelper.getRange(value));
 
-    if (value == DatePreset.today || value == DatePreset.week || value == DatePreset.month) {
-       DI.settings.setDateRange(value);
+    if (value == DatePreset.today ||
+        value == DatePreset.week ||
+        value == DatePreset.month) {
+      DI.settings.setDateRange(value);
     }
   }
 }

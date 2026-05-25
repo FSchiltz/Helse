@@ -2,7 +2,7 @@ namespace Api.Models.Metrics;
 
 public abstract class MetricBase
 {
-    public DateTime Date { get; set; }
+    public required DateTime Date { get; set; }
 
     public required string Value { get; set; }
 

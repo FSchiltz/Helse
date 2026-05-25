@@ -17,7 +17,10 @@ class DeleteEvent extends StatelessWidget {
         TextButton(
           onPressed: () async {
             await callback();
-            Navigator.pop(context, 'OK');
+
+            if (context.mounted) {
+              Navigator.pop(context, 'OK');
+            }
           },
           child: const Text('OK'),
         ),

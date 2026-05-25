@@ -1,7 +1,7 @@
-import 'dart:html' as html;
+import 'package:web/web.dart' as web;
 
 class UrlHelper {
   static void removeParam() {
-    html.window.history.replaceState(html.window.history.state, 'title', '/');
+    web.window.history.replaceState(web.window.history.state, 'title', '/');
   }
 }

@@ -30,7 +30,7 @@ public class StatsContext(DataConnection db) : BaseContext(db), IStatsContext
 
     public Task<CountByDate[]> GetMetricStats(DateTime start, DateTime end)
     {
-        return Db.GetTable<Data.Models.Event>()
+        return Db.GetTable<Data.Models.Metric>()
             .Where(x => x.Created <= end && x.Created >= start)
             .GroupBy(e => e.Created.Date)
             .Select(g => new CountByDate(g.Key, g.Count()))
@@ -38,9 +38,9 @@ public class StatsContext(DataConnection db) : BaseContext(db), IStatsContext
             .ToArrayAsync();
     }
 
-    public Task<Dictionary<int, int>> CountMetricsByType(DateTime start, DateTime end)
+    public Task<Dictionary<long, int>> CountMetricsByType(DateTime start, DateTime end)
     {
-        return Db.GetTable<Event>()
+        return Db.GetTable<Metric>()
             .Where(x => x.Created <= end && x.Created >= start)
             .GroupBy(x => x.Type)
             .Select(x => new { x.Key, Count = x.Count() })

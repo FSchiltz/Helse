@@ -86,7 +86,7 @@ public class AdminLogicTests : LogicTests
         };
         stats.GetMetricStats(start, end).Returns(metricStats);
 
-        var metricCounts = new Dictionary<int, int> { { 1, 8 } };
+        var metricCounts = new Dictionary<long, int> { { 1, 8 } };
         stats.CountMetricsByType(start, end).Returns(metricCounts);
 
         MetricType[] metricTypes = [new() { Id = 1, Name = "Blood Pressure" }];

@@ -15,7 +15,13 @@ class MetricAdd extends StatefulWidget {
   final int? person;
   final Metric? edit;
 
-  const MetricAdd(this.type, this.callback, {super.key, this.person, this.edit});
+  const MetricAdd(
+    this.type,
+    this.callback, {
+    super.key,
+    this.person,
+    this.edit,
+  });
 
   @override
   State<MetricAdd> createState() => _MetricAddState();
@@ -34,7 +40,7 @@ class _MetricAddState extends State<MetricAdd> {
 
     var edit = widget.edit;
     if (edit != null) {
-      if (edit.date != null) _date = edit.date!.toLocal();
+      _date = edit.date.toLocal();
       _value.text = edit.value;
       _tag.text = edit.tag ?? '';
     }
@@ -84,11 +90,12 @@ class _MetricAddState extends State<MetricAdd> {
                   ),
                   const SizedBox(height: 20),
                   DateInput(
-                      "Date",
-                      _date,
-                      (value) => setState(() {
-                            _date = value ?? DateTime.now();
-                          })),
+                    "Date",
+                    _date,
+                    (value) => setState(() {
+                      _date = value ?? DateTime.now();
+                    }),
+                  ),
                 ],
               ),
             ),

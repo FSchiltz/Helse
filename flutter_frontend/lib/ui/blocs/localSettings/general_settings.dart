@@ -27,7 +27,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     await _submitTheme();
 
     // apply the theme
-    AppView.of(context).changeTheme(value);
+    var c = context;
+    if (c.mounted) {
+      AppView.of(c).changeTheme(value);
+    }
   }
 
   Future<void> _submitTheme() async {
