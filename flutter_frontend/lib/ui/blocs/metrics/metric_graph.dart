@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -10,6 +9,8 @@ import 'package:helse/logic/settings/ordered_item.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/delete_metric.dart';
 import 'package:helse/ui/blocs/metrics/metric_add.dart';
+import 'package:helse/ui/common/date_range_picker.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../helpers/date.dart';
 
@@ -38,13 +39,32 @@ class MetricGraph extends StatefulWidget {
 
 class _MetricGraphState extends State<MetricGraph> {
   Metric? _metric;
+  List<Metric> filteredMetrics = [];
+  DateTimeRange subDate = DateHelper.now();
+
+  void _setDate(DateTimeRange value) {
+    var filter = widget.metrics
+        .where(
+          (x) =>
+              (x.date ?? DateTime(1000)).isAfter(value.start) &&
+              (x.date ?? DateTime(1000)).isBefore(value.end),
+        )
+        .toList();
+    setState(() {
+      subDate = value;
+      filteredMetrics = filter;
+    });
+  }
+
   final StreamController<Map<String, Set<int>>?> _selection =
       StreamController.broadcast();
 
   @override
   void initState() {
     super.initState();
+    subDate = widget.date;
     _selection.stream.listen(onData);
+    filteredMetrics = widget.metrics;
   }
 
   @override
@@ -62,41 +82,26 @@ class _MetricGraphState extends State<MetricGraph> {
     var id = _metric?.id;
     final metric = _metric;
 
-    var theme = Theme.of(context).colorScheme;
-
-    List<Mark<Shape>> marks;
-    if (widget.settings == GraphKind.line) {
-      marks = [
-        PointMark(
-          size: SizeEncode(value: 6),
-          color: ColorEncode(value: theme.primary),
-          selected: {
-            'touchMove': {1},
-          },
-          selectionStream: _selection,
-        ),
-        LineMark(
-          size: SizeEncode(value: 1),
-          color: ColorEncode(value: theme.secondary),
-        ),
-      ];
-    } else {
-      marks = [
-        IntervalMark(
-          size: SizeEncode(value: 5),
-          color: ColorEncode(value: theme.primary),
-        ),
-      ];
-    }
+    var isLargeScreen =
+        MediaQuery.of(context).size.width > UIConstants.displaySmall;
 
     return Column(
       children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: DateRangePicker(
+            _setDate,
+            subDate,
+            isLargeScreen,
+            range: widget.date,
+          ),
+        ),
         Expanded(
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: SizedBox(
               width: _getWidth(widget.date),
-              child: _flChart(context, marks),
+              child: _grapichChart(context),
             ),
           ),
         ),
@@ -184,10 +189,18 @@ class _MetricGraphState extends State<MetricGraph> {
     );
   }
 
-  Widget _flChart(BuildContext context, List<Mark<Shape>> marks) {
+  Widget _flChart(BuildContext context) {
     return LineChart(
       LineChartData(
-        
+        lineTouchData: LineTouchData(
+          touchCallback: (event, response) {
+            if (response != null) {
+              // handle tap here
+              var spots = response.lineBarSpots ?? [];
+              _selectionChanged(widget.metrics[0]);
+            }
+          },
+        ),
         lineBarsData: [
           LineChartBarData(
             barWidth: 2,
@@ -202,23 +215,49 @@ class _MetricGraphState extends State<MetricGraph> {
                 .toList(),
             isCurved: true,
             curveSmoothness: 0.002,
-            dotData: const FlDotData(show: false),
+            dotData: const FlDotData(show: true),
           ),
         ],
       ),
     );
   }
 
-  Widget _grapichChart(BuildContext context, List<Mark<Shape>> marks) {
+  Widget _grapichChart(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
+
+    List<Mark<Shape>> marks;
+    if (widget.settings == GraphKind.line) {
+      marks = [
+        PointMark(
+          size: SizeEncode(value: 2),
+          color: ColorEncode(value: theme.primary),
+          selected: {
+            'touchMove': {1},
+          },
+          selectionStream: _selection,
+        ),
+        LineMark(
+          size: SizeEncode(value: 1),
+          color: ColorEncode(value: theme.secondary),
+        ),
+      ];
+    } else {
+      marks = [
+        IntervalMark(
+          size: SizeEncode(value: 5),
+          color: ColorEncode(value: theme.primary),
+        ),
+      ];
+    }
+
     return Chart(
-      data: widget.metrics,
+      data: filteredMetrics,
       variables: {
         'date': Variable(
           accessor: (Metric datumn) => datumn.date!.toLocal(),
           scale: TimeScale(
-            min: widget.date.start,
-            max: widget.date.end,
-
+            min: subDate.start,
+            max: subDate.end,
             formatter: (time) => DateHelper.format(time, context: context),
           ),
         ),
@@ -229,14 +268,7 @@ class _MetricGraphState extends State<MetricGraph> {
       },
       marks: marks,
       selections: {
-        'hover': PointSelection(
-          on: {
-            GestureType.hover,
-            GestureType.tapDown,
-            GestureType.longPressMoveUpdate,
-          },
-          dim: Dim.x,
-        ),
+        'hover': PointSelection(on: {GestureType.hover}, dim: Dim.x),
         'click': PointSelection(
           on: {
             GestureType.tap,
@@ -248,16 +280,18 @@ class _MetricGraphState extends State<MetricGraph> {
       },
       crosshair: CrosshairGuide(followPointer: [false, false]),
       tooltip: TooltipGuide(
-        followPointer: [false, false],
+        followPointer: [true, true],
         align: Alignment.topLeft,
-        offset: const Offset(-20, -20),
+        offset: const Offset(0, -0),
       ),
       axes: [Defaults.horizontalAxis, Defaults.verticalAxis],
     );
   }
 
   void onData(Map<String, Set<int>>? event) {
-    var click = event?.entries.firstWhereOrNull((x) => x.key == 'click');
+    var click = event?.entries.firstWhereOrNull(
+      (x) => x.key == 'click' || x.key == 'hover',
+    );
     if (click == null) return;
 
     var metric = widget.metrics[click.value.first];
