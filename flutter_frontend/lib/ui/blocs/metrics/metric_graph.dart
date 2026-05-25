@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -100,7 +101,7 @@ class _MetricGraphState extends State<MetricGraph> {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: SizedBox(
-              width: _getWidth(widget.date),
+              width: _getWidth(widget.date, context),
               child: _grapichChart(context),
             ),
           ),
@@ -194,10 +195,11 @@ class _MetricGraphState extends State<MetricGraph> {
       LineChartData(
         lineTouchData: LineTouchData(
           touchCallback: (event, response) {
-            if (response != null) {
+            var lines = response?.lineBarSpots;
+            if (lines != null && lines.isNotEmpty) {
               // handle tap here
-              var spots = response.lineBarSpots ?? [];
-              _selectionChanged(widget.metrics[0]);
+              var spots = lines[0];
+              _selectionChanged(filteredMetrics[spots.spotIndex]);
             }
           },
         ),
@@ -205,7 +207,7 @@ class _MetricGraphState extends State<MetricGraph> {
           LineChartBarData(
             barWidth: 2,
             preventCurveOverShooting: true,
-            spots: widget.metrics
+            spots: filteredMetrics
                 .map(
                   (e) => FlSpot(
                     e.date?.millisecondsSinceEpoch.toDouble() ?? 0,
@@ -229,16 +231,16 @@ class _MetricGraphState extends State<MetricGraph> {
     if (widget.settings == GraphKind.line) {
       marks = [
         PointMark(
-          size: SizeEncode(value: 2),
-          color: ColorEncode(value: theme.primary),
+          size: SizeEncode(value: 3),
+          color: ColorEncode(value: theme.secondary),
           selected: {
             'touchMove': {1},
           },
           selectionStream: _selection,
         ),
         LineMark(
-          size: SizeEncode(value: 1),
-          color: ColorEncode(value: theme.secondary),
+          size: SizeEncode(value: 2),
+          color: ColorEncode(value: theme.primary),
         ),
       ];
     } else {
@@ -298,7 +300,7 @@ class _MetricGraphState extends State<MetricGraph> {
     _selectionChanged(metric);
   }
 
-  double _getWidth(DateTimeRange<DateTime> date) {
+  double _getWidth(DateTimeRange<DateTime> date, BuildContext context) {
     int ticks;
 
     if (date.duration.inDays >= 1) {
@@ -315,9 +317,10 @@ class _MetricGraphState extends State<MetricGraph> {
 
     ticks = date.duration.inMilliseconds;
 
+    double screen = max(3000, MediaQuery.sizeOf(context).width);
     double width = ticks * 50;
-    if (width > 3000) {
-      return 3000;
+    if (width > screen) {
+      return screen;
     }
 
     return width;
