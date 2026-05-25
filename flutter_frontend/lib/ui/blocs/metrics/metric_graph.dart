@@ -15,6 +15,14 @@ import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../helpers/date.dart';
 
+class MetricGroup {
+  final List<Metric> metrics;
+  final DateTime time;
+  final int value;
+
+  const MetricGroup(this.time, this.value, this.metrics);
+}
+
 class MetricGraph extends StatefulWidget {
   final List<Metric> metrics;
   final DateTimeRange date;
