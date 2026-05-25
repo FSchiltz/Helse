@@ -190,7 +190,8 @@ class _MetricGraphState extends State<MetricGraph> {
     if (widget.settings == GraphKind.line) {
       marks = [
         PointMark(
-          size: SizeEncode(value: 3),
+          position: Varset('date') * Varset('value'),
+          size: SizeEncode(value: 5),
           color: ColorEncode(value: theme.secondary),
           selected: {
             'touchMove': {1},
@@ -198,9 +199,23 @@ class _MetricGraphState extends State<MetricGraph> {
           selectionStream: _selection,
         ),
         LineMark(
-          size: SizeEncode(value: 2),
+          position: Varset('date') * Varset('value'),
+          size: SizeEncode(value: 3),
           color: ColorEncode(value: theme.primary),
         ),
+        /*
+        LineMark(
+          position: Varset('date') * Varset('min'),
+          size: SizeEncode(value: 1),
+          color: ColorEncode(value: theme.outline),
+          layer: 2,
+        ),
+        LineMark(
+          position: Varset('date') * Varset('max'),
+          size: SizeEncode(value: 1),
+          color: ColorEncode(value: theme.outline),
+          layer: 2,
+        ),*/
       ];
     } else {
       marks = [
@@ -224,6 +239,14 @@ class _MetricGraphState extends State<MetricGraph> {
         ),
         'value': Variable(
           accessor: (MetricGrouped datumn) => datumn.value,
+          scale: LinearScale(),
+        ),
+        'min': Variable(
+          accessor: (MetricGrouped datumn) => datumn.min,
+          scale: LinearScale(),
+        ),
+        'max': Variable(
+          accessor: (MetricGrouped datumn) => datumn.max,
           scale: LinearScale(),
         ),
       },
@@ -250,9 +273,7 @@ class _MetricGraphState extends State<MetricGraph> {
   }
 
   void _onData(Map<String, Set<int>>? event) {
-    var click = event?.entries.firstWhereOrNull(
-      (x) => x.key == 'click' || x.key == 'hover',
-    );
+    var click = event?.entries.firstWhereOrNull((x) => x.key == 'click');
     if (click == null) return;
 
     var metric = filteredMetrics[click.value.first];
@@ -286,14 +307,15 @@ class _MetricGraphState extends State<MetricGraph> {
   }
 
   List<MetricGrouped> _group(List<Metric> filter) {
+    var buckets = 200;
     // First create the buckets
-    var bucketLength = subDate.duration.inMilliseconds / 500;
+    var bucketLength = subDate.duration.inMilliseconds / buckets;
 
     List<MetricGrouped> groups = [];
     var start = subDate.start;
     var end = subDate.start.add(Duration(milliseconds: bucketLength.toInt()));
 
-    for (int i = 0; i < 500; i++) {
+    for (int i = 0; i < buckets; i++) {
       var items = filter
           .where((e) => e.date.isAfter(start) && e.date.isBefore(end))
           .toList();
@@ -302,12 +324,22 @@ class _MetricGraphState extends State<MetricGraph> {
       if (values.isNotEmpty) {
         double min = values.min;
         double max = values.max;
-        double f = values.reduce((a, b) => a + b) / values.length;
+        if (min > max) {
+          throw Exception("issue");
+        }
+
+        double mean = values.reduce((a, b) => a + b) / values.length;
+        if (mean > max) {
+          throw Exception("issue");
+        }
+        if (mean < min) {
+          throw Exception("issue");
+        }
 
         groups.add(
           MetricGrouped(
             start.add(Duration(milliseconds: (bucketLength / 2).toInt())),
-            f,
+            mean,
             items,
             min: min,
             max: max,
