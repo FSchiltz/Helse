@@ -10,18 +10,11 @@ import 'package:helse/logic/settings/ordered_item.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/delete_metric.dart';
 import 'package:helse/ui/blocs/metrics/metric_add.dart';
+import 'package:helse/ui/blocs/metrics/metric_group.dart';
 import 'package:helse/ui/common/date_range_picker.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../helpers/date.dart';
-
-class MetricGroup {
-  final List<Metric> metrics;
-  final DateTime time;
-  final int value;
-
-  const MetricGroup(this.time, this.value, this.metrics);
-}
 
 class MetricGraph extends StatefulWidget {
   final List<Metric> metrics;
@@ -47,33 +40,31 @@ class MetricGraph extends StatefulWidget {
 }
 
 class _MetricGraphState extends State<MetricGraph> {
-  Metric? _metric;
-  List<Metric> filteredMetrics = [];
+  MetricGrouped? _metric;
+  List<MetricGrouped> filteredMetrics = [];
+
+  final StreamController<Map<String, Set<int>>?> _selection =
+      StreamController.broadcast();
+
   DateTimeRange subDate = DateHelper.now();
 
   void _setDate(DateTimeRange value) {
     var filter = widget.metrics
-        .where(
-          (x) =>
-              (x.date ?? DateTime(1000)).isAfter(value.start) &&
-              (x.date ?? DateTime(1000)).isBefore(value.end),
-        )
+        .where((x) => x.date.isAfter(value.start) && x.date.isBefore(value.end))
         .toList();
+
     setState(() {
       subDate = value;
-      filteredMetrics = filter;
+      filteredMetrics = _group(filter);
     });
   }
-
-  final StreamController<Map<String, Set<int>>?> _selection =
-      StreamController.broadcast();
 
   @override
   void initState() {
     super.initState();
     subDate = widget.date;
-    _selection.stream.listen(onData);
-    filteredMetrics = widget.metrics;
+    _selection.stream.listen(_onData);
+    filteredMetrics = _group(widget.metrics);
   }
 
   @override
@@ -81,14 +72,13 @@ class _MetricGraphState extends State<MetricGraph> {
     return _getGraph(context);
   }
 
-  void _selectionChanged(Metric metric) {
+  void _selectionChanged(MetricGrouped metric) {
     setState(() {
       _metric = metric;
     });
   }
 
   Widget _getGraph(BuildContext context) {
-    var id = _metric?.id;
     final metric = _metric;
 
     var isLargeScreen =
@@ -115,83 +105,90 @@ class _MetricGraphState extends State<MetricGraph> {
           ),
         ),
         Flexible(
-          child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0),
-            ),
-            shadowColor: Theme.of(context).colorScheme.shadow,
-            elevation: 10,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Wrap(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Text(
-                      'Selected${metric != null ? ' (${metric.id})' : ''} :',
-                    ),
-                  ),
-                  if (metric != null)
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Text(
-                        '${metric.value}${widget.type.unit} on ${DateHelper.format(metric.date?.toLocal(), context: context)}',
+          child: ListView.builder(
+            itemCount: metric?.metrics.length,
+            itemBuilder: (context, index) {
+              var current = metric?.metrics[index];
+              var id = current?.id;
+              return Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0),
+                ),
+                shadowColor: Theme.of(context).colorScheme.shadow,
+                elevation: 10,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Wrap(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Text(
+                          'Selected${current != null ? ' (${current.id})' : ''} :',
+                        ),
                       ),
-                    ),
-                  if (metric != null)
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Text(metric.tag.toString()),
-                    ),
-                  if (metric != null && metric.source != FileTypes.none)
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Text('by ${metric.source}'),
-                    ),
-                  if (metric != null)
-                    SizedBox(
-                      width: 40,
-                      child: IconButton(
-                        onPressed: () {
-                          showDialog<void>(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return MetricAdd(
-                                widget.type,
-                                widget.reset,
-                                person: widget.person,
-                                edit: metric,
+                      if (current != null)
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text(
+                            '${current.value}${widget.type.unit} on ${DateHelper.format(current.date.toLocal(), context: context)}',
+                          ),
+                        ),
+                      if (current != null)
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text(current.tag.toString()),
+                        ),
+                      if (current != null && current.source != FileTypes.none)
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text('by ${current.source}'),
+                        ),
+                      if (current != null)
+                        SizedBox(
+                          width: 40,
+                          child: IconButton(
+                            onPressed: () {
+                              showDialog<void>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return MetricAdd(
+                                    widget.type,
+                                    widget.reset,
+                                    person: widget.person,
+                                    edit: current,
+                                  );
+                                },
                               );
                             },
-                          );
-                        },
-                        icon: const Icon(Icons.edit_sharp),
-                      ),
-                    ),
-                  if (id != null)
-                    SizedBox(
-                      width: 40,
-                      child: IconButton(
-                        onPressed: () {
-                          showDialog<void>(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return DeleteMetric(() async {
-                                await DI.metric.deleteMetrics(id);
-                                widget.reset();
-                                setState(() {
-                                  _metric = null;
-                                });
-                              }, person: widget.person);
+                            icon: const Icon(Icons.edit_sharp),
+                          ),
+                        ),
+                      if (id != null)
+                        SizedBox(
+                          width: 40,
+                          child: IconButton(
+                            onPressed: () {
+                              showDialog<void>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return DeleteMetric(() async {
+                                    await DI.metric.deleteMetrics(id);
+                                    widget.reset();
+                                    setState(() {
+                                      _metric = null;
+                                    });
+                                  }, person: widget.person);
+                                },
+                              );
                             },
-                          );
-                        },
-                        icon: const Icon(Icons.delete_sharp),
-                      ),
-                    ),
-                ],
-              ),
-            ),
+                            icon: const Icon(Icons.delete_sharp),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ],
@@ -217,10 +214,8 @@ class _MetricGraphState extends State<MetricGraph> {
             preventCurveOverShooting: true,
             spots: filteredMetrics
                 .map(
-                  (e) => FlSpot(
-                    e.date?.millisecondsSinceEpoch.toDouble() ?? 0,
-                    double.parse(e.value),
-                  ),
+                  (e) =>
+                      FlSpot(e.date.millisecondsSinceEpoch.toDouble(), e.value),
                 )
                 .toList(),
             isCurved: true,
@@ -264,7 +259,7 @@ class _MetricGraphState extends State<MetricGraph> {
       data: filteredMetrics,
       variables: {
         'date': Variable(
-          accessor: (Metric datumn) => datumn.date!.toLocal(),
+          accessor: (MetricGrouped datumn) => datumn.date.toLocal(),
           scale: TimeScale(
             min: subDate.start,
             max: subDate.end,
@@ -272,7 +267,7 @@ class _MetricGraphState extends State<MetricGraph> {
           ),
         ),
         'value': Variable(
-          accessor: (Metric datumn) => int.tryParse(datumn.value) ?? 0,
+          accessor: (MetricGrouped datumn) => datumn.value,
           scale: LinearScale(),
         ),
       },
@@ -298,13 +293,13 @@ class _MetricGraphState extends State<MetricGraph> {
     );
   }
 
-  void onData(Map<String, Set<int>>? event) {
+  void _onData(Map<String, Set<int>>? event) {
     var click = event?.entries.firstWhereOrNull(
       (x) => x.key == 'click' || x.key == 'hover',
     );
     if (click == null) return;
 
-    var metric = widget.metrics[click.value.first];
+    var metric = filteredMetrics[click.value.first];
     _selectionChanged(metric);
   }
 
@@ -332,5 +327,42 @@ class _MetricGraphState extends State<MetricGraph> {
     }
 
     return width;
+  }
+
+  List<MetricGrouped> _group(List<Metric> filter) {
+    // First create the buckets
+    var bucketLength = subDate.duration.inMilliseconds / 500;
+
+    List<MetricGrouped> groups = [];
+    var start = subDate.start;
+    var end = subDate.start.add(Duration(milliseconds: bucketLength.toInt()));
+
+    for (int i = 0; i < 500; i++) {
+      var items = filter
+          .where((e) => e.date.isAfter(start) && e.date.isBefore(end))
+          .toList();
+
+      var values = items.map((e) => double.parse(e.value)).toList();
+      if (values.isNotEmpty) {
+        double min = values.min;
+        double max = values.max;
+        double f = values.reduce((a, b) => a + b) / values.length;
+
+        groups.add(
+          MetricGrouped(
+            start.add(Duration(milliseconds: (bucketLength / 2).toInt())),
+            f,
+            items,
+            min: min,
+            max: max,
+          ),
+        );
+      }
+
+      start = end;
+      end = end.add(Duration(milliseconds: bucketLength.toInt()));
+    }
+
+    return groups;
   }
 }

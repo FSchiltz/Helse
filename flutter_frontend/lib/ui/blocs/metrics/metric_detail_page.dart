@@ -57,7 +57,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
       simple: false,
     );
   }
-
+  
   void _resetMetric() {
     setState(() {
       _dummy = !_dummy;
@@ -105,17 +105,13 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
             return data
                 .where(
                   (x) =>
-                      x.date != null &&
-                      day.year == x.date!.year &&
-                      day.month == x.date!.month &&
-                      day.day == x.date!.day,
+                      day.year == x.date.year &&
+                      day.month == x.date.month &&
+                      day.day == x.date.day,
                 )
                 .map(
-                  (x) => CalendarEvent(
-                    from: x.date ?? DateTime.now(),
-                    to: x.date ?? DateTime.now(),
-                    value: x.value,
-                  ),
+                  (x) =>
+                      CalendarEvent(from: x.date, to: x.date, value: x.value),
                 )
                 .toList();
           }
@@ -127,7 +123,8 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                 )
-              : (widget.type.type == MetricDataType.text || widget.settings == GraphKind.event
+              : (widget.type.type == MetricDataType.text ||
+                        widget.settings == GraphKind.event
                     ? CalendarView(getEventsForDay, widget.date)
                     : MetricGraph(
                         data,

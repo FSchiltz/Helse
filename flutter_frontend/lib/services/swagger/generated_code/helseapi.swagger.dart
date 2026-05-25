@@ -1715,7 +1715,7 @@ extension $CreateEventExtension on CreateEvent {
 @JsonSerializable(explicitToJson: true)
 class CreateMetric {
   const CreateMetric({
-    this.date,
+    required this.date,
     required this.value,
     this.tag,
     this.type,
@@ -1729,7 +1729,7 @@ class CreateMetric {
   Map<String, dynamic> toJson() => _$CreateMetricToJson(this);
 
   @JsonKey(name: 'date')
-  final DateTime? date;
+  final DateTime date;
   @JsonKey(name: 'value')
   final String value;
   @JsonKey(name: 'tag')
@@ -1791,7 +1791,7 @@ extension $CreateMetricExtension on CreateMetric {
   }
 
   CreateMetric copyWithWrapped({
-    Wrapped<DateTime?>? date,
+    Wrapped<DateTime>? date,
     Wrapped<String>? value,
     Wrapped<String?>? tag,
     Wrapped<int?>? type,
@@ -2443,7 +2443,7 @@ class Metric {
     this.id,
     this.person,
     this.user,
-    this.date,
+    required this.date,
     required this.value,
     this.tag,
     this.type,
@@ -2462,7 +2462,7 @@ class Metric {
   @JsonKey(name: 'user')
   final int? user;
   @JsonKey(name: 'date')
-  final DateTime? date;
+  final DateTime date;
   @JsonKey(name: 'value')
   final String value;
   @JsonKey(name: 'tag')
@@ -2542,7 +2542,7 @@ extension $MetricExtension on Metric {
     Wrapped<int?>? id,
     Wrapped<int?>? person,
     Wrapped<int?>? user,
-    Wrapped<DateTime?>? date,
+    Wrapped<DateTime>? date,
     Wrapped<String>? value,
     Wrapped<String?>? tag,
     Wrapped<int?>? type,
@@ -4083,7 +4083,7 @@ extension $UpdateEventExtension on UpdateEvent {
 class UpdateMetric {
   const UpdateMetric({
     this.id,
-    this.date,
+    required this.date,
     required this.value,
     this.tag,
     this.type,
@@ -4099,7 +4099,7 @@ class UpdateMetric {
   @JsonKey(name: 'id')
   final int? id;
   @JsonKey(name: 'date')
-  final DateTime? date;
+  final DateTime date;
   @JsonKey(name: 'value')
   final String value;
   @JsonKey(name: 'tag')
@@ -4167,7 +4167,7 @@ extension $UpdateMetricExtension on UpdateMetric {
 
   UpdateMetric copyWithWrapped({
     Wrapped<int?>? id,
-    Wrapped<DateTime?>? date,
+    Wrapped<DateTime>? date,
     Wrapped<String>? value,
     Wrapped<String?>? tag,
     Wrapped<int?>? type,

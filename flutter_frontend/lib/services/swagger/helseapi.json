@@ -1800,6 +1800,7 @@
       },
       "CreateMetric": {
         "required": [
+          "date",
           "value"
         ],
         "type": "object",
@@ -2092,6 +2093,7 @@
       },
       "Metric": {
         "required": [
+          "date",
           "value"
         ],
         "type": "object",
@@ -2671,6 +2673,7 @@
       },
       "UpdateMetric": {
         "required": [
+          "date",
           "value"
         ],
         "type": "object",
