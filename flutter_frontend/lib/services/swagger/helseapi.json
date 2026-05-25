@@ -2093,6 +2093,8 @@
       },
       "Metric": {
         "required": [
+          "id",
+          "person",
           "date",
           "value"
         ],

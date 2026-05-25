@@ -2440,8 +2440,8 @@ extension $ImportDataExtension on ImportData {
 @JsonSerializable(explicitToJson: true)
 class Metric {
   const Metric({
-    this.id,
-    this.person,
+    required this.id,
+    required this.person,
     this.user,
     required this.date,
     required this.value,
@@ -2456,9 +2456,9 @@ class Metric {
   Map<String, dynamic> toJson() => _$MetricToJson(this);
 
   @JsonKey(name: 'id')
-  final int? id;
+  final int id;
   @JsonKey(name: 'person')
-  final int? person;
+  final int person;
   @JsonKey(name: 'user')
   final int? user;
   @JsonKey(name: 'date')
@@ -2539,8 +2539,8 @@ extension $MetricExtension on Metric {
   }
 
   Metric copyWithWrapped({
-    Wrapped<int?>? id,
-    Wrapped<int?>? person,
+    Wrapped<int>? id,
+    Wrapped<int>? person,
     Wrapped<int?>? user,
     Wrapped<DateTime>? date,
     Wrapped<String>? value,

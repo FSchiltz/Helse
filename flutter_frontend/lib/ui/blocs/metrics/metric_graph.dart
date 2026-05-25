@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
 import 'package:helse/logic/d_i.dart';
@@ -105,125 +104,82 @@ class _MetricGraphState extends State<MetricGraph> {
           ),
         ),
         Flexible(
-          child: ListView.builder(
-            itemCount: metric?.metrics.length,
-            itemBuilder: (context, index) {
-              var current = metric?.metrics[index];
-              var id = current?.id;
-              return Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(0),
-                ),
-                shadowColor: Theme.of(context).colorScheme.shadow,
-                elevation: 10,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Wrap(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Text(
-                          'Selected${current != null ? ' (${current.id})' : ''} :',
+          child: SingleChildScrollView(
+            child: DataTable(
+              columns: const [
+                DataColumn(label: Expanded(child: Text("Id"))),
+                DataColumn(label: Expanded(child: Text("Value"))),
+                DataColumn(label: Expanded(child: Text("Date"))),
+                DataColumn(label: Expanded(child: Text("Type"))),
+                DataColumn(label: Expanded(child: Text("Source"))),
+                DataColumn(label: Expanded(child: Text(""))),
+              ],
+
+              rows:
+                  metric?.metrics
+                      .map(
+                        (m) => DataRow(
+                          cells: [
+                            DataCell(Text((m.id).toString())),
+                            DataCell(Text('${m.value}${widget.type.unit}')),
+                            DataCell(
+                              Text(
+                                DateHelper.format(
+                                  m.date.toLocal(),
+                                  context: context,
+                                ),
+                              ),
+                            ),
+                            DataCell(Text(m.tag.toString())),
+                            DataCell(Text(m.source.toString())),
+                            DataCell(
+                              Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      showDialog<void>(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return MetricAdd(
+                                            widget.type,
+                                            widget.reset,
+                                            person: widget.person,
+                                            edit: m,
+                                          );
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.edit_sharp),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      showDialog<void>(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return DeleteMetric(() async {
+                                            await DI.metric.deleteMetrics(m.id);
+                                            widget.reset();
+                                            setState(() {
+                                              _metric = null;
+                                            });
+                                          }, person: widget.person);
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.delete_sharp),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      if (current != null)
-                        Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Text(
-                            '${current.value}${widget.type.unit} on ${DateHelper.format(current.date.toLocal(), context: context)}',
-                          ),
-                        ),
-                      if (current != null)
-                        Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Text(current.tag.toString()),
-                        ),
-                      if (current != null && current.source != FileTypes.none)
-                        Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Text('by ${current.source}'),
-                        ),
-                      if (current != null)
-                        SizedBox(
-                          width: 40,
-                          child: IconButton(
-                            onPressed: () {
-                              showDialog<void>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return MetricAdd(
-                                    widget.type,
-                                    widget.reset,
-                                    person: widget.person,
-                                    edit: current,
-                                  );
-                                },
-                              );
-                            },
-                            icon: const Icon(Icons.edit_sharp),
-                          ),
-                        ),
-                      if (id != null)
-                        SizedBox(
-                          width: 40,
-                          child: IconButton(
-                            onPressed: () {
-                              showDialog<void>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return DeleteMetric(() async {
-                                    await DI.metric.deleteMetrics(id);
-                                    widget.reset();
-                                    setState(() {
-                                      _metric = null;
-                                    });
-                                  }, person: widget.person);
-                                },
-                              );
-                            },
-                            icon: const Icon(Icons.delete_sharp),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              );
-            },
+                      )
+                      .toList() ??
+                  [],
+            ),
           ),
         ),
       ],
-    );
-  }
-
-  Widget _flChart(BuildContext context) {
-    return LineChart(
-      LineChartData(
-        lineTouchData: LineTouchData(
-          touchCallback: (event, response) {
-            var lines = response?.lineBarSpots;
-            if (lines != null && lines.isNotEmpty) {
-              // handle tap here
-              var spots = lines[0];
-              _selectionChanged(filteredMetrics[spots.spotIndex]);
-            }
-          },
-        ),
-        lineBarsData: [
-          LineChartBarData(
-            barWidth: 2,
-            preventCurveOverShooting: true,
-            spots: filteredMetrics
-                .map(
-                  (e) =>
-                      FlSpot(e.date.millisecondsSinceEpoch.toDouble(), e.value),
-                )
-                .toList(),
-            isCurved: true,
-            curveSmoothness: 0.002,
-            dotData: const FlDotData(show: true),
-          ),
-        ],
-      ),
     );
   }
 

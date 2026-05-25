@@ -213,8 +213,8 @@ Map<String, dynamic> _$ImportDataToJson(ImportData instance) =>
     };
 
 Metric _$MetricFromJson(Map<String, dynamic> json) => Metric(
-  id: (json['id'] as num?)?.toInt(),
-  person: (json['person'] as num?)?.toInt(),
+  id: (json['id'] as num).toInt(),
+  person: (json['person'] as num).toInt(),
   user: (json['user'] as num?)?.toInt(),
   date: DateTime.parse(json['date'] as String),
   value: json['value'] as String,
