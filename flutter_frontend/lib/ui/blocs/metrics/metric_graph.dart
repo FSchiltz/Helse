@@ -222,6 +222,10 @@ class _MetricGraphState extends State<MetricGraph> {
         IntervalMark(
           size: SizeEncode(value: 5),
           color: ColorEncode(value: theme.primary),
+          selected: {
+            'touchMove': {1},
+          },
+          selectionStream: _selection,
         ),
       ];
     }
