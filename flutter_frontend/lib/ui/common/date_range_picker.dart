@@ -22,25 +22,35 @@ class DateRangePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<MenuItemButton> presets = DatePreset.values
+        .map(
+          (v) => MenuItemButton(
+            onPressed: () => _setPreset(v),
+            child: Text(Translation.get(v)),
+          ),
+        )
+        .toList();
+    var preset = range;
+    if (preset != null) {
+      presets.add(
+        MenuItemButton(
+          onPressed: () => setDate(preset),
+          child: Text('Initial range'),
+        ),
+      );
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
           child: IconButton(
-            onPressed: _previousPeriod,
+            onPressed: (_previousIsBefore()) ? null : _previousPeriod,
             icon: const Icon(Icons.skip_previous_sharp),
           ),
         ),
         MenuAnchor(
-          menuChildren: DatePreset.values
-              .map(
-                (v) => MenuItemButton(
-                  onPressed: () => _setPreset(v),
-                  child: Text(Translation.get(v)),
-                ),
-              )
-              .toList(),
+          menuChildren: presets,
           builder: (context, controller, child) => IconButton(
             iconSize: large ? 24 : 22,
             icon: const Icon(Icons.calendar_month_sharp),
@@ -62,7 +72,7 @@ class DateRangePicker extends StatelessWidget {
         ),
         SizedBox(
           child: IconButton(
-            onPressed: _nextPeriod,
+            onPressed: (_nextIsAfter()) ? null : _nextPeriod,
             icon: const Icon(Icons.skip_next_sharp),
           ),
         ),
@@ -102,5 +112,27 @@ class DateRangePicker extends StatelessWidget {
         value == DatePreset.month) {
       DI.settings.setDateRange(value);
     }
+  }
+
+  bool _previousIsBefore() {
+    var start = range?.start;
+    if (start == null) {
+      return false;
+    }
+
+    var duration = Duration(seconds: _getDurationToMove().inSeconds * -1);
+    var end = initial.end.add(duration);
+    return start == end || end.isBefore(start);
+  }
+
+  bool _nextIsAfter() {
+    var end = range?.end;
+    if (end == null) {
+      return false;
+    }
+
+    var duration = _getDurationToMove();
+    var start = initial.start.add(duration);
+    return start == end || start.isAfter(end);
   }
 }
