@@ -11,7 +11,6 @@ import 'package:helse/ui/blocs/metrics/delete_metric.dart';
 import 'package:helse/ui/blocs/metrics/metric_add.dart';
 import 'package:helse/ui/blocs/metrics/metric_group.dart';
 import 'package:helse/ui/common/date_range_picker.dart';
-import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../helpers/date.dart';
 
@@ -80,9 +79,6 @@ class _MetricGraphState extends State<MetricGraph> {
   Widget _getGraph(BuildContext context) {
     final metric = _metric;
 
-    var isLargeScreen =
-        MediaQuery.of(context).size.width > UIConstants.displaySmall;
-
     return Column(
       children: [
         Padding(
@@ -90,7 +86,6 @@ class _MetricGraphState extends State<MetricGraph> {
           child: DateRangePicker(
             _setDate,
             subDate,
-            isLargeScreen,
             range: widget.date,
           ),
         ),

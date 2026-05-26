@@ -4,20 +4,28 @@ import 'package:flutter/material.dart';
 import '../../../helpers/date.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 
-class EventGraph extends StatelessWidget {
+class EventsTimelineGraph extends StatelessWidget {
   final List<Event> events;
   final DateTimeRange date;
   final ScrollController _scrollController = ScrollController();
   final void Function(Event event) selectionChanged;
 
-  EventGraph(this.events, this.date, this.selectionChanged, {super.key});
+  EventsTimelineGraph(
+    this.events,
+    this.date,
+    this.selectionChanged, {
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return (events.isEmpty
         ? Padding(
             padding: const EdgeInsets.only(top: 16.0),
-            child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
+            child: Text(
+              "No data",
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
           )
         : buildChart(events, context));
   }
@@ -29,25 +37,25 @@ class EventGraph extends StatelessWidget {
       child: SingleChildScrollView(
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
-        child: Stack(fit: StackFit.loose, children: <Widget>[
-          buildGrid(),
-          buildDayHeader(),
-          Container(
-            margin: const EdgeInsets.only(top: 25.0),
-            child: buildHeader(context),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Stack(
+            fit: StackFit.loose,
+            children: <Widget>[
+              buildGrid(),
+              buildDayHeader(),
+              buildHeader(context),
+              Container(
+                margin: const EdgeInsets.only(top: 50.0),
+                child: Column(
+                  children: <Widget>[
+                    EventTimeline(userData, date, selectionChanged),
+                  ],
+                ),
+              ),
+            ],
           ),
-          Container(
-              margin: const EdgeInsets.only(top: 50.0),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      EventTimeline(userData, date, selectionChanged),
-                    ],
-                  ),
-                ],
-              )),
-        ]),
+        ),
       ),
     );
   }
@@ -60,28 +68,23 @@ class EventGraph extends StatelessWidget {
     var viewRange = _minutesBetween(date.start, date.end) / (60 * 24);
 
     for (int i = 0; i < viewRange; i++) {
-      headerItems.add(SizedBox(
-        width: 60 * 24,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: Text(
-            ' ${tempDate.day.toString().padLeft(2, '0')}/${tempDate.month.toString().padLeft(2, '0')}/${tempDate.year.toString().padLeft(4, '0')}',
-            textAlign: TextAlign.left,
-            style: const TextStyle(
-              fontSize: 16.0,
+      headerItems.add(
+        SizedBox(
+          width: 60 * 24,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Text(
+              ' ${tempDate.day.toString().padLeft(2, '0')}/${tempDate.month.toString().padLeft(2, '0')}/${tempDate.year.toString().padLeft(4, '0')}',
+              textAlign: TextAlign.left,
+              style: const TextStyle(fontSize: 16.0),
             ),
           ),
         ),
-      ));
+      );
       tempDate = tempDate.add(const Duration(days: 1));
     }
 
-    return SizedBox(
-      height: 25.0,
-      child: Row(
-        children: headerItems,
-      ),
-    );
+    return SizedBox(height: 25.0, child: Row(children: headerItems));
   }
 
   Widget buildHeader(BuildContext context) {
@@ -92,27 +95,25 @@ class EventGraph extends StatelessWidget {
     var viewRange = _minutesBetween(date.start, date.end) / (60);
 
     for (int i = 0; i < viewRange; i++) {
-      headerItems.add(SizedBox(
-        width: 60,
-        child: Tooltip(
-          message: DateHelper.format(tempDate, context: context),
-          child: Text(
-            '${tempDate.hour.toString().padLeft(2, '0')}:${tempDate.second.toString().padLeft(2, '0')}',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 12.0,
+      headerItems.add(
+        SizedBox(
+          width: 60,
+          child: Tooltip(
+            message: DateHelper.format(tempDate, context: context),
+            child: Text(
+              '${tempDate.hour.toString().padLeft(2, '0')}:${tempDate.second.toString().padLeft(2, '0')}',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 12.0),
             ),
           ),
         ),
-      ));
+      );
       tempDate = tempDate.add(const Duration(hours: 1));
     }
 
-    return SizedBox(
-      height: 25.0,
-      child: Row(
-        children: headerItems,
-      ),
+    return Container(
+      margin: const EdgeInsets.only(top: 25.0),
+      child: SizedBox(height: 25.0, child: Row(children: headerItems)),
     );
   }
 
@@ -122,15 +123,19 @@ class EventGraph extends StatelessWidget {
     var viewRange = _minutesBetween(date.start, date.end) / (60);
 
     for (int i = 0; i <= viewRange; i++) {
-      gridColumns.add(Container(
-        decoration: BoxDecoration(border: Border(right: BorderSide(color: Colors.white.withAlpha(75), width: 0.5))),
-        width: 60,
-      ));
+      gridColumns.add(
+        Container(
+          decoration: BoxDecoration(
+            border: Border(
+              right: BorderSide(color: Colors.white.withAlpha(75), width: 0.5),
+            ),
+          ),
+          width: 60,
+        ),
+      );
     }
 
-    return Row(
-      children: gridColumns,
-    );
+    return Row(children: gridColumns);
   }
 
   int _minutesBetween(DateTime from, DateTime to) {
@@ -163,7 +168,12 @@ class _EventTimelineState extends State<EventTimeline> {
       return colors[state]!;
     } else {
       var r = Random();
-      var color = Color.fromRGBO(r.nextInt(106) + 50, r.nextInt(106) + 50, r.nextInt(106) + 50, 0.75);
+      var color = Color.fromRGBO(
+        r.nextInt(106) + 50,
+        r.nextInt(106) + 50,
+        r.nextInt(106) + 50,
+        0.75,
+      );
       colors[state] = color;
       return color;
     }
@@ -212,45 +222,49 @@ class _EventTimelineState extends State<EventTimeline> {
       List<Widget> chartGroup = [];
       for (var n in group.value) {
         // if the event has no start or end, we clamp to the filtered value
-        var start = n.start?.toLocal() ?? widget.date.start;
-        var end = n.stop?.toLocal() ?? widget.date.end;
+        var start = n.start.toLocal();
+        var end = n.stop.toLocal();
 
         var width = _distanceInMinutes(start, end);
         var color = _stateColor(n.description ?? '');
         if (width > 0) {
-          chartGroup.add(Container(
-            margin: EdgeInsets.only(left: _distanceToLeftBorder(start).toDouble(), top: 2.0, bottom: 2.0),
-            alignment: Alignment.centerLeft,
-            child: Tooltip(
-              message: "${n.description ?? ""}: ${n.start?.toLocal()} => ${n.stop?.toLocal()}",
-              child: InkWell(
-                onTap: () => widget.selectionChanged(n),
-                child: Container(
-                  width: width.toDouble(),
-                  decoration: BoxDecoration(
-                    color: color.withAlpha(100),
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  ),
-                  height: 25.0,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(
-                      n.description ?? "",
-                      maxLines: 1,
-                      overflow: TextOverflow.clip,
-                      style: const TextStyle(fontSize: 10.0),
+          chartGroup.add(
+            Container(
+              margin: EdgeInsets.only(
+                left: _distanceToLeftBorder(start).toDouble(),
+                top: 2.0,
+                bottom: 2.0,
+              ),
+              alignment: Alignment.centerLeft,
+              child: Tooltip(
+                message:
+                    "${n.description ?? ""}: ${n.start.toLocal()} => ${n.stop.toLocal()}",
+                child: InkWell(
+                  onTap: () => widget.selectionChanged(n),
+                  child: Container(
+                    width: width.toDouble(),
+                    decoration: BoxDecoration(
+                      color: color.withAlpha(100),
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    ),
+                    height: 25.0,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        n.description ?? "",
+                        maxLines: 1,
+                        overflow: TextOverflow.clip,
+                        style: const TextStyle(fontSize: 10.0),
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ));
+          );
         }
       }
-      chartBars.add(Stack(
-        fit: StackFit.loose,
-        children: chartGroup,
-      ));
+      chartBars.add(Stack(fit: StackFit.loose, children: chartGroup));
     }
 
     return chartBars;

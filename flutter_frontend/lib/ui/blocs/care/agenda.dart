@@ -17,8 +17,8 @@ class Agenda extends StatelessWidget {
     return events
         .map(
           (x) => CalendarEvent(
-            from: x.start ?? DateTime.now(),
-            to: x.stop ?? DateTime.now(),
+            from: x.start,
+            to: x.stop,
             value: x.description ?? '',
           ),
         )

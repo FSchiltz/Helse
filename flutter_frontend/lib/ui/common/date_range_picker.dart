@@ -3,6 +3,7 @@ import 'package:helse/helpers/date.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/common/date_range_input.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 enum DatePreset { today, week, month, trimestre, halfYear, year, yearToDate }
 
@@ -10,15 +11,8 @@ class DateRangePicker extends StatelessWidget {
   final void Function(DateTimeRange value) setDate;
   final DateTimeRange initial;
   final DateTimeRange? range;
-  final bool large;
 
-  const DateRangePicker(
-    this.setDate,
-    this.initial,
-    this.large, {
-    this.range,
-    super.key,
-  });
+  const DateRangePicker(this.setDate, this.initial, {this.range, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +33,8 @@ class DateRangePicker extends StatelessWidget {
         ),
       );
     }
+    var isLargeScreen =
+        MediaQuery.of(context).size.width > UIConstants.displaySmall;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -52,7 +48,7 @@ class DateRangePicker extends StatelessWidget {
         MenuAnchor(
           menuChildren: presets,
           builder: (context, controller, child) => IconButton(
-            iconSize: large ? 24 : 22,
+            iconSize: isLargeScreen ? 24 : 22,
             icon: const Icon(Icons.calendar_month_sharp),
             onPressed: () {
               if (controller.isOpen) {
@@ -66,7 +62,7 @@ class DateRangePicker extends StatelessWidget {
         DateRangeInput(
           _callBack,
           initial,
-          large,
+          isLargeScreen,
           showIcon: false,
           range: range,
         ),

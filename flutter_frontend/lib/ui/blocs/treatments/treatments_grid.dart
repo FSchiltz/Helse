@@ -3,7 +3,7 @@ import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../events/events_graph.dart';
+import '../events/events_timeline_graph.dart';
 
 class TreatmentsGrid extends StatefulWidget {
   const TreatmentsGrid({super.key, required this.date, this.person});
@@ -41,7 +41,7 @@ class _TreatmentsGridState extends State<TreatmentsGrid> {
               .map(
                 (e) => Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: EventGraph(
+                  child: EventsTimelineGraph(
                     e.events ?? List<Event>.empty(),
                     widget.date,
                     (e) => {},

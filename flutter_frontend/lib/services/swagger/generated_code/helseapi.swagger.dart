@@ -1608,8 +1608,8 @@ class CreateEvent {
   const CreateEvent({
     this.type,
     this.description,
-    this.start,
-    this.stop,
+    required this.start,
+    required this.stop,
     this.tag,
     this.notificationTime,
   });
@@ -1625,9 +1625,9 @@ class CreateEvent {
   @JsonKey(name: 'description')
   final String? description;
   @JsonKey(name: 'start')
-  final DateTime? start;
+  final DateTime start;
   @JsonKey(name: 'stop')
-  final DateTime? stop;
+  final DateTime stop;
   @JsonKey(name: 'tag')
   final String? tag;
   @JsonKey(name: 'notificationTime')
@@ -1694,8 +1694,8 @@ extension $CreateEventExtension on CreateEvent {
   CreateEvent copyWithWrapped({
     Wrapped<int?>? type,
     Wrapped<String?>? description,
-    Wrapped<DateTime?>? start,
-    Wrapped<DateTime?>? stop,
+    Wrapped<DateTime>? start,
+    Wrapped<DateTime>? stop,
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
   }) {
@@ -1877,8 +1877,8 @@ class Event {
     this.address,
     this.type,
     this.description,
-    this.start,
-    this.stop,
+    required this.start,
+    required this.stop,
     this.tag,
     this.notificationTime,
   });
@@ -1907,9 +1907,9 @@ class Event {
   @JsonKey(name: 'description')
   final String? description;
   @JsonKey(name: 'start')
-  final DateTime? start;
+  final DateTime start;
   @JsonKey(name: 'stop')
-  final DateTime? stop;
+  final DateTime stop;
   @JsonKey(name: 'tag')
   final String? tag;
   @JsonKey(name: 'notificationTime')
@@ -2024,8 +2024,8 @@ extension $EventExtension on Event {
     Wrapped<int?>? address,
     Wrapped<int?>? type,
     Wrapped<String?>? description,
-    Wrapped<DateTime?>? start,
-    Wrapped<DateTime?>? stop,
+    Wrapped<DateTime>? start,
+    Wrapped<DateTime>? stop,
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
   }) {
@@ -3966,8 +3966,8 @@ class UpdateEvent {
     this.id,
     this.type,
     this.description,
-    this.start,
-    this.stop,
+    required this.start,
+    required this.stop,
     this.tag,
     this.notificationTime,
   });
@@ -3985,9 +3985,9 @@ class UpdateEvent {
   @JsonKey(name: 'description')
   final String? description;
   @JsonKey(name: 'start')
-  final DateTime? start;
+  final DateTime start;
   @JsonKey(name: 'stop')
-  final DateTime? stop;
+  final DateTime stop;
   @JsonKey(name: 'tag')
   final String? tag;
   @JsonKey(name: 'notificationTime')
@@ -4060,8 +4060,8 @@ extension $UpdateEventExtension on UpdateEvent {
     Wrapped<int?>? id,
     Wrapped<int?>? type,
     Wrapped<String?>? description,
-    Wrapped<DateTime?>? start,
-    Wrapped<DateTime?>? stop,
+    Wrapped<DateTime>? start,
+    Wrapped<DateTime>? stop,
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
   }) {

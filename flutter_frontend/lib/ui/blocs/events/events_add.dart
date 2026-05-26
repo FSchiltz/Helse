@@ -82,10 +82,8 @@ class _EventAddState extends State<EventAdd> {
 
     var edit = widget.edit;
     if (edit != null) {
-      if (edit.start != null) _start = edit.start ?? _start;
-
-      if (edit.stop != null) _stop = edit.stop ?? _stop;
-
+      _start = edit.start;
+      _stop = edit.stop;
       _description.text = edit.description ?? '';
     }
   }

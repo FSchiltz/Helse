@@ -1759,6 +1759,10 @@
         }
       },
       "CreateEvent": {
+        "required": [
+          "start",
+          "stop"
+        ],
         "type": "object",
         "properties": {
           "type": {
@@ -1852,6 +1856,10 @@
         }
       },
       "Event": {
+        "required": [
+          "start",
+          "stop"
+        ],
         "type": "object",
         "properties": {
           "user": {
@@ -2626,6 +2634,10 @@
         ]
       },
       "UpdateEvent": {
+        "required": [
+          "start",
+          "stop"
+        ],
         "type": "object",
         "properties": {
           "id": {
