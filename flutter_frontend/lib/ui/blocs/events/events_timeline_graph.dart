@@ -1,10 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-import '../../../helpers/date.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 
 class EventsTimelineGraph extends StatelessWidget {
+  final int skippedWidth = 130;
   final List<Event> events;
   final DateTimeRange date;
   final ScrollController _scrollController = ScrollController();
@@ -30,7 +30,59 @@ class EventsTimelineGraph extends StatelessWidget {
         : buildChart(events, context));
   }
 
-  Widget buildChart(List<Event> userData, BuildContext context) {
+  Widget buildChart(List<Event> events, BuildContext context) {
+    var viewRange = _minutesBetween(date.start, date.end) / (60);
+
+    List<Widget> headerItems = [];
+    List<Widget> headerDayItems = [];
+    List<Widget> gridColumns = [];
+    DateTime tempDate = date.start;
+    DateTime tempDay = date.start;
+    bool skipping = false;
+    List<DateTimeRange> skipped = [];
+    DateTime startSkipping = date.start;
+
+    for (int i = 0; i <= viewRange; i++) {
+      var currentDate = tempDate;
+      tempDate = tempDate.add(const Duration(hours: 1));
+      var existing = events
+          .where((x) => x.start.isBefore(tempDate) && x.stop.isAfter(currentDate))
+          .toList();
+
+      if (existing.isNotEmpty) {
+        if (i % 24 == 0) {
+          headerDayItems.add(buildDayHeader(tempDay));
+        }
+        headerItems.add(buildHeader(context, currentDate));
+        gridColumns.add(buildGrid());
+
+        if (skipping) {
+          skipping = false;
+          skipped.add(DateTimeRange(start: startSkipping, end: currentDate));
+        }
+      } else {
+        if (!skipping) {
+          headerItems.add(_skipWidget());
+          gridColumns.add(_skipWidget());
+          headerDayItems.add(_skipWidget());
+
+          skipping = true;
+          startSkipping = tempDate;
+        }
+      }
+
+      if (i % 24 == 0) {
+        tempDay = tempDay.add(const Duration(days: 1));
+      }
+    }
+
+    if (skipping) {
+      skipping = false;
+      skipped.add(DateTimeRange(start: startSkipping, end: tempDate));
+    }
+
+    var chartBars = buildChartBars(events, skipped);
+
     return Scrollbar(
       interactive: true,
       controller: _scrollController,
@@ -42,15 +94,20 @@ class EventsTimelineGraph extends StatelessWidget {
           child: Stack(
             fit: StackFit.loose,
             children: <Widget>[
-              buildGrid(),
-              buildDayHeader(),
-              buildHeader(context),
+              Row(children: gridColumns),
+              SizedBox(height: 25.0, child: Row(children: headerDayItems)),
+              Container(
+                margin: const EdgeInsets.only(top: 25.0),
+                child: SizedBox(
+                  height: 25.0,
+                  child: Row(children: headerItems),
+                ),
+              ),
               Container(
                 margin: const EdgeInsets.only(top: 50.0),
                 child: Column(
-                  children: <Widget>[
-                    EventTimeline(userData, date, selectionChanged),
-                  ],
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: chartBars,
                 ),
               ),
             ],
@@ -60,108 +117,54 @@ class EventsTimelineGraph extends StatelessWidget {
     );
   }
 
-  Widget buildDayHeader() {
-    List<Widget> headerItems = [];
-
-    DateTime tempDate = date.start;
-
-    var viewRange = _minutesBetween(date.start, date.end) / (60 * 24);
-
-    for (int i = 0; i < viewRange; i++) {
-      headerItems.add(
-        SizedBox(
-          width: 60 * 24,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Text(
-              ' ${tempDate.day.toString().padLeft(2, '0')}/${tempDate.month.toString().padLeft(2, '0')}/${tempDate.year.toString().padLeft(4, '0')}',
-              textAlign: TextAlign.left,
-              style: const TextStyle(fontSize: 16.0),
-            ),
-          ),
+  Widget buildDayHeader(DateTime tempDate) {
+    return SizedBox(
+      width: 60 * 24,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8.0),
+        child: Text(
+          ' ${tempDate.day.toString().padLeft(2, '0')}/${tempDate.month.toString().padLeft(2, '0')}/${tempDate.year.toString().padLeft(4, '0')}',
+          textAlign: TextAlign.left,
+          style: const TextStyle(fontSize: 16.0),
         ),
-      );
-      tempDate = tempDate.add(const Duration(days: 1));
-    }
-
-    return SizedBox(height: 25.0, child: Row(children: headerItems));
+      ),
+    );
   }
 
-  Widget buildHeader(BuildContext context) {
-    List<Widget> headerItems = [];
-
-    DateTime tempDate = date.start;
-
-    var viewRange = _minutesBetween(date.start, date.end) / (60);
-
-    for (int i = 0; i < viewRange; i++) {
-      headerItems.add(
-        SizedBox(
-          width: 60,
-          child: Tooltip(
-            message: DateHelper.format(tempDate, context: context),
-            child: Text(
-              '${tempDate.hour.toString().padLeft(2, '0')}:${tempDate.second.toString().padLeft(2, '0')}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12.0),
-            ),
-          ),
-        ),
-      );
-      tempDate = tempDate.add(const Duration(hours: 1));
-    }
-
+  Widget buildHeader(BuildContext context, DateTime utc) {
+    var tempDate = utc.toLocal();
     return Container(
-      margin: const EdgeInsets.only(top: 25.0),
-      child: SizedBox(height: 25.0, child: Row(children: headerItems)),
+      alignment: Alignment.centerLeft,
+      width: 60,
+      child: Tooltip(
+        message: '$tempDate',
+        textAlign: TextAlign.left,
+        child: Text(
+          '${tempDate.hour.toString().padLeft(2, '0')}:${tempDate.minute.toString().padLeft(2, '0')}',
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 12.0),
+        ),
+      ),
     );
   }
 
   Widget buildGrid() {
-    List<Widget> gridColumns = [];
-
-    var viewRange = _minutesBetween(date.start, date.end) / (60);
-
-    for (int i = 0; i <= viewRange; i++) {
-      gridColumns.add(
-        Container(
-          decoration: BoxDecoration(
-            border: Border(
-              right: BorderSide(color: Colors.white.withAlpha(75), width: 0.5),
-            ),
-          ),
-          width: 60,
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          right: BorderSide(color: Colors.white.withAlpha(75), width: 0.5),
         ),
-      );
-    }
-
-    return Row(children: gridColumns);
+      ),
+      width: 60,
+      height: 200,
+    );
   }
 
   int _minutesBetween(DateTime from, DateTime to) {
     return to.difference(from).inMinutes;
   }
-}
 
-class EventTimeline extends StatefulWidget {
-  final List<Event> userData;
-  final DateTimeRange date;
-  final void Function(Event event) selectionChanged;
-
-  const EventTimeline(
-    this.userData,
-    this.date,
-    this.selectionChanged, {
-    super.key,
-  });
-
-  @override
-  State<EventTimeline> createState() => _EventTimelineState();
-}
-
-class _EventTimelineState extends State<EventTimeline> {
   final Map<String, Color> colors = {};
-  List<Widget> _chartBars = [];
 
   Color _stateColor(String state) {
     if (colors.containsKey(state)) {
@@ -179,35 +182,46 @@ class _EventTimelineState extends State<EventTimeline> {
     }
   }
 
-  int _minutesBetween(DateTime from, DateTime to) {
-    return to.difference(from).inMinutes;
-  }
-
-  int _distanceToLeftBorder(DateTime projectStartedAt) {
-    if (projectStartedAt.compareTo(widget.date.start) <= 0) {
+  int _distanceToLeftBorder(
+    DateTime projectStartedAt,
+    List<DateTimeRange<DateTime>> skipped,
+  ) {
+    if (projectStartedAt.compareTo(date.start) <= 0) {
       return 0;
     } else {
-      return _minutesBetween(widget.date.start, projectStartedAt) - 1;
+      var skipping = skipped
+          .where(
+            (x) =>
+                x.end.isBefore(projectStartedAt) ||
+                x.end.isAtSameMomentAs(projectStartedAt),
+          )
+          .fold(0, (a, b) => a + b.duration.inMinutes - skippedWidth + 60);
+
+      var fullDistance = _minutesBetween(date.start, projectStartedAt);
+
+      return fullDistance - 1 - skipping;
     }
   }
 
   int _distanceInMinutes(DateTime start, DateTime end) {
-    if (start.compareTo(widget.date.start) < 0) {
-      start = widget.date.start;
+    if (start.compareTo(date.start) < 0) {
+      start = date.start;
     }
 
-    if (end.compareTo(widget.date.end) > 0) {
-      end = widget.date.end;
+    if (end.compareTo(date.end) > 0) {
+      end = date.end;
     }
 
     return max(6, _minutesBetween(start, end));
   }
 
-  List<Widget> buildChartBars(List<Event> data) {
-    List<Widget> chartBars = [];
+  List<Widget> buildChartBars(
+    List<Event> events,
+    List<DateTimeRange<DateTime>> skipped,
+  ) {
     Map<String?, List<Event>> orderedData = {};
 
-    for (var n in data) {
+    for (var n in events) {
       var list = orderedData[n.description];
       if (list == null) {
         list = [];
@@ -217,6 +231,8 @@ class _EventTimelineState extends State<EventTimeline> {
         list.add(n);
       }
     }
+
+    List<Widget> chartBars = [];
 
     for (var group in orderedData.entries) {
       List<Widget> chartGroup = [];
@@ -231,7 +247,7 @@ class _EventTimelineState extends State<EventTimeline> {
           chartGroup.add(
             Container(
               margin: EdgeInsets.only(
-                left: _distanceToLeftBorder(start).toDouble(),
+                left: _distanceToLeftBorder(start, skipped).toDouble(),
                 top: 2.0,
                 bottom: 2.0,
               ),
@@ -240,7 +256,7 @@ class _EventTimelineState extends State<EventTimeline> {
                 message:
                     "${n.description ?? ""}: ${n.start.toLocal()} => ${n.stop.toLocal()}",
                 child: InkWell(
-                  onTap: () => widget.selectionChanged(n),
+                  onTap: () => selectionChanged(n),
                   child: Container(
                     width: width.toDouble(),
                     decoration: BoxDecoration(
@@ -270,17 +286,11 @@ class _EventTimelineState extends State<EventTimeline> {
     return chartBars;
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _chartBars = buildChartBars(widget.userData);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: _chartBars,
+  Widget _skipWidget() {
+    return Container(
+      width: skippedWidth.toDouble(),
+      color: Colors.red,
+      child: Text('K'),
     );
   }
 }
