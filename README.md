@@ -17,8 +17,10 @@ The webapp will ask for the information of the admin account then open the main 
 
 ### Dashboard
 
-Depending of the user type, a dashboard will open.
-For the user, a recap of the metric and event for the day will show
+Depending of the user type, a dashboard or multiple will open.
+For the user dashboard, a recap of the metric and event for the day will show.
+For the caregiver dashboard, a list of the patients and a recap of the events will show.
+For the admin dashboard, some small statitics about the server will appear.
 
 ### Metric
 
@@ -41,14 +43,17 @@ Represent a list of recurring events. Exemple: take a medicine every 2 day at 12
 - Admin: Works as an user but can also edit the settings of the server
 - Caregiver: Works as an user but can also add patients and edit and view their metric/event and treatment.
     This role is useful if you need to track the care of someone else.
+- Patient: A base user that can receive treatment and be managed by a Caregiver. A patient can't connect on his own so their is no dashboard for them yet.
 
 ## Feature to come
 
-- Multiple roles for a user
-- Add better graphs detail for the metric
-- Allow marking event as TODO and DONE.
-- Support for google health connect sync
-- Notification for incoming event
+- [x] Multiple roles for a user
+- [x] Add better graphs detail for the metric
+- [ ] Allow marking event as TODO and DONE.
+- [x] Support for google health connect sync
+- [x] Notification for incoming event
+- [ ] Patient read only screen by url
+- [ ] Ability to choose a username/password for a patient and become a user
 - And more
 
 ## Installation
