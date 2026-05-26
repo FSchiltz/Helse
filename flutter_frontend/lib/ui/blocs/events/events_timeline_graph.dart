@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 
-class EventsTimelineGraph extends StatelessWidget {
-  final int skippedWidth = 130;
+class EventsTimelineGraph extends StatefulWidget {
   final List<Event> events;
   final DateTimeRange date;
-  final ScrollController _scrollController = ScrollController();
   final void Function(Event event) selectionChanged;
 
-  EventsTimelineGraph(
+  const EventsTimelineGraph(
     this.events,
     this.date,
     this.selectionChanged, {
@@ -18,8 +16,17 @@ class EventsTimelineGraph extends StatelessWidget {
   });
 
   @override
+  State<EventsTimelineGraph> createState() => _EventsTimelineGraphState();
+}
+
+class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
+  final int skippedWidth = 130;
+
+  final ScrollController _scrollController = ScrollController();
+
+  @override
   Widget build(BuildContext context) {
-    return (events.isEmpty
+    return (widget.events.isEmpty
         ? Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: Text(
@@ -27,20 +34,20 @@ class EventsTimelineGraph extends StatelessWidget {
               style: Theme.of(context).textTheme.labelLarge,
             ),
           )
-        : buildChart(events, context));
+        : buildChart(widget.events, context));
   }
 
   Widget buildChart(List<Event> events, BuildContext context) {
-    var viewRange = _minutesBetween(date.start, date.end) / (60);
+    var viewRange = _minutesBetween(widget.date.start, widget.date.end) / (60);
 
     List<Widget> headerItems = [];
     List<Widget> headerDayItems = [];
     List<Widget> gridColumns = [];
-    DateTime tempDate = date.start;
-    DateTime tempDay = date.start;
+    DateTime tempDate = widget.date.start;
+    DateTime tempDay = widget.date.start;
     bool skipping = false;
     List<DateTimeRange> skipped = [];
-    DateTime startSkipping = date.start;
+    DateTime startSkipping = widget.date.start;
 
     for (int i = 0; i <= viewRange; i++) {
       var currentDate = tempDate;
@@ -186,7 +193,7 @@ class EventsTimelineGraph extends StatelessWidget {
     DateTime projectStartedAt,
     List<DateTimeRange<DateTime>> skipped,
   ) {
-    if (projectStartedAt.compareTo(date.start) <= 0) {
+    if (projectStartedAt.compareTo(widget.date.start) <= 0) {
       return 0;
     } else {
       var skipping = skipped
@@ -197,19 +204,19 @@ class EventsTimelineGraph extends StatelessWidget {
           )
           .fold(0, (a, b) => a + b.duration.inMinutes - skippedWidth + 60);
 
-      var fullDistance = _minutesBetween(date.start, projectStartedAt);
+      var fullDistance = _minutesBetween(widget.date.start, projectStartedAt);
 
       return fullDistance - 1 - skipping;
     }
   }
 
   int _distanceInMinutes(DateTime start, DateTime end) {
-    if (start.compareTo(date.start) < 0) {
-      start = date.start;
+    if (start.compareTo(widget.date.start) < 0) {
+      start = widget.date.start;
     }
 
-    if (end.compareTo(date.end) > 0) {
-      end = date.end;
+    if (end.compareTo(widget.date.end) > 0) {
+      end = widget.date.end;
     }
 
     return max(6, _minutesBetween(start, end));
@@ -256,7 +263,7 @@ class EventsTimelineGraph extends StatelessWidget {
                 message:
                     "${n.description ?? ""}: ${n.start.toLocal()} => ${n.stop.toLocal()}",
                 child: InkWell(
-                  onTap: () => selectionChanged(n),
+                  onTap: () => widget.selectionChanged(n),
                   child: Container(
                     width: width.toDouble(),
                     decoration: BoxDecoration(
