@@ -39,10 +39,10 @@ public class Event
     public string? Description { get; set; }
 
     [Column, NotNull]
-    public DateTime Start { get; set; }
+    public required DateTime Start { get; set; }
 
     [Column, NotNull]
-    public DateTime Stop { get; set; }
+    public required DateTime Stop { get; set; }
 
     [Column, NotNull]
     public bool Valid { get; set; }

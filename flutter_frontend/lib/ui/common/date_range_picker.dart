@@ -3,6 +3,7 @@ import 'package:helse/helpers/date.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/common/date_range_input.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 enum DatePreset { today, week, month, trimestre, halfYear, year, yearToDate }
 
@@ -10,39 +11,44 @@ class DateRangePicker extends StatelessWidget {
   final void Function(DateTimeRange value) setDate;
   final DateTimeRange initial;
   final DateTimeRange? range;
-  final bool large;
 
-  const DateRangePicker(
-    this.setDate,
-    this.initial,
-    this.large, {
-    this.range,
-    super.key,
-  });
+  const DateRangePicker(this.setDate, this.initial, {this.range, super.key});
 
   @override
   Widget build(BuildContext context) {
+    List<MenuItemButton> presets = DatePreset.values
+        .map(
+          (v) => MenuItemButton(
+            onPressed: () => _setPreset(v),
+            child: Text(Translation.get(v)),
+          ),
+        )
+        .toList();
+    var preset = range;
+    if (preset != null) {
+      presets.add(
+        MenuItemButton(
+          onPressed: () => setDate(preset),
+          child: Text('Initial range'),
+        ),
+      );
+    }
+    var isLargeScreen =
+        MediaQuery.of(context).size.width > UIConstants.displaySmall;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
           child: IconButton(
-            onPressed: _previousPeriod,
+            onPressed: (_previousIsBefore()) ? null : _previousPeriod,
             icon: const Icon(Icons.skip_previous_sharp),
           ),
         ),
         MenuAnchor(
-          menuChildren: DatePreset.values
-              .map(
-                (v) => MenuItemButton(
-                  onPressed: () => _setPreset(v),
-                  child: Text(Translation.get(v)),
-                ),
-              )
-              .toList(),
+          menuChildren: presets,
           builder: (context, controller, child) => IconButton(
-            iconSize: large ? 24 : 22,
+            iconSize: isLargeScreen ? 24 : 22,
             icon: const Icon(Icons.calendar_month_sharp),
             onPressed: () {
               if (controller.isOpen) {
@@ -56,13 +62,13 @@ class DateRangePicker extends StatelessWidget {
         DateRangeInput(
           _callBack,
           initial,
-          large,
+          isLargeScreen,
           showIcon: false,
           range: range,
         ),
         SizedBox(
           child: IconButton(
-            onPressed: _nextPeriod,
+            onPressed: (_nextIsAfter()) ? null : _nextPeriod,
             icon: const Icon(Icons.skip_next_sharp),
           ),
         ),
@@ -102,5 +108,27 @@ class DateRangePicker extends StatelessWidget {
         value == DatePreset.month) {
       DI.settings.setDateRange(value);
     }
+  }
+
+  bool _previousIsBefore() {
+    var start = range?.start;
+    if (start == null) {
+      return false;
+    }
+
+    var duration = Duration(seconds: _getDurationToMove().inSeconds * -1);
+    var end = initial.end.add(duration);
+    return start == end || end.isBefore(start);
+  }
+
+  bool _nextIsAfter() {
+    var end = range?.end;
+    if (end == null) {
+      return false;
+    }
+
+    var duration = _getDurationToMove();
+    var start = initial.start.add(duration);
+    return start == end || start.isAfter(end);
   }
 }

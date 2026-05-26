@@ -18,7 +18,7 @@ class DateHelper {
     } else {
       dateTimeFormat = dateTimeFormat.add_jm();
     }
-    return dateTimeFormat.format(date);
+    return dateTimeFormat.format(date.toLocal());
   }
 
   static String formatMonth(DateTime? date, {required BuildContext context}) {

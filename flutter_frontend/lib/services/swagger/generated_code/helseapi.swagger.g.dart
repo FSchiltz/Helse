@@ -43,8 +43,8 @@ Map<String, dynamic> _$CountRecordToJson(CountRecord instance) =>
 CreateEvent _$CreateEventFromJson(Map<String, dynamic> json) => CreateEvent(
   type: (json['type'] as num?)?.toInt(),
   description: json['description'] as String?,
-  start: json['start'] == null ? null : DateTime.parse(json['start'] as String),
-  stop: json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
+  start: DateTime.parse(json['start'] as String),
+  stop: DateTime.parse(json['stop'] as String),
   tag: json['tag'] as String?,
   notificationTime: json['notificationTime'] == null
       ? null
@@ -55,8 +55,8 @@ Map<String, dynamic> _$CreateEventToJson(CreateEvent instance) =>
     <String, dynamic>{
       'type': instance.type,
       'description': instance.description,
-      'start': instance.start?.toIso8601String(),
-      'stop': instance.stop?.toIso8601String(),
+      'start': instance.start.toIso8601String(),
+      'stop': instance.stop.toIso8601String(),
       'tag': instance.tag,
       'notificationTime': instance.notificationTime?.toIso8601String(),
     };
@@ -104,8 +104,8 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
   address: (json['address'] as num?)?.toInt(),
   type: (json['type'] as num?)?.toInt(),
   description: json['description'] as String?,
-  start: json['start'] == null ? null : DateTime.parse(json['start'] as String),
-  stop: json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
+  start: DateTime.parse(json['start'] as String),
+  stop: DateTime.parse(json['stop'] as String),
   tag: json['tag'] as String?,
   notificationTime: json['notificationTime'] == null
       ? null
@@ -122,8 +122,8 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
   'address': instance.address,
   'type': instance.type,
   'description': instance.description,
-  'start': instance.start?.toIso8601String(),
-  'stop': instance.stop?.toIso8601String(),
+  'start': instance.start.toIso8601String(),
+  'stop': instance.stop.toIso8601String(),
   'tag': instance.tag,
   'notificationTime': instance.notificationTime?.toIso8601String(),
 };
@@ -494,8 +494,8 @@ UpdateEvent _$UpdateEventFromJson(Map<String, dynamic> json) => UpdateEvent(
   id: (json['id'] as num?)?.toInt(),
   type: (json['type'] as num?)?.toInt(),
   description: json['description'] as String?,
-  start: json['start'] == null ? null : DateTime.parse(json['start'] as String),
-  stop: json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
+  start: DateTime.parse(json['start'] as String),
+  stop: DateTime.parse(json['stop'] as String),
   tag: json['tag'] as String?,
   notificationTime: json['notificationTime'] == null
       ? null
@@ -507,8 +507,8 @@ Map<String, dynamic> _$UpdateEventToJson(UpdateEvent instance) =>
       'id': instance.id,
       'type': instance.type,
       'description': instance.description,
-      'start': instance.start?.toIso8601String(),
-      'stop': instance.stop?.toIso8601String(),
+      'start': instance.start.toIso8601String(),
+      'stop': instance.stop.toIso8601String(),
       'tag': instance.tag,
       'notificationTime': instance.notificationTime?.toIso8601String(),
     };

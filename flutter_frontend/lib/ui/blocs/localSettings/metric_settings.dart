@@ -110,7 +110,7 @@ class _MetricSettingsState extends State<MetricSettings> {
                     columns: [
                       DataColumn(label: Expanded(child: Text("Name"))),
                       DataColumn(label: Expanded(child: Text("Visible"))),
-                      DataColumn(label: Expanded(child: Text("Widget tyoe"))),
+                      DataColumn(label: Expanded(child: Text("Widget type"))),
                       DataColumn(label: Expanded(child: Text("Detail type"))),
                     ],
                     rows: data

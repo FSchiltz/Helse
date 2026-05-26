@@ -19,8 +19,6 @@ class EventWidget extends StatefulWidget {
 }
 
 class _EventWidgetState extends State<EventWidget> {
-  List<EventSummary>? _events;
-
   _EventWidgetState();
 
   void _resetEvents() {
@@ -77,7 +75,6 @@ class _EventWidgetState extends State<EventWidget> {
                           date: widget.date,
                           type: widget.type,
                           person: widget.person,
-                          summary: _events ?? [],
                         ),
                       ),
                     ),

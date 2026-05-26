@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/blocs/events/delete_event.dart';
+import 'package:helse/ui/blocs/events/event_graph.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
-import '../../../helpers/date.dart';
 import '../../../logic/d_i.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import 'events_add.dart';
-import 'events_graph.dart';
-import 'events_summary.dart';
 
 class EventDetailPage extends StatefulWidget {
   const EventDetailPage({
@@ -15,21 +12,17 @@ class EventDetailPage extends StatefulWidget {
     required this.date,
     required this.type,
     required this.person,
-    required this.summary,
   });
 
   final DateTimeRange date;
   final EventType type;
   final int? person;
-  final List<EventSummary> summary;
 
   @override
   State<EventDetailPage> createState() => _EventDetailPageState();
 }
 
 class _EventDetailPageState extends State<EventDetailPage> {
-  Event? _event;
-
   Future<List<Event>> _getData(bool refresh) async {
     if (widget.type.id == null) {
       return [];
@@ -57,15 +50,8 @@ class _EventDetailPageState extends State<EventDetailPage> {
     super.initState();
   }
 
-  void _selectionChanged(Event event) {
-    setState(() {
-      _event = event;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    var id = _event?.id;
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -99,96 +85,12 @@ class _EventDetailPageState extends State<EventDetailPage> {
       body: LoadingBuilder(
         _getData,
         builder: (context, data, reset) {
-          final event = _event;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: EventsSummary(widget.summary, widget.date),
-                ),
-              ),
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(0),
-                ),
-                shadowColor: Theme.of(context).colorScheme.shadow,
-                elevation: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Wrap(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Text(
-                          'Selected${event != null ? ' (${event.id})' : ''}:',
-                        ),
-                      ),
-                      if (event != null)
-                        Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Text(event.description.toString()),
-                        ),
-                      if (event != null)
-                        Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Text(
-                            'from ${DateHelper.format(event.start?.toLocal(), context: context)} to ${DateHelper.format(event.stop?.toLocal(), context: context)}',
-                          ),
-                        ),
-                      if (event != null && event.tag != null)
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(event.tag.toString()),
-                        ),
-                      if (event != null)
-                        SizedBox(
-                          width: 40,
-                          child: IconButton(
-                            onPressed: () {
-                              showDialog<void>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return EventAdd(
-                                    reset,
-                                    widget.type,
-                                    person: widget.person,
-                                    edit: event,
-                                  );
-                                },
-                              );
-                            },
-                            icon: const Icon(Icons.edit_sharp),
-                          ),
-                        ),
-                      if (id != null)
-                        SizedBox(
-                          width: 40,
-                          child: IconButton(
-                            onPressed: () {
-                              showDialog<void>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return DeleteEvent(() async {
-                                    await DI.event.deleteEvent(id);
-                                    reset();
-                                    setState(() {
-                                      _event = null;
-                                    });
-                                  }, person: widget.person);
-                                },
-                              );
-                            },
-                            icon: const Icon(Icons.delete_sharp),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-              EventGraph(data, widget.date, _selectionChanged),
-            ],
+          return EventsGraph(
+            date: widget.date,
+            person: widget.person,
+            type: widget.type,
+            data: data,
+            reset: reset,
           );
         },
       ),
