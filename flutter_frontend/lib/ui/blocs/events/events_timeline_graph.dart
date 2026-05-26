@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -20,7 +21,7 @@ class EventsTimelineGraph extends StatefulWidget {
 }
 
 class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
-  final int skippedWidth = 130;
+  final int skippedWidth = 32;
 
   final ScrollController _scrollController = ScrollController();
 
@@ -44,23 +45,41 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     List<Widget> headerDayItems = [];
     List<Widget> gridColumns = [];
     DateTime tempDate = widget.date.start;
-    DateTime tempDay = widget.date.start;
     bool skipping = false;
     List<DateTimeRange> skipped = [];
     DateTime startSkipping = widget.date.start;
 
+    bool hasDayHeader = false;
     for (int i = 0; i <= viewRange; i++) {
+      // for each hour, build the timeline
       var currentDate = tempDate;
       tempDate = tempDate.add(const Duration(hours: 1));
       var existing = events
-          .where((x) => x.start.isBefore(tempDate) && x.stop.isAfter(currentDate))
+          .where(
+            (x) => x.start.isBefore(tempDate) && x.stop.isAfter(currentDate),
+          )
           .toList();
 
       if (existing.isNotEmpty) {
-        if (i % 24 == 0) {
-          headerDayItems.add(buildDayHeader(tempDay));
+        // There is an event during that hour
+
+        // TODO fix the issue when there is an event starting at 23h the day before and both day overlap
+        if (skipping || currentDate.hour < 1) {
+          // first hour after a skip or a new day
+          headerDayItems.add(buildDayHeader(tempDate, context));
+          hasDayHeader = true;
+          // their is a header, we need to skip the next hour
+        } else if (!hasDayHeader) {
+          headerDayItems.add(
+            Container(
+              width: 60,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            ),
+          );
+        } else {
+          hasDayHeader = false;
         }
-        headerItems.add(buildHeader(context, currentDate));
+        headerItems.add(buildHeader(currentDate, context));
         gridColumns.add(buildGrid());
 
         if (skipping) {
@@ -69,17 +88,13 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
         }
       } else {
         if (!skipping) {
-          headerItems.add(_skipWidget());
-          gridColumns.add(_skipWidget());
-          headerDayItems.add(_skipWidget());
+          headerItems.add(SizedBox(width: skippedWidth.toDouble()));
+          gridColumns.add(_skipWidget(context));
+          headerDayItems.add(SizedBox(width: skippedWidth.toDouble()));
 
           skipping = true;
           startSkipping = tempDate;
         }
-      }
-
-      if (i % 24 == 0) {
-        tempDay = tempDay.add(const Duration(days: 1));
       }
     }
 
@@ -124,23 +139,24 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     );
   }
 
-  Widget buildDayHeader(DateTime tempDate) {
-    return SizedBox(
-      width: 60 * 24,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 8.0),
-        child: Text(
-          ' ${tempDate.day.toString().padLeft(2, '0')}/${tempDate.month.toString().padLeft(2, '0')}/${tempDate.year.toString().padLeft(4, '0')}',
-          textAlign: TextAlign.left,
-          style: const TextStyle(fontSize: 16.0),
-        ),
+  Widget buildDayHeader(DateTime tempDate, BuildContext context) {
+    return Container(
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      alignment: Alignment.centerLeft,
+      width: 120,
+      clipBehavior: Clip.none,
+      child: Text(
+        ' ${tempDate.day.toString().padLeft(2, '0')}/${tempDate.month.toString().padLeft(2, '0')}/${tempDate.year.toString().padLeft(4, '0')}',
+        textAlign: TextAlign.left,
+        style: const TextStyle(fontSize: 16.0),
       ),
     );
   }
 
-  Widget buildHeader(BuildContext context, DateTime utc) {
+  Widget buildHeader(DateTime utc, BuildContext context) {
     var tempDate = utc.toLocal();
     return Container(
+      color: Theme.of(context).colorScheme.surfaceContainerHigh,
       alignment: Alignment.centerLeft,
       width: 60,
       child: Tooltip(
@@ -293,11 +309,11 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     return chartBars;
   }
 
-  Widget _skipWidget() {
+  Widget _skipWidget(BuildContext context) {
     return Container(
       width: skippedWidth.toDouble(),
-      color: Colors.red,
-      child: Text('K'),
+      alignment: Alignment.center,
+      child: Text('<>'),
     );
   }
 }
