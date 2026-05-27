@@ -19,8 +19,8 @@ public class ImporterService(IServiceProvider serviceProvider, IImportQueue queu
                 var db = scope.ServiceProvider.GetRequiredService<IHealthContext>();
                 Importer importer = job.Type switch
                 {
-                    FileTypes.Clue => new ClueImporter(job.Input, db, job.User),
-                    FileTypes.RedmiWatch => new RedmiWatch(job.Input, db, job.User),
+                    FileTypes.Clue => new ClueImporter(job.Input, db, job.UserId, job.Patient),
+                    FileTypes.RedmiWatch => new RedmiWatch(job.Input, db, job.UserId, job.Patient),
                     _ => throw new NotSupportedException("Invalid file type"),
                 };
                 queue.Start(job.Id);
@@ -38,5 +38,5 @@ public class ImporterService(IServiceProvider serviceProvider, IImportQueue queu
         }
     }
 
-    public record Job(Guid Id, Stream Input, FileTypes Type, Data.Models.User User);
+    public record Job(Guid Id, Stream Input, FileTypes Type, long UserId, long Patient);
 }

@@ -42,8 +42,8 @@ class ImportLogic {
     );
   }
 
-  Future<void> import(String content, int type) async {
-    var id = await DI.import.import(content, type);
+  Future<void> import(String content, int type, int? patient) async {
+    var id = await DI.import.import(content, type, patient);
     if (id == null) {
       throw StateError("Incorrect job id");
     }
@@ -58,7 +58,7 @@ class ImportLogic {
             e.value.start,
             _getStatus(e.value.status),
             title: e.value.description,
-            progress: e.value.progress ,
+            progress: e.value.progress,
           ),
         )
         .toList();

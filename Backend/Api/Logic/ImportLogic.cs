@@ -5,6 +5,7 @@ using Api.Logic.Import;
 using Api.Models;
 using Api.Models.Events;
 using Api.Models.Metrics;
+using Api.Models.Settings;
 using LinqToDB;
 using Microsoft.AspNetCore.Mvc;
 
@@ -66,11 +67,25 @@ public static class ImportLogic
         return TypedResults.Ok(results);
     }
 
-    public static async Task<IResult> PostFileAsync([FromForm] IFormFile file, [FromRoute] int type, IUserContext users, IImportQueue queue, HttpContext context)
+    public static async Task<IResult> PostFileAsync([FromForm] IFormFile file, [FromRoute] int type, [FromQuery] long? patient, IUserContext users, IImportQueue queue, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
             return error;
+
+        long person;
+        if (patient is not null)
+        {
+            if (!await users.ValidateCaregiverAsync(user, patient.Value, RightType.Edit))
+            {
+                return TypedResults.Forbid();
+            }
+            person = patient.Value;
+        }
+        else
+        {
+            person = user.Id;
+        }
 
         // generate a task id
         var id = Guid.NewGuid();
@@ -83,19 +98,33 @@ public static class ImportLogic
         ms.Position = 0;
         var fileType = (FileTypes)type;
 
-        queue.Enqueue(new ImporterService.Job(id, ms, fileType, user), $"Import from {fileType}");
+        queue.Enqueue(new ImporterService.Job(id, ms, fileType, user.Id, person), $"Import from {fileType}{(patient is not null ? $" for {patient}" : string.Empty)}");
 
         // return the jobid
         return TypedResults.Created(default(string), new JobId(id));
     }
 
-    public static async Task<IResult> PostListAsync([FromBody] ImportData file, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> PostListAsync([FromBody] ImportData file, [FromQuery] long? patient, IUserContext users, IHealthContext db, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
             return error;
 
-        Importer importer = new ListImporter(file, db, user);
+        long person;
+        if (patient is not null)
+        {
+            if (!await users.ValidateCaregiverAsync(user, patient.Value, RightType.Edit))
+            {
+                return TypedResults.Forbid();
+            }
+            person = patient.Value;
+        }
+        else
+        {
+            person = user.Id;
+        }
+
+        Importer importer = new ListImporter(file, db, user.Id, person);
         await importer.Import(new LocalQueue(), Guid.NewGuid());
 
         // TODO return a asyncenumerable to stream the progress

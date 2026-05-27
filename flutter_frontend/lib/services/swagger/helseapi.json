@@ -1655,6 +1655,18 @@
               ],
               "format": "int32"
             }
+          },
+          {
+            "name": "patient",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
           }
         ],
         "requestBody": {
@@ -1782,6 +1794,20 @@
       "post": {
         "tags": [
           "ImportLogic"
+        ],
+        "parameters": [
+          {
+            "name": "patient",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          }
         ],
         "requestBody": {
           "content": {

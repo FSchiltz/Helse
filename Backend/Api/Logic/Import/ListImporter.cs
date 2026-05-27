@@ -4,7 +4,7 @@ using Api.Jobs;
 
 namespace Api.Logic.Import;
 
-public class ListImporter(ImportData file, IHealthContext db, User user) : Importer(db, user)
+public class ListImporter(ImportData file, IHealthContext db, long user, long patient) : Importer(db, user, patient)
 {
     public ImportData Data { get; } = file;
 

@@ -1391,21 +1391,25 @@ abstract class Helseapi extends ChopperService {
 
   ///
   ///@param type
+  ///@param patient
   Future<chopper.Response<JobId>> apiImportTypePost({
     required int? type,
+    int? patient,
     required dynamic file,
   }) {
     generatedMapping.putIfAbsent(JobId, () => JobId.fromJsonFactory);
 
-    return _apiImportTypePost(type: type, file: file);
+    return _apiImportTypePost(type: type, patient: patient, file: file);
   }
 
   ///
   ///@param type
+  ///@param patient
   @POST(path: '/api/import/{type}', optionalBody: true)
   @Multipart()
   Future<chopper.Response<JobId>> _apiImportTypePost({
     @Path('type') required int? type,
+    @Query('patient') int? patient,
     @Part('file') required dynamic file,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -1499,13 +1503,19 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response> apiImportPost({required ImportData? body}) {
-    return _apiImportPost(body: body);
+  ///@param patient
+  Future<chopper.Response> apiImportPost({
+    int? patient,
+    required ImportData? body,
+  }) {
+    return _apiImportPost(patient: patient, body: body);
   }
 
   ///
+  ///@param patient
   @POST(path: '/api/import', optionalBody: true)
   Future<chopper.Response> _apiImportPost({
+    @Query('patient') int? patient,
     @Body() required ImportData? body,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(

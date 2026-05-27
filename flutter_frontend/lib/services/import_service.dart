@@ -11,11 +11,13 @@ class ImportService extends ApiService {
     return await call(api.apiImportTypesGet);
   }
 
-  Future<JobId?> import(String file, int type) async {
+  Future<JobId?> import(String file, int type, int? patient) async {
     var api = await getService();
 
     var part = MultipartFile.fromString("file", file, filename: 'upload');
-    return await call(() => api.apiImportTypePost(file: part, type: type));
+    return await call(
+      () => api.apiImportTypePost(file: part, type: type, patient: patient),
+    );
   }
 
   Future<JobResult?> status(String id) async {

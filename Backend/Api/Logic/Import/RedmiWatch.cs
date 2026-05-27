@@ -12,7 +12,7 @@ using CsvHelper;
 
 namespace Api.Logic.Import;
 
-public class RedmiWatch(Stream file, IHealthContext db, Data.Models.User user) : FileImporter(file, db, user)
+public class RedmiWatch(Stream file, IHealthContext db, long user, long patient) : FileImporter(file, db, user, patient)
 {
     private const string MaxSpo = "max_spo2";
     private const string MinSpo = "min_spo2";

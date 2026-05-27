@@ -20,7 +20,7 @@ public sealed class ImportQueue : IImportQueue
         _queue.Writer.TryWrite(value);
         _results.Add(value.Id, new JobResult()
         {
-            UserId = value.User.Id,
+            UserId = value.UserId,
             Progress = 0,
             Status = JobStatus.NotStarted,
             Start = DateTime.MinValue,
