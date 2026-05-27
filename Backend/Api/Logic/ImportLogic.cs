@@ -34,8 +34,34 @@ public static class ImportLogic
             return error;
 
         var result = queue.GetResult(id);
+        if (result.UserId != user.Id)
+        {
+            return TypedResults.NotFound();
+        }
 
         return TypedResults.Ok(result);
+    }
+
+    public static async Task<IResult> GetJobsAsync(IImportQueue queue, IUserContext users, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+        var results = queue.GetJobs(user.Id);
+
+        return TypedResults.Ok(results);
+    }
+
+    public static async Task<IResult> GetAllJobsAsync(IImportQueue queue, IUserContext users, HttpContext context)
+    {
+        var admin = await users.IsAdmin(context.User);
+        if (admin is not null)
+            return admin;
+
+        var results = queue.GetJobs();
+
+        return TypedResults.Ok(results);
     }
 
     public static async Task<IResult> PostFileAsync([FromForm] IFormFile file, [FromRoute] int type, IUserContext users, IImportQueue queue, HttpContext context)
@@ -48,7 +74,12 @@ public static class ImportLogic
         var id = Guid.NewGuid();
 
         // add the job in the queue  
-        queue.Enqueue(new ImporterService.Job(id, file, (FileTypes)type, user));
+        await using var stream = file.OpenReadStream();
+        MemoryStream ms = new();
+        // save the data so the background job does not fail
+        await stream.CopyToAsync(ms);
+
+        queue.Enqueue(new ImporterService.Job(id, ms, (FileTypes)type, user));
 
         // return the jobid
         return TypedResults.Created(default(string), id);

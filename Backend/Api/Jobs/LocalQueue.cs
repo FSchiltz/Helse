@@ -17,6 +17,16 @@ public sealed class LocalQueue : IImportQueue
         throw new NotImplementedException();
     }
 
+    public JobResult[] GetJobs(long userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public JobResult[] GetJobs()
+    {
+        throw new NotImplementedException();
+    }
+
     public JobResult GetResult(Guid id)
     {
         throw new NotImplementedException();
@@ -26,7 +36,7 @@ public sealed class LocalQueue : IImportQueue
     {
     }
 
-    public void Start(Guid id)
+    public void Start(Guid id, long userId)
     {
     }
 

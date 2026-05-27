@@ -23,6 +23,7 @@ public class ImporterService(IServiceProvider serviceProvider, IImportQueue queu
                     FileTypes.RedmiWatch => new RedmiWatch(job.Input, db, job.User),
                     _ => throw new NotSupportedException("Invalid file type"),
                 };
+                queue.Start(job.Id, job.User.Id);
                 await importer.Import(queue, job.Id);
 
             }
@@ -37,5 +38,5 @@ public class ImporterService(IServiceProvider serviceProvider, IImportQueue queu
         }
     }
 
-    public record Job(Guid Id, IFormFile Input, FileTypes Type, Data.Models.User User);
+    public record Job(Guid Id, Stream Input, FileTypes Type, Data.Models.User User);
 }

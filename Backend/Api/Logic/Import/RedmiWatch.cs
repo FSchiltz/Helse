@@ -12,7 +12,7 @@ using CsvHelper;
 
 namespace Api.Logic.Import;
 
-public class RedmiWatch(IFormFile file, IHealthContext db, Data.Models.User user) : FileImporter(file, db, user)
+public class RedmiWatch(Stream file, IHealthContext db, Data.Models.User user) : FileImporter(file, db, user)
 {
     private const string MaxSpo = "max_spo2";
     private const string MinSpo = "min_spo2";
@@ -61,8 +61,7 @@ public class RedmiWatch(IFormFile file, IHealthContext db, Data.Models.User user
     public override async Task Import(IImportQueue queue, Guid id)
     {
         // Remdi fiel are csv, we first convert them
-        await using var stream = File.OpenReadStream();
-        using var reader = new StreamReader(stream);
+        using var reader = new StreamReader(File);
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
         // for each record, find the type

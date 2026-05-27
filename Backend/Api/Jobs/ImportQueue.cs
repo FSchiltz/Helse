@@ -27,10 +27,14 @@ public sealed class ImportQueue : IImportQueue
         _results[id].Progress = progress;
     }
 
-    public void Start(Guid id)
+    public void Start(Guid id, long userId)
     {
-        _results[id].Status = JobStatus.InProgress;
-        _results[id].Progress = 0;
+        _results.Add(id, new JobResult()
+        {
+            UserId = userId,
+            Progress = 0,
+            Status = JobStatus.NotStarted,
+        });
     }
 
     public void Stop(Guid id)
@@ -45,8 +49,9 @@ public sealed class ImportQueue : IImportQueue
         _results[id].Error = error;
     }
 
-    public JobResult GetResult(Guid id)
-    {
-        return _results[id];
-    }
+    public JobResult GetResult(Guid id) => _results[id];
+
+    public JobResult[] GetJobs(long userId) => [.. _results.Values.Where(x => x.UserId == userId)];
+
+    public JobResult[] GetJobs() => [.. _results.Values];
 }

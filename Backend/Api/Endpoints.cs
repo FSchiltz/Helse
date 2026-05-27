@@ -246,6 +246,10 @@ public static class Endpoints
             .Produces<Smtp>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
 
+        settings.MapGet("/jobs", ImportLogic.GetAllJobsAsync)
+            .Produces<JobResult[]>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
         var stats = admin.MapGroup("/stats").RequireAuthorization();
         stats.MapGet("/users", AdminLogic.GetUserStatsAsync)
             .Produces<UserStats>((int)HttpStatusCode.OK)
@@ -273,8 +277,13 @@ public static class Endpoints
             .Produces<Guid>((int)HttpStatusCode.Accepted)
             .Produces((int)HttpStatusCode.Unauthorized);
 
+        import.MapGet("/", ImportLogic.GetJobsAsync)
+            .Produces<JobResult[]>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
         import.MapGet("/{id}", ImportLogic.GetJobResultAsync)
             .Produces<JobResult>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.NotFound)
             .Produces((int)HttpStatusCode.Unauthorized);
 
         import.MapPost("/", ImportLogic.PostListAsync)
