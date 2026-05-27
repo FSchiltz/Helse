@@ -4,13 +4,12 @@ using System.Text;
 using System.Text.Json;
 using Api.Data;
 using Api.Jobs;
-using Api.Logic.Import.Redmi;
 using Api.Models;
 using Api.Models.Events;
 using Api.Models.Metrics;
 using CsvHelper;
 
-namespace Api.Logic.Import;
+namespace Api.Logic.Import.Redmi;
 
 public class RedmiWatch(Stream file, IHealthContext db, long user, long patient) : FileImporter(file, db, user, patient)
 {
