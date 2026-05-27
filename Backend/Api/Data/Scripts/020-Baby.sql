@@ -8,10 +8,12 @@ INSERT INTO
         unit,
         type,
         summaryType,
-        usereditable
+        usereditable,
+        GroupId
     )
 VALUES
-    (17, null, 'Head Diameter', 'cm', 1, 0, false);
+    (17, null, 'Head Diameter', 'cm', 1, 0, false, 2),
+    (18, null, 'Diapper', '', 0, 0, false, 1);
 
 INSERT INTO
     health.EventType(id, description, name, standalone, UserEditable)

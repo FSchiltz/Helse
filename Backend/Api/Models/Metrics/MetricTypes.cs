@@ -19,4 +19,5 @@ public enum MetricTypes
     Stool = 15,
     Spotting = 16,
     HeadDiameter = 17,
+    Diaper = 18,
 }

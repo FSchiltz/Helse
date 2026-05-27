@@ -65,6 +65,13 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
 
     private async Task ImportDiaper(Record item)
     {
+        await ImportMetric(new CreateMetric()
+        {
+            Value = item.Amount.ToString(),
+            Date = ToDate(item.FromDate),
+            Source = FileTypes.BabyTracker,
+            Type = (long)MetricTypes.Diaper,
+        });
     }
 
     private async Task ImportLeisure(Record item)
@@ -136,10 +143,21 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
             Start = ToDate(item.FromDate),
             Stop = ToDate(item.ToDate ?? throw new InvalidDataException()),
             Description = description,
-            Tag = item.Details,
+            Tag = $"{item.Amount}{GetUnit(item.Unit)} {item.Details}",
             Type = (int)EventTypes.Feeding,
             Source = FileTypes.BabyTracker,
         });
+    }
+
+    private string GetUnit(string unit)
+    {
+        return unit.ToUpper() switch
+        {
+            "NONE" => string.Empty,
+            "MILLIMETERS" => "mm",
+            "MILLILITRES" => "mL",
+            _ => throw new NotSupportedException(),
+        };
     }
 
     private DateTime ToDate(string date)
@@ -151,6 +169,15 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
     {
         switch (item.Subtype.ToUpper())
         {
+            case "HEALTH_VACCINATIONS":
+                await ImportMetric(new CreateMetric()
+                {
+                    Value = "Vaccination: " + item.Details,
+                    Date = ToDate(item.FromDate),
+                    Source = FileTypes.BabyTracker,
+                    Type = (int)MetricTypes.Medication,
+                });
+                break;
             case "HEALTH_MEDICATIONS":
                 await ImportMetric(new CreateMetric()
                 {
