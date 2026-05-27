@@ -49,6 +49,7 @@ CreateEvent _$CreateEventFromJson(Map<String, dynamic> json) => CreateEvent(
   notificationTime: json['notificationTime'] == null
       ? null
       : DateTime.parse(json['notificationTime'] as String),
+  source: fileTypesNullableFromJson(json['source']),
 );
 
 Map<String, dynamic> _$CreateEventToJson(CreateEvent instance) =>
@@ -59,6 +60,7 @@ Map<String, dynamic> _$CreateEventToJson(CreateEvent instance) =>
       'stop': instance.stop.toIso8601String(),
       'tag': instance.tag,
       'notificationTime': instance.notificationTime?.toIso8601String(),
+      'source': fileTypesNullableToJson(instance.source),
     };
 
 CreateMetric _$CreateMetricFromJson(Map<String, dynamic> json) => CreateMetric(
@@ -110,6 +112,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
   notificationTime: json['notificationTime'] == null
       ? null
       : DateTime.parse(json['notificationTime'] as String),
+  source: fileTypesNullableFromJson(json['source']),
 );
 
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
@@ -126,6 +129,7 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
   'stop': instance.stop.toIso8601String(),
   'tag': instance.tag,
   'notificationTime': instance.notificationTime?.toIso8601String(),
+  'source': fileTypesNullableToJson(instance.source),
 };
 
 EventStats _$EventStatsFromJson(Map<String, dynamic> json) => EventStats(
@@ -536,6 +540,7 @@ UpdateEvent _$UpdateEventFromJson(Map<String, dynamic> json) => UpdateEvent(
   notificationTime: json['notificationTime'] == null
       ? null
       : DateTime.parse(json['notificationTime'] as String),
+  source: fileTypesNullableFromJson(json['source']),
 );
 
 Map<String, dynamic> _$UpdateEventToJson(UpdateEvent instance) =>
@@ -547,6 +552,7 @@ Map<String, dynamic> _$UpdateEventToJson(UpdateEvent instance) =>
       'stop': instance.stop.toIso8601String(),
       'tag': instance.tag,
       'notificationTime': instance.notificationTime?.toIso8601String(),
+      'source': fileTypesNullableToJson(instance.source),
     };
 
 UpdateMetric _$UpdateMetricFromJson(Map<String, dynamic> json) => UpdateMetric(

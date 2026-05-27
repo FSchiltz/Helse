@@ -13,4 +13,6 @@ public abstract class BaseEvent
     public string? Tag { get; set; }
 
     public DateTime? NotificationTime { get; set; }
+
+    public FileTypes Source { get; set; }
 }

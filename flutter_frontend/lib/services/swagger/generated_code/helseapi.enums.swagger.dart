@@ -15,7 +15,9 @@ enum FileTypes {
   @JsonValue('GoogleHealthConnect')
   googlehealthconnect('GoogleHealthConnect'),
   @JsonValue('Clue')
-  clue('Clue');
+  clue('Clue'),
+  @JsonValue('BabyTracker')
+  babytracker('BabyTracker');
 
   final String? value;
 

@@ -1725,6 +1725,7 @@ class CreateEvent {
     required this.stop,
     this.tag,
     this.notificationTime,
+    this.source,
   });
 
   factory CreateEvent.fromJson(Map<String, dynamic> json) =>
@@ -1745,6 +1746,12 @@ class CreateEvent {
   final String? tag;
   @JsonKey(name: 'notificationTime')
   final DateTime? notificationTime;
+  @JsonKey(
+    name: 'source',
+    toJson: fileTypesNullableToJson,
+    fromJson: fileTypesNullableFromJson,
+  )
+  final enums.FileTypes? source;
   static const fromJsonFactory = _$CreateEventFromJson;
 
   @override
@@ -1768,7 +1775,9 @@ class CreateEvent {
                 const DeepCollectionEquality().equals(
                   other.notificationTime,
                   notificationTime,
-                )));
+                )) &&
+            (identical(other.source, source) ||
+                const DeepCollectionEquality().equals(other.source, source)));
   }
 
   @override
@@ -1782,6 +1791,7 @@ class CreateEvent {
       const DeepCollectionEquality().hash(stop) ^
       const DeepCollectionEquality().hash(tag) ^
       const DeepCollectionEquality().hash(notificationTime) ^
+      const DeepCollectionEquality().hash(source) ^
       runtimeType.hashCode;
 }
 
@@ -1793,6 +1803,7 @@ extension $CreateEventExtension on CreateEvent {
     DateTime? stop,
     String? tag,
     DateTime? notificationTime,
+    enums.FileTypes? source,
   }) {
     return CreateEvent(
       type: type ?? this.type,
@@ -1801,6 +1812,7 @@ extension $CreateEventExtension on CreateEvent {
       stop: stop ?? this.stop,
       tag: tag ?? this.tag,
       notificationTime: notificationTime ?? this.notificationTime,
+      source: source ?? this.source,
     );
   }
 
@@ -1811,6 +1823,7 @@ extension $CreateEventExtension on CreateEvent {
     Wrapped<DateTime>? stop,
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
+    Wrapped<enums.FileTypes?>? source,
   }) {
     return CreateEvent(
       type: (type != null ? type.value : this.type),
@@ -1821,6 +1834,7 @@ extension $CreateEventExtension on CreateEvent {
       notificationTime: (notificationTime != null
           ? notificationTime.value
           : this.notificationTime),
+      source: (source != null ? source.value : this.source),
     );
   }
 }
@@ -1994,6 +2008,7 @@ class Event {
     required this.stop,
     this.tag,
     this.notificationTime,
+    this.source,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
@@ -2027,6 +2042,12 @@ class Event {
   final String? tag;
   @JsonKey(name: 'notificationTime')
   final DateTime? notificationTime;
+  @JsonKey(
+    name: 'source',
+    toJson: fileTypesNullableToJson,
+    fromJson: fileTypesNullableFromJson,
+  )
+  final enums.FileTypes? source;
   static const fromJsonFactory = _$EventFromJson;
 
   @override
@@ -2070,7 +2091,9 @@ class Event {
                 const DeepCollectionEquality().equals(
                   other.notificationTime,
                   notificationTime,
-                )));
+                )) &&
+            (identical(other.source, source) ||
+                const DeepCollectionEquality().equals(other.source, source)));
   }
 
   @override
@@ -2091,6 +2114,7 @@ class Event {
       const DeepCollectionEquality().hash(stop) ^
       const DeepCollectionEquality().hash(tag) ^
       const DeepCollectionEquality().hash(notificationTime) ^
+      const DeepCollectionEquality().hash(source) ^
       runtimeType.hashCode;
 }
 
@@ -2109,6 +2133,7 @@ extension $EventExtension on Event {
     DateTime? stop,
     String? tag,
     DateTime? notificationTime,
+    enums.FileTypes? source,
   }) {
     return Event(
       user: user ?? this.user,
@@ -2124,6 +2149,7 @@ extension $EventExtension on Event {
       stop: stop ?? this.stop,
       tag: tag ?? this.tag,
       notificationTime: notificationTime ?? this.notificationTime,
+      source: source ?? this.source,
     );
   }
 
@@ -2141,6 +2167,7 @@ extension $EventExtension on Event {
     Wrapped<DateTime>? stop,
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
+    Wrapped<enums.FileTypes?>? source,
   }) {
     return Event(
       user: (user != null ? user.value : this.user),
@@ -2158,6 +2185,7 @@ extension $EventExtension on Event {
       notificationTime: (notificationTime != null
           ? notificationTime.value
           : this.notificationTime),
+      source: (source != null ? source.value : this.source),
     );
   }
 }
@@ -4295,6 +4323,7 @@ class UpdateEvent {
     required this.stop,
     this.tag,
     this.notificationTime,
+    this.source,
   });
 
   factory UpdateEvent.fromJson(Map<String, dynamic> json) =>
@@ -4317,6 +4346,12 @@ class UpdateEvent {
   final String? tag;
   @JsonKey(name: 'notificationTime')
   final DateTime? notificationTime;
+  @JsonKey(
+    name: 'source',
+    toJson: fileTypesNullableToJson,
+    fromJson: fileTypesNullableFromJson,
+  )
+  final enums.FileTypes? source;
   static const fromJsonFactory = _$UpdateEventFromJson;
 
   @override
@@ -4342,7 +4377,9 @@ class UpdateEvent {
                 const DeepCollectionEquality().equals(
                   other.notificationTime,
                   notificationTime,
-                )));
+                )) &&
+            (identical(other.source, source) ||
+                const DeepCollectionEquality().equals(other.source, source)));
   }
 
   @override
@@ -4357,6 +4394,7 @@ class UpdateEvent {
       const DeepCollectionEquality().hash(stop) ^
       const DeepCollectionEquality().hash(tag) ^
       const DeepCollectionEquality().hash(notificationTime) ^
+      const DeepCollectionEquality().hash(source) ^
       runtimeType.hashCode;
 }
 
@@ -4369,6 +4407,7 @@ extension $UpdateEventExtension on UpdateEvent {
     DateTime? stop,
     String? tag,
     DateTime? notificationTime,
+    enums.FileTypes? source,
   }) {
     return UpdateEvent(
       id: id ?? this.id,
@@ -4378,6 +4417,7 @@ extension $UpdateEventExtension on UpdateEvent {
       stop: stop ?? this.stop,
       tag: tag ?? this.tag,
       notificationTime: notificationTime ?? this.notificationTime,
+      source: source ?? this.source,
     );
   }
 
@@ -4389,6 +4429,7 @@ extension $UpdateEventExtension on UpdateEvent {
     Wrapped<DateTime>? stop,
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
+    Wrapped<enums.FileTypes?>? source,
   }) {
     return UpdateEvent(
       id: (id != null ? id.value : this.id),
@@ -4400,6 +4441,7 @@ extension $UpdateEventExtension on UpdateEvent {
       notificationTime: (notificationTime != null
           ? notificationTime.value
           : this.notificationTime),
+      source: (source != null ? source.value : this.source),
     );
   }
 }

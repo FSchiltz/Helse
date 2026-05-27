@@ -42,6 +42,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
             Start = e.Start,
             Tag = e.Tag,
             NotificationTime = e.NotificationTime,
+            Source = (int)e.Source,
         });
     }
 
@@ -252,13 +253,14 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task<bool> ExistsEvent(long person, string tag) => Db.GetTable<Event>().AnyAsync(x => x.PersonId == person && x.Tag == tag);
+    public Task<bool> ExistsEvent(long person, int type, DateTime from, DateTime to, int source, string? description)
+    => Db.GetTable<Event>().AnyAsync(x => x.PersonId == person && x.Source == source && x.Description == description && x.Type == type && x.Start == from && x.Stop == to);
 
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task<bool> ExistsMetric(long person, string tag, Api.Models.FileTypes source)
-    => Db.GetTable<Metric>().AnyAsync(x => x.PersonId == person && x.Tag == tag && x.Source == (int)source);
+    public Task<bool> ExistsMetric(long person, long type, string value, int source, DateTime date)
+    => Db.GetTable<Metric>().AnyAsync(x => x.PersonId == person && x.Type == type && x.Value == value && x.Source == source && x.Date == date);
 
     /// <summary>
     /// <inheritdoc/>
@@ -334,6 +336,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
         .Set(x => x.Description, e.Description)
         .Set(x => x.Tag, e.Tag)
         .Set(x => x.NotificationTime, e.NotificationTime)
+        .Set(x => x.Source, (int)e.Source)
         .UpdateAsync();
     }
 

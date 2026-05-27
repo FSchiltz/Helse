@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/logic/event.dart';
 import 'package:helse/logic/fit/task_bloc.dart';
@@ -42,7 +44,7 @@ class ImportLogic {
     );
   }
 
-  Future<void> import(String content, int type, int? patient) async {
+  Future<void> import(Uint8List content, int type, int? patient) async {
     var id = await DI.import.import(content, type, patient);
     if (id == null) {
       throw StateError("Incorrect job id");

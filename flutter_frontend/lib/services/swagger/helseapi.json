@@ -1943,6 +1943,9 @@
               "string"
             ],
             "format": "date-time"
+          },
+          "source": {
+            "$ref": "#/components/schemas/FileTypes"
           }
         }
       },
@@ -2094,6 +2097,9 @@
               "string"
             ],
             "format": "date-time"
+          },
+          "source": {
+            "$ref": "#/components/schemas/FileTypes"
           }
         }
       },
@@ -2199,7 +2205,8 @@
           "None",
           "RedmiWatch",
           "GoogleHealthConnect",
-          "Clue"
+          "Clue",
+          "BabyTracker"
         ]
       },
       "Gotify": {
@@ -2912,6 +2919,9 @@
               "string"
             ],
             "format": "date-time"
+          },
+          "source": {
+            "$ref": "#/components/schemas/FileTypes"
           }
         }
       },
