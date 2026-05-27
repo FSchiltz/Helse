@@ -134,7 +134,7 @@
         }
       }
     },
-    "/api/person/{personId}": {
+    "/api/person/{userId}": {
       "delete": {
         "tags": [
           "PersonLogic"
@@ -142,7 +142,7 @@
         "parameters": [
           {
             "name": "userId",
-            "in": "query",
+            "in": "path",
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -1481,6 +1481,31 @@
         }
       }
     },
+    "/api/admin/settings/jobs": {
+      "get": {
+        "tags": [
+          "ImportLogic"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobResult"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/api/admin/stats/users": {
       "get": {
         "tags": [
@@ -1630,6 +1655,18 @@
               ],
               "format": "int32"
             }
+          },
+          {
+            "name": "patient",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
           }
         ],
         "requestBody": {
@@ -1651,8 +1688,101 @@
           "required": true
         },
         "responses": {
-          "204": {
-            "description": "No Content"
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobId"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/import/jobs/all": {
+      "get": {
+        "tags": [
+          "ImportLogic"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobResultInfo"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/import/jobs": {
+      "get": {
+        "tags": [
+          "ImportLogic"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobResultInfo"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/import/{id}": {
+      "get": {
+        "tags": [
+          "ImportLogic"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
           },
           "401": {
             "description": "Unauthorized"
@@ -1664,6 +1794,20 @@
       "post": {
         "tags": [
           "ImportLogic"
+        ],
+        "parameters": [
+          {
+            "name": "patient",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          }
         ],
         "requestBody": {
           "content": {
@@ -2098,6 +2242,92 @@
             }
           }
         }
+      },
+      "JobId": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "JobResult": {
+        "required": [
+          "description",
+          "userId",
+          "start"
+        ],
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "userId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "progress": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "status": {
+            "$ref": "#/components/schemas/JobStatus"
+          },
+          "error": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "stop": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "JobResultInfo": {
+        "required": [
+          "id",
+          "result"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "result": {
+            "$ref": "#/components/schemas/JobResult"
+          }
+        }
+      },
+      "JobStatus": {
+        "enum": [
+          "NotStarted",
+          "InProgress",
+          "Done",
+          "InError",
+          "Cancel"
+        ]
       },
       "Metric": {
         "required": [
@@ -2883,10 +3113,10 @@
       "name": "SettingsLogic"
     },
     {
-      "name": "AdminLogic"
+      "name": "ImportLogic"
     },
     {
-      "name": "ImportLogic"
+      "name": "AdminLogic"
     }
   ]
 }

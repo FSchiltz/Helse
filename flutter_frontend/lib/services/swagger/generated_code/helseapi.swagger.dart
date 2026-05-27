@@ -173,15 +173,15 @@ abstract class Helseapi extends ChopperService {
 
   ///
   ///@param userId
-  Future<chopper.Response> apiPersonPersonIdDelete({required int? userId}) {
-    return _apiPersonPersonIdDelete(userId: userId);
+  Future<chopper.Response> apiPersonUserIdDelete({required int? userId}) {
+    return _apiPersonUserIdDelete(userId: userId);
   }
 
   ///
   ///@param userId
-  @DELETE(path: '/api/person/{personId}')
-  Future<chopper.Response> _apiPersonPersonIdDelete({
-    @Query('userId') required int? userId,
+  @DELETE(path: '/api/person/{userId}')
+  Future<chopper.Response> _apiPersonUserIdDelete({
+    @Path('userId') required int? userId,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -1257,6 +1257,29 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
+  Future<chopper.Response<List<JobResult>>> apiAdminSettingsJobsGet() {
+    generatedMapping.putIfAbsent(JobResult, () => JobResult.fromJsonFactory);
+
+    return _apiAdminSettingsJobsGet();
+  }
+
+  ///
+  @GET(path: '/api/admin/settings/jobs')
+  Future<chopper.Response<List<JobResult>>> _apiAdminSettingsJobsGet({
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["ImportLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
   Future<chopper.Response<UserStats>> apiAdminStatsUsersGet() {
     generatedMapping.putIfAbsent(UserStats, () => UserStats.fromJsonFactory);
 
@@ -1368,19 +1391,25 @@ abstract class Helseapi extends ChopperService {
 
   ///
   ///@param type
-  Future<chopper.Response> apiImportTypePost({
+  ///@param patient
+  Future<chopper.Response<JobId>> apiImportTypePost({
     required int? type,
+    int? patient,
     required dynamic file,
   }) {
-    return _apiImportTypePost(type: type, file: file);
+    generatedMapping.putIfAbsent(JobId, () => JobId.fromJsonFactory);
+
+    return _apiImportTypePost(type: type, patient: patient, file: file);
   }
 
   ///
   ///@param type
+  ///@param patient
   @POST(path: '/api/import/{type}', optionalBody: true)
   @Multipart()
-  Future<chopper.Response> _apiImportTypePost({
+  Future<chopper.Response<JobId>> _apiImportTypePost({
     @Path('type') required int? type,
+    @Query('patient') int? patient,
     @Part('file') required dynamic file,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -1396,13 +1425,97 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response> apiImportPost({required ImportData? body}) {
-    return _apiImportPost(body: body);
+  Future<chopper.Response<List<JobResultInfo>>> apiImportJobsAllGet() {
+    generatedMapping.putIfAbsent(
+      JobResultInfo,
+      () => JobResultInfo.fromJsonFactory,
+    );
+
+    return _apiImportJobsAllGet();
   }
 
   ///
+  @GET(path: '/api/import/jobs/all')
+  Future<chopper.Response<List<JobResultInfo>>> _apiImportJobsAllGet({
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["ImportLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  Future<chopper.Response<List<JobResultInfo>>> apiImportJobsGet() {
+    generatedMapping.putIfAbsent(
+      JobResultInfo,
+      () => JobResultInfo.fromJsonFactory,
+    );
+
+    return _apiImportJobsGet();
+  }
+
+  ///
+  @GET(path: '/api/import/jobs')
+  Future<chopper.Response<List<JobResultInfo>>> _apiImportJobsGet({
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["ImportLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param id
+  Future<chopper.Response<JobResult>> apiImportIdGet({required String? id}) {
+    generatedMapping.putIfAbsent(JobResult, () => JobResult.fromJsonFactory);
+
+    return _apiImportIdGet(id: id);
+  }
+
+  ///
+  ///@param id
+  @GET(path: '/api/import/{id}')
+  Future<chopper.Response<JobResult>> _apiImportIdGet({
+    @Path('id') required String? id,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["ImportLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param patient
+  Future<chopper.Response> apiImportPost({
+    int? patient,
+    required ImportData? body,
+  }) {
+    return _apiImportPost(patient: patient, body: body);
+  }
+
+  ///
+  ///@param patient
   @POST(path: '/api/import', optionalBody: true)
   Future<chopper.Response> _apiImportPost({
+    @Query('patient') int? patient,
     @Body() required ImportData? body,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -2433,6 +2546,218 @@ extension $ImportDataExtension on ImportData {
     return ImportData(
       metrics: (metrics != null ? metrics.value : this.metrics),
       events: (events != null ? events.value : this.events),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class JobId {
+  const JobId({required this.id});
+
+  factory JobId.fromJson(Map<String, dynamic> json) => _$JobIdFromJson(json);
+
+  static const toJsonFactory = _$JobIdToJson;
+  Map<String, dynamic> toJson() => _$JobIdToJson(this);
+
+  @JsonKey(name: 'id')
+  final String id;
+  static const fromJsonFactory = _$JobIdFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is JobId &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(id) ^ runtimeType.hashCode;
+}
+
+extension $JobIdExtension on JobId {
+  JobId copyWith({String? id}) {
+    return JobId(id: id ?? this.id);
+  }
+
+  JobId copyWithWrapped({Wrapped<String>? id}) {
+    return JobId(id: (id != null ? id.value : this.id));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class JobResult {
+  const JobResult({
+    required this.description,
+    required this.userId,
+    this.progress,
+    this.status,
+    this.error,
+    required this.start,
+    this.stop,
+  });
+
+  factory JobResult.fromJson(Map<String, dynamic> json) =>
+      _$JobResultFromJson(json);
+
+  static const toJsonFactory = _$JobResultToJson;
+  Map<String, dynamic> toJson() => _$JobResultToJson(this);
+
+  @JsonKey(name: 'description')
+  final String description;
+  @JsonKey(name: 'userId')
+  final int userId;
+  @JsonKey(name: 'progress')
+  final double? progress;
+  @JsonKey(
+    name: 'status',
+    toJson: jobStatusNullableToJson,
+    fromJson: jobStatusNullableFromJson,
+  )
+  final enums.JobStatus? status;
+  @JsonKey(name: 'error')
+  final String? error;
+  @JsonKey(name: 'start')
+  final DateTime start;
+  @JsonKey(name: 'stop')
+  final DateTime? stop;
+  static const fromJsonFactory = _$JobResultFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is JobResult &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )) &&
+            (identical(other.userId, userId) ||
+                const DeepCollectionEquality().equals(other.userId, userId)) &&
+            (identical(other.progress, progress) ||
+                const DeepCollectionEquality().equals(
+                  other.progress,
+                  progress,
+                )) &&
+            (identical(other.status, status) ||
+                const DeepCollectionEquality().equals(other.status, status)) &&
+            (identical(other.error, error) ||
+                const DeepCollectionEquality().equals(other.error, error)) &&
+            (identical(other.start, start) ||
+                const DeepCollectionEquality().equals(other.start, start)) &&
+            (identical(other.stop, stop) ||
+                const DeepCollectionEquality().equals(other.stop, stop)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(userId) ^
+      const DeepCollectionEquality().hash(progress) ^
+      const DeepCollectionEquality().hash(status) ^
+      const DeepCollectionEquality().hash(error) ^
+      const DeepCollectionEquality().hash(start) ^
+      const DeepCollectionEquality().hash(stop) ^
+      runtimeType.hashCode;
+}
+
+extension $JobResultExtension on JobResult {
+  JobResult copyWith({
+    String? description,
+    int? userId,
+    double? progress,
+    enums.JobStatus? status,
+    String? error,
+    DateTime? start,
+    DateTime? stop,
+  }) {
+    return JobResult(
+      description: description ?? this.description,
+      userId: userId ?? this.userId,
+      progress: progress ?? this.progress,
+      status: status ?? this.status,
+      error: error ?? this.error,
+      start: start ?? this.start,
+      stop: stop ?? this.stop,
+    );
+  }
+
+  JobResult copyWithWrapped({
+    Wrapped<String>? description,
+    Wrapped<int>? userId,
+    Wrapped<double?>? progress,
+    Wrapped<enums.JobStatus?>? status,
+    Wrapped<String?>? error,
+    Wrapped<DateTime>? start,
+    Wrapped<DateTime?>? stop,
+  }) {
+    return JobResult(
+      description: (description != null ? description.value : this.description),
+      userId: (userId != null ? userId.value : this.userId),
+      progress: (progress != null ? progress.value : this.progress),
+      status: (status != null ? status.value : this.status),
+      error: (error != null ? error.value : this.error),
+      start: (start != null ? start.value : this.start),
+      stop: (stop != null ? stop.value : this.stop),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class JobResultInfo {
+  const JobResultInfo({required this.id, required this.result});
+
+  factory JobResultInfo.fromJson(Map<String, dynamic> json) =>
+      _$JobResultInfoFromJson(json);
+
+  static const toJsonFactory = _$JobResultInfoToJson;
+  Map<String, dynamic> toJson() => _$JobResultInfoToJson(this);
+
+  @JsonKey(name: 'id')
+  final String id;
+  @JsonKey(name: 'result')
+  final JobResult result;
+  static const fromJsonFactory = _$JobResultInfoFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is JobResultInfo &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.result, result) ||
+                const DeepCollectionEquality().equals(other.result, result)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(result) ^
+      runtimeType.hashCode;
+}
+
+extension $JobResultInfoExtension on JobResultInfo {
+  JobResultInfo copyWith({String? id, JobResult? result}) {
+    return JobResultInfo(id: id ?? this.id, result: result ?? this.result);
+  }
+
+  JobResultInfo copyWithWrapped({
+    Wrapped<String>? id,
+    Wrapped<JobResult>? result,
+  }) {
+    return JobResultInfo(
+      id: (id != null ? id.value : this.id),
+      result: (result != null ? result.value : this.result),
     );
   }
 }
@@ -4590,6 +4915,68 @@ List<enums.FileTypes>? fileTypesNullableListFromJson(
   }
 
   return fileTypes.map((e) => fileTypesFromJson(e.toString())).toList();
+}
+
+String? jobStatusNullableToJson(enums.JobStatus? jobStatus) {
+  return jobStatus?.value;
+}
+
+String? jobStatusToJson(enums.JobStatus jobStatus) {
+  return jobStatus.value;
+}
+
+enums.JobStatus jobStatusFromJson(
+  Object? jobStatus, [
+  enums.JobStatus? defaultValue,
+]) {
+  return enums.JobStatus.values.firstWhereOrNull((e) => e.value == jobStatus) ??
+      defaultValue ??
+      enums.JobStatus.swaggerGeneratedUnknown;
+}
+
+enums.JobStatus? jobStatusNullableFromJson(
+  Object? jobStatus, [
+  enums.JobStatus? defaultValue,
+]) {
+  if (jobStatus == null) {
+    return null;
+  }
+  return enums.JobStatus.values.firstWhereOrNull((e) => e.value == jobStatus) ??
+      defaultValue;
+}
+
+String jobStatusExplodedListToJson(List<enums.JobStatus>? jobStatus) {
+  return jobStatus?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> jobStatusListToJson(List<enums.JobStatus>? jobStatus) {
+  if (jobStatus == null) {
+    return [];
+  }
+
+  return jobStatus.map((e) => e.value!).toList();
+}
+
+List<enums.JobStatus> jobStatusListFromJson(
+  List? jobStatus, [
+  List<enums.JobStatus>? defaultValue,
+]) {
+  if (jobStatus == null) {
+    return defaultValue ?? [];
+  }
+
+  return jobStatus.map((e) => jobStatusFromJson(e.toString())).toList();
+}
+
+List<enums.JobStatus>? jobStatusNullableListFromJson(
+  List? jobStatus, [
+  List<enums.JobStatus>? defaultValue,
+]) {
+  if (jobStatus == null) {
+    return defaultValue;
+  }
+
+  return jobStatus.map((e) => jobStatusFromJson(e.toString())).toList();
 }
 
 String? metricDataTypeNullableToJson(enums.MetricDataType? metricDataType) {

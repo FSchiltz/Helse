@@ -7,6 +7,7 @@ using Api.Models.Persons;
 using Api.Models.Settings.Admin;
 using Api.Models.Treatments;
 using Api.Models.Admin;
+using Api.Jobs;
 
 namespace Api;
 
@@ -40,7 +41,7 @@ public static class Endpoints
         .Produces<List<Person>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
-        person.MapDelete("/{personId}", PersonLogic.DeleteAsync)
+        person.MapDelete("/{userId}", PersonLogic.DeleteAsync)
         .Produces((int)HttpStatusCode.NoContent)
         .Produces((int)HttpStatusCode.Unauthorized);
 
@@ -245,6 +246,10 @@ public static class Endpoints
             .Produces<Smtp>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
 
+        settings.MapGet("/jobs", ImportLogic.GetAllJobsAsync)
+            .Produces<JobResult[]>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
         var stats = admin.MapGroup("/stats").RequireAuthorization();
         stats.MapGet("/users", AdminLogic.GetUserStatsAsync)
             .Produces<UserStats>((int)HttpStatusCode.OK)
@@ -256,6 +261,37 @@ public static class Endpoints
 
         stats.MapGet("/metrics", AdminLogic.GetMetricStatsAsync)
             .Produces<EventStats>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized);
+    }
+
+    public static void MapImports(this RouteGroupBuilder api)
+    {
+        /* Importer endpoint */
+        var import = api.MapGroup("/import").RequireAuthorization();
+        import.MapGet("/types", ImportLogic.GetImportTypes)
+            .Produces<List<FileType>>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
+        import.MapPost("/{type}", ImportLogic.PostFileAsync)
+            .DisableAntiforgery()
+            .Produces<JobId>((int)HttpStatusCode.Accepted)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
+        import.MapGet("/jobs/all", ImportLogic.GetAllJobsAsync)
+            .Produces<JobResultInfo[]>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
+        import.MapGet("/jobs", ImportLogic.GetJobsAsync)
+            .Produces<JobResultInfo[]>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
+        import.MapGet("/{id:Guid}", ImportLogic.GetJobResultAsync)
+            .Produces<JobResult>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.NotFound)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
+        import.MapPost("/", ImportLogic.PostListAsync)
+            .Produces((int)HttpStatusCode.NoContent)
             .Produces((int)HttpStatusCode.Unauthorized);
     }
 
@@ -272,19 +308,6 @@ public static class Endpoints
 
         api.MapAdmin();
 
-        /* Importer endpoint */
-        var import = api.MapGroup("/import").RequireAuthorization();
-        import.MapGet("/types", ImportLogic.GetImportTypes)
-            .Produces<List<FileType>>((int)HttpStatusCode.OK)
-            .Produces((int)HttpStatusCode.Unauthorized);
-
-        import.MapPost("/{type}", ImportLogic.PostFileAsync)
-            .DisableAntiforgery()
-            .Produces((int)HttpStatusCode.NoContent)
-            .Produces((int)HttpStatusCode.Unauthorized);
-
-        import.MapPost("/", ImportLogic.PostListAsync)
-            .Produces((int)HttpStatusCode.NoContent)
-            .Produces((int)HttpStatusCode.Unauthorized);
+        api.MapImports();
     }
 }

@@ -28,7 +28,7 @@ class UserService extends ApiService {
 
   Future<void> deletePerson(int id) async {
     var api = await getService();
-    await call<void>(() => api.apiPersonPersonIdDelete(userId: id));
+    await call<void>(() => api.apiPersonUserIdDelete(userId: id));
   }
 
   Future<List<Person>> caregiver() async {

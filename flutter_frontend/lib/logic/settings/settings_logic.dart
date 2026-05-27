@@ -26,13 +26,13 @@ class SettingsBloc extends Cubit<bool> {
 
 class SettingsLogic {
   static final storage = SharedPreferences.getInstance();
-  final Account _account;
+  final Account account;
   final SettingsBloc events = SettingsBloc(false);
   final SettingsBloc metrics = SettingsBloc(false);
 
-  SettingsLogic(Account account) : _account = account;
+  SettingsLogic(this.account);
 
-  SettingService api() => SettingService(_account);
+  SettingService api() => SettingService(account);
 
   Future<HealthSettings> getHealth() async {
     var encoded = (await storage).getString(Account.health);

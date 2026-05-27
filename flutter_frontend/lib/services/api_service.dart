@@ -24,7 +24,7 @@ abstract class ApiService {
           result = null;
           break;
         default:
-          throw Exception(response.error ?? "Login error");
+          throw StateError(response.error?.toString() ?? "Login error");
       }
     } else {
       result = response.body;
@@ -34,7 +34,7 @@ abstract class ApiService {
 
   Future<Helseapi> getService({String? override}) async {
     var url = override ?? await _account.get(Account.url);
-    if (url == null) throw Exception("Url missing");
+    if (url == null) throw StateError("Url missing");
 
     // first we try to get a new refresh token if needed
     var token = await _account.get(Account.token);

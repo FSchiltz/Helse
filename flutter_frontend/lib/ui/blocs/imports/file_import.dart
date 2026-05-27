@@ -10,7 +10,8 @@ import '../../common/loader.dart';
 import '../../common/notification.dart';
 
 class FileImport extends StatefulWidget {
-  const FileImport({super.key});
+  final int? patient;
+  const FileImport({super.key, this.patient});
 
   @override
   State<FileImport> createState() => _FileImportState();
@@ -29,7 +30,7 @@ class _FileImportState extends State<FileImport> {
   }
 
   void _getData() async {
-    var model = await DI.helper.fileTypes();
+    var model = await DI.import.fileTypes();
     if (model != null) {
       setState(() {
         types = model;
@@ -57,15 +58,21 @@ class _FileImportState extends State<FileImport> {
         padding: const EdgeInsets.all(30.0),
         child: Column(
           children: [
-            Text("Import external metric",
-                style: Theme.of(context).textTheme.bodyMedium),
+            Text(
+              "Import external metric",
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
             DropdownButtonFormField(
               onChanged: (value) => setState(() {
                 selected = value;
               }),
               items: types
-                  .map((type) => DropdownMenuItem(
-                      value: type.type, child: Text(type.name ?? "")))
+                  .map(
+                    (type) => DropdownMenuItem(
+                      value: type.type,
+                      child: Text(type.name ?? ""),
+                    ),
+                  )
                   .toList(),
               decoration: const InputDecoration(
                 labelText: 'Type',
@@ -102,7 +109,7 @@ class _FileImportState extends State<FileImport> {
       try {
         var content = await file?.readAsString();
         if (content == null) return;
-        await DI.helper.import(content, selected!);
+        await DI.importLogic.import(content, selected!, widget.patient);
 
         setState(() {
           status = SubmissionStatus.success;

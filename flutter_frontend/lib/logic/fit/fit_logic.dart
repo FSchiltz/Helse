@@ -61,7 +61,7 @@ class FitLogic {
 
     bool requested = await Health().requestAuthorization(types);
     if (!requested) {
-      throw Exception('Missing permissions');
+      throw StateError('Missing permissions');
     }
 
     // fetch health data from the last 24 hours
@@ -78,7 +78,7 @@ class FitLogic {
     // TODO add a loop here if too much events
     if (converted.metrics?.isNotEmpty == true ||
         converted.events?.isNotEmpty == true) {
-      DI.helper.importData(converted);
+      await DI.import.importData(converted);
     }
     events += converted.events?.length ?? 0;
     metrics += converted.metrics?.length ?? 0;

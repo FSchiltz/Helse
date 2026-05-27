@@ -3,22 +3,21 @@ using System.Net.Mail;
 using Api.Data;
 using Api.Data.Models;
 using Api.Models.Settings.Admin;
-using Microsoft.IdentityModel.Tokens;
 
-namespace Api.Helpers;
+namespace Api.Jobs;
 
 public class EventNotificationService(IServiceProvider serviceProvider, ILogger<EventNotificationService> logger) : BackgroundService
 {
-    protected override async Task ExecuteAsync(CancellationToken token)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         logger.LogInformation("Event notification service started.");
 
-        while (!token.IsCancellationRequested)
+        while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
-                await CheckEventsAsync(token);
-                await Task.Delay(TimeSpan.FromSeconds(60), token);
+                await CheckEventsAsync(stoppingToken);
+                await Task.Delay(TimeSpan.FromSeconds(60), stoppingToken);
             }
             catch (OperationCanceledException)
             {

@@ -59,7 +59,7 @@ class AuthenticationLogic {
 
   Future<Person> getUser() async {
     var token = await _account.get(Account.refresh);
-    if (token == null) throw Exception("Not connected");
+    if (token == null) throw StateError("Not connected");
 
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
     var data = decodedToken["roles"] as String?;

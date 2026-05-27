@@ -16,9 +16,14 @@ class AdminService extends ApiService {
     return response.body;
   }
 
-    Future<EventStats?> getmetricStats(DateTime? start, DateTime? end) async {
+  Future<EventStats?> getmetricStats(DateTime? start, DateTime? end) async {
     var api = await getService();
     var response = await api.apiAdminStatsMetricsGet(start: start, end: end);
     return response.body;
+  }
+
+  Future<List<JobResultInfo>> getJobs() async {
+    var api = await getService();
+    return await call(() => api.apiImportJobsAllGet()) ?? [];
   }
 }

@@ -9,8 +9,10 @@ class Execution {
   DateTime date;
   SubmissionStatus state;
   String? status;
+  double? progress;
+  String? title;
 
-  Execution(this.date, this.state, this.status);
+  Execution(this.date, this.state, {this.status, this.progress, this.title});
 }
 
 class TaskBloc extends Cubit<SubmissionStatus> {
@@ -21,7 +23,8 @@ class TaskBloc extends Cubit<SubmissionStatus> {
   Duration duration;
   bool _running = false;
 
-  TaskBloc(this.action, this.duration, this.check) : super(SubmissionStatus.initial);
+  TaskBloc(this.action, this.duration, this.check)
+    : super(SubmissionStatus.initial);
 
   void cancel() {
     timer?.cancel();
@@ -37,7 +40,15 @@ class TaskBloc extends Cubit<SubmissionStatus> {
             emit(SubmissionStatus.inProgress);
             var status = await action.call();
 
-            executions.add(Execution(DateTime.now(), status != null ? SubmissionStatus.success : SubmissionStatus.skipped, status));
+            executions.add(
+              Execution(
+                DateTime.now(),
+                status != null
+                    ? SubmissionStatus.success
+                    : SubmissionStatus.skipped,
+                status: status,
+              ),
+            );
             emit(SubmissionStatus.success);
           } else {
             emit(SubmissionStatus.initial);
@@ -46,7 +57,13 @@ class TaskBloc extends Cubit<SubmissionStatus> {
         }
       } catch (ex) {
         _running = false;
-        executions.add(Execution(DateTime.now(), SubmissionStatus.failure, ex.toString()));
+        executions.add(
+          Execution(
+            DateTime.now(),
+            SubmissionStatus.failure,
+            status: ex.toString(),
+          ),
+        );
         emit(SubmissionStatus.failure);
         Notify.showError("$ex");
       }

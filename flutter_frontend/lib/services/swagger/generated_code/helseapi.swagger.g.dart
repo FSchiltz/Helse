@@ -212,6 +212,42 @@ Map<String, dynamic> _$ImportDataToJson(ImportData instance) =>
       'events': instance.events?.map((e) => e.toJson()).toList(),
     };
 
+JobId _$JobIdFromJson(Map<String, dynamic> json) =>
+    JobId(id: json['id'] as String);
+
+Map<String, dynamic> _$JobIdToJson(JobId instance) => <String, dynamic>{
+  'id': instance.id,
+};
+
+JobResult _$JobResultFromJson(Map<String, dynamic> json) => JobResult(
+  description: json['description'] as String,
+  userId: (json['userId'] as num).toInt(),
+  progress: (json['progress'] as num?)?.toDouble(),
+  status: jobStatusNullableFromJson(json['status']),
+  error: json['error'] as String?,
+  start: DateTime.parse(json['start'] as String),
+  stop: json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
+);
+
+Map<String, dynamic> _$JobResultToJson(JobResult instance) => <String, dynamic>{
+  'description': instance.description,
+  'userId': instance.userId,
+  'progress': instance.progress,
+  'status': jobStatusNullableToJson(instance.status),
+  'error': instance.error,
+  'start': instance.start.toIso8601String(),
+  'stop': instance.stop?.toIso8601String(),
+};
+
+JobResultInfo _$JobResultInfoFromJson(Map<String, dynamic> json) =>
+    JobResultInfo(
+      id: json['id'] as String,
+      result: JobResult.fromJson(json['result'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$JobResultInfoToJson(JobResultInfo instance) =>
+    <String, dynamic>{'id': instance.id, 'result': instance.result.toJson()};
+
 Metric _$MetricFromJson(Map<String, dynamic> json) => Metric(
   id: (json['id'] as num).toInt(),
   person: (json['person'] as num).toInt(),

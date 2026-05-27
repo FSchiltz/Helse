@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using Api.Data;
+using Api.Jobs;
 using Api.Logic.Import.Redmi;
 using Api.Models;
 using Api.Models.Events;
@@ -11,7 +12,7 @@ using CsvHelper;
 
 namespace Api.Logic.Import;
 
-public class RedmiWatch(IFormFile file, IHealthContext db, Data.Models.User user) : FileImporter(file, db, user)
+public class RedmiWatch(Stream file, IHealthContext db, long user, long patient) : FileImporter(file, db, user, patient)
 {
     private const string MaxSpo = "max_spo2";
     private const string MinSpo = "min_spo2";
@@ -57,12 +58,13 @@ public class RedmiWatch(IFormFile file, IHealthContext db, Data.Models.User user
         }
     }
 
-    public override async Task Import()
+    public override async Task Import(IImportQueue queue, Guid id)
     {
         // Remdi fiel are csv, we first convert them
-        await using var stream = File.OpenReadStream();
-        using var reader = new StreamReader(stream);
+        using var reader = new StreamReader(File);
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+
+        long read = 0;
 
         // for each record, find the type
         foreach (var record in csv.GetRecords<RedmiRecord>())
@@ -182,6 +184,9 @@ public class RedmiWatch(IFormFile file, IHealthContext db, Data.Models.User user
                     });
                     break;
             }
+
+            read = File.Position;
+            queue.Progress(id, read / (double)File.Length * 100);
         }
     }
 }

@@ -44,8 +44,20 @@
             "name": "Flutter",
             "type": "dart",
             "request": "launch",
-            "program": "flutter_frontend/lib/main.dart", "args": [               
+            "program": "flutter_frontend/lib/main.dart",
+            "args": [
                 "--web-port=8000"
+            ]
+        },
+        {
+            "name": "Flutter Desktop",
+            "type": "dart",
+            "request": "launch",            
+            "program": "flutter_frontend/lib/main.dart",
+            "args": [
+                "-d",
+                "linux",
+                "--offline"
             ]
         },
         {

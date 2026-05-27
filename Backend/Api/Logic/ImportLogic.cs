@@ -1,15 +1,19 @@
 using Api.Data;
 using Api.Helpers;
+using Api.Jobs;
 using Api.Logic.Import;
 using Api.Models;
 using Api.Models.Events;
 using Api.Models.Metrics;
+using Api.Models.Settings;
 using LinqToDB;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Logic;
 
 public record FileType(int Type, string? Name);
+
+public record JobId(Guid Id);
 
 public class ImportData
 {
@@ -26,34 +30,104 @@ public static class ImportLogic
     public static IResult GetImportTypes()
       => TypedResults.Ok(Enum.GetValues<FileTypes>().Select(x => new FileType((int)x, x.DescriptionAttr())));
 
-    public static async Task<IResult> PostFileAsync([FromForm]IFormFile file, [FromRoute]int type, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> GetJobResultAsync([FromRoute] Guid id, IImportQueue queue, IUserContext users, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
             return error;
 
-        Importer importer = (FileTypes)type switch
+        var result = queue.GetResult(id);
+        if (result.UserId != user.Id)
         {
-            FileTypes.Clue => new ClueImporter(file, db, user),
-            FileTypes.RedmiWatch => new RedmiWatch(file, db, user),
-            _ => throw new NotSupportedException("Invalid file type"),
-        };
+            return TypedResults.NotFound();
+        }
 
-        await importer.Import();
-
-        return TypedResults.NoContent();
+        return TypedResults.Ok(result);
     }
 
-    public static async Task<IResult> PostListAsync([FromBody] ImportData file, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> GetJobsAsync(IImportQueue queue, IUserContext users, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
             return error;
 
-        Importer importer = new ListImporter(file, db, user);
+        var results = queue.GetJobs().Where(x => x.Result.UserId == user.Id);
 
-        await importer.Import();
+        return TypedResults.Ok(results);
+    }
 
+    public static async Task<IResult> GetAllJobsAsync(IImportQueue queue, IUserContext users, HttpContext context)
+    {
+        var admin = await users.IsAdmin(context.User);
+        if (admin is not null)
+            return admin;
+
+        var results = queue.GetJobs();
+
+        return TypedResults.Ok(results);
+    }
+
+    public static async Task<IResult> PostFileAsync([FromForm] IFormFile file, [FromRoute] int type, [FromQuery] long? patient, IUserContext users, IImportQueue queue, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+        long person;
+        if (patient is not null)
+        {
+            if (!await users.ValidateCaregiverAsync(user, patient.Value, RightType.Edit))
+            {
+                return TypedResults.Forbid();
+            }
+            person = patient.Value;
+        }
+        else
+        {
+            person = user.Id;
+        }
+
+        // generate a task id
+        var id = Guid.NewGuid();
+
+        // add the job in the queue  
+        await using var stream = file.OpenReadStream();
+        MemoryStream ms = new();
+        // save the data so the background job does not fail
+        await stream.CopyToAsync(ms);
+        ms.Position = 0;
+        var fileType = (FileTypes)type;
+
+        queue.Enqueue(new ImporterService.Job(id, ms, fileType, user.Id, person), $"Import from {fileType}{(patient is not null ? $" for {patient}" : string.Empty)}");
+
+        // return the jobid
+        return TypedResults.Created(default(string), new JobId(id));
+    }
+
+    public static async Task<IResult> PostListAsync([FromBody] ImportData file, [FromQuery] long? patient, IUserContext users, IHealthContext db, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+        long person;
+        if (patient is not null)
+        {
+            if (!await users.ValidateCaregiverAsync(user, patient.Value, RightType.Edit))
+            {
+                return TypedResults.Forbid();
+            }
+            person = patient.Value;
+        }
+        else
+        {
+            person = user.Id;
+        }
+
+        Importer importer = new ListImporter(file, db, user.Id, person);
+        await importer.Import(new LocalQueue(), Guid.NewGuid());
+
+        // TODO return a asyncenumerable to stream the progress
         return TypedResults.NoContent();
     }
 }

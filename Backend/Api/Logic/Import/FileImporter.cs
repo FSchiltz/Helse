@@ -1,54 +1,38 @@
 using Api.Data;
 using Api.Data.Models;
-using Api.Models.Events;
-using Api.Models.Metrics;
 
 namespace Api.Logic.Import;
 
-public abstract class FileImporter(IFormFile file, IHealthContext db, User user) : Importer(db, user)
+public abstract class FileImporter(Stream file, IHealthContext db, long user, long patient) : Importer(db, user, patient), IDisposable
 {
-    public IFormFile File { get; } = file;
-}
+    private bool disposedValue;
 
-public abstract class Importer(IHealthContext db, Data.Models.User user)
-{
-    public Data.Models.User User { get; } = user;
+    public Stream File { get; } = file;
 
-    public abstract Task Import();
-
-    protected async Task ImportEvent(CreateEvent e)
+    protected virtual void Dispose(bool disposing)
     {
-        if (e.Tag is null)
-            return;
-
-        await using var transaction = await db.BeginTransactionAsync();
-
-        // check if the event exists
-        var fromDb = await db.ExistsEvent(User.PersonId, e.Tag);
-
-        if (!fromDb)
+        if (!disposedValue)
         {
-            await db.Insert(e, User.PersonId, User.Id);
-        }
+            if (disposing)
+            {
+                File.Dispose();
+            }
 
-        await transaction.CommitAsync();
+            disposedValue = true;
+        }
     }
 
-    protected async Task ImportMetric(CreateMetric metric)
+    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+    // ~FileImporter()
+    // {
+    //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+    //     Dispose(disposing: false);
+    // }
+
+    public void Dispose()
     {
-        if (metric.Tag is null)
-            return;
-
-        await using var transaction = await db.BeginTransactionAsync();
-
-        // check if the metric exists
-        var fromDb = await db.ExistsMetric(User.PersonId, metric.Tag, metric.Source);
-
-        if (!fromDb)
-        {
-            await db.Insert(metric, User.PersonId, User.Id);
-        }
-
-        await transaction.CommitAsync();
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

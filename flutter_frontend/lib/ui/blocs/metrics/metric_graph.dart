@@ -277,15 +277,15 @@ class _MetricGraphState extends State<MetricGraph> {
         double min = values.min;
         double max = values.max;
         if (min > max) {
-          throw Exception("issue");
+          throw StateError("issue");
         }
 
         double mean = values.reduce((a, b) => a + b) / values.length;
         if (mean > max) {
-          throw Exception("issue");
+          throw StateError("issue");
         }
         if (mean < min) {
-          throw Exception("issue");
+          throw StateError("issue");
         }
 
         groups.add(

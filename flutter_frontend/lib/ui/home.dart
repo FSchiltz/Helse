@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:helse/logic/fit/status_bloc.dart';
 
 import '../logic/d_i.dart';
 import '../logic/event.dart';
@@ -42,6 +43,7 @@ class _HomeState extends State<Home> {
     super.initState();
     _getUser();
     _startFitJob(DI.fit);
+    _startTaskResultJob(DI.jobs);
   }
 
   DeviceType getDevice() {
@@ -74,37 +76,62 @@ class _HomeState extends State<Home> {
             elevation: 1,
             centerTitle: true,
             actions: [
+              BlocProvider<StatusBloc>.value(
+                value: DI.jobs,
+                child: BlocBuilder<StatusBloc, SubmissionStatus>(
+                  builder: (context, state) {
+                    Color? color;
+                    bool static = true;
+                    switch (state) {
+                      case SubmissionStatus.success:
+                        color = Colors.green;
+                        break;
+                      case SubmissionStatus.failure:
+                        color = Colors.red;
+                        break;
+                      case SubmissionStatus.inProgress:
+                        static = false;
+                        break;
+                      default:
+                        color = null;
+                    }
+
+                    return HelseLoader(
+                      static: static,
+                      color: color,
+                      size: 22,
+                      onTouch: () => _showJobs(context),
+                      icon: Icons.list_alt_sharp,
+                    );
+                  },
+                ),
+              ),
+
               BlocProvider<TaskBloc>.value(
                 value: DI.fit,
                 child: BlocBuilder<TaskBloc, SubmissionStatus>(
                   builder: (context, state) {
+                    Color? color;
+                    bool static = true;
                     switch (state) {
                       case SubmissionStatus.success:
-                        return HelseLoader(
-                          static: true,
-                          color: Colors.green,
-                          size: 22,
-                          onTouch: () => _showTasks(context),
-                        );
+                        color = Colors.green;
+                        break;
                       case SubmissionStatus.failure:
-                        return HelseLoader(
-                          static: true,
-                          color: Colors.red,
-                          size: 22,
-                          onTouch: () => _showTasks(context),
-                        );
+                        color = Colors.red;
+                        break;
                       case SubmissionStatus.inProgress:
-                        return HelseLoader(
-                          size: 32,
-                          onTouch: () => _showTasks(context),
-                        );
+                        static = false;
+                        break;
                       default:
-                        return HelseLoader(
-                          size: 20,
-                          static: true,
-                          onTouch: () => _showTasks(context),
-                        );
+                        color = null;
                     }
+                    return HelseLoader(
+                      static: static,
+                      color: color,
+                      size: 22,
+                      onTouch: () => _showSynchroRuns(context),
+                    );
                   },
                 ),
               ),
@@ -177,8 +204,7 @@ class _HomeState extends State<Home> {
                       ).then(
                         (c) => setState(() {
                           _refreshKey = UniqueKey();
-                        })
-                        ,
+                        }),
                       );
                       break;
                     case 3:
@@ -202,11 +228,32 @@ class _HomeState extends State<Home> {
     }
   }
 
-  void _showTasks(BuildContext context) {
+  Future<void> _startTaskResultJob(StatusBloc jobs) async {
+    jobs.start();
+    var existingJobs = await DI.import.getJobs();
+    for (var job in existingJobs) {
+      DI.importLogic.jobs[job.id] = job.result;
+    }
+  }
+
+  void _showSynchroRuns(BuildContext context) {
     var tasks = DI.fit.executions;
+    _showTaskDialog(context, tasks, 'Health sync history');
+  }
+
+  void _showJobs(BuildContext context) {
+    var tasks = DI.importLogic.executions();
+    _showTaskDialog(context, tasks, 'File import history');
+  }
+
+  void _showTaskDialog(
+    BuildContext context,
+    List<Execution> tasks,
+    String title,
+  ) {
     showDialog<void>(
       context: context,
-      builder: (context) => TaskStatusDialog(tasks),
+      builder: (context) => TaskStatusDialog(tasks, title),
     );
   }
 }

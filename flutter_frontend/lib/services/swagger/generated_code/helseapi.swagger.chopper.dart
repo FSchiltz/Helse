@@ -143,7 +143,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<dynamic>> _apiPersonPersonIdDelete({
+  Future<Response<dynamic>> _apiPersonUserIdDelete({
     required int? userId,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -156,13 +156,11 @@ final class _$Helseapi extends Helseapi {
       deprecated: false,
     ),
   }) {
-    final Uri $url = Uri.parse('/api/person/{personId}');
-    final Map<String, dynamic> $params = <String, dynamic>{'userId': userId};
+    final Uri $url = Uri.parse('/api/person/${userId}');
     final Request $request = Request(
       'DELETE',
       $url,
       client.baseUrl,
-      parameters: $params,
       tag: swaggerMetaData,
     );
     return client.send<dynamic, dynamic>($request);
@@ -1219,6 +1217,29 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
+  Future<Response<List<JobResult>>> _apiAdminSettingsJobsGet({
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["ImportLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/admin/settings/jobs');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      tag: swaggerMetaData,
+    );
+    return client.send<List<JobResult>, JobResult>($request);
+  }
+
+  @override
   Future<Response<UserStats>> _apiAdminStatsUsersGet({
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -1325,8 +1346,9 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<dynamic>> _apiImportTypePost({
+  Future<Response<JobId>> _apiImportTypePost({
     required int? type,
+    int? patient,
     required dynamic file,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -1340,6 +1362,7 @@ final class _$Helseapi extends Helseapi {
     ),
   }) {
     final Uri $url = Uri.parse('/api/import/${type}');
+    final Map<String, dynamic> $params = <String, dynamic>{'patient': patient};
     final List<PartValue> $parts = <PartValue>[
       PartValue<dynamic>('file', file),
     ];
@@ -1349,13 +1372,85 @@ final class _$Helseapi extends Helseapi {
       client.baseUrl,
       parts: $parts,
       multipart: true,
+      parameters: $params,
       tag: swaggerMetaData,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<JobId, JobId>($request);
+  }
+
+  @override
+  Future<Response<List<JobResultInfo>>> _apiImportJobsAllGet({
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["ImportLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/import/jobs/all');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      tag: swaggerMetaData,
+    );
+    return client.send<List<JobResultInfo>, JobResultInfo>($request);
+  }
+
+  @override
+  Future<Response<List<JobResultInfo>>> _apiImportJobsGet({
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["ImportLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/import/jobs');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      tag: swaggerMetaData,
+    );
+    return client.send<List<JobResultInfo>, JobResultInfo>($request);
+  }
+
+  @override
+  Future<Response<JobResult>> _apiImportIdGet({
+    required String? id,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["ImportLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/import/${id}');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      tag: swaggerMetaData,
+    );
+    return client.send<JobResult, JobResult>($request);
   }
 
   @override
   Future<Response<dynamic>> _apiImportPost({
+    int? patient,
     required ImportData? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -1369,12 +1464,14 @@ final class _$Helseapi extends Helseapi {
     ),
   }) {
     final Uri $url = Uri.parse('/api/import');
+    final Map<String, dynamic> $params = <String, dynamic>{'patient': patient};
     final $body = body;
     final Request $request = Request(
       'POST',
       $url,
       client.baseUrl,
       body: $body,
+      parameters: $params,
       tag: swaggerMetaData,
     );
     return client.send<dynamic, dynamic>($request);

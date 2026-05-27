@@ -19,6 +19,8 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
   List<CountByDate> _metricSummaries = [];
   bool _loading = true;
 
+  List<JobResultInfo> _jobs = [];
+
   @override
   void initState() {
     super.initState();
@@ -48,6 +50,8 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
       _metricSummaries = metrics.events;
       _metricTypeCounts = metrics.eventCounts;
     }
+
+    _jobs = await DI.admin.getJobs();
 
     setState(() => _loading = false);
   }
@@ -108,6 +112,30 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
               countGraph(_eventSummaries),
               countTypeGraph(_eventTypeCounts),
             ],
+          ),
+          const SizedBox(height: 32),
+          const Text(
+            'Jobs',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          ListView.builder(
+            itemCount: _jobs.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              var job = _jobs[index];
+              return Row(
+                children: [
+                  Text(job.id),
+                  SizedBox(width: 12),
+                  Text(job.result.status.toString()),
+                  SizedBox(width: 12),
+                  Text('${job.result.progress}%'),
+                  SizedBox(width: 12),
+                  Text(job.result.error?.toString() ?? ''),
+                ],
+              );
+            },
           ),
         ],
       ),

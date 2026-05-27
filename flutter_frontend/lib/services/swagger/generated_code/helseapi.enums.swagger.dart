@@ -22,6 +22,26 @@ enum FileTypes {
   const FileTypes(this.value);
 }
 
+enum JobStatus {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue('NotStarted')
+  notstarted('NotStarted'),
+  @JsonValue('InProgress')
+  inprogress('InProgress'),
+  @JsonValue('Done')
+  done('Done'),
+  @JsonValue('InError')
+  inerror('InError'),
+  @JsonValue('Cancel')
+  cancel('Cancel');
+
+  final String? value;
+
+  const JobStatus(this.value);
+}
+
 enum MetricDataType {
   @JsonValue(null)
   swaggerGeneratedUnknown(null),
