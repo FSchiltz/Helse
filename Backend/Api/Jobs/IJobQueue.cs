@@ -2,7 +2,7 @@ namespace Api.Jobs;
 
 public interface IJobQueue<T>
 {
-    void Enqueue(T value);
+    void Enqueue(T value, string description);
 
     ValueTask<T> DequeueAsync(CancellationToken token);
 

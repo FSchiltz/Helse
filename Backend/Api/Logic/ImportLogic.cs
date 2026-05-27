@@ -81,8 +81,9 @@ public static class ImportLogic
         // save the data so the background job does not fail
         await stream.CopyToAsync(ms);
         ms.Position = 0;
+        var fileType = (FileTypes)type;
 
-        queue.Enqueue(new ImporterService.Job(id, ms, (FileTypes)type, user));
+        queue.Enqueue(new ImporterService.Job(id, ms, fileType, user), $"Import from {fileType}");
 
         // return the jobid
         return TypedResults.Created(default(string), new JobId(id));

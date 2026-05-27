@@ -3,15 +3,8 @@ import 'package:helse/logic/event.dart';
 import 'package:helse/logic/fit/task_bloc.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
-class JobCheckResult {
-  final JobResult result;
-  final DateTime time;
-
-  JobCheckResult(this.result, this.time);
-}
-
 class ImportLogic {
-  final Map<String, JobCheckResult> jobs = {};
+  final Map<String, JobResult> jobs = {};
   ImportLogic();
 
   Future<bool> isEnabled() async {
@@ -23,12 +16,12 @@ class ImportLogic {
     SubmissionStatus result = SubmissionStatus.initial;
 
     for (var job in entries) {
-      if (job.value.result.status == JobStatus.inprogress ||
-          job.value.result.status == JobStatus.notstarted) {
+      if (job.value.status == JobStatus.inprogress ||
+          job.value.status == JobStatus.notstarted) {
         var status = await DI.import.status(job.key);
         if (status != null) {
           result = SubmissionStatus.inProgress;
-          jobs[job.key] = JobCheckResult(status, DateTime.now().toLocal());
+          jobs[job.key] = status;
         }
       }
     }
@@ -39,9 +32,12 @@ class ImportLogic {
   void add(String id) {
     jobs.putIfAbsent(
       id,
-      () => JobCheckResult(
-        JobResult(status: JobStatus.inprogress, progress: 0, userId: 0),
-        DateTime.now(),
+      () => JobResult(
+        status: JobStatus.notstarted,
+        progress: 0,
+        userId: 0,
+        description: "",
+        start: DateTime.now(),
       ),
     );
   }
@@ -59,9 +55,10 @@ class ImportLogic {
     return jobs.entries
         .map(
           (e) => Execution(
-            e.value.time,
-            _getStatus(e.value.result.status),
-            "Task ${e.key} has progress ${e.value.result.progress?.toStringAsFixed(2)} %",
+            e.value.start,
+            _getStatus(e.value.status),
+            title: e.value.description,
+            progress: e.value.progress ,
           ),
         )
         .toList();

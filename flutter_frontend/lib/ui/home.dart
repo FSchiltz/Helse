@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/logic/fit/status_bloc.dart';
-import 'package:helse/logic/import_logic.dart';
 
 import '../logic/d_i.dart';
 import '../logic/event.dart';
@@ -233,7 +232,7 @@ class _HomeState extends State<Home> {
     jobs.start();
     var existingJobs = await DI.import.getJobs();
     for (var job in existingJobs) {
-      DI.importLogic.jobs[job.id] = JobCheckResult(job.result, DateTime.now());
+      DI.importLogic.jobs[job.id] = job.result;
     }
   }
 

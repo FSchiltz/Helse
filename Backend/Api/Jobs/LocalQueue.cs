@@ -12,7 +12,7 @@ public sealed class LocalQueue : IImportQueue
         throw new NotImplementedException();
     }
 
-    public void Enqueue(Job value)
+    public void Enqueue(Job value, string description)
     {
         throw new NotImplementedException();
     }

@@ -28,15 +28,47 @@ class TaskStatusDialog extends StatelessWidget {
                           itemBuilder: (x, key) {
                             var theme = Theme.of(x).textTheme;
                             var task = tasks[key];
-                            return Column(
-                              children: [
-                                Text(
-                                  '${task.state.name} at ${DateHelper.format(task.date, context: x)}',
-                                  style: theme.bodyLarge,
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.surfaceContainerHighest,
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      '${task.title ?? task.state.name} at ${DateHelper.format(task.date, context: x)}',
+                                      style: theme.bodyLarge,
+                                    ),
+                                    Text(
+                                      task.status ?? '',
+                                      style: theme.bodySmall,
+                                    ),
+
+                                    if (task.progress != null &&
+                                        (task.progress ?? 0) < 100)
+                                      Row(
+                                        children: [
+                                          SizedBox(width: 12),
+                                          Text(
+                                            '${task.progress?.toStringAsFixed(2)}%',
+                                          ),
+                                          SizedBox(width: 8),
+                                          Flexible(
+                                            child: LinearProgressIndicator(
+                                              value: (task.progress ?? 0) / 100,
+                                            ),
+                                          ),
+                                          SizedBox(width: 12),
+                                          Expanded(
+                                            child: Text(task.state.name),
+                                          ),
+                                        ],
+                                      ),
+                                    const SizedBox(height: 10),
+                                  ],
                                 ),
-                                Text(task.status ?? '', style: theme.bodySmall),
-                                const SizedBox(height: 10),
-                              ],
+                              ),
                             );
                           },
                         ),

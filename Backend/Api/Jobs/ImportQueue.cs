@@ -15,14 +15,16 @@ public sealed class ImportQueue : IImportQueue
         return _queue.Reader.ReadAsync(token);
     }
 
-    public void Enqueue(Job value)
+    public void Enqueue(Job value, string description)
     {
         _queue.Writer.TryWrite(value);
-         _results.Add(value.Id, new JobResult()
+        _results.Add(value.Id, new JobResult()
         {
             UserId = value.User.Id,
             Progress = 0,
             Status = JobStatus.NotStarted,
+            Start = DateTime.MinValue,
+            Description = description,
         });
     }
 
@@ -34,20 +36,23 @@ public sealed class ImportQueue : IImportQueue
 
     public void Start(Guid id)
     {
-       _results[id].Status = JobStatus.InProgress;
-       _results[id].Progress = 0;
+        _results[id].Status = JobStatus.InProgress;
+        _results[id].Progress = 0;
+        _results[id].Start = DateTime.Now;
     }
 
     public void Stop(Guid id)
     {
         _results[id].Status = JobStatus.Done;
         _results[id].Progress = 100;
+        _results[id].Stop = DateTime.Now;
     }
 
     public void Error(Guid id, Exception error)
     {
         _results[id].Status = JobStatus.InError;
         _results[id].Error = error;
+        _results[id].Stop = DateTime.Now;
     }
 
     public JobResult GetResult(Guid id) => _results[id];

@@ -2723,10 +2723,13 @@ extension $JobIdExtension on JobId {
 @JsonSerializable(explicitToJson: true)
 class JobResult {
   const JobResult({
+    required this.description,
     required this.userId,
     this.progress,
     this.status,
     this.error,
+    required this.start,
+    this.stop,
   });
 
   factory JobResult.fromJson(Map<String, dynamic> json) =>
@@ -2735,6 +2738,8 @@ class JobResult {
   static const toJsonFactory = _$JobResultToJson;
   Map<String, dynamic> toJson() => _$JobResultToJson(this);
 
+  @JsonKey(name: 'description')
+  final String description;
   @JsonKey(name: 'userId')
   final int userId;
   @JsonKey(name: 'progress')
@@ -2747,12 +2752,21 @@ class JobResult {
   final enums.JobStatus? status;
   @JsonKey(name: 'error')
   final dynamic error;
+  @JsonKey(name: 'start')
+  final DateTime start;
+  @JsonKey(name: 'stop')
+  final DateTime? stop;
   static const fromJsonFactory = _$JobResultFromJson;
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is JobResult &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )) &&
             (identical(other.userId, userId) ||
                 const DeepCollectionEquality().equals(other.userId, userId)) &&
             (identical(other.progress, progress) ||
@@ -2763,7 +2777,11 @@ class JobResult {
             (identical(other.status, status) ||
                 const DeepCollectionEquality().equals(other.status, status)) &&
             (identical(other.error, error) ||
-                const DeepCollectionEquality().equals(other.error, error)));
+                const DeepCollectionEquality().equals(other.error, error)) &&
+            (identical(other.start, start) ||
+                const DeepCollectionEquality().equals(other.start, start)) &&
+            (identical(other.stop, stop) ||
+                const DeepCollectionEquality().equals(other.stop, stop)));
   }
 
   @override
@@ -2771,39 +2789,54 @@ class JobResult {
 
   @override
   int get hashCode =>
+      const DeepCollectionEquality().hash(description) ^
       const DeepCollectionEquality().hash(userId) ^
       const DeepCollectionEquality().hash(progress) ^
       const DeepCollectionEquality().hash(status) ^
       const DeepCollectionEquality().hash(error) ^
+      const DeepCollectionEquality().hash(start) ^
+      const DeepCollectionEquality().hash(stop) ^
       runtimeType.hashCode;
 }
 
 extension $JobResultExtension on JobResult {
   JobResult copyWith({
+    String? description,
     int? userId,
     double? progress,
     enums.JobStatus? status,
     dynamic error,
+    DateTime? start,
+    DateTime? stop,
   }) {
     return JobResult(
+      description: description ?? this.description,
       userId: userId ?? this.userId,
       progress: progress ?? this.progress,
       status: status ?? this.status,
       error: error ?? this.error,
+      start: start ?? this.start,
+      stop: stop ?? this.stop,
     );
   }
 
   JobResult copyWithWrapped({
+    Wrapped<String>? description,
     Wrapped<int>? userId,
     Wrapped<double?>? progress,
     Wrapped<enums.JobStatus?>? status,
     Wrapped<dynamic>? error,
+    Wrapped<DateTime>? start,
+    Wrapped<DateTime?>? stop,
   }) {
     return JobResult(
+      description: (description != null ? description.value : this.description),
       userId: (userId != null ? userId.value : this.userId),
       progress: (progress != null ? progress.value : this.progress),
       status: (status != null ? status.value : this.status),
       error: (error != null ? error.value : this.error),
+      start: (start != null ? start.value : this.start),
+      stop: (stop != null ? stop.value : this.stop),
     );
   }
 }

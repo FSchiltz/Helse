@@ -2280,10 +2280,15 @@
       },
       "JobResult": {
         "required": [
-          "userId"
+          "description",
+          "userId",
+          "start"
         ],
         "type": "object",
         "properties": {
+          "description": {
+            "type": "string"
+          },
           "userId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
@@ -2312,6 +2317,17 @@
                 "$ref": "#/components/schemas/Exception"
               }
             ]
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "stop": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           }
         }
       },

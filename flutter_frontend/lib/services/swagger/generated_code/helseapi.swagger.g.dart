@@ -246,17 +246,23 @@ Map<String, dynamic> _$JobIdToJson(JobId instance) => <String, dynamic>{
 };
 
 JobResult _$JobResultFromJson(Map<String, dynamic> json) => JobResult(
+  description: json['description'] as String,
   userId: (json['userId'] as num).toInt(),
   progress: (json['progress'] as num?)?.toDouble(),
   status: jobStatusNullableFromJson(json['status']),
   error: json['error'],
+  start: DateTime.parse(json['start'] as String),
+  stop: json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
 );
 
 Map<String, dynamic> _$JobResultToJson(JobResult instance) => <String, dynamic>{
+  'description': instance.description,
   'userId': instance.userId,
   'progress': instance.progress,
   'status': jobStatusNullableToJson(instance.status),
   'error': instance.error,
+  'start': instance.start.toIso8601String(),
+  'stop': instance.stop?.toIso8601String(),
 };
 
 JobResultInfo _$JobResultInfoFromJson(Map<String, dynamic> json) =>
