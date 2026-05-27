@@ -188,7 +188,5 @@ public class RedmiWatch(Stream file, IHealthContext db, long user, long patient)
             read = File.Position;
             queue.Progress(id, read / (double)File.Length * 100);
         }
-
-        queue.Stop(id);
     }
 }

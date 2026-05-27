@@ -11,9 +11,9 @@ public class ImporterService(IServiceProvider serviceProvider, IImportQueue queu
     {
         while (!stoppingToken.IsCancellationRequested)
         {
+            var job = await queue.DequeueAsync(stoppingToken);
             try
             {
-                var job = await queue.DequeueAsync(stoppingToken);
 
                 using var scope = serviceProvider.CreateScope();
                 var db = scope.ServiceProvider.GetRequiredService<IHealthContext>();
@@ -25,14 +25,17 @@ public class ImporterService(IServiceProvider serviceProvider, IImportQueue queu
                 };
                 queue.Start(job.Id);
                 await importer.Import(queue, job.Id);
+                queue.Stop(job.Id);
 
             }
             catch (OperationCanceledException)
             {
+                queue.Cancel(job.Id);
                 break;
             }
             catch (Exception ex)
             {
+                queue.Error(job.Id, ex);
                 logger.LogError(ex, "Error while checking events for notifications.");
             }
         }

@@ -7,6 +7,11 @@ namespace Api.Jobs;
 /// </summary>
 public sealed class LocalQueue : IImportQueue
 {
+    public void Cancel(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
     public ValueTask<Job> DequeueAsync(CancellationToken token)
     {
         throw new NotImplementedException();
@@ -14,7 +19,10 @@ public sealed class LocalQueue : IImportQueue
 
     public void Enqueue(Job value, string description)
     {
-        throw new NotImplementedException();
+    }
+
+    public void Error(Guid id, Exception ex)
+    {
     }
 
     public JobResultInfo[] GetJobs()

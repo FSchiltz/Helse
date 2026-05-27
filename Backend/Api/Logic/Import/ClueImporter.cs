@@ -21,7 +21,6 @@ public class ClueImporter(Stream file, IHealthContext db, long user, long patien
         var json = await JsonSerializer.DeserializeAsync<ClueItem[]>(File, _options);
         if (json is null)
         {
-            queue.Stop(id);
             return;
         }
 
@@ -52,8 +51,6 @@ public class ClueImporter(Stream file, IHealthContext db, long user, long patien
             queue.Progress(id, i / json.Length * 100);
             i++;
         }
-
-        queue.Stop(id);
     }
 
     private static (MetricTypes, string?) GetType(string? type) => type switch

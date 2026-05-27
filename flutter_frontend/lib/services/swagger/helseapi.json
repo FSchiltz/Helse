@@ -2171,55 +2171,6 @@
           }
         }
       },
-      "Exception": {
-        "type": "object",
-        "properties": {
-          "targetSite": {
-            "$ref": "#/components/schemas/MethodBase"
-          },
-          "message": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "data": {
-            "type": [
-              "null",
-              "object"
-            ]
-          },
-          "innerException": {
-            "$ref": "#/components/schemas/Exception"
-          },
-          "helpLink": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "source": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "hResult": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
-          "stackTrace": {
-            "type": [
-              "null",
-              "string"
-            ]
-          }
-        }
-      },
       "FileType": {
         "required": [
           "type",
@@ -2335,13 +2286,9 @@
             "$ref": "#/components/schemas/JobStatus"
           },
           "error": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/Exception"
-              }
+            "type": [
+              "null",
+              "string"
             ]
           },
           "start": {
@@ -2378,10 +2325,10 @@
           "NotStarted",
           "InProgress",
           "Done",
-          "InError"
+          "InError",
+          "Cancel"
         ]
       },
-      "MethodBase": { },
       "Metric": {
         "required": [
           "id",

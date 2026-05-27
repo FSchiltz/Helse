@@ -75,6 +75,7 @@ class ImportLogic {
       case JobStatus.done:
         return SubmissionStatus.success;
       case JobStatus.inerror:
+      case JobStatus.cancel:
         return SubmissionStatus.failure;
     }
   }

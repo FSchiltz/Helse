@@ -2376,147 +2376,6 @@ extension $EventTypeExtension on EventType {
 }
 
 @JsonSerializable(explicitToJson: true)
-class Exception {
-  const Exception({
-    this.targetSite,
-    this.message,
-    this.data,
-    this.innerException,
-    this.helpLink,
-    this.source,
-    this.hResult,
-    this.stackTrace,
-  });
-
-  factory Exception.fromJson(Map<String, dynamic> json) =>
-      _$ExceptionFromJson(json);
-
-  static const toJsonFactory = _$ExceptionToJson;
-  Map<String, dynamic> toJson() => _$ExceptionToJson(this);
-
-  @JsonKey(name: 'targetSite')
-  final MethodBase? targetSite;
-  @JsonKey(name: 'message')
-  final String? message;
-  @JsonKey(name: 'data')
-  final Object? data;
-  @JsonKey(name: 'innerException')
-  final Exception? innerException;
-  @JsonKey(name: 'helpLink')
-  final String? helpLink;
-  @JsonKey(name: 'source')
-  final String? source;
-  @JsonKey(name: 'hResult')
-  final int? hResult;
-  @JsonKey(name: 'stackTrace')
-  final String? stackTrace;
-  static const fromJsonFactory = _$ExceptionFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is Exception &&
-            (identical(other.targetSite, targetSite) ||
-                const DeepCollectionEquality().equals(
-                  other.targetSite,
-                  targetSite,
-                )) &&
-            (identical(other.message, message) ||
-                const DeepCollectionEquality().equals(
-                  other.message,
-                  message,
-                )) &&
-            (identical(other.data, data) ||
-                const DeepCollectionEquality().equals(other.data, data)) &&
-            (identical(other.innerException, innerException) ||
-                const DeepCollectionEquality().equals(
-                  other.innerException,
-                  innerException,
-                )) &&
-            (identical(other.helpLink, helpLink) ||
-                const DeepCollectionEquality().equals(
-                  other.helpLink,
-                  helpLink,
-                )) &&
-            (identical(other.source, source) ||
-                const DeepCollectionEquality().equals(other.source, source)) &&
-            (identical(other.hResult, hResult) ||
-                const DeepCollectionEquality().equals(
-                  other.hResult,
-                  hResult,
-                )) &&
-            (identical(other.stackTrace, stackTrace) ||
-                const DeepCollectionEquality().equals(
-                  other.stackTrace,
-                  stackTrace,
-                )));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(targetSite) ^
-      const DeepCollectionEquality().hash(message) ^
-      const DeepCollectionEquality().hash(data) ^
-      const DeepCollectionEquality().hash(innerException) ^
-      const DeepCollectionEquality().hash(helpLink) ^
-      const DeepCollectionEquality().hash(source) ^
-      const DeepCollectionEquality().hash(hResult) ^
-      const DeepCollectionEquality().hash(stackTrace) ^
-      runtimeType.hashCode;
-}
-
-extension $ExceptionExtension on Exception {
-  Exception copyWith({
-    MethodBase? targetSite,
-    String? message,
-    Object? data,
-    Exception? innerException,
-    String? helpLink,
-    String? source,
-    int? hResult,
-    String? stackTrace,
-  }) {
-    return Exception(
-      targetSite: targetSite ?? this.targetSite,
-      message: message ?? this.message,
-      data: data ?? this.data,
-      innerException: innerException ?? this.innerException,
-      helpLink: helpLink ?? this.helpLink,
-      source: source ?? this.source,
-      hResult: hResult ?? this.hResult,
-      stackTrace: stackTrace ?? this.stackTrace,
-    );
-  }
-
-  Exception copyWithWrapped({
-    Wrapped<MethodBase?>? targetSite,
-    Wrapped<String?>? message,
-    Wrapped<Object?>? data,
-    Wrapped<Exception?>? innerException,
-    Wrapped<String?>? helpLink,
-    Wrapped<String?>? source,
-    Wrapped<int?>? hResult,
-    Wrapped<String?>? stackTrace,
-  }) {
-    return Exception(
-      targetSite: (targetSite != null ? targetSite.value : this.targetSite),
-      message: (message != null ? message.value : this.message),
-      data: (data != null ? data.value : this.data),
-      innerException: (innerException != null
-          ? innerException.value
-          : this.innerException),
-      helpLink: (helpLink != null ? helpLink.value : this.helpLink),
-      source: (source != null ? source.value : this.source),
-      hResult: (hResult != null ? hResult.value : this.hResult),
-      stackTrace: (stackTrace != null ? stackTrace.value : this.stackTrace),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
 class FileType {
   const FileType({required this.type, this.name});
 
@@ -2761,7 +2620,7 @@ class JobResult {
   )
   final enums.JobStatus? status;
   @JsonKey(name: 'error')
-  final dynamic error;
+  final String? error;
   @JsonKey(name: 'start')
   final DateTime start;
   @JsonKey(name: 'stop')
@@ -2815,7 +2674,7 @@ extension $JobResultExtension on JobResult {
     int? userId,
     double? progress,
     enums.JobStatus? status,
-    dynamic error,
+    String? error,
     DateTime? start,
     DateTime? stop,
   }) {
@@ -2835,7 +2694,7 @@ extension $JobResultExtension on JobResult {
     Wrapped<int>? userId,
     Wrapped<double?>? progress,
     Wrapped<enums.JobStatus?>? status,
-    Wrapped<dynamic>? error,
+    Wrapped<String?>? error,
     Wrapped<DateTime>? start,
     Wrapped<DateTime?>? stop,
   }) {
@@ -2901,25 +2760,6 @@ extension $JobResultInfoExtension on JobResultInfo {
       result: (result != null ? result.value : this.result),
     );
   }
-}
-
-@JsonSerializable(explicitToJson: true)
-class MethodBase {
-  const MethodBase();
-
-  factory MethodBase.fromJson(Map<String, dynamic> json) =>
-      _$MethodBaseFromJson(json);
-
-  static const toJsonFactory = _$MethodBaseToJson;
-  Map<String, dynamic> toJson() => _$MethodBaseToJson(this);
-
-  static const fromJsonFactory = _$MethodBaseFromJson;
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode => runtimeType.hashCode;
 }
 
 @JsonSerializable(explicitToJson: true)

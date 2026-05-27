@@ -33,7 +33,9 @@ enum JobStatus {
   @JsonValue('Done')
   done('Done'),
   @JsonValue('InError')
-  inerror('InError');
+  inerror('InError'),
+  @JsonValue('Cancel')
+  cancel('Cancel');
 
   final String? value;
 

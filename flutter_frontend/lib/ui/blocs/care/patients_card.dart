@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/blocs/care/patient_add.dart';
 import 'package:helse/ui/blocs/care/patient_menu.dart';
 import 'package:helse/ui/blocs/care/patients_dashboard.dart';
-import 'package:helse/ui/blocs/care/share_patient_dialog.dart';
 
 class PatientsCard extends StatelessWidget {
   final Person person;

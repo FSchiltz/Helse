@@ -51,11 +51,17 @@ public sealed class ImportQueue : IImportQueue
     public void Error(Guid id, Exception error)
     {
         _results[id].Status = JobStatus.InError;
-        _results[id].Error = error;
+        _results[id].Error = error.Message;
         _results[id].Stop = DateTime.Now;
     }
 
     public JobResult GetResult(Guid id) => _results[id];
 
     public JobResultInfo[] GetJobs() => [.. _results.Select(x => new JobResultInfo(x.Key, x.Value))];
+
+    public void Cancel(Guid id)
+    {
+        _results[id].Status = JobStatus.Cancel;
+        _results[id].Stop = DateTime.Now;
+    }
 }
