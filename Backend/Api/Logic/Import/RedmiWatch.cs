@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using Api.Data;
+using Api.Jobs;
 using Api.Logic.Import.Redmi;
 using Api.Models;
 using Api.Models.Events;
@@ -57,7 +58,7 @@ public class RedmiWatch(IFormFile file, IHealthContext db, Data.Models.User user
         }
     }
 
-    public override async Task Import()
+    public override async Task Import(IImportQueue queue, Guid id)
     {
         // Remdi fiel are csv, we first convert them
         await using var stream = File.OpenReadStream();
@@ -183,5 +184,7 @@ public class RedmiWatch(IFormFile file, IHealthContext db, Data.Models.User user
                     break;
             }
         }
+
+        queue.Stop(id);
     }
 }

@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 using Api;
 using Api.Data;
-using Api.Helpers;
 using Api.Helpers.Auth;
+using Api.Jobs;
 using Api.Logic.Auth;
 using LinqToDB;
 using LinqToDB.AspNet;
@@ -79,6 +79,9 @@ builder.Services.AddAuthorizationBuilder()
 builder.Services.AddSingleton(new MigrationSettings(connection));
 builder.Services.AddHostedService<MigrationHelper>();
 builder.Services.AddHostedService<EventNotificationService>();
+builder.Services.AddHostedService<ImporterService>()
+    .AddSingleton<IImportQueue, ImportQueue>();
+
 builder.Services.AddHttpClient();
 
 var app = builder.Build();

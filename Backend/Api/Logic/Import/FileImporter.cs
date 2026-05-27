@@ -1,5 +1,6 @@
 using Api.Data;
 using Api.Data.Models;
+using Api.Jobs;
 using Api.Models.Events;
 using Api.Models.Metrics;
 
@@ -10,11 +11,19 @@ public abstract class FileImporter(IFormFile file, IHealthContext db, User user)
     public IFormFile File { get; } = file;
 }
 
+public enum JobStatus
+{
+    NotStarted,
+    InProgress,
+    Done,
+    InError,
+}
+
 public abstract class Importer(IHealthContext db, Data.Models.User user)
 {
     public Data.Models.User User { get; } = user;
 
-    public abstract Task Import();
+    public abstract Task Import(IImportQueue queue, Guid id);
 
     protected async Task ImportEvent(CreateEvent e)
     {

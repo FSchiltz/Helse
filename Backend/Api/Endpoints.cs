@@ -7,6 +7,7 @@ using Api.Models.Persons;
 using Api.Models.Settings.Admin;
 using Api.Models.Treatments;
 using Api.Models.Admin;
+using Api.Jobs;
 
 namespace Api;
 
@@ -278,9 +279,14 @@ public static class Endpoints
             .Produces<List<FileType>>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
 
+
         import.MapPost("/{type}", ImportLogic.PostFileAsync)
             .DisableAntiforgery()
-            .Produces((int)HttpStatusCode.NoContent)
+            .Produces<Guid>((int)HttpStatusCode.Accepted)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
+        import.MapGet("/{id}", ImportLogic.GetJobResult)
+            .Produces<JobResult>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
 
         import.MapPost("/", ImportLogic.PostListAsync)

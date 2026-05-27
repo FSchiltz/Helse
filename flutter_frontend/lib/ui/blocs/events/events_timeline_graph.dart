@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';

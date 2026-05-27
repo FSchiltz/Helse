@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Api.Data;
 using Api.Data.Models;
+using Api.Jobs;
 using Api.Logic.Import.Clue;
 using Api.Models;
 using Api.Models.Metrics;
@@ -14,7 +15,7 @@ public class ClueImporter(IFormFile file, IHealthContext db, User user) : FileIm
         PropertyNameCaseInsensitive = true
     };
 
-    public override async Task Import()
+    public override async Task Import(IImportQueue queue, Guid id)
     {
         await using var stream = File.OpenReadStream();
 
@@ -22,13 +23,18 @@ public class ClueImporter(IFormFile file, IHealthContext db, User user) : FileIm
         var json = await JsonSerializer.DeserializeAsync<ClueItem[]>(stream, _options);
         if (json is null)
         {
+            queue.Stop(id);
             return;
         }
 
+        int i = 0;
         foreach (var node in json)
         {
             if (node.Date is null || node.Value?.Any() != true)
+            {
+                i++;
                 continue;
+            }
 
             foreach (var value in node.Value.Where(x => x.Option is not null))
             {
@@ -44,7 +50,12 @@ public class ClueImporter(IFormFile file, IHealthContext db, User user) : FileIm
                 // import the data
                 await ImportMetric(metric);
             }
+
+            queue.Progress(id, i / json.Length * 100);
+            i++;
         }
+
+        queue.Stop(id);
     }
 
     private static (MetricTypes, string?) GetType(string? type) => type switch

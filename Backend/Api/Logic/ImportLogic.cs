@@ -1,6 +1,6 @@
 using Api.Data;
 using Api.Helpers;
-using Api.Logic.Import;
+using Api.Jobs;
 using Api.Models;
 using Api.Models.Events;
 using Api.Models.Metrics;
@@ -26,34 +26,47 @@ public static class ImportLogic
     public static IResult GetImportTypes()
       => TypedResults.Ok(Enum.GetValues<FileTypes>().Select(x => new FileType((int)x, x.DescriptionAttr())));
 
-    public static async Task<IResult> PostFileAsync([FromForm]IFormFile file, [FromRoute]int type, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> GetJobResultAsync(Guid id, IImportQueue queue, IUserContext users, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
             return error;
 
-        Importer importer = (FileTypes)type switch
-        {
-            FileTypes.Clue => new ClueImporter(file, db, user),
-            FileTypes.RedmiWatch => new RedmiWatch(file, db, user),
-            _ => throw new NotSupportedException("Invalid file type"),
-        };
+        var result = queue.GetResult(id);
 
-        await importer.Import();
-
-        return TypedResults.NoContent();
+        return TypedResults.Ok(result);
     }
 
-    public static async Task<IResult> PostListAsync([FromBody] ImportData file, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> PostFileAsync([FromForm] IFormFile file, [FromRoute] int type, IUserContext users, IImportQueue queue, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
             return error;
 
-        Importer importer = new ListImporter(file, db, user);
+        // generate a task id
+        var id = Guid.NewGuid();
 
-        await importer.Import();
+        // add the job in the queue  
+        queue.Enqueue(new ImporterService.Job(id, new(file, null), (FileTypes)type, user));
 
-        return TypedResults.NoContent();
+        // return the jobid
+        return TypedResults.Created(default(string), id);
+    }
+
+    public static async Task<IResult> PostListAsync([FromBody] ImportData file, IUserContext users, IImportQueue queue, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+
+        // generate a task id
+        var id = Guid.NewGuid();
+
+        // add the job in the queue  
+        queue.Enqueue(new ImporterService.Job(id, new(null, file), FileTypes.Bulk, user));
+
+        // return the jobid
+        return TypedResults.Accepted(default(string), id);
     }
 }
