@@ -1,6 +1,7 @@
 using Api.Data;
 using Api.Helpers;
 using Api.Jobs;
+using Api.Logic.Import;
 using Api.Models;
 using Api.Models.Events;
 using Api.Models.Metrics;
@@ -47,26 +48,22 @@ public static class ImportLogic
         var id = Guid.NewGuid();
 
         // add the job in the queue  
-        queue.Enqueue(new ImporterService.Job(id, new(file, null), (FileTypes)type, user));
+        queue.Enqueue(new ImporterService.Job(id, file, (FileTypes)type, user));
 
         // return the jobid
         return TypedResults.Created(default(string), id);
     }
 
-    public static async Task<IResult> PostListAsync([FromBody] ImportData file, IUserContext users, IImportQueue queue, HttpContext context)
+    public static async Task<IResult> PostListAsync([FromBody] ImportData file, IUserContext users, IHealthContext db, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
             return error;
 
+        Importer importer = new ListImporter(file, db, user);
+        await importer.Import(new LocalQueue(), Guid.NewGuid());
 
-        // generate a task id
-        var id = Guid.NewGuid();
-
-        // add the job in the queue  
-        queue.Enqueue(new ImporterService.Job(id, new(null, file), FileTypes.Bulk, user));
-
-        // return the jobid
-        return TypedResults.Accepted(default(string), id);
+        // TODO return a asyncenumerable to stream the progress
+        return TypedResults.NoContent();
     }
 }

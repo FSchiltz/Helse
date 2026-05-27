@@ -20,7 +20,4 @@ public enum FileTypes
 
     [Description("Data from the Clue application")]
     Clue,
-
-    [Description("Bulk import of a list of event and metrics")]
-    Bulk,
 }

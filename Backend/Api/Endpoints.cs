@@ -41,7 +41,7 @@ public static class Endpoints
         .Produces<List<Person>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
-        person.MapDelete("/{personId}", PersonLogic.DeleteAsync)
+        person.MapDelete("/{userId}", PersonLogic.DeleteAsync)
         .Produces((int)HttpStatusCode.NoContent)
         .Produces((int)HttpStatusCode.Unauthorized);
 
@@ -260,25 +260,13 @@ public static class Endpoints
             .Produces((int)HttpStatusCode.Unauthorized);
     }
 
-    public static void MapEnpoints(this RouteGroupBuilder api)
+    public static void MapImports(this RouteGroupBuilder api)
     {
-        api.MapAuth();
-        api.MapPerson();
-        api.MapPatients();
-
-        api.MapMetrics();
-        api.MapEvents();
-
-        api.MapTreatments();
-
-        api.MapAdmin();
-
         /* Importer endpoint */
         var import = api.MapGroup("/import").RequireAuthorization();
         import.MapGet("/types", ImportLogic.GetImportTypes)
             .Produces<List<FileType>>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
-
 
         import.MapPost("/{type}", ImportLogic.PostFileAsync)
             .DisableAntiforgery()
@@ -292,5 +280,21 @@ public static class Endpoints
         import.MapPost("/", ImportLogic.PostListAsync)
             .Produces((int)HttpStatusCode.NoContent)
             .Produces((int)HttpStatusCode.Unauthorized);
+    }
+
+    public static void MapEnpoints(this RouteGroupBuilder api)
+    {
+        api.MapAuth();
+        api.MapPerson();
+        api.MapPatients();
+
+        api.MapMetrics();
+        api.MapEvents();
+
+        api.MapTreatments();
+
+        api.MapAdmin();
+
+        api.MapImports();
     }
 }
