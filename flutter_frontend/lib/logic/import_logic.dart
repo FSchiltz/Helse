@@ -21,7 +21,8 @@ class ImportLogic {
   Future<String?> sync() async {
     var entries = jobs.entries.toList();
     for (var job in entries) {
-      if (job.value.result.status == JobStatus.inprogress) {
+      if (job.value.result.status == JobStatus.inprogress ||
+          job.value.result.status == JobStatus.notstarted) {
         var status = await DI.import.status(job.key);
         if (status != null) {
           jobs[job.key] = JobCheckResult(status, DateTime.now().toLocal());
@@ -57,7 +58,7 @@ class ImportLogic {
           (e) => Execution(
             e.value.time,
             _getStatus(e.value.result.status),
-            "Task ${e.key} has progress ${e.value.result.progress} %",
+            "Task ${e.key} has progress ${e.value.result.progress?.toStringAsFixed(2)} %",
           ),
         )
         .toList();

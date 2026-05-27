@@ -80,6 +80,7 @@ public static class ImportLogic
         MemoryStream ms = new();
         // save the data so the background job does not fail
         await stream.CopyToAsync(ms);
+        ms.Position = 0;
 
         queue.Enqueue(new ImporterService.Job(id, ms, (FileTypes)type, user));
 

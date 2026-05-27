@@ -18,23 +18,24 @@ public sealed class ImportQueue : IImportQueue
     public void Enqueue(Job value)
     {
         _queue.Writer.TryWrite(value);
+         _results.Add(value.Id, new JobResult()
+        {
+            UserId = value.User.Id,
+            Progress = 0,
+            Status = JobStatus.NotStarted,
+        });
     }
 
     public void Progress(Guid id, double progress)
     {
         ArgumentOutOfRangeException.ThrowIfGreaterThan(progress, 100);
-
         _results[id].Progress = progress;
     }
 
-    public void Start(Guid id, long userId)
+    public void Start(Guid id)
     {
-        _results.Add(id, new JobResult()
-        {
-            UserId = userId,
-            Progress = 0,
-            Status = JobStatus.NotStarted,
-        });
+       _results[id].Status = JobStatus.InProgress;
+       _results[id].Progress = 0;
     }
 
     public void Stop(Guid id)

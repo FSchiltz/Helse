@@ -64,6 +64,8 @@ public class RedmiWatch(Stream file, IHealthContext db, Data.Models.User user) :
         using var reader = new StreamReader(File);
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
+        long read = 0;
+
         // for each record, find the type
         foreach (var record in csv.GetRecords<RedmiRecord>())
         {
@@ -182,6 +184,9 @@ public class RedmiWatch(Stream file, IHealthContext db, Data.Models.User user) :
                     });
                     break;
             }
+
+            read = File.Position;
+            queue.Progress(id, read / (double)File.Length * 100);
         }
 
         queue.Stop(id);

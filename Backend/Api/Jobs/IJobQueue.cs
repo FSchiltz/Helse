@@ -6,7 +6,7 @@ public interface IJobQueue<T>
 
     ValueTask<T> DequeueAsync(CancellationToken token);
 
-    void Start(Guid id, long userId);
+    void Start(Guid id);
 
     void Stop(Guid id);
 

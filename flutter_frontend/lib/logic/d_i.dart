@@ -147,7 +147,7 @@ class DI {
     _importLogic = ImportLogic();
     _jobs = TaskBloc(
       importLogic.sync,
-      const Duration(seconds: 5),
+      const Duration(seconds: 1),
       importLogic.isEnabled,
     );
   }
