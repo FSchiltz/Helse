@@ -108,7 +108,7 @@ class _FileImportState extends State<FileImport> {
       try {
         var content = await file?.readAsString();
         if (content == null) return;
-        await DI.import.import(content, selected!);
+        await DI.importLogic.import(content, selected!);
         
         setState(() {
           status = SubmissionStatus.success;

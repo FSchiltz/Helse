@@ -1391,10 +1391,12 @@ abstract class Helseapi extends ChopperService {
 
   ///
   ///@param type
-  Future<chopper.Response<String>> apiImportTypePost({
+  Future<chopper.Response<JobId>> apiImportTypePost({
     required int? type,
     required dynamic file,
   }) {
+    generatedMapping.putIfAbsent(JobId, () => JobId.fromJsonFactory);
+
     return _apiImportTypePost(type: type, file: file);
   }
 
@@ -1402,7 +1404,7 @@ abstract class Helseapi extends ChopperService {
   ///@param type
   @POST(path: '/api/import/{type}', optionalBody: true)
   @Multipart()
-  Future<chopper.Response<String>> _apiImportTypePost({
+  Future<chopper.Response<JobId>> _apiImportTypePost({
     @Path('type') required int? type,
     @Part('file') required dynamic file,
     @chopper.Tag()
@@ -1472,17 +1474,17 @@ abstract class Helseapi extends ChopperService {
 
   ///
   ///@param id
-  Future<chopper.Response<JobResult>> apiImportGet({required String? id}) {
+  Future<chopper.Response<JobResult>> apiImportIdGet({required String? id}) {
     generatedMapping.putIfAbsent(JobResult, () => JobResult.fromJsonFactory);
 
-    return _apiImportGet(id: id);
+    return _apiImportIdGet(id: id);
   }
 
   ///
   ///@param id
-  @GET(path: '/api/import')
-  Future<chopper.Response<JobResult>> _apiImportGet({
-    @Query('id') required String? id,
+  @GET(path: '/api/import/{id}')
+  Future<chopper.Response<JobResult>> _apiImportIdGet({
+    @Path('id') required String? id,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -2676,6 +2678,45 @@ extension $ImportDataExtension on ImportData {
       metrics: (metrics != null ? metrics.value : this.metrics),
       events: (events != null ? events.value : this.events),
     );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class JobId {
+  const JobId({required this.id});
+
+  factory JobId.fromJson(Map<String, dynamic> json) => _$JobIdFromJson(json);
+
+  static const toJsonFactory = _$JobIdToJson;
+  Map<String, dynamic> toJson() => _$JobIdToJson(this);
+
+  @JsonKey(name: 'id')
+  final String id;
+  static const fromJsonFactory = _$JobIdFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is JobId &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(id) ^ runtimeType.hashCode;
+}
+
+extension $JobIdExtension on JobId {
+  JobId copyWith({String? id}) {
+    return JobId(id: id ?? this.id);
+  }
+
+  JobId copyWithWrapped({Wrapped<String>? id}) {
+    return JobId(id: (id != null ? id.value : this.id));
   }
 }
 

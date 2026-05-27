@@ -5,6 +5,7 @@ class HelseLoader extends StatefulWidget {
   final Color? color;
   final double size;
   final void Function()? onTouch;
+  final IconData? icon;
 
   const HelseLoader({
     super.key,
@@ -12,25 +13,25 @@ class HelseLoader extends StatefulWidget {
     this.color,
     this.size = 40,
     this.onTouch,
+    this.icon,
   });
 
   @override
   State<HelseLoader> createState() => HelseLoaderState();
 }
 
-class HelseLoaderState extends State<HelseLoader> with SingleTickerProviderStateMixin {
+class HelseLoaderState extends State<HelseLoader>
+    with SingleTickerProviderStateMixin {
   late AnimationController controller;
   late Animation<double> animation;
 
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    )
-      ..forward()
-      ..repeat(reverse: true);
+    controller =
+        AnimationController(vsync: this, duration: const Duration(seconds: 1))
+          ..forward()
+          ..repeat(reverse: true);
     animation = Tween<double>(begin: 0.0, end: 1.0).animate(controller);
   }
 
@@ -44,20 +45,24 @@ class HelseLoaderState extends State<HelseLoader> with SingleTickerProviderState
   Widget build(BuildContext context) {
     var theme = widget.color ?? Theme.of(context).colorScheme.secondary;
     return Container(
-        alignment: Alignment.center,
-        child: FadeTransition(
-          opacity: TweenSequence([
-            TweenSequenceItem<double>(
-              tween: Tween<double>(begin: widget.static ? 1 : 0, end: 1).chain(CurveTween(curve: Curves.easeInOut)),
-              weight: 1,
-            ),
-          ]).animate(controller),
-          child: IconButton(
-            color: theme,
-            icon: const Icon(Icons.favorite),
-            iconSize: widget.size,
-            onPressed: widget.onTouch ?? () {},
+      alignment: Alignment.center,
+      child: FadeTransition(
+        opacity: TweenSequence([
+          TweenSequenceItem<double>(
+            tween: Tween<double>(
+              begin: widget.static ? 1 : 0,
+              end: 1,
+            ).chain(CurveTween(curve: Curves.easeInOut)),
+            weight: 1,
           ),
-        ));
+        ]).animate(controller),
+        child: IconButton(
+          color: theme,
+          icon: Icon(widget.icon ?? Icons.favorite),
+          iconSize: widget.size,
+          onPressed: widget.onTouch ?? () {},
+        ),
+      ),
+    );
   }
 }

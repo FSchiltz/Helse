@@ -80,33 +80,25 @@ class _HomeState extends State<Home> {
                 value: DI.jobs,
                 child: BlocBuilder<TaskBloc, SubmissionStatus>(
                   builder: (context, state) {
+                    Color? color;
                     switch (state) {
                       case SubmissionStatus.success:
-                        return HelseLoader(
-                          static: true,
-                          color: Colors.green,
-                          size: 22,
-                          onTouch: () => _showJobs(context),
-                        );
+                        color = Colors.green;
+                        break;
                       case SubmissionStatus.failure:
-                        return HelseLoader(
-                          static: true,
-                          color: Colors.red,
-                          size: 22,
-                          onTouch: () => _showJobs(context),
-                        );
-                      case SubmissionStatus.inProgress:
-                        return HelseLoader(
-                          size: 32,
-                          onTouch: () => _showJobs(context),
-                        );
+                        color = Colors.red;
+                        break;
                       default:
-                        return HelseLoader(
-                          size: 20,
-                          static: true,
-                          onTouch: () => _showJobs(context),
-                        );
+                        color = null;
                     }
+
+                    return HelseLoader(
+                      static: true,
+                      color: color,
+                      size: 22,
+                      onTouch: () => _showJobs(context),
+                      icon: Icons.list_alt_sharp,
+                    );
                   },
                 ),
               ),
@@ -115,33 +107,23 @@ class _HomeState extends State<Home> {
                 value: DI.fit,
                 child: BlocBuilder<TaskBloc, SubmissionStatus>(
                   builder: (context, state) {
+                    Color? color;
                     switch (state) {
                       case SubmissionStatus.success:
-                        return HelseLoader(
-                          static: true,
-                          color: Colors.green,
-                          size: 22,
-                          onTouch: () => _showSynchroRuns(context),
-                        );
+                        color = Colors.green;
+                        break;
                       case SubmissionStatus.failure:
-                        return HelseLoader(
-                          static: true,
-                          color: Colors.red,
-                          size: 22,
-                          onTouch: () => _showSynchroRuns(context),
-                        );
-                      case SubmissionStatus.inProgress:
-                        return HelseLoader(
-                          size: 32,
-                          onTouch: () => _showSynchroRuns(context),
-                        );
+                        color = Colors.red;
+                        break;
                       default:
-                        return HelseLoader(
-                          size: 20,
-                          static: true,
-                          onTouch: () => _showSynchroRuns(context),
-                        );
+                        color = null;
                     }
+                    return HelseLoader(
+                      static: true,
+                      color: color,
+                      size: 22,
+                      onTouch: () => _showSynchroRuns(context),
+                    );
                   },
                 ),
               ),

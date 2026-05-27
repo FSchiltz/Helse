@@ -12,6 +12,8 @@ namespace Api.Logic;
 
 public record FileType(int Type, string? Name);
 
+public record JobId(Guid Id);
+
 public class ImportData
 {
     public List<CreateMetric> Metrics { get; set; } = [];
@@ -27,7 +29,7 @@ public static class ImportLogic
     public static IResult GetImportTypes()
       => TypedResults.Ok(Enum.GetValues<FileTypes>().Select(x => new FileType((int)x, x.DescriptionAttr())));
 
-    public static async Task<IResult> GetJobResultAsync(Guid id, IImportQueue queue, IUserContext users, HttpContext context)
+    public static async Task<IResult> GetJobResultAsync([FromRoute] Guid id, IImportQueue queue, IUserContext users, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -82,7 +84,7 @@ public static class ImportLogic
         queue.Enqueue(new ImporterService.Job(id, ms, (FileTypes)type, user));
 
         // return the jobid
-        return TypedResults.Created(default(string), id);
+        return TypedResults.Created(default(string), new JobId(id));
     }
 
     public static async Task<IResult> PostListAsync([FromBody] ImportData file, IUserContext users, IHealthContext db, HttpContext context)

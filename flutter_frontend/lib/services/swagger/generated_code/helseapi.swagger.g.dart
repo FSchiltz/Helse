@@ -238,6 +238,13 @@ Map<String, dynamic> _$ImportDataToJson(ImportData instance) =>
       'events': instance.events?.map((e) => e.toJson()).toList(),
     };
 
+JobId _$JobIdFromJson(Map<String, dynamic> json) =>
+    JobId(id: json['id'] as String);
+
+Map<String, dynamic> _$JobIdToJson(JobId instance) => <String, dynamic>{
+  'id': instance.id,
+};
+
 JobResult _$JobResultFromJson(Map<String, dynamic> json) => JobResult(
   userId: (json['userId'] as num).toInt(),
   progress: (json['progress'] as num?)?.toDouble(),

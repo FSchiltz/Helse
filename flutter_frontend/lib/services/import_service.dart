@@ -11,7 +11,7 @@ class ImportService extends ApiService {
     return await call(api.apiImportTypesGet);
   }
 
-  Future<String?> import(String file, int type) async {
+  Future<JobId?> import(String file, int type) async {
     var api = await getService();
 
     var part = MultipartFile.fromString("file", file, filename: 'upload');
@@ -21,7 +21,7 @@ class ImportService extends ApiService {
   Future<JobResult?> status(String id) async {
     var api = await getService();
 
-    return await call(() => api.apiImportGet(id: id));
+    return await call(() => api.apiImportIdGet(id: id));
   }
 
   Future<void> importData(ImportData file) async {

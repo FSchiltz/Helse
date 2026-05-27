@@ -19,7 +19,8 @@ class ImportLogic {
   }
 
   Future<String?> sync() async {
-    for (var job in jobs.entries.toList()) {
+    var entries = jobs.entries.toList();
+    for (var job in entries) {
       if (job.value.result.status == JobStatus.inprogress) {
         var status = await DI.import.status(job.key);
         if (status != null) {
@@ -47,7 +48,7 @@ class ImportLogic {
       throw StateError("Incorrect job id");
     }
 
-    add(id);
+    add(id.id);
   }
 
   List<Execution> executions() {

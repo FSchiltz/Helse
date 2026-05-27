@@ -1681,8 +1681,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string",
-                  "format": "uuid"
+                  "$ref": "#/components/schemas/JobId"
                 }
               }
             }
@@ -1743,7 +1742,7 @@
         }
       }
     },
-    "/api/import": {
+    "/api/import/{id}": {
       "get": {
         "tags": [
           "ImportLogic"
@@ -1751,7 +1750,7 @@
         "parameters": [
           {
             "name": "id",
-            "in": "query",
+            "in": "path",
             "required": true,
             "schema": {
               "type": "string",
@@ -1777,7 +1776,9 @@
             "description": "Unauthorized"
           }
         }
-      },
+      }
+    },
+    "/api/import": {
       "post": {
         "tags": [
           "ImportLogic"
@@ -2262,6 +2263,18 @@
             "items": {
               "$ref": "#/components/schemas/CreateEvent"
             }
+          }
+        }
+      },
+      "JobId": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
           }
         }
       },

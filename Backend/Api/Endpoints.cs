@@ -274,7 +274,7 @@ public static class Endpoints
 
         import.MapPost("/{type}", ImportLogic.PostFileAsync)
             .DisableAntiforgery()
-            .Produces<Guid>((int)HttpStatusCode.Accepted)
+            .Produces<JobId>((int)HttpStatusCode.Accepted)
             .Produces((int)HttpStatusCode.Unauthorized);
 
         import.MapGet("/jobs/all", ImportLogic.GetAllJobsAsync)
@@ -285,7 +285,7 @@ public static class Endpoints
             .Produces<JobResultInfo[]>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
 
-        import.MapGet("/", ImportLogic.GetJobResultAsync)
+        import.MapGet("/{id:Guid}", ImportLogic.GetJobResultAsync)
             .Produces<JobResult>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.NotFound)
             .Produces((int)HttpStatusCode.Unauthorized);
