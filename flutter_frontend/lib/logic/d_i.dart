@@ -1,3 +1,4 @@
+import 'package:helse/logic/fit/status_bloc.dart';
 import 'package:helse/logic/import_logic.dart';
 import 'package:helse/services/account.dart';
 import 'package:health/health.dart';
@@ -113,8 +114,8 @@ class DI {
     return a;
   }
 
-  static TaskBloc? _jobs;
-  static TaskBloc get jobs {
+  static StatusBloc? _jobs;
+  static StatusBloc get jobs {
     var a = _jobs;
     if (a == null) {
       throw Exception("Invalid access");
@@ -145,7 +146,7 @@ class DI {
     );
 
     _importLogic = ImportLogic();
-    _jobs = TaskBloc(
+    _jobs = StatusBloc(
       importLogic.sync,
       const Duration(seconds: 1),
       importLogic.isEnabled,

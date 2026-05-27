@@ -18,19 +18,22 @@ class ImportLogic {
     return jobs.isNotEmpty;
   }
 
-  Future<String?> sync() async {
+  Future<SubmissionStatus> sync() async {
     var entries = jobs.entries.toList();
+    SubmissionStatus result = SubmissionStatus.initial;
+
     for (var job in entries) {
       if (job.value.result.status == JobStatus.inprogress ||
           job.value.result.status == JobStatus.notstarted) {
         var status = await DI.import.status(job.key);
         if (status != null) {
+          result = SubmissionStatus.inProgress;
           jobs[job.key] = JobCheckResult(status, DateTime.now().toLocal());
         }
       }
     }
 
-    return "";
+    return result;
   }
 
   void add(String id) {

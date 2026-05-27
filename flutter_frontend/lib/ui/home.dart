@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:helse/logic/fit/status_bloc.dart';
 import 'package:helse/logic/import_logic.dart';
 
 import '../logic/d_i.dart';
@@ -76,11 +77,12 @@ class _HomeState extends State<Home> {
             elevation: 1,
             centerTitle: true,
             actions: [
-              BlocProvider<TaskBloc>.value(
+              BlocProvider<StatusBloc>.value(
                 value: DI.jobs,
-                child: BlocBuilder<TaskBloc, SubmissionStatus>(
+                child: BlocBuilder<StatusBloc, SubmissionStatus>(
                   builder: (context, state) {
                     Color? color;
+                    bool static = true;
                     switch (state) {
                       case SubmissionStatus.success:
                         color = Colors.green;
@@ -88,12 +90,15 @@ class _HomeState extends State<Home> {
                       case SubmissionStatus.failure:
                         color = Colors.red;
                         break;
+                      case SubmissionStatus.inProgress:
+                        static = false;
+                        break;
                       default:
                         color = null;
                     }
 
                     return HelseLoader(
-                      static: true,
+                      static: static,
                       color: color,
                       size: 22,
                       onTouch: () => _showJobs(context),
@@ -108,6 +113,7 @@ class _HomeState extends State<Home> {
                 child: BlocBuilder<TaskBloc, SubmissionStatus>(
                   builder: (context, state) {
                     Color? color;
+                    bool static = true;
                     switch (state) {
                       case SubmissionStatus.success:
                         color = Colors.green;
@@ -115,11 +121,14 @@ class _HomeState extends State<Home> {
                       case SubmissionStatus.failure:
                         color = Colors.red;
                         break;
+                      case SubmissionStatus.inProgress:
+                        static = false;
+                        break;
                       default:
                         color = null;
                     }
                     return HelseLoader(
-                      static: true,
+                      static: static,
                       color: color,
                       size: 22,
                       onTouch: () => _showSynchroRuns(context),
@@ -220,7 +229,7 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Future<void> _startTaskResultJob(TaskBloc jobs) async {
+  Future<void> _startTaskResultJob(StatusBloc jobs) async {
     jobs.start();
     var existingJobs = await DI.import.getJobs();
     for (var job in existingJobs) {
