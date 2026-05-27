@@ -9,11 +9,11 @@ class LoginService extends ApiService {
 
     switch (response.statusCode) {
       case 401:
-        throw Exception("Incorrect username or password");
+        throw ArgumentError("Incorrect username or password");
       case 200:
         return response.body;
       default:
-        throw Exception(response.error ?? "Error");
+        throw StateError(response.error?.toString() ?? "Error");
     }
   }
 }

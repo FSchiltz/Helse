@@ -239,16 +239,27 @@ Map<String, dynamic> _$ImportDataToJson(ImportData instance) =>
     };
 
 JobResult _$JobResultFromJson(Map<String, dynamic> json) => JobResult(
+  userId: (json['userId'] as num).toInt(),
   progress: (json['progress'] as num?)?.toDouble(),
   status: jobStatusNullableFromJson(json['status']),
   error: json['error'],
 );
 
 Map<String, dynamic> _$JobResultToJson(JobResult instance) => <String, dynamic>{
+  'userId': instance.userId,
   'progress': instance.progress,
   'status': jobStatusNullableToJson(instance.status),
   'error': instance.error,
 };
+
+JobResultInfo _$JobResultInfoFromJson(Map<String, dynamic> json) =>
+    JobResultInfo(
+      id: json['id'] as String,
+      result: JobResult.fromJson(json['result'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$JobResultInfoToJson(JobResultInfo instance) =>
+    <String, dynamic>{'id': instance.id, 'result': instance.result.toJson()};
 
 MethodBase _$MethodBaseFromJson(Map<String, dynamic> json) => MethodBase();
 

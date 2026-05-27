@@ -134,7 +134,7 @@
         }
       }
     },
-    "/api/person/{personId}": {
+    "/api/person/{userId}": {
       "delete": {
         "tags": [
           "PersonLogic"
@@ -142,7 +142,7 @@
         "parameters": [
           {
             "name": "userId",
-            "in": "query",
+            "in": "path",
             "required": true,
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -1481,6 +1481,31 @@
         }
       }
     },
+    "/api/admin/settings/jobs": {
+      "get": {
+        "tags": [
+          "ImportLogic"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobResult"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/api/admin/stats/users": {
       "get": {
         "tags": [
@@ -1668,7 +1693,57 @@
         }
       }
     },
-    "/api/import/{id}": {
+    "/api/import/jobs/all": {
+      "get": {
+        "tags": [
+          "ImportLogic"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobResultInfo"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/import/jobs": {
+      "get": {
+        "tags": [
+          "ImportLogic"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobResultInfo"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/import": {
       "get": {
         "tags": [
           "ImportLogic"
@@ -1676,7 +1751,7 @@
         "parameters": [
           {
             "name": "id",
-            "in": "path",
+            "in": "query",
             "required": true,
             "schema": {
               "type": "string",
@@ -1695,13 +1770,14 @@
               }
             }
           },
+          "404": {
+            "description": "Not Found"
+          },
           "401": {
             "description": "Unauthorized"
           }
         }
-      }
-    },
-    "/api/import": {
+      },
       "post": {
         "tags": [
           "ImportLogic"
@@ -2145,8 +2221,7 @@
           "None",
           "RedmiWatch",
           "GoogleHealthConnect",
-          "Clue",
-          "Bulk"
+          "Clue"
         ]
       },
       "Gotify": {
@@ -2191,8 +2266,19 @@
         }
       },
       "JobResult": {
+        "required": [
+          "userId"
+        ],
         "type": "object",
         "properties": {
+          "userId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
           "progress": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
             "type": [
@@ -2213,6 +2299,22 @@
                 "$ref": "#/components/schemas/Exception"
               }
             ]
+          }
+        }
+      },
+      "JobResultInfo": {
+        "required": [
+          "id",
+          "result"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "result": {
+            "$ref": "#/components/schemas/JobResult"
           }
         }
       },
@@ -3009,10 +3111,10 @@
       "name": "SettingsLogic"
     },
     {
-      "name": "AdminLogic"
+      "name": "ImportLogic"
     },
     {
-      "name": "ImportLogic"
+      "name": "AdminLogic"
     }
   ]
 }

@@ -1,3 +1,4 @@
+import 'package:helse/logic/import_logic.dart';
 import 'package:helse/services/account.dart';
 import 'package:health/health.dart';
 import 'package:helse/helpers/oauth.dart';
@@ -7,6 +8,7 @@ import 'package:helse/logic/settings/settings_logic.dart';
 import 'package:helse/services/admin_service.dart';
 import 'package:helse/services/event_service.dart';
 import 'package:helse/services/helper_service.dart';
+import 'package:helse/services/import_service.dart';
 import 'package:helse/services/metric_service.dart';
 import 'package:helse/services/treatment_service.dart';
 import 'package:helse/services/user_service.dart';
@@ -16,7 +18,7 @@ import 'theme_helper.dart';
 
 class DI {
   static OauthClient? authService;
-  
+
   static MetricService? _metric;
   static MetricService get metric {
     var a = _metric;
@@ -38,6 +40,15 @@ class DI {
   static EventService? _event;
   static EventService get event {
     var a = _event;
+    if (a == null) {
+      throw Exception("Invalid access");
+    }
+    return a;
+  }
+
+  static ImportService? _import;
+  static ImportService get import {
+    var a = _import;
     if (a == null) {
       throw Exception("Invalid access");
     }
@@ -73,7 +84,7 @@ class DI {
     return a;
   }
 
-  static Health health = Health(); 
+  static Health health = Health();
 
   static AuthenticationLogic? _authentication;
   static AuthenticationLogic get authentication {
@@ -84,9 +95,27 @@ class DI {
     return a;
   }
 
+  static ImportLogic? _importLogic;
+  static ImportLogic get importLogic {
+    var a = _importLogic;
+    if (a == null) {
+      throw Exception("Invalid access");
+    }
+    return a;
+  }
+
   static TaskBloc? _fit;
   static TaskBloc get fit {
     var a = _fit;
+    if (a == null) {
+      throw Exception("Invalid access");
+    }
+    return a;
+  }
+
+  static TaskBloc? _jobs;
+  static TaskBloc get jobs {
+    var a = _jobs;
     if (a == null) {
       throw Exception("Invalid access");
     }
@@ -106,8 +135,20 @@ class DI {
     _admin = AdminService(account);
     treatement = TreatmentService(account);
     _settings = SettingsLogic(account);
+    _import = ImportService(account);
 
     var fitLogic = FitLogic(account);
-    _fit = TaskBloc(fitLogic.sync, const Duration(seconds: 30), FitLogic.isEnabled);
+    _fit = TaskBloc(
+      fitLogic.sync,
+      const Duration(seconds: 30),
+      FitLogic.isEnabled,
+    );
+
+    _importLogic = ImportLogic();
+    _jobs = TaskBloc(
+      importLogic.sync,
+      const Duration(seconds: 30),
+      importLogic.isEnabled,
+    );
   }
 }
