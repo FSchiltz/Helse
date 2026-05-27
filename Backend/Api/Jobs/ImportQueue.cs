@@ -51,7 +51,5 @@ public sealed class ImportQueue : IImportQueue
 
     public JobResult GetResult(Guid id) => _results[id];
 
-    public JobResult[] GetJobs(long userId) => [.. _results.Values.Where(x => x.UserId == userId)];
-
-    public JobResult[] GetJobs() => [.. _results.Values];
+    public JobResultInfo[] GetJobs() => [.. _results.Select(x => new JobResultInfo(x.Key, x.Value))];
 }

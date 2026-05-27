@@ -277,11 +277,15 @@ public static class Endpoints
             .Produces<Guid>((int)HttpStatusCode.Accepted)
             .Produces((int)HttpStatusCode.Unauthorized);
 
-        import.MapGet("/", ImportLogic.GetJobsAsync)
-            .Produces<JobResult[]>((int)HttpStatusCode.OK)
+        import.MapGet("/jobs/all", ImportLogic.GetAllJobsAsync)
+            .Produces<JobResultInfo[]>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
 
-        import.MapGet("/{id}", ImportLogic.GetJobResultAsync)
+        import.MapGet("/jobs", ImportLogic.GetJobsAsync)
+            .Produces<JobResultInfo[]>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
+        import.MapGet("/", ImportLogic.GetJobResultAsync)
             .Produces<JobResult>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.NotFound)
             .Produces((int)HttpStatusCode.Unauthorized);

@@ -14,7 +14,5 @@ public interface IJobQueue<T>
 
     JobResult GetResult(Guid id);
 
-    JobResult[] GetJobs(long userId);
-
-    JobResult[] GetJobs();
+    JobResultInfo[] GetJobs();
 }

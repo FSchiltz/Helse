@@ -17,12 +17,7 @@ public sealed class LocalQueue : IImportQueue
         throw new NotImplementedException();
     }
 
-    public JobResult[] GetJobs(long userId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public JobResult[] GetJobs()
+    public JobResultInfo[] GetJobs()
     {
         throw new NotImplementedException();
     }

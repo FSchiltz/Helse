@@ -48,7 +48,7 @@ public static class ImportLogic
         if (error is not null)
             return error;
 
-        var results = queue.GetJobs(user.Id);
+        var results = queue.GetJobs().Where(x => x.Result.UserId == user.Id);
 
         return TypedResults.Ok(results);
     }
