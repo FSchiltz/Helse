@@ -64,4 +64,7 @@ public class Event
 
     [Column]
     public DateTime? NotificationTime { get; set; }
+
+    [Column]
+    public int Source { get; set; }
 }

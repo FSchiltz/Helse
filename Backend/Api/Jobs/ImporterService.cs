@@ -1,7 +1,11 @@
 using Api.Data;
 using Api.Logic;
 using Api.Logic.Import;
+using Api.Logic.Import.BabyTracker;
+using Api.Logic.Import.Clue;
+using Api.Logic.Import.Redmi;
 using Api.Models;
+using LinqToDB.Tools;
 
 namespace Api.Jobs;
 
@@ -21,6 +25,8 @@ public class ImporterService(IServiceProvider serviceProvider, IImportQueue queu
                 {
                     FileTypes.Clue => new ClueImporter(job.Input, db, job.UserId, job.Patient),
                     FileTypes.RedmiWatch => new RedmiWatch(job.Input, db, job.UserId, job.Patient),
+                    FileTypes.GoogleHealthConnect => new GoogleImporter(job.Input, db, job.UserId, job.Patient),
+                    FileTypes.BabyTracker => new BabyTrackerImporter(job.Input, db, job.UserId, job.Patient),
                     _ => throw new NotSupportedException("Invalid file type"),
                 };
                 queue.Start(job.Id);

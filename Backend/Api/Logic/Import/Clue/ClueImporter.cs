@@ -2,11 +2,10 @@ using System.Text.Json;
 using Api.Data;
 using Api.Data.Models;
 using Api.Jobs;
-using Api.Logic.Import.Clue;
 using Api.Models;
 using Api.Models.Metrics;
 
-namespace Api.Logic.Import;
+namespace Api.Logic.Import.Clue;
 
 public class ClueImporter(Stream file, IHealthContext db, long user, long patient) : FileImporter(file, db, user, patient)
 {

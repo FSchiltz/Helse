@@ -33,6 +33,7 @@ public static class EventsLogic
             Start = DateTime.SpecifyKind(x.Start, DateTimeKind.Utc),
             Valid = x.Valid,
             NotificationTime = x.NotificationTime,
+            Source = (Models.FileTypes)x.Source,
         });
 
         return TypedResults.Ok(result);

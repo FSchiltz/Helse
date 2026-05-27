@@ -107,7 +107,7 @@ class _FileImportState extends State<FileImport> {
       });
 
       try {
-        var content = await file?.readAsString();
+        var content = await file?.readAsBytes();
         if (content == null) return;
         await DI.importLogic.import(content, selected!, widget.patient);
 

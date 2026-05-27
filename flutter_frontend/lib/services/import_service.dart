@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:helse/services/api_service.dart';
 import 'package:http/http.dart';
 
@@ -11,10 +13,10 @@ class ImportService extends ApiService {
     return await call(api.apiImportTypesGet);
   }
 
-  Future<JobId?> import(String file, int type, int? patient) async {
+  Future<JobId?> import(Uint8List file, int type, int? patient) async {
     var api = await getService();
 
-    var part = MultipartFile.fromString("file", file, filename: 'upload');
+    var part = MultipartFile.fromBytes("file", file, filename: 'upload');
     return await call(
       () => api.apiImportTypePost(file: part, type: type, patient: patient),
     );

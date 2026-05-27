@@ -57,14 +57,14 @@ public interface IHealthContext : IContext
     Task Update(Api.Models.Events.UpdateEvent e);
 
     Task<EventType[]> GetEventTypes(bool? all);
-    Task Insert(EventType  metric);
+    Task Insert(EventType metric);
     Task Update(EventType type);
     Task<int> DeleteEventType(long id);
 
     Task<MetricType[]> GetMetricTypes(bool? all, long? group);
-    
+
     Task<int> DeleteMetricType(long id);
-    Task Update(Api.Models.Metrics.MetricType  metric);
+    Task Update(Api.Models.Metrics.MetricType metric);
     Task Insert(Api.Models.Metrics.MetricType metric);
 
     Task DeleteMetric(long id);
@@ -80,8 +80,9 @@ public interface IHealthContext : IContext
 
     Task<Person[]> GetAllPatients();
 
-    Task<bool> ExistsEvent(long person, string tag);
-    Task<bool> ExistsMetric(long person, string tag, Api.Models.FileTypes source);
+    Task<bool> ExistsEvent(long person, int type, DateTime from, DateTime to, int source, string? description);
+
+    Task<bool> ExistsMetric(long person, long type, string value, int source, DateTime date);
 
     /// <summary>
     /// Get a single metric type

@@ -17,13 +17,10 @@ public abstract class Importer(IHealthContext db, long user, long patient)
 
     protected async Task ImportEvent(CreateEvent e)
     {
-        if (e.Tag is null)
-            return;
-
         await using var transaction = await db.BeginTransactionAsync();
 
         // check if the event exists
-        var fromDb = await db.ExistsEvent(patient, e.Tag);
+        var fromDb = await db.ExistsEvent(patient, e.Type, e.Start, e.Stop, (int)e.Source, e.Description);
 
         if (!fromDb)
         {
@@ -35,13 +32,10 @@ public abstract class Importer(IHealthContext db, long user, long patient)
 
     protected async Task ImportMetric(CreateMetric metric)
     {
-        if (metric.Tag is null)
-            return;
-
         await using var transaction = await db.BeginTransactionAsync();
 
         // check if the metric exists
-        var fromDb = await db.ExistsMetric(patient, metric.Tag, metric.Source);
+        var fromDb = await db.ExistsMetric(patient, metric.Type, metric.Value, (int)metric.Source, metric.Date);
 
         if (!fromDb)
         {

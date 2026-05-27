@@ -20,4 +20,7 @@ public enum FileTypes
 
     [Description("Data from the Clue application")]
     Clue,
+
+    [Description("Data from an .abt file from the Baby Tracker application")]
+    BabyTracker,
 }

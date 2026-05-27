@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/date.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
@@ -124,15 +125,32 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
             shrinkWrap: true,
             itemBuilder: (context, index) {
               var job = _jobs[index];
+              var task = job.result;
+              var theme = Theme.of(context).textTheme;
               return Row(
                 children: [
-                  Text(job.id),
-                  SizedBox(width: 12),
-                  Text(job.result.status.toString()),
-                  SizedBox(width: 12),
-                  Text('${job.result.progress}%'),
-                  SizedBox(width: 12),
-                  Text(job.result.error?.toString() ?? ''),
+                  Text(
+                    '${task.description} at ${DateHelper.format(task.start, context: context)}',
+                    style: theme.bodyLarge,
+                  ),
+                  Text(
+                    task.status?.name.toString() ?? '',
+                    style: theme.bodySmall,
+                  ),
+
+                  if (task.progress != null && (task.progress ?? 0) < 100) ...[
+                    SizedBox(width: 12),
+                    Text('${task.progress?.toStringAsFixed(2)}%'),
+                    SizedBox(width: 8),
+                    SizedBox(
+                      width: 100,
+                      child: LinearProgressIndicator(
+                        value: (task.progress ?? 0) / 100,
+                      ),
+                    ),
+                  ],
+
+                  const SizedBox(height: 10),
                 ],
               );
             },
