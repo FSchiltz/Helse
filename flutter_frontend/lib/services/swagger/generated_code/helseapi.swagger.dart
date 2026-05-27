@@ -1368,7 +1368,7 @@ abstract class Helseapi extends ChopperService {
 
   ///
   ///@param type
-  Future<chopper.Response> apiImportTypePost({
+  Future<chopper.Response<String>> apiImportTypePost({
     required int? type,
     required dynamic file,
   }) {
@@ -1379,9 +1379,35 @@ abstract class Helseapi extends ChopperService {
   ///@param type
   @POST(path: '/api/import/{type}', optionalBody: true)
   @Multipart()
-  Future<chopper.Response> _apiImportTypePost({
+  Future<chopper.Response<String>> _apiImportTypePost({
     @Path('type') required int? type,
     @Part('file') required dynamic file,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["ImportLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param id
+  Future<chopper.Response<JobResult>> apiImportIdGet({required String? id}) {
+    generatedMapping.putIfAbsent(JobResult, () => JobResult.fromJsonFactory);
+
+    return _apiImportIdGet(id: id);
+  }
+
+  ///
+  ///@param id
+  @GET(path: '/api/import/{id}')
+  Future<chopper.Response<JobResult>> _apiImportIdGet({
+    @Path('id') required String? id,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -2263,6 +2289,147 @@ extension $EventTypeExtension on EventType {
 }
 
 @JsonSerializable(explicitToJson: true)
+class Exception {
+  const Exception({
+    this.targetSite,
+    this.message,
+    this.data,
+    this.innerException,
+    this.helpLink,
+    this.source,
+    this.hResult,
+    this.stackTrace,
+  });
+
+  factory Exception.fromJson(Map<String, dynamic> json) =>
+      _$ExceptionFromJson(json);
+
+  static const toJsonFactory = _$ExceptionToJson;
+  Map<String, dynamic> toJson() => _$ExceptionToJson(this);
+
+  @JsonKey(name: 'targetSite')
+  final MethodBase? targetSite;
+  @JsonKey(name: 'message')
+  final String? message;
+  @JsonKey(name: 'data')
+  final Object? data;
+  @JsonKey(name: 'innerException')
+  final Exception? innerException;
+  @JsonKey(name: 'helpLink')
+  final String? helpLink;
+  @JsonKey(name: 'source')
+  final String? source;
+  @JsonKey(name: 'hResult')
+  final int? hResult;
+  @JsonKey(name: 'stackTrace')
+  final String? stackTrace;
+  static const fromJsonFactory = _$ExceptionFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is Exception &&
+            (identical(other.targetSite, targetSite) ||
+                const DeepCollectionEquality().equals(
+                  other.targetSite,
+                  targetSite,
+                )) &&
+            (identical(other.message, message) ||
+                const DeepCollectionEquality().equals(
+                  other.message,
+                  message,
+                )) &&
+            (identical(other.data, data) ||
+                const DeepCollectionEquality().equals(other.data, data)) &&
+            (identical(other.innerException, innerException) ||
+                const DeepCollectionEquality().equals(
+                  other.innerException,
+                  innerException,
+                )) &&
+            (identical(other.helpLink, helpLink) ||
+                const DeepCollectionEquality().equals(
+                  other.helpLink,
+                  helpLink,
+                )) &&
+            (identical(other.source, source) ||
+                const DeepCollectionEquality().equals(other.source, source)) &&
+            (identical(other.hResult, hResult) ||
+                const DeepCollectionEquality().equals(
+                  other.hResult,
+                  hResult,
+                )) &&
+            (identical(other.stackTrace, stackTrace) ||
+                const DeepCollectionEquality().equals(
+                  other.stackTrace,
+                  stackTrace,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(targetSite) ^
+      const DeepCollectionEquality().hash(message) ^
+      const DeepCollectionEquality().hash(data) ^
+      const DeepCollectionEquality().hash(innerException) ^
+      const DeepCollectionEquality().hash(helpLink) ^
+      const DeepCollectionEquality().hash(source) ^
+      const DeepCollectionEquality().hash(hResult) ^
+      const DeepCollectionEquality().hash(stackTrace) ^
+      runtimeType.hashCode;
+}
+
+extension $ExceptionExtension on Exception {
+  Exception copyWith({
+    MethodBase? targetSite,
+    String? message,
+    Object? data,
+    Exception? innerException,
+    String? helpLink,
+    String? source,
+    int? hResult,
+    String? stackTrace,
+  }) {
+    return Exception(
+      targetSite: targetSite ?? this.targetSite,
+      message: message ?? this.message,
+      data: data ?? this.data,
+      innerException: innerException ?? this.innerException,
+      helpLink: helpLink ?? this.helpLink,
+      source: source ?? this.source,
+      hResult: hResult ?? this.hResult,
+      stackTrace: stackTrace ?? this.stackTrace,
+    );
+  }
+
+  Exception copyWithWrapped({
+    Wrapped<MethodBase?>? targetSite,
+    Wrapped<String?>? message,
+    Wrapped<Object?>? data,
+    Wrapped<Exception?>? innerException,
+    Wrapped<String?>? helpLink,
+    Wrapped<String?>? source,
+    Wrapped<int?>? hResult,
+    Wrapped<String?>? stackTrace,
+  }) {
+    return Exception(
+      targetSite: (targetSite != null ? targetSite.value : this.targetSite),
+      message: (message != null ? message.value : this.message),
+      data: (data != null ? data.value : this.data),
+      innerException: (innerException != null
+          ? innerException.value
+          : this.innerException),
+      helpLink: (helpLink != null ? helpLink.value : this.helpLink),
+      source: (source != null ? source.value : this.source),
+      hResult: (hResult != null ? hResult.value : this.hResult),
+      stackTrace: (stackTrace != null ? stackTrace.value : this.stackTrace),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class FileType {
   const FileType({required this.type, this.name});
 
@@ -2435,6 +2602,99 @@ extension $ImportDataExtension on ImportData {
       events: (events != null ? events.value : this.events),
     );
   }
+}
+
+@JsonSerializable(explicitToJson: true)
+class JobResult {
+  const JobResult({this.progress, this.status, this.error});
+
+  factory JobResult.fromJson(Map<String, dynamic> json) =>
+      _$JobResultFromJson(json);
+
+  static const toJsonFactory = _$JobResultToJson;
+  Map<String, dynamic> toJson() => _$JobResultToJson(this);
+
+  @JsonKey(name: 'progress')
+  final double? progress;
+  @JsonKey(
+    name: 'status',
+    toJson: jobStatusNullableToJson,
+    fromJson: jobStatusNullableFromJson,
+  )
+  final enums.JobStatus? status;
+  @JsonKey(name: 'error')
+  final dynamic error;
+  static const fromJsonFactory = _$JobResultFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is JobResult &&
+            (identical(other.progress, progress) ||
+                const DeepCollectionEquality().equals(
+                  other.progress,
+                  progress,
+                )) &&
+            (identical(other.status, status) ||
+                const DeepCollectionEquality().equals(other.status, status)) &&
+            (identical(other.error, error) ||
+                const DeepCollectionEquality().equals(other.error, error)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(progress) ^
+      const DeepCollectionEquality().hash(status) ^
+      const DeepCollectionEquality().hash(error) ^
+      runtimeType.hashCode;
+}
+
+extension $JobResultExtension on JobResult {
+  JobResult copyWith({
+    double? progress,
+    enums.JobStatus? status,
+    dynamic error,
+  }) {
+    return JobResult(
+      progress: progress ?? this.progress,
+      status: status ?? this.status,
+      error: error ?? this.error,
+    );
+  }
+
+  JobResult copyWithWrapped({
+    Wrapped<double?>? progress,
+    Wrapped<enums.JobStatus?>? status,
+    Wrapped<dynamic>? error,
+  }) {
+    return JobResult(
+      progress: (progress != null ? progress.value : this.progress),
+      status: (status != null ? status.value : this.status),
+      error: (error != null ? error.value : this.error),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class MethodBase {
+  const MethodBase();
+
+  factory MethodBase.fromJson(Map<String, dynamic> json) =>
+      _$MethodBaseFromJson(json);
+
+  static const toJsonFactory = _$MethodBaseToJson;
+  Map<String, dynamic> toJson() => _$MethodBaseToJson(this);
+
+  static const fromJsonFactory = _$MethodBaseFromJson;
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode => runtimeType.hashCode;
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -4590,6 +4850,68 @@ List<enums.FileTypes>? fileTypesNullableListFromJson(
   }
 
   return fileTypes.map((e) => fileTypesFromJson(e.toString())).toList();
+}
+
+String? jobStatusNullableToJson(enums.JobStatus? jobStatus) {
+  return jobStatus?.value;
+}
+
+String? jobStatusToJson(enums.JobStatus jobStatus) {
+  return jobStatus.value;
+}
+
+enums.JobStatus jobStatusFromJson(
+  Object? jobStatus, [
+  enums.JobStatus? defaultValue,
+]) {
+  return enums.JobStatus.values.firstWhereOrNull((e) => e.value == jobStatus) ??
+      defaultValue ??
+      enums.JobStatus.swaggerGeneratedUnknown;
+}
+
+enums.JobStatus? jobStatusNullableFromJson(
+  Object? jobStatus, [
+  enums.JobStatus? defaultValue,
+]) {
+  if (jobStatus == null) {
+    return null;
+  }
+  return enums.JobStatus.values.firstWhereOrNull((e) => e.value == jobStatus) ??
+      defaultValue;
+}
+
+String jobStatusExplodedListToJson(List<enums.JobStatus>? jobStatus) {
+  return jobStatus?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> jobStatusListToJson(List<enums.JobStatus>? jobStatus) {
+  if (jobStatus == null) {
+    return [];
+  }
+
+  return jobStatus.map((e) => e.value!).toList();
+}
+
+List<enums.JobStatus> jobStatusListFromJson(
+  List? jobStatus, [
+  List<enums.JobStatus>? defaultValue,
+]) {
+  if (jobStatus == null) {
+    return defaultValue ?? [];
+  }
+
+  return jobStatus.map((e) => jobStatusFromJson(e.toString())).toList();
+}
+
+List<enums.JobStatus>? jobStatusNullableListFromJson(
+  List? jobStatus, [
+  List<enums.JobStatus>? defaultValue,
+]) {
+  if (jobStatus == null) {
+    return defaultValue;
+  }
+
+  return jobStatus.map((e) => jobStatusFromJson(e.toString())).toList();
 }
 
 String? metricDataTypeNullableToJson(enums.MetricDataType? metricDataType) {

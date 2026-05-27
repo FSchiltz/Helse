@@ -15,11 +15,31 @@ enum FileTypes {
   @JsonValue('GoogleHealthConnect')
   googlehealthconnect('GoogleHealthConnect'),
   @JsonValue('Clue')
-  clue('Clue');
+  clue('Clue'),
+  @JsonValue('Bulk')
+  bulk('Bulk');
 
   final String? value;
 
   const FileTypes(this.value);
+}
+
+enum JobStatus {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue('NotStarted')
+  notstarted('NotStarted'),
+  @JsonValue('InProgress')
+  inprogress('InProgress'),
+  @JsonValue('Done')
+  done('Done'),
+  @JsonValue('InError')
+  inerror('InError');
+
+  final String? value;
+
+  const JobStatus(this.value);
 }
 
 enum MetricDataType {

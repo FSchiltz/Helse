@@ -1325,7 +1325,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<dynamic>> _apiImportTypePost({
+  Future<Response<String>> _apiImportTypePost({
     required int? type,
     required dynamic file,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -1351,7 +1351,31 @@ final class _$Helseapi extends Helseapi {
       multipart: true,
       tag: swaggerMetaData,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<String, String>($request);
+  }
+
+  @override
+  Future<Response<JobResult>> _apiImportIdGet({
+    required String? id,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["ImportLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/import/${id}');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      tag: swaggerMetaData,
+    );
+    return client.send<JobResult, JobResult>($request);
   }
 
   @override

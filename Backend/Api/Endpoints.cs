@@ -285,7 +285,7 @@ public static class Endpoints
             .Produces<Guid>((int)HttpStatusCode.Accepted)
             .Produces((int)HttpStatusCode.Unauthorized);
 
-        import.MapGet("/{id}", ImportLogic.GetJobResult)
+        import.MapGet("/{id}", ImportLogic.GetJobResultAsync)
             .Produces<JobResult>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
 

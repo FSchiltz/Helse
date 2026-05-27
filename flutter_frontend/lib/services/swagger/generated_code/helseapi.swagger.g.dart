@@ -171,6 +171,32 @@ Map<String, dynamic> _$EventTypeToJson(EventType instance) => <String, dynamic>{
   'visible': instance.visible,
 };
 
+Exception _$ExceptionFromJson(Map<String, dynamic> json) => Exception(
+  targetSite: json['targetSite'] == null
+      ? null
+      : MethodBase.fromJson(json['targetSite'] as Map<String, dynamic>),
+  message: json['message'] as String?,
+  data: json['data'],
+  innerException: json['innerException'] == null
+      ? null
+      : Exception.fromJson(json['innerException'] as Map<String, dynamic>),
+  helpLink: json['helpLink'] as String?,
+  source: json['source'] as String?,
+  hResult: (json['hResult'] as num?)?.toInt(),
+  stackTrace: json['stackTrace'] as String?,
+);
+
+Map<String, dynamic> _$ExceptionToJson(Exception instance) => <String, dynamic>{
+  'targetSite': instance.targetSite?.toJson(),
+  'message': instance.message,
+  'data': instance.data,
+  'innerException': instance.innerException?.toJson(),
+  'helpLink': instance.helpLink,
+  'source': instance.source,
+  'hResult': instance.hResult,
+  'stackTrace': instance.stackTrace,
+};
+
 FileType _$FileTypeFromJson(Map<String, dynamic> json) => FileType(
   type: (json['type'] as num).toInt(),
   name: json['name'] as String?,
@@ -211,6 +237,23 @@ Map<String, dynamic> _$ImportDataToJson(ImportData instance) =>
       'metrics': instance.metrics?.map((e) => e.toJson()).toList(),
       'events': instance.events?.map((e) => e.toJson()).toList(),
     };
+
+JobResult _$JobResultFromJson(Map<String, dynamic> json) => JobResult(
+  progress: (json['progress'] as num?)?.toDouble(),
+  status: jobStatusNullableFromJson(json['status']),
+  error: json['error'],
+);
+
+Map<String, dynamic> _$JobResultToJson(JobResult instance) => <String, dynamic>{
+  'progress': instance.progress,
+  'status': jobStatusNullableToJson(instance.status),
+  'error': instance.error,
+};
+
+MethodBase _$MethodBaseFromJson(Map<String, dynamic> json) => MethodBase();
+
+Map<String, dynamic> _$MethodBaseToJson(MethodBase instance) =>
+    <String, dynamic>{};
 
 Metric _$MetricFromJson(Map<String, dynamic> json) => Metric(
   id: (json['id'] as num).toInt(),
