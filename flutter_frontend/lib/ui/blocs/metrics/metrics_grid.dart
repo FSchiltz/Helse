@@ -37,7 +37,7 @@ class _MetricsGridState extends State<MetricsGrid> {
         // filter using the user settings
 
         List<MetricGroup> filtered = [];
-        for (var item in model.where((x) => x.showOnDashboard == true)) {
+        for (var item in model) {
           OrderedItem? setting = settings.firstWhereOrNull(
             (element) => element.id == item.id,
           );
