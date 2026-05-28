@@ -2365,6 +2365,13 @@
           }
         }
       },
+      "InterfaceTheme": {
+        "enum": [
+          "System",
+          "Dark",
+          "Light"
+        ]
+      },
       "JobId": {
         "required": [
           "id"
@@ -2731,7 +2738,7 @@
             "$ref": "#/components/schemas/DatePreset"
           },
           "theme": {
-            "$ref": "#/components/schemas/Theme"
+            "$ref": "#/components/schemas/InterfaceTheme"
           },
           "eventWidth": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -3035,13 +3042,6 @@
           }
         }
       },
-      "Theme": {
-        "enum": [
-          "System",
-          "Dark",
-          "Light"
-        ]
-      },
       "TokenResponse": {
         "required": [
           "accessToken",
@@ -3316,7 +3316,7 @@
             "$ref": "#/components/schemas/DatePreset"
           },
           "theme": {
-            "$ref": "#/components/schemas/Theme"
+            "$ref": "#/components/schemas/InterfaceTheme"
           },
           "eventWidth": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",

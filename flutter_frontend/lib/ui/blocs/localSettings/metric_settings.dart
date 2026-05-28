@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
-import 'package:helse/logic/settings/metric_groups_settings.dart';
-import 'package:helse/logic/settings/metrics_settings.dart';
-import 'package:helse/logic/settings/ordered_item.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/statefull_check.dart';
@@ -20,18 +18,18 @@ class _MetricSettingsState extends State<MetricSettings> {
   final GlobalKey<FormState> _formGroupKey = GlobalKey();
 
   Future<List<OrderedItem>> _getData(bool refresh) async {
-    return (await DI.settings.getMetrics()).metrics;
+    return await DI.settings.getMetrics();
   }
 
   Future<List<OrderedItem>> _getGroupData(bool reset) async {
-    return (await DI.settings.getMetricGroups()).metrics;
+    return await DI.settings.getMetricGroups();
   }
 
   Future<void> _submitMetricGroups(List<OrderedItem> groups) async {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
-        await DI.settings.saveMetricGroups(MetricGroupsSettings(groups));
+        await DI.settings.saveMetricGroups(groups);
 
         Notify.show("Saved Successfully");
       }
@@ -44,7 +42,7 @@ class _MetricSettingsState extends State<MetricSettings> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
-        await DI.settings.saveMetrics(MetricsSettings(metrics));
+        await DI.settings.saveMetrics(metrics);
 
         Notify.show("Saved Successfully");
       }
@@ -125,7 +123,7 @@ class _MetricSettingsState extends State<MetricSettings> {
                               ),
                               DataCell(
                                 StatefullCheck(
-                                  item.visible,
+                                  item.visible ?? false,
                                   (value) => item.visible = value,
                                 ),
                               ),

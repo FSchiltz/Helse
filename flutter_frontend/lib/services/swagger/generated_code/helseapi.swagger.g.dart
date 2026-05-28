@@ -395,7 +395,7 @@ PatientSettings _$PatientSettingsFromJson(Map<String, dynamic> json) =>
     PatientSettings(
       patientId: (json['patientId'] as num?)?.toInt(),
       datePreset: datePresetNullableFromJson(json['datePreset']),
-      theme: themeNullableFromJson(json['theme']),
+      theme: interfaceThemeNullableFromJson(json['theme']),
       eventWidth: (json['eventWidth'] as num?)?.toInt(),
       metrics:
           (json['metrics'] as List<dynamic>?)
@@ -418,7 +418,7 @@ Map<String, dynamic> _$PatientSettingsToJson(PatientSettings instance) =>
     <String, dynamic>{
       'patientId': instance.patientId,
       'datePreset': datePresetNullableToJson(instance.datePreset),
-      'theme': themeNullableToJson(instance.theme),
+      'theme': interfaceThemeNullableToJson(instance.theme),
       'eventWidth': instance.eventWidth,
       'metrics': instance.metrics?.map((e) => e.toJson()).toList(),
       'metricGroups': instance.metricGroups?.map((e) => e.toJson()).toList(),
@@ -686,7 +686,7 @@ Map<String, dynamic> _$UserIdToJson(UserId instance) => <String, dynamic>{
 
 UserSettings _$UserSettingsFromJson(Map<String, dynamic> json) => UserSettings(
   datePreset: datePresetNullableFromJson(json['datePreset']),
-  theme: themeNullableFromJson(json['theme']),
+  theme: interfaceThemeNullableFromJson(json['theme']),
   eventWidth: (json['eventWidth'] as num?)?.toInt(),
   metrics:
       (json['metrics'] as List<dynamic>?)
@@ -708,7 +708,7 @@ UserSettings _$UserSettingsFromJson(Map<String, dynamic> json) => UserSettings(
 Map<String, dynamic> _$UserSettingsToJson(UserSettings instance) =>
     <String, dynamic>{
       'datePreset': datePresetNullableToJson(instance.datePreset),
-      'theme': themeNullableToJson(instance.theme),
+      'theme': interfaceThemeNullableToJson(instance.theme),
       'eventWidth': instance.eventWidth,
       'metrics': instance.metrics?.map((e) => e.toJson()).toList(),
       'metricGroups': instance.metricGroups?.map((e) => e.toJson()).toList(),

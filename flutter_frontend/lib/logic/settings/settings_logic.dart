@@ -43,11 +43,11 @@ class SettingsLogic {
     );
   }
 
-  Future<Theme> getTheme() async {
-    return (await _userSettings()).theme ?? Theme.system;
+  Future<InterfaceTheme> getTheme() async {
+    return (await _userSettings()).theme ?? InterfaceTheme.system;
   }
 
-  Future<void> saveTheme(Theme theme) async {
+  Future<void> saveTheme(InterfaceTheme theme) async {
     var settings = await _userSettings();
     await _saveSettings(
       UserSettings(
@@ -128,7 +128,7 @@ class SettingsLogic {
         metricGroups: settings.metricGroups,
         metrics: settings.metrics,
         theme: settings.theme,
-        dateRange: run,
+        datePreset: run,
       ),
     );
   }

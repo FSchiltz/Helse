@@ -49,12 +49,10 @@ class _MetricsGroupState extends State<MetricsGroup> {
         List<Pair<MetricType, OrderedItem>> filtered = [];
         for (var item in model.where((x) => x.showOnDashboard == true)) {
           OrderedItem setting =
-              settings.metrics.firstWhereOrNull(
-                (element) => element.id == item.id,
-              ) ??
+              settings.firstWhereOrNull((element) => element.id == item.id) ??
               DI.settings.getDefault(item);
 
-          if (setting.visible) filtered.add(Pair(item, setting));
+          if (setting.visible == true) filtered.add(Pair(item, setting));
         }
 
         setState(() {

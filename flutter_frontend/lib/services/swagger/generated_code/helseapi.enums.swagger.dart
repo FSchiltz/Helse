@@ -64,6 +64,22 @@ enum GraphKind {
   const GraphKind(this.value);
 }
 
+enum InterfaceTheme {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue('System')
+  system('System'),
+  @JsonValue('Dark')
+  dark('Dark'),
+  @JsonValue('Light')
+  light('Light');
+
+  final String? value;
+
+  const InterfaceTheme(this.value);
+}
+
 enum JobStatus {
   @JsonValue(null)
   swaggerGeneratedUnknown(null),
@@ -126,22 +142,6 @@ enum RightType {
   final String? value;
 
   const RightType(this.value);
-}
-
-enum Theme {
-  @JsonValue(null)
-  swaggerGeneratedUnknown(null),
-
-  @JsonValue('System')
-  system('System'),
-  @JsonValue('Dark')
-  dark('Dark'),
-  @JsonValue('Light')
-  light('Light');
-
-  final String? value;
-
-  const Theme(this.value);
 }
 
 enum TreatmentType {

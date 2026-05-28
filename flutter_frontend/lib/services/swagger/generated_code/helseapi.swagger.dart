@@ -3724,10 +3724,10 @@ class PatientSettings {
   final enums.DatePreset? datePreset;
   @JsonKey(
     name: 'theme',
-    toJson: themeNullableToJson,
-    fromJson: themeNullableFromJson,
+    toJson: interfaceThemeNullableToJson,
+    fromJson: interfaceThemeNullableFromJson,
   )
-  final enums.Theme? theme;
+  final enums.InterfaceTheme? theme;
   @JsonKey(name: 'eventWidth')
   final int? eventWidth;
   @JsonKey(name: 'metrics', defaultValue: <OrderedItem>[])
@@ -3792,7 +3792,7 @@ extension $PatientSettingsExtension on PatientSettings {
   PatientSettings copyWith({
     int? patientId,
     enums.DatePreset? datePreset,
-    enums.Theme? theme,
+    enums.InterfaceTheme? theme,
     int? eventWidth,
     List<OrderedItem>? metrics,
     List<OrderedItem>? metricGroups,
@@ -3812,7 +3812,7 @@ extension $PatientSettingsExtension on PatientSettings {
   PatientSettings copyWithWrapped({
     Wrapped<int?>? patientId,
     Wrapped<enums.DatePreset?>? datePreset,
-    Wrapped<enums.Theme?>? theme,
+    Wrapped<enums.InterfaceTheme?>? theme,
     Wrapped<int?>? eventWidth,
     Wrapped<List<OrderedItem>?>? metrics,
     Wrapped<List<OrderedItem>?>? metricGroups,
@@ -5240,10 +5240,10 @@ class UserSettings {
   final enums.DatePreset? datePreset;
   @JsonKey(
     name: 'theme',
-    toJson: themeNullableToJson,
-    fromJson: themeNullableFromJson,
+    toJson: interfaceThemeNullableToJson,
+    fromJson: interfaceThemeNullableFromJson,
   )
-  final enums.Theme? theme;
+  final enums.InterfaceTheme? theme;
   @JsonKey(name: 'eventWidth')
   final int? eventWidth;
   @JsonKey(name: 'metrics', defaultValue: <OrderedItem>[])
@@ -5301,7 +5301,7 @@ class UserSettings {
 extension $UserSettingsExtension on UserSettings {
   UserSettings copyWith({
     enums.DatePreset? datePreset,
-    enums.Theme? theme,
+    enums.InterfaceTheme? theme,
     int? eventWidth,
     List<OrderedItem>? metrics,
     List<OrderedItem>? metricGroups,
@@ -5319,7 +5319,7 @@ extension $UserSettingsExtension on UserSettings {
 
   UserSettings copyWithWrapped({
     Wrapped<enums.DatePreset?>? datePreset,
-    Wrapped<enums.Theme?>? theme,
+    Wrapped<enums.InterfaceTheme?>? theme,
     Wrapped<int?>? eventWidth,
     Wrapped<List<OrderedItem>?>? metrics,
     Wrapped<List<OrderedItem>?>? metricGroups,
@@ -5616,6 +5616,80 @@ List<enums.GraphKind>? graphKindNullableListFromJson(
   return graphKind.map((e) => graphKindFromJson(e.toString())).toList();
 }
 
+String? interfaceThemeNullableToJson(enums.InterfaceTheme? interfaceTheme) {
+  return interfaceTheme?.value;
+}
+
+String? interfaceThemeToJson(enums.InterfaceTheme interfaceTheme) {
+  return interfaceTheme.value;
+}
+
+enums.InterfaceTheme interfaceThemeFromJson(
+  Object? interfaceTheme, [
+  enums.InterfaceTheme? defaultValue,
+]) {
+  return enums.InterfaceTheme.values.firstWhereOrNull(
+        (e) => e.value == interfaceTheme,
+      ) ??
+      defaultValue ??
+      enums.InterfaceTheme.swaggerGeneratedUnknown;
+}
+
+enums.InterfaceTheme? interfaceThemeNullableFromJson(
+  Object? interfaceTheme, [
+  enums.InterfaceTheme? defaultValue,
+]) {
+  if (interfaceTheme == null) {
+    return null;
+  }
+  return enums.InterfaceTheme.values.firstWhereOrNull(
+        (e) => e.value == interfaceTheme,
+      ) ??
+      defaultValue;
+}
+
+String interfaceThemeExplodedListToJson(
+  List<enums.InterfaceTheme>? interfaceTheme,
+) {
+  return interfaceTheme?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> interfaceThemeListToJson(
+  List<enums.InterfaceTheme>? interfaceTheme,
+) {
+  if (interfaceTheme == null) {
+    return [];
+  }
+
+  return interfaceTheme.map((e) => e.value!).toList();
+}
+
+List<enums.InterfaceTheme> interfaceThemeListFromJson(
+  List? interfaceTheme, [
+  List<enums.InterfaceTheme>? defaultValue,
+]) {
+  if (interfaceTheme == null) {
+    return defaultValue ?? [];
+  }
+
+  return interfaceTheme
+      .map((e) => interfaceThemeFromJson(e.toString()))
+      .toList();
+}
+
+List<enums.InterfaceTheme>? interfaceThemeNullableListFromJson(
+  List? interfaceTheme, [
+  List<enums.InterfaceTheme>? defaultValue,
+]) {
+  if (interfaceTheme == null) {
+    return defaultValue;
+  }
+
+  return interfaceTheme
+      .map((e) => interfaceThemeFromJson(e.toString()))
+      .toList();
+}
+
 String? jobStatusNullableToJson(enums.JobStatus? jobStatus) {
   return jobStatus?.value;
 }
@@ -5880,62 +5954,6 @@ List<enums.RightType>? rightTypeNullableListFromJson(
   }
 
   return rightType.map((e) => rightTypeFromJson(e.toString())).toList();
-}
-
-String? themeNullableToJson(enums.Theme? theme) {
-  return theme?.value;
-}
-
-String? themeToJson(enums.Theme theme) {
-  return theme.value;
-}
-
-enums.Theme themeFromJson(Object? theme, [enums.Theme? defaultValue]) {
-  return enums.Theme.values.firstWhereOrNull((e) => e.value == theme) ??
-      defaultValue ??
-      enums.Theme.swaggerGeneratedUnknown;
-}
-
-enums.Theme? themeNullableFromJson(Object? theme, [enums.Theme? defaultValue]) {
-  if (theme == null) {
-    return null;
-  }
-  return enums.Theme.values.firstWhereOrNull((e) => e.value == theme) ??
-      defaultValue;
-}
-
-String themeExplodedListToJson(List<enums.Theme>? theme) {
-  return theme?.map((e) => e.value!).join(',') ?? '';
-}
-
-List<String> themeListToJson(List<enums.Theme>? theme) {
-  if (theme == null) {
-    return [];
-  }
-
-  return theme.map((e) => e.value!).toList();
-}
-
-List<enums.Theme> themeListFromJson(
-  List? theme, [
-  List<enums.Theme>? defaultValue,
-]) {
-  if (theme == null) {
-    return defaultValue ?? [];
-  }
-
-  return theme.map((e) => themeFromJson(e.toString())).toList();
-}
-
-List<enums.Theme>? themeNullableListFromJson(
-  List? theme, [
-  List<enums.Theme>? defaultValue,
-]) {
-  if (theme == null) {
-    return defaultValue;
-  }
-
-  return theme.map((e) => themeFromJson(e.toString())).toList();
 }
 
 String? treatmentTypeNullableToJson(enums.TreatmentType? treatmentType) {
