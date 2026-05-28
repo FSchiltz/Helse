@@ -35,12 +35,19 @@ class _MetricsGroupState extends State<MetricsGroup> {
 
     if (widget.group.showOnDashboard == true) {
       _getData();
+    } else {
+      setState(() {
+        types = [];
+      });
     }
   }
 
   void _getData() async {
     try {
-      var model = await Dependencies.services.metric.metricsType(false, widget.group.id);
+      var model = await Dependencies.services.metric.metricsType(
+        false,
+        widget.group.id,
+      );
       if (model != null) {
         await Dependencies.logics.settings.updateMetrics(model);
         var settings = await Dependencies.logics.settings.getMetrics();
@@ -70,35 +77,23 @@ class _MetricsGroupState extends State<MetricsGroup> {
 
     Widget body;
 
-    if (widget.group.showOnDashboard == true) {
-      body = cached == null
-          ? const HelseLoader()
-          : BlocListener<SettingsBloc, bool>(
-              listener: (context, state) {
-                _getData();
-              },
-              bloc: Dependencies.logics.settings.metrics,
-              child: MetricWidgetsGrid(
-                date: widget.date,
-                person: widget.person,
-                cached: cached,
-                button: IconButton(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (context) => MetricGroupDetail(
-                        widget.date,
-                        widget.person,
-                        widget.group,
-                      ),
-                    ),
-                  ),
-                  icon: const Icon(Icons.open_in_new_sharp),
-                ),
-              ),
-            );
-    } else {
-      body = Text('');
-    }
+    body = cached == null
+        ? const HelseLoader()
+        : BlocListener<SettingsBloc, bool>(
+            listener: (context, state) {
+              _getData();
+            },
+            bloc: Dependencies.logics.settings.metrics,
+            child: (cached.isNotEmpty)
+                ? MetricWidgetsGrid(
+                    date: widget.date,
+                    person: widget.person,
+                    cached: cached,
+                    button: _openAll(context),
+                  )
+                : _openAll(context),
+          );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -113,6 +108,18 @@ class _MetricsGroupState extends State<MetricsGroup> {
         Divider(height: 4),
         SizedBox(height: 32),
       ],
+    );
+  }
+
+  IconButton _openAll(BuildContext context) {
+    return IconButton(
+      onPressed: () => Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (context) =>
+              MetricGroupDetail(widget.date, widget.person, widget.group),
+        ),
+      ),
+      icon: const Icon(Icons.open_in_new_sharp),
     );
   }
 }
