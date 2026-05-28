@@ -1,4 +1,4 @@
-namespace Api.Models.Settings.Admin;
+namespace Api.Models.Settings;
 
 public interface IJsonSettings
 {
