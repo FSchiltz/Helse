@@ -1,9 +1,7 @@
 using Api.Data;
-using Api.Data.Models.Persons;
 using Api.Helpers;
 using Api.Helpers.Auth;
 using Api.Models.Persons;
-using Api.Models.Settings;
 using LinqToDB;
 
 namespace Api.Logic;
@@ -119,7 +117,7 @@ public static class PersonLogic
 
         // first we clean up the rights from the caller
         // the start date can't be in the past and the user must be the one in the query
-        var dbRights = rights.Select(x => new Data.Models.Right
+        var dbRights = rights.Select(x => new Data.Models.Persons.Right
         {
             Stop = x.Stop,
             UserId = x.UserId,

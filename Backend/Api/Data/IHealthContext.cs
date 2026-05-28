@@ -1,5 +1,4 @@
 using Api.Data.Models.Health;
-using Api.Data.Models.Persons;
 using Api.Models.Persons;
 
 namespace Api.Data;
@@ -59,14 +58,19 @@ public interface IHealthContext : IContext
     Task Update(Api.Models.Events.UpdateEvent e);
 
     Task<EventType[]> GetEventTypes(bool? all);
-    Task Insert(EventType metric);
-    Task Update(EventType type);
+
+    Task Insert(Api.Models.Events.EventType metric);
+
+    Task Update(Api.Models.Events.EventType type);
+
     Task<int> DeleteEventType(long id);
 
     Task<MetricType[]> GetMetricTypes(bool? all, long? group);
 
     Task<int> DeleteMetricType(long id);
+
     Task Update(Api.Models.Metrics.MetricType metric);
+
     Task Insert(Api.Models.Metrics.MetricType metric);
 
     Task DeleteMetric(long id);
@@ -76,11 +80,11 @@ public interface IHealthContext : IContext
     Task Insert(Api.Models.Metrics.CreateMetric metric, long person, long id);
     Task Update(Api.Models.Metrics.UpdateMetric metric);
 
-    Task<Person[]> GetPatients(long id, DateTime now, RightType view);
+    Task<Models.Persons.Person[]> GetPatients(long id, DateTime now, RightType view);
     Task<Event[]> GetEvents(long id, RightType view, DateTime start, DateTime end);
     Task<Event[]> GetEvents(long id, DateTime start, DateTime end);
 
-    Task<Person[]> GetAllPatients();
+    Task<Models.Persons.Person[]> GetAllPatients();
 
     Task<bool> ExistsEvent(long person, int type, DateTime from, DateTime to, int source, string? description);
 

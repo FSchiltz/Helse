@@ -1,9 +1,6 @@
 using Api.Data;
-using Api.Data.Models;
 using Api.Data.Models.Persons;
 using Api.Helpers;
-using Api.Helpers.Auth;
-using Api.Models.Persons;
 using NSubstitute;
 using System.Security.Claims;
 
@@ -17,11 +14,11 @@ public class RightsHelperTests
         // Arrange
         var db = Substitute.For<IUserContext>();
         var user = new User { Id = 1, Identifier = "caregiver", Password = "pass", Type = (int)UserType.Caregiver };
-        var right = new Api.Models.Settings.Right { Start = DateTime.UtcNow };
-        db.HasRightAsync(1, 2, RightType.View, Arg.Any<DateTime>()).Returns(right);
+        var right = new Api.Models.Persons.Right { Start = DateTime.UtcNow };
+        db.HasRightAsync(1, 2, Api.Models.Persons.RightType.View, Arg.Any<DateTime>()).Returns(right);
 
         // Act
-        var result = await db.ValidateCaregiverAsync(user, 2, RightType.View);
+        var result = await db.ValidateCaregiverAsync(user, 2, Api.Models.Persons.RightType.View);
 
         // Assert
         Assert.True(result);
@@ -33,10 +30,10 @@ public class RightsHelperTests
         // Arrange
         var db = Substitute.For<IUserContext>();
         var user = new User { Id = 1, Identifier = "caregiver", Password = "pass", Type = (int)UserType.Caregiver };
-        db.HasRightAsync(1, 2, RightType.View, Arg.Any<DateTime>()).Returns((Api.Models.Settings.Right?)null);
+        db.HasRightAsync(1, 2, Api.Models.Persons.RightType.View, Arg.Any<DateTime>()).Returns((Api.Models.Persons.Right?)null);
 
         // Act
-        var result = await db.ValidateCaregiverAsync(user, 2, RightType.View);
+        var result = await db.ValidateCaregiverAsync(user, 2, Api.Models.Persons.RightType.View);
 
         // Assert
         Assert.False(result);

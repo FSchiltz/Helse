@@ -1,5 +1,4 @@
 using Api.Data;
-using Api.Data.Models.Health;
 using Api.Helpers;
 using Api.Models;
 using Api.Models.Metrics;

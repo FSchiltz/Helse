@@ -1,7 +1,6 @@
 using Api.Data.Models.Persons;
 using Api.Models.Events;
 using Api.Models.Persons;
-using Api.Models.Settings;
 using Api.Models.Treatments;
 
 namespace Api.Data;
@@ -20,7 +19,7 @@ public interface IUserContext : IContext
 
     Task<PersonFromDb?> Get(long id);
 
-    Task<Right?> HasRightAsync(long id, long personId, RightType type, DateTime now);
+    Task<Api.Models.Persons.Right?> HasRightAsync(long id, long personId, RightType type, DateTime now);
 
     Task<long> InsertPerson(PersonCreation newUser);
 
@@ -44,7 +43,7 @@ public interface IUserContext : IContext
 
     Task DeleteUserAsync(long userId);
 
-    Task LinkOauth(Models.Persons.Person.OauthUser oauthUser);
+    Task LinkOauth(OauthUser oauthUser);
 
     Task<PersonFromDb?> Get(string user, string issuer);
 }

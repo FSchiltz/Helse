@@ -8,7 +8,6 @@ using Api.Models.Settings.Admin;
 using Api.Models.Treatments;
 using Api.Models.Admin;
 using Api.Jobs;
-using Api.Data.Models.Health;
 
 namespace Api;
 

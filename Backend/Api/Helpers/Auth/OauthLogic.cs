@@ -3,7 +3,7 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text.Json;
 using Api.Data;
-using Api.Data.Models;
+using Api.Data.Models.Persons;
 using Api.Models;
 using Api.Models.Persons;
 using Api.Models.Settings.Admin;

@@ -1,6 +1,5 @@
 using Api.Data;
 using Api.Data.Models.Persons;
-using Api.Models.Persons;
 using LinqToDB;
 using LinqToDB.Data;
 
@@ -13,10 +12,10 @@ public class UserContextTests : IAsyncLifetime
     public async Task InitializeAsync()
     {
         // Create in-memory SQLite database
-        _db = new DataConnection("SQLite.MS",  x=> new LinqToDB.DataOptions().UseSQLite("Data Source=:memory:"));
+        _db = new DataConnection("SQLite.MS",  x=> new DataOptions().UseSQLite("Data Source=:memory:"));
         await _db.CreateTableAsync<Person>();
         await _db.CreateTableAsync<User>();
-        await _db.CreateTableAsync<Api.Data.Models.Persons.Right>();
+        await _db.CreateTableAsync<Right>();
     }
 
     public async Task DisposeAsync()
@@ -108,7 +107,7 @@ public class UserContextTests : IAsyncLifetime
         var now = DateTime.UtcNow;
 
         // Act
-        var result = await context.HasRightAsync(userId, person2Id, RightType.View, now);
+        var result = await context.HasRightAsync(userId, person2Id, Api.Models.Persons.RightType.View, now);
 
         // Assert
         Assert.Null(result);
@@ -128,23 +127,23 @@ public class UserContextTests : IAsyncLifetime
         var userId = (long)await _db.GetTable<User>().InsertWithIdentityAsync(() => user);
 
         var now = DateTime.UtcNow;
-        var right = new Api.Data.Models.Right
+        var right = new Right
         {
             UserId = userId,
             PersonId = person2Id,
-            Type = (int)RightType.View,
+            Type = (int)Api.Models.Persons.RightType.View,
             Start = now.AddHours(-1),
             Stop = now.AddHours(1)
         };
-        await _db.GetTable<Api.Data.Models.Persons.Right>().InsertAsync(() => right);
+        await _db.GetTable<Right>().InsertAsync(() => right);
 
         var context = new UserContext(_db);
 
         // Act
-        var result = await context.HasRightAsync(userId, person2Id, RightType.View, now);
+        var result = await context.HasRightAsync(userId, person2Id, Api.Models.Persons.RightType.View, now);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(RightType.View, result.Type);
+        Assert.Equal(Api.Models.Persons.RightType.View, result.Type);
     }
 }

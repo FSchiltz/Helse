@@ -1,7 +1,6 @@
 using Api.Data.Models.Persons;
 using Api.Models.Events;
 using Api.Models.Persons;
-using Api.Models.Settings;
 using Api.Models.Treatments;
 using LinqToDB;
 using LinqToDB.Data;
@@ -20,7 +19,7 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
     /// <param name="type"></param>
     /// <param name="time"></param>
     /// <returns></returns>
-    public async Task<Api.Models.Settings.Right?> HasRightAsync(long user, long person, RightType type, DateTime time)
+    public async Task<Api.Models.Persons.Right?> HasRightAsync(long user, long person, RightType type, DateTime time)
      => (await Db.GetTable<Models.Persons.Right>()
         .Where(x => x.UserId == user
             && x.PersonId == person
@@ -112,7 +111,7 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
     public Task<long> InsertPerson(PersonCreation newUser)
     {
         return Db.GetTable<Models.Persons.Person>().InsertWithInt64IdentityAsync(()
-            => new Models.Person
+            => new Models.Persons.Person
             {
                 Birth = newUser.Birth,
                 Identifier = newUser.Identifier,
@@ -227,7 +226,7 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
 
     public Task LinkOauth(OauthUser oauthUser)
     {
-        return Db.GetTable<Models.Persons.Person.OauthUser>().InsertAsync(() => new()
+        return Db.GetTable<OauthUser>().InsertAsync(() => new()
         {
             UserId = oauthUser.UserId,
             OauthSub = oauthUser.OauthSub,

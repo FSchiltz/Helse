@@ -20,7 +20,7 @@ public class PersonLogicTests : LogicTests
 
         users.GetUsers().Returns(
         [
-            new(new Api.Data.Models.User { Id = 1, Identifier = "test", Password = "pass" }, new Api.Data.Models.Person { Id = 1, Name = "Test" })
+            new(new Api.Data.Models.Persons.User { Id = 1, Identifier = "test", Password = "pass" }, new Api.Data.Models.Persons.Person { Id = 1, Name = "Test" })
         ]);
         users.GetRights(Arg.Any<DateTime>()).Returns([]);
 
@@ -28,7 +28,7 @@ public class PersonLogicTests : LogicTests
         var result = await PersonLogic.GetAsync(users, context);
 
         // Assert
-        var okResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<IEnumerable<Person>>>(result);
+        var okResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<IEnumerable<Api.Models.Persons.Person>>>(result);
         Assert.NotNull(okResult.Value);
     }
 

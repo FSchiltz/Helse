@@ -2,7 +2,7 @@ namespace Api.Models.Settings;
 
 public enum GraphKind
 {
-  event,
-    line,
-    bar,
+  Text = 0,
+  Line = 1,
+  Bar = 2,
 }

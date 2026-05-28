@@ -1,6 +1,4 @@
-using Api.Models.Persons;
-
-namespace Api.Models.Settings;
+namespace Api.Models.Persons;
 
 public class Right
 {

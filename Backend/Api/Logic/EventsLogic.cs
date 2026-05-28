@@ -1,5 +1,4 @@
 using Api.Data;
-using Api.Data.Models.Health;
 using Api.Helpers;
 using Api.Models.Events;
 using Api.Models.Persons;
@@ -24,7 +23,7 @@ public static class EventsLogic
         var id = personId ?? user.PersonId;
 
         var result = (await events.GetEvents(id, type, start, end))
-        .Select(x => new Event
+        .Select(x => new Models.Events.Event
         {
             Id = x.Id,
             Type = x.Type,

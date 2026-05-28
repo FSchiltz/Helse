@@ -1,10 +1,7 @@
 using Api.Data;
-using Api.Data.Models.Persons;
 using Api.Logic;
 using Api.Models.Persons;
-using Microsoft.AspNetCore.Http;
 using NSubstitute;
-using System.Security.Claims;
 
 namespace Tests.Unit.Logic;
 

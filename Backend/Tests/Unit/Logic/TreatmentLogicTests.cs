@@ -38,10 +38,10 @@ public class TreatmentLogicTests
     {
         // Arrange
         var db = Substitute.For<IUserContext>();
-        var user = new Api.Data.Models.User { Id = 1, PersonId = 1, Identifier = "test", Password = "pass" };
+        var user = new Api.Data.Models.Persons.User { Id = 1, PersonId = 1, Identifier = "test", Password = "pass" };
         db.Get(Arg.Any<string>()).Returns(new PersonFromDb(user, new()));
         db.BeginTransactionAsync().Returns(Substitute.For<ITransaction>());
-        db.HasRightAsync(1, 1, RightType.Edit, Arg.Any<DateTime>()).Returns(new Api.Models.Settings.Right());
+        db.HasRightAsync(1, 1, RightType.Edit, Arg.Any<DateTime>()).Returns(new Api.Models.Persons.Right());
         db.InsertTreatment(1, TreatmentType.Care).Returns(1L);
         var treatment = new CreateTreatment { PersonId = 1, Events = [] };
         var context = new DefaultHttpContext
