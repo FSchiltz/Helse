@@ -4,7 +4,7 @@ import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
-import 'event_add.dart';
+import 'event_type_add.dart';
 
 class EventTypeView extends StatelessWidget {
   const EventTypeView({super.key});
