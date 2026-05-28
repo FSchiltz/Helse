@@ -1,3 +1,4 @@
+import 'package:helse/di/services.dart';
 import 'package:helse/logic/account/authentication_logic.dart';
 import 'package:helse/logic/fit/fit_logic.dart';
 import 'package:helse/logic/import_logic.dart';
@@ -12,10 +13,10 @@ class Logics {
 
   Logics.build(this.authentication, this.settings, this.fit);
 
-  factory Logics(Account account) {
+  factory Logics(Account account, Services service) {
     return Logics.build(
       AuthenticationLogic(account),
-      SettingsLogic(account),
+      SettingsLogic(account, service.settings),
       FitLogic(account),
     );
   }

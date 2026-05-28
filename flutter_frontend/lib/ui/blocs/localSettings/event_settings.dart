@@ -35,7 +35,7 @@ class _EventSettingsState extends State<EventSettings> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
-        await Dependencies.logics.settings.saveEvents(events);
+        await Dependencies.logics.settings.saveEvents(events, true);
 
         Notify.show("Saved Successfully");
       }

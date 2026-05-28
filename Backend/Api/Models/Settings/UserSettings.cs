@@ -4,9 +4,9 @@ public class UserSettings : IJsonSettings
 {
     public static string Name => "User";
 
-    public DatePreset DatePreset { get; set; }
+    public DatePreset? DatePreset { get; set; }
 
-    public InterfaceTheme Theme { get; set; }
+    public InterfaceTheme ?Theme { get; set; }
 
     public int EventWidth { get; set; }
 

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:helse/logic/settings/health_settings.dart';
+import 'package:helse/services/setting_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,8 +22,10 @@ class SettingsLogic {
   final Account account;
   final SettingsBloc events = SettingsBloc(false);
   final SettingsBloc metrics = SettingsBloc(false);
+  final SettingService service;
+  bool init = false;
 
-  SettingsLogic(this.account);
+  SettingsLogic(this.account, this.service);
 
   Future<HealthSettings> getHealth() async {
     var encoded = (await storage).getString(Account.health);
@@ -53,15 +56,35 @@ class SettingsLogic {
         metricGroups: settings.metricGroups,
         metrics: settings.metrics,
         theme: theme,
+        datePreset: settings.datePreset,
       ),
+      true,
     );
   }
 
-  Future<void> _saveSettings(UserSettings settings) async {
+  Future<void> _saveSettings(UserSettings settings, bool toServer) async {
+    if (toServer) {
+      await service.savePersonSettings(settings);
+    }
+
     (await storage).setString(Account.settings, json.encode(settings.toJson()));
   }
 
+  Future<void> _loadSettings() async {
+    var serverSettings = await service.getPersonSettings();
+    (await storage).setString(
+      Account.settings,
+      json.encode(serverSettings.toJson()),
+    );
+    init = true;
+    metrics.changed();
+  }
+
   Future<UserSettings> _userSettings() async {
+    if (!init) {
+      await _loadSettings();
+    }
+
     var encoded = (await storage).getString(Account.settings);
     if (encoded == null) {
       return UserSettings();
@@ -76,7 +99,7 @@ class SettingsLogic {
     return (await _userSettings()).metrics ?? [];
   }
 
-  Future<void> saveMetrics(List<OrderedItem> metric) async {
+  Future<void> saveMetrics(List<OrderedItem> metric, bool toServer) async {
     var settings = await _userSettings();
     await _saveSettings(
       UserSettings(
@@ -85,7 +108,9 @@ class SettingsLogic {
         metricGroups: settings.metricGroups,
         metrics: metric,
         theme: settings.theme,
+        datePreset: settings.datePreset,
       ),
+      toServer,
     );
     metrics.changed();
   }
@@ -94,7 +119,7 @@ class SettingsLogic {
     return (await _userSettings()).events ?? [];
   }
 
-  Future<void> saveEvents(List<OrderedItem> events) async {
+  Future<void> saveEvents(List<OrderedItem> events, bool toServer) async {
     var settings = await _userSettings();
     await _saveSettings(
       UserSettings(
@@ -103,7 +128,9 @@ class SettingsLogic {
         metricGroups: settings.metricGroups,
         metrics: settings.metrics,
         theme: settings.theme,
+        datePreset: settings.datePreset,
       ),
+      toServer,
     );
   }
 
@@ -130,23 +157,25 @@ class SettingsLogic {
         theme: settings.theme,
         datePreset: run,
       ),
+      true,
     );
   }
 
   Future<DatePreset> getDateRange() async {
-    return (await _userSettings()).datePreset ?? DatePreset.today;
+    var settings = await _userSettings();
+    return settings.datePreset ?? DatePreset.today;
   }
 
   Future<void> updateMetrics(List<MetricType> model) async {
     var metrics = await getMetrics();
-    List<OrderedItem> newMetrics = [];
     for (var metric in model) {
       var existing = metrics.firstWhereOrNull(
         (element) => element.id == metric.id,
       );
       if (existing != null) {
+        metrics.removeWhere((x)=> x.id == metric.id);
         // already there, just update the name
-        newMetrics.add(
+        metrics.add(
           OrderedItem(
             name: metric.name,
             detailGraph: existing.detailGraph,
@@ -158,12 +187,12 @@ class SettingsLogic {
         );
       } else {
         if (metric.id != null) {
-          newMetrics.add(getDefault(metric));
+          metrics.add(getDefault(metric));
         }
       }
     }
 
-    await saveMetrics(newMetrics);
+    await saveMetrics(metrics, false);
   }
 
   Future<void> updateEvents(List<EventType> model) async {
@@ -199,7 +228,7 @@ class SettingsLogic {
         }
       }
     }
-    await saveEvents(newEvents);
+    await saveEvents(newEvents, false);
   }
 
   OrderedItem getDefault(MetricType item) {
@@ -222,7 +251,7 @@ class SettingsLogic {
     );
   }
 
-  Future<void> saveMetricGroups(List<OrderedItem> metric) async {
+  Future<void> saveMetricGroups(List<OrderedItem> metric, bool toServer) async {
     var settings = await _userSettings();
     await _saveSettings(
       UserSettings(
@@ -231,7 +260,9 @@ class SettingsLogic {
         metricGroups: metric,
         metrics: settings.metrics,
         theme: settings.theme,
+        datePreset: settings.datePreset,
       ),
+      toServer,
     );
     metrics.changed();
   }
@@ -274,6 +305,6 @@ class SettingsLogic {
       }
     }
 
-    await saveMetricGroups(newMetrics);
+    await saveMetricGroups(newMetrics, false);
   }
 }

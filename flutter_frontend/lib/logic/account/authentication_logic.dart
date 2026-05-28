@@ -97,6 +97,7 @@ class AuthenticationLogic {
   /// Call the logout service
   Future<void> logOut() async {
     await account.clean();
+    Dependencies.logics.settings.init = false;
     Dependencies.blocs.fit.cancel();
     _controller.add(AuthenticationStatus.unauthenticated);
   }

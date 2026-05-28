@@ -15,7 +15,6 @@ class GeneralSettings extends StatefulWidget {
 }
 
 class _GeneralSettingsState extends State<GeneralSettings> {
-  final GlobalKey<FormState> _formKey = GlobalKey();
   InterfaceTheme _theme = InterfaceTheme.system;
   DatePreset _range = DatePreset.today;
 
@@ -34,12 +33,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   Future<void> _submitTheme() async {
     try {
-      if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
         await Dependencies.logics.settings.saveTheme(_theme);
 
         Notify.show("Saved Successfully");
-      }
     } catch (ex) {
       Notify.showError("Error: $ex");
     }
@@ -54,9 +51,13 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   Future<void> rangeCallback(DatePreset? value) async {
     if (value == null) return;
-
-    _range = value;
-    await Dependencies.logics.settings.setDateRange(value);
+    try {
+      _range = value;
+      await Dependencies.logics.settings.setDateRange(value);
+      Notify.show("Saved Successfully");
+    } catch (ex) {
+      Notify.showError("Error: $ex");
+    }
   }
 
   @override
@@ -67,34 +68,61 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       builder: (context, data, reset) {
         return Padding(
           padding: const EdgeInsets.all(32.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Interface',
-                  style: Theme.of(context).textTheme.headlineSmall,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Interface',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              SizedBox(height: 32),
+              SizedBox(
+                width: 200,
+                child: DropdownButtonFormField(
+                  initialValue: _theme,
+                  onChanged: (value) async {
+                    await themeCallback(value);
+                    reset();
+                  },
+                  items: InterfaceTheme.values
+                      .map(
+                        (type) => DropdownMenuItem(
+                          value: type,
+                          child: Text(type.name),
+                        ),
+                      )
+                      .toList(),
+                  decoration: InputDecoration(
+                    labelText: 'Theme',
+                    prefixIcon: const Icon(Icons.list_sharp),
+                    prefixIconColor: theme.primary,
+                    filled: true,
+                    fillColor: theme.surface,
+                    border: SquareOutlineInputBorder(theme.primary),
+                  ),
                 ),
-                SizedBox(height: 32),
-                SizedBox(
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                "Default range for the date. This may be overidden by the last used range",
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: SizedBox(
                   width: 200,
                   child: DropdownButtonFormField(
-                    initialValue: _theme,
-                    onChanged: (value) async {
-                      await themeCallback(value);
-                      reset();
-                    },
-                    items: InterfaceTheme.values
+                    initialValue: _range,
+                    onChanged: rangeCallback,
+                    items: DatePreset.values
                         .map(
                           (type) => DropdownMenuItem(
                             value: type,
-                            child: Text(type.name),
+                            child: Text(Translation.get(type)),
                           ),
                         )
                         .toList(),
                     decoration: InputDecoration(
-                      labelText: 'Theme',
+                      labelText: 'Date range',
                       prefixIcon: const Icon(Icons.list_sharp),
                       prefixIconColor: theme.primary,
                       filled: true,
@@ -103,38 +131,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
-                const Text(
-                  "Default range for the date. This may be overidden by the last used range",
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: SizedBox(
-                    width: 200,
-                    child: DropdownButtonFormField(
-                      initialValue: _range,
-                      onChanged: rangeCallback,
-                      items: DatePreset.values
-                          .map(
-                            (type) => DropdownMenuItem(
-                              value: type,
-                              child: Text(Translation.get(type)),
-                            ),
-                          )
-                          .toList(),
-                      decoration: InputDecoration(
-                        labelText: 'Date range',
-                        prefixIcon: const Icon(Icons.list_sharp),
-                        prefixIconColor: theme.primary,
-                        filled: true,
-                        fillColor: theme.surface,
-                        border: SquareOutlineInputBorder(theme.primary),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },

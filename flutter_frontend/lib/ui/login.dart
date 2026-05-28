@@ -231,9 +231,11 @@ class _LoginState extends State<LoginPage> {
     try {
       var isInit = await Dependencies.services.helper.isInit(url);
 
-      setState(() {
-        _initStatus = isInit;
-      });
+      if (mounted) {
+        setState(() {
+          _initStatus = isInit;
+        });
+      }
 
       // If the server is init or not
       // Todo use stream
@@ -247,7 +249,8 @@ class _LoginState extends State<LoginPage> {
               _submit(
                 noUser: true,
                 oAuth: grant,
-                redirect: await Dependencies.logics.authentication.getRedirect(),
+                redirect: await Dependencies.logics.authentication
+                    .getRedirect(),
                 issuer: await Dependencies.logics.authentication.getClientId(),
               );
             } else if (autologin != null) {
@@ -354,7 +357,10 @@ class _LoginState extends State<LoginPage> {
           name: _controllerName.text,
           surname: _controllerSurname.text,
         );
-        await Dependencies.logics.authentication.initAccount(url: url, person: person);
+        await Dependencies.logics.authentication.initAccount(
+          url: url,
+          person: person,
+        );
 
         // after a succes, we auto login
         await Dependencies.logics.authentication.logIn(
@@ -385,7 +391,10 @@ class _LoginState extends State<LoginPage> {
 
   Future<String?> _connectOauth(String url, OauthConnection oauth) async {
     try {
-      Dependencies.services.authService.init(auth: oauth.url, clientId: oauth.clientId);
+      Dependencies.services.authService.init(
+        auth: oauth.url,
+        clientId: oauth.clientId,
+      );
 
       return await Dependencies.services.authService.login(url);
     } catch (ex) {

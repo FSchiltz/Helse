@@ -44,4 +44,14 @@ class SettingService extends ApiService {
     var api = await getService();
     await call(() => api.apiAdminSettingsGotifyPost(body: settings));
   }
+
+  Future<void> savePersonSettings(UserSettings settings) async {
+    var api = await getService();
+    await call(() => api.apiPersonSettingsPost(body: settings));
+  }
+
+  Future<UserSettings> getPersonSettings() async {
+    var api = await getService();
+    return await call(api.apiPersonSettingsGet) ?? const UserSettings();
+  }
 }

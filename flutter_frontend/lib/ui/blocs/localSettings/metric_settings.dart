@@ -49,7 +49,7 @@ class _MetricSettingsState extends State<MetricSettings> {
     try {
       var toSave = groups.map((e) => e.ordered()).toList();
       // save the user's settings
-      await Dependencies.logics.settings.saveMetricGroups(toSave);
+      await Dependencies.logics.settings.saveMetricGroups(toSave, true);
 
       Notify.show("Saved Successfully");
     } catch (ex) {
@@ -61,7 +61,7 @@ class _MetricSettingsState extends State<MetricSettings> {
     try {
       var toSave = metrics.map((e) => e.ordered()).toList();
       // save the user's settings
-      await Dependencies.logics.settings.saveMetrics(toSave);
+      await Dependencies.logics.settings.saveMetrics(toSave, true);
 
       Notify.show("Saved Successfully");
     } catch (ex) {

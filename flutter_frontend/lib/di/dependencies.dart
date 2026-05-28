@@ -39,8 +39,8 @@ class Dependencies {
 
   static void init() {
     var account = Account();
-    _logics = Logics(account);
     _services = Services(account);
+    _logics = Logics(account, services);
     _blocs = Blocs(logics);
   }
 }
