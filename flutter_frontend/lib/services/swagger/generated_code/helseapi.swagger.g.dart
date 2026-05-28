@@ -373,7 +373,7 @@ Map<String, dynamic> _$OauthProviderToJson(OauthProvider instance) =>
     };
 
 Person _$PersonFromJson(Map<String, dynamic> json) => Person(
-  id: (json['id'] as num?)?.toInt(),
+  id: (json['id'] as num).toInt(),
   userName: json['userName'] as String?,
   rights:
       (json['rights'] as List<dynamic>?)
@@ -620,6 +620,16 @@ Map<String, dynamic> _$UpdatePersonToJson(UpdatePerson instance) =>
       'email': instance.email,
       'phone': instance.phone,
     };
+
+UserId _$UserIdFromJson(Map<String, dynamic> json) => UserId(
+  person: (json['person'] as num).toInt(),
+  user: (json['user'] as num?)?.toInt(),
+);
+
+Map<String, dynamic> _$UserIdToJson(UserId instance) => <String, dynamic>{
+  'person': instance.person,
+  'user': instance.user,
+};
 
 UserStats _$UserStatsFromJson(Map<String, dynamic> json) => UserStats(
   userCount:

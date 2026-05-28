@@ -20,7 +20,9 @@ class EventsTimelineGraph extends StatefulWidget {
 }
 
 class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
-  final int skippedWidth = 32;
+  static const int skippedWidth = 32;
+  static const int widthCoef = 1;
+  final double boxWidth = 60.0 * widthCoef;
 
   final ScrollController _scrollController = ScrollController();
 
@@ -48,7 +50,6 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     List<DateTimeRange> skipped = [];
     DateTime startSkipping = widget.date.start;
 
-    bool hasDayHeader = false;
     for (int i = 0; i <= viewRange; i++) {
       // for each hour, build the timeline
       var currentDate = tempDate;
@@ -62,22 +63,10 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
       if (existing.isNotEmpty) {
         // There is an event during that hour
 
-        // TODO fix the issue when there is an event starting at 23h the day before and both day overlap
         if (skipping || currentDate.hour < 1) {
           // first hour after a skip or a new day
           headerDayItems.add(buildDayHeader(tempDate, context));
-          hasDayHeader = true;
-          // their is a header, we need to skip the next hour
-        } else if (!hasDayHeader) {
-          headerDayItems.add(
-            Container(
-              width: 60,
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            ),
-          );
-        } else {
-          hasDayHeader = false;
-        }
+        } 
         headerItems.add(buildHeader(currentDate, context));
         gridColumns.add(buildGrid());
 
@@ -142,7 +131,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     return Container(
       color: Theme.of(context).colorScheme.surfaceContainerHighest,
       alignment: Alignment.centerLeft,
-      width: 120,
+      width: boxWidth,
       clipBehavior: Clip.none,
       child: Text(
         ' ${tempDate.day.toString().padLeft(2, '0')}/${tempDate.month.toString().padLeft(2, '0')}/${tempDate.year.toString().padLeft(4, '0')}',
@@ -157,7 +146,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     return Container(
       color: Theme.of(context).colorScheme.surfaceContainerHigh,
       alignment: Alignment.centerLeft,
-      width: 60,
+      width: boxWidth,
       child: Tooltip(
         message: '$tempDate',
         textAlign: TextAlign.left,
@@ -177,7 +166,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
           right: BorderSide(color: Colors.white.withAlpha(75), width: 0.5),
         ),
       ),
-      width: 60,
+      width: boxWidth,
       height: 200,
     );
   }
@@ -217,7 +206,11 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
                 x.end.isBefore(projectStartedAt) ||
                 x.end.isAtSameMomentAs(projectStartedAt),
           )
-          .fold(0, (a, b) => a + b.duration.inMinutes - skippedWidth + 60);
+          .fold(
+            0,
+            (a, b) =>
+                a + b.duration.inMinutes - skippedWidth + boxWidth.toInt(),
+          );
 
       var fullDistance = _minutesBetween(widget.date.start, projectStartedAt);
 
@@ -269,7 +262,9 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
           chartGroup.add(
             Container(
               margin: EdgeInsets.only(
-                left: _distanceToLeftBorder(start, skipped).toDouble(),
+                left:
+                    _distanceToLeftBorder(start, skipped).toDouble() *
+                    widthCoef,
                 top: 2.0,
                 bottom: 2.0,
               ),
@@ -280,7 +275,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
                 child: InkWell(
                   onTap: () => widget.selectionChanged(n),
                   child: Container(
-                    width: width.toDouble(),
+                    width: width.toDouble() * widthCoef,
                     decoration: BoxDecoration(
                       color: color.withAlpha(100),
                       borderRadius: const BorderRadius.all(Radius.circular(10)),

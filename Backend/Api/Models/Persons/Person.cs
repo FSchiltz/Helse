@@ -4,7 +4,7 @@ namespace Api.Models.Persons;
 
 public class Person : PersonBase
 {
-    public long Id { get; set; }
+    public required long Id { get; set; }
 
     public string? UserName { get; set; }
 

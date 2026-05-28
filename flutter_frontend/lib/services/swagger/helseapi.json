@@ -79,8 +79,15 @@
           "required": true
         },
         "responses": {
-          "204": {
-            "description": "No Content"
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserId"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -2566,6 +2573,9 @@
         }
       },
       "Person": {
+        "required": [
+          "id"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -3074,6 +3084,32 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "UserId": {
+        "required": [
+          "person",
+          "user"
+        ],
+        "type": "object",
+        "properties": {
+          "person": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "user": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int64"
           }
         }
       },

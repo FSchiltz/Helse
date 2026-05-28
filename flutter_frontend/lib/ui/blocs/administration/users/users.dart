@@ -64,11 +64,10 @@ class _UsersViewState extends State<UsersView> {
                       .map(
                         (user) => DataRow(
                           cells: [
-                            DataCell(Text(user.id?.toString() ?? '')),
+                            DataCell(Text(user.id.toString())),
                             DataCell(
                               Text(
-                                user.types?.map((x) => x.name).join(';') ??
-                                    '0',
+                                user.types?.map((x) => x.name).join(';') ?? '0',
                               ),
                             ),
                             DataCell(Text(user.userName ?? "")),
@@ -80,18 +79,12 @@ class _UsersViewState extends State<UsersView> {
                                 children: [
                                   IconButton(
                                     onPressed: () {
-                                      var id = user.id;
-                                      if (id != null) {
-                                        showDialog<void>(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return UserAdd(
-                                              reset,
-                                              edit: user,
-                                            );
-                                          },
-                                        );
-                                      }
+                                      showDialog<void>(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return UserAdd(reset, edit: user);
+                                        },
+                                      );
                                     },
                                     icon: const Icon(Icons.edit_sharp),
                                   ),
@@ -102,7 +95,7 @@ class _UsersViewState extends State<UsersView> {
                                         builder: (BuildContext context) {
                                           return DeleteUser(() async {
                                             await DI.user.deletePerson(
-                                              user.id ?? 0,
+                                              user.id,
                                             );
                                             reset();
                                           }, person: user);

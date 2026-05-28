@@ -68,7 +68,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<dynamic>> _apiPersonPost({
+  Future<Response<UserId>> _apiPersonPost({
     required PersonCreation? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -90,7 +90,7 @@ final class _$Helseapi extends Helseapi {
       body: $body,
       tag: swaggerMetaData,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<UserId, UserId>($request);
   }
 
   @override

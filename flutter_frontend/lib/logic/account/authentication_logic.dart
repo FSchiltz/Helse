@@ -64,7 +64,7 @@ class AuthenticationLogic {
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
     var data = decodedToken["roles"] as String?;
     if (data == null) {
-      return const Person(types: [UserType.swaggerGeneratedUnknown]);
+      return const Person(types: [UserType.swaggerGeneratedUnknown], id: 0);
     }
 
     var name = decodedToken["name"] as String?;
@@ -82,7 +82,7 @@ class AuthenticationLogic {
               UserType.swaggerGeneratedUnknown,
         )
         .toList();
-    return Person(types: roles, name: name, surname: surname);
+    return Person(types: roles, name: name, surname: surname, id: 0);
   }
 
   /// Init the account for a first connection

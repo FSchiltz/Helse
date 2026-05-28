@@ -50,7 +50,7 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
                         minimumSize: const Size.fromHeight(50),
                         shape: const ContinuousRectangleBorder(),
                       ),
-                      onPressed: _submit,
+                      onPressed: (caregiver > 0) ? _submit : null,
                       child: const Text('Share'),
                     ),
             ],
@@ -60,27 +60,34 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
     );
   }
 
-  List<Widget> _shareForm(List<Person> caregivers, Person patient) => [
-    EnumInput(
-      label: 'Caregiver',
-      caregivers.map((x) => DropDownItem(x.id, x.userName ?? '')).toList(),
-      (value) => setState(() {
-        caregiver = value ?? 0;
-      }),
-    ),
-    const SizedBox(height: 10),
-    Row(
-      children: [
-        const Text("With edit right: "),
-        StatefullCheck(
-          edit,
-          (value) => setState(() {
-            edit = value;
-          }),
-        ),
-      ],
-    ),
-  ];
+  List<Widget> _shareForm(List<Person> caregivers, Person patient) {
+    var selects = [DropDownItem(0, "Select")];
+
+    selects.addAll(caregivers.map((x) => DropDownItem(x.id, x.userName ?? '')));
+
+    return [
+      EnumInput(
+        label: 'Caregiver',
+        selects,
+        (value) => setState(() {
+          caregiver = value ?? 0;
+        }),
+        value: caregiver,
+      ),
+      const SizedBox(height: 10),
+      Row(
+        children: [
+          const Text("With edit right: "),
+          StatefullCheck(
+            edit,
+            (value) => setState(() {
+              edit = value;
+            }),
+          ),
+        ],
+      ),
+    ];
+  }
 
   void _submit() async {
     var localContext = context;
@@ -92,9 +99,6 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
       try {
         // save the user
         var patient = widget.patient.id;
-        if (patient == null) {
-          throw Exception();
-        }
 
         await DI.user.sharePatient(
           patient: patient,
