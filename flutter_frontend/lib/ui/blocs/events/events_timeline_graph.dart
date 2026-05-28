@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -20,7 +21,9 @@ class EventsTimelineGraph extends StatefulWidget {
 }
 
 class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
-  final int skippedWidth = 32;
+  static const int skippedWidth = 32;
+  static const int widthCoef = 2;
+  final double boxWidth = 60.0 * widthCoef;
 
   final ScrollController _scrollController = ScrollController();
 
@@ -48,7 +51,6 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     List<DateTimeRange> skipped = [];
     DateTime startSkipping = widget.date.start;
 
-    bool hasDayHeader = false;
     for (int i = 0; i <= viewRange; i++) {
       // for each hour, build the timeline
       var currentDate = tempDate;
@@ -62,21 +64,11 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
       if (existing.isNotEmpty) {
         // There is an event during that hour
 
-        // TODO fix the issue when there is an event starting at 23h the day before and both day overlap
         if (skipping || currentDate.hour < 1) {
           // first hour after a skip or a new day
           headerDayItems.add(buildDayHeader(tempDate, context));
-          hasDayHeader = true;
-          // their is a header, we need to skip the next hour
-        } else if (!hasDayHeader) {
-          headerDayItems.add(
-            Container(
-              width: 60,
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            ),
-          );
         } else {
-          hasDayHeader = false;
+          headerDayItems.add(_fillerWidget());
         }
         headerItems.add(buildHeader(currentDate, context));
         gridColumns.add(buildGrid());
@@ -87,12 +79,12 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
         }
       } else {
         if (!skipping) {
-          headerItems.add(SizedBox(width: skippedWidth.toDouble()));
+          headerItems.add(_skipWidget(context));
           gridColumns.add(_skipWidget(context));
-          headerDayItems.add(SizedBox(width: skippedWidth.toDouble()));
+          headerDayItems.add(_skipWidget(context));
 
           skipping = true;
-          startSkipping = tempDate;
+          startSkipping = currentDate;
         }
       }
     }
@@ -142,8 +134,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     return Container(
       color: Theme.of(context).colorScheme.surfaceContainerHighest,
       alignment: Alignment.centerLeft,
-      width: 120,
-      clipBehavior: Clip.none,
+      width: boxWidth,
       child: Text(
         ' ${tempDate.day.toString().padLeft(2, '0')}/${tempDate.month.toString().padLeft(2, '0')}/${tempDate.year.toString().padLeft(4, '0')}',
         textAlign: TextAlign.left,
@@ -157,7 +148,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     return Container(
       color: Theme.of(context).colorScheme.surfaceContainerHigh,
       alignment: Alignment.centerLeft,
-      width: 60,
+      width: boxWidth,
       child: Tooltip(
         message: '$tempDate',
         textAlign: TextAlign.left,
@@ -177,7 +168,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
           right: BorderSide(color: Colors.white.withAlpha(75), width: 0.5),
         ),
       ),
-      width: 60,
+      width: boxWidth,
       height: 200,
     );
   }
@@ -204,7 +195,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     }
   }
 
-  int _distanceToLeftBorder(
+  double _distanceToLeftBorder(
     DateTime projectStartedAt,
     List<DateTimeRange<DateTime>> skipped,
   ) {
@@ -217,11 +208,15 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
                 x.end.isBefore(projectStartedAt) ||
                 x.end.isAtSameMomentAs(projectStartedAt),
           )
-          .fold(0, (a, b) => a + b.duration.inMinutes - skippedWidth + 60);
+          .toList();
+
+      var widthToSkip =
+          skipping.map((a) => a.duration.inMinutes).sum -
+          (skipping.length * skippedWidth);
 
       var fullDistance = _minutesBetween(widget.date.start, projectStartedAt);
 
-      return fullDistance - 1 - skipping;
+      return (fullDistance - widthToSkip).toDouble() * widthCoef;
     }
   }
 
@@ -265,22 +260,19 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
 
         var width = _distanceInMinutes(start, end);
         var color = _stateColor(n.description ?? '');
+        var left = _distanceToLeftBorder(start, skipped);
         if (width > 0) {
           chartGroup.add(
             Container(
-              margin: EdgeInsets.only(
-                left: _distanceToLeftBorder(start, skipped).toDouble(),
-                top: 2.0,
-                bottom: 2.0,
-              ),
+              margin: EdgeInsets.only(left: left, top: 2.0, bottom: 2.0),
               alignment: Alignment.centerLeft,
               child: Tooltip(
                 message:
-                    "${n.description ?? ""}: ${n.start.toLocal()} => ${n.stop.toLocal()}",
+                    "${n.description ?? ""}: ${n.start.toLocal()} => ${n.stop.toLocal()} ( ${left * widthCoef} - ${width * widthCoef} ))",
                 child: InkWell(
                   onTap: () => widget.selectionChanged(n),
                   child: Container(
-                    width: width.toDouble(),
+                    width: width.toDouble() * widthCoef,
                     decoration: BoxDecoration(
                       color: color.withAlpha(100),
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -310,9 +302,14 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
 
   Widget _skipWidget(BuildContext context) {
     return Container(
-      width: skippedWidth.toDouble(),
+      width: skippedWidth.toDouble() * widthCoef,
       alignment: Alignment.center,
       child: Text('<>'),
     );
   }
+
+  Widget _fillerWidget() => Container(
+    color: Colors.red,
+    child: SizedBox(width: boxWidth.toDouble()),
+  );
 }

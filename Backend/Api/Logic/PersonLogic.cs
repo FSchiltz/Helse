@@ -192,9 +192,9 @@ public static class PersonLogic
 
         log.LogInformation("User creation of {user}", newUser.UserName);
 
-        await db.CreateUserAsync(newUser, userId);
+        var result = await db.CreateUserAsync(newUser, userId);
 
-        return TypedResults.NoContent();
+        return TypedResults.Created(default(string), result);
     }
 
     public static async Task<IResult> DeleteAsync(long userId, IUserContext db, HttpContext context)
@@ -237,7 +237,7 @@ public static class PersonLogic
             return TypedResults.BadRequest("Cannot remove your own admin right.");
         }
 
-        var userToUpdate =await db.Get(update.Id)?? throw new InvalidDataException();
+        var userToUpdate = await db.Get(update.Id) ?? throw new InvalidDataException();
 
         await using var transaction = await db.BeginTransactionAsync();
         await db.UpdatePerson(update);

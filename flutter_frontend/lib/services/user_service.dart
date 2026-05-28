@@ -10,10 +10,10 @@ class UserService extends ApiService {
     return await call(api.apiPersonGet);
   }
 
-  Future<void> addPerson(PersonCreation person) async {
+  Future<UserId?> addPerson(PersonCreation person) async {
     var api = await getService();
 
-    await call<void>(() => api.apiPersonPost(body: person));
+    return await call(() => api.apiPersonPost(body: person));
   }
 
   Future<List<Person>?> patients() async {

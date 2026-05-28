@@ -33,6 +33,7 @@ class _MetricsGridState extends State<MetricsGrid> {
     try {
       var model = await DI.metric.metricsGroup();
       if (model != null) {
+        await DI.settings.updateMetricGroups(model);
         var settings = await DI.settings.getMetricGroups();
         // filter using the user settings
 

@@ -34,7 +34,7 @@ public static class Endpoints
 
         person.MapPost("/", PersonLogic.CreateAsync)
         .AllowAnonymous()
-        .Produces((int)HttpStatusCode.NoContent)
+        .Produces<UserId>((int)HttpStatusCode.Created)
         .Produces((int)HttpStatusCode.Unauthorized);
 
         person.MapGet("/", PersonLogic.GetAsync)

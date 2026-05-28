@@ -108,7 +108,7 @@ class _SignupState extends State<UserAdd> {
           );
         } else {
           // save the user
-          await DI.user.addPerson(
+          var result = await DI.user.addPerson(
             PersonCreation(
               userName: _controllerUsername.text,
               name: _controllerName.text,
@@ -118,6 +118,14 @@ class _SignupState extends State<UserAdd> {
               types: _type,
             ),
           );
+
+          if (result == null) {
+            throw StateError("No user created");
+          }
+
+          if (result.user == null) {
+            throw StateError("The person was only added as a patient");
+          }
         }
 
         _formKey.currentState?.reset();

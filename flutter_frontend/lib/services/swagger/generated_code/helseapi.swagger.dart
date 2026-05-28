@@ -105,13 +105,17 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response> apiPersonPost({required PersonCreation? body}) {
+  Future<chopper.Response<UserId>> apiPersonPost({
+    required PersonCreation? body,
+  }) {
+    generatedMapping.putIfAbsent(UserId, () => UserId.fromJsonFactory);
+
     return _apiPersonPost(body: body);
   }
 
   ///
   @POST(path: '/api/person', optionalBody: true)
-  Future<chopper.Response> _apiPersonPost({
+  Future<chopper.Response<UserId>> _apiPersonPost({
     @Body() required PersonCreation? body,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -3477,7 +3481,7 @@ extension $OauthProviderExtension on OauthProvider {
 @JsonSerializable(explicitToJson: true)
 class Person {
   const Person({
-    this.id,
+    required this.id,
     this.userName,
     this.rights,
     this.types,
@@ -3497,7 +3501,7 @@ class Person {
   Map<String, dynamic> toJson() => _$PersonToJson(this);
 
   @JsonKey(name: 'id')
-  final int? id;
+  final int id;
   @JsonKey(name: 'userName')
   final String? userName;
   @JsonKey(name: 'rights', defaultValue: <Right>[])
@@ -3623,7 +3627,7 @@ extension $PersonExtension on Person {
   }
 
   Person copyWithWrapped({
-    Wrapped<int?>? id,
+    Wrapped<int>? id,
     Wrapped<String?>? userName,
     Wrapped<List<Right>?>? rights,
     Wrapped<List<enums.UserType>?>? types,
@@ -4805,6 +4809,54 @@ extension $UpdatePersonExtension on UpdatePerson {
           : this.profilePicture),
       email: (email != null ? email.value : this.email),
       phone: (phone != null ? phone.value : this.phone),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class UserId {
+  const UserId({required this.person, this.user});
+
+  factory UserId.fromJson(Map<String, dynamic> json) => _$UserIdFromJson(json);
+
+  static const toJsonFactory = _$UserIdToJson;
+  Map<String, dynamic> toJson() => _$UserIdToJson(this);
+
+  @JsonKey(name: 'person')
+  final int person;
+  @JsonKey(name: 'user')
+  final int? user;
+  static const fromJsonFactory = _$UserIdFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is UserId &&
+            (identical(other.person, person) ||
+                const DeepCollectionEquality().equals(other.person, person)) &&
+            (identical(other.user, user) ||
+                const DeepCollectionEquality().equals(other.user, user)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(person) ^
+      const DeepCollectionEquality().hash(user) ^
+      runtimeType.hashCode;
+}
+
+extension $UserIdExtension on UserId {
+  UserId copyWith({int? person, int? user}) {
+    return UserId(person: person ?? this.person, user: user ?? this.user);
+  }
+
+  UserId copyWithWrapped({Wrapped<int>? person, Wrapped<int?>? user}) {
+    return UserId(
+      person: (person != null ? person.value : this.person),
+      user: (user != null ? user.value : this.user),
     );
   }
 }

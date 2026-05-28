@@ -79,7 +79,7 @@ public class UserHelperTests
         {
             Name = "Caregiver",
             Surname = "User",
-            Types = new HashSet<UserType> { UserType.Caregiver }
+            Types = []
         };
 
         users.InsertPerson(newUser).Returns(3L);
@@ -109,7 +109,7 @@ public class UserHelperTests
             Surname = "Doe",
             UserName = null,
             Password = "password123",
-            Types = new HashSet<UserType> { UserType.User }
+            Types = [UserType.User]
         };
 
         users.InsertPerson(newUser).Returns(1L);
@@ -132,7 +132,7 @@ public class UserHelperTests
             Surname = "Doe",
             UserName = "johndoe",
             Password = null,
-            Types = new HashSet<UserType> { UserType.User }
+            Types = [UserType.User]
         };
 
         users.InsertPerson(newUser).Returns(1L);

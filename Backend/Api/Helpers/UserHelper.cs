@@ -7,7 +7,7 @@ namespace Api.Helpers;
 
 public static class UserHelper
 {
-    public static async Task<(long Person, long? User)> CreateUserAsync(this IUserContext users, PersonCreation newUser, long userId)
+    public static async Task<UserId> CreateUserAsync(this IUserContext users, PersonCreation newUser, long userId)
     {
         // Open a transaction
         await using var transaction = await users.BeginTransactionAsync();
@@ -19,7 +19,7 @@ public static class UserHelper
         // create the user if needed
         // patient are non user of the app, only external people managed by a caregiver
         // TODO add patient account creation
-        if (newUser.Types.Any(x => x == UserType.User || x == UserType.Admin))
+        if (newUser.Types.Any(x => x == UserType.User || x == UserType.Admin || x == UserType.Caregiver))
         {
             if (newUser.UserName is null)
                 throw new ArgumentException("Missing username", nameof(newUser));
@@ -39,6 +39,6 @@ public static class UserHelper
 
         await transaction.CommitAsync();
 
-        return (id, newUserId);
+        return new(id, newUserId);
     }
 }
