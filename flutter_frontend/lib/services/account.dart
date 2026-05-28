@@ -11,12 +11,9 @@ class Account {
   static const clientid = "clientid";
   static const refresh = "refresh";
   static const fitRun = "fitLastRun";
-  static const theme = 'theme';
   static const health = 'health';
-  static const metrics = 'metrics';
-  static const metricGroups = 'metricgroups';
-  static const events = 'events';
-  static const dateRange = 'dateRange';
+  static const settings = 'settings';
+  static const patients = 'patients';
 
   Future<String?> get(String name) async {
     return (await storage).getString(name);
@@ -38,9 +35,8 @@ class Account {
     await s.remove(clientid);
     await s.remove(refresh);
     await s.remove(fitRun);
-    await s.remove(theme);
+    await s.remove(patients);
     await s.remove(health);
-    await s.remove(metrics);
-    await s.remove(events);
+    await s.remove(settings);
   }
 }

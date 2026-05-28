@@ -196,6 +196,51 @@
         }
       }
     },
+    "/api/person/settings": {
+      "get": {
+        "tags": [
+          "SettingsLogic"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSettings"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SettingsLogic"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSettings"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/api/person/rights/{personId}": {
       "post": {
         "tags": [
@@ -390,7 +435,17 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientSettings"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       },
@@ -409,8 +464,11 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -2041,6 +2099,17 @@
           }
         }
       },
+      "DatePreset": {
+        "enum": [
+          "today",
+          "week",
+          "month",
+          "trimestre",
+          "halfYear",
+          "year",
+          "yearToDate"
+        ]
+      },
       "Event": {
         "required": [
           "start",
@@ -2647,6 +2716,51 @@
           }
         }
       },
+      "PatientSettings": {
+        "type": "object",
+        "properties": {
+          "patientId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "datePreset": {
+            "$ref": "#/components/schemas/DatePreset"
+          },
+          "theme": {
+            "$ref": "#/components/schemas/Theme"
+          },
+          "eventWidth": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "metrics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderedItem"
+            }
+          },
+          "metricGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderedItem"
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderedItem"
+            }
+          }
+        }
+      },
       "Person": {
         "required": [
           "id"
@@ -3198,6 +3312,9 @@
       "UserSettings": {
         "type": "object",
         "properties": {
+          "datePreset": {
+            "$ref": "#/components/schemas/DatePreset"
+          },
           "theme": {
             "$ref": "#/components/schemas/Theme"
           },
@@ -3260,10 +3377,10 @@
       "name": "PersonLogic"
     },
     {
-      "name": "PatientsLogic"
+      "name": "SettingsLogic"
     },
     {
-      "name": "SettingsLogic"
+      "name": "PatientsLogic"
     },
     {
       "name": "MetricsLogic"

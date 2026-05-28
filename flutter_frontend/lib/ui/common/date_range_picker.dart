@@ -5,8 +5,6 @@ import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/common/date_range_input.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
-enum DatePreset { today, week, month, trimestre, halfYear, year, yearToDate }
-
 class DateRangePicker extends StatelessWidget {
   final void Function(DateTimeRange value) setDate;
   final DateTimeRange initial;
