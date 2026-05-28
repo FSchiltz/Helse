@@ -2,7 +2,7 @@ using Api.Data;
 using Api.Data.Models.Health;
 using Api.Helpers;
 using Api.Models.Events;
-using Api.Models.Settings;
+using Api.Models.Persons;
 using LinqToDB;
 
 namespace Api.Logic;

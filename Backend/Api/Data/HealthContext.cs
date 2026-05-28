@@ -1,6 +1,7 @@
 using System.Data;
 using Api.Data.Models.Health;
 using Api.Data.Models.Persons;
+using Api.Models.Persons;
 using LinqToDB;
 using LinqToDB.Data;
 using LinqToDB.Mapping;
@@ -73,7 +74,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     }
 
     /// <inheritdoc/>
-    public Task<Event[]> GetEvents(long user, Api.Models.Settings.RightType view, DateTime start, DateTime end)
+    public Task<Event[]> GetEvents(long user, RightType view, DateTime start, DateTime end)
     {
         return (from e in Db.GetTable<Event>()
                 join r in Db.GetTable<Right>() on e.PersonId equals r.PersonId
@@ -144,7 +145,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     public Task<MetricType?> GetMetricType(int type) => Db.GetTable<MetricType>().FirstOrDefaultAsync(x => x.Id == type);
 
     /// <inheritdoc/>
-    public Task<Person[]> GetPatients(long user, DateTime now, Api.Models.Settings.RightType right)
+    public Task<Person[]> GetPatients(long user, DateTime now, RightType right)
     {
         return (from u in Db.GetTable<Person>()
                 join r in Db.GetTable<Right>() on u.Id equals r.PersonId

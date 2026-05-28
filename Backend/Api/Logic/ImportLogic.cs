@@ -5,7 +5,7 @@ using Api.Logic.Import;
 using Api.Models;
 using Api.Models.Events;
 using Api.Models.Metrics;
-using Api.Models.Settings;
+using Api.Models.Persons;
 using LinqToDB;
 using Microsoft.AspNetCore.Mvc;
 

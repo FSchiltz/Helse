@@ -1,5 +1,6 @@
 using Api.Data.Models.Health;
 using Api.Data.Models.Persons;
+using Api.Models.Persons;
 
 namespace Api.Data;
 
@@ -75,8 +76,8 @@ public interface IHealthContext : IContext
     Task Insert(Api.Models.Metrics.CreateMetric metric, long person, long id);
     Task Update(Api.Models.Metrics.UpdateMetric metric);
 
-    Task<Person[]> GetPatients(long id, DateTime now, Api.Models.Settings.RightType view);
-    Task<Event[]> GetEvents(long id, Api.Models.Settings.RightType view, DateTime start, DateTime end);
+    Task<Person[]> GetPatients(long id, DateTime now, RightType view);
+    Task<Event[]> GetEvents(long id, RightType view, DateTime start, DateTime end);
     Task<Event[]> GetEvents(long id, DateTime start, DateTime end);
 
     Task<Person[]> GetAllPatients();

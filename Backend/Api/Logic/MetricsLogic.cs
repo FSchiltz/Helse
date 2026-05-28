@@ -3,7 +3,7 @@ using Api.Data.Models.Health;
 using Api.Helpers;
 using Api.Models;
 using Api.Models.Metrics;
-using Api.Models.Settings;
+using Api.Models.Persons;
 using LinqToDB;
 
 namespace Api.Logic;

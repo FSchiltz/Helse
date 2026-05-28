@@ -2,7 +2,7 @@ using System.Security.Claims;
 using Api.Data;
 using Api.Data.Models.Persons;
 using Api.Helpers.Auth;
-using Api.Models.Settings;
+using Api.Models.Persons;
 using Microsoft.OpenApi;
 
 namespace Api.Helpers;

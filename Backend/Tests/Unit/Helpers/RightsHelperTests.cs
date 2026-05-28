@@ -3,7 +3,7 @@ using Api.Data.Models;
 using Api.Data.Models.Persons;
 using Api.Helpers;
 using Api.Helpers.Auth;
-using Api.Models.Settings;
+using Api.Models.Persons;
 using NSubstitute;
 using System.Security.Claims;
 

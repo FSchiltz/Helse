@@ -1,6 +1,6 @@
 using Api.Data;
 using Api.Data.Models.Persons;
-using Api.Models.Settings;
+using Api.Models.Persons;
 using LinqToDB;
 using LinqToDB.Data;
 

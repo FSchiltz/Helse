@@ -2,7 +2,6 @@ using Api.Data;
 using Api.Helpers;
 using Api.Helpers.Auth;
 using Api.Models.Persons;
-using Api.Models.Settings;
 using NSubstitute;
 
 namespace Tests.Unit.Helpers;

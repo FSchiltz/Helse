@@ -21,7 +21,7 @@ public class PatientsLogicTests : LogicTests
         [
             new() { Id = 1, Name = "Test", Surname = "User" }
         ];
-        db.GetPatients(1, Arg.Any<DateTime>(), Api.Models.Settings.RightType.View).Returns(persons);
+        db.GetPatients(1, Arg.Any<DateTime>(), RightType.View).Returns(persons);
 
         // Act
         var result = await PatientsLogic.GetPatientsAsync(users, db, context);
