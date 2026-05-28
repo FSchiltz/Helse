@@ -2,11 +2,11 @@ namespace Api.Models.Settings;
 
 public enum DatePreset
 {
-    today = 0,
-    week = 1,
-    month = 2,
-    trimestre = 3,
-    halfYear = 4,
-    year = 5,
-    yearToDate = 6
+    Today = 0,
+    Week = 1,
+    Month = 2,
+    Trimestre = 3,
+    HalfYear = 4,
+    Year = 5,
+    YearToDate = 6
 }

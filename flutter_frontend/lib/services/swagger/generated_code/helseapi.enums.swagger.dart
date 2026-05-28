@@ -8,20 +8,20 @@ enum DatePreset {
   @JsonValue(null)
   swaggerGeneratedUnknown(null),
 
-  @JsonValue('today')
-  today('today'),
-  @JsonValue('week')
-  week('week'),
-  @JsonValue('month')
-  month('month'),
-  @JsonValue('trimestre')
-  trimestre('trimestre'),
-  @JsonValue('halfYear')
-  halfyear('halfYear'),
-  @JsonValue('year')
-  year('year'),
-  @JsonValue('yearToDate')
-  yeartodate('yearToDate');
+  @JsonValue('Today')
+  today('Today'),
+  @JsonValue('Week')
+  week('Week'),
+  @JsonValue('Month')
+  month('Month'),
+  @JsonValue('Trimestre')
+  trimestre('Trimestre'),
+  @JsonValue('HalfYear')
+  halfyear('HalfYear'),
+  @JsonValue('Year')
+  year('Year'),
+  @JsonValue('YearToDate')
+  yeartodate('YearToDate');
 
   final String? value;
 

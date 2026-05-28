@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
-import 'package:helse/logic/settings/ordered_item.dart';
 import 'package:helse/ui/blocs/metrics/metric_detail_page.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
@@ -72,7 +71,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                 type: widget.type,
                 person: widget.person,
                 summary: data,
-                settings: widget.settings.detailGraph,
+                settings: widget.settings.detailGraph ?? GraphKind.text,
               ),
             ),
           ),

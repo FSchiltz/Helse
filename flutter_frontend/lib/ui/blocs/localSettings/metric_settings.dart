@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/ui/blocs/localSettings/ordered_edit_item.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/statefull_check.dart';
@@ -17,12 +18,34 @@ class _MetricSettingsState extends State<MetricSettings> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final GlobalKey<FormState> _formGroupKey = GlobalKey();
 
-  Future<List<OrderedItem>> _getData(bool refresh) async {
-    return await DI.settings.getMetrics();
+  Future<List<OrderedEditItem>> _getData(bool refresh) async {
+    return (await DI.settings.getMetrics())
+        .map(
+          (e) => OrderedEditItem(
+            id: e.id ?? 0,
+            name: e.name,
+            detailGraph: e.detailGraph,
+            graph: e.graph,
+            visible: e.visible ?? false,
+            order: e.order,
+          ),
+        )
+        .toList();
   }
 
-  Future<List<OrderedItem>> _getGroupData(bool reset) async {
-    return await DI.settings.getMetricGroups();
+  Future<List<OrderedEditItem>> _getGroupData(bool reset) async {
+    return (await DI.settings.getMetricGroups())
+        .map(
+          (e) => OrderedEditItem(
+            id: e.id ?? 0,
+            name: e.name,
+            detailGraph: e.detailGraph,
+            graph: e.graph,
+            visible: e.visible ?? true,
+            order: e.order,
+          ),
+        )
+        .toList();
   }
 
   Future<void> _submitMetricGroups(List<OrderedItem> groups) async {
@@ -94,7 +117,9 @@ class _MetricSettingsState extends State<MetricSettings> {
                       shape: const ContinuousRectangleBorder(),
                     ),
                     onPressed: () async {
-                      await _submitMetrics(data);
+                      await _submitMetrics(
+                        data.map((e) => e.ordered()).toList(),
+                      );
                       reset();
                     },
                     child: const Text("Save"),
@@ -123,7 +148,7 @@ class _MetricSettingsState extends State<MetricSettings> {
                               ),
                               DataCell(
                                 StatefullCheck(
-                                  item.visible ?? false,
+                                  item.visible,
                                   (value) => item.visible = value,
                                 ),
                               ),
@@ -190,7 +215,9 @@ class _MetricSettingsState extends State<MetricSettings> {
                         shape: const ContinuousRectangleBorder(),
                       ),
                       onPressed: () async {
-                        await _submitMetricGroups(data);
+                        await _submitMetricGroups(
+                          data.map((e) => e.ordered()).toList(),
+                        );
                         reset();
                       },
                       child: const Text("Save"),

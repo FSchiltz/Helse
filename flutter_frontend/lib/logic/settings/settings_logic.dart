@@ -69,7 +69,7 @@ class SettingsLogic {
     if (encoded == null) {
       return UserSettings();
     }
-    return UserSettings.fromJson(json.decode(encoded));
+    return UserSettings.fromJson(json.decode(encoded) as Map<String, Object?>);
   }
 
   Future<List<OrderedItem>> getMetrics() async {

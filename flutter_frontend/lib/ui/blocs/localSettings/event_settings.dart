@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/logic/d_i.dart';
-import 'package:helse/logic/settings/events_settings.dart';
-import 'package:helse/logic/settings/ordered_item.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/ui/blocs/localSettings/ordered_edit_item.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/statefull_check.dart';
@@ -16,15 +16,26 @@ class EventSettings extends StatefulWidget {
 class _EventSettingsState extends State<EventSettings> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
-  Future<List<OrderedItem>> _getData(bool refresh) async {
-    return (await DI.settings.getEvents()).events;
+  Future<List<OrderedEditItem>> _getData(bool refresh) async {
+    return (await DI.settings.getEvents())
+        .map(
+          (e) => OrderedEditItem(
+            visible: e.visible ?? true,
+            name: e.name,
+            id: e.id ?? 0,
+            detailGraph: e.detailGraph,
+            graph: e.graph,
+            order: e.order,
+          ),
+        )
+        .toList();
   }
 
   void _submitEvent(List<OrderedItem> events) async {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
-        await DI.settings.saveEvents(EventsSettings(events));
+        await DI.settings.saveEvents(events);
 
         Notify.show("Saved Successfully");
       }
@@ -61,7 +72,7 @@ class _EventSettingsState extends State<EventSettings> {
                           shape: const ContinuousRectangleBorder(),
                         ),
                         onPressed: () {
-                          _submitEvent(data);
+                          _submitEvent(data.map((e) => e.ordered()).toList());
                           reset();
                         },
                         child: const Text("Save"),

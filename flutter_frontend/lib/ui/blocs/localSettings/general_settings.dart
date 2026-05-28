@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/d_i.dart';
-import 'package:helse/logic/settings/theme_settings.dart';
 import 'package:helse/main.dart';
-import 'package:helse/ui/common/date_range_picker.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_outline_input_border.dart';
@@ -17,10 +16,10 @@ class GeneralSettings extends StatefulWidget {
 
 class _GeneralSettingsState extends State<GeneralSettings> {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  ThemeMode _theme = ThemeMode.system;
+  InterfaceTheme _theme = InterfaceTheme.system;
   DatePreset _range = DatePreset.today;
 
-  Future<void> themeCallback(ThemeMode? value) async {
+  Future<void> themeCallback(InterfaceTheme? value) async {
     if (value == null) return;
     // save the settings
     _theme = value;
@@ -37,7 +36,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
-        await DI.settings.saveTheme(ThemeSettings(_theme));
+        await DI.settings.saveTheme(_theme);
 
         Notify.show("Saved Successfully");
       }
@@ -47,7 +46,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   Future<int> _getData(bool reset) async {
-    _theme = (await DI.settings.getTheme()).theme;
+    _theme = await DI.settings.getTheme();
     _range = await DI.settings.getDateRange();
 
     return 1;
@@ -86,7 +85,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       await themeCallback(value);
                       reset();
                     },
-                    items: ThemeMode.values
+                    items: InterfaceTheme.values
                         .map(
                           (type) => DropdownMenuItem(
                             value: type,

@@ -1,7 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-import '../../../logic/settings/ordered_item.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 
 class MetricCondensed extends StatelessWidget {
@@ -10,15 +9,26 @@ class MetricCondensed extends StatelessWidget {
   final DateTimeRange date;
   final OrderedItem settings;
 
-  const MetricCondensed(this.metrics, this.type, this.settings, this.date, {super.key});
+  const MetricCondensed(
+    this.metrics,
+    this.type,
+    this.settings,
+    this.date, {
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return metrics.isEmpty
         ? Center(
-            child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
+            child: Text(
+              "No data",
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
           )
-        : (type.type == MetricDataType.text ? const Center() : WidgetGraph(metrics, date, settings.graph));
+        : (type.type == MetricDataType.text
+              ? const Center()
+              : WidgetGraph(metrics, date, settings.graph ?? GraphKind.text));
   }
 }
 
@@ -28,7 +38,13 @@ class WidgetGraph extends StatelessWidget {
   final GraphKind settings;
   final DateTimeRange? highlight;
 
-  const WidgetGraph(this.metrics, this.date, this.settings, {super.key, this.highlight});
+  const WidgetGraph(
+    this.metrics,
+    this.date,
+    this.settings, {
+    super.key,
+    this.highlight,
+  });
 
   List<FlSpot> _getSpot(List<Metric> raw) {
     List<FlSpot> spots = [];
@@ -49,7 +65,12 @@ class WidgetGraph extends StatelessWidget {
     List<BarChartGroupData> bar = [];
 
     for (final item in spots) {
-      bar.add(BarChartGroupData(x: item.x.toInt(), barRods: [BarChartRodData(toY: item.y)]));
+      bar.add(
+        BarChartGroupData(
+          x: item.x.toInt(),
+          barRods: [BarChartRodData(toY: item.y)],
+        ),
+      );
     }
 
     return bar;
@@ -57,7 +78,10 @@ class WidgetGraph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: const EdgeInsets.all(8.0), child: _getGraph(context));
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: _getGraph(context),
+    );
   }
 
   Widget _getGraph(BuildContext context) {
@@ -71,46 +95,47 @@ class WidgetGraph extends StatelessWidget {
             bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
             topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
           ),
-          borderData: FlBorderData(
-            show: false,
-          ),
+          borderData: FlBorderData(show: false),
           gridData: const FlGridData(show: false),
           barGroups: _getBar(metrics),
         ),
       );
     } else {
-      return LineChart(LineChartData(
-        minX: 0,
-        maxX: 16,
-        lineTouchData: const LineTouchData(enabled: false),
-        titlesData: const FlTitlesData(
-          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        ),
-        borderData: FlBorderData(
-          show: false,
-        ),
-        gridData: const FlGridData(show: false),
-        lineBarsData: [
-          if (highlight != null)
+      return LineChart(
+        LineChartData(
+          minX: 0,
+          maxX: 16,
+          lineTouchData: const LineTouchData(enabled: false),
+          titlesData: const FlTitlesData(
+            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          ),
+          borderData: FlBorderData(show: false),
+          gridData: const FlGridData(show: false),
+          lineBarsData: [
+            if (highlight != null)
+              LineChartBarData(
+                barWidth: 4,
+                color: Theme.of(context).colorScheme.secondaryContainer,
+                aboveBarData: BarAreaData(
+                  color: Theme.of(context).colorScheme.secondaryContainer,
+                  show: true,
+                ),
+                spots: _getHighLight(),
+                dotData: const FlDotData(show: false),
+              ),
             LineChartBarData(
               barWidth: 4,
-              color: Theme.of(context).colorScheme.secondaryContainer,
-              aboveBarData: BarAreaData(color: Theme.of(context).colorScheme.secondaryContainer, show: true),
-              spots: _getHighLight(),
+              spots: _getSpot(metrics),
+              isCurved: true,
+              curveSmoothness: 0.2,
               dotData: const FlDotData(show: false),
             ),
-          LineChartBarData(
-            barWidth: 4,
-            spots: _getSpot(metrics),
-            isCurved: true,
-            curveSmoothness: 0.2,
-            dotData: const FlDotData(show: false),
-          ),
-        ],
-      ));
+          ],
+        ),
+      );
     }
   }
 
@@ -123,9 +148,6 @@ class WidgetGraph extends StatelessWidget {
     var start = range.start.difference(date.start).inHours * coeff;
     var end = range.end.difference(date.start).inHours * coeff;
 
-    return [
-      FlSpot(start, 0),
-      FlSpot(end, 0),
-    ];
+    return [FlSpot(start, 0), FlSpot(end, 0)];
   }
 }

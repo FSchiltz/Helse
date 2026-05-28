@@ -2101,13 +2101,13 @@
       },
       "DatePreset": {
         "enum": [
-          "today",
-          "week",
-          "month",
-          "trimestre",
-          "halfYear",
-          "year",
-          "yearToDate"
+          "Today",
+          "Week",
+          "Month",
+          "Trimestre",
+          "HalfYear",
+          "Year",
+          "YearToDate"
         ]
       },
       "Event": {

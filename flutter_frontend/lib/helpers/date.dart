@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/common/date_range_picker.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:intl/intl.dart';
 
 class DateHelper {
@@ -49,20 +49,20 @@ class DateHelper {
 
   static DateTimeRange getRange(DatePreset value) {
     switch (value) {
-      case DatePreset.today:
-        return now();
       case DatePreset.week:
         return currentWeek();
       case DatePreset.month:
         return currentMonths();
       case DatePreset.trimestre:
         return currentMonths(count: 3);
-      case DatePreset.halfYear:
+      case DatePreset.halfyear:
         return currentMonths(count: 6);
       case DatePreset.year:
         return currentWeek(count: 365);
-      case DatePreset.yearToDate:
+      case DatePreset.yeartodate:
         return yearToDate();
+      default:
+        return now();
     }
   }
 

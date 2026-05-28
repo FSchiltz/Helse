@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
 import '../../../logic/d_i.dart';
-import '../../../logic/settings/ordered_item.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../calendar/calendar_view.dart';
 import 'metric_add.dart';
@@ -124,7 +123,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                   ),
                 )
               : (widget.type.type == MetricDataType.text ||
-                        widget.settings == GraphKind.event
+                        widget.settings == GraphKind.text
                     ? CalendarView(getEventsForDay, widget.date)
                     : MetricGraph(
                         data,
