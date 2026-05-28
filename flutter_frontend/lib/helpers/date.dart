@@ -4,11 +4,15 @@ import 'package:intl/intl.dart';
 
 class DateHelper {
   static DateTimeRange now() {
-    var now = DateTime.now();
-    return DateTimeRange(start: DateTime(now.year, now.month, now.day), end: DateTime(now.year, now.month, now.day + 1));
+    var now = today();
+    return DateTimeRange(start: now, end: now.add(Duration(days: 1)));
   }
 
-  static String format(DateTime? date, {bool? second, required BuildContext context}) {
+  static String format(
+    DateTime? date, {
+    bool? second,
+    required BuildContext context,
+  }) {
     if (date == null) return "";
     var tag = Localizations.maybeLocaleOf(context)?.toLanguageTag();
 
@@ -26,7 +30,7 @@ class DateHelper {
     var tag = Localizations.maybeLocaleOf(context)?.toLanguageTag();
     DateFormat dateTimeFormat = DateFormat.yMMM(tag);
     return dateTimeFormat.format(date);
-  }  
+  }
 
   static String formatDate(DateTime? date, {required BuildContext context}) {
     if (date == null) return "";
@@ -58,12 +62,12 @@ class DateHelper {
       case DatePreset.year:
         return currentWeek(count: 365);
       case DatePreset.yearToDate:
-      return yearToDate();
+        return yearToDate();
     }
   }
 
   static DateTimeRange currentWeek({int count = 7}) {
-    var now = DateTime.now();
+    var now = today();
 
     var end = now;
     var start = end.add(Duration(days: -1 * count));
@@ -71,17 +75,23 @@ class DateHelper {
     return DateTimeRange(start: start, end: end);
   }
 
-  static DateTimeRange currentMonths({int count = 1}) {
+  static DateTime today() {
     var now = DateTime.now();
+
+    return DateTime(now.year, now.month, now.day, 0, 0, 0);
+  }
+
+  static DateTimeRange currentMonths({int count = 1}) {
+    var now = today();
 
     var end = now;
     var start = end.add(Duration(days: 30 * -1 * count));
 
     return DateTimeRange(start: start, end: end);
   }
-  
+
   static DateTimeRange yearToDate() {
-       var now = DateTime.now();
+    var now = today();
 
     var start = DateTime(now.year, 1, 1);
     var end = now;
