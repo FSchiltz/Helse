@@ -6,7 +6,7 @@ public class UserSettings : IJsonSettings
 
     public DatePreset DatePreset { get; set; }
 
-    public Theme Theme { get; set; }
+    public InterfaceTheme Theme { get; set; }
 
     public int EventWidth { get; set; }
 

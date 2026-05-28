@@ -1,6 +1,6 @@
 namespace Api.Models.Settings;
 
-public enum Theme
+public enum InterfaceTheme
 {
     System = 0,
     Dark = 1,
