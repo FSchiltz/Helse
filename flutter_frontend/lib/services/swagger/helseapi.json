@@ -383,6 +383,38 @@
         }
       }
     },
+    "/api/patients/settings": {
+      "get": {
+        "tags": [
+          "SettingsLogic"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SettingsLogic"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSettings"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/metrics/summary": {
       "get": {
         "tags": [
@@ -2236,6 +2268,13 @@
           }
         }
       },
+      "GraphKind": {
+        "enum": [
+          "Text",
+          "Line",
+          "Bar"
+        ]
+      },
       "IFormFile": {
         "type": "string",
         "format": "binary"
@@ -2572,6 +2611,42 @@
           }
         }
       },
+      "OrderedItem": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "visible": {
+            "type": "boolean"
+          },
+          "order": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "graph": {
+            "$ref": "#/components/schemas/GraphKind"
+          },
+          "detailGraph": {
+            "$ref": "#/components/schemas/GraphKind"
+          }
+        }
+      },
       "Person": {
         "required": [
           "id"
@@ -2846,6 +2921,13 @@
           }
         }
       },
+      "Theme": {
+        "enum": [
+          "System",
+          "Dark",
+          "Light"
+        ]
+      },
       "TokenResponse": {
         "required": [
           "accessToken",
@@ -3113,6 +3195,40 @@
           }
         }
       },
+      "UserSettings": {
+        "type": "object",
+        "properties": {
+          "theme": {
+            "$ref": "#/components/schemas/Theme"
+          },
+          "eventWidth": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "metrics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderedItem"
+            }
+          },
+          "metricGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderedItem"
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderedItem"
+            }
+          }
+        }
+      },
       "UserStats": {
         "required": [
           "userCount"
@@ -3147,6 +3263,9 @@
       "name": "PatientsLogic"
     },
     {
+      "name": "SettingsLogic"
+    },
+    {
       "name": "MetricsLogic"
     },
     {
@@ -3154,9 +3273,6 @@
     },
     {
       "name": "TreatmentLogic"
-    },
-    {
-      "name": "SettingsLogic"
     },
     {
       "name": "ImportLogic"

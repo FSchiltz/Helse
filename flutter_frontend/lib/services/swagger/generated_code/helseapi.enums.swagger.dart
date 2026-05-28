@@ -24,6 +24,22 @@ enum FileTypes {
   const FileTypes(this.value);
 }
 
+enum GraphKind {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue('Text')
+  text('Text'),
+  @JsonValue('Line')
+  line('Line'),
+  @JsonValue('Bar')
+  bar('Bar');
+
+  final String? value;
+
+  const GraphKind(this.value);
+}
+
 enum JobStatus {
   @JsonValue(null)
   swaggerGeneratedUnknown(null),
@@ -86,6 +102,22 @@ enum RightType {
   final String? value;
 
   const RightType(this.value);
+}
+
+enum Theme {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue('System')
+  system('System'),
+  @JsonValue('Dark')
+  dark('Dark'),
+  @JsonValue('Light')
+  light('Light');
+
+  final String? value;
+
+  const Theme(this.value);
 }
 
 enum TreatmentType {

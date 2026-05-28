@@ -372,6 +372,25 @@ Map<String, dynamic> _$OauthProviderToJson(OauthProvider instance) =>
       'claimsUrl': instance.claimsUrl,
     };
 
+OrderedItem _$OrderedItemFromJson(Map<String, dynamic> json) => OrderedItem(
+  visible: json['visible'] as bool?,
+  order: (json['order'] as num?)?.toInt(),
+  name: json['name'] as String,
+  id: (json['id'] as num?)?.toInt(),
+  graph: graphKindNullableFromJson(json['graph']),
+  detailGraph: graphKindNullableFromJson(json['detailGraph']),
+);
+
+Map<String, dynamic> _$OrderedItemToJson(OrderedItem instance) =>
+    <String, dynamic>{
+      'visible': instance.visible,
+      'order': instance.order,
+      'name': instance.name,
+      'id': instance.id,
+      'graph': graphKindNullableToJson(instance.graph),
+      'detailGraph': graphKindNullableToJson(instance.detailGraph),
+    };
+
 Person _$PersonFromJson(Map<String, dynamic> json) => Person(
   id: (json['id'] as num).toInt(),
   userName: json['userName'] as String?,
@@ -630,6 +649,35 @@ Map<String, dynamic> _$UserIdToJson(UserId instance) => <String, dynamic>{
   'person': instance.person,
   'user': instance.user,
 };
+
+UserSettings _$UserSettingsFromJson(Map<String, dynamic> json) => UserSettings(
+  theme: themeNullableFromJson(json['theme']),
+  eventWidth: (json['eventWidth'] as num?)?.toInt(),
+  metrics:
+      (json['metrics'] as List<dynamic>?)
+          ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
+  metricGroups:
+      (json['metricGroups'] as List<dynamic>?)
+          ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
+  events:
+      (json['events'] as List<dynamic>?)
+          ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
+);
+
+Map<String, dynamic> _$UserSettingsToJson(UserSettings instance) =>
+    <String, dynamic>{
+      'theme': themeNullableToJson(instance.theme),
+      'eventWidth': instance.eventWidth,
+      'metrics': instance.metrics?.map((e) => e.toJson()).toList(),
+      'metricGroups': instance.metricGroups?.map((e) => e.toJson()).toList(),
+      'events': instance.events?.map((e) => e.toJson()).toList(),
+    };
 
 UserStats _$UserStatsFromJson(Map<String, dynamic> json) => UserStats(
   userCount:

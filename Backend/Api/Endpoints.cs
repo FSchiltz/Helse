@@ -77,6 +77,10 @@ public static class Endpoints
         patients.MapGet("/share", PatientsLogic.SharePatient)
        .Produces((int)HttpStatusCode.NoContent)
        .Produces((int)HttpStatusCode.Unauthorized);
+
+        patients.MapGet("/settings", SettingsLogic.GetPatientsSettings);
+
+        patients.MapPost("/settings", SettingsLogic.PostPatientsSettingsAsync);
     }
 
     public static void MapMetrics(this RouteGroupBuilder api)

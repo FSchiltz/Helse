@@ -366,6 +366,51 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
+  Future<chopper.Response> apiPatientsSettingsGet() {
+    return _apiPatientsSettingsGet();
+  }
+
+  ///
+  @GET(path: '/api/patients/settings')
+  Future<chopper.Response> _apiPatientsSettingsGet({
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["SettingsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  Future<chopper.Response> apiPatientsSettingsPost({
+    required UserSettings? body,
+  }) {
+    return _apiPatientsSettingsPost(body: body);
+  }
+
+  ///
+  @POST(path: '/api/patients/settings', optionalBody: true)
+  Future<chopper.Response> _apiPatientsSettingsPost({
+    @Body() required UserSettings? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["SettingsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
   ///@param tile
   ///@param type
   ///@param start
@@ -3482,6 +3527,121 @@ extension $OauthProviderExtension on OauthProvider {
 }
 
 @JsonSerializable(explicitToJson: true)
+class OrderedItem {
+  const OrderedItem({
+    this.visible,
+    this.order,
+    required this.name,
+    this.id,
+    this.graph,
+    this.detailGraph,
+  });
+
+  factory OrderedItem.fromJson(Map<String, dynamic> json) =>
+      _$OrderedItemFromJson(json);
+
+  static const toJsonFactory = _$OrderedItemToJson;
+  Map<String, dynamic> toJson() => _$OrderedItemToJson(this);
+
+  @JsonKey(name: 'visible')
+  final bool? visible;
+  @JsonKey(name: 'order')
+  final int? order;
+  @JsonKey(name: 'name')
+  final String name;
+  @JsonKey(name: 'id')
+  final int? id;
+  @JsonKey(
+    name: 'graph',
+    toJson: graphKindNullableToJson,
+    fromJson: graphKindNullableFromJson,
+  )
+  final enums.GraphKind? graph;
+  @JsonKey(
+    name: 'detailGraph',
+    toJson: graphKindNullableToJson,
+    fromJson: graphKindNullableFromJson,
+  )
+  final enums.GraphKind? detailGraph;
+  static const fromJsonFactory = _$OrderedItemFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is OrderedItem &&
+            (identical(other.visible, visible) ||
+                const DeepCollectionEquality().equals(
+                  other.visible,
+                  visible,
+                )) &&
+            (identical(other.order, order) ||
+                const DeepCollectionEquality().equals(other.order, order)) &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.graph, graph) ||
+                const DeepCollectionEquality().equals(other.graph, graph)) &&
+            (identical(other.detailGraph, detailGraph) ||
+                const DeepCollectionEquality().equals(
+                  other.detailGraph,
+                  detailGraph,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(visible) ^
+      const DeepCollectionEquality().hash(order) ^
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(graph) ^
+      const DeepCollectionEquality().hash(detailGraph) ^
+      runtimeType.hashCode;
+}
+
+extension $OrderedItemExtension on OrderedItem {
+  OrderedItem copyWith({
+    bool? visible,
+    int? order,
+    String? name,
+    int? id,
+    enums.GraphKind? graph,
+    enums.GraphKind? detailGraph,
+  }) {
+    return OrderedItem(
+      visible: visible ?? this.visible,
+      order: order ?? this.order,
+      name: name ?? this.name,
+      id: id ?? this.id,
+      graph: graph ?? this.graph,
+      detailGraph: detailGraph ?? this.detailGraph,
+    );
+  }
+
+  OrderedItem copyWithWrapped({
+    Wrapped<bool?>? visible,
+    Wrapped<int?>? order,
+    Wrapped<String>? name,
+    Wrapped<int?>? id,
+    Wrapped<enums.GraphKind?>? graph,
+    Wrapped<enums.GraphKind?>? detailGraph,
+  }) {
+    return OrderedItem(
+      visible: (visible != null ? visible.value : this.visible),
+      order: (order != null ? order.value : this.order),
+      name: (name != null ? name.value : this.name),
+      id: (id != null ? id.value : this.id),
+      graph: (graph != null ? graph.value : this.graph),
+      detailGraph: (detailGraph != null ? detailGraph.value : this.detailGraph),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class Person {
   const Person({
     required this.id,
@@ -4865,6 +5025,112 @@ extension $UserIdExtension on UserId {
 }
 
 @JsonSerializable(explicitToJson: true)
+class UserSettings {
+  const UserSettings({
+    this.theme,
+    this.eventWidth,
+    this.metrics,
+    this.metricGroups,
+    this.events,
+  });
+
+  factory UserSettings.fromJson(Map<String, dynamic> json) =>
+      _$UserSettingsFromJson(json);
+
+  static const toJsonFactory = _$UserSettingsToJson;
+  Map<String, dynamic> toJson() => _$UserSettingsToJson(this);
+
+  @JsonKey(
+    name: 'theme',
+    toJson: themeNullableToJson,
+    fromJson: themeNullableFromJson,
+  )
+  final enums.Theme? theme;
+  @JsonKey(name: 'eventWidth')
+  final int? eventWidth;
+  @JsonKey(name: 'metrics', defaultValue: <OrderedItem>[])
+  final List<OrderedItem>? metrics;
+  @JsonKey(name: 'metricGroups', defaultValue: <OrderedItem>[])
+  final List<OrderedItem>? metricGroups;
+  @JsonKey(name: 'events', defaultValue: <OrderedItem>[])
+  final List<OrderedItem>? events;
+  static const fromJsonFactory = _$UserSettingsFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is UserSettings &&
+            (identical(other.theme, theme) ||
+                const DeepCollectionEquality().equals(other.theme, theme)) &&
+            (identical(other.eventWidth, eventWidth) ||
+                const DeepCollectionEquality().equals(
+                  other.eventWidth,
+                  eventWidth,
+                )) &&
+            (identical(other.metrics, metrics) ||
+                const DeepCollectionEquality().equals(
+                  other.metrics,
+                  metrics,
+                )) &&
+            (identical(other.metricGroups, metricGroups) ||
+                const DeepCollectionEquality().equals(
+                  other.metricGroups,
+                  metricGroups,
+                )) &&
+            (identical(other.events, events) ||
+                const DeepCollectionEquality().equals(other.events, events)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(theme) ^
+      const DeepCollectionEquality().hash(eventWidth) ^
+      const DeepCollectionEquality().hash(metrics) ^
+      const DeepCollectionEquality().hash(metricGroups) ^
+      const DeepCollectionEquality().hash(events) ^
+      runtimeType.hashCode;
+}
+
+extension $UserSettingsExtension on UserSettings {
+  UserSettings copyWith({
+    enums.Theme? theme,
+    int? eventWidth,
+    List<OrderedItem>? metrics,
+    List<OrderedItem>? metricGroups,
+    List<OrderedItem>? events,
+  }) {
+    return UserSettings(
+      theme: theme ?? this.theme,
+      eventWidth: eventWidth ?? this.eventWidth,
+      metrics: metrics ?? this.metrics,
+      metricGroups: metricGroups ?? this.metricGroups,
+      events: events ?? this.events,
+    );
+  }
+
+  UserSettings copyWithWrapped({
+    Wrapped<enums.Theme?>? theme,
+    Wrapped<int?>? eventWidth,
+    Wrapped<List<OrderedItem>?>? metrics,
+    Wrapped<List<OrderedItem>?>? metricGroups,
+    Wrapped<List<OrderedItem>?>? events,
+  }) {
+    return UserSettings(
+      theme: (theme != null ? theme.value : this.theme),
+      eventWidth: (eventWidth != null ? eventWidth.value : this.eventWidth),
+      metrics: (metrics != null ? metrics.value : this.metrics),
+      metricGroups: (metricGroups != null
+          ? metricGroups.value
+          : this.metricGroups),
+      events: (events != null ? events.value : this.events),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class UserStats {
   const UserStats({required this.userCount});
 
@@ -5012,6 +5278,68 @@ List<enums.FileTypes>? fileTypesNullableListFromJson(
   }
 
   return fileTypes.map((e) => fileTypesFromJson(e.toString())).toList();
+}
+
+String? graphKindNullableToJson(enums.GraphKind? graphKind) {
+  return graphKind?.value;
+}
+
+String? graphKindToJson(enums.GraphKind graphKind) {
+  return graphKind.value;
+}
+
+enums.GraphKind graphKindFromJson(
+  Object? graphKind, [
+  enums.GraphKind? defaultValue,
+]) {
+  return enums.GraphKind.values.firstWhereOrNull((e) => e.value == graphKind) ??
+      defaultValue ??
+      enums.GraphKind.swaggerGeneratedUnknown;
+}
+
+enums.GraphKind? graphKindNullableFromJson(
+  Object? graphKind, [
+  enums.GraphKind? defaultValue,
+]) {
+  if (graphKind == null) {
+    return null;
+  }
+  return enums.GraphKind.values.firstWhereOrNull((e) => e.value == graphKind) ??
+      defaultValue;
+}
+
+String graphKindExplodedListToJson(List<enums.GraphKind>? graphKind) {
+  return graphKind?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> graphKindListToJson(List<enums.GraphKind>? graphKind) {
+  if (graphKind == null) {
+    return [];
+  }
+
+  return graphKind.map((e) => e.value!).toList();
+}
+
+List<enums.GraphKind> graphKindListFromJson(
+  List? graphKind, [
+  List<enums.GraphKind>? defaultValue,
+]) {
+  if (graphKind == null) {
+    return defaultValue ?? [];
+  }
+
+  return graphKind.map((e) => graphKindFromJson(e.toString())).toList();
+}
+
+List<enums.GraphKind>? graphKindNullableListFromJson(
+  List? graphKind, [
+  List<enums.GraphKind>? defaultValue,
+]) {
+  if (graphKind == null) {
+    return defaultValue;
+  }
+
+  return graphKind.map((e) => graphKindFromJson(e.toString())).toList();
 }
 
 String? jobStatusNullableToJson(enums.JobStatus? jobStatus) {
@@ -5278,6 +5606,62 @@ List<enums.RightType>? rightTypeNullableListFromJson(
   }
 
   return rightType.map((e) => rightTypeFromJson(e.toString())).toList();
+}
+
+String? themeNullableToJson(enums.Theme? theme) {
+  return theme?.value;
+}
+
+String? themeToJson(enums.Theme theme) {
+  return theme.value;
+}
+
+enums.Theme themeFromJson(Object? theme, [enums.Theme? defaultValue]) {
+  return enums.Theme.values.firstWhereOrNull((e) => e.value == theme) ??
+      defaultValue ??
+      enums.Theme.swaggerGeneratedUnknown;
+}
+
+enums.Theme? themeNullableFromJson(Object? theme, [enums.Theme? defaultValue]) {
+  if (theme == null) {
+    return null;
+  }
+  return enums.Theme.values.firstWhereOrNull((e) => e.value == theme) ??
+      defaultValue;
+}
+
+String themeExplodedListToJson(List<enums.Theme>? theme) {
+  return theme?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> themeListToJson(List<enums.Theme>? theme) {
+  if (theme == null) {
+    return [];
+  }
+
+  return theme.map((e) => e.value!).toList();
+}
+
+List<enums.Theme> themeListFromJson(
+  List? theme, [
+  List<enums.Theme>? defaultValue,
+]) {
+  if (theme == null) {
+    return defaultValue ?? [];
+  }
+
+  return theme.map((e) => themeFromJson(e.toString())).toList();
+}
+
+List<enums.Theme>? themeNullableListFromJson(
+  List? theme, [
+  List<enums.Theme>? defaultValue,
+]) {
+  if (theme == null) {
+    return defaultValue;
+  }
+
+  return theme.map((e) => themeFromJson(e.toString())).toList();
 }
 
 String? treatmentTypeNullableToJson(enums.TreatmentType? treatmentType) {
