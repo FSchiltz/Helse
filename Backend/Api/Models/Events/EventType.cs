@@ -11,4 +11,6 @@ public class EventType
     public bool Visible { get; set; }
 
     public long Id { get; set; }
+
+    public bool UserEditable { get; set; }
 }

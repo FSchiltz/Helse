@@ -181,7 +181,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
             Description = eventType.Description,
             StandAlone = eventType.StandAlone,
             UserEditable = true,
-            Visible = eventType.Visible,            
+            Visible = eventType.Visible,
         });
     }
 

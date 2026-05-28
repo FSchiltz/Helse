@@ -79,7 +79,6 @@ class _EventTypeAddState extends State<EventTypeAdd> {
           standAlone: true,
           id: widget.edit?.id ?? 0,
           visible: _visible,
-          userEditable: true,
         );
         String text;
 

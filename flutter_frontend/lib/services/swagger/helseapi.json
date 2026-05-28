@@ -2156,14 +2156,6 @@
         ],
         "type": "object",
         "properties": {
-          "id": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int64"
-          },
           "name": {
             "type": "string"
           },
@@ -2176,10 +2168,18 @@
           "standAlone": {
             "type": "boolean"
           },
-          "userEditable": {
+          "visible": {
             "type": "boolean"
           },
-          "visible": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "userEditable": {
             "type": "boolean"
           }
         }

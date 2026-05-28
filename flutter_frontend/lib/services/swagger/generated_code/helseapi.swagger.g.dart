@@ -158,21 +158,21 @@ Map<String, dynamic> _$EventSummaryToJson(EventSummary instance) =>
     <String, dynamic>{'data': instance.data};
 
 EventType _$EventTypeFromJson(Map<String, dynamic> json) => EventType(
-  id: (json['id'] as num?)?.toInt(),
   name: json['name'] as String,
   description: json['description'] as String?,
   standAlone: json['standAlone'] as bool?,
-  userEditable: json['userEditable'] as bool?,
   visible: json['visible'] as bool?,
+  id: (json['id'] as num?)?.toInt(),
+  userEditable: json['userEditable'] as bool?,
 );
 
 Map<String, dynamic> _$EventTypeToJson(EventType instance) => <String, dynamic>{
-  'id': instance.id,
   'name': instance.name,
   'description': instance.description,
   'standAlone': instance.standAlone,
-  'userEditable': instance.userEditable,
   'visible': instance.visible,
+  'id': instance.id,
+  'userEditable': instance.userEditable,
 };
 
 FileType _$FileTypeFromJson(Map<String, dynamic> json) => FileType(

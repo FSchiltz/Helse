@@ -108,7 +108,15 @@ public static class EventsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> GetTypeAsync(bool? all, IHealthContext events) => TypedResults.Ok(await events.GetEventTypes(all));
+    public static async Task<IResult> GetTypeAsync(bool? all, IHealthContext events) => TypedResults.Ok((await events.GetEventTypes(all)).Select(x => new EventType
+    {
+        Name = x.Name,
+        Description = x.Description,
+        Id = x.Id,
+        StandAlone = x.StandAlone,
+        Visible = x.Visible,
+        UserEditable = x.UserEditable,
+    }));
 
     public static async Task<IResult> CreateTypeAsync(EventType type, IUserContext users, IHealthContext events, HttpContext context)
     {
