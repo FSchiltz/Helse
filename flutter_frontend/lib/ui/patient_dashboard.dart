@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/date.dart';
 import 'package:helse/logic/d_i.dart';
 import 'package:helse/ui/common/date_range_picker.dart';
-import 'package:helse/ui/common/notification.dart';
 
 import 'blocs/events/events_grid.dart';
 import 'blocs/metrics/metrics_grid.dart';
@@ -35,7 +34,6 @@ class _PatientDashboardState extends State<PatientDashboard> {
   void initState() {
     super.initState();
     _setDefaultRange();
-    _initSettings();
   }
 
   @override
@@ -56,21 +54,5 @@ class _PatientDashboardState extends State<PatientDashboard> {
         ),
       ),
     );
-  }
-
-  Future<void> _initSettings() async {
-    try {
-      var model = await DI.metric.metricsType(false, null);
-      if (model != null) {
-        DI.settings.updateMetrics(model);
-      }
-
-      var groups = await DI.metric.metricsGroup();
-      if (groups != null) {
-        DI.settings.updateMetricGroups(groups);
-      }
-    } catch (ex) {
-      Notify.showError("$ex");
-    }
   }
 }

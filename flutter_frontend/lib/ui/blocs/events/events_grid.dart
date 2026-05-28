@@ -11,11 +11,7 @@ import '../../common/notification.dart';
 import 'events_widget.dart';
 
 class EventsGrid extends StatefulWidget {
-  const EventsGrid({
-    super.key,
-    required this.date,
-    this.person,
-  });
+  const EventsGrid({super.key, required this.date, this.person});
 
   final DateTimeRange date;
   final int? person;
@@ -37,12 +33,15 @@ class _EventsGridState extends State<EventsGrid> {
     try {
       var model = await DI.event.eventsType(false);
       if (model != null) {
+        await DI.settings.updateEvents(model);
         var settings = await DI.settings.getEvents();
 
         // filter using the user settings
         List<EventType> filtered = [];
         for (var item in model) {
-          OrderedItem? setting = settings.events.firstWhereOrNull((element) => element.id == item.id);
+          OrderedItem? setting = settings.events.firstWhereOrNull(
+            (element) => element.id == item.id,
+          );
 
           if (setting == null || setting.visible) filtered.add(item);
         }
@@ -50,7 +49,6 @@ class _EventsGridState extends State<EventsGrid> {
         setState(() {
           types = filtered;
         });
-        DI.settings.updateEvents(model);
       }
     } catch (ex) {
       Notify.showError("$ex");
@@ -69,8 +67,16 @@ class _EventsGridState extends State<EventsGrid> {
             child: ListView(
               shrinkWrap: true,
               physics: const BouncingScrollPhysics(),
-              children: types
-                      ?.map((type) => EventWidget(type, widget.date, key: Key(type.id?.toString() ?? ""), person: widget.person))
+              children:
+                  types
+                      ?.map(
+                        (type) => EventWidget(
+                          type,
+                          widget.date,
+                          key: Key(type.id?.toString() ?? ""),
+                          person: widget.person,
+                        ),
+                      )
                       .toList() ??
                   [],
             ),

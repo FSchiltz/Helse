@@ -43,6 +43,7 @@ class _MetricsGroupState extends State<MetricsGroup> {
     try {
       var model = await DI.metric.metricsType(false, widget.group.id);
       if (model != null) {
+        await DI.settings.updateMetrics(model);
         var settings = await DI.settings.getMetrics();
         // filter using the user settings
 
