@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using Api.Data;
-using Api.Data.Models;
+using Api.Data.Models.Persons;
 using Api.Helpers.Auth;
 using Api.Models.Settings;
 using Microsoft.OpenApi;

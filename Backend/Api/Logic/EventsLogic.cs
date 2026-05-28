@@ -1,4 +1,5 @@
 using Api.Data;
+using Api.Data.Models.Health;
 using Api.Helpers;
 using Api.Models.Events;
 using Api.Models.Settings;
@@ -110,7 +111,7 @@ public static class EventsLogic
 
     public static async Task<IResult> GetTypeAsync(bool? all, IHealthContext events) => TypedResults.Ok(await events.GetEventTypes(all));
 
-    public static async Task<IResult> CreateTypeAsync(Data.Models.EventType type, IUserContext users, IHealthContext events, HttpContext context)
+    public static async Task<IResult> CreateTypeAsync(EventType type, IUserContext users, IHealthContext events, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
@@ -121,7 +122,7 @@ public static class EventsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> UpdateTypeAsync(Data.Models.EventType type, IUserContext users, IHealthContext events, HttpContext context)
+    public static async Task<IResult> UpdateTypeAsync(EventType type, IUserContext users, IHealthContext events, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)

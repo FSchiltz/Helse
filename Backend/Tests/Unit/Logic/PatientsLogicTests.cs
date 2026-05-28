@@ -1,4 +1,5 @@
 using Api.Data;
+using Api.Data.Models.Persons;
 using Api.Logic;
 using Api.Models.Persons;
 using Microsoft.AspNetCore.Http;
@@ -13,10 +14,10 @@ public class PatientsLogicTests : LogicTests
     public async Task GetPatientsAsync_ReturnsPatients_WhenValidUser()
     {
         // Arrange
-        var users = SetupUser(Api.Data.Models.UserType.Admin);
+        var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);
         var context = SetupContext();
         var db = Substitute.For<IHealthContext>();
-        Api.Data.Models.Person[] persons =
+        Api.Data.Models.Persons.Person[] persons =
         [
             new() { Id = 1, Name = "Test", Surname = "User" }
         ];

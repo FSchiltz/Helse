@@ -15,7 +15,7 @@ public class Right
 
 public static class RightExtensions
 {
-    public static Right FromDb(this Data.Models.Right x) => new()
+    public static Right FromDb(this Data.Models.Persons.Right x) => new()
     {
         Stop = x.Stop,
         PersonId = x.PersonId,

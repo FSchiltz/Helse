@@ -1,4 +1,5 @@
 using Api.Data;
+using Api.Data.Models.Persons;
 using Api.Helpers;
 using Api.Helpers.Auth;
 using Api.Models.Persons;
@@ -180,11 +181,11 @@ public static class PersonLogic
             // else check if user is admin
             userId = user?.User.Id ?? 0;
 
-            userHasRole = user?.User.HasRight(Data.Models.UserType.Admin) == true;
+            userHasRole = user?.User.HasRight(Data.Models.Persons.UserType.Admin) == true;
 
             // Care giver can add new patients without admin right
             // TODO move to a create patien endpoint
-            userHasRole = userHasRole || user?.User.HasRight(Data.Models.UserType.Caregiver) == true;
+            userHasRole = userHasRole || user?.User.HasRight(Data.Models.Persons.UserType.Caregiver) == true;
         }
 
         if (!userHasRole)

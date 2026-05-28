@@ -1,3 +1,4 @@
+using Api.Data.Models.Persons;
 using Api.Models.Events;
 using Api.Models.Persons;
 using Api.Models.Settings;
@@ -29,11 +30,11 @@ public interface IUserContext : IContext
 
     Task<List<PersonFromDb>> GetUsers();
 
-    Task<List<Models.Right>> GetRights(DateTime time);
+    Task<List<Models.Persons.Right>> GetRights(DateTime time);
 
     Task SetExpiryRight(long personId, DateTime now);
 
-    Task InsertRights(IEnumerable<Models.Right> dbRights);
+    Task InsertRights(IEnumerable<Models.Persons.Right> dbRights);
 
     Task<long> InsertTreatment(long v, TreatmentType care);
 
@@ -43,7 +44,7 @@ public interface IUserContext : IContext
 
     Task DeleteUserAsync(long userId);
 
-    Task LinkOauth(Models.OauthUser oauthUser);
+    Task LinkOauth(Models.Persons.Person.OauthUser oauthUser);
 
     Task<PersonFromDb?> Get(string user, string issuer);
 }

@@ -2,8 +2,8 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Identity;
-using Api.Data.Models;
 using Microsoft.Extensions.Options;
+using Api.Data.Models.Persons;
 
 namespace Api.Helpers.Auth;
 

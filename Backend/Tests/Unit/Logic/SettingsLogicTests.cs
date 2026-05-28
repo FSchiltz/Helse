@@ -1,4 +1,5 @@
 using Api.Data;
+using Api.Data.Models.Persons;
 using Api.Logic;
 using Api.Models.Settings.Admin;
 using NSubstitute;
@@ -11,7 +12,7 @@ public class SettingsLogicTests : LogicTests
     public async Task GetOauthAsync_ReturnsOauth_WhenAdmin()
     {
         // Arrange
-        var users = SetupUser(Api.Data.Models.UserType.Admin);
+        var users = SetupUser(UserType.Admin);
         var context = SetupContext();
         var settings = Substitute.For<ISettingsContext>();
         var oauth = new Oauth { Enabled = true };
@@ -30,7 +31,7 @@ public class SettingsLogicTests : LogicTests
     public async Task GetOauthAsync_ReturnsForbid_WhenNotAdmin()
     {
         // Arrange
-        var users = SetupUser(Api.Data.Models.UserType.User);
+        var users = SetupUser(UserType.User);
         var context = SetupContext();
         var settings = Substitute.For<ISettingsContext>();
 

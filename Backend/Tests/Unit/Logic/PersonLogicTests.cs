@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using System.Security.Claims;
 using Api.Helpers;
+using Api.Data.Models.Persons;
 
 namespace Tests.Unit.Logic;
 
@@ -14,7 +15,7 @@ public class PersonLogicTests : LogicTests
     public async Task GetAsync_ReturnsUsers_WhenAdmin()
     {
         // Arrange        
-        var users = SetupUser(Api.Data.Models.UserType.Admin);
+        var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);
         var context = SetupContext();
 
         users.GetUsers().Returns(
@@ -35,7 +36,7 @@ public class PersonLogicTests : LogicTests
     public async Task GetAsync_ReturnsForbid_WhenNotAdmin()
     {
         // Arrange
-        var users = SetupUser(Api.Data.Models.UserType.User);
+        var users = SetupUser(Api.Data.Models.Persons.UserType.User);
         var context = SetupContext();
 
         // Act

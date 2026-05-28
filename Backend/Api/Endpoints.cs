@@ -8,6 +8,7 @@ using Api.Models.Settings.Admin;
 using Api.Models.Treatments;
 using Api.Models.Admin;
 using Api.Jobs;
+using Api.Data.Models.Health;
 
 namespace Api;
 
@@ -186,7 +187,7 @@ public static class Endpoints
         ;
 
         eventsType.MapGet("/", EventsLogic.GetTypeAsync)
-        .Produces<List<Api.Data.Models.EventType>>((int)HttpStatusCode.OK)
+        .Produces<List<EventType>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized)
         ;
     }
@@ -205,7 +206,7 @@ public static class Endpoints
 
         var eventsType = treatment.MapGroup("/type").RequireAuthorization();
         eventsType.MapGet("/", TreatmentLogic.GetTypeAsync)
-            .Produces<List<Api.Data.Models.EventType>>((int)HttpStatusCode.OK)
+            .Produces<List<EventType>>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
     }
 

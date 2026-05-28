@@ -1,5 +1,5 @@
 using Api.Data;
-using Api.Data.Models;
+using Api.Data.Models.Admin;
 using Api.Models.Settings.Admin;
 using LinqToDB;
 using LinqToDB.Data;

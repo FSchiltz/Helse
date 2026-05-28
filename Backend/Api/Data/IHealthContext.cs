@@ -1,4 +1,5 @@
-using Api.Data.Models;
+using Api.Data.Models.Health;
+using Api.Data.Models.Persons;
 
 namespace Api.Data;
 

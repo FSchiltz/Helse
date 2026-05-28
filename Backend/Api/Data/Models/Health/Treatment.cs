@@ -1,6 +1,7 @@
+using Api.Data.Models.Persons;
 using LinqToDB.Mapping;
 
-namespace Api.Data.Models;
+namespace Api.Data.Models.Health;
 
 [Table(Schema = "health")]
 public class Treatment
@@ -11,7 +12,7 @@ public class Treatment
     [Column]
     public long? PrescriptionId { get; set; }
 
-    [Association(ThisKey = nameof(PrescriptionId), OtherKey = nameof(Data.Models.Prescription.Id))]
+    [Association(ThisKey = nameof(PrescriptionId), OtherKey = nameof(Health.Prescription.Id))]
     public Prescription? Prescription { get; set; }
 
     [Column, NotNull]
@@ -20,7 +21,7 @@ public class Treatment
     [Column, NotNull]
     public long PersonId { get; set; }
 
-    [Association(ThisKey = nameof(PersonId), OtherKey = nameof(Data.Models.Person.Id))]
+    [Association(ThisKey = nameof(PersonId), OtherKey = nameof(Persons.Person.Id))]
     public Person? Person { get; set; }
 
     [Column]

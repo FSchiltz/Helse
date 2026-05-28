@@ -1,4 +1,4 @@
-namespace Api.Data.Models;
+namespace Api.Data.Models.Persons;
 
 [Flags]
 public enum UserType

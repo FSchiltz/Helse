@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 namespace Api.Logic;
 
 /// <summary>
-/// Management of the sserver settings
+/// Management of the server settings
 /// </summary>
 public static class SettingsLogic
 {

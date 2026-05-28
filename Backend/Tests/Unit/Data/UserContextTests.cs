@@ -1,5 +1,5 @@
 using Api.Data;
-using Api.Data.Models;
+using Api.Data.Models.Persons;
 using Api.Models.Settings;
 using LinqToDB;
 using LinqToDB.Data;
@@ -16,7 +16,7 @@ public class UserContextTests : IAsyncLifetime
         _db = new DataConnection("SQLite.MS",  x=> new LinqToDB.DataOptions().UseSQLite("Data Source=:memory:"));
         await _db.CreateTableAsync<Person>();
         await _db.CreateTableAsync<User>();
-        await _db.CreateTableAsync<Api.Data.Models.Right>();
+        await _db.CreateTableAsync<Api.Data.Models.Persons.Right>();
     }
 
     public async Task DisposeAsync()
@@ -136,7 +136,7 @@ public class UserContextTests : IAsyncLifetime
             Start = now.AddHours(-1),
             Stop = now.AddHours(1)
         };
-        await _db.GetTable<Api.Data.Models.Right>().InsertAsync(() => right);
+        await _db.GetTable<Api.Data.Models.Persons.Right>().InsertAsync(() => right);
 
         var context = new UserContext(_db);
 

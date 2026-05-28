@@ -1,5 +1,5 @@
 using Api.Data;
-using Api.Data.Models;
+using Api.Data.Models.Persons;
 using Api.Logic;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;

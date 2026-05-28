@@ -1,4 +1,4 @@
-using Api.Data.Models;
+using Api.Data.Models.Persons;
 using Api.Models.Events;
 using Api.Models.Persons;
 using Api.Models.Settings;
@@ -8,7 +8,7 @@ using LinqToDB.Data;
 
 namespace Api.Data;
 
-public record PersonFromDb(User User, Models.Person Person);
+public record PersonFromDb(User User, Models.Persons.Person Person);
 
 public class UserContext(DataConnection db) : BaseContext(db), IUserContext
 {
@@ -21,7 +21,7 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
     /// <param name="time"></param>
     /// <returns></returns>
     public async Task<Api.Models.Settings.Right?> HasRightAsync(long user, long person, RightType type, DateTime time)
-     => (await Db.GetTable<Data.Models.Right>()
+     => (await Db.GetTable<Models.Persons.Right>()
         .Where(x => x.UserId == user
             && x.PersonId == person
             && x.Type == (int)type
@@ -31,7 +31,7 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
 
     public async Task UpdatePatient(UpdatePatient update)
     {
-        var personQuery = Db.GetTable<Models.Person>()
+        var personQuery = Db.GetTable<Models.Persons.Person>()
             .Where(x => x.Id == update.Id)
             .AsUpdatable();
 
@@ -73,7 +73,7 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
             }
             else
             {
-                userQuery = userQuery.Set(x => x.Type, (int)update.Types.Cast<Models.UserType>().Aggregate((a, b) => a | b));
+                userQuery = userQuery.Set(x => x.Type, (int)update.Types.Cast<Models.Persons.UserType>().Aggregate((a, b) => a | b));
             }
         }
         await userQuery.UpdateAsync();
@@ -87,7 +87,7 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
             return Task.FromResult(default(PersonFromDb?));
 
         return (from u in Db.GetTable<User>()
-                join p in Db.GetTable<Models.Person>() on u.PersonId equals p.Id
+                join p in Db.GetTable<Models.Persons.Person>() on u.PersonId equals p.Id
                 where u.Identifier == identifier
                 select new PersonFromDb(u, p))
                                  .FirstOrDefaultAsync();
@@ -100,7 +100,7 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
 
         return (from o in Db.GetTable<OauthUser>()
                 join u in Db.GetTable<User>() on o.UserId equals u.Id
-                join p in Db.GetTable<Models.Person>() on u.PersonId equals p.Id
+                join p in Db.GetTable<Models.Persons.Person>() on u.PersonId equals p.Id
                 where o.OauthSub == identifier && o.Provider == issuer
                 select new PersonFromDb(u, p))
                                  .FirstOrDefaultAsync();
@@ -111,7 +111,7 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
 
     public Task<long> InsertPerson(PersonCreation newUser)
     {
-        return Db.GetTable<Models.Person>().InsertWithInt64IdentityAsync(()
+        return Db.GetTable<Models.Persons.Person>().InsertWithInt64IdentityAsync(()
             => new Models.Person
             {
                 Birth = newUser.Birth,
@@ -132,13 +132,13 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
                     Phone = newUser.Phone,
                     Email = newUser.Email,
                     PersonId = id,
-                    Type = (int)newUser.Types.Cast<Models.UserType>().Aggregate((a, b) => a | b),
+                    Type = (int)newUser.Types.Cast<Models.Persons.UserType>().Aggregate((a, b) => a | b),
                 });
     }
 
     public Task AddRight(long userId, long id, RightType right)
     {
-        return Db.GetTable<Models.Right>().InsertAsync(() => new()
+        return Db.GetTable<Models.Persons.Right>().InsertAsync(() => new()
         {
             UserId = userId,
             Start = DateTime.UtcNow,
@@ -151,15 +151,15 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
     {
         var query =
         from u in Db.GetTable<User>()
-        from p in Db.GetTable<Models.Person>().RightJoin(pr => pr.Id == u.PersonId)
+        from p in Db.GetTable<Models.Persons.Person>().RightJoin(pr => pr.Id == u.PersonId)
         select new PersonFromDb(u, p);
 
         return query.OrderBy(x => x.User.Id).ToListAsync();
     }
 
-    public Task<List<Models.Right>> GetRights(DateTime time)
+    public Task<List<Models.Persons.Right>> GetRights(DateTime time)
     {
-        return (from r in Db.GetTable<Models.Right>()
+        return (from r in Db.GetTable<Models.Persons.Right>()
                 where r.Stop == null || (r.Stop >= time && r.Start <= time)
                 select r)
                 .ToListAsync();
@@ -167,17 +167,17 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
 
     public Task SetExpiryRight(long personId, DateTime now)
     {
-        return Db.GetTable<Models.Right>()
+        return Db.GetTable<Models.Persons.Right>()
             .Where(x => x.UserId == personId)
             .Set(x => x.Stop, now)
             .UpdateAsync();
     }
 
-    public Task InsertRights(IEnumerable<Models.Right> dbRights) => Db.GetTable<Models.Right>().BulkCopyAsync(dbRights);
+    public Task InsertRights(IEnumerable<Models.Persons.Right> dbRights) => Db.GetTable<Models.Persons.Right>().BulkCopyAsync(dbRights);
 
     public Task<long> InsertTreatment(long person, TreatmentType type)
     {
-        return Db.GetTable<Models.Treatment>().InsertWithInt64IdentityAsync(() => new()
+        return Db.GetTable<Models.Health.Treatment>().InsertWithInt64IdentityAsync(() => new()
         {
             PersonId = person,
             Type = (int)type,
@@ -186,7 +186,7 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
 
     public Task InsertEvent(CreateEvent e, long person, long user, long? treatment)
     {
-        return Db.GetTable<Models.Event>().InsertAsync(() => new()
+        return Db.GetTable<Models.Health.Event>().InsertAsync(() => new()
         {
             PersonId = person,
             UserId = user,
@@ -200,7 +200,7 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
 
     public async Task DeletePersonAsync(long personId)
     {
-        await Db.GetTable<Models.Person>()
+        await Db.GetTable<Models.Persons.Person>()
             .Where(x => x.Id == personId)
             .DeleteAsync();
     }
@@ -219,7 +219,7 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
     public Task<PersonFromDb?> Get(long id)
     {
         return (from u in Db.GetTable<User>()
-                join p in Db.GetTable<Models.Person>() on u.PersonId equals p.Id
+                join p in Db.GetTable<Models.Persons.Person>() on u.PersonId equals p.Id
                 where u.Id == id
                 select new PersonFromDb(u, p))
                                  .FirstOrDefaultAsync();
@@ -227,7 +227,7 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
 
     public Task LinkOauth(OauthUser oauthUser)
     {
-        return Db.GetTable<Models.OauthUser>().InsertAsync(() => new()
+        return Db.GetTable<Models.Persons.Person.OauthUser>().InsertAsync(() => new()
         {
             UserId = oauthUser.UserId,
             OauthSub = oauthUser.OauthSub,

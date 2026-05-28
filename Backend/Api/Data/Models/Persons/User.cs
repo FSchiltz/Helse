@@ -1,6 +1,6 @@
 using LinqToDB.Mapping;
 
-namespace Api.Data.Models;
+namespace Api.Data.Models.Persons;
 
 [Table(Schema = "person")]
 public class User
@@ -17,7 +17,7 @@ public class User
     [Column, NotNull]
     public long PersonId { get; set; }
 
-    [Association(ThisKey = nameof(PersonId), OtherKey = nameof(Models.Person.Id))]
+    [Association(ThisKey = nameof(PersonId), OtherKey = nameof(Persons.Person.Id))]
     public Person? Person { get; set; }
 
     [Column, NotNull]

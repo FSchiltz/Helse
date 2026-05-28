@@ -1,6 +1,6 @@
 using LinqToDB.Mapping;
 
-namespace Api.Data.Models;
+namespace Api.Data.Models.Health;
 
 [Table(Schema = "health")]
 public class MetricType

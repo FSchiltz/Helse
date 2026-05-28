@@ -22,7 +22,7 @@ public class MetricLogicTests : LogicTests
             SummaryType = MetricSummary.Sum,
         };
 
-        var users = SetupUser(Api.Data.Models.UserType.User);
+        var users = SetupUser(Api.Data.Models.Persons.UserType.User);
         var context = SetupContext();
 
         var result = await MetricsLogic.CreateTypeAsync(type, users, _db, context);
@@ -39,7 +39,7 @@ public class MetricLogicTests : LogicTests
             SummaryType = MetricSummary.Sum,
         };
 
-        var users = SetupUser(Api.Data.Models.UserType.Admin);
+        var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);
         var context = SetupContext();
 
         await Assert.ThrowsAsync<InvalidDataException>(() => MetricsLogic.CreateTypeAsync(type, users, _db, context));
@@ -55,7 +55,7 @@ public class MetricLogicTests : LogicTests
             SummaryType = MetricSummary.Sum,
         };
 
-        var users = SetupUser(Api.Data.Models.UserType.Admin);
+        var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);
         var context = SetupContext();
 
         await Assert.ThrowsAsync<InvalidDataException>(() => MetricsLogic.CreateTypeAsync(type, users, _db, context));
@@ -71,7 +71,7 @@ public class MetricLogicTests : LogicTests
             SummaryType = MetricSummary.Latest,
         };
 
-        var users = SetupUser(Api.Data.Models.UserType.Admin);
+        var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);
         var context = SetupContext();
 
         var result = await MetricsLogic.CreateTypeAsync(type, users, _db, context);
@@ -88,7 +88,7 @@ public class MetricLogicTests : LogicTests
             SummaryType = MetricSummary.Mean,
         };
 
-        var users = SetupUser(Api.Data.Models.UserType.Admin);
+        var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);
         var context = SetupContext();
 
         var result = await MetricsLogic.CreateTypeAsync(type, users, _db, context);

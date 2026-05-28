@@ -14,7 +14,7 @@ public static class EventHelpers
         Years,
     }
 
-    public static EventSummary[] Summarize(this IEnumerable<Data.Models.Event> events, DateTime start, DateTime end)
+    public static EventSummary[] Summarize(this IEnumerable<Data.Models.Health.Event> events, DateTime start, DateTime end)
     {
         // first find the number of steps
         var (kind, count) = GetSteps(start, end);
@@ -52,7 +52,7 @@ public static class EventHelpers
         return data;
     }
 
-    private static List<(int, int)> Cut(Steps kind, Data.Models.Event e, DateTime start, DateTime end)
+    private static List<(int, int)> Cut(Steps kind, Data.Models.Health.Event e, DateTime start, DateTime end)
     {
         var steps = new List<(int, int)>();
         var startDate = start;

@@ -1,7 +1,7 @@
 using LinqToDB;
 using LinqToDB.Mapping;
 
-namespace Api.Data.Models;
+namespace Api.Data.Models.Admin;
 
 [Table(Schema = "admin")]
 public class Settings

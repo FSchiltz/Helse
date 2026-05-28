@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Api.Data.Models.Persons;
 using LinqToDB;
 using LinqToDB.Data;
 
@@ -16,11 +17,11 @@ public interface ISettingsContext : IContext
 /// </summary>
 public class SettingsContext(DataConnection db) : BaseContext(db), ISettingsContext
 {
-    public Task Delete(string name) => Db.GetTable<Data.Models.Settings>().DeleteAsync(x => x.Name == name);
+    public Task Delete(string name) => Db.GetTable<Person.Settings>().DeleteAsync(x => x.Name == name);
 
     public async Task<T> GetSettings<T>(string name) where T : new()
     {
-        var settings = await Db.GetTable<Data.Models.Settings>().Where(x => x.Name == name).SingleOrDefaultAsync();
+        var settings = await Db.GetTable<Person.Settings>().Where(x => x.Name == name).SingleOrDefaultAsync();
         if (settings?.Blob is null)
         {
             return new T();
@@ -31,7 +32,7 @@ public class SettingsContext(DataConnection db) : BaseContext(db), ISettingsCont
 
     public Task Upsert(string name, string data)
     {
-        return Db.GetTable<Data.Models.Settings>().InsertOrUpdateAsync(() => new Data.Models.Settings
+        return Db.GetTable<Person.Settings>().InsertOrUpdateAsync(() => new Data.Models.Settings
         {
             Name = name,
             Blob = data,

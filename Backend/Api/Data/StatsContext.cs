@@ -1,5 +1,6 @@
 using System.Data;
-using Api.Data.Models;
+using Api.Data.Models.Health;
+using Api.Data.Models.Persons;
 using Api.Models.Admin;
 using LinqToDB;
 using LinqToDB.Data;
@@ -11,7 +12,7 @@ public class StatsContext(DataConnection db) : BaseContext(db), IStatsContext
 {
     public Task<CountByDate[]> GetEventStats(DateTime start, DateTime end)
     {
-        return Db.GetTable<Data.Models.Event>()
+        return Db.GetTable<Event>()
             .Where(x => x.Created <= end && x.Created >= start)
             .GroupBy(e => e.Created.Date)
             .Select(g => new CountByDate(g.Key, g.Count()))
@@ -30,7 +31,7 @@ public class StatsContext(DataConnection db) : BaseContext(db), IStatsContext
 
     public Task<CountByDate[]> GetMetricStats(DateTime start, DateTime end)
     {
-        return Db.GetTable<Data.Models.Metric>()
+        return Db.GetTable<Metric>()
             .Where(x => x.Created <= end && x.Created >= start)
             .GroupBy(e => e.Created.Date)
             .Select(g => new CountByDate(g.Key, g.Count()))

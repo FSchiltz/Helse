@@ -1,6 +1,6 @@
 using LinqToDB.Mapping;
 
-namespace Api.Data.Models;
+namespace Api.Data.Models.Persons;
 
 [Table(Schema = "person")]
 public class OauthUser

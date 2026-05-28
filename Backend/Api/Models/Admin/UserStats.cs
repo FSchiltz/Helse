@@ -1,4 +1,4 @@
-using Api.Data.Models;
+using Api.Data.Models.Persons;
 
 namespace Api.Models.Admin;
 

@@ -1,4 +1,5 @@
 using Api.Data;
+using Api.Data.Models.Health;
 using Api.Helpers;
 using Api.Models;
 using Api.Models.Metrics;
@@ -49,7 +50,7 @@ public static class MetricsLogic
         var id = personId ?? user.PersonId;
         var metricType = await db.GetMetricType(type) ?? throw new InvalidDataException("Incorrect metric type: " + type);
 
-        Api.Data.Models.Metric[] metrics;
+        Data.Models.Health.Metric[] metrics;
         if (metricType.Type == (long)MetricDataType.Text)
         {
             var last = await db.GetLastMetrics(id, type, start, end);
@@ -95,7 +96,7 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    private static void Validate(MetricBase metric, Data.Models.MetricType? type)
+    private static void Validate(MetricBase metric, Data.Models.Health.MetricType? type)
     {
         if (type == null)
             throw new InvalidDataException("Type not found");

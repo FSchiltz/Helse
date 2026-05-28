@@ -1,11 +1,11 @@
 using Api.Data;
-using Api.Data.Models;
 using Api.Logic;
 using Api.Models.Treatments;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using System.Security.Claims;
 using Api.Helpers;
+using Api.Data.Models.Health;
 
 namespace Tests.Unit.Logic;
 
