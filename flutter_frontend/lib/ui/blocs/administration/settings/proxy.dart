@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/common/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
@@ -11,7 +11,7 @@ class ProxyView extends StatelessWidget {
   const ProxyView({super.key});
 
   Future<Proxy> _getData(bool refresh) async {
-    return await DI.settings.api().proxy();
+    return await Dependencies.services.settings.proxy();
   }
 
   @override
@@ -104,7 +104,7 @@ class _ProxyFormViewState extends State<ProxyFormView> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
-        await DI.settings.api().updateProxy(
+        await Dependencies.services.settings.updateProxy(
           Proxy(
             autoRegister: _proxyAutoRegister,
             proxyAuth: _proxyAuth,

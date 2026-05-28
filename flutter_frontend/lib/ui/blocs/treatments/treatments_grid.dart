@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -26,7 +26,7 @@ class _TreatmentsGridState extends State<TreatmentsGrid> {
       date.end.day,
     ).add(const Duration(days: 1));
 
-    return await DI.treatement?.treatments(start, end, person: widget.person) ??
+    return await Dependencies.services.treatement.treatments(start, end, person: widget.person) ??
         [];
   }
 

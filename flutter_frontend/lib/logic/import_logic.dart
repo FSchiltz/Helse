@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/event.dart';
 import 'package:helse/logic/fit/task_bloc.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
@@ -20,7 +20,7 @@ class ImportLogic {
     for (var job in entries) {
       if (job.value.status == JobStatus.inprogress ||
           job.value.status == JobStatus.notstarted) {
-        var status = await DI.import.status(job.key);
+        var status = await Dependencies.services.import.status(job.key);
         if (status != null) {
           result = SubmissionStatus.inProgress;
           jobs[job.key] = status;
@@ -45,7 +45,7 @@ class ImportLogic {
   }
 
   Future<void> import(Uint8List content, int type, int? patient) async {
-    var id = await DI.import.import(content, type, patient);
+    var id = await Dependencies.services.import.import(content, type, patient);
     if (id == null) {
       throw StateError("Incorrect job id");
     }

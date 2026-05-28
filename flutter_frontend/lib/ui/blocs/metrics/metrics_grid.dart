@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/ui/blocs/metrics/metrics_group.dart';
 
-import '../../../logic/d_i.dart';
+import '../../../di/dependencies.dart';
 import '../../../logic/settings/settings_logic.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/loader.dart';
@@ -30,10 +30,10 @@ class _MetricsGridState extends State<MetricsGrid> {
 
   void _getData() async {
     try {
-      var model = await DI.metric.metricsGroup();
+      var model = await Dependencies.services.metric.metricsGroup();
       if (model != null) {
-        await DI.settings.updateMetricGroups(model);
-        var settings = await DI.settings.getMetricGroups();
+        await Dependencies.logics.settings.updateMetricGroups(model);
+        var settings = await Dependencies.logics.settings.getMetricGroups();
         // filter using the user settings
 
         List<MetricGroup> filtered = [];
@@ -63,7 +63,7 @@ class _MetricsGridState extends State<MetricsGrid> {
             listener: (context, state) {
               _getData();
             },
-            bloc: DI.settings.metrics,
+            bloc: Dependencies.logics.settings.metrics,
             child: _getGrid(cached),
           );
   }

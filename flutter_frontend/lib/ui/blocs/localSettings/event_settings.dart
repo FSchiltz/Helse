@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/localSettings/ordered_edit_item.dart';
 import 'package:helse/ui/common/loading_builder.dart';
@@ -17,7 +17,7 @@ class _EventSettingsState extends State<EventSettings> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   Future<List<OrderedEditItem>> _getData(bool refresh) async {
-    return (await DI.settings.getEvents())
+    return (await Dependencies.logics.settings.getEvents())
         .map(
           (e) => OrderedEditItem(
             visible: e.visible ?? true,
@@ -35,7 +35,7 @@ class _EventSettingsState extends State<EventSettings> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
-        await DI.settings.saveEvents(events);
+        await Dependencies.logics.settings.saveEvents(events);
 
         Notify.show("Saved Successfully");
       }

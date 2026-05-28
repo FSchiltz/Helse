@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/localSettings/ordered_edit_item.dart';
 import 'package:helse/ui/common/loading_builder.dart';
@@ -19,7 +19,7 @@ class _MetricSettingsState extends State<MetricSettings> {
   final GlobalKey<FormState> _formGroupKey = GlobalKey();
 
   Future<List<OrderedEditItem>> _getData(bool refresh) async {
-    return (await DI.settings.getMetrics())
+    return (await Dependencies.logics.settings.getMetrics())
         .map(
           (e) => OrderedEditItem(
             id: e.id ?? 0,
@@ -34,7 +34,7 @@ class _MetricSettingsState extends State<MetricSettings> {
   }
 
   Future<List<OrderedEditItem>> _getGroupData(bool reset) async {
-    return (await DI.settings.getMetricGroups())
+    return (await Dependencies.logics.settings.getMetricGroups())
         .map(
           (e) => OrderedEditItem(
             id: e.id ?? 0,
@@ -52,7 +52,7 @@ class _MetricSettingsState extends State<MetricSettings> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
-        await DI.settings.saveMetricGroups(groups);
+        await Dependencies.logics.settings.saveMetricGroups(groups);
 
         Notify.show("Saved Successfully");
       }
@@ -65,7 +65,7 @@ class _MetricSettingsState extends State<MetricSettings> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
-        await DI.settings.saveMetrics(metrics);
+        await Dependencies.logics.settings.saveMetrics(metrics);
 
         Notify.show("Saved Successfully");
       }

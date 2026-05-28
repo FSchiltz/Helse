@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/main.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:helse/ui/common/loading_builder.dart';
@@ -36,7 +36,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
-        await DI.settings.saveTheme(_theme);
+        await Dependencies.logics.settings.saveTheme(_theme);
 
         Notify.show("Saved Successfully");
       }
@@ -46,8 +46,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   Future<int> _getData(bool reset) async {
-    _theme = await DI.settings.getTheme();
-    _range = await DI.settings.getDateRange();
+    _theme = await Dependencies.logics.settings.getTheme();
+    _range = await Dependencies.logics.settings.getDateRange();
 
     return 1;
   }
@@ -56,7 +56,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     if (value == null) return;
 
     _range = value;
-    await DI.settings.setDateRange(value);
+    await Dependencies.logics.settings.setDateRange(value);
   }
 
   @override

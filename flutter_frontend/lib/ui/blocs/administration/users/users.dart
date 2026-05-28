@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/blocs/administration/users/delete_user.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
@@ -15,7 +15,7 @@ class UsersView extends StatefulWidget {
 
 class _UsersViewState extends State<UsersView> {
   Future<List<Person>> _getData(bool reset) async {
-    return await DI.user.persons() ?? [];
+    return await Dependencies.services.user.persons() ?? [];
   }
 
   @override
@@ -94,7 +94,7 @@ class _UsersViewState extends State<UsersView> {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return DeleteUser(() async {
-                                            await DI.user.deletePerson(
+                                            await Dependencies.services.user.deletePerson(
                                               user.id,
                                             );
                                             reset();

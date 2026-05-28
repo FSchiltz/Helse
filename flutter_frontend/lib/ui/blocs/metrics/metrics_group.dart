@@ -5,7 +5,7 @@ import 'package:helse/ui/blocs/metrics/metric_group_detail.dart';
 import 'package:helse/ui/blocs/metrics/metric_widgets_grid.dart';
 
 import '../../../helpers/pair.dart';
-import '../../../logic/d_i.dart';
+import '../../../di/dependencies.dart';
 import '../../../logic/settings/settings_logic.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/loader.dart';
@@ -40,17 +40,17 @@ class _MetricsGroupState extends State<MetricsGroup> {
 
   void _getData() async {
     try {
-      var model = await DI.metric.metricsType(false, widget.group.id);
+      var model = await Dependencies.services.metric.metricsType(false, widget.group.id);
       if (model != null) {
-        await DI.settings.updateMetrics(model);
-        var settings = await DI.settings.getMetrics();
+        await Dependencies.logics.settings.updateMetrics(model);
+        var settings = await Dependencies.logics.settings.getMetrics();
         // filter using the user settings
 
         List<Pair<MetricType, OrderedItem>> filtered = [];
         for (var item in model.where((x) => x.showOnDashboard == true)) {
           OrderedItem setting =
               settings.firstWhereOrNull((element) => element.id == item.id) ??
-              DI.settings.getDefault(item);
+              Dependencies.logics.settings.getDefault(item);
 
           if (setting.visible == true) filtered.add(Pair(item, setting));
         }
@@ -77,7 +77,7 @@ class _MetricsGroupState extends State<MetricsGroup> {
               listener: (context, state) {
                 _getData();
               },
-              bloc: DI.settings.metrics,
+              bloc: Dependencies.logics.settings.metrics,
               child: MetricWidgetsGrid(
                 date: widget.date,
                 person: widget.person,

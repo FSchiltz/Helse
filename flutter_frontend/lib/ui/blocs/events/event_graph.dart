@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/date.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/events/delete_event.dart';
 import 'package:helse/ui/blocs/events/events_add.dart';
@@ -137,7 +137,7 @@ class _EventsGraphState extends State<EventsGraph> {
                             context: context,
                             builder: (BuildContext context) {
                               return DeleteEvent(() async {
-                                await DI.event.deleteEvent(id);
+                                await Dependencies.services.event.deleteEvent(id);
                                 widget.reset();
                                 setState(() {
                                   _event = null;

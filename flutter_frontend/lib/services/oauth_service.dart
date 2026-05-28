@@ -3,19 +3,19 @@ import 'dart:core';
 import 'dart:math';
 import 'package:app_links/app_links.dart';
 import 'package:helse/logic/account/authentication_logic.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
+import 'package:helse/services/api_service.dart';
 import 'package:universal_html/html.dart';
 import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../services/account.dart';
+import 'account.dart';
 
-class OauthClient {
+class OauthService extends ApiService {
   String? _auth;
   String? _clientId;
-  final Account account;
 
-  OauthClient(this.account);
+  OauthService(super.account);
 
   void listen(Null Function(dynamic user) param0) {}
 
@@ -74,12 +74,12 @@ class OauthClient {
       if (uri.toString().startsWith(redirect)) {
         getCode(uri.queryParameters).then(
           (value) =>
-              DI.authentication.set(AuthenticationStatus.unauthenticated),
+              Dependencies.logics.authentication.set(AuthenticationStatus.unauthenticated),
         );
       }
     });
 
-    DI.authentication.set(AuthenticationStatus.unknown);
+    Dependencies.logics.authentication.set(AuthenticationStatus.unknown);
     var uri = Uri.parse(result);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);

@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 
@@ -67,7 +67,7 @@ class _PatientAddState extends State<PatientAdd> {
       });
       try {
         if(widget.edit != null){
-          await DI.user.updatePatient(
+          await Dependencies.services.user.updatePatient(
           UpdatePatient(
             id: widget.edit?.id,
             name: _controllerName.text,
@@ -81,7 +81,7 @@ class _PatientAddState extends State<PatientAdd> {
         }
         else{
         // save the user
-        await DI.user.addPerson(
+        await Dependencies.services.user.addPerson(
           PersonCreation(
             name: _controllerName.text,
             surname: _controllerSurname.text,

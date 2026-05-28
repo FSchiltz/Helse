@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -85,10 +85,10 @@ class _EventTypeAddState extends State<EventTypeAdd> {
 
         if (widget.edit == null) {
           text = "Added";
-          await DI.event.addEventsType(event);
+          await Dependencies.services.event.addEventsType(event);
         } else {
           text = "Updated";
-          await DI.event.updateEventsType(event);
+          await Dependencies.services.event.updateEventsType(event);
         }
 
         _formKey.currentState?.reset();

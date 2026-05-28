@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
-import '../../../logic/d_i.dart';
+import '../../../di/dependencies.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../calendar/calendar_view.dart';
 import 'metric_add.dart';
@@ -48,7 +48,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
       date.end.day,
     ).add(const Duration(days: 1));
 
-    return await DI.metric.metrics(
+    return await Dependencies.services.metric.metrics(
       id,
       start,
       end,

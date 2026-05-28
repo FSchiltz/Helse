@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 
@@ -11,7 +11,7 @@ class OauthView extends StatelessWidget {
   const OauthView({super.key});
 
   Future<Oauth> _getData(bool reset) async {
-    return await DI.settings.api().oauth();
+    return await Dependencies.services.settings.oauth();
   }
 
   @override
@@ -125,7 +125,7 @@ class _OauthFormViewState extends State<OauthFormView> {
           );
         }
         // save the oauth
-        await DI.settings.api().updateOauth(
+        await Dependencies.services.settings.updateOauth(
           Oauth(enabled: _enabled, providers: providers),
         );
 

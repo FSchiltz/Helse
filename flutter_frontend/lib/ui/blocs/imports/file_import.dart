@@ -1,6 +1,6 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 
 import '../../../logic/event.dart';
@@ -30,7 +30,7 @@ class _FileImportState extends State<FileImport> {
   }
 
   void _getData() async {
-    var model = await DI.import.fileTypes();
+    var model = await Dependencies.services.import.fileTypes();
     if (model != null) {
       setState(() {
         types = model;
@@ -109,7 +109,7 @@ class _FileImportState extends State<FileImport> {
       try {
         var content = await file?.readAsBytes();
         if (content == null) return;
-        await DI.importLogic.import(content, selected!, widget.patient);
+        await Dependencies.logics.import.import(content, selected!, widget.patient);
 
         setState(() {
           status = SubmissionStatus.success;

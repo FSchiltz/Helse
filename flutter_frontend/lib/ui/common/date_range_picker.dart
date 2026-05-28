@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/date.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:helse/ui/common/date_range_input.dart';
 import 'package:helse/ui/common/ui_constants.dart';
@@ -105,7 +105,7 @@ class DateRangePicker extends StatelessWidget {
     if (value == DatePreset.today ||
         value == DatePreset.week ||
         value == DatePreset.month) {
-      DI.settings.setDateRange(value);
+      Dependencies.logics.settings.setDateRange(value);
     }
   }
 

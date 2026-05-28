@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:toastification/toastification.dart';
 
@@ -14,6 +14,7 @@ import 'ui/login.dart';
 import 'ui/splash.dart';
 
 void main() {
+  Dependencies.init();
   runApp(const App());
 }
 
@@ -24,18 +25,17 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return ToastificationWrapper(
       child: MaterialApp(
-        title: 'Demo App',
+        title: 'Helse',
         theme: ThemeData(
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         onGenerateRoute: (RouteSettings routeSettings) {
-          DI.init();
           if (kIsWeb) {
             var uri = Uri.base.queryParameters;
 
             if (uri.containsKey("code")) {
-              DI.authService?.doAuthOnWeb(uri);
+              Dependencies.services.authService.doAuthOnWeb(uri);
               UrlHelper.removeParam();
             }
           }
@@ -75,7 +75,7 @@ class AppState extends State<AppView> {
   @override
   void initState() {
     super.initState();
-    DI.settings.getTheme().then((value) => changeTheme(value));
+    Dependencies.logics.settings.getTheme().then((value) => changeTheme(value));
   }
 
   void changeTheme(InterfaceTheme themeMode) {

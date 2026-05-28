@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
@@ -10,7 +10,7 @@ class SmtpView extends StatelessWidget {
   const SmtpView({super.key});
 
   Future<Smtp> _getData(bool reset) async {
-    return await DI.settings.api().smtp();
+    return await Dependencies.services.settings.smtp();
   }
 
   @override
@@ -211,7 +211,7 @@ class _SmtpFormViewState extends State<SmtpFormView> {
           enabled: _enabled,
         );
 
-        await DI.settings.api().updateSmtp(smtp);
+        await Dependencies.services.settings.updateSmtp(smtp);
 
         Notify.show('Saved Successfully');
         widget.callback();

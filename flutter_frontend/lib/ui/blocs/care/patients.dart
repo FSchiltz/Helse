@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/ui/blocs/care/patients_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
-import '../../../logic/d_i.dart';
+import '../../../di/dependencies.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import 'patient_add.dart';
 
@@ -10,7 +10,7 @@ class Patients extends StatelessWidget {
   const Patients({super.key});
 
   Future<List<Person>> _getData(bool refresh) async {
-    return await DI.user.patients() ?? [];
+    return await Dependencies.services.user.patients() ?? [];
   }
 
   @override

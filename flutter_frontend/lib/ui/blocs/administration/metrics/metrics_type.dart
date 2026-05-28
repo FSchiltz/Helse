@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 
@@ -10,7 +10,7 @@ class MetricTypeView extends StatelessWidget {
   const MetricTypeView({super.key});
 
   Future<List<MetricType>> _getData(bool refresh) async {
-    return await DI.metric.metricsType(true, null) ?? [];
+    return await Dependencies.services.metric.metricsType(true, null) ?? [];
   }
 
   @override
@@ -141,7 +141,7 @@ class MetricTypeView extends StatelessWidget {
     var id = type.id;
     try {
       if (id != null) {
-        await DI.metric.deleteMetricsType(id);
+        await Dependencies.services.metric.deleteMetricsType(id);
         Notify.show('Metric ${type.name} deleted');
       }
     } catch (ex) {

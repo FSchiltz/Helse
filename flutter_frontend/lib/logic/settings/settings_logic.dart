@@ -7,7 +7,6 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../services/account.dart';
-import '../../services/setting_service.dart';
 
 class SettingsBloc extends Cubit<bool> {
   SettingsBloc(super.initialState);
@@ -24,8 +23,6 @@ class SettingsLogic {
   final SettingsBloc metrics = SettingsBloc(false);
 
   SettingsLogic(this.account);
-
-  SettingService api() => SettingService(account);
 
   Future<HealthSettings> getHealth() async {
     var encoded = (await storage).getString(Account.health);
@@ -69,7 +66,10 @@ class SettingsLogic {
     if (encoded == null) {
       return UserSettings();
     }
-    return UserSettings.fromJson(json.decode(encoded) as Map<String, Object?>);
+
+    var map = json.decode(encoded) as Map<String, Object?>;
+    var object = UserSettings.fromJson(map);
+    return object;
   }
 
   Future<List<OrderedItem>> getMetrics() async {
@@ -163,7 +163,7 @@ class SettingsLogic {
       }
     }
 
-    await saveMetrics(metrics);
+    await saveMetrics(newMetrics);
   }
 
   Future<void> updateEvents(List<EventType> model) async {
@@ -187,7 +187,7 @@ class SettingsLogic {
         );
       } else {
         if (event.id != null) {
-          events.add(
+          newEvents.add(
             OrderedItem(
               id: event.id!,
               name: event.name,
@@ -199,7 +199,7 @@ class SettingsLogic {
         }
       }
     }
-    await saveEvents(events);
+    await saveEvents(newEvents);
   }
 
   OrderedItem getDefault(MetricType item) {
@@ -267,12 +267,13 @@ class SettingsLogic {
               name: metric.name,
               graph: GraphKind.bar,
               detailGraph: GraphKind.line,
+              visible: metric.showOnDashboard,
             ),
           );
         }
       }
     }
 
-    await saveMetricGroups(metrics);
+    await saveMetricGroups(newMetrics);
   }
 }

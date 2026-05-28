@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:helse/di/dependencies.dart';
 
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 
@@ -177,24 +178,6 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     return to.difference(from).inMinutes;
   }
 
-  final Map<String, Color> colors = {};
-
-  Color _stateColor(String state) {
-    if (colors.containsKey(state)) {
-      return colors[state]!;
-    } else {
-      var r = Random();
-      var color = Color.fromRGBO(
-        r.nextInt(106) + 50,
-        r.nextInt(106) + 50,
-        r.nextInt(106) + 50,
-        0.75,
-      );
-      colors[state] = color;
-      return color;
-    }
-  }
-
   double _distanceToLeftBorder(
     DateTime projectStartedAt,
     List<DateTimeRange<DateTime>> skipped,
@@ -259,7 +242,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
         var end = n.stop.toLocal();
 
         var width = _distanceInMinutes(start, end);
-        var color = _stateColor(n.description ?? '');
+        var color = Dependencies.theme.stateColor(n.description ?? '');
         var left = _distanceToLeftBorder(start, skipped);
         if (width > 0) {
           chartGroup.add(

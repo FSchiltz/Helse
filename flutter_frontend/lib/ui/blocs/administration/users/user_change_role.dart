@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/administration/users/userright_input.dart';
 import 'package:helse/ui/common/square_dialog.dart';
@@ -67,7 +67,7 @@ class _ChangeRoleState extends State<ChangeRole> {
     var localContext = context;
     try {
       // save the user
-      await DI.user.updatePerson(UpdatePerson(id: widget.id, types: types.where((x)=> x != UserType.swaggerGeneratedUnknown).toList()));
+      await Dependencies.services.user.updatePerson(UpdatePerson(id: widget.id, types: types.where((x)=> x != UserType.swaggerGeneratedUnknown).toList()));
 
       widget.callback.call();
 
