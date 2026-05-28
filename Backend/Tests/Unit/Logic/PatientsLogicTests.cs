@@ -1,9 +1,7 @@
 using Api.Data;
 using Api.Logic;
 using Api.Models.Persons;
-using Microsoft.AspNetCore.Http;
 using NSubstitute;
-using System.Security.Claims;
 
 namespace Tests.Unit.Logic;
 
@@ -13,14 +11,14 @@ public class PatientsLogicTests : LogicTests
     public async Task GetPatientsAsync_ReturnsPatients_WhenValidUser()
     {
         // Arrange
-        var users = SetupUser(Api.Data.Models.UserType.Admin);
+        var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);
         var context = SetupContext();
         var db = Substitute.For<IHealthContext>();
-        Api.Data.Models.Person[] persons =
+        Api.Data.Models.Persons.Person[] persons =
         [
             new() { Id = 1, Name = "Test", Surname = "User" }
         ];
-        db.GetPatients(1, Arg.Any<DateTime>(), Api.Models.Settings.RightType.View).Returns(persons);
+        db.GetPatients(1, Arg.Any<DateTime>(), RightType.View).Returns(persons);
 
         // Act
         var result = await PatientsLogic.GetPatientsAsync(users, db, context);

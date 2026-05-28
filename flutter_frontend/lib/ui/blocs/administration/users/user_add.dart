@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/blocs/administration/users/userright_input.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 
@@ -97,7 +97,7 @@ class _SignupState extends State<UserAdd> {
       if (_formKey.currentState?.validate() ?? false) {
         var edit = widget.edit;
         if (edit != null) {
-          await DI.user.updatePerson(
+          await Dependencies.services.user.updatePerson(
             UpdatePerson(
               id: edit.id,
               types: _type,
@@ -108,7 +108,7 @@ class _SignupState extends State<UserAdd> {
           );
         } else {
           // save the user
-          var result = await DI.user.addPerson(
+          var result = await Dependencies.services.user.addPerson(
             PersonCreation(
               userName: _controllerUsername.text,
               name: _controllerName.text,

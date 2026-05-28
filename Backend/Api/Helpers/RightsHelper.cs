@@ -1,8 +1,8 @@
 using System.Security.Claims;
 using Api.Data;
-using Api.Data.Models;
+using Api.Data.Models.Persons;
 using Api.Helpers.Auth;
-using Api.Models.Settings;
+using Api.Models.Persons;
 using Microsoft.OpenApi;
 
 namespace Api.Helpers;
@@ -31,7 +31,7 @@ public static class RightsHelper
         if (error is not null)
             return error;
 
-        if (!user.HasRight(UserType.Admin))
+        if (!user.HasRight(Data.Models.Persons.UserType.Admin))
             return TypedResults.Forbid();
 
         return null;
@@ -60,9 +60,9 @@ public static class RightsHelper
         if (fromDb is null)
             return null;
 
-        var types = string.Join(';', Enum.GetValues<UserType>()
-                      .Cast<UserType>()
-                      .Where(e => ((UserType)fromDb.User.Type).HasFlag(e))
+        var types = string.Join(';', Enum.GetValues<Data.Models.Persons.UserType>()
+                      .Cast<Data.Models.Persons.UserType>()
+                      .Where(e => ((Data.Models.Persons.UserType)fromDb.User.Type).HasFlag(e))
                       .Select(e => e.GetDisplayName()));
 
         return new(

@@ -2,7 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:toastification/toastification.dart';
 
 import 'helpers/url_dummy.dart' if (dart.library.html) 'helpers/url.dart';
@@ -13,6 +14,7 @@ import 'ui/login.dart';
 import 'ui/splash.dart';
 
 void main() {
+  Dependencies.init();
   runApp(const App());
 }
 
@@ -23,35 +25,32 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return ToastificationWrapper(
       child: MaterialApp(
-        title: 'Demo App',
+        title: 'Helse',
         theme: ThemeData(
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         onGenerateRoute: (RouteSettings routeSettings) {
-          DI.init();
           if (kIsWeb) {
             var uri = Uri.base.queryParameters;
 
             if (uri.containsKey("code")) {
-              DI.authService?.doAuthOnWeb(uri);
+              Dependencies.services.authService.doAuthOnWeb(uri);
               UrlHelper.removeParam();
             }
           }
-          return MaterialPageRoute(builder: (BuildContext context) {
-            return const AppView();
-          });
+          return MaterialPageRoute(
+            builder: (BuildContext context) {
+              return const AppView();
+            },
+          );
         },
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        supportedLocales: const [
-          Locale('en'),
-          Locale('fr'),
-          Locale('es'),
-        ],
+        supportedLocales: const [Locale('en'), Locale('fr'), Locale('es')],
       ),
     );
   }
@@ -60,7 +59,8 @@ class App extends StatelessWidget {
 class AppView extends StatefulWidget {
   const AppView({super.key});
 
-  static AppState of(BuildContext context) => context.findAncestorStateOfType<AppState>()!;
+  static AppState of(BuildContext context) =>
+      context.findAncestorStateOfType<AppState>()!;
 
   @override
   State<AppView> createState() => AppState();
@@ -75,13 +75,26 @@ class AppState extends State<AppView> {
   @override
   void initState() {
     super.initState();
-     DI.settings.getTheme().then((value) => changeTheme(value.theme));
+    Dependencies.logics.settings.getTheme().then((value) => changeTheme(value));
   }
 
-  void changeTheme(ThemeMode themeMode) {
-    setState(() {
-      _themeMode = themeMode;
-    });
+  void changeTheme(InterfaceTheme themeMode) {
+    switch (themeMode) {
+      case InterfaceTheme.light:
+        setState(() {
+          _themeMode = ThemeMode.light;
+        });
+        break;
+      case InterfaceTheme.dark:
+        setState(() {
+          _themeMode = ThemeMode.dark;
+        });
+        break;
+      default:
+        setState(() {
+          _themeMode = ThemeMode.system;
+        });
+    }
   }
 
   @override
@@ -92,11 +105,16 @@ class AppState extends State<AppView> {
         title: 'Helse',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 123, 250, 123)),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 123, 250, 123),
+          ),
         ),
         darkTheme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 0, 97, 0), brightness: Brightness.dark),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 0, 97, 0),
+            brightness: Brightness.dark,
+          ),
           /* dark theme settings */
         ),
         themeMode: _themeMode,

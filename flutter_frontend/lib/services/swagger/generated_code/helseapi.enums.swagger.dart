@@ -4,6 +4,30 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:collection/collection.dart';
 
+enum DatePreset {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue('Today')
+  today('Today'),
+  @JsonValue('Week')
+  week('Week'),
+  @JsonValue('Month')
+  month('Month'),
+  @JsonValue('Trimestre')
+  trimestre('Trimestre'),
+  @JsonValue('HalfYear')
+  halfyear('HalfYear'),
+  @JsonValue('Year')
+  year('Year'),
+  @JsonValue('YearToDate')
+  yeartodate('YearToDate');
+
+  final String? value;
+
+  const DatePreset(this.value);
+}
+
 enum FileTypes {
   @JsonValue(null)
   swaggerGeneratedUnknown(null),
@@ -22,6 +46,38 @@ enum FileTypes {
   final String? value;
 
   const FileTypes(this.value);
+}
+
+enum GraphKind {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue('Text')
+  text('Text'),
+  @JsonValue('Line')
+  line('Line'),
+  @JsonValue('Bar')
+  bar('Bar');
+
+  final String? value;
+
+  const GraphKind(this.value);
+}
+
+enum InterfaceTheme {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue('System')
+  system('System'),
+  @JsonValue('Dark')
+  dark('Dark'),
+  @JsonValue('Light')
+  light('Light');
+
+  final String? value;
+
+  const InterfaceTheme(this.value);
 }
 
 enum JobStatus {

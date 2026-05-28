@@ -8,6 +8,7 @@ using Api.Models.Settings.Admin;
 using Api.Models.Treatments;
 using Api.Models.Admin;
 using Api.Jobs;
+using Api.Models.Settings;
 
 namespace Api;
 
@@ -53,6 +54,14 @@ public static class Endpoints
             .Produces((int)HttpStatusCode.Unauthorized)
             .Produces((int)HttpStatusCode.NoContent);
 
+        person.MapGet("/settings", SettingsLogic.GetUserSettings)
+        .Produces<UserSettings>((int)HttpStatusCode.OK)
+       .Produces((int)HttpStatusCode.Unauthorized);
+
+        person.MapPost("/settings", SettingsLogic.PostUserSettingsAsync)
+       .Produces((int)HttpStatusCode.NoContent)
+       .Produces((int)HttpStatusCode.Unauthorized);
+
         var rights = person.MapGroup("/rights");
         rights.MapPost("/{personId}", PersonLogic.SetRight)
         .Produces((int)HttpStatusCode.NoContent)
@@ -75,6 +84,14 @@ public static class Endpoints
         .Produces((int)HttpStatusCode.Unauthorized);
 
         patients.MapGet("/share", PatientsLogic.SharePatient)
+       .Produces((int)HttpStatusCode.NoContent)
+       .Produces((int)HttpStatusCode.Unauthorized);
+
+        patients.MapGet("/settings", SettingsLogic.GetPatientsSettings)
+        .Produces<PatientSettings>((int)HttpStatusCode.OK)
+       .Produces((int)HttpStatusCode.Unauthorized);
+
+        patients.MapPost("/settings", SettingsLogic.PostPatientsSettingsAsync)
        .Produces((int)HttpStatusCode.NoContent)
        .Produces((int)HttpStatusCode.Unauthorized);
     }
@@ -146,23 +163,19 @@ public static class Endpoints
 
         events.MapGet("/summary", EventsLogic.GetSummaryAsync)
         .Produces<EventSummary[]>((int)HttpStatusCode.OK)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        ;
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         events.MapGet("/", EventsLogic.GetAsync)
         .Produces<List<Event>>((int)HttpStatusCode.OK)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        ;
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         events.MapPost("/", EventsLogic.CreateAsync)
         .Produces((int)HttpStatusCode.NoContent)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        ;
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         events.MapPut("/", EventsLogic.UpdateAsync)
         .Produces((int)HttpStatusCode.NoContent)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        ;
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         events.MapDelete("/{id}", EventsLogic.DeleteAsync)
         .Produces((int)HttpStatusCode.NoContent)
@@ -172,23 +185,19 @@ public static class Endpoints
         var eventsType = events.MapGroup("/type").RequireAuthorization();
         eventsType.MapPost("/", EventsLogic.CreateTypeAsync)
         .Produces((int)HttpStatusCode.NoContent)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        ;
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         eventsType.MapPut("/", EventsLogic.UpdateTypeAsync)
         .Produces((int)HttpStatusCode.NoContent)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        ;
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         eventsType.MapDelete("/{id}", EventsLogic.DeleteTypeAsync)
         .Produces((int)HttpStatusCode.NoContent)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        ;
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         eventsType.MapGet("/", EventsLogic.GetTypeAsync)
-        .Produces<List<Api.Data.Models.EventType>>((int)HttpStatusCode.OK)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        ;
+        .Produces<List<EventType>>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
     }
 
     public static void MapTreatments(this RouteGroupBuilder api)
@@ -205,7 +214,7 @@ public static class Endpoints
 
         var eventsType = treatment.MapGroup("/type").RequireAuthorization();
         eventsType.MapGet("/", TreatmentLogic.GetTypeAsync)
-            .Produces<List<Api.Data.Models.EventType>>((int)HttpStatusCode.OK)
+            .Produces<List<EventType>>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
     }
 

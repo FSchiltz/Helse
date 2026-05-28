@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/helpers/pair.dart';
-import 'package:helse/logic/d_i.dart';
-import 'package:helse/logic/settings/ordered_item.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/settings/settings_logic.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/metric_widgets_grid.dart';
@@ -25,11 +24,11 @@ class _MetricGroupDetailState extends State<MetricGroupDetail> {
 
   void _getData() async {
     try {
-      var model = await DI.metric.metricsType(false, widget.group.id);
+      var model = await Dependencies.services.metric.metricsType(false, widget.group.id);
       if (model != null) {
         List<Pair<MetricType, OrderedItem>> filtered = [];
         for (var item in model) {
-          OrderedItem setting = DI.settings.getDefault(item);
+          OrderedItem setting = Dependencies.logics.settings.getDefault(item);
 
           filtered.add(Pair(item, setting));
         }
@@ -67,7 +66,7 @@ class _MetricGroupDetailState extends State<MetricGroupDetail> {
               listener: (context, state) {
                 _getData();
               },
-              bloc: DI.settings.metrics,
+              bloc: Dependencies.logics.settings.metrics,
               child: MetricWidgetsGrid(
                 cached: cached,
                 person: widget.person,

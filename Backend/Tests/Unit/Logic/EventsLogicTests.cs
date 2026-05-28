@@ -1,5 +1,5 @@
 using Api.Data;
-using Api.Data.Models;
+using Api.Data.Models.Persons;
 using Api.Logic;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;
@@ -13,7 +13,7 @@ public class EventsLogicTests : LogicTests
     [Fact]
     public async Task EventType_NonAdmin()
     {
-        var type = new Api.Data.Models.EventType()
+        var type = new Api.Models.Events.EventType()
         {
             Name = "",
             Description = "",
@@ -29,7 +29,7 @@ public class EventsLogicTests : LogicTests
     [Fact]
     public async Task EventType()
     {
-        var type = new Api.Data.Models.EventType()
+        var type = new Api.Models.Events.EventType()
         {
             Name = "",
             Description = "",

@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/date.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class AdminDashBoard extends StatefulWidget {
@@ -32,7 +32,7 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
     setState(() => _loading = true);
 
     // Load user stats from admin endpoint
-    final userStats = await DI.admin.getUserStats();
+    final userStats = await Dependencies.services.admin.getUserStats();
     if (userStats != null) {
       _userCounts = userStats.userCount;
     }
@@ -40,19 +40,19 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
     // Load event summaries for the last 30 days
     final end = DateTime.now();
     final start = end.subtract(const Duration(days: 30));
-    var events = await DI.admin.getEventStats(start, end);
+    var events = await Dependencies.services.admin.getEventStats(start, end);
     if (events != null) {
       _eventSummaries = events.events;
       _eventTypeCounts = events.eventCounts;
     }
 
-    var metrics = await DI.admin.getmetricStats(start, end);
+    var metrics = await Dependencies.services.admin.getmetricStats(start, end);
     if (metrics != null) {
       _metricSummaries = metrics.events;
       _metricTypeCounts = metrics.eventCounts;
     }
 
-    _jobs = await DI.admin.getJobs();
+    _jobs = await Dependencies.services.admin.getJobs();
 
     setState(() => _loading = false);
   }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/logic/fit/status_bloc.dart';
 
-import '../logic/d_i.dart';
+import '../di/dependencies.dart';
 import '../logic/event.dart';
 import '../logic/fit/task_bloc.dart';
 import '../services/swagger/generated_code/helseapi.swagger.dart';
@@ -42,8 +42,8 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     _getUser();
-    _startFitJob(DI.fit);
-    _startTaskResultJob(DI.jobs);
+    _startFitJob(Dependencies.blocs.fit);
+    _startTaskResultJob(Dependencies.blocs.jobs);
   }
 
   DeviceType getDevice() {
@@ -54,7 +54,7 @@ class _HomeState extends State<Home> {
 
   void _getUser() async {
     try {
-      var model = await DI.authentication.getUser();
+      var model = await Dependencies.logics.authentication.getUser();
       setState(() {
         user = model;
       });
@@ -77,7 +77,7 @@ class _HomeState extends State<Home> {
             centerTitle: true,
             actions: [
               BlocProvider<StatusBloc>.value(
-                value: DI.jobs,
+                value: Dependencies.blocs.jobs,
                 child: BlocBuilder<StatusBloc, SubmissionStatus>(
                   builder: (context, state) {
                     Color? color;
@@ -108,7 +108,7 @@ class _HomeState extends State<Home> {
               ),
 
               BlocProvider<TaskBloc>.value(
-                value: DI.fit,
+                value: Dependencies.blocs.fit,
                 child: BlocBuilder<TaskBloc, SubmissionStatus>(
                   builder: (context, state) {
                     Color? color;
@@ -208,7 +208,7 @@ class _HomeState extends State<Home> {
                       );
                       break;
                     case 3:
-                      DI.authentication.logOut();
+                      Dependencies.logics.authentication.logOut();
                       break;
                   }
                 },
@@ -222,7 +222,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _startFitJob(TaskBloc fit) async {
-    var settings = await DI.settings.getHealth();
+    var settings = await Dependencies.logics.settings.getHealth();
     if (settings.syncHealth) {
       fit.start();
     }
@@ -230,19 +230,19 @@ class _HomeState extends State<Home> {
 
   Future<void> _startTaskResultJob(StatusBloc jobs) async {
     jobs.start();
-    var existingJobs = await DI.import.getJobs();
+    var existingJobs = await Dependencies.services.import.getJobs();
     for (var job in existingJobs) {
-      DI.importLogic.jobs[job.id] = job.result;
+      Dependencies.logics.import.jobs[job.id] = job.result;
     }
   }
 
   void _showSynchroRuns(BuildContext context) {
-    var tasks = DI.fit.executions;
+    var tasks = Dependencies.blocs.fit.executions;
     _showTaskDialog(context, tasks, 'Health sync history');
   }
 
   void _showJobs(BuildContext context) {
-    var tasks = DI.importLogic.executions();
+    var tasks = Dependencies.logics.import.executions();
     _showTaskDialog(context, tasks, 'File import history');
   }
 

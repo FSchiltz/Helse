@@ -1,5 +1,7 @@
 using System.Data;
-using Api.Data.Models;
+using Api.Data.Models.Health;
+using Api.Data.Models.Persons;
+using Api.Models.Persons;
 using LinqToDB;
 using LinqToDB.Data;
 using LinqToDB.Mapping;
@@ -72,10 +74,10 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     }
 
     /// <inheritdoc/>
-    public Task<Event[]> GetEvents(long user, Api.Models.Settings.RightType view, DateTime start, DateTime end)
+    public Task<Event[]> GetEvents(long user, RightType view, DateTime start, DateTime end)
     {
         return (from e in Db.GetTable<Event>()
-                join r in Db.GetTable<Right>() on e.PersonId equals r.PersonId
+                join r in Db.GetTable<Models.Persons.Right>() on e.PersonId equals r.PersonId
                 where e.Start <= end && start <= e.Stop
                 where r.UserId == user && r.Type == (int)view
                 select e)
@@ -143,10 +145,10 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     public Task<MetricType?> GetMetricType(int type) => Db.GetTable<MetricType>().FirstOrDefaultAsync(x => x.Id == type);
 
     /// <inheritdoc/>
-    public Task<Person[]> GetPatients(long user, DateTime now, Api.Models.Settings.RightType right)
+    public Task<Models.Persons.Person[]> GetPatients(long user, DateTime now, RightType right)
     {
-        return (from u in Db.GetTable<Person>()
-                join r in Db.GetTable<Right>() on u.Id equals r.PersonId
+        return (from u in Db.GetTable<Models.Persons.Person>()
+                join r in Db.GetTable<Models.Persons.Right>() on u.Id equals r.PersonId
                 where r.Stop == null || (r.Stop >= now && r.Start <= now)
                 where r.UserId == user
                 where r.Type == (int)right
@@ -154,9 +156,9 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     }
 
     /// <inheritdoc/>
-    public Task<Person[]> GetAllPatients()
+    public Task<Models.Persons.Person[]> GetAllPatients()
     {
-        return Db.GetTable<Person>().ToArrayAsync();
+        return Db.GetTable<Models.Persons.Person>().ToArrayAsync();
     }
 
     /// <inheritdoc/>
@@ -171,7 +173,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     }
 
     /// <inheritdoc/>
-    public Task Insert(EventType eventType)
+    public Task Insert(Api.Models.Events.EventType eventType)
     {
         return Db.GetTable<EventType>().InsertAsync(() => new EventType
         {
@@ -179,7 +181,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
             Description = eventType.Description,
             StandAlone = eventType.StandAlone,
             UserEditable = true,
-            Visible = eventType.Visible
+            Visible = eventType.Visible,
         });
     }
 
@@ -222,7 +224,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task Update(EventType type)
+    public Task Update(Api.Models.Events.EventType type)
     {
         return Db.GetTable<EventType>()
             .Where(x => x.Id == type.Id)

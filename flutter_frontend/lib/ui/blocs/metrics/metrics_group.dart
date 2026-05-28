@@ -1,12 +1,11 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:helse/logic/settings/ordered_item.dart';
 import 'package:helse/ui/blocs/metrics/metric_group_detail.dart';
 import 'package:helse/ui/blocs/metrics/metric_widgets_grid.dart';
 
 import '../../../helpers/pair.dart';
-import '../../../logic/d_i.dart';
+import '../../../di/dependencies.dart';
 import '../../../logic/settings/settings_logic.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/loader.dart';
@@ -36,26 +35,31 @@ class _MetricsGroupState extends State<MetricsGroup> {
 
     if (widget.group.showOnDashboard == true) {
       _getData();
+    } else {
+      setState(() {
+        types = [];
+      });
     }
   }
 
   void _getData() async {
     try {
-      var model = await DI.metric.metricsType(false, widget.group.id);
+      var model = await Dependencies.services.metric.metricsType(
+        false,
+        widget.group.id,
+      );
       if (model != null) {
-        await DI.settings.updateMetrics(model);
-        var settings = await DI.settings.getMetrics();
+        await Dependencies.logics.settings.updateMetrics(model);
+        var settings = await Dependencies.logics.settings.getMetrics();
         // filter using the user settings
 
         List<Pair<MetricType, OrderedItem>> filtered = [];
         for (var item in model.where((x) => x.showOnDashboard == true)) {
           OrderedItem setting =
-              settings.metrics.firstWhereOrNull(
-                (element) => element.id == item.id,
-              ) ??
-              DI.settings.getDefault(item);
+              settings.firstWhereOrNull((element) => element.id == item.id) ??
+              Dependencies.logics.settings.getDefault(item);
 
-          if (setting.visible) filtered.add(Pair(item, setting));
+          if (setting.visible == true) filtered.add(Pair(item, setting));
         }
 
         setState(() {
@@ -73,35 +77,23 @@ class _MetricsGroupState extends State<MetricsGroup> {
 
     Widget body;
 
-    if (widget.group.showOnDashboard == true) {
-      body = cached == null
-          ? const HelseLoader()
-          : BlocListener<SettingsBloc, bool>(
-              listener: (context, state) {
-                _getData();
-              },
-              bloc: DI.settings.metrics,
-              child: MetricWidgetsGrid(
-                date: widget.date,
-                person: widget.person,
-                cached: cached,
-                button: IconButton(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (context) => MetricGroupDetail(
-                        widget.date,
-                        widget.person,
-                        widget.group,
-                      ),
-                    ),
-                  ),
-                  icon: const Icon(Icons.open_in_new_sharp),
-                ),
-              ),
-            );
-    } else {
-      body = Text('');
-    }
+    body = cached == null
+        ? const HelseLoader()
+        : BlocListener<SettingsBloc, bool>(
+            listener: (context, state) {
+              _getData();
+            },
+            bloc: Dependencies.logics.settings.metrics,
+            child: (cached.isNotEmpty)
+                ? MetricWidgetsGrid(
+                    date: widget.date,
+                    person: widget.person,
+                    cached: cached,
+                    button: _openAll(context),
+                  )
+                : _openAll(context),
+          );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -116,6 +108,18 @@ class _MetricsGroupState extends State<MetricsGroup> {
         Divider(height: 4),
         SizedBox(height: 32),
       ],
+    );
+  }
+
+  IconButton _openAll(BuildContext context) {
+    return IconButton(
+      onPressed: () => Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (context) =>
+              MetricGroupDetail(widget.date, widget.person, widget.group),
+        ),
+      ),
+      icon: const Icon(Icons.open_in_new_sharp),
     );
   }
 }

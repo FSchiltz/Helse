@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/blocs/events/event_detail_page.dart';
 import 'package:helse/ui/blocs/events/events_summary.dart';
 import 'package:helse/ui/common/loading_builder.dart';
@@ -43,7 +43,7 @@ class _EventWidgetState extends State<EventWidget> {
       date.end.day,
     ).add(const Duration(days: 1));
 
-    return await DI.event.eventsSummary(
+    return await Dependencies.services.event.eventsSummary(
           widget.type.id,
           start,
           end,

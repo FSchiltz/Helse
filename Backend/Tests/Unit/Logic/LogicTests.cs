@@ -1,5 +1,5 @@
 using Api.Data;
-using Api.Data.Models;
+using Api.Data.Models.Persons;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using System.Security.Claims;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/fit/fit_logic.dart';
 import 'package:helse/logic/settings/health_settings.dart';
 import 'package:helse/ui/common/custom_switch.dart';
@@ -27,8 +27,8 @@ class _SyncSettingsState extends State<SyncSettings> {
   }
 
   Future<int> _getData(bool refresh) async {
-    _healthEnabled = (await DI.settings.getHealth()).syncHealth;
-    _lastRun = (await DI.settings.getLastRun());
+    _healthEnabled = (await Dependencies.logics.settings.getHealth()).syncHealth;
+    _lastRun = (await Dependencies.logics.settings.getLastRun());
 
     return 1;
   }
@@ -37,7 +37,7 @@ class _SyncSettingsState extends State<SyncSettings> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
-        await DI.settings.saveHealth(HealthSettings(_healthEnabled));
+        await Dependencies.logics.settings.saveHealth(HealthSettings(_healthEnabled));
 
         Notify.show("Saved Successfully");
       }
@@ -47,7 +47,7 @@ class _SyncSettingsState extends State<SyncSettings> {
   }
 
   Future<void> _resetLastRun() async {
-    await DI.settings.removeLastRun();
+    await Dependencies.logics.settings.removeLastRun();
     setState(() {
       _lastRun = null;
     });
@@ -89,9 +89,9 @@ class _SyncSettingsState extends State<SyncSettings> {
 
                             // Stop or start
                             if (value) {
-                              DI.fit.start();
+                              Dependencies.blocs.fit.start();
                             } else {
-                              DI.fit.cancel();
+                              Dependencies.blocs.fit.cancel();
                             }
                           });
                         },

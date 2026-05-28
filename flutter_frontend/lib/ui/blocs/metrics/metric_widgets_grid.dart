@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/pair.dart';
-import 'package:helse/logic/settings/ordered_item.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/metric_widget.dart';
 

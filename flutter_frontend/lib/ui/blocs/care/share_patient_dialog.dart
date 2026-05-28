@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
-import '../../../logic/d_i.dart';
+import '../../../di/dependencies.dart';
 import '../../../logic/event.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
@@ -25,7 +25,7 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
   SubmissionStatus _status = SubmissionStatus.initial;
 
   Future<List<Person>> _getCaregiver(bool refresh) {
-    return DI.user.caregiver();
+    return Dependencies.services.user.caregiver();
   }
 
   @override
@@ -100,7 +100,7 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
         // save the user
         var patient = widget.patient.id;
 
-        await DI.user.sharePatient(
+        await Dependencies.services.user.sharePatient(
           patient: patient,
           caregiver: caregiver,
           edit: edit,

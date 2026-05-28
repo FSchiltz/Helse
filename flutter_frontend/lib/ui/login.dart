@@ -1,7 +1,7 @@
 import 'package:async/async.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/common/password_input.dart';
 import '../logic/event.dart';
 import '../services/swagger/generated_code/helseapi.swagger.dart';
@@ -229,11 +229,13 @@ class _LoginState extends State<LoginPage> {
     });
 
     try {
-      var isInit = await DI.helper.isInit(url);
+      var isInit = await Dependencies.services.helper.isInit(url);
 
-      setState(() {
-        _initStatus = isInit;
-      });
+      if (mounted) {
+        setState(() {
+          _initStatus = isInit;
+        });
+      }
 
       // If the server is init or not
       // Todo use stream
@@ -241,14 +243,15 @@ class _LoginState extends State<LoginPage> {
         if (isInit != null && isInit.init == true) {
           if (isInit.oauths.isNotEmpty) {
             // Start the oauth login procedure
-            var grant = await DI.authentication.getGrant();
+            var grant = await Dependencies.logics.authentication.getGrant();
             var autologin = isInit.oauths.firstWhereOrNull((x) => x.autoLogin);
             if (grant != null) {
               _submit(
                 noUser: true,
                 oAuth: grant,
-                redirect: await DI.authentication.getRedirect(),
-                issuer: await DI.authentication.getClientId(),
+                redirect: await Dependencies.logics.authentication
+                    .getRedirect(),
+                issuer: await Dependencies.logics.authentication.getClientId(),
               );
             } else if (autologin != null) {
               _connectOauth(url, autologin);
@@ -279,9 +282,9 @@ class _LoginState extends State<LoginPage> {
 
   /// Prefill the url from storage or other
   Future<void> _initUrl() async {
-    await DI.authentication.checkLogin();
+    await Dependencies.logics.authentication.checkLogin();
     // We first try to get it from storage
-    var url = await DI.authentication.getUrl();
+    var url = await Dependencies.logics.authentication.getUrl();
 
     if (url != null && url.isNotEmpty) {
       textController.text = url;
@@ -302,13 +305,13 @@ class _LoginState extends State<LoginPage> {
         _submit(
           noUser: true,
           oAuth: grant,
-          issuer: await DI.authentication.getClientId(),
-          redirect: await DI.authentication.getRedirect(),
+          issuer: await Dependencies.logics.authentication.getClientId(),
+          redirect: await Dependencies.logics.authentication.getRedirect(),
         );
       }
     } else {
       Notify.showError('Server not ready');
-      DI.authentication.logOut();
+      Dependencies.logics.authentication.logOut();
     }
   }
 
@@ -337,7 +340,7 @@ class _LoginState extends State<LoginPage> {
 
     try {
       if (init || noUser) {
-        await DI.authentication.logIn(
+        await Dependencies.logics.authentication.logIn(
           url: url,
           connection: Connection(
             user: user,
@@ -354,15 +357,18 @@ class _LoginState extends State<LoginPage> {
           name: _controllerName.text,
           surname: _controllerSurname.text,
         );
-        await DI.authentication.initAccount(url: url, person: person);
+        await Dependencies.logics.authentication.initAccount(
+          url: url,
+          person: person,
+        );
 
         // after a succes, we auto login
-        await DI.authentication.logIn(
+        await Dependencies.logics.authentication.logIn(
           url: url,
           connection: Connection(user: user, password: password),
         );
 
-        await DI.authentication.clean();
+        await Dependencies.logics.authentication.clean();
 
         Notify.show('User created, welcome');
       }
@@ -374,7 +380,7 @@ class _LoginState extends State<LoginPage> {
       Notify.showError(ex.toString());
 
       // clear any info about the login
-      await DI.authentication.logOut();
+      await Dependencies.logics.authentication.logOut();
 
       // we start the login process again
       setState(() {
@@ -385,13 +391,16 @@ class _LoginState extends State<LoginPage> {
 
   Future<String?> _connectOauth(String url, OauthConnection oauth) async {
     try {
-      DI.authService?.init(auth: oauth.url, clientId: oauth.clientId);
+      Dependencies.services.authService.init(
+        auth: oauth.url,
+        clientId: oauth.clientId,
+      );
 
-      return await DI.authService?.login(url);
+      return await Dependencies.services.authService.login(url);
     } catch (ex) {
       Notify.showError(ex.toString());
 
-      DI.authentication.logOut();
+      Dependencies.logics.authentication.logOut();
 
       // we start the login process again
       setState(() {

@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
-import '../../../logic/d_i.dart';
+import '../../../di/dependencies.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 
 class EventsSummary extends StatelessWidget {
@@ -85,7 +85,7 @@ class EventTimeline extends StatelessWidget {
           message: entry.key,
           child: Container(
             decoration: BoxDecoration(
-              color: DI.theme.stateColor(entry.key),
+              color: Dependencies.theme.stateColor(entry.key),
             ),
             width: 20 * widthCoeff,
             height: coeff * count,

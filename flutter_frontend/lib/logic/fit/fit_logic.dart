@@ -6,7 +6,7 @@ import 'package:helse/services/account.dart';
 import 'package:helse/ui/common/notification.dart';
 
 import '../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../d_i.dart';
+import '../../di/dependencies.dart';
 
 enum MetricTypes {
   none(0),
@@ -32,7 +32,7 @@ class FitLogic {
     // TODO use a background task
 
     // Get the last run
-    var run = await DI.settings.getLastRun();
+    var run = await Dependencies.logics.settings.getLastRun();
 
     var now = DateTime.now();
     var start = run == null
@@ -78,7 +78,7 @@ class FitLogic {
     // TODO add a loop here if too much events
     if (converted.metrics?.isNotEmpty == true ||
         converted.events?.isNotEmpty == true) {
-      await DI.import.importData(converted);
+      await Dependencies.services.import.importData(converted);
     }
     events += converted.events?.length ?? 0;
     metrics += converted.metrics?.length ?? 0;
@@ -96,7 +96,7 @@ class FitLogic {
   }
 
   static Future<bool> isEnabled() async {
-    DI.health.configure();
+    Dependencies.health.configure();
 
     return isSupported();
   }

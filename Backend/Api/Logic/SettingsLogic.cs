@@ -1,16 +1,59 @@
 using System.Text.Json;
 using Api.Data;
 using Api.Helpers;
+using Api.Models.Settings;
 using Api.Models.Settings.Admin;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Api.Logic;
 
 /// <summary>
-/// Management of the sserver settings
+/// Management of the server settings
 /// </summary>
 public static class SettingsLogic
 {
+    public static async Task<IResult> GetUserSettings(IUserContext users, ISettingsContext settings, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        return error ?? TypedResults.Ok(await settings.GetSettings<UserSettings>(UserSettings.Name, user.Id));
+    }
+
+    /// <summary>
+    /// Update the user settings
+    /// </summary>
+    /// <param name="settings"></param>
+    /// <param name="users"></param>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public static async Task<IResult> PostUserSettingsAsync(UserSettings settings, IUserContext users, ISettingsContext db, HttpContext context, ILoggerFactory logger)
+    {
+        var log = logger.CreateLogger(nameof(SettingsLogic));
+
+        var (error, user) = await users.GetUser(context.User);
+        return error ?? await db.Save(settings, user.Id, log);
+    }
+
+    public static async Task<IResult> GetPatientsSettings(IUserContext users, ISettingsContext settings, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        return error ?? TypedResults.Ok(await settings.GetSettings<UserSettings>(UserSettings.Name, user.Id));
+    }
+
+    /// <summary>
+    /// Update the patients settings
+    /// </summary>
+    /// <param name="settings"></param>
+    /// <param name="users"></param>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public static async Task<IResult> PostPatientsSettingsAsync(UserSettings settings, IUserContext users, ISettingsContext db, HttpContext context, ILoggerFactory logger)
+    {
+        var log = logger.CreateLogger(nameof(SettingsLogic));
+
+        var (error, user) = await users.GetUser(context.User);
+        return error ?? await db.Save(settings, user.Id, log);
+    }
+
     /// <summary>
     /// Get the Oauth settings
     /// </summary>
@@ -120,6 +163,15 @@ public static class SettingsLogic
     {
         var data = JsonSerializer.Serialize(settings);
         await db.Upsert(T.Name, data);
+
+        log.LogInformation("Settings saved");
+        return TypedResults.Created();
+    }
+
+    private static async Task<Created> Save<T>(this ISettingsContext db, T settings, long user, ILogger log) where T : IJsonSettings
+    {
+        var data = JsonSerializer.Serialize(settings);
+        await db.Upsert(T.Name, user, data);
 
         log.LogInformation("Settings saved");
         return TypedResults.Created();

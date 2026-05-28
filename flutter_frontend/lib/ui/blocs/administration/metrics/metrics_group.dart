@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/blocs/administration/metrics/metric_group_add.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
@@ -10,7 +10,7 @@ class MetricGroupView extends StatelessWidget {
   const MetricGroupView({super.key});
 
   Future<List<MetricGroup>> _getGroupData(bool refresh) async {
-    return await DI.metric.metricsGroup() ?? [];
+    return await Dependencies.services.metric.metricsGroup() ?? [];
   }
 
   @override
@@ -122,7 +122,7 @@ class MetricGroupView extends StatelessWidget {
     var id = type.id;
     try {
       if (id != null) {
-        await DI.metric.deleteMetricsGroup(id);
+        await Dependencies.services.metric.deleteMetricsGroup(id);
         Notify.show('Metric group ${type.name} deleted');
       }
     } catch (ex) {

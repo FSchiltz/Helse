@@ -223,6 +223,56 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
+  Future<chopper.Response<UserSettings>> apiPersonSettingsGet() {
+    generatedMapping.putIfAbsent(
+      UserSettings,
+      () => UserSettings.fromJsonFactory,
+    );
+
+    return _apiPersonSettingsGet();
+  }
+
+  ///
+  @GET(path: '/api/person/settings')
+  Future<chopper.Response<UserSettings>> _apiPersonSettingsGet({
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["SettingsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  Future<chopper.Response> apiPersonSettingsPost({
+    required UserSettings? body,
+  }) {
+    return _apiPersonSettingsPost(body: body);
+  }
+
+  ///
+  @POST(path: '/api/person/settings', optionalBody: true)
+  Future<chopper.Response> _apiPersonSettingsPost({
+    @Body() required UserSettings? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["SettingsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
   ///@param personId
   Future<chopper.Response> apiPersonRightsPersonIdPost({
     required int? personId,
@@ -361,6 +411,56 @@ abstract class Helseapi extends ChopperService {
       produces: [],
       security: [],
       tags: ["PatientsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  Future<chopper.Response<PatientSettings>> apiPatientsSettingsGet() {
+    generatedMapping.putIfAbsent(
+      PatientSettings,
+      () => PatientSettings.fromJsonFactory,
+    );
+
+    return _apiPatientsSettingsGet();
+  }
+
+  ///
+  @GET(path: '/api/patients/settings')
+  Future<chopper.Response<PatientSettings>> _apiPatientsSettingsGet({
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["SettingsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  Future<chopper.Response> apiPatientsSettingsPost({
+    required UserSettings? body,
+  }) {
+    return _apiPatientsSettingsPost(body: body);
+  }
+
+  ///
+  @POST(path: '/api/patients/settings', optionalBody: true)
+  Future<chopper.Response> _apiPatientsSettingsPost({
+    @Body() required UserSettings? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["SettingsLogic"],
       deprecated: false,
     ),
   });
@@ -2298,12 +2398,12 @@ extension $EventSummaryExtension on EventSummary {
 @JsonSerializable(explicitToJson: true)
 class EventType {
   const EventType({
-    this.id,
     required this.name,
     this.description,
     this.standAlone,
-    this.userEditable,
     this.visible,
+    this.id,
+    this.userEditable,
   });
 
   factory EventType.fromJson(Map<String, dynamic> json) =>
@@ -2312,26 +2412,24 @@ class EventType {
   static const toJsonFactory = _$EventTypeToJson;
   Map<String, dynamic> toJson() => _$EventTypeToJson(this);
 
-  @JsonKey(name: 'id')
-  final int? id;
   @JsonKey(name: 'name')
   final String name;
   @JsonKey(name: 'description')
   final String? description;
   @JsonKey(name: 'standAlone')
   final bool? standAlone;
-  @JsonKey(name: 'userEditable')
-  final bool? userEditable;
   @JsonKey(name: 'visible')
   final bool? visible;
+  @JsonKey(name: 'id')
+  final int? id;
+  @JsonKey(name: 'userEditable')
+  final bool? userEditable;
   static const fromJsonFactory = _$EventTypeFromJson;
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is EventType &&
-            (identical(other.id, id) ||
-                const DeepCollectionEquality().equals(other.id, id)) &&
             (identical(other.name, name) ||
                 const DeepCollectionEquality().equals(other.name, name)) &&
             (identical(other.description, description) ||
@@ -2344,13 +2442,18 @@ class EventType {
                   other.standAlone,
                   standAlone,
                 )) &&
+            (identical(other.visible, visible) ||
+                const DeepCollectionEquality().equals(
+                  other.visible,
+                  visible,
+                )) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
             (identical(other.userEditable, userEditable) ||
                 const DeepCollectionEquality().equals(
                   other.userEditable,
                   userEditable,
-                )) &&
-            (identical(other.visible, visible) ||
-                const DeepCollectionEquality().equals(other.visible, visible)));
+                )));
   }
 
   @override
@@ -2358,51 +2461,51 @@ class EventType {
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(name) ^
       const DeepCollectionEquality().hash(description) ^
       const DeepCollectionEquality().hash(standAlone) ^
-      const DeepCollectionEquality().hash(userEditable) ^
       const DeepCollectionEquality().hash(visible) ^
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(userEditable) ^
       runtimeType.hashCode;
 }
 
 extension $EventTypeExtension on EventType {
   EventType copyWith({
-    int? id,
     String? name,
     String? description,
     bool? standAlone,
-    bool? userEditable,
     bool? visible,
+    int? id,
+    bool? userEditable,
   }) {
     return EventType(
-      id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
       standAlone: standAlone ?? this.standAlone,
-      userEditable: userEditable ?? this.userEditable,
       visible: visible ?? this.visible,
+      id: id ?? this.id,
+      userEditable: userEditable ?? this.userEditable,
     );
   }
 
   EventType copyWithWrapped({
-    Wrapped<int?>? id,
     Wrapped<String>? name,
     Wrapped<String?>? description,
     Wrapped<bool?>? standAlone,
-    Wrapped<bool?>? userEditable,
     Wrapped<bool?>? visible,
+    Wrapped<int?>? id,
+    Wrapped<bool?>? userEditable,
   }) {
     return EventType(
-      id: (id != null ? id.value : this.id),
       name: (name != null ? name.value : this.name),
       description: (description != null ? description.value : this.description),
       standAlone: (standAlone != null ? standAlone.value : this.standAlone),
+      visible: (visible != null ? visible.value : this.visible),
+      id: (id != null ? id.value : this.id),
       userEditable: (userEditable != null
           ? userEditable.value
           : this.userEditable),
-      visible: (visible != null ? visible.value : this.visible),
     );
   }
 }
@@ -3474,6 +3577,257 @@ extension $OauthProviderExtension on OauthProvider {
       url: (url != null ? url.value : this.url),
       tokenurl: (tokenurl != null ? tokenurl.value : this.tokenurl),
       claimsUrl: (claimsUrl != null ? claimsUrl.value : this.claimsUrl),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class OrderedItem {
+  const OrderedItem({
+    this.visible,
+    this.order,
+    required this.name,
+    this.id,
+    this.graph,
+    this.detailGraph,
+  });
+
+  factory OrderedItem.fromJson(Map<String, dynamic> json) =>
+      _$OrderedItemFromJson(json);
+
+  static const toJsonFactory = _$OrderedItemToJson;
+  Map<String, dynamic> toJson() => _$OrderedItemToJson(this);
+
+  @JsonKey(name: 'visible')
+  final bool? visible;
+  @JsonKey(name: 'order')
+  final int? order;
+  @JsonKey(name: 'name')
+  final String name;
+  @JsonKey(name: 'id')
+  final int? id;
+  @JsonKey(
+    name: 'graph',
+    toJson: graphKindNullableToJson,
+    fromJson: graphKindNullableFromJson,
+  )
+  final enums.GraphKind? graph;
+  @JsonKey(
+    name: 'detailGraph',
+    toJson: graphKindNullableToJson,
+    fromJson: graphKindNullableFromJson,
+  )
+  final enums.GraphKind? detailGraph;
+  static const fromJsonFactory = _$OrderedItemFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is OrderedItem &&
+            (identical(other.visible, visible) ||
+                const DeepCollectionEquality().equals(
+                  other.visible,
+                  visible,
+                )) &&
+            (identical(other.order, order) ||
+                const DeepCollectionEquality().equals(other.order, order)) &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.graph, graph) ||
+                const DeepCollectionEquality().equals(other.graph, graph)) &&
+            (identical(other.detailGraph, detailGraph) ||
+                const DeepCollectionEquality().equals(
+                  other.detailGraph,
+                  detailGraph,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(visible) ^
+      const DeepCollectionEquality().hash(order) ^
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(graph) ^
+      const DeepCollectionEquality().hash(detailGraph) ^
+      runtimeType.hashCode;
+}
+
+extension $OrderedItemExtension on OrderedItem {
+  OrderedItem copyWith({
+    bool? visible,
+    int? order,
+    String? name,
+    int? id,
+    enums.GraphKind? graph,
+    enums.GraphKind? detailGraph,
+  }) {
+    return OrderedItem(
+      visible: visible ?? this.visible,
+      order: order ?? this.order,
+      name: name ?? this.name,
+      id: id ?? this.id,
+      graph: graph ?? this.graph,
+      detailGraph: detailGraph ?? this.detailGraph,
+    );
+  }
+
+  OrderedItem copyWithWrapped({
+    Wrapped<bool?>? visible,
+    Wrapped<int?>? order,
+    Wrapped<String>? name,
+    Wrapped<int?>? id,
+    Wrapped<enums.GraphKind?>? graph,
+    Wrapped<enums.GraphKind?>? detailGraph,
+  }) {
+    return OrderedItem(
+      visible: (visible != null ? visible.value : this.visible),
+      order: (order != null ? order.value : this.order),
+      name: (name != null ? name.value : this.name),
+      id: (id != null ? id.value : this.id),
+      graph: (graph != null ? graph.value : this.graph),
+      detailGraph: (detailGraph != null ? detailGraph.value : this.detailGraph),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class PatientSettings {
+  const PatientSettings({
+    this.patientId,
+    this.datePreset,
+    this.theme,
+    this.eventWidth,
+    this.metrics,
+    this.metricGroups,
+    this.events,
+  });
+
+  factory PatientSettings.fromJson(Map<String, dynamic> json) =>
+      _$PatientSettingsFromJson(json);
+
+  static const toJsonFactory = _$PatientSettingsToJson;
+  Map<String, dynamic> toJson() => _$PatientSettingsToJson(this);
+
+  @JsonKey(name: 'patientId')
+  final int? patientId;
+  @JsonKey(
+    name: 'datePreset',
+    toJson: datePresetNullableToJson,
+    fromJson: datePresetNullableFromJson,
+  )
+  final enums.DatePreset? datePreset;
+  @JsonKey(
+    name: 'theme',
+    toJson: interfaceThemeNullableToJson,
+    fromJson: interfaceThemeNullableFromJson,
+  )
+  final enums.InterfaceTheme? theme;
+  @JsonKey(name: 'eventWidth')
+  final int? eventWidth;
+  @JsonKey(name: 'metrics', defaultValue: <OrderedItem>[])
+  final List<OrderedItem>? metrics;
+  @JsonKey(name: 'metricGroups', defaultValue: <OrderedItem>[])
+  final List<OrderedItem>? metricGroups;
+  @JsonKey(name: 'events', defaultValue: <OrderedItem>[])
+  final List<OrderedItem>? events;
+  static const fromJsonFactory = _$PatientSettingsFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is PatientSettings &&
+            (identical(other.patientId, patientId) ||
+                const DeepCollectionEquality().equals(
+                  other.patientId,
+                  patientId,
+                )) &&
+            (identical(other.datePreset, datePreset) ||
+                const DeepCollectionEquality().equals(
+                  other.datePreset,
+                  datePreset,
+                )) &&
+            (identical(other.theme, theme) ||
+                const DeepCollectionEquality().equals(other.theme, theme)) &&
+            (identical(other.eventWidth, eventWidth) ||
+                const DeepCollectionEquality().equals(
+                  other.eventWidth,
+                  eventWidth,
+                )) &&
+            (identical(other.metrics, metrics) ||
+                const DeepCollectionEquality().equals(
+                  other.metrics,
+                  metrics,
+                )) &&
+            (identical(other.metricGroups, metricGroups) ||
+                const DeepCollectionEquality().equals(
+                  other.metricGroups,
+                  metricGroups,
+                )) &&
+            (identical(other.events, events) ||
+                const DeepCollectionEquality().equals(other.events, events)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(patientId) ^
+      const DeepCollectionEquality().hash(datePreset) ^
+      const DeepCollectionEquality().hash(theme) ^
+      const DeepCollectionEquality().hash(eventWidth) ^
+      const DeepCollectionEquality().hash(metrics) ^
+      const DeepCollectionEquality().hash(metricGroups) ^
+      const DeepCollectionEquality().hash(events) ^
+      runtimeType.hashCode;
+}
+
+extension $PatientSettingsExtension on PatientSettings {
+  PatientSettings copyWith({
+    int? patientId,
+    enums.DatePreset? datePreset,
+    enums.InterfaceTheme? theme,
+    int? eventWidth,
+    List<OrderedItem>? metrics,
+    List<OrderedItem>? metricGroups,
+    List<OrderedItem>? events,
+  }) {
+    return PatientSettings(
+      patientId: patientId ?? this.patientId,
+      datePreset: datePreset ?? this.datePreset,
+      theme: theme ?? this.theme,
+      eventWidth: eventWidth ?? this.eventWidth,
+      metrics: metrics ?? this.metrics,
+      metricGroups: metricGroups ?? this.metricGroups,
+      events: events ?? this.events,
+    );
+  }
+
+  PatientSettings copyWithWrapped({
+    Wrapped<int?>? patientId,
+    Wrapped<enums.DatePreset?>? datePreset,
+    Wrapped<enums.InterfaceTheme?>? theme,
+    Wrapped<int?>? eventWidth,
+    Wrapped<List<OrderedItem>?>? metrics,
+    Wrapped<List<OrderedItem>?>? metricGroups,
+    Wrapped<List<OrderedItem>?>? events,
+  }) {
+    return PatientSettings(
+      patientId: (patientId != null ? patientId.value : this.patientId),
+      datePreset: (datePreset != null ? datePreset.value : this.datePreset),
+      theme: (theme != null ? theme.value : this.theme),
+      eventWidth: (eventWidth != null ? eventWidth.value : this.eventWidth),
+      metrics: (metrics != null ? metrics.value : this.metrics),
+      metricGroups: (metricGroups != null
+          ? metricGroups.value
+          : this.metricGroups),
+      events: (events != null ? events.value : this.events),
     );
   }
 }
@@ -4862,6 +5216,129 @@ extension $UserIdExtension on UserId {
 }
 
 @JsonSerializable(explicitToJson: true)
+class UserSettings {
+  const UserSettings({
+    this.datePreset,
+    this.theme,
+    this.eventWidth,
+    this.metrics,
+    this.metricGroups,
+    this.events,
+  });
+
+  factory UserSettings.fromJson(Map<String, dynamic> json) =>
+      _$UserSettingsFromJson(json);
+
+  static const toJsonFactory = _$UserSettingsToJson;
+  Map<String, dynamic> toJson() => _$UserSettingsToJson(this);
+
+  @JsonKey(
+    name: 'datePreset',
+    toJson: datePresetNullableToJson,
+    fromJson: datePresetNullableFromJson,
+  )
+  final enums.DatePreset? datePreset;
+  @JsonKey(
+    name: 'theme',
+    toJson: interfaceThemeNullableToJson,
+    fromJson: interfaceThemeNullableFromJson,
+  )
+  final enums.InterfaceTheme? theme;
+  @JsonKey(name: 'eventWidth')
+  final int? eventWidth;
+  @JsonKey(name: 'metrics', defaultValue: <OrderedItem>[])
+  final List<OrderedItem>? metrics;
+  @JsonKey(name: 'metricGroups', defaultValue: <OrderedItem>[])
+  final List<OrderedItem>? metricGroups;
+  @JsonKey(name: 'events', defaultValue: <OrderedItem>[])
+  final List<OrderedItem>? events;
+  static const fromJsonFactory = _$UserSettingsFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is UserSettings &&
+            (identical(other.datePreset, datePreset) ||
+                const DeepCollectionEquality().equals(
+                  other.datePreset,
+                  datePreset,
+                )) &&
+            (identical(other.theme, theme) ||
+                const DeepCollectionEquality().equals(other.theme, theme)) &&
+            (identical(other.eventWidth, eventWidth) ||
+                const DeepCollectionEquality().equals(
+                  other.eventWidth,
+                  eventWidth,
+                )) &&
+            (identical(other.metrics, metrics) ||
+                const DeepCollectionEquality().equals(
+                  other.metrics,
+                  metrics,
+                )) &&
+            (identical(other.metricGroups, metricGroups) ||
+                const DeepCollectionEquality().equals(
+                  other.metricGroups,
+                  metricGroups,
+                )) &&
+            (identical(other.events, events) ||
+                const DeepCollectionEquality().equals(other.events, events)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(datePreset) ^
+      const DeepCollectionEquality().hash(theme) ^
+      const DeepCollectionEquality().hash(eventWidth) ^
+      const DeepCollectionEquality().hash(metrics) ^
+      const DeepCollectionEquality().hash(metricGroups) ^
+      const DeepCollectionEquality().hash(events) ^
+      runtimeType.hashCode;
+}
+
+extension $UserSettingsExtension on UserSettings {
+  UserSettings copyWith({
+    enums.DatePreset? datePreset,
+    enums.InterfaceTheme? theme,
+    int? eventWidth,
+    List<OrderedItem>? metrics,
+    List<OrderedItem>? metricGroups,
+    List<OrderedItem>? events,
+  }) {
+    return UserSettings(
+      datePreset: datePreset ?? this.datePreset,
+      theme: theme ?? this.theme,
+      eventWidth: eventWidth ?? this.eventWidth,
+      metrics: metrics ?? this.metrics,
+      metricGroups: metricGroups ?? this.metricGroups,
+      events: events ?? this.events,
+    );
+  }
+
+  UserSettings copyWithWrapped({
+    Wrapped<enums.DatePreset?>? datePreset,
+    Wrapped<enums.InterfaceTheme?>? theme,
+    Wrapped<int?>? eventWidth,
+    Wrapped<List<OrderedItem>?>? metrics,
+    Wrapped<List<OrderedItem>?>? metricGroups,
+    Wrapped<List<OrderedItem>?>? events,
+  }) {
+    return UserSettings(
+      datePreset: (datePreset != null ? datePreset.value : this.datePreset),
+      theme: (theme != null ? theme.value : this.theme),
+      eventWidth: (eventWidth != null ? eventWidth.value : this.eventWidth),
+      metrics: (metrics != null ? metrics.value : this.metrics),
+      metricGroups: (metricGroups != null
+          ? metricGroups.value
+          : this.metricGroups),
+      events: (events != null ? events.value : this.events),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class UserStats {
   const UserStats({required this.userCount});
 
@@ -4949,6 +5426,72 @@ extension $ApiImportTypePost$RequestBodyExtension
   }
 }
 
+String? datePresetNullableToJson(enums.DatePreset? datePreset) {
+  return datePreset?.value;
+}
+
+String? datePresetToJson(enums.DatePreset datePreset) {
+  return datePreset.value;
+}
+
+enums.DatePreset datePresetFromJson(
+  Object? datePreset, [
+  enums.DatePreset? defaultValue,
+]) {
+  return enums.DatePreset.values.firstWhereOrNull(
+        (e) => e.value == datePreset,
+      ) ??
+      defaultValue ??
+      enums.DatePreset.swaggerGeneratedUnknown;
+}
+
+enums.DatePreset? datePresetNullableFromJson(
+  Object? datePreset, [
+  enums.DatePreset? defaultValue,
+]) {
+  if (datePreset == null) {
+    return null;
+  }
+  return enums.DatePreset.values.firstWhereOrNull(
+        (e) => e.value == datePreset,
+      ) ??
+      defaultValue;
+}
+
+String datePresetExplodedListToJson(List<enums.DatePreset>? datePreset) {
+  return datePreset?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> datePresetListToJson(List<enums.DatePreset>? datePreset) {
+  if (datePreset == null) {
+    return [];
+  }
+
+  return datePreset.map((e) => e.value!).toList();
+}
+
+List<enums.DatePreset> datePresetListFromJson(
+  List? datePreset, [
+  List<enums.DatePreset>? defaultValue,
+]) {
+  if (datePreset == null) {
+    return defaultValue ?? [];
+  }
+
+  return datePreset.map((e) => datePresetFromJson(e.toString())).toList();
+}
+
+List<enums.DatePreset>? datePresetNullableListFromJson(
+  List? datePreset, [
+  List<enums.DatePreset>? defaultValue,
+]) {
+  if (datePreset == null) {
+    return defaultValue;
+  }
+
+  return datePreset.map((e) => datePresetFromJson(e.toString())).toList();
+}
+
 String? fileTypesNullableToJson(enums.FileTypes? fileTypes) {
   return fileTypes?.value;
 }
@@ -5009,6 +5552,142 @@ List<enums.FileTypes>? fileTypesNullableListFromJson(
   }
 
   return fileTypes.map((e) => fileTypesFromJson(e.toString())).toList();
+}
+
+String? graphKindNullableToJson(enums.GraphKind? graphKind) {
+  return graphKind?.value;
+}
+
+String? graphKindToJson(enums.GraphKind graphKind) {
+  return graphKind.value;
+}
+
+enums.GraphKind graphKindFromJson(
+  Object? graphKind, [
+  enums.GraphKind? defaultValue,
+]) {
+  return enums.GraphKind.values.firstWhereOrNull((e) => e.value == graphKind) ??
+      defaultValue ??
+      enums.GraphKind.swaggerGeneratedUnknown;
+}
+
+enums.GraphKind? graphKindNullableFromJson(
+  Object? graphKind, [
+  enums.GraphKind? defaultValue,
+]) {
+  if (graphKind == null) {
+    return null;
+  }
+  return enums.GraphKind.values.firstWhereOrNull((e) => e.value == graphKind) ??
+      defaultValue;
+}
+
+String graphKindExplodedListToJson(List<enums.GraphKind>? graphKind) {
+  return graphKind?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> graphKindListToJson(List<enums.GraphKind>? graphKind) {
+  if (graphKind == null) {
+    return [];
+  }
+
+  return graphKind.map((e) => e.value!).toList();
+}
+
+List<enums.GraphKind> graphKindListFromJson(
+  List? graphKind, [
+  List<enums.GraphKind>? defaultValue,
+]) {
+  if (graphKind == null) {
+    return defaultValue ?? [];
+  }
+
+  return graphKind.map((e) => graphKindFromJson(e.toString())).toList();
+}
+
+List<enums.GraphKind>? graphKindNullableListFromJson(
+  List? graphKind, [
+  List<enums.GraphKind>? defaultValue,
+]) {
+  if (graphKind == null) {
+    return defaultValue;
+  }
+
+  return graphKind.map((e) => graphKindFromJson(e.toString())).toList();
+}
+
+String? interfaceThemeNullableToJson(enums.InterfaceTheme? interfaceTheme) {
+  return interfaceTheme?.value;
+}
+
+String? interfaceThemeToJson(enums.InterfaceTheme interfaceTheme) {
+  return interfaceTheme.value;
+}
+
+enums.InterfaceTheme interfaceThemeFromJson(
+  Object? interfaceTheme, [
+  enums.InterfaceTheme? defaultValue,
+]) {
+  return enums.InterfaceTheme.values.firstWhereOrNull(
+        (e) => e.value == interfaceTheme,
+      ) ??
+      defaultValue ??
+      enums.InterfaceTheme.swaggerGeneratedUnknown;
+}
+
+enums.InterfaceTheme? interfaceThemeNullableFromJson(
+  Object? interfaceTheme, [
+  enums.InterfaceTheme? defaultValue,
+]) {
+  if (interfaceTheme == null) {
+    return null;
+  }
+  return enums.InterfaceTheme.values.firstWhereOrNull(
+        (e) => e.value == interfaceTheme,
+      ) ??
+      defaultValue;
+}
+
+String interfaceThemeExplodedListToJson(
+  List<enums.InterfaceTheme>? interfaceTheme,
+) {
+  return interfaceTheme?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> interfaceThemeListToJson(
+  List<enums.InterfaceTheme>? interfaceTheme,
+) {
+  if (interfaceTheme == null) {
+    return [];
+  }
+
+  return interfaceTheme.map((e) => e.value!).toList();
+}
+
+List<enums.InterfaceTheme> interfaceThemeListFromJson(
+  List? interfaceTheme, [
+  List<enums.InterfaceTheme>? defaultValue,
+]) {
+  if (interfaceTheme == null) {
+    return defaultValue ?? [];
+  }
+
+  return interfaceTheme
+      .map((e) => interfaceThemeFromJson(e.toString()))
+      .toList();
+}
+
+List<enums.InterfaceTheme>? interfaceThemeNullableListFromJson(
+  List? interfaceTheme, [
+  List<enums.InterfaceTheme>? defaultValue,
+]) {
+  if (interfaceTheme == null) {
+    return defaultValue;
+  }
+
+  return interfaceTheme
+      .map((e) => interfaceThemeFromJson(e.toString()))
+      .toList();
 }
 
 String? jobStatusNullableToJson(enums.JobStatus? jobStatus) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/ui/common/square_text_field.dart';
 
-import '../../../logic/d_i.dart';
+import '../../../di/dependencies.dart';
 import '../../../logic/event.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/date_input.dart';
@@ -45,7 +45,7 @@ class _EventAddState extends State<EventAdd> {
             id: widget.edit?.id,
             notificationTime: _notification?.toUtc(),
           );
-          await DI.event.updateEvent(event, person: widget.person);
+          await Dependencies.services.event.updateEvent(event, person: widget.person);
         } else {
           var event = CreateEvent(
             start: _start.toUtc(),
@@ -54,7 +54,7 @@ class _EventAddState extends State<EventAdd> {
             description: _description.text,
             notificationTime: _notification?.toUtc(),
           );
-          await DI.event.addEvent(event, person: widget.person);
+          await Dependencies.services.event.addEvent(event, person: widget.person);
         }
         widget.callback.call();
         setState(() {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/blocs/calendar/calendar_view.dart';
 
 class Agenda extends StatelessWidget {
@@ -13,7 +13,7 @@ class Agenda extends StatelessWidget {
       day.day,
     ).add(const Duration(days: 1));
 
-    var events = await DI.event.agenda(start, end) ?? [];
+    var events = await Dependencies.services.event.agenda(start, end) ?? [];
     return events
         .map(
           (x) => CalendarEvent(

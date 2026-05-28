@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
-import '../../../logic/d_i.dart';
+import '../../../di/dependencies.dart';
 import '../../../logic/event.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/date_input.dart';
@@ -27,43 +27,38 @@ class _TreatementState extends State<TreatmentAdd> {
   int? _type;
 
   Future<List<EventType>> _getTypes(bool refresh) async {
-    return await DI.treatement?.treatmentTypes() ?? [];
+    return await Dependencies.services.treatement.treatmentTypes() ?? [];
   }
 
   void _submit() async {
     var localContext = context;
 
-    if (DI.treatement != null) {
+    setState(() {
+      _status = SubmissionStatus.inProgress;
+    });
+    try {
+      var event = CreateEvent(
+        start: _start,
+        stop: _stop,
+        type: _type,
+        description: _description.text,
+      );
+      var treatment = CreateTreatment(events: [event], personId: widget.person);
+      await Dependencies.services.treatement.addTreatment(treatment);
+
       setState(() {
-        _status = SubmissionStatus.inProgress;
+        _status = SubmissionStatus.success;
       });
-      try {
-        var event = CreateEvent(
-          start: _start,
-          stop: _stop,
-          type: _type,
-          description: _description.text,
-        );
-        var treatment = CreateTreatment(
-          events: [event],
-          personId: widget.person,
-        );
-        await DI.treatement?.addTreatment(treatment);
 
-        setState(() {
-          _status = SubmissionStatus.success;
-        });
-
-        if (localContext.mounted) {
-          Navigator.of(localContext).pop();
-        }
-        Notify.show("Treatment added");
-      } catch (ex) {
-        setState(() {
-          _status = SubmissionStatus.failure;
-        });
-        Notify.showError("Error: $ex");
+      if (localContext.mounted) {
+        Navigator.of(localContext).pop();
       }
+      Notify.show("Treatment added");
+    } catch (ex) {
+      setState(() {
+        _status = SubmissionStatus.failure;
+      });
+      Notify.showError("Error: $ex");
     }
   }
 

@@ -1,5 +1,6 @@
 using Api.Data;
-using Api.Data.Models;
+using Api.Data.Models.Health;
+using Api.Data.Models.Persons;
 using Api.Logic;
 using Api.Models.Admin;
 using NSubstitute;

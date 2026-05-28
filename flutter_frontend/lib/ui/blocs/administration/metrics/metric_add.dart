@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -119,10 +119,10 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
 
         if (widget.edit == null) {
           text = "Added";
-          await DI.metric.addMetricsType(metric);
+          await Dependencies.services.metric.addMetricsType(metric);
         } else {
           text = "Updated";
-          await DI.metric.updateMetricsType(metric);
+          await Dependencies.services.metric.updateMetricsType(metric);
         }
 
         _formKey.currentState?.reset();
@@ -147,7 +147,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
   }
 
   Future<void> _loadGroup() async {
-    var result = (await DI.metric.metricsGroup()) ?? [];
+    var result = (await Dependencies.services.metric.metricsGroup()) ?? [];
     result.add(MetricGroup(name: "Choose", description: '', id: 0));
     setState(() {
       _groups = result;

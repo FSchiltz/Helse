@@ -1,7 +1,7 @@
 using Api.Data;
 using Api.Helpers;
 using Api.Models.Events;
-using Api.Models.Settings;
+using Api.Models.Persons;
 using LinqToDB;
 
 namespace Api.Logic;
@@ -23,7 +23,7 @@ public static class EventsLogic
         var id = personId ?? user.PersonId;
 
         var result = (await events.GetEvents(id, type, start, end))
-        .Select(x => new Event
+        .Select(x => new Models.Events.Event
         {
             Id = x.Id,
             Type = x.Type,
@@ -108,9 +108,17 @@ public static class EventsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> GetTypeAsync(bool? all, IHealthContext events) => TypedResults.Ok(await events.GetEventTypes(all));
+    public static async Task<IResult> GetTypeAsync(bool? all, IHealthContext events) => TypedResults.Ok((await events.GetEventTypes(all)).Select(x => new EventType
+    {
+        Name = x.Name,
+        Description = x.Description,
+        Id = x.Id,
+        StandAlone = x.StandAlone,
+        Visible = x.Visible,
+        UserEditable = x.UserEditable,
+    }));
 
-    public static async Task<IResult> CreateTypeAsync(Data.Models.EventType type, IUserContext users, IHealthContext events, HttpContext context)
+    public static async Task<IResult> CreateTypeAsync(EventType type, IUserContext users, IHealthContext events, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
@@ -121,7 +129,7 @@ public static class EventsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> UpdateTypeAsync(Data.Models.EventType type, IUserContext users, IHealthContext events, HttpContext context)
+    public static async Task<IResult> UpdateTypeAsync(EventType type, IUserContext users, IHealthContext events, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)

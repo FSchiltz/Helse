@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/ui/common/loader.dart';
 
-import '../../../logic/d_i.dart';
-import '../../../logic/settings/ordered_item.dart';
+import '../../../di/dependencies.dart';
 import '../../../logic/settings/settings_logic.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/notification.dart';
@@ -31,19 +30,19 @@ class _EventsGridState extends State<EventsGrid> {
 
   void _getData() async {
     try {
-      var model = await DI.event.eventsType(false);
+      var model = await Dependencies.services.event.eventsType(false);
       if (model != null) {
-        await DI.settings.updateEvents(model);
-        var settings = await DI.settings.getEvents();
+        await Dependencies.logics.settings.updateEvents(model);
+        var settings = await Dependencies.logics.settings.getEvents();
 
         // filter using the user settings
         List<EventType> filtered = [];
         for (var item in model) {
-          OrderedItem? setting = settings.events.firstWhereOrNull(
+          OrderedItem? setting = settings.firstWhereOrNull(
             (element) => element.id == item.id,
           );
 
-          if (setting == null || setting.visible) filtered.add(item);
+          if (setting == null || setting.visible == true) filtered.add(item);
         }
 
         setState(() {
@@ -63,7 +62,7 @@ class _EventsGridState extends State<EventsGrid> {
             listener: (context, state) {
               _getData();
             },
-            bloc: DI.settings.events,
+            bloc: Dependencies.logics.settings.events,
             child: ListView(
               shrinkWrap: true,
               physics: const BouncingScrollPhysics(),

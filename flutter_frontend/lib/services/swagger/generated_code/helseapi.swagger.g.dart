@@ -158,21 +158,21 @@ Map<String, dynamic> _$EventSummaryToJson(EventSummary instance) =>
     <String, dynamic>{'data': instance.data};
 
 EventType _$EventTypeFromJson(Map<String, dynamic> json) => EventType(
-  id: (json['id'] as num?)?.toInt(),
   name: json['name'] as String,
   description: json['description'] as String?,
   standAlone: json['standAlone'] as bool?,
-  userEditable: json['userEditable'] as bool?,
   visible: json['visible'] as bool?,
+  id: (json['id'] as num?)?.toInt(),
+  userEditable: json['userEditable'] as bool?,
 );
 
 Map<String, dynamic> _$EventTypeToJson(EventType instance) => <String, dynamic>{
-  'id': instance.id,
   'name': instance.name,
   'description': instance.description,
   'standAlone': instance.standAlone,
-  'userEditable': instance.userEditable,
   'visible': instance.visible,
+  'id': instance.id,
+  'userEditable': instance.userEditable,
 };
 
 FileType _$FileTypeFromJson(Map<String, dynamic> json) => FileType(
@@ -370,6 +370,59 @@ Map<String, dynamic> _$OauthProviderToJson(OauthProvider instance) =>
       'url': instance.url,
       'tokenurl': instance.tokenurl,
       'claimsUrl': instance.claimsUrl,
+    };
+
+OrderedItem _$OrderedItemFromJson(Map<String, dynamic> json) => OrderedItem(
+  visible: json['visible'] as bool?,
+  order: (json['order'] as num?)?.toInt(),
+  name: json['name'] as String,
+  id: (json['id'] as num?)?.toInt(),
+  graph: graphKindNullableFromJson(json['graph']),
+  detailGraph: graphKindNullableFromJson(json['detailGraph']),
+);
+
+Map<String, dynamic> _$OrderedItemToJson(OrderedItem instance) =>
+    <String, dynamic>{
+      'visible': instance.visible,
+      'order': instance.order,
+      'name': instance.name,
+      'id': instance.id,
+      'graph': graphKindNullableToJson(instance.graph),
+      'detailGraph': graphKindNullableToJson(instance.detailGraph),
+    };
+
+PatientSettings _$PatientSettingsFromJson(Map<String, dynamic> json) =>
+    PatientSettings(
+      patientId: (json['patientId'] as num?)?.toInt(),
+      datePreset: datePresetNullableFromJson(json['datePreset']),
+      theme: interfaceThemeNullableFromJson(json['theme']),
+      eventWidth: (json['eventWidth'] as num?)?.toInt(),
+      metrics:
+          (json['metrics'] as List<dynamic>?)
+              ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      metricGroups:
+          (json['metricGroups'] as List<dynamic>?)
+              ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      events:
+          (json['events'] as List<dynamic>?)
+              ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$PatientSettingsToJson(PatientSettings instance) =>
+    <String, dynamic>{
+      'patientId': instance.patientId,
+      'datePreset': datePresetNullableToJson(instance.datePreset),
+      'theme': interfaceThemeNullableToJson(instance.theme),
+      'eventWidth': instance.eventWidth,
+      'metrics': instance.metrics?.map((e) => e.toJson()).toList(),
+      'metricGroups': instance.metricGroups?.map((e) => e.toJson()).toList(),
+      'events': instance.events?.map((e) => e.toJson()).toList(),
     };
 
 Person _$PersonFromJson(Map<String, dynamic> json) => Person(
@@ -630,6 +683,37 @@ Map<String, dynamic> _$UserIdToJson(UserId instance) => <String, dynamic>{
   'person': instance.person,
   'user': instance.user,
 };
+
+UserSettings _$UserSettingsFromJson(Map<String, dynamic> json) => UserSettings(
+  datePreset: datePresetNullableFromJson(json['datePreset']),
+  theme: interfaceThemeNullableFromJson(json['theme']),
+  eventWidth: (json['eventWidth'] as num?)?.toInt(),
+  metrics:
+      (json['metrics'] as List<dynamic>?)
+          ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
+  metricGroups:
+      (json['metricGroups'] as List<dynamic>?)
+          ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
+  events:
+      (json['events'] as List<dynamic>?)
+          ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
+);
+
+Map<String, dynamic> _$UserSettingsToJson(UserSettings instance) =>
+    <String, dynamic>{
+      'datePreset': datePresetNullableToJson(instance.datePreset),
+      'theme': interfaceThemeNullableToJson(instance.theme),
+      'eventWidth': instance.eventWidth,
+      'metrics': instance.metrics?.map((e) => e.toJson()).toList(),
+      'metricGroups': instance.metricGroups?.map((e) => e.toJson()).toList(),
+      'events': instance.events?.map((e) => e.toJson()).toList(),
+    };
 
 UserStats _$UserStatsFromJson(Map<String, dynamic> json) => UserStats(
   userCount:

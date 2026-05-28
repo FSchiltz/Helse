@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
-import 'event_add.dart';
+import 'event_type_add.dart';
 
 class EventTypeView extends StatelessWidget {
   const EventTypeView({super.key});
 
   Future<List<EventType>> _getData(bool reset) async {
-    return await DI.event.eventsType(true) ?? [];
+    return await Dependencies.services.event.eventsType(true) ?? [];
   }
 
   @override
@@ -119,7 +119,7 @@ class EventTypeView extends StatelessWidget {
     var id = type.id;
     try {
       if (id != null) {
-        await DI.event.deleteEventsType(id);
+        await Dependencies.services.event.deleteEventsType(id);
         Notify.show('Event ${type.name} deleted');
       }
     } catch (ex) {

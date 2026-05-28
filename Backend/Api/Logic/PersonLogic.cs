@@ -2,7 +2,6 @@ using Api.Data;
 using Api.Helpers;
 using Api.Helpers.Auth;
 using Api.Models.Persons;
-using Api.Models.Settings;
 using LinqToDB;
 
 namespace Api.Logic;
@@ -118,7 +117,7 @@ public static class PersonLogic
 
         // first we clean up the rights from the caller
         // the start date can't be in the past and the user must be the one in the query
-        var dbRights = rights.Select(x => new Data.Models.Right
+        var dbRights = rights.Select(x => new Data.Models.Persons.Right
         {
             Stop = x.Stop,
             UserId = x.UserId,
@@ -180,11 +179,11 @@ public static class PersonLogic
             // else check if user is admin
             userId = user?.User.Id ?? 0;
 
-            userHasRole = user?.User.HasRight(Data.Models.UserType.Admin) == true;
+            userHasRole = user?.User.HasRight(Data.Models.Persons.UserType.Admin) == true;
 
             // Care giver can add new patients without admin right
             // TODO move to a create patien endpoint
-            userHasRole = userHasRole || user?.User.HasRight(Data.Models.UserType.Caregiver) == true;
+            userHasRole = userHasRole || user?.User.HasRight(Data.Models.Persons.UserType.Caregiver) == true;
         }
 
         if (!userHasRole)

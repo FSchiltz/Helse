@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 import 'package:helse/ui/common/square_text_field.dart';
 import 'package:helse/ui/common/statefull_check.dart';
@@ -145,10 +145,10 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
 
         if (widget.edit == null) {
           text = "Added";
-          await DI.metric.addMetricsGroup(metric);
+          await Dependencies.services.metric.addMetricsGroup(metric);
         } else {
           text = "Updated";
-          await DI.metric.updateMetricsGroup(metric);
+          await Dependencies.services.metric.updateMetricsGroup(metric);
         }
 
         _formKey.currentState?.reset();

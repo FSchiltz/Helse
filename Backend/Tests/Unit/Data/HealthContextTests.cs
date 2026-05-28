@@ -1,5 +1,6 @@
 using Api.Data;
-using Api.Data.Models;
+using Api.Data.Models.Health;
+using Api.Data.Models.Persons;
 using LinqToDB;
 using LinqToDB.Data;
 

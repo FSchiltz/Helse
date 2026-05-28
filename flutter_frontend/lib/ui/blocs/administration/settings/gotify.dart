@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/logic/d_i.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
@@ -10,7 +10,7 @@ class GotifyView extends StatelessWidget {
   const GotifyView({super.key});
 
   Future<Gotify> _getData(bool reset) async {
-    return await DI.settings.api().gotify();
+    return await Dependencies.services.settings.gotify();
   }
 
   @override
@@ -99,7 +99,7 @@ class _SmtpFormViewState extends State<GotifyFormView> {
           enabled: _enabled,
         );
 
-        await DI.settings.api().updateGotify(smtp);
+        await Dependencies.services.settings.updateGotify(smtp);
 
         Notify.show('Saved Successfully');
         widget.callback();
