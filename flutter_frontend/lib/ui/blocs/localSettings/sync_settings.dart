@@ -29,7 +29,7 @@ class _SyncSettingsState extends State<SyncSettings> {
   Future<int> _getData(bool refresh) async {
     _healthEnabled =
         (await Dependencies.logics.settings.getHealth()).syncHealth;
-    _lastRun = (await Dependencies.logics.settings.getLastRun());
+    _lastRun = await Dependencies.logics.settings.getLastRun();
 
     return 1;
   }
@@ -43,6 +43,9 @@ class _SyncSettingsState extends State<SyncSettings> {
         );
 
         Notify.show("Saved Successfully");
+        if (_healthEnabled) {
+          await Dependencies.logics.fit.requestPermissions();
+        }
       }
     } catch (ex) {
       Notify.showError("Error: $ex");

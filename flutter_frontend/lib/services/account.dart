@@ -11,6 +11,7 @@ class Account {
   static const clientid = "clientid";
   static const refresh = "refresh";
   static const fitRun = "fitLastRun";
+  static const fitHistory = "fitHistory";
   static const health = 'health';
   static const settings = 'settings';
   static const patients = 'patients';
@@ -37,6 +38,7 @@ class Account {
     await s.remove(clientid);
     await s.remove(refresh);
     await s.remove(fitRun);
+    await s.remove(fitHistory);
     await s.remove(patients);
     await s.remove(health);
     await s.remove(settings);

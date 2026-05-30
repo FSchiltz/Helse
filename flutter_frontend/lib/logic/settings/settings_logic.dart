@@ -146,6 +146,14 @@ class SettingsLogic {
     return (await storage).getString(Account.fitRun);
   }
 
+  Future<void> setHasHistory(bool run) async {
+    await (await storage).setBool(Account.fitHistory, run);
+  }
+
+  Future<bool?> getHasHistory() async {
+    return (await storage).getBool(Account.fitHistory);
+  }
+
   Future<void> setDateRange(DatePreset run) async {
     var settings = await _userSettings();
     await _saveSettings(
@@ -173,7 +181,7 @@ class SettingsLogic {
         (element) => element.id == metric.id,
       );
       if (existing != null) {
-        metrics.removeWhere((x)=> x.id == metric.id);
+        metrics.removeWhere((x) => x.id == metric.id);
         // already there, just update the name
         metrics.add(
           OrderedItem(

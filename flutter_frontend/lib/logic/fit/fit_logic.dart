@@ -50,51 +50,43 @@ class FitLogic {
   Account account;
   FitLogic(this.account);
 
-  Future<String?> sync() async {
-    // TODO use a background task
+  // get the data
+  final List<HealthDataType> _types = [
+    HealthDataType.HEART_RATE,
+    HealthDataType.BLOOD_OXYGEN,
+    HealthDataType.WEIGHT,
+    HealthDataType.STEPS,
+    HealthDataType.ACTIVE_ENERGY_BURNED,
+    HealthDataType.HEIGHT,
+    HealthDataType.BODY_TEMPERATURE,
+    HealthDataType.SKIN_TEMPERATURE,
+  ];
 
-    // get the data
-    var types = [
-      HealthDataType.HEART_RATE,
-      HealthDataType.BLOOD_OXYGEN,
-      HealthDataType.WEIGHT,
-      HealthDataType.STEPS,
-      HealthDataType.ACTIVE_ENERGY_BURNED,
-      HealthDataType.HEIGHT,
-    ];
+  final List<HealthDataType> _other = [
+    HealthDataType.SLEEP_WRIST_TEMPERATURE,
+    HealthDataType.RESTING_HEART_RATE,
+    HealthDataType.WALKING_HEART_RATE,
+    HealthDataType.BASAL_ENERGY_BURNED,
+    HealthDataType.DISTANCE_WALKING_RUNNING,
+    HealthDataType.DISTANCE_SWIMMING,
+    HealthDataType.DISTANCE_CYCLING,
+    HealthDataType.SLEEP_ASLEEP,
+    HealthDataType.SLEEP_AWAKE_IN_BED,
+    HealthDataType.SLEEP_AWAKE,
+    HealthDataType.SLEEP_DEEP,
+    HealthDataType.SLEEP_IN_BED,
+    HealthDataType.SLEEP_LIGHT,
+    HealthDataType.SLEEP_OUT_OF_BED,
+    HealthDataType.SLEEP_REM,
+    HealthDataType.SLEEP_SESSION,
+    HealthDataType.SLEEP_UNKNOWN,
+    HealthDataType.TOTAL_CALORIES_BURNED,
+  ];
 
-    var other = [
-      HealthDataType.HEART_RATE,
-      HealthDataType.BLOOD_OXYGEN,
-      HealthDataType.BODY_TEMPERATURE,
-      HealthDataType.SKIN_TEMPERATURE,
-      HealthDataType.SLEEP_WRIST_TEMPERATURE,
-      HealthDataType.WEIGHT,
-      HealthDataType.STEPS,
-      HealthDataType.ACTIVE_ENERGY_BURNED,
-      HealthDataType.HEIGHT,
-      HealthDataType.RESTING_HEART_RATE,
-      HealthDataType.WALKING_HEART_RATE,
-      HealthDataType.BASAL_ENERGY_BURNED,
-      HealthDataType.DISTANCE_WALKING_RUNNING,
-      HealthDataType.DISTANCE_SWIMMING,
-      HealthDataType.DISTANCE_CYCLING,
-      HealthDataType.SLEEP_ASLEEP,
-      HealthDataType.SLEEP_AWAKE_IN_BED,
-      HealthDataType.SLEEP_AWAKE,
-      HealthDataType.SLEEP_DEEP,
-      HealthDataType.SLEEP_IN_BED,
-      HealthDataType.SLEEP_LIGHT,
-      HealthDataType.SLEEP_OUT_OF_BED,
-      HealthDataType.SLEEP_REM,
-      HealthDataType.SLEEP_SESSION,
-      HealthDataType.SLEEP_UNKNOWN,
-      HealthDataType.TOTAL_CALORIES_BURNED,
-    ];
-
+  Future<void> requestPermissions() async {
     var health = Health();
     await health.configure();
-    var exisitingTypes = types
+    var exisitingTypes = _types
         .where((e) => health.isDataTypeAvailable(e))
         .toList();
     if (await health.hasPermissions(exisitingTypes) != true) {
@@ -119,7 +111,14 @@ class FitLogic {
       }
     }
 
+    await Dependencies.logics.settings.setHasHistory(history);
+  }
+
+  Future<String?> sync() async {
+    // TODO use a background task
+
     var run = await Dependencies.logics.settings.getLastRun();
+    var history = await Dependencies.logics.settings.getHasHistory() ?? false;
 
     var now = DateTime.now();
     var start = run == null
@@ -138,10 +137,12 @@ class FitLogic {
     // don't sync of in the future
     if (start.compareTo(now) >= 0) return null;
 
+    var health = Health();
+    await health.configure();
     List<HealthDataPoint> healthData = await health.getHealthDataFromTypes(
       startTime: start,
       endTime: now,
-      types: types,
+      types: _types,
     );
 
     // convert to import data
