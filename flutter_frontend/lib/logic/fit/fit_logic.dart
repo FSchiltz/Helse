@@ -53,28 +53,17 @@ class FitLogic {
   Future<String?> sync() async {
     // TODO use a background task
 
-    // Get the last run
-    var run = await Dependencies.logics.settings.getLastRun();
-
-    var now = DateTime.now();
-    var start = run == null
-        ? now.add(const Duration(days: -35))
-        : DateTime.parse(run);
-
-    int events = 0;
-    int metrics = 0;
-
-    var firstRun = run == null;
-
-    // don't sync of in the future
-    if (start.compareTo(now) >= 0) return null;
-
-    var difference = now.difference(start);
-    // Don't sync if less than 5 sec since last
-    if (difference <= const Duration(seconds: 5)) return null;
-
     // get the data
     var types = [
+      HealthDataType.HEART_RATE,
+      HealthDataType.BLOOD_OXYGEN,
+      HealthDataType.WEIGHT,
+      HealthDataType.STEPS,
+      HealthDataType.ACTIVE_ENERGY_BURNED,
+      HealthDataType.HEIGHT,
+    ];
+
+    var other = [
       HealthDataType.HEART_RATE,
       HealthDataType.BLOOD_OXYGEN,
       HealthDataType.BODY_TEMPERATURE,
@@ -103,12 +92,53 @@ class FitLogic {
       HealthDataType.TOTAL_CALORIES_BURNED,
     ];
 
-    bool requested = await Health().requestAuthorization(types);
-    if (!requested) {
-      throw StateError('Missing permissions');
+    var health = Health();
+    await health.configure();
+    var exisitingTypes = types
+        .where((e) => health.isDataTypeAvailable(e))
+        .toList();
+    if (await health.hasPermissions(exisitingTypes) != true) {
+      bool requested = await health.requestAuthorization(
+        exisitingTypes,
+        permissions: exisitingTypes.map((e) => HealthDataAccess.READ).toList(),
+      );
+
+      if (!requested) {
+        throw StateError('Missing permissions');
+      }
     }
 
-    List<HealthDataPoint> healthData = await Health().getHealthDataFromTypes(
+    bool history = false;
+    bool available = await health.isHealthDataHistoryAvailable();
+    bool authorized = await health.isHealthDataHistoryAuthorized();
+    if (available) {
+      if (!authorized) {
+        history = await health.requestHealthDataHistoryAuthorization();
+      } else {
+        history = authorized;
+      }
+    }
+
+    var run = await Dependencies.logics.settings.getLastRun();
+
+    var now = DateTime.now();
+    var start = run == null
+        ? now.add(
+            (history)
+                ? const Duration(days: -30 * 12 * 5)
+                : const Duration(days: -35),
+          )
+        : DateTime.parse(run);
+
+    int events = 0;
+    int metrics = 0;
+
+    var firstRun = run == null;
+
+    // don't sync of in the future
+    if (start.compareTo(now) >= 0) return null;
+
+    List<HealthDataPoint> healthData = await health.getHealthDataFromTypes(
       startTime: start,
       endTime: now,
       types: types,
@@ -129,7 +159,7 @@ class FitLogic {
     await account.set(Account.fitRun, now.toString());
 
     var text =
-        "Sync sucessful with $metrics metrics and $events events of interval $difference";
+        "Sync sucessful with $metrics metrics and $events events since $start";
     if (firstRun || metrics > 0 || events > 0) {
       firstRun = false;
       Notify.show(text);

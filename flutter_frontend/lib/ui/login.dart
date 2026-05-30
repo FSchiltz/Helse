@@ -376,6 +376,7 @@ class _LoginState extends State<LoginPage> {
         Notify.show('User created, welcome');
       }
 
+      Notify.show('Welcome');
       setState(() {
         _status = SubmissionStatus.success;
       });

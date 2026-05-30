@@ -27,7 +27,8 @@ class _SyncSettingsState extends State<SyncSettings> {
   }
 
   Future<int> _getData(bool refresh) async {
-    _healthEnabled = (await Dependencies.logics.settings.getHealth()).syncHealth;
+    _healthEnabled =
+        (await Dependencies.logics.settings.getHealth()).syncHealth;
     _lastRun = (await Dependencies.logics.settings.getLastRun());
 
     return 1;
@@ -37,7 +38,9 @@ class _SyncSettingsState extends State<SyncSettings> {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
-        await Dependencies.logics.settings.saveHealth(HealthSettings(_healthEnabled));
+        await Dependencies.logics.settings.saveHealth(
+          HealthSettings(_healthEnabled),
+        );
 
         Notify.show("Saved Successfully");
       }
@@ -81,19 +84,20 @@ class _SyncSettingsState extends State<SyncSettings> {
                       const Text("Enable"),
                       CustomSwitch(
                         value: _healthEnabled,
-                        onChanged: (bool? value) {
-                          setState(() async {
-                            _healthEnabled = value!;
-                            await _submitHealth();
-                            reset();
-
-                            // Stop or start
-                            if (value) {
-                              Dependencies.blocs.fit.start();
-                            } else {
-                              Dependencies.blocs.fit.cancel();
-                            }
+                        onChanged: (bool? value) async {
+                          setState(() {
+                            _healthEnabled = value == true;
                           });
+
+                          await _submitHealth();
+                          reset();
+
+                          // Stop or start
+                          if (value == true) {
+                            Dependencies.blocs.fit.start();
+                          } else {
+                            Dependencies.blocs.fit.cancel();
+                          }
                         },
                       ),
                     ],
