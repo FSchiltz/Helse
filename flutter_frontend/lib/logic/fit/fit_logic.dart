@@ -17,11 +17,33 @@ enum MetricTypes {
   temperature(5),
   steps(6),
   calories(7),
-  distance(8);
+  distance(8),
+  pain(10),
+  mood(11),
+  medication(12),
+  tests(13),
+  sex(14),
+  stool(15),
+  spotting(16),
+  headDiameter(17),
+  diaper(18);
 
   final int? value;
 
   const MetricTypes(this.value);
+}
+
+enum EventTypes {
+  none(0),
+  sleep(1),
+  care(2),
+  workout(3),
+  bath(4),
+  feeding(5);
+
+  final int? value;
+
+  const EventTypes(this.value);
 }
 
 class FitLogic {
@@ -55,8 +77,30 @@ class FitLogic {
     var types = [
       HealthDataType.HEART_RATE,
       HealthDataType.BLOOD_OXYGEN,
+      HealthDataType.BODY_TEMPERATURE,
+      HealthDataType.SKIN_TEMPERATURE,
+      HealthDataType.SLEEP_WRIST_TEMPERATURE,
       HealthDataType.WEIGHT,
       HealthDataType.STEPS,
+      HealthDataType.ACTIVE_ENERGY_BURNED,
+      HealthDataType.HEIGHT,
+      HealthDataType.RESTING_HEART_RATE,
+      HealthDataType.WALKING_HEART_RATE,
+      HealthDataType.BASAL_ENERGY_BURNED,
+      HealthDataType.DISTANCE_WALKING_RUNNING,
+      HealthDataType.DISTANCE_SWIMMING,
+      HealthDataType.DISTANCE_CYCLING,
+      HealthDataType.SLEEP_ASLEEP,
+      HealthDataType.SLEEP_AWAKE_IN_BED,
+      HealthDataType.SLEEP_AWAKE,
+      HealthDataType.SLEEP_DEEP,
+      HealthDataType.SLEEP_IN_BED,
+      HealthDataType.SLEEP_LIGHT,
+      HealthDataType.SLEEP_OUT_OF_BED,
+      HealthDataType.SLEEP_REM,
+      HealthDataType.SLEEP_SESSION,
+      HealthDataType.SLEEP_UNKNOWN,
+      HealthDataType.TOTAL_CALORIES_BURNED,
     ];
 
     bool requested = await Health().requestAuthorization(types);
@@ -64,7 +108,6 @@ class FitLogic {
       throw StateError('Missing permissions');
     }
 
-    // fetch health data from the last 24 hours
     List<HealthDataPoint> healthData = await Health().getHealthDataFromTypes(
       startTime: start,
       endTime: now,
@@ -107,34 +150,84 @@ class FitLogic {
 
   ImportData _convert(List<HealthDataPoint> healthData) {
     List<CreateMetric> metrics = [];
+    List<CreateEvent> events = [];
 
     for (var point in healthData) {
-      int? type;
+      int? metricType;
+      int? eventType;
       switch (point.type) {
         case HealthDataType.BLOOD_OXYGEN:
-          type = MetricTypes.oxygen.value;
+          metricType = MetricTypes.oxygen.value;
+
         case HealthDataType.WEIGHT:
-          type = MetricTypes.wheight.value;
+          metricType = MetricTypes.wheight.value;
+
         case HealthDataType.STEPS:
-          type = MetricTypes.steps.value;
+          metricType = MetricTypes.steps.value;
+
+        case HealthDataType.RESTING_HEART_RATE:
+        case HealthDataType.WALKING_HEART_RATE:
         case HealthDataType.HEART_RATE:
-          type = MetricTypes.heart.value;
+          metricType = MetricTypes.heart.value;
+
+        case HealthDataType.HEIGHT:
+          metricType = MetricTypes.height.value;
+
+        case HealthDataType.BODY_TEMPERATURE:
+        case HealthDataType.SLEEP_WRIST_TEMPERATURE:
+        case HealthDataType.SKIN_TEMPERATURE:
+          metricType = MetricTypes.temperature.value;
+
+        case HealthDataType.TOTAL_CALORIES_BURNED:
+        case HealthDataType.ACTIVE_ENERGY_BURNED:
+        case HealthDataType.BASAL_ENERGY_BURNED:
+          metricType = MetricTypes.calories.value;
+
+        case HealthDataType.DISTANCE_WALKING_RUNNING:
+        case HealthDataType.DISTANCE_SWIMMING:
+        case HealthDataType.DISTANCE_CYCLING:
+          metricType = MetricTypes.distance.value;
+
+        case HealthDataType.SLEEP_ASLEEP:
+        case HealthDataType.SLEEP_AWAKE_IN_BED:
+        case HealthDataType.SLEEP_AWAKE:
+        case HealthDataType.SLEEP_DEEP:
+        case HealthDataType.SLEEP_IN_BED:
+        case HealthDataType.SLEEP_LIGHT:
+        case HealthDataType.SLEEP_OUT_OF_BED:
+        case HealthDataType.SLEEP_REM:
+        case HealthDataType.SLEEP_SESSION:
+        case HealthDataType.SLEEP_UNKNOWN:
+          eventType = EventTypes.sleep.value;
+
         default:
-          break;
+          throw Error();
       }
 
-      if (type != null) {
+      if (metricType != null) {
         var metric = CreateMetric(
           date: point.dateFrom.toUtc(),
           value: _convertValue(point.value) ?? '',
           source: FileTypes.googlehealthconnect,
-          tag: '${point.typeString}:${point.dateFrom}',
-          type: type,
+          tag: point.typeString,
+          type: metricType,
         );
         metrics.add(metric);
       }
+
+      if (eventType != null) {
+        var event = CreateEvent(
+          start: point.dateFrom.toUtc(),
+          stop: point.dateTo.toUtc(),
+          description: _convertValue(point.value) ?? '',
+          source: FileTypes.googlehealthconnect,
+          tag: point.typeString,
+          type: eventType,
+        );
+        events.add(event);
+      }
     }
-    return ImportData(metrics: metrics);
+    return ImportData(metrics: metrics, events: events);
   }
 
   String? _convertValue(HealthValue value) {

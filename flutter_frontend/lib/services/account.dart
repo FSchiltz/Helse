@@ -16,7 +16,9 @@ class Account {
   static const patients = 'patients';
 
   Future<String?> get(String name) async {
-    return (await storage).getString(name);
+    var store = await storage;
+    var url = store.getString(name);
+    return url;
   }
 
   Future<void> set(String name, String value) async {

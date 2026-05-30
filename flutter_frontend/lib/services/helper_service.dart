@@ -5,7 +5,7 @@ import 'swagger/generated_code/helseapi.swagger.dart';
 class HelperService extends ApiService {
   HelperService(super.account);
 
-  Future<Status?> isInit(String url) async {
+  Future<Status?> isInit(Uri url) async {
     var api = await getService(override: url);
     var response = await api.apiStatusGet();
 

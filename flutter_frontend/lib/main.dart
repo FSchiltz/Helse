@@ -14,6 +14,7 @@ import 'ui/login.dart';
 import 'ui/splash.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   Dependencies.init();
   runApp(const App());
 }
