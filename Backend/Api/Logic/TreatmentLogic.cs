@@ -61,7 +61,7 @@ public static class TreatmentLogic
 
         return TypedResults.Ok(events.GroupBy(x => x.TreatmentId).Select(t => new Treatment
         {
-            Events = t.Select(x => new Event
+            Events = [.. t.Select(x => new Event
             {
                 Id = x.Id,
                 Type = x.Type,
@@ -70,7 +70,7 @@ public static class TreatmentLogic
                 File = x.FileId,
                 Start = x.Start,
                 Valid = x.Valid,
-            }).ToList()
+            })]
         }));
     }
 }

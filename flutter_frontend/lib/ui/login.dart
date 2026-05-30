@@ -220,7 +220,8 @@ class _LoginState extends State<LoginPage> {
   }
 
   Future<void> _urlChanged(String url) async {
-    if (Uri.tryParse(url) == null) {
+    var uri = Uri.tryParse(url);
+    if (uri == null || !uri.isAbsolute) {
       return;
     }
 
@@ -229,7 +230,7 @@ class _LoginState extends State<LoginPage> {
     });
 
     try {
-      var isInit = await Dependencies.services.helper.isInit(url);
+      var isInit = await Dependencies.services.helper.isInit(uri);
 
       if (mounted) {
         setState(() {
@@ -246,6 +247,7 @@ class _LoginState extends State<LoginPage> {
             var grant = await Dependencies.logics.authentication.getGrant();
             var autologin = isInit.oauths.firstWhereOrNull((x) => x.autoLogin);
             if (grant != null) {
+              Notify.show("Oauth in progress");
               _submit(
                 noUser: true,
                 oAuth: grant,
@@ -302,6 +304,7 @@ class _LoginState extends State<LoginPage> {
     if (init != null && url != null) {
       var grant = await _connectOauth(url, oauth);
       if (grant != null) {
+        Notify.show('Oauth submitted');
         _submit(
           noUser: true,
           oAuth: grant,
@@ -373,6 +376,7 @@ class _LoginState extends State<LoginPage> {
         Notify.show('User created, welcome');
       }
 
+      Notify.show('Welcome');
       setState(() {
         _status = SubmissionStatus.success;
       });
@@ -391,6 +395,7 @@ class _LoginState extends State<LoginPage> {
 
   Future<String?> _connectOauth(String url, OauthConnection oauth) async {
     try {
+      Notify.show("Oauth started");
       Dependencies.services.authService.init(
         auth: oauth.url,
         clientId: oauth.clientId,

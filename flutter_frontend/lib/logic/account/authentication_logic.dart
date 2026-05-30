@@ -13,7 +13,7 @@ enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
 /// Authentication logic
 class AuthenticationLogic {
-  final _controller = StreamController<AuthenticationStatus>();
+  final _controller = StreamController<AuthenticationStatus>.broadcast();
   final Account account;
 
   AuthenticationLogic(this.account);

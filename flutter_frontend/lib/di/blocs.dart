@@ -13,7 +13,7 @@ class Blocs {
     return Blocs.build(
       TaskBloc(
         logic.fit.sync,
-        const Duration(seconds: 30),
+        const Duration(minutes: 5),
         FitLogic.isEnabled,
       ),
       StatusBloc(

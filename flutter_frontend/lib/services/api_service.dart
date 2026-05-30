@@ -32,9 +32,8 @@ abstract class ApiService {
     return result;
   }
 
-  Future<Helseapi> getService({String? override}) async {
-    var url = override ?? await account.get(Account.url);
-    if (url == null) throw StateError("Url missing");
+  Future<Helseapi> getService({Uri? override}) async {
+    var url = override ?? Uri.parse(await account.get(Account.url) ?? '');
 
     // first we try to get a new refresh token if needed
     var token = await account.get(Account.token);
@@ -42,7 +41,7 @@ abstract class ApiService {
       if (JwtDecoder.isExpired(token)) {
         var refresh = await account.get(Account.refresh);
         var client = Helseapi.create(
-          baseUrl: Uri.parse(url),
+          baseUrl: url,
           interceptors: [
             HeadersInterceptor({'Authorization': 'Bearer $refresh'}),
           ],
@@ -56,7 +55,7 @@ abstract class ApiService {
     }
 
     return Helseapi.create(
-      baseUrl: Uri.parse(url),
+      baseUrl: url,
       interceptors: [
         HeadersInterceptor({'Authorization': 'Bearer $token'}),
       ],

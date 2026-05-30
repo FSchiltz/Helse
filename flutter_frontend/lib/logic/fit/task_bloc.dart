@@ -32,41 +32,44 @@ class TaskBloc extends Cubit<SubmissionStatus> {
   }
 
   Future<void> start() async {
-    timer = Timer.periodic(duration, (timer) async {
-      try {
-        if (!_running) {
-          _running = true;
-          if (await check.call()) {
-            emit(SubmissionStatus.inProgress);
-            var status = await action.call();
+    execute();
+    timer = Timer.periodic(duration, (timer) async => await execute());
+  }
 
-            executions.add(
-              Execution(
-                DateTime.now(),
-                status != null
-                    ? SubmissionStatus.success
-                    : SubmissionStatus.skipped,
-                status: status,
-              ),
-            );
-            emit(SubmissionStatus.success);
-          } else {
-            emit(SubmissionStatus.initial);
-          }
-          _running = false;
+  Future<void> execute() async {
+    try {
+      if (!_running) {
+        _running = true;
+        if (await check.call()) {
+          emit(SubmissionStatus.inProgress);
+          var status = await action.call();
+
+          executions.add(
+            Execution(
+              DateTime.now(),
+              status != null
+                  ? SubmissionStatus.success
+                  : SubmissionStatus.skipped,
+              status: status,
+            ),
+          );
+          emit(SubmissionStatus.success);
+        } else {
+          emit(SubmissionStatus.initial);
         }
-      } catch (ex) {
         _running = false;
-        executions.add(
-          Execution(
-            DateTime.now(),
-            SubmissionStatus.failure,
-            status: ex.toString(),
-          ),
-        );
-        emit(SubmissionStatus.failure);
-        Notify.showError("$ex");
       }
-    });
+    } catch (ex) {
+      _running = false;
+      executions.add(
+        Execution(
+          DateTime.now(),
+          SubmissionStatus.failure,
+          status: ex.toString(),
+        ),
+      );
+      emit(SubmissionStatus.failure);
+      Notify.showError("$ex");
+    }
   }
 }
