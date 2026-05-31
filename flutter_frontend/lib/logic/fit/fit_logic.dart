@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:health/health.dart';
 import 'package:helse/services/account.dart';
 import 'package:helse/ui/common/notification.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../di/dependencies.dart';
@@ -86,19 +87,24 @@ class FitLogic {
   Future<void> requestPermissions() async {
     var health = Health();
     await health.configure();
-    var exisitingTypes = _types
-        .where((e) => health.isDataTypeAvailable(e))
-        .toList();
-    if (await health.hasPermissions(exisitingTypes) != true) {
-      bool requested = await health.requestAuthorization(
-        exisitingTypes,
-        permissions: exisitingTypes.map((e) => HealthDataAccess.READ).toList(),
-      );
+    for (var type in _types) {
+      if (health.isDataTypeAvailable(type) &&
+          await health.hasPermissions([type]) != true) {
+        bool requested = await health.requestAuthorization(
+          [type],
+          permissions: [HealthDataAccess.READ],
+        );
 
-      if (!requested) {
-        throw StateError('Missing permissions');
+        if (!requested) {
+          throw StateError('Missing permissions for type $type');
+        }
       }
     }
+
+    // If we are trying to read Step Count, Workout, Sleep or other data that requires
+    // the ACTIVITY_RECOGNITION permission, we need to request the permission first.
+    // This requires a special request authorization call.
+    await Permission.activityRecognition.request();
 
     bool history = false;
     bool available = await health.isHealthDataHistoryAvailable();
