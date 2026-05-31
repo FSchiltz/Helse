@@ -250,9 +250,9 @@ class FitLogic {
         var event = CreateEvent(
           start: point.dateFrom.toUtc(),
           stop: point.dateTo.toUtc(),
-          description: _convertValue(point.value) ?? '',
+          description: point.typeString,
           source: FileTypes.googlehealthconnect,
-          tag: point.typeString,
+          tag: _convertValue(point.value) ?? '',
           type: eventType,
         );
         events.add(event);
