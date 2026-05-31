@@ -68,10 +68,13 @@ class FitLogic {
     HealthDataType.SLEEP_REM,
     HealthDataType.SLEEP_SESSION,
     HealthDataType.SLEEP_UNKNOWN,
+    HealthDataType.WORKOUT,
+    HealthDataType.TOTAL_CALORIES_BURNED,
+    HealthDataType.RESTING_HEART_RATE,
+    HealthDataType.BASAL_ENERGY_BURNED,
   ];
 
   final List<HealthDataType> _other = [
-    HealthDataType.TOTAL_CALORIES_BURNED,
     HealthDataType.RESTING_HEART_RATE,
     HealthDataType.WALKING_HEART_RATE,
     HealthDataType.SLEEP_WRIST_TEMPERATURE,
@@ -82,23 +85,23 @@ class FitLogic {
     HealthDataType.SLEEP_IN_BED,
     HealthDataType.SLEEP_OUT_OF_BED,
     HealthDataType.SLEEP_AWAKE_IN_BED,
+    HealthDataType.SLEEP_WRIST_TEMPERATURE,
   ];
 
   Future<void> requestPermissions() async {
     var health = Health();
     await health.configure();
-    for (var type in _types) {
-      if (health.isDataTypeAvailable(type) &&
-          await health.hasPermissions([type]) != true) {
-        bool requested = await health.requestAuthorization(
-          [type],
-          permissions: [HealthDataAccess.READ],
-        );
+    var existingTypes = _types
+        .where((e) => health.isDataTypeAvailable(e))
+        .toList();
 
-        if (!requested) {
-          throw StateError('Missing permissions for type $type');
-        }
-      }
+    try {
+      await health.requestAuthorization(
+        existingTypes,
+        permissions: existingTypes.map((e) => HealthDataAccess.READ).toList(),
+      );
+    } catch (error) {
+      Notify.showError(error.toString());
     }
 
     // If we are trying to read Step Count, Workout, Sleep or other data that requires
@@ -237,6 +240,9 @@ class FitLogic {
         case HealthDataType.SLEEP_UNKNOWN:
           eventType = EventTypes.sleep.value;
 
+        case HealthDataType.WORKOUT:
+          eventType = EventTypes.workout.value;
+
         default:
           throw Error();
       }
@@ -274,7 +280,7 @@ class FitLogic {
       case NutritionHealthValue nutrition:
         return nutrition.calories.toString();
       case WorkoutHealthValue workout:
-        return workout.totalDistance.toString();
+        return '${workout.totalDistance}-${workout.totalEnergyBurned}-${workout.totalSteps}';
     }
     return value.toString();
   }
