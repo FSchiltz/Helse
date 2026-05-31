@@ -54,6 +54,12 @@
 @import url_launcher_ios;
 #endif
 
+#if __has_include(<workmanager_apple/WorkmanagerPlugin.h>)
+#import <workmanager_apple/WorkmanagerPlugin.h>
+#else
+@import workmanager_apple;
+#endif
+
 @implementation GeneratedPluginRegistrant
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
@@ -65,6 +71,7 @@
   [PermissionHandlerPlugin registerWithRegistrar:[registry registrarForPlugin:@"PermissionHandlerPlugin"]];
   [SharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"SharedPreferencesPlugin"]];
   [URLLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"URLLauncherPlugin"]];
+  [WorkmanagerPlugin registerWithRegistrar:[registry registrarForPlugin:@"WorkmanagerPlugin"]];
 }
 
 @end

@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:health/health.dart';
+import 'package:helse/logic/event.dart';
+import 'package:helse/logic/fit/task_bloc.dart';
 import 'package:helse/services/account.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -48,6 +50,7 @@ enum EventTypes {
 }
 
 class FitLogic {
+  final List<Execution> _executions = [];
   Account account;
   FitLogic(this.account);
 
@@ -123,7 +126,7 @@ class FitLogic {
     await Dependencies.logics.settings.setHasHistory(history);
   }
 
-  Future<String?> sync() async {
+  Future<void> sync() async {
     // TODO use a background task
 
     var run = await Dependencies.logics.settings.getLastRun();
@@ -172,19 +175,17 @@ class FitLogic {
         "Sync sucessful with $metrics metrics and $events events since $start";
     if (firstRun || metrics > 0 || events > 0) {
       firstRun = false;
-      Notify.show(text);
+      await account.set(Account.fitStatus, text);
     }
-
-    return text;
   }
 
-  static Future<bool> isEnabled() async {
+  Future<bool> isEnabled() async {
     Dependencies.health.configure();
 
     return isSupported();
   }
 
-  static bool isSupported() {
+  bool isSupported() {
     return !kIsWeb && Platform.isAndroid;
   }
 
@@ -283,5 +284,25 @@ class FitLogic {
         return '${workout.totalDistance}-${workout.totalEnergyBurned}-${workout.totalSteps}';
     }
     return value.toString();
+  }
+
+  List<Execution> executions() {
+    return _executions;
+  }
+
+  Future<String?> checkRun() async {
+    var lastrun = await account.get(Account.fitRun);
+    if (lastrun != null) {
+      var date = DateTime.parse(lastrun);
+
+      if (date.isAfter(_executions.last.date)) {
+        var status = await account.get(Account.fitStatus);
+        _executions.add(
+          Execution(date, SubmissionStatus.success, status: status),
+        );
+      }
+    }
+
+    return null;
   }
 }

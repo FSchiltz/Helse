@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
-import 'package:helse/logic/fit/fit_logic.dart';
 import 'package:helse/logic/settings/health_settings.dart';
 import 'package:helse/ui/common/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
@@ -23,7 +22,7 @@ class _SyncSettingsState extends State<SyncSettings> {
   void initState() {
     super.initState();
 
-    _isSupported = FitLogic.isSupported();
+    _isSupported = Dependencies.logics.fit.isSupported();
   }
 
   Future<int> _getData(bool refresh) async {
@@ -94,13 +93,6 @@ class _SyncSettingsState extends State<SyncSettings> {
 
                           await _submitHealth();
                           reset();
-
-                          // Stop or start
-                          if (value == true) {
-                            Dependencies.blocs.fit.start();
-                          } else {
-                            Dependencies.blocs.fit.cancel();
-                          }
                         },
                       ),
                     ],

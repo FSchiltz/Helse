@@ -11,9 +11,9 @@ class Blocs {
   factory Blocs(Logics logic) {
     return Blocs.build(
       TaskBloc(
-        logic.fit.sync,
-        const Duration(minutes: 5),
-        FitLogic.isEnabled,
+        logic.fit.checkRun,
+        const Duration(minutes: 1),
+        logic.fit.isEnabled,
       ),
       StatusBloc(
         logic.import.sync,
