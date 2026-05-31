@@ -240,14 +240,12 @@ class _LoginState extends State<LoginPage> {
 
       // If the server is init or not
       // Todo use the loaded stream
-      if (isInit != null && isInit.init == true && mounted) {
+      var needsLogging = await Dependencies.logics.authentication.checkIfNeedsLogging();
+      if (isInit != null && isInit.init == true && mounted && needsLogging) {
         if (isInit.oauths.isNotEmpty) {
           // Start the oauth login procedure
-          var grant = await Dependencies.logics.authentication.getGrant();
           var autologin = isInit.oauths.firstWhereOrNull((x) => x.autoLogin);
-          if (grant != null) {
-            await _submit(oAuth: grant);
-          } else if (autologin != null) {
+          if (autologin != null) {
             await _submitOauth(autologin);
           }
         } else if (isInit.externalAuth == true) {
@@ -303,7 +301,7 @@ class _LoginState extends State<LoginPage> {
         );
         if (grant != null) {
           _submit(oAuth: grant);
-        } 
+        }
       } catch (ex) {
         Notify.showError('Failed to start the oauth process:$ex');
         Dependencies.logics.authentication.logOut();

@@ -28,11 +28,14 @@ class AuthenticationLogic {
   UserService _api() => UserService(account);
 
   /// Check if the user is logged in
-  Future<void> checkLogin() async {
+  Future<bool> checkLogin() async {
     var token = await account.get(Account.refresh);
     if (token != null && token.isNotEmpty && !JwtDecoder.isExpired(token)) {
       _controller.add(AuthenticationStatus.authenticated);
+      return true;
     }
+
+    return false;
   }
 
   void set(AuthenticationStatus status) {
@@ -224,5 +227,11 @@ class AuthenticationLogic {
         );
       }
     });
+  }
+
+  Future<bool> checkIfNeedsLogging() async {
+    var grant = await getGrant();
+    var isLogged = await checkLogin();
+    return grant == null && !isLogged;
   }
 }
