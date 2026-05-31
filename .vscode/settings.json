@@ -1,4 +1,5 @@
 {
     "dotnet.defaultSolution": "Backend/API.sln",
-    "dart.offline": true
+    "dart.offline": true,
+    "cmake.ignoreCMakeListsMissing": true
 }

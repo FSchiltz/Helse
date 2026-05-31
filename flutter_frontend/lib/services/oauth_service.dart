@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:core';
 import 'dart:math';
-import 'package:app_links/app_links.dart';
 import 'package:helse/logic/account/authentication_logic.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/api_service.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:universal_html/html.dart';
 import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -16,8 +16,6 @@ class OauthService extends ApiService {
   String? _clientId;
 
   OauthService(super.account);
-
-  void listen(Null Function(dynamic user) param0) {}
 
   Uri get redirectUrl {
     if (kIsWeb) {
@@ -38,7 +36,8 @@ class OauthService extends ApiService {
     return base64UrlEncode(values);
   }
 
-  Future<String?> login(String url) async {
+  Future<String?> getGrant(String url, OauthConnection oauth) async {
+    init(auth: oauth.url, clientId: oauth.clientId);
     await account.set(Account.url, url);
 
     var grant = await account.get(Account.grant);
@@ -55,7 +54,7 @@ class OauthService extends ApiService {
         window.location.assign(authUrl);
         return null;
       } else {
-        _doAuthOnMobile(authUrl, redirect);
+        await _redirect(authUrl);
         return null;
       }
     } else {
@@ -63,28 +62,19 @@ class OauthService extends ApiService {
     }
   }
 
-  Future<void> getCode(Map<String, String> uri) async {
+  Future<String> getCode(Map<String, String> uri) async {
     var code = uri['code'] ?? '';
     await account.set(Account.grant, code);
+    return code;
   }
 
-  void _doAuthOnMobile(String result, String redirect) async {
-    var links = AppLinks();
-    links.uriLinkStream.listen((uri) {
-      if (uri.toString().startsWith(redirect)) {
-        getCode(uri.queryParameters).then(
-          (value) =>
-              Dependencies.logics.authentication.set(AuthenticationStatus.unauthenticated),
-        );
-      }
-    });
+  void doAuthOnWeb(Map<String, String> uri) => getCode(uri);
 
+  Future<void> _redirect(String authUrl) async {
     Dependencies.logics.authentication.set(AuthenticationStatus.unknown);
-    var uri = Uri.parse(result);
+    var uri = Uri.parse(authUrl);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     }
   }
-
-  void doAuthOnWeb(Map<String, String> uri) => getCode(uri);
 }
