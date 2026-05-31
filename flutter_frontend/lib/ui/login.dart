@@ -239,33 +239,22 @@ class _LoginState extends State<LoginPage> {
       }
 
       // If the server is init or not
-      // Todo use stream
-      if (mounted) {
-        if (isInit != null && isInit.init == true) {
-          if (isInit.oauths.isNotEmpty) {
-            // Start the oauth login procedure
-            var grant = await Dependencies.logics.authentication.getGrant();
-            var autologin = isInit.oauths.firstWhereOrNull((x) => x.autoLogin);
-            if (grant != null) {
-              Notify.show("Oauth in progress");
-              _submit(
-                noUser: true,
-                oAuth: grant,
-                redirect: await Dependencies.logics.authentication
-                    .getRedirect(),
-                issuer: await Dependencies.logics.authentication.getClientId(),
-              );
-            } else if (autologin != null) {
-              _connectOauth(url, autologin);
-            }
-          } else if (isInit.externalAuth == true) {
-            // Todo read from config
-
-            // directly start the login procedure
-            _submit(noUser: true);
+      // Todo use the loaded stream
+      var needsLogging = await Dependencies.logics.authentication.checkIfNeedsLogging();
+      if (isInit != null && isInit.init == true && mounted && needsLogging) {
+        if (isInit.oauths.isNotEmpty) {
+          // Start the oauth login procedure
+          var autologin = isInit.oauths.firstWhereOrNull((x) => x.autoLogin);
+          if (autologin != null) {
+            await _submitOauth(autologin);
           }
+        } else if (isInit.externalAuth == true) {
+          // directly start the login procedure
+          await _submit(oAuth: 'Header');
         }
+      }
 
+      if (mounted) {
         setState(() {
           _loaded = ((isInit?.init == null)
               ? SubmissionStatus.failure
@@ -284,7 +273,6 @@ class _LoginState extends State<LoginPage> {
 
   /// Prefill the url from storage or other
   Future<void> _initUrl() async {
-    await Dependencies.logics.authentication.checkLogin();
     // We first try to get it from storage
     var url = await Dependencies.logics.authentication.getUrl();
 
@@ -302,86 +290,80 @@ class _LoginState extends State<LoginPage> {
     var init = _initStatus;
     var url = _url;
     if (init != null && url != null) {
-      var grant = await _connectOauth(url, oauth);
-      if (grant != null) {
-        Notify.show('Oauth submitted');
-        _submit(
-          noUser: true,
-          oAuth: grant,
-          issuer: await Dependencies.logics.authentication.getClientId(),
-          redirect: await Dependencies.logics.authentication.getRedirect(),
+      Notify.show("Oauth started");
+      setState(() {
+        _status = SubmissionStatus.inProgress;
+      });
+      try {
+        var grant = await Dependencies.services.authService.getGrant(
+          url,
+          oauth,
         );
+        if (grant != null) {
+          _submit(oAuth: grant);
+        }
+      } catch (ex) {
+        Notify.showError('Failed to start the oauth process:$ex');
+        Dependencies.logics.authentication.logOut();
+
+        // we start the login process again
+        setState(() {
+          _status = SubmissionStatus.initial;
+        });
       }
     } else {
       Notify.showError('Server not ready');
       Dependencies.logics.authentication.logOut();
+      setState(() {
+        _status = SubmissionStatus.initial;
+      });
     }
   }
 
-  Future<void> _submit({
-    bool noUser = false,
-    String? oAuth,
-    String? issuer,
-    String? redirect,
-  }) async {
-    var init = _initStatus?.init;
-    var url = _url;
-    if (init == null || url == null) return;
-
-    var user = _controllerUsername.text;
-    var password = _controllerPassword.text;
-
-    if (oAuth != null) {
-      password = oAuth;
-    }
-
-    if (!noUser && (user.isEmpty || password.isEmpty)) return;
-
+  Future<void> _submit({String? oAuth}) async {
     setState(() {
       _status = SubmissionStatus.inProgress;
     });
 
+    if (oAuth != null) {
+      Notify.show("Oauth in progress");
+    }
+
+    var init = _initStatus?.init;
+    var url = _url;
+    if (init == null || url == null) {
+      Notify.showError('Server not yet init');
+      return;
+    }
+
+    var user = _controllerUsername.text;
+    var password = oAuth ?? _controllerPassword.text;
+
+    if (oAuth == null && (user.isEmpty || password.isEmpty)) {
+      Notify.showError("Invalid login flow");
+      return;
+    }
     try {
-      if (init || noUser) {
-        await Dependencies.logics.authentication.logIn(
-          url: url,
-          connection: Connection(
-            user: user,
-            password: password,
-            issuer: issuer,
-            redirect: redirect,
-          ),
-        );
-      } else {
-        var person = PersonCreation(
-          types: [UserType.admin],
-          userName: user,
-          password: password,
-          name: _controllerName.text,
-          surname: _controllerSurname.text,
-        );
-        await Dependencies.logics.authentication.initAccount(
-          url: url,
-          person: person,
-        );
+      var created = await Dependencies.logics.authentication.startLogin(
+        init: init,
+        oauth: oAuth == null,
+        password: password,
+        url: url,
+        user: user,
+        name: _controllerName.text,
+        surname: _controllerSurname.text,
+      );
 
-        // after a succes, we auto login
-        await Dependencies.logics.authentication.logIn(
-          url: url,
-          connection: Connection(user: user, password: password),
-        );
-
-        await Dependencies.logics.authentication.clean();
-
+      if (created) {
         Notify.show('User created, welcome');
+      } else {
+        Notify.show('Welcome');
       }
-
-      Notify.show('Welcome');
       setState(() {
         _status = SubmissionStatus.success;
       });
     } catch (ex) {
-      Notify.showError(ex.toString());
+      Notify.showError("Logging failed:$ex");
 
       // clear any info about the login
       await Dependencies.logics.authentication.logOut();
@@ -391,29 +373,6 @@ class _LoginState extends State<LoginPage> {
         _status = SubmissionStatus.initial;
       });
     }
-  }
-
-  Future<String?> _connectOauth(String url, OauthConnection oauth) async {
-    try {
-      Notify.show("Oauth started");
-      Dependencies.services.authService.init(
-        auth: oauth.url,
-        clientId: oauth.clientId,
-      );
-
-      return await Dependencies.services.authService.login(url);
-    } catch (ex) {
-      Notify.showError(ex.toString());
-
-      Dependencies.logics.authentication.logOut();
-
-      // we start the login process again
-      setState(() {
-        _status = SubmissionStatus.initial;
-      });
-    }
-
-    return null;
   }
 
   List<Widget> _providers(List<OauthConnection>? oauths, TextTheme theme) {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:app_links/app_links.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:helse/services/login_service.dart';
@@ -27,11 +28,14 @@ class AuthenticationLogic {
   UserService _api() => UserService(account);
 
   /// Check if the user is logged in
-  Future<void> checkLogin() async {
+  Future<bool> checkLogin() async {
     var token = await account.get(Account.refresh);
     if (token != null && token.isNotEmpty && !JwtDecoder.isExpired(token)) {
       _controller.add(AuthenticationStatus.authenticated);
+      return true;
     }
+
+    return false;
   }
 
   void set(AuthenticationStatus status) {
@@ -129,6 +133,7 @@ class AuthenticationLogic {
   }
 
   Future<String?> getUrl() async {
+    await checkLogin();
     var url = await account.get(Account.url);
 
     // if not in storage, we can try to get it from the current url on the web
@@ -149,5 +154,84 @@ class AuthenticationLogic {
     }
 
     return url;
+  }
+
+  Future<bool> startLogin({
+    bool init = false,
+    bool oauth = false,
+    required String url,
+    required String user,
+    required String password,
+    String? name,
+    String? surname,
+  }) async {
+    bool creating = false;
+    if (init || oauth) {
+      String? issuer;
+      String? redirect;
+
+      if (oauth) {
+        issuer = await getClientId();
+        redirect = await getRedirect();
+      }
+
+      await logIn(
+        url: url,
+        connection: Connection(
+          user: user,
+          password: password,
+          issuer: issuer,
+          redirect: redirect,
+        ),
+      );
+    } else {
+      creating = true;
+      var person = PersonCreation(
+        types: [UserType.admin],
+        userName: user,
+        password: password,
+        name: name,
+        surname: surname,
+      );
+      await initAccount(url: url, person: person);
+
+      // after a succes, we auto login
+      await logIn(
+        url: url,
+        connection: Connection(user: user, password: password),
+      );
+
+      await clean();
+    }
+
+    return creating;
+  }
+
+  void listen() async {
+    var links = AppLinks();
+    var redirect = Dependencies.services.authService.redirectUrl.toString();
+    links.uriLinkStream.listen((uri) async {
+      if (uri.toString().startsWith(redirect)) {
+        var code = await Dependencies.services.authService.getCode(
+          uri.queryParameters,
+        );
+        var url = await account.get(Account.url);
+
+        set(AuthenticationStatus.unauthenticated);
+        startLogin(
+          init: true,
+          oauth: true,
+          password: code,
+          url: url ?? '',
+          user: "",
+        );
+      }
+    });
+  }
+
+  Future<bool> checkIfNeedsLogging() async {
+    var grant = await getGrant();
+    var isLogged = await checkLogin();
+    return grant == null && !isLogged;
   }
 }

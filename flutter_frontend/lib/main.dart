@@ -77,6 +77,7 @@ class AppState extends State<AppView> {
   void initState() {
     super.initState();
     Dependencies.logics.settings.getTheme().then((value) => changeTheme(value));
+    Dependencies.logics.authentication.listen();
   }
 
   void changeTheme(InterfaceTheme themeMode) {
