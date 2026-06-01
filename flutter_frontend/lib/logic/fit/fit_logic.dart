@@ -82,13 +82,14 @@ class FitLogic {
     HealthDataType.WALKING_HEART_RATE,
     HealthDataType.SLEEP_WRIST_TEMPERATURE,
     HealthDataType.BASAL_ENERGY_BURNED,
-    HealthDataType.DISTANCE_WALKING_RUNNING,
-    HealthDataType.DISTANCE_SWIMMING,
-    HealthDataType.DISTANCE_CYCLING,
     HealthDataType.SLEEP_IN_BED,
     HealthDataType.SLEEP_OUT_OF_BED,
     HealthDataType.SLEEP_AWAKE_IN_BED,
-    HealthDataType.SLEEP_WRIST_TEMPERATURE,
+    HealthDataType.DISTANCE_WALKING_RUNNING,
+    HealthDataType.DISTANCE_SWIMMING,
+    HealthDataType.DISTANCE_CYCLING,
+    HealthDataType.WORKOUT,
+    HealthDataType.DISTANCE_DELTA,
   ];
 
   Future<void> requestPermissions() async {
@@ -127,8 +128,6 @@ class FitLogic {
   }
 
   Future<void> sync() async {
-    // TODO use a background task
-
     var run = await Dependencies.logics.settings.getLastRun();
     var history = await Dependencies.logics.settings.getHasHistory() ?? false;
 
@@ -146,8 +145,8 @@ class FitLogic {
 
     var firstRun = run == null;
 
-    // don't sync of in the future
-    if (start.compareTo(now) >= 0) return null;
+    // don't sync if in the future
+    if (start.compareTo(now) >= 0) return;
 
     var health = Health();
     await health.configure();
@@ -227,6 +226,7 @@ class FitLogic {
         case HealthDataType.DISTANCE_WALKING_RUNNING:
         case HealthDataType.DISTANCE_SWIMMING:
         case HealthDataType.DISTANCE_CYCLING:
+        case HealthDataType.DISTANCE_DELTA:
           metricType = MetricTypes.distance.value;
 
         case HealthDataType.SLEEP_ASLEEP:
@@ -244,8 +244,90 @@ class FitLogic {
         case HealthDataType.WORKOUT:
           eventType = EventTypes.workout.value;
 
-        default:
-          throw Error();
+        case HealthDataType.ATRIAL_FIBRILLATION_BURDEN:
+        case HealthDataType.APPLE_STAND_HOUR:
+        case HealthDataType.APPLE_MOVE_TIME:
+        case HealthDataType.APPLE_STAND_TIME:
+        case HealthDataType.AUDIOGRAM:
+        case HealthDataType.BLOOD_GLUCOSE:
+        case HealthDataType.BLOOD_PRESSURE_DIASTOLIC:
+        case HealthDataType.BLOOD_PRESSURE_SYSTOLIC:
+        case HealthDataType.BODY_FAT_PERCENTAGE:
+        case HealthDataType.LEAN_BODY_MASS:
+        case HealthDataType.BODY_MASS_INDEX:
+        case HealthDataType.BODY_WATER_MASS:
+        case HealthDataType.DIETARY_CARBS_CONSUMED:
+        case HealthDataType.DIETARY_CAFFEINE:
+        case HealthDataType.DIETARY_ENERGY_CONSUMED:
+        case HealthDataType.DIETARY_FATS_CONSUMED:
+        case HealthDataType.DIETARY_PROTEIN_CONSUMED:
+        case HealthDataType.DIETARY_FIBER:
+        case HealthDataType.DIETARY_SUGAR:
+        case HealthDataType.DIETARY_FAT_MONOUNSATURATED:
+        case HealthDataType.DIETARY_FAT_POLYUNSATURATED:
+        case HealthDataType.DIETARY_FAT_SATURATED:
+        case HealthDataType.DIETARY_CHOLESTEROL:
+        case HealthDataType.DIETARY_VITAMIN_A:
+        case HealthDataType.DIETARY_THIAMIN:
+        case HealthDataType.DIETARY_RIBOFLAVIN:
+        case HealthDataType.DIETARY_NIACIN:
+        case HealthDataType.DIETARY_PANTOTHENIC_ACID:
+        case HealthDataType.DIETARY_VITAMIN_B6:
+        case HealthDataType.DIETARY_BIOTIN:
+        case HealthDataType.DIETARY_VITAMIN_B12:
+        case HealthDataType.DIETARY_VITAMIN_C:
+        case HealthDataType.DIETARY_VITAMIN_D:
+        case HealthDataType.DIETARY_VITAMIN_E:
+        case HealthDataType.DIETARY_VITAMIN_K:
+        case HealthDataType.DIETARY_FOLATE:
+        case HealthDataType.DIETARY_CALCIUM:
+        case HealthDataType.DIETARY_CHLORIDE:
+        case HealthDataType.DIETARY_IRON:
+        case HealthDataType.DIETARY_MAGNESIUM:
+        case HealthDataType.DIETARY_PHOSPHORUS:
+        case HealthDataType.DIETARY_POTASSIUM:
+        case HealthDataType.DIETARY_SODIUM:
+        case HealthDataType.DIETARY_ZINC:
+        case HealthDataType.DIETARY_CHROMIUM:
+        case HealthDataType.DIETARY_COPPER:
+        case HealthDataType.DIETARY_IODINE:
+        case HealthDataType.DIETARY_MANGANESE:
+        case HealthDataType.DIETARY_MOLYBDENUM:
+        case HealthDataType.DIETARY_SELENIUM:
+        case HealthDataType.FORCED_EXPIRATORY_VOLUME:
+        case HealthDataType.HEART_RATE_VARIABILITY_SDNN:
+        case HealthDataType.HEART_RATE_VARIABILITY_RMSSD:
+        case HealthDataType.INSULIN_DELIVERY:
+        case HealthDataType.RESPIRATORY_RATE:
+        case HealthDataType.PERIPHERAL_PERFUSION_INDEX:
+        case HealthDataType.WAIST_CIRCUMFERENCE:
+        case HealthDataType.FLIGHTS_CLIMBED:
+        case HealthDataType.WALKING_SPEED:
+        case HealthDataType.SPEED:
+        case HealthDataType.MINDFULNESS:
+        case HealthDataType.WATER:
+        case HealthDataType.EXERCISE_TIME:
+        case HealthDataType.WORKOUT_ROUTE:
+        case HealthDataType.HEADACHE_NOT_PRESENT:
+        case HealthDataType.HEADACHE_MILD:
+        case HealthDataType.HEADACHE_MODERATE:
+        case HealthDataType.HEADACHE_SEVERE:
+        case HealthDataType.HEADACHE_UNSPECIFIED:
+        case HealthDataType.NUTRITION:
+        case HealthDataType.UV_INDEX:
+        case HealthDataType.GENDER:
+        case HealthDataType.BIRTH_DATE:
+        case HealthDataType.BLOOD_TYPE:
+        case HealthDataType.MENSTRUATION_FLOW:
+        case HealthDataType.WATER_TEMPERATURE:
+        case HealthDataType.UNDERWATER_DEPTH:
+        case HealthDataType.HIGH_HEART_RATE_EVENT:
+        case HealthDataType.LOW_HEART_RATE_EVENT:
+        case HealthDataType.IRREGULAR_HEART_RATE_EVENT:
+        case HealthDataType.ELECTRODERMAL_ACTIVITY:
+        case HealthDataType.ELECTROCARDIOGRAM:
+        case HealthDataType.ACTIVITY_INTENSITY:
+        // do nothing for now
       }
 
       if (metricType != null) {
@@ -263,9 +345,9 @@ class FitLogic {
         var event = CreateEvent(
           start: point.dateFrom.toUtc(),
           stop: point.dateTo.toUtc(),
-          description: _convertValue(point.value) ?? '',
+          description: point.typeString,
           source: FileTypes.googlehealthconnect,
-          tag: point.typeString,
+          tag: _convertValue(point.value) ?? '',
           type: eventType,
         );
         events.add(event);
@@ -295,7 +377,7 @@ class FitLogic {
     if (lastrun != null) {
       var date = DateTime.parse(lastrun);
 
-      if (date.isAfter(_executions.last.date)) {
+      if (_executions.isEmpty || date.isAfter(_executions.last.date)) {
         var status = await account.get(Account.fitStatus);
         _executions.add(
           Execution(date, SubmissionStatus.success, status: status),

@@ -42,6 +42,7 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     _getUser();
+    _startFitJob(Dependencies.blocs.fit);
     _startTaskResultJob(Dependencies.blocs.jobs);
   }
 
@@ -62,6 +63,13 @@ class _HomeState extends State<Home> {
     }
   }
 
+  Future<void> _startFitJob(TaskBloc fit) async {
+    var settings = await Dependencies.logics.settings.getHealth();
+    if (settings.syncHealth) {
+      fit.start();
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     var types = user?.types ?? [];
