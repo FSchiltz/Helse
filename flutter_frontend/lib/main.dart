@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,13 +19,16 @@ import 'ui/splash.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  Dependencies.init(); 
-  Workmanager().initialize(callbackDispatcher);
-  Workmanager().registerPeriodicTask(
-  "data_sync",
-  "data_sync",
-  frequency: Duration(minutes: 15),
-);
+  Dependencies.init();
+
+  if (Platform.isAndroid) {
+    Workmanager().initialize(callbackDispatcher);
+    Workmanager().registerPeriodicTask(
+      "data_sync",
+      "data_sync",
+      frequency: Duration(minutes: 15),
+    );
+  }
   runApp(const App());
 }
 
