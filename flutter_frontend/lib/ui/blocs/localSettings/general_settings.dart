@@ -106,14 +106,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   child: DropdownButtonFormField(
                     initialValue: _range,
                     onChanged: rangeCallback,
-                    items: DatePreset.values
-                        .map(
-                          (type) => DropdownMenuItem(
-                            value: type,
-                            child: Text(Translation.get(type)),
-                          ),
-                        )
-                        .toList(),
+                    items: _getRangeValues(),
                     decoration: InputDecoration(
                       labelText: 'Date range',
                       prefixIcon: const Icon(Icons.list_sharp),
@@ -133,8 +126,19 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   List<DropdownMenuItem<InterfaceTheme>>? _getThemeValues() {
-    return InterfaceTheme.values.where((e) => e.index > 0)
+    return InterfaceTheme.values
+        .where((e) => e.index > 0)
         .map((type) => DropdownMenuItem(value: type, child: Text(type.name)))
+        .toList();
+  }
+
+  List<DropdownMenuItem<DatePreset>>? _getRangeValues() {
+    return DatePreset.values
+        .where((e) => e.index > 0)
+        .map(
+          (type) =>
+              DropdownMenuItem(value: type, child: Text(Translation.get(type))),
+        )
         .toList();
   }
 }
