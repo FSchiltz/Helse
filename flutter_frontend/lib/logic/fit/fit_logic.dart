@@ -244,7 +244,7 @@ class FitLogic {
           eventType = EventTypes.sleep.value;
 
         case HealthDataType.WORKOUT:
-          eventType = Even
+          eventType = EventTypes.workout.value;
             
         case HealthDataType.ATRIAL_FIBRILLATION_BURDEN:
         case HealthDataType.APPLE_STAND_HOUR:
