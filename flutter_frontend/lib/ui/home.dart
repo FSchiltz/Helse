@@ -42,7 +42,6 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     _getUser();
-    _startFitJob(Dependencies.blocs.fit);
     _startTaskResultJob(Dependencies.blocs.jobs);
   }
 
@@ -107,34 +106,12 @@ class _HomeState extends State<Home> {
                 ),
               ),
 
-              BlocProvider<TaskBloc>.value(
-                value: Dependencies.blocs.fit,
-                child: BlocBuilder<TaskBloc, SubmissionStatus>(
-                  builder: (context, state) {
-                    Color? color;
-                    bool static = true;
-                    switch (state) {
-                      case SubmissionStatus.success:
-                        color = Colors.green;
-                        break;
-                      case SubmissionStatus.failure:
-                        color = Colors.red;
-                        break;
-                      case SubmissionStatus.inProgress:
-                        static = false;
-                        break;
-                      default:
-                        color = null;
-                    }
-                    return HelseLoader(
-                      static: static,
-                      color: color,
-                      size: 22,
-                      onTouch: () => _showSynchroRuns(context),
-                    );
-                  },
-                ),
+              HelseLoader(
+                static: true,
+                size: 22,
+                onTouch: () => _showSynchroRuns(context),
               ),
+
               PopupMenuButton(
                 icon: Icon(
                   Icons.menu_sharp,
@@ -221,13 +198,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Future<void> _startFitJob(TaskBloc fit) async {
-    var settings = await Dependencies.logics.settings.getHealth();
-    if (settings.syncHealth) {
-      fit.start();
-    }
-  }
-
   Future<void> _startTaskResultJob(StatusBloc jobs) async {
     jobs.start();
     var existingJobs = await Dependencies.services.import.getJobs();
@@ -236,9 +206,12 @@ class _HomeState extends State<Home> {
     }
   }
 
-  void _showSynchroRuns(BuildContext context) {
-    var tasks = Dependencies.blocs.fit.executions;
-    _showTaskDialog(context, tasks, 'Health sync history');
+  Future<void> _showSynchroRuns(BuildContext context) async {
+    var tasks = Dependencies.logics.fit.executions();
+
+    if (context.mounted) {
+      _showTaskDialog(context, tasks, 'Health sync history');
+    }
   }
 
   void _showJobs(BuildContext context) {

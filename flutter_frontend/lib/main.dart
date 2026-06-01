@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
+import 'package:helse/worker.dart';
 import 'package:toastification/toastification.dart';
+import 'package:workmanager/workmanager.dart';
 
 import 'helpers/url_dummy.dart' if (dart.library.html) 'helpers/url.dart';
 import 'logic/account/authentication_logic.dart';
@@ -15,7 +17,13 @@ import 'ui/splash.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  Dependencies.init();
+  Dependencies.init(); 
+  Workmanager().initialize(callbackDispatcher);
+  Workmanager().registerPeriodicTask(
+  "data_sync",
+  "data_sync",
+  frequency: Duration(minutes: 15),
+);
   runApp(const App());
 }
 

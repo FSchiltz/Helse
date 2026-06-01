@@ -2,8 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:health/health.dart';
+import 'package:helse/logic/event.dart';
+import 'package:helse/logic/fit/task_bloc.dart';
 import 'package:helse/services/account.dart';
 import 'package:helse/ui/common/notification.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../di/dependencies.dart';
@@ -47,6 +50,7 @@ enum EventTypes {
 }
 
 class FitLogic {
+  final List<Execution> _executions = [];
   Account account;
   FitLogic(this.account);
 
@@ -67,10 +71,13 @@ class FitLogic {
     HealthDataType.SLEEP_REM,
     HealthDataType.SLEEP_SESSION,
     HealthDataType.SLEEP_UNKNOWN,
+    HealthDataType.WORKOUT,
+    HealthDataType.TOTAL_CALORIES_BURNED,
+    HealthDataType.RESTING_HEART_RATE,
+    HealthDataType.BASAL_ENERGY_BURNED,
   ];
 
   final List<HealthDataType> _other = [
-    HealthDataType.TOTAL_CALORIES_BURNED,
     HealthDataType.RESTING_HEART_RATE,
     HealthDataType.WALKING_HEART_RATE,
     HealthDataType.SLEEP_WRIST_TEMPERATURE,
@@ -88,19 +95,23 @@ class FitLogic {
   Future<void> requestPermissions() async {
     var health = Health();
     await health.configure();
-    var exisitingTypes = _types
+    var existingTypes = _types
         .where((e) => health.isDataTypeAvailable(e))
         .toList();
-    if (await health.hasPermissions(exisitingTypes) != true) {
-      bool requested = await health.requestAuthorization(
-        exisitingTypes,
-        permissions: exisitingTypes.map((e) => HealthDataAccess.READ).toList(),
-      );
 
-      if (!requested) {
-        throw StateError('Missing permissions');
-      }
+    try {
+      await health.requestAuthorization(
+        existingTypes,
+        permissions: existingTypes.map((e) => HealthDataAccess.READ).toList(),
+      );
+    } catch (error) {
+      Notify.showError(error.toString());
     }
+
+    // If we are trying to read Step Count, Workout, Sleep or other data that requires
+    // the ACTIVITY_RECOGNITION permission, we need to request the permission first.
+    // This requires a special request authorization call.
+    await Permission.activityRecognition.request();
 
     bool history = false;
     bool available = await health.isHealthDataHistoryAvailable();
@@ -116,7 +127,7 @@ class FitLogic {
     await Dependencies.logics.settings.setHasHistory(history);
   }
 
-  Future<String?> sync() async {
+  Future<void> sync() async {
     // TODO use a background task
 
     var run = await Dependencies.logics.settings.getLastRun();
@@ -165,19 +176,17 @@ class FitLogic {
         "Sync sucessful with $metrics metrics and $events events since $start";
     if (firstRun || metrics > 0 || events > 0) {
       firstRun = false;
-      Notify.show(text);
+      await account.set(Account.fitStatus, text);
     }
-
-    return text;
   }
 
-  static Future<bool> isEnabled() async {
+  Future<bool> isEnabled() async {
     Dependencies.health.configure();
 
     return isSupported();
   }
 
-  static bool isSupported() {
+  bool isSupported() {
     return !kIsWeb && Platform.isAndroid;
   }
 
@@ -235,8 +244,8 @@ class FitLogic {
           eventType = EventTypes.sleep.value;
 
         case HealthDataType.WORKOUT:
-          eventType = EventTypes.workout.value;
-
+          eventType = Even
+            
         case HealthDataType.ATRIAL_FIBRILLATION_BURDEN:
         case HealthDataType.APPLE_STAND_HOUR:
         case HealthDataType.APPLE_MOVE_TIME:
@@ -356,8 +365,28 @@ class FitLogic {
       case NutritionHealthValue nutrition:
         return nutrition.calories.toString();
       case WorkoutHealthValue workout:
-        return workout.totalDistance.toString();
+        return '${workout.totalDistance}-${workout.totalEnergyBurned}-${workout.totalSteps}';
     }
     return value.toString();
+  }
+
+  List<Execution> executions() {
+    return _executions;
+  }
+
+  Future<String?> checkRun() async {
+    var lastrun = await account.get(Account.fitRun);
+    if (lastrun != null) {
+      var date = DateTime.parse(lastrun);
+
+      if (date.isAfter(_executions.last.date)) {
+        var status = await account.get(Account.fitStatus);
+        _executions.add(
+          Execution(date, SubmissionStatus.success, status: status),
+        );
+      }
+    }
+
+    return null;
   }
 }

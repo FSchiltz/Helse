@@ -102,7 +102,6 @@ class AuthenticationLogic {
   Future<void> logOut() async {
     await account.clean();
     Dependencies.logics.settings.init = false;
-    Dependencies.blocs.fit.cancel();
     _controller.add(AuthenticationStatus.unauthenticated);
   }
 
