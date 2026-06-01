@@ -128,8 +128,6 @@ class FitLogic {
   }
 
   Future<void> sync() async {
-    // TODO use a background task
-
     var run = await Dependencies.logics.settings.getLastRun();
     var history = await Dependencies.logics.settings.getHasHistory() ?? false;
 
@@ -147,8 +145,8 @@ class FitLogic {
 
     var firstRun = run == null;
 
-    // don't sync of in the future
-    if (start.compareTo(now) >= 0) return null;
+    // don't sync if in the future
+    if (start.compareTo(now) >= 0) return;
 
     var health = Health();
     await health.configure();
@@ -245,7 +243,7 @@ class FitLogic {
 
         case HealthDataType.WORKOUT:
           eventType = EventTypes.workout.value;
-            
+
         case HealthDataType.ATRIAL_FIBRILLATION_BURDEN:
         case HealthDataType.APPLE_STAND_HOUR:
         case HealthDataType.APPLE_MOVE_TIME:
@@ -379,7 +377,7 @@ class FitLogic {
     if (lastrun != null) {
       var date = DateTime.parse(lastrun);
 
-      if (date.isAfter(_executions.last.date)) {
+      if (_executions.isEmpty || date.isAfter(_executions.last.date)) {
         var status = await account.get(Account.fitStatus);
         _executions.add(
           Execution(date, SubmissionStatus.success, status: status),

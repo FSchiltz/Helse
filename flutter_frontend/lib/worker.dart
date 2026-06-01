@@ -1,6 +1,7 @@
 import 'package:helse/di/dependencies.dart';
 import 'package:workmanager/workmanager.dart';
 
+
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
