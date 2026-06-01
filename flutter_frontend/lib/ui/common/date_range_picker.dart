@@ -16,6 +16,7 @@ class DateRangePicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<MenuItemButton> presets = DatePreset.values
+        .where((e) => e.index > 0)
         .map(
           (v) => MenuItemButton(
             onPressed: () => _setPreset(v),
