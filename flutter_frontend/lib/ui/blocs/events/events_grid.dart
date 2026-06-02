@@ -58,7 +58,7 @@ class _EventsGridState extends State<EventsGrid> {
   Widget build(BuildContext context) {
     return types == null
         ? const HelseLoader()
-        : BlocListener<SettingsBloc, bool>(
+        : BlocListener<SettingsBloc<bool>, bool>(
             listener: (context, state) {
               _getData();
             },

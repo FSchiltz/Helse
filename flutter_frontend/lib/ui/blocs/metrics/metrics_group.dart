@@ -79,7 +79,7 @@ class _MetricsGroupState extends State<MetricsGroup> {
 
     body = cached == null
         ? const HelseLoader()
-        : BlocListener<SettingsBloc, bool>(
+        : BlocListener<SettingsBloc<bool>, bool>(
             listener: (context, state) {
               _getData();
             },

@@ -6,6 +6,7 @@ import 'package:helse/services/login_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/services/user_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:helse/helpers/url_dummy.dart' if (dart.library.html) 'package:helse/helpers/url.dart';
 
 import '../../services/account.dart';
 import '../../di/dependencies.dart';
@@ -56,6 +57,7 @@ class AuthenticationLogic {
       await account.remove(Account.grant);
 
       _controller.add(AuthenticationStatus.authenticated);
+      Dependencies.logics.settings.loadSettings();
     } else {
       _controller.add(AuthenticationStatus.unauthenticated);
     }
@@ -173,6 +175,7 @@ class AuthenticationLogic {
         issuer = await getClientId();
         redirect = await getRedirect();
       }
+      print('Auth with: $issuer - $redirect');
 
       await logIn(
         url: url,
@@ -214,16 +217,23 @@ class AuthenticationLogic {
         var code = await Dependencies.services.authService.getCode(
           uri.queryParameters,
         );
-        var url = await account.get(Account.url);
+        if (code != null) {
+          if (kIsWeb) {
+            UrlHelper.removeParam();
+            print("Auth code found");
+          }
 
-        set(AuthenticationStatus.unauthenticated);
-        startLogin(
-          init: true,
-          oauth: true,
-          password: code,
-          url: url ?? '',
-          user: "",
-        );
+          var url = await account.get(Account.url);
+
+          set(AuthenticationStatus.unauthenticated);
+          await startLogin(
+            init: true,
+            oauth: true,
+            password: code,
+            url: url ?? '',
+            user: "",
+          );
+        }
       }
     });
   }

@@ -9,19 +9,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../services/account.dart';
 
-class SettingsBloc extends Cubit<bool> {
+class SettingsBloc<T> extends Cubit<T> {
   SettingsBloc(super.initialState);
 
-  void changed() {
-    emit(true);
+  void changed(T value) {
+    emit(value);
   }
 }
 
 class SettingsLogic {
   static final storage = SharedPreferences.getInstance();
   final Account account;
-  final SettingsBloc events = SettingsBloc(false);
-  final SettingsBloc metrics = SettingsBloc(false);
+  final SettingsBloc<InterfaceTheme> themebloc = SettingsBloc(
+    InterfaceTheme.system,
+  );
+  final SettingsBloc<bool> events = SettingsBloc(false);
+  final SettingsBloc<bool> metrics = SettingsBloc(false);
   final SettingService service;
   bool init = false;
 
@@ -60,6 +63,7 @@ class SettingsLogic {
       ),
       true,
     );
+    themebloc.changed(theme);
   }
 
   Future<void> _saveSettings(UserSettings settings, bool toServer) async {
@@ -70,21 +74,21 @@ class SettingsLogic {
     (await storage).setString(Account.settings, json.encode(settings.toJson()));
   }
 
-  Future<void> _loadSettings() async {
+  Future<void> loadSettings() async {
     var serverSettings = await service.getPersonSettings();
+    print("Settings loaded from server");
+
     (await storage).setString(
       Account.settings,
       json.encode(serverSettings.toJson()),
     );
     init = true;
-    metrics.changed();
+    metrics.changed(true);
+    events.changed(true);
+    themebloc.changed(serverSettings.theme ?? InterfaceTheme.system);
   }
 
   Future<UserSettings> _userSettings() async {
-    if (!init) {
-      await _loadSettings();
-    }
-
     var encoded = (await storage).getString(Account.settings);
     if (encoded == null) {
       return UserSettings();
@@ -112,7 +116,7 @@ class SettingsLogic {
       ),
       toServer,
     );
-    metrics.changed();
+    metrics.changed(true);
   }
 
   Future<List<OrderedItem>> getEvents() async {
@@ -272,7 +276,7 @@ class SettingsLogic {
       ),
       toServer,
     );
-    metrics.changed();
+    metrics.changed(true);
   }
 
   Future<List<OrderedItem>> getMetricGroups() async {
