@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 
@@ -22,7 +23,7 @@ class MetricCondensed extends StatelessWidget {
     return metrics.isEmpty
         ? Center(
             child: Text(
-              "No data",
+              Translation.locale(context).nodata,
               style: Theme.of(context).textTheme.labelLarge,
             ),
           )

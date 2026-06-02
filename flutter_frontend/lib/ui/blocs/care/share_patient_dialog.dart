@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
@@ -35,8 +36,9 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
 
   @override
   Widget build(BuildContext context) {
+    var locale = Translation.locale(context);
     return SquareDialog(
-      title: Text("Share ${widget.patient.name} ${widget.patient.surname}"),
+      title: Text("${locale.share} ${widget.patient.name} ${widget.patient.surname}"),
       content: LoadingBuilder(
         _getCaregiver,
         builder: (context, data, reset) {
@@ -51,7 +53,7 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
                         shape: const ContinuousRectangleBorder(),
                       ),
                       onPressed: (caregiver > 0) ? _submit : null,
-                      child: const Text('Share'),
+                      child: Text(locale.share),
                     ),
             ],
           );

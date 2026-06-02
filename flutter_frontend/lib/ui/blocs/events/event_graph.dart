@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/date.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/events/delete_event.dart';
 import 'package:helse/ui/blocs/events/events_add.dart';
@@ -63,7 +64,7 @@ class _EventsGraphState extends State<EventsGraph> {
   Widget build(BuildContext context) {
     var event = _event;
     var id = _event?.id;
-
+    var locale = Translation.locale(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -73,12 +74,18 @@ class _EventsGraphState extends State<EventsGraph> {
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: EventsTimelineGraph(filteredEvents, subDate, _selectionChanged),
+          child: EventsTimelineGraph(
+            filteredEvents,
+            subDate,
+            _selectionChanged,
+          ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0),
+            ),
             shadowColor: Theme.of(context).colorScheme.shadow,
             elevation: 2,
             child: Padding(
@@ -100,7 +107,16 @@ class _EventsGraphState extends State<EventsGraph> {
                     Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: Text(
-                        'from ${DateHelper.format(event.start.toLocal(), context: context)} to ${DateHelper.format(event.stop.toLocal(), context: context)}',
+                        locale.range(
+                          DateHelper.format(
+                            event.start.toLocal(),
+                            context: context,
+                          ),
+                          DateHelper.format(
+                            event.stop.toLocal(),
+                            context: context,
+                          ),
+                        ),
                       ),
                     ),
                   if (event != null && event.tag != null)
@@ -137,7 +153,9 @@ class _EventsGraphState extends State<EventsGraph> {
                             context: context,
                             builder: (BuildContext context) {
                               return DeleteEvent(() async {
-                                await Dependencies.services.event.deleteEvent(id);
+                                await Dependencies.services.event.deleteEvent(
+                                  id,
+                                );
                                 widget.reset();
                                 setState(() {
                                   _event = null;

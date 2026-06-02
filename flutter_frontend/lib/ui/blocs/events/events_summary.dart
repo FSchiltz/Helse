@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -16,7 +17,7 @@ class EventsSummary extends StatelessWidget {
     return (events.isEmpty
         ? Padding(
             padding: const EdgeInsets.only(top: 16.0),
-            child: Text("No data", style: Theme.of(context).textTheme.labelLarge),
+            child: Text(Translation.locale(context).nodata, style: Theme.of(context).textTheme.labelLarge),
           )
         : EventTimeline(events, date));
   }

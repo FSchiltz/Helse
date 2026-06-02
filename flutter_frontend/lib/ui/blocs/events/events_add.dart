@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/square_text_field.dart';
 
 import '../../../di/dependencies.dart';
@@ -30,6 +31,7 @@ class _EventAddState extends State<EventAdd> {
 
   void _submit() async {
     var localContext = context;
+    var locale = Translation.locale(context);
     try {
       setState(() {
         _status = SubmissionStatus.inProgress;
@@ -45,7 +47,10 @@ class _EventAddState extends State<EventAdd> {
             id: widget.edit?.id,
             notificationTime: _notification?.toUtc(),
           );
-          await Dependencies.services.event.updateEvent(event, person: widget.person);
+          await Dependencies.services.event.updateEvent(
+            event,
+            person: widget.person,
+          );
         } else {
           var event = CreateEvent(
             start: _start.toUtc(),
@@ -54,7 +59,10 @@ class _EventAddState extends State<EventAdd> {
             description: _description.text,
             notificationTime: _notification?.toUtc(),
           );
-          await Dependencies.services.event.addEvent(event, person: widget.person);
+          await Dependencies.services.event.addEvent(
+            event,
+            person: widget.person,
+          );
         }
         widget.callback.call();
         setState(() {
@@ -65,14 +73,14 @@ class _EventAddState extends State<EventAdd> {
           Navigator.of(localContext).pop();
         }
 
-        Notify.show("Event Added");
+        Notify.show(locale.added);
       } catch (_) {
         setState(() {
           _status = SubmissionStatus.failure;
         });
       }
     } catch (ex) {
-      Notify.showError("Error: $ex");
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 
@@ -91,8 +99,9 @@ class _EventAddState extends State<EventAdd> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
+    var locale = Translation.locale(context);
     return SquareDialog(
-      title: Text("Add a new ${widget.type.name}"),
+      title: Text(locale.addItem(widget.type.name)),
       actions: [
         SizedBox(
           child: _status == SubmissionStatus.inProgress
@@ -103,7 +112,7 @@ class _EventAddState extends State<EventAdd> {
                     shape: const ContinuousRectangleBorder(),
                   ),
                   onPressed: _submit,
-                  child: const Text('Submit'),
+                  child: Text(locale.submit),
                 ),
         ),
       ],
@@ -116,12 +125,12 @@ class _EventAddState extends State<EventAdd> {
                 SquareTextField(
                   theme: theme,
                   icon: Icons.description_sharp,
-                  label: "Description",
+                  label: locale.description,
                   controller: _description,
                 ),
                 const SizedBox(height: 20),
                 DateInput(
-                  "start",
+                  locale.start,
                   _start,
                   (date) => setState(() {
                     _start = date ?? DateTime.now();
@@ -129,7 +138,7 @@ class _EventAddState extends State<EventAdd> {
                 ),
                 const SizedBox(height: 20),
                 DateInput(
-                  "end",
+                  locale.end,
                   _stop,
                   (date) => setState(() {
                     _stop = date ?? DateTime.now();
@@ -137,7 +146,7 @@ class _EventAddState extends State<EventAdd> {
                 ),
                 const SizedBox(height: 20),
                 DateInput(
-                  "notification time",
+                  locale.notificationTime,
                   _notification,
                   (date) => setState(() {
                     _notification = date;

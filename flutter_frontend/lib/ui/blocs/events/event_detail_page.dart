@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/events/event_graph.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
@@ -52,6 +53,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    var locale = Translation.locale(context);
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -78,7 +80,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
           ),
         ],
         title: Text(
-          'Detail of ${widget.type.name}',
+          locale.detailof(widget.type.name),
           style: Theme.of(context).textTheme.displaySmall,
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/administration/metrics/metrics_group.dart';
 import 'package:helse/ui/blocs/administration/metrics/metrics_settings.dart';
 import 'package:helse/ui/blocs/administration/metrics/metrics_type.dart';
@@ -16,7 +17,7 @@ class MetricSettings extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-              "Metrics Settings",
+             Translation.locale(context).metricSettings,
               style: Theme.of(context).textTheme.displaySmall,
             ),
             MetricSettingsView(),

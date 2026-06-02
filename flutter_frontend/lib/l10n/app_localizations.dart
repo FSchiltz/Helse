@@ -163,6 +163,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Health sync history'**
   String get syncHistory;
+
+  /// No description provided for @initialrange.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial range'**
+  String get initialrange;
+
+  /// No description provided for @start.
+  ///
+  /// In en, this message translates to:
+  /// **'start'**
+  String get start;
+
+  /// No description provided for @stop.
+  ///
+  /// In en, this message translates to:
+  /// **'stop'**
+  String get stop;
+
+  /// No description provided for @end.
+  ///
+  /// In en, this message translates to:
+  /// **'end'**
+  String get end;
+
+  /// No description provided for @notificationTime.
+  ///
+  /// In en, this message translates to:
+  /// **'notification time'**
+  String get notificationTime;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}'**
+  String error(String error);
+
+  /// No description provided for @password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// No description provided for @username.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get username;
+
+  /// No description provided for @name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name;
+
+  /// No description provided for @surname.
+  ///
+  /// In en, this message translates to:
+  /// **'Surname'**
+  String get surname;
+
+  /// No description provided for @confirmpassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get confirmpassword;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @type.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get type;
+
+  /// No description provided for @eventSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Events Settings'**
+  String get eventSettings;
+
+  /// No description provided for @generalSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'General Settings'**
+  String get generalSettings;
+
+  /// No description provided for @metricSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Metrics Settings'**
+  String get metricSettings;
+
+  /// No description provided for @userSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Users Settings'**
+  String get userSettings;
+
+  /// No description provided for @added.
+  ///
+  /// In en, this message translates to:
+  /// **'Added succesfully'**
+  String get added;
+
+  /// No description provided for @add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get add;
+
+  /// No description provided for @addItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a new {item}'**
+  String addItem(String item);
+
+  /// No description provided for @submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// No description provided for @addPatients.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a new patient'**
+  String get addPatients;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// No description provided for @share.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// No description provided for @patients.
+  ///
+  /// In en, this message translates to:
+  /// **'Patients'**
+  String get patients;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @deleteEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete the event ?'**
+  String get deleteEvent;
+
+  /// No description provided for @detailof.
+  ///
+  /// In en, this message translates to:
+  /// **'Detail of {item}'**
+  String detailof(String item);
+
+  /// No description provided for @range.
+  ///
+  /// In en, this message translates to:
+  /// **'from {from} to {to}'**
+  String range(String from, String to);
+
+  /// No description provided for @nodata.
+  ///
+  /// In en, this message translates to:
+  /// **'no data'**
+  String get nodata;
+
+  /// No description provided for @notask.
+  ///
+  /// In en, this message translates to:
+  /// **'no tasks'**
+  String get notask;
 }
 
 class _AppLocalizationsDelegate

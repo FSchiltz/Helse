@@ -5,7 +5,6 @@ import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dar
 class Translation {
   static AppLocalizations locale(BuildContext context) {
     var local = AppLocalizations.of(context);
-    if (local == null) throw StateError("Missing localization");
     return local;
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
 import '../../../di/dependencies.dart';
@@ -93,7 +94,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
           ),
         ],
         title: Text(
-          'Detail of ${widget.type.name}',
+          Translation.locale(context).detailof(widget.type.name),
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),
@@ -118,7 +119,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
           return data.isEmpty
               ? Center(
                   child: Text(
-                    "No data",
+                    Translation.locale(context).nodata,
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                 )

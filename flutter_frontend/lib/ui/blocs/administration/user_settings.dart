@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/administration/users/users.dart';
 
 class UserSettings extends StatelessWidget {
@@ -13,7 +14,7 @@ class UserSettings extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
-            "Users Settings",
+            Translation.locale(context).userSettings,
             style: Theme.of(context).textTheme.displaySmall,
           ),
           const SizedBox(height: 20),

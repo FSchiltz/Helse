@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/administration/events/event_settings.dart';
 import 'package:helse/ui/blocs/administration/events/event_type.dart';
 
@@ -13,7 +14,7 @@ class EventSettings extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Events Settings",
+            Translation.locale(context).eventSettings,
             style: Theme.of(context).textTheme.displaySmall,
           ),
           const SizedBox(height: 20),
