@@ -34,6 +34,7 @@ public static class MetricsLogic
             Tag = x.Tag,
             User = x.UserId,
             Source = (FileTypes)x.Source,
+            SourceId = x.SourceId,
         }));
     }
 
@@ -73,6 +74,7 @@ public static class MetricsLogic
             Tag = x.Tag,
             User = x.UserId,
             Source = (FileTypes)x.Source,
+            SourceId = x.SourceId,
         }));
     }
 

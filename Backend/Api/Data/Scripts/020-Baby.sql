@@ -1,5 +1,3 @@
-BEGIN TRANSACTION;
-
 INSERT INTO
     health.MetricType(
         id,
@@ -22,5 +20,3 @@ VALUES
     (5, null, 'Feeding', true, false);
 
 ALTER TABLE health.Event ADD COLUMN source INT NOT NULL DEFAULT 0;
-
-COMMIT;

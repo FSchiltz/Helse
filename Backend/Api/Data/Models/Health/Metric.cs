@@ -41,4 +41,7 @@ public class Metric
 
     [Column]
     public DateTime Created { get; set; }
+
+    [Column]
+    public string SourceId { get; set; } = string.Empty;
 }

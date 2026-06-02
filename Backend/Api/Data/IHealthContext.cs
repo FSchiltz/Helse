@@ -86,9 +86,9 @@ public interface IHealthContext : IContext
 
     Task<Models.Persons.Person[]> GetAllPatients();
 
-    Task<bool> ExistsEvent(long person, int type, DateTime from, DateTime to, int source, string? description);
+    Task<bool> ExistsEvent(long person, int type, int source, string sourceId);
 
-    Task<bool> ExistsMetric(long person, long type, string value, int source, DateTime date);
+    Task<bool> ExistsMetric(long person, long type, int source, string sourceId);
 
     /// <summary>
     /// Get a single metric type

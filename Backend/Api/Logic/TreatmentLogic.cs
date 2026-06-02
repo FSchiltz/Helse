@@ -70,6 +70,7 @@ public static class TreatmentLogic
                 File = x.FileId,
                 Start = x.Start,
                 Valid = x.Valid,
+                SourceId = x.SourceId,
             })]
         }));
     }

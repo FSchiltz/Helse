@@ -194,6 +194,7 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
             Stop = e.Stop,
             Start = e.Start,
             TreatmentId = treatment,
+            SourceId = e.SourceId,
         });
     }
 

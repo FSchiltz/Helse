@@ -1830,6 +1830,7 @@ class CreateEvent {
     this.tag,
     this.notificationTime,
     this.source,
+    this.sourceId,
   });
 
   factory CreateEvent.fromJson(Map<String, dynamic> json) =>
@@ -1856,6 +1857,8 @@ class CreateEvent {
     fromJson: fileTypesNullableFromJson,
   )
   final enums.FileTypes? source;
+  @JsonKey(name: 'sourceId')
+  final String? sourceId;
   static const fromJsonFactory = _$CreateEventFromJson;
 
   @override
@@ -1881,7 +1884,12 @@ class CreateEvent {
                   notificationTime,
                 )) &&
             (identical(other.source, source) ||
-                const DeepCollectionEquality().equals(other.source, source)));
+                const DeepCollectionEquality().equals(other.source, source)) &&
+            (identical(other.sourceId, sourceId) ||
+                const DeepCollectionEquality().equals(
+                  other.sourceId,
+                  sourceId,
+                )));
   }
 
   @override
@@ -1896,6 +1904,7 @@ class CreateEvent {
       const DeepCollectionEquality().hash(tag) ^
       const DeepCollectionEquality().hash(notificationTime) ^
       const DeepCollectionEquality().hash(source) ^
+      const DeepCollectionEquality().hash(sourceId) ^
       runtimeType.hashCode;
 }
 
@@ -1908,6 +1917,7 @@ extension $CreateEventExtension on CreateEvent {
     String? tag,
     DateTime? notificationTime,
     enums.FileTypes? source,
+    String? sourceId,
   }) {
     return CreateEvent(
       type: type ?? this.type,
@@ -1917,6 +1927,7 @@ extension $CreateEventExtension on CreateEvent {
       tag: tag ?? this.tag,
       notificationTime: notificationTime ?? this.notificationTime,
       source: source ?? this.source,
+      sourceId: sourceId ?? this.sourceId,
     );
   }
 
@@ -1928,6 +1939,7 @@ extension $CreateEventExtension on CreateEvent {
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
     Wrapped<enums.FileTypes?>? source,
+    Wrapped<String?>? sourceId,
   }) {
     return CreateEvent(
       type: (type != null ? type.value : this.type),
@@ -1939,6 +1951,7 @@ extension $CreateEventExtension on CreateEvent {
           ? notificationTime.value
           : this.notificationTime),
       source: (source != null ? source.value : this.source),
+      sourceId: (sourceId != null ? sourceId.value : this.sourceId),
     );
   }
 }
@@ -1951,6 +1964,7 @@ class CreateMetric {
     this.tag,
     this.type,
     this.source,
+    required this.sourceId,
   });
 
   factory CreateMetric.fromJson(Map<String, dynamic> json) =>
@@ -1973,6 +1987,8 @@ class CreateMetric {
     fromJson: fileTypesNullableFromJson,
   )
   final enums.FileTypes? source;
+  @JsonKey(name: 'sourceId')
+  final String sourceId;
   static const fromJsonFactory = _$CreateMetricFromJson;
 
   @override
@@ -1988,7 +2004,12 @@ class CreateMetric {
             (identical(other.type, type) ||
                 const DeepCollectionEquality().equals(other.type, type)) &&
             (identical(other.source, source) ||
-                const DeepCollectionEquality().equals(other.source, source)));
+                const DeepCollectionEquality().equals(other.source, source)) &&
+            (identical(other.sourceId, sourceId) ||
+                const DeepCollectionEquality().equals(
+                  other.sourceId,
+                  sourceId,
+                )));
   }
 
   @override
@@ -2001,6 +2022,7 @@ class CreateMetric {
       const DeepCollectionEquality().hash(tag) ^
       const DeepCollectionEquality().hash(type) ^
       const DeepCollectionEquality().hash(source) ^
+      const DeepCollectionEquality().hash(sourceId) ^
       runtimeType.hashCode;
 }
 
@@ -2011,6 +2033,7 @@ extension $CreateMetricExtension on CreateMetric {
     String? tag,
     int? type,
     enums.FileTypes? source,
+    String? sourceId,
   }) {
     return CreateMetric(
       date: date ?? this.date,
@@ -2018,6 +2041,7 @@ extension $CreateMetricExtension on CreateMetric {
       tag: tag ?? this.tag,
       type: type ?? this.type,
       source: source ?? this.source,
+      sourceId: sourceId ?? this.sourceId,
     );
   }
 
@@ -2027,6 +2051,7 @@ extension $CreateMetricExtension on CreateMetric {
     Wrapped<String?>? tag,
     Wrapped<int?>? type,
     Wrapped<enums.FileTypes?>? source,
+    Wrapped<String>? sourceId,
   }) {
     return CreateMetric(
       date: (date != null ? date.value : this.date),
@@ -2034,6 +2059,7 @@ extension $CreateMetricExtension on CreateMetric {
       tag: (tag != null ? tag.value : this.tag),
       type: (type != null ? type.value : this.type),
       source: (source != null ? source.value : this.source),
+      sourceId: (sourceId != null ? sourceId.value : this.sourceId),
     );
   }
 }
@@ -2113,6 +2139,7 @@ class Event {
     this.tag,
     this.notificationTime,
     this.source,
+    this.sourceId,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
@@ -2152,6 +2179,8 @@ class Event {
     fromJson: fileTypesNullableFromJson,
   )
   final enums.FileTypes? source;
+  @JsonKey(name: 'sourceId')
+  final String? sourceId;
   static const fromJsonFactory = _$EventFromJson;
 
   @override
@@ -2197,7 +2226,12 @@ class Event {
                   notificationTime,
                 )) &&
             (identical(other.source, source) ||
-                const DeepCollectionEquality().equals(other.source, source)));
+                const DeepCollectionEquality().equals(other.source, source)) &&
+            (identical(other.sourceId, sourceId) ||
+                const DeepCollectionEquality().equals(
+                  other.sourceId,
+                  sourceId,
+                )));
   }
 
   @override
@@ -2219,6 +2253,7 @@ class Event {
       const DeepCollectionEquality().hash(tag) ^
       const DeepCollectionEquality().hash(notificationTime) ^
       const DeepCollectionEquality().hash(source) ^
+      const DeepCollectionEquality().hash(sourceId) ^
       runtimeType.hashCode;
 }
 
@@ -2238,6 +2273,7 @@ extension $EventExtension on Event {
     String? tag,
     DateTime? notificationTime,
     enums.FileTypes? source,
+    String? sourceId,
   }) {
     return Event(
       user: user ?? this.user,
@@ -2254,6 +2290,7 @@ extension $EventExtension on Event {
       tag: tag ?? this.tag,
       notificationTime: notificationTime ?? this.notificationTime,
       source: source ?? this.source,
+      sourceId: sourceId ?? this.sourceId,
     );
   }
 
@@ -2272,6 +2309,7 @@ extension $EventExtension on Event {
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
     Wrapped<enums.FileTypes?>? source,
+    Wrapped<String?>? sourceId,
   }) {
     return Event(
       user: (user != null ? user.value : this.user),
@@ -2290,6 +2328,7 @@ extension $EventExtension on Event {
           ? notificationTime.value
           : this.notificationTime),
       source: (source != null ? source.value : this.source),
+      sourceId: (sourceId != null ? sourceId.value : this.sourceId),
     );
   }
 }
@@ -2908,6 +2947,7 @@ class Metric {
     this.tag,
     this.type,
     this.source,
+    required this.sourceId,
   });
 
   factory Metric.fromJson(Map<String, dynamic> json) => _$MetricFromJson(json);
@@ -2935,6 +2975,8 @@ class Metric {
     fromJson: fileTypesNullableFromJson,
   )
   final enums.FileTypes? source;
+  @JsonKey(name: 'sourceId')
+  final String sourceId;
   static const fromJsonFactory = _$MetricFromJson;
 
   @override
@@ -2956,7 +2998,12 @@ class Metric {
             (identical(other.type, type) ||
                 const DeepCollectionEquality().equals(other.type, type)) &&
             (identical(other.source, source) ||
-                const DeepCollectionEquality().equals(other.source, source)));
+                const DeepCollectionEquality().equals(other.source, source)) &&
+            (identical(other.sourceId, sourceId) ||
+                const DeepCollectionEquality().equals(
+                  other.sourceId,
+                  sourceId,
+                )));
   }
 
   @override
@@ -2972,6 +3019,7 @@ class Metric {
       const DeepCollectionEquality().hash(tag) ^
       const DeepCollectionEquality().hash(type) ^
       const DeepCollectionEquality().hash(source) ^
+      const DeepCollectionEquality().hash(sourceId) ^
       runtimeType.hashCode;
 }
 
@@ -2985,6 +3033,7 @@ extension $MetricExtension on Metric {
     String? tag,
     int? type,
     enums.FileTypes? source,
+    String? sourceId,
   }) {
     return Metric(
       id: id ?? this.id,
@@ -2995,6 +3044,7 @@ extension $MetricExtension on Metric {
       tag: tag ?? this.tag,
       type: type ?? this.type,
       source: source ?? this.source,
+      sourceId: sourceId ?? this.sourceId,
     );
   }
 
@@ -3007,6 +3057,7 @@ extension $MetricExtension on Metric {
     Wrapped<String?>? tag,
     Wrapped<int?>? type,
     Wrapped<enums.FileTypes?>? source,
+    Wrapped<String>? sourceId,
   }) {
     return Metric(
       id: (id != null ? id.value : this.id),
@@ -3017,6 +3068,7 @@ extension $MetricExtension on Metric {
       tag: (tag != null ? tag.value : this.tag),
       type: (type != null ? type.value : this.type),
       source: (source != null ? source.value : this.source),
+      sourceId: (sourceId != null ? sourceId.value : this.sourceId),
     );
   }
 }
@@ -3716,18 +3768,10 @@ class PatientSettings {
 
   @JsonKey(name: 'patientId')
   final int? patientId;
-  @JsonKey(
-    name: 'datePreset',
-    toJson: datePresetNullableToJson,
-    fromJson: datePresetNullableFromJson,
-  )
-  final enums.DatePreset? datePreset;
-  @JsonKey(
-    name: 'theme',
-    toJson: interfaceThemeNullableToJson,
-    fromJson: interfaceThemeNullableFromJson,
-  )
-  final enums.InterfaceTheme? theme;
+  @JsonKey(name: 'datePreset')
+  final dynamic datePreset;
+  @JsonKey(name: 'theme')
+  final dynamic theme;
   @JsonKey(name: 'eventWidth')
   final int? eventWidth;
   @JsonKey(name: 'metrics', defaultValue: <OrderedItem>[])
@@ -4682,6 +4726,7 @@ class UpdateEvent {
     this.tag,
     this.notificationTime,
     this.source,
+    this.sourceId,
   });
 
   factory UpdateEvent.fromJson(Map<String, dynamic> json) =>
@@ -4710,6 +4755,8 @@ class UpdateEvent {
     fromJson: fileTypesNullableFromJson,
   )
   final enums.FileTypes? source;
+  @JsonKey(name: 'sourceId')
+  final String? sourceId;
   static const fromJsonFactory = _$UpdateEventFromJson;
 
   @override
@@ -4737,7 +4784,12 @@ class UpdateEvent {
                   notificationTime,
                 )) &&
             (identical(other.source, source) ||
-                const DeepCollectionEquality().equals(other.source, source)));
+                const DeepCollectionEquality().equals(other.source, source)) &&
+            (identical(other.sourceId, sourceId) ||
+                const DeepCollectionEquality().equals(
+                  other.sourceId,
+                  sourceId,
+                )));
   }
 
   @override
@@ -4753,6 +4805,7 @@ class UpdateEvent {
       const DeepCollectionEquality().hash(tag) ^
       const DeepCollectionEquality().hash(notificationTime) ^
       const DeepCollectionEquality().hash(source) ^
+      const DeepCollectionEquality().hash(sourceId) ^
       runtimeType.hashCode;
 }
 
@@ -4766,6 +4819,7 @@ extension $UpdateEventExtension on UpdateEvent {
     String? tag,
     DateTime? notificationTime,
     enums.FileTypes? source,
+    String? sourceId,
   }) {
     return UpdateEvent(
       id: id ?? this.id,
@@ -4776,6 +4830,7 @@ extension $UpdateEventExtension on UpdateEvent {
       tag: tag ?? this.tag,
       notificationTime: notificationTime ?? this.notificationTime,
       source: source ?? this.source,
+      sourceId: sourceId ?? this.sourceId,
     );
   }
 
@@ -4788,6 +4843,7 @@ extension $UpdateEventExtension on UpdateEvent {
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
     Wrapped<enums.FileTypes?>? source,
+    Wrapped<String?>? sourceId,
   }) {
     return UpdateEvent(
       id: (id != null ? id.value : this.id),
@@ -4800,6 +4856,7 @@ extension $UpdateEventExtension on UpdateEvent {
           ? notificationTime.value
           : this.notificationTime),
       source: (source != null ? source.value : this.source),
+      sourceId: (sourceId != null ? sourceId.value : this.sourceId),
     );
   }
 }
@@ -4813,6 +4870,7 @@ class UpdateMetric {
     this.tag,
     this.type,
     this.source,
+    required this.sourceId,
   });
 
   factory UpdateMetric.fromJson(Map<String, dynamic> json) =>
@@ -4837,6 +4895,8 @@ class UpdateMetric {
     fromJson: fileTypesNullableFromJson,
   )
   final enums.FileTypes? source;
+  @JsonKey(name: 'sourceId')
+  final String sourceId;
   static const fromJsonFactory = _$UpdateMetricFromJson;
 
   @override
@@ -4854,7 +4914,12 @@ class UpdateMetric {
             (identical(other.type, type) ||
                 const DeepCollectionEquality().equals(other.type, type)) &&
             (identical(other.source, source) ||
-                const DeepCollectionEquality().equals(other.source, source)));
+                const DeepCollectionEquality().equals(other.source, source)) &&
+            (identical(other.sourceId, sourceId) ||
+                const DeepCollectionEquality().equals(
+                  other.sourceId,
+                  sourceId,
+                )));
   }
 
   @override
@@ -4868,6 +4933,7 @@ class UpdateMetric {
       const DeepCollectionEquality().hash(tag) ^
       const DeepCollectionEquality().hash(type) ^
       const DeepCollectionEquality().hash(source) ^
+      const DeepCollectionEquality().hash(sourceId) ^
       runtimeType.hashCode;
 }
 
@@ -4879,6 +4945,7 @@ extension $UpdateMetricExtension on UpdateMetric {
     String? tag,
     int? type,
     enums.FileTypes? source,
+    String? sourceId,
   }) {
     return UpdateMetric(
       id: id ?? this.id,
@@ -4887,6 +4954,7 @@ extension $UpdateMetricExtension on UpdateMetric {
       tag: tag ?? this.tag,
       type: type ?? this.type,
       source: source ?? this.source,
+      sourceId: sourceId ?? this.sourceId,
     );
   }
 
@@ -4897,6 +4965,7 @@ extension $UpdateMetricExtension on UpdateMetric {
     Wrapped<String?>? tag,
     Wrapped<int?>? type,
     Wrapped<enums.FileTypes?>? source,
+    Wrapped<String>? sourceId,
   }) {
     return UpdateMetric(
       id: (id != null ? id.value : this.id),
@@ -4905,6 +4974,7 @@ extension $UpdateMetricExtension on UpdateMetric {
       tag: (tag != null ? tag.value : this.tag),
       type: (type != null ? type.value : this.type),
       source: (source != null ? source.value : this.source),
+      sourceId: (sourceId != null ? sourceId.value : this.sourceId),
     );
   }
 }
@@ -5318,8 +5388,8 @@ extension $UserSettingsExtension on UserSettings {
   }
 
   UserSettings copyWithWrapped({
-    Wrapped<enums.DatePreset?>? datePreset,
-    Wrapped<enums.InterfaceTheme?>? theme,
+    Wrapped<dynamic>? datePreset,
+    Wrapped<dynamic>? theme,
     Wrapped<int?>? eventWidth,
     Wrapped<List<OrderedItem>?>? metrics,
     Wrapped<List<OrderedItem>?>? metricGroups,

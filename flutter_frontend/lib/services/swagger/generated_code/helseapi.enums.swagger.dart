@@ -21,7 +21,9 @@ enum DatePreset {
   @JsonValue('Year')
   year('Year'),
   @JsonValue('YearToDate')
-  yeartodate('YearToDate');
+  yeartodate('YearToDate'),
+  @JsonValue('null')
+  $null('null');
 
   final String? value;
 
@@ -73,7 +75,9 @@ enum InterfaceTheme {
   @JsonValue('Dark')
   dark('Dark'),
   @JsonValue('Light')
-  light('Light');
+  light('Light'),
+  @JsonValue('null')
+  $null('null');
 
   final String? value;
 

@@ -15,4 +15,6 @@ public abstract class BaseEvent
     public DateTime? NotificationTime { get; set; }
 
     public FileTypes Source { get; set; }
+
+    public string SourceId { get; set; } = string.Empty;
 }

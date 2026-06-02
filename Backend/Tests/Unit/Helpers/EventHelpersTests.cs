@@ -11,11 +11,13 @@ public class EventHelpersTests
         // Arrange
         var start = new DateTime(2024, 1, 1, 0, 0, 0);
         var end = new DateTime(2024, 1, 3, 0, 0, 0);
-        
+
         var events = new List<Api.Data.Models.Health.Event>
         {
-            new() { Id = 1, Description = "Event 1", Start = new DateTime(2024, 1, 1, 10, 0, 0), Stop = new DateTime(2024, 1, 1, 12, 0, 0) },
-            new() { Id = 2, Description = "Event 2", Start = new DateTime(2024, 1, 2, 14, 0, 0), Stop = new DateTime(2024, 1, 2, 16, 0, 0) }
+            new() { Id = 1, Description = "Event 1", Start = new DateTime(2024, 1, 1, 10, 0, 0), Stop = new DateTime(2024, 1, 1, 12, 0, 0),
+            SourceId = string.Empty, },
+            new() { Id = 2, Description = "Event 2", Start = new DateTime(2024, 1, 2, 14, 0, 0), Stop = new DateTime(2024, 1, 2, 16, 0, 0),
+            SourceId = string.Empty, },
         };
 
         // Act
@@ -33,10 +35,11 @@ public class EventHelpersTests
         // Arrange
         var start = new DateTime(2024, 1, 1);
         var end = new DateTime(2024, 1, 4);
-        
+
         var events = new List<Api.Data.Models.Health.Event>
         {
-            new() { Id = 1, Description = "Event 1", Start = start.AddHours(10), Stop = start.AddHours(12) }
+            new() { Id = 1, Description = "Event 1", Start = start.AddHours(10), Stop = start.AddHours(12),
+            SourceId = string.Empty, }
         };
 
         // Act
@@ -53,12 +56,15 @@ public class EventHelpersTests
         // Arrange
         var start = new DateTime(2024, 1, 1);
         var end = new DateTime(2024, 1, 2);
-        
+
         var events = new List<Api.Data.Models.Health.Event>
         {
-            new() { Id = 1, Description = "Type A", Start = start.AddHours(8), Stop = start.AddHours(10) },
-            new() { Id = 2, Description = "Type A", Start = start.AddHours(14), Stop = start.AddHours(16) },
-            new() { Id = 3, Description = "Type B", Start = start.AddHours(12), Stop = start.AddHours(13) }
+            new() { Id = 1, Description = "Type A", Start = start.AddHours(8), Stop = start.AddHours(10),
+            SourceId = string.Empty, },
+            new() { Id = 2, Description = "Type A", Start = start.AddHours(14), Stop = start.AddHours(16),
+            SourceId = string.Empty, },
+            new() { Id = 3, Description = "Type B", Start = start.AddHours(12), Stop = start.AddHours(13),
+            SourceId = string.Empty, },
         };
 
         // Act
@@ -77,10 +83,11 @@ public class EventHelpersTests
         // Arrange
         var start = new DateTime(2024, 1, 1);
         var end = new DateTime(2024, 1, 2);
-        
+
         var events = new List<Api.Data.Models.Health.Event>
         {
-            new() { Id = 1, Description = null, Start = start.AddHours(8), Stop = start.AddHours(10) }
+            new() { Id = 1, Description = null, Start = start.AddHours(8), Stop = start.AddHours(10),
+            SourceId = string.Empty, },
         };
 
         // Act
@@ -99,7 +106,7 @@ public class EventHelpersTests
         // Arrange
         var start = new DateTime(2024, 1, 1);
         var end = new DateTime(2024, 1, 2);
-        
+
         var events = new List<Api.Data.Models.Health.Event>();
 
         // Act
@@ -145,10 +152,11 @@ public class EventHelpersTests
         // Arrange
         var start = new DateTime(2024, 1, 1, 22, 0, 0);
         var end = new DateTime(2024, 1, 2, 2, 0, 0);
-        
+
         var events = new List<Api.Data.Models.Health.Event>
         {
-            new() { Id = 1, Description = "Event Crossing Boundary", Start = start.AddHours(1), Stop = end.AddHours(-1) }
+            new() { Id = 1, Description = "Event Crossing Boundary", Start = start.AddHours(1), Stop = end.AddHours(-1),
+            SourceId = string.Empty, },
         };
 
         // Act

@@ -50,6 +50,7 @@ CreateEvent _$CreateEventFromJson(Map<String, dynamic> json) => CreateEvent(
       ? null
       : DateTime.parse(json['notificationTime'] as String),
   source: fileTypesNullableFromJson(json['source']),
+  sourceId: json['sourceId'] as String?,
 );
 
 Map<String, dynamic> _$CreateEventToJson(CreateEvent instance) =>
@@ -61,6 +62,7 @@ Map<String, dynamic> _$CreateEventToJson(CreateEvent instance) =>
       'tag': instance.tag,
       'notificationTime': instance.notificationTime?.toIso8601String(),
       'source': fileTypesNullableToJson(instance.source),
+      'sourceId': instance.sourceId,
     };
 
 CreateMetric _$CreateMetricFromJson(Map<String, dynamic> json) => CreateMetric(
@@ -69,6 +71,7 @@ CreateMetric _$CreateMetricFromJson(Map<String, dynamic> json) => CreateMetric(
   tag: json['tag'] as String?,
   type: (json['type'] as num?)?.toInt(),
   source: fileTypesNullableFromJson(json['source']),
+  sourceId: json['sourceId'] as String,
 );
 
 Map<String, dynamic> _$CreateMetricToJson(CreateMetric instance) =>
@@ -78,6 +81,7 @@ Map<String, dynamic> _$CreateMetricToJson(CreateMetric instance) =>
       'tag': instance.tag,
       'type': instance.type,
       'source': fileTypesNullableToJson(instance.source),
+      'sourceId': instance.sourceId,
     };
 
 CreateTreatment _$CreateTreatmentFromJson(Map<String, dynamic> json) =>
@@ -113,6 +117,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       ? null
       : DateTime.parse(json['notificationTime'] as String),
   source: fileTypesNullableFromJson(json['source']),
+  sourceId: json['sourceId'] as String?,
 );
 
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
@@ -130,6 +135,7 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
   'tag': instance.tag,
   'notificationTime': instance.notificationTime?.toIso8601String(),
   'source': fileTypesNullableToJson(instance.source),
+  'sourceId': instance.sourceId,
 };
 
 EventStats _$EventStatsFromJson(Map<String, dynamic> json) => EventStats(
@@ -261,6 +267,7 @@ Metric _$MetricFromJson(Map<String, dynamic> json) => Metric(
   tag: json['tag'] as String?,
   type: (json['type'] as num?)?.toInt(),
   source: fileTypesNullableFromJson(json['source']),
+  sourceId: json['sourceId'] as String,
 );
 
 Map<String, dynamic> _$MetricToJson(Metric instance) => <String, dynamic>{
@@ -272,6 +279,7 @@ Map<String, dynamic> _$MetricToJson(Metric instance) => <String, dynamic>{
   'tag': instance.tag,
   'type': instance.type,
   'source': fileTypesNullableToJson(instance.source),
+  'sourceId': instance.sourceId,
 };
 
 MetricGroup _$MetricGroupFromJson(Map<String, dynamic> json) => MetricGroup(
@@ -594,6 +602,7 @@ UpdateEvent _$UpdateEventFromJson(Map<String, dynamic> json) => UpdateEvent(
       ? null
       : DateTime.parse(json['notificationTime'] as String),
   source: fileTypesNullableFromJson(json['source']),
+  sourceId: json['sourceId'] as String?,
 );
 
 Map<String, dynamic> _$UpdateEventToJson(UpdateEvent instance) =>
@@ -606,6 +615,7 @@ Map<String, dynamic> _$UpdateEventToJson(UpdateEvent instance) =>
       'tag': instance.tag,
       'notificationTime': instance.notificationTime?.toIso8601String(),
       'source': fileTypesNullableToJson(instance.source),
+      'sourceId': instance.sourceId,
     };
 
 UpdateMetric _$UpdateMetricFromJson(Map<String, dynamic> json) => UpdateMetric(
@@ -615,6 +625,7 @@ UpdateMetric _$UpdateMetricFromJson(Map<String, dynamic> json) => UpdateMetric(
   tag: json['tag'] as String?,
   type: (json['type'] as num?)?.toInt(),
   source: fileTypesNullableFromJson(json['source']),
+  sourceId: json['sourceId'] as String,
 );
 
 Map<String, dynamic> _$UpdateMetricToJson(UpdateMetric instance) =>
@@ -625,6 +636,7 @@ Map<String, dynamic> _$UpdateMetricToJson(UpdateMetric instance) =>
       'tag': instance.tag,
       'type': instance.type,
       'source': fileTypesNullableToJson(instance.source),
+      'sourceId': instance.sourceId,
     };
 
 UpdatePatient _$UpdatePatientFromJson(Map<String, dynamic> json) =>

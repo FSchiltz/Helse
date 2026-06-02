@@ -2043,13 +2043,17 @@
           },
           "source": {
             "$ref": "#/components/schemas/FileTypes"
+          },
+          "sourceId": {
+            "type": "string"
           }
         }
       },
       "CreateMetric": {
         "required": [
           "date",
-          "value"
+          "value",
+          "sourceId"
         ],
         "type": "object",
         "properties": {
@@ -2076,6 +2080,9 @@
           },
           "source": {
             "$ref": "#/components/schemas/FileTypes"
+          },
+          "sourceId": {
+            "type": "string"
           }
         }
       },
@@ -2107,7 +2114,8 @@
           "Trimestre",
           "HalfYear",
           "Year",
-          "YearToDate"
+          "YearToDate",
+          null
         ]
       },
       "Event": {
@@ -2208,6 +2216,9 @@
           },
           "source": {
             "$ref": "#/components/schemas/FileTypes"
+          },
+          "sourceId": {
+            "type": "string"
           }
         }
       },
@@ -2369,7 +2380,8 @@
         "enum": [
           "System",
           "Dark",
-          "Light"
+          "Light",
+          null
         ]
       },
       "JobId": {
@@ -2463,7 +2475,8 @@
           "id",
           "person",
           "date",
-          "value"
+          "value",
+          "sourceId"
         ],
         "type": "object",
         "properties": {
@@ -2514,6 +2527,9 @@
           },
           "source": {
             "$ref": "#/components/schemas/FileTypes"
+          },
+          "sourceId": {
+            "type": "string"
           }
         }
       },
@@ -2699,6 +2715,7 @@
           "order": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
+              "null",
               "integer",
               "string"
             ],
@@ -2735,10 +2752,24 @@
             "format": "int64"
           },
           "datePreset": {
-            "$ref": "#/components/schemas/DatePreset"
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DatePreset"
+              }
+            ]
           },
           "theme": {
-            "$ref": "#/components/schemas/InterfaceTheme"
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/InterfaceTheme"
+              }
+            ]
           },
           "eventWidth": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -3128,13 +3159,17 @@
           },
           "source": {
             "$ref": "#/components/schemas/FileTypes"
+          },
+          "sourceId": {
+            "type": "string"
           }
         }
       },
       "UpdateMetric": {
         "required": [
           "date",
-          "value"
+          "value",
+          "sourceId"
         ],
         "type": "object",
         "properties": {
@@ -3169,6 +3204,9 @@
           },
           "source": {
             "$ref": "#/components/schemas/FileTypes"
+          },
+          "sourceId": {
+            "type": "string"
           }
         }
       },
@@ -3313,10 +3351,24 @@
         "type": "object",
         "properties": {
           "datePreset": {
-            "$ref": "#/components/schemas/DatePreset"
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DatePreset"
+              }
+            ]
           },
           "theme": {
-            "$ref": "#/components/schemas/InterfaceTheme"
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/InterfaceTheme"
+              }
+            ]
           },
           "eventWidth": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",

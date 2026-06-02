@@ -1,5 +1,3 @@
-BEGIN TRANSACTION;
-
 CREATE TABLE person.OauthUser (
     UserId BIGINT NOT NULL,
     OauthSub VARCHAR Not NULL,
@@ -11,5 +9,3 @@ ALTER TABLE
     person.OauthUser
 ADD
     CONSTRAINT FK_Oauth_TO_User FOREIGN KEY (UserId) REFERENCES person.User (Id);
-
-COMMIT;

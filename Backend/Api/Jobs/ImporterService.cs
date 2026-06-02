@@ -24,7 +24,7 @@ public class ImporterService(IServiceProvider serviceProvider, IImportQueue queu
                 Importer importer = job.Type switch
                 {
                     FileTypes.Clue => new ClueImporter(job.Input, db, job.UserId, job.Patient),
-                    FileTypes.RedmiWatch => new RedmiWatch(job.Input, db, job.UserId, job.Patient),
+                    FileTypes.RedmiWatch => new RedmiWatchImporter(job.Input, db, job.UserId, job.Patient),
                     FileTypes.GoogleHealthConnect => new GoogleImporter(job.Input, db, job.UserId, job.Patient),
                     FileTypes.BabyTracker => new BabyTrackerImporter(job.Input, db, job.UserId, job.Patient),
                     _ => throw new NotSupportedException("Invalid file type"),
