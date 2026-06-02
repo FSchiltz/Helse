@@ -132,13 +132,14 @@ class FitLogic {
     var history = await Dependencies.logics.settings.getHasHistory() ?? false;
 
     var now = DateTime.now();
+    // each sync we have to get the last 5 days because the apps can add metrics in the pasts
     var start = run == null
         ? now.add(
             (history)
                 ? const Duration(days: -30 * 12 * 5)
                 : const Duration(days: -35),
           )
-        : DateTime.parse(run);
+        : now.add(Duration(days: -5));
 
     int events = 0;
     int metrics = 0;
