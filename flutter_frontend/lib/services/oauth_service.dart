@@ -62,9 +62,9 @@ class OauthService extends ApiService {
     }
   }
 
-  Future<String> getCode(Map<String, String> uri) async {
-    var code = uri['code'] ?? '';
-    await account.set(Account.grant, code);
+  Future<String?> getCode(Map<String, String> uri) async {
+    var code = uri['code'];
+    if (code != null) await account.set(Account.grant, code);
     return code;
   }
 

@@ -214,16 +214,18 @@ class AuthenticationLogic {
         var code = await Dependencies.services.authService.getCode(
           uri.queryParameters,
         );
-        var url = await account.get(Account.url);
+        if (code != null) {
+          var url = await account.get(Account.url);
 
-        set(AuthenticationStatus.unauthenticated);
-        startLogin(
-          init: true,
-          oauth: true,
-          password: code,
-          url: url ?? '',
-          user: "",
-        );
+          set(AuthenticationStatus.unauthenticated);
+          await startLogin(
+            init: true,
+            oauth: true,
+            password: code,
+            url: url ?? '',
+            user: "",
+          );
+        }
       }
     });
   }

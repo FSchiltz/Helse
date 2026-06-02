@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
+import 'package:helse/ui/common/notification.dart';
 import 'package:helse/worker.dart';
 import 'package:toastification/toastification.dart';
 import 'package:workmanager/workmanager.dart';
