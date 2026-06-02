@@ -27,7 +27,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     // apply the theme
     var c = context;
     if (c.mounted) {
-      AppView.of(c).changeTheme(value);
+      App.of(c).changeTheme(value);
     }
   }
 
@@ -106,7 +106,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   child: DropdownButtonFormField(
                     initialValue: _range,
                     onChanged: rangeCallback,
-                    items: _getRangeValues(),
+                    items: _getRangeValues(context),
                     decoration: InputDecoration(
                       labelText: 'Date range',
                       prefixIcon: const Icon(Icons.list_sharp),
@@ -132,12 +132,12 @@ class _GeneralSettingsState extends State<GeneralSettings> {
         .toList();
   }
 
-  List<DropdownMenuItem<DatePreset>>? _getRangeValues() {
+  List<DropdownMenuItem<DatePreset>>? _getRangeValues(BuildContext context) {
     return DatePreset.values
         .where((e) => e.index > 0)
         .map(
           (type) =>
-              DropdownMenuItem(value: type, child: Text(Translation.get(type))),
+              DropdownMenuItem(value: type, child: Text(Translation.get(type, context))),
         )
         .toList();
   }

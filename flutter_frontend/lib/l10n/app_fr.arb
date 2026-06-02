@@ -1,0 +1,14 @@
+{
+    "@@locale": "fr",
+    "administration": "Administration",
+    "logout": "Déconnexion",
+    "settings": "Configuration",
+    "import": "Importation",
+    "days": "jours",
+    "months": "mois",
+    "years": "années",
+    "yeartodate": "Année en cours",
+    "today": "Aujourd'hui",
+    "importHistory": "Historique des importations",
+    "syncHistory": "Historique de la synchronisation"
+}

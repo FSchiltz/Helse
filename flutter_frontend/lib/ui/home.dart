@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/fit/status_bloc.dart';
 
 import '../di/dependencies.dart';
@@ -69,7 +70,7 @@ class _HomeState extends State<Home> {
       fit.start();
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     var types = user?.types ?? [];
@@ -126,34 +127,35 @@ class _HomeState extends State<Home> {
                   color: theme.colorScheme.onSurface,
                 ),
                 itemBuilder: (context) {
+                  var locale = Translation.locale(context);
                   return [
-                    const PopupMenuItem<int>(
+                    PopupMenuItem<int>(
                       value: 0,
                       child: ListTile(
                         leading: Icon(Icons.upload_file_sharp),
-                        title: Text("Import"),
+                        title: Text(locale.import),
                       ),
                     ),
-                    const PopupMenuItem<int>(
+                    PopupMenuItem<int>(
                       value: 1,
                       child: ListTile(
                         leading: Icon(Icons.settings_sharp),
-                        title: Text("Settings"),
+                        title: Text(locale.settings),
                       ),
                     ),
                     if (types.contains(UserType.admin) == true)
-                      const PopupMenuItem<int>(
+                      PopupMenuItem<int>(
                         value: 2,
                         child: ListTile(
                           leading: Icon(Icons.admin_panel_settings_sharp),
-                          title: Text("Administration"),
+                          title: Text(locale.administration),
                         ),
                       ),
-                    const PopupMenuItem<int>(
+                    PopupMenuItem<int>(
                       value: 3,
                       child: ListTile(
                         leading: Icon(Icons.logout_sharp),
-                        title: Text("Logout"),
+                        title: Text(locale.logout),
                       ),
                     ),
                   ];
@@ -218,13 +220,13 @@ class _HomeState extends State<Home> {
     var tasks = Dependencies.logics.fit.executions();
 
     if (context.mounted) {
-      _showTaskDialog(context, tasks, 'Health sync history');
+      _showTaskDialog(context, tasks, Translation.locale(context).syncHistory);
     }
   }
 
   void _showJobs(BuildContext context) {
     var tasks = Dependencies.logics.import.executions();
-    _showTaskDialog(context, tasks, 'File import history');
+    _showTaskDialog(context, tasks, Translation.locale(context).importHistory);
   }
 
   void _showTaskDialog(

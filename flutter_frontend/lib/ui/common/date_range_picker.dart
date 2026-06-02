@@ -20,7 +20,7 @@ class DateRangePicker extends StatelessWidget {
         .map(
           (v) => MenuItemButton(
             onPressed: () => _setPreset(v),
-            child: Text(Translation.get(v)),
+            child: Text(Translation.get(v, context)),
           ),
         )
         .toList();
