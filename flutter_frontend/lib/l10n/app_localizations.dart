@@ -332,6 +332,12 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get cancel;
 
+  /// No description provided for @deleteMetric.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete the metric ?'**
+  String get deleteMetric;
+
   /// No description provided for @deleteEvent.
   ///
   /// In en, this message translates to:
@@ -433,6 +439,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete'**
   String get delete;
+
+  /// No description provided for @saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved succefully'**
+  String get saved;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @events.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get events;
+
+  /// No description provided for @metrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Metrics'**
+  String get metrics;
+
+  /// No description provided for @metricgroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Metric Groups'**
+  String get metricgroups;
+
+  /// No description provided for @visible.
+  ///
+  /// In en, this message translates to:
+  /// **'Visible'**
+  String get visible;
+
+  /// No description provided for @widgetType.
+  ///
+  /// In en, this message translates to:
+  /// **'Widget type'**
+  String get widgetType;
+
+  /// No description provided for @detailType.
+  ///
+  /// In en, this message translates to:
+  /// **'Detail type'**
+  String get detailType;
+
+  /// No description provided for @date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get date;
+
+  /// No description provided for @value.
+  ///
+  /// In en, this message translates to:
+  /// **'Value'**
+  String get value;
+
+  /// No description provided for @tag.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag'**
+  String get tag;
+
+  /// No description provided for @source.
+  ///
+  /// In en, this message translates to:
+  /// **'Source'**
+  String get source;
 }
 
 class _AppLocalizationsDelegate

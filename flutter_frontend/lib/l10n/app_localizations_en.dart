@@ -130,6 +130,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancel => 'Cancel';
 
   @override
+  String get deleteMetric => 'Delete the metric ?';
+
+  @override
   String get deleteEvent => 'Delete the event ?';
 
   @override
@@ -187,4 +190,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get delete => 'Delete';
+
+  @override
+  String get saved => 'Saved succefully';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get events => 'Events';
+
+  @override
+  String get metrics => 'Metrics';
+
+  @override
+  String get metricgroups => 'Metric Groups';
+
+  @override
+  String get visible => 'Visible';
+
+  @override
+  String get widgetType => 'Widget type';
+
+  @override
+  String get detailType => 'Detail type';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String get value => 'Value';
+
+  @override
+  String get tag => 'Tag';
+
+  @override
+  String get source => 'Source';
 }

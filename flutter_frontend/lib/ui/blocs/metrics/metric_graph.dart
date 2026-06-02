@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/delete_metric.dart';
 import 'package:helse/ui/blocs/metrics/metric_add.dart';
@@ -77,16 +78,13 @@ class _MetricGraphState extends State<MetricGraph> {
 
   Widget _getGraph(BuildContext context) {
     final metric = _metric;
+    var locale = Translation.locale(context);
 
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: DateRangePicker(
-            _setDate,
-            subDate,
-            range: widget.date,
-          ),
+          child: DateRangePicker(_setDate, subDate, range: widget.date),
         ),
         Expanded(
           child: SingleChildScrollView(
@@ -104,14 +102,14 @@ class _MetricGraphState extends State<MetricGraph> {
               child: Center(
                 child: PaginatedDataTable(
                   rowsPerPage: 50,
-                  showEmptyRows: false,                  
+                  showEmptyRows: false,
                   primary: true,
-                  columns: const [
+                  columns: [
                     DataColumn(label: Expanded(child: Text("Id"))),
-                    DataColumn(label: Expanded(child: Text("Value"))),
-                    DataColumn(label: Expanded(child: Text("Date"))),
-                    DataColumn(label: Expanded(child: Text("Tag"))),
-                    DataColumn(label: Expanded(child: Text("Source"))),
+                    DataColumn(label: Expanded(child: Text(locale.value))),
+                    DataColumn(label: Expanded(child: Text(locale.date))),
+                    DataColumn(label: Expanded(child: Text(locale.tag))),
+                    DataColumn(label: Expanded(child: Text(locale.source))),
                     DataColumn(label: Expanded(child: Text(""))),
                   ],
                   source: MetricDataSource(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
+import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
 import '../../../di/dependencies.dart';
@@ -30,7 +32,7 @@ class _TreatementState extends State<TreatmentAdd> {
     return await Dependencies.services.treatement.treatmentTypes() ?? [];
   }
 
-  void _submit() async {
+  void _submit(AppLocalizations locale) async {
     var localContext = context;
 
     setState(() {
@@ -53,20 +55,21 @@ class _TreatementState extends State<TreatmentAdd> {
       if (localContext.mounted) {
         Navigator.of(localContext).pop();
       }
-      Notify.show("Treatment added");
+      Notify.show(locale.added);
     } catch (ex) {
       setState(() {
         _status = SubmissionStatus.failure;
       });
-      Notify.showError("Error: $ex");
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
+    var locale = Translation.locale(context);
     return SquareDialog(
-      title: const Text("New Event"),
+      title:  Text(locale.addItem(locale.treatment)),
       actions: [
         SizedBox(
           child: _status == SubmissionStatus.inProgress
@@ -76,8 +79,8 @@ class _TreatementState extends State<TreatmentAdd> {
                     minimumSize: const Size.fromHeight(50),
                     shape: const ContinuousRectangleBorder(),
                   ),
-                  onPressed: _submit,
-                  child: const Text('Submit'),
+                  onPressed: () => _submit(locale),
+                  child: Text(locale.submit),
                 ),
         ),
       ],

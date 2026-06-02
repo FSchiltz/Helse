@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/pair.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/metric_widget.dart';
 
@@ -42,10 +43,7 @@ class MetricWidgetsGrid extends StatelessWidget {
         Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
           elevation: 0,
-          child: Padding(
-            padding: const EdgeInsets.all(32.0),
-            child: button,
-          ),
+          child: Padding(padding: const EdgeInsets.all(32.0), child: button),
         ),
       );
     }
@@ -56,7 +54,7 @@ class MetricWidgetsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (cached.isEmpty) {
-      return const Text("No metrics");
+      return Text(Translation.locale(context).nodata);
     } else {
       return GridView.extent(
         maxCrossAxisExtent: extend ?? 200,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/main.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:helse/ui/common/loading_builder.dart';
@@ -18,11 +19,14 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   InterfaceTheme _theme = InterfaceTheme.system;
   DatePreset _range = DatePreset.today;
 
-  Future<void> themeCallback(InterfaceTheme? value) async {
+  Future<void> themeCallback(
+    InterfaceTheme? value,
+    AppLocalizations locale,
+  ) async {
     if (value == null) return;
     // save the settings
     _theme = value;
-    await _submitTheme();
+    await _submitTheme(locale);
 
     // apply the theme
     var c = context;
@@ -31,14 +35,14 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     }
   }
 
-  Future<void> _submitTheme() async {
+  Future<void> _submitTheme(AppLocalizations locale) async {
     try {
       // save the user's settings
       await Dependencies.logics.settings.saveTheme(_theme);
 
-      Notify.show("Saved Successfully");
+      Notify.show(locale.saved);
     } catch (ex) {
-      Notify.showError("Error: $ex");
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 
@@ -66,6 +70,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     return LoadingBuilder(
       _getData,
       builder: (context, data, reset) {
+        var locale = Translation.locale(context);
         return Padding(
           padding: const EdgeInsets.all(32.0),
           child: Column(
@@ -81,7 +86,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 child: DropdownButtonFormField(
                   initialValue: _theme,
                   onChanged: (value) async {
-                    await themeCallback(value);
+                    await themeCallback(value, locale);
                     reset();
                   },
                   items: _getThemeValues(),
@@ -136,8 +141,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     return DatePreset.values
         .where((e) => e.index > 0)
         .map(
-          (type) =>
-              DropdownMenuItem(value: type, child: Text(Translation.get(type, context))),
+          (type) => DropdownMenuItem(
+            value: type,
+            child: Text(Translation.get(type, context)),
+          ),
         )
         .toList();
   }

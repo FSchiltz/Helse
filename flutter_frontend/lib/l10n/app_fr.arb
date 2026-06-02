@@ -36,6 +36,7 @@
     "ok": "OK",
     "cancel": "Annuler",
     "deleteEvent": "Supprimer l'evenement ?",
+    "deleteMetric": "Supprimer la métrique ?",
     "detailof": "Detail de {item}",
     "range": "Du {from} au {to}",
     "nodata": "Pas de données",
@@ -55,5 +56,18 @@
     "welcome": "Bienvenue",
     "welcomenew": "Utilisateur créé, bienvenue",
     "deleteUser": "Supprimer l'utilisateur ?",
-    "delete": "Supprimer"
+    "delete": "Supprimer",
+    "saved": "Sauvé avec succes",
+    "metrics": "Métriques",
+    "metricgroups": "Groupes de métriques",
+    "save": "Sauver",
+    "events": "Evénements",
+    "visible": "Visible",
+    "widgetType": "Type de widget",
+    "detailType": "Type de détail",
+    "date": "Date",
+    "value": "Valeur",
+    "tag": "Tag",
+    "source": "Source",
+    "treatment": "traitement"
 }

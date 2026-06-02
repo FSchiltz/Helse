@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
+import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/localSettings/ordered_edit_item.dart';
 import 'package:helse/ui/common/loading_builder.dart';
@@ -45,33 +47,40 @@ class _MetricSettingsState extends State<MetricSettings> {
         .toList();
   }
 
-  Future<void> _submitMetricGroups(List<OrderedEditItem> groups) async {
+  Future<void> _submitMetricGroups(
+    List<OrderedEditItem> groups,
+    AppLocalizations locale,
+  ) async {
     try {
       var toSave = groups.map((e) => e.ordered()).toList();
       // save the user's settings
       await Dependencies.logics.settings.saveMetricGroups(toSave, true);
 
-      Notify.show("Saved Successfully");
+      Notify.show(locale.saved);
     } catch (ex) {
-      Notify.showError("Error: $ex");
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 
-  Future<void> _submitMetrics(List<OrderedEditItem> metrics) async {
+  Future<void> _submitMetrics(
+    List<OrderedEditItem> metrics,
+    AppLocalizations locale,
+  ) async {
     try {
       var toSave = metrics.map((e) => e.ordered()).toList();
       // save the user's settings
       await Dependencies.logics.settings.saveMetrics(toSave, true);
 
-      Notify.show("Saved Successfully");
+      Notify.show(locale.saved);
     } catch (ex) {
-      Notify.showError("Error: $ex");
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
+    var locale = Translation.locale(context);
     return DefaultTabController(
       length: 2,
       child: Column(
@@ -79,13 +88,13 @@ class _MetricSettingsState extends State<MetricSettings> {
         children: [
           TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.post_add_sharp), text: 'Metrics'),
-              Tab(icon: Icon(Icons.group_add_sharp), text: 'Metric Groups'),
+              Tab(icon: Icon(Icons.post_add_sharp), text: locale.metrics),
+              Tab(icon: Icon(Icons.group_add_sharp), text: locale.metricgroups),
             ],
           ),
           Flexible(
             child: TabBarView(
-              children: [_metricsGrid(theme), _metricGroupsGrid(theme)],
+              children: [_metricsGrid(theme, locale), _metricGroupsGrid(theme, locale)],
             ),
           ),
         ],
@@ -93,7 +102,7 @@ class _MetricSettingsState extends State<MetricSettings> {
     );
   }
 
-  Widget _metricsGrid(ThemeData theme) {
+  Widget _metricsGrid(ThemeData theme, AppLocalizations locale) {
     return LoadingBuilder(
       _getData,
       builder: (context, data, reset) => Padding(
@@ -110,10 +119,10 @@ class _MetricSettingsState extends State<MetricSettings> {
                     shape: const ContinuousRectangleBorder(),
                   ),
                   onPressed: () async {
-                    await _submitMetrics(data);
+                    await _submitMetrics(data, locale);
                     reset();
                   },
-                  child: const Text("Save"),
+                  child: Text(locale.save),
                 ),
               ),
               const SizedBox(height: 20),
@@ -122,10 +131,10 @@ class _MetricSettingsState extends State<MetricSettings> {
                   dataRowMinHeight: 48,
                   dataRowMaxHeight: 60,
                   columns: [
-                    DataColumn(label: Expanded(child: Text("Name"))),
-                    DataColumn(label: Expanded(child: Text("Visible"))),
-                    DataColumn(label: Expanded(child: Text("Widget type"))),
-                    DataColumn(label: Expanded(child: Text("Detail type"))),
+                    DataColumn(label: Expanded(child: Text(locale.name))),
+                    DataColumn(label: Expanded(child: Text(locale.visible))),
+                    DataColumn(label: Expanded(child: Text(locale.widgetType))),
+                    DataColumn(label: Expanded(child: Text(locale.detailType))),
                   ],
                   rows: data
                       .map(
@@ -153,7 +162,7 @@ class _MetricSettingsState extends State<MetricSettings> {
                                       .map((x) => DropDownItem(x, x.name))
                                       .toList(),
                                   (value) => item.graph = value ?? item.graph,
-                                  label: 'Type',
+                                  label: locale.type,
                                 ),
                               ),
                             ),
@@ -168,7 +177,7 @@ class _MetricSettingsState extends State<MetricSettings> {
                                       .toList(),
                                   (value) => item.detailGraph =
                                       value ?? item.detailGraph,
-                                  label: 'Type',
+                                  label: locale.type,
                                 ),
                               ),
                             ),
@@ -185,7 +194,7 @@ class _MetricSettingsState extends State<MetricSettings> {
     );
   }
 
-  Widget _metricGroupsGrid(ThemeData theme) {
+  Widget _metricGroupsGrid(ThemeData theme, AppLocalizations locale) {
     return LoadingBuilder(
       _getGroupData,
       builder: (context, data, reset) {
@@ -203,18 +212,18 @@ class _MetricSettingsState extends State<MetricSettings> {
                       shape: const ContinuousRectangleBorder(),
                     ),
                     onPressed: () async {
-                      await _submitMetricGroups(data);
+                      await _submitMetricGroups(data, locale);
                       reset();
                     },
-                    child: const Text("Save"),
+                    child: Text(locale.save),
                   ),
                 ),
                 const SizedBox(height: 20),
                 FittedBox(
                   child: DataTable(
                     columns: [
-                      DataColumn(label: Expanded(child: Text("Name"))),
-                      DataColumn(label: Expanded(child: Text("Visible"))),
+                      DataColumn(label: Expanded(child: Text(locale.name))),
+                      DataColumn(label: Expanded(child: Text(locale.visible))),
                     ],
                     rows: data
                         .map(
