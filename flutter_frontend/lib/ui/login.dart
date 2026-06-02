@@ -2,6 +2,8 @@ import 'package:async/async.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
+import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/password_input.dart';
 import '../logic/event.dart';
 import '../services/swagger/generated_code/helseapi.swagger.dart';
@@ -47,6 +49,7 @@ class _LoginState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
+    var locale = Translation.locale(context);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       body: SafeArea(
@@ -61,18 +64,19 @@ class _LoginState extends State<LoginPage> {
                   key: _formKey,
                   child: Column(
                     children: [
+                      const SizedBox(height: 12),
                       Text(
-                        "Welcome ${_initStatus?.init == true ? "Back" : ""}",
+                        locale.welcome,
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
                       const SizedBox(height: 20),
                       TextField(
                         controller: textController,
                         keyboardType: TextInputType.url,
-                        onChanged: _urlTextChanged,
+                        onChanged: (v) => _urlTextChanged(v, locale),
                         key: const Key('loginForm_urlInput_textField'),
                         decoration: InputDecoration(
-                          labelText: 'Server url',
+                          labelText: locale.serverurl,
                           prefixIcon: const Icon(Icons.home_sharp),
                           prefixIconColor: theme.primary,
                           filled: true,
@@ -82,7 +86,7 @@ class _LoginState extends State<LoginPage> {
                             borderSide: BorderSide(color: theme.primary),
                           ),
                           errorText: _status == SubmissionStatus.failure
-                              ? 'invalid url'
+                              ? locale.invalid(locale.url)
                               : null,
                         ),
                       ),
@@ -108,13 +112,13 @@ class _LoginState extends State<LoginPage> {
                                     : Column(
                                         children: [
                                           Text(
-                                            "Create your account",
+                                            locale.createAccount,
                                             style: Theme.of(
                                               context,
                                             ).textTheme.headlineLarge,
                                           ),
                                           Text(
-                                            "This is the admin account for the server",
+                                            locale.adminDescription,
                                             style: Theme.of(
                                               context,
                                             ).textTheme.bodyLarge,
@@ -147,11 +151,11 @@ class _LoginState extends State<LoginPage> {
                                               shape:
                                                   const ContinuousRectangleBorder(),
                                             ),
-                                            onPressed: _submit,
+                                            onPressed: () => _submit(locale),
                                             child: Text(
                                               _initStatus?.init == true
-                                                  ? 'Login'
-                                                  : 'Create',
+                                                  ? locale.login
+                                                  : locale.create,
                                               style: Theme.of(
                                                 context,
                                               ).textTheme.titleLarge,
@@ -161,6 +165,7 @@ class _LoginState extends State<LoginPage> {
                                           ..._providers(
                                             _initStatus?.oauths,
                                             Theme.of(context).textTheme,
+                                            locale,
                                           ),
                                         ],
                                       ),
@@ -186,7 +191,7 @@ class _LoginState extends State<LoginPage> {
     return null;
   }
 
-  void _urlTextChanged(String url) async {
+  void _urlTextChanged(String url, AppLocalizations locale) async {
     if (_loaded == SubmissionStatus.waiting && _operation != null) {
       // cancel the existing call
       _operation?.cancel();
@@ -212,14 +217,14 @@ class _LoginState extends State<LoginPage> {
         Future<void>.delayed(Durations.extralong3),
       );
 
-      operation.value.then((value) async => await _urlChanged(url));
+      operation.value.then((value) async => await _urlChanged(url, locale));
       setState(() {
         _operation = operation;
       });
     }
   }
 
-  Future<void> _urlChanged(String url) async {
+  Future<void> _urlChanged(String url, AppLocalizations locale) async {
     var uri = Uri.tryParse(url);
     if (uri == null || !uri.isAbsolute) {
       return;
@@ -240,17 +245,18 @@ class _LoginState extends State<LoginPage> {
 
       // If the server is init or not
       // Todo use the loaded stream
-      var needsLogging = await Dependencies.logics.authentication.checkIfNeedsLogging();
+      var needsLogging = await Dependencies.logics.authentication
+          .checkIfNeedsLogging();
       if (isInit != null && isInit.init == true && mounted && needsLogging) {
         if (isInit.oauths.isNotEmpty) {
           // Start the oauth login procedure
           var autologin = isInit.oauths.firstWhereOrNull((x) => x.autoLogin);
           if (autologin != null) {
-            await _submitOauth(autologin);
+            await _submitOauth(autologin, locale);
           }
         } else if (isInit.externalAuth == true) {
           // directly start the login procedure
-          await _submit(oAuth: 'Header');
+          await _submit(locale, oAuth: 'Header');
         }
       }
 
@@ -282,11 +288,17 @@ class _LoginState extends State<LoginPage> {
         _url = url;
       });
 
-      await _urlChanged(url);
+      if (mounted) {
+        var locale = Translation.locale(context);
+        await _urlChanged(url, locale);
+      }
     }
   }
 
-  Future<void> _submitOauth(OauthConnection oauth) async {
+  Future<void> _submitOauth(
+    OauthConnection oauth,
+    AppLocalizations locale,
+  ) async {
     var init = _initStatus;
     var url = _url;
     if (init != null && url != null) {
@@ -300,7 +312,7 @@ class _LoginState extends State<LoginPage> {
           oauth,
         );
         if (grant != null) {
-          _submit(oAuth: grant);
+          await _submit(locale, oAuth: grant);
         }
       } catch (ex) {
         Notify.showError('Failed to start the oauth process:$ex');
@@ -320,7 +332,7 @@ class _LoginState extends State<LoginPage> {
     }
   }
 
-  Future<void> _submit({String? oAuth}) async {
+  Future<void> _submit(AppLocalizations locale, {String? oAuth}) async {
     setState(() {
       _status = SubmissionStatus.inProgress;
     });
@@ -355,9 +367,9 @@ class _LoginState extends State<LoginPage> {
       );
 
       if (created) {
-        Notify.show('User created, welcome');
+        Notify.show(locale.welcomenew);
       } else {
-        Notify.show('Welcome');
+        Notify.show(locale.welcome);
       }
       setState(() {
         _status = SubmissionStatus.success;
@@ -375,7 +387,11 @@ class _LoginState extends State<LoginPage> {
     }
   }
 
-  List<Widget> _providers(List<OauthConnection>? oauths, TextTheme theme) {
+  List<Widget> _providers(
+    List<OauthConnection>? oauths,
+    TextTheme theme,
+    AppLocalizations locale,
+  ) {
     if (oauths == null) {
       return [];
     }
@@ -387,8 +403,8 @@ class _LoginState extends State<LoginPage> {
               minimumSize: const Size.fromHeight(50),
               shape: const ContinuousRectangleBorder(),
             ),
-            onPressed: () => _submitOauth(o),
-            child: Text('Login with ${o.name}', style: theme.titleLarge),
+            onPressed: () => _submitOauth(o, locale),
+            child: Text(locale.loginwith(o.name), style: theme.titleLarge),
           ),
         )
         .toList();

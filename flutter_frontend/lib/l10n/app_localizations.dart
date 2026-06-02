@@ -361,6 +361,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'no tasks'**
   String get notask;
+
+  /// No description provided for @serverurl.
+  ///
+  /// In en, this message translates to:
+  /// **'Server url'**
+  String get serverurl;
+
+  /// No description provided for @url.
+  ///
+  /// In en, this message translates to:
+  /// **'url'**
+  String get url;
+
+  /// No description provided for @invalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid {item}'**
+  String invalid(String item);
+
+  /// No description provided for @login.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get login;
+
+  /// No description provided for @loginwith.
+  ///
+  /// In en, this message translates to:
+  /// **'Login with {provider}'**
+  String loginwith(String provider);
+
+  /// No description provided for @create.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get create;
+
+  /// No description provided for @createAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your account'**
+  String get createAccount;
+
+  /// No description provided for @adminDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'This is the admin account for the server'**
+  String get adminDescription;
+
+  /// No description provided for @welcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome'**
+  String get welcome;
+
+  /// No description provided for @welcomenew.
+  ///
+  /// In en, this message translates to:
+  /// **'User created, welcome'**
+  String get welcomenew;
+
+  /// No description provided for @deleteUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete the user ?'**
+  String get deleteUser;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
 }
 
 class _AppLocalizationsDelegate

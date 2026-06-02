@@ -147,4 +147,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notask => 'no tasks';
+
+  @override
+  String get serverurl => 'Server url';
+
+  @override
+  String get url => 'url';
+
+  @override
+  String invalid(String item) {
+    return 'Invalid $item';
+  }
+
+  @override
+  String get login => 'Login';
+
+  @override
+  String loginwith(String provider) {
+    return 'Login with $provider';
+  }
+
+  @override
+  String get create => 'Create';
+
+  @override
+  String get createAccount => 'Create your account';
+
+  @override
+  String get adminDescription => 'This is the admin account for the server';
+
+  @override
+  String get welcome => 'Welcome';
+
+  @override
+  String get welcomenew => 'User created, welcome';
+
+  @override
+  String get deleteUser => 'Delete the user ?';
+
+  @override
+  String get delete => 'Delete';
 }

@@ -67,41 +67,39 @@ class _PatientAddState extends State<PatientAdd> {
         _status = SubmissionStatus.inProgress;
       });
       try {
-        if(widget.edit != null){
+        if (widget.edit != null) {
           await Dependencies.services.user.updatePatient(
-          UpdatePatient(
-            id: widget.edit?.id,
-            name: _controllerName.text,
-            surname: _controllerSurname.text,
-            identifier: _controllerNiss.text,
-            profilePicture: _pictureData != null
-                ? base64Encode(_pictureData!)
-                : null,
-          ),
-        );
-        }
-        else{
-        // save the user
-        await Dependencies.services.user.addPerson(
-          PersonCreation(
-            name: _controllerName.text,
-            surname: _controllerSurname.text,
-            identifier: _controllerNiss.text,
-            types: [],
-            profilePicture: _pictureData != null
-                ? base64Encode(_pictureData!)
-                : null,
-          ),
-        );
+            UpdatePatient(
+              id: widget.edit?.id,
+              name: _controllerName.text,
+              surname: _controllerSurname.text,
+              identifier: _controllerNiss.text,
+              profilePicture: _pictureData != null
+                  ? base64Encode(_pictureData!)
+                  : null,
+            ),
+          );
+        } else {
+          // save the user
+          await Dependencies.services.user.addPerson(
+            PersonCreation(
+              name: _controllerName.text,
+              surname: _controllerSurname.text,
+              identifier: _controllerNiss.text,
+              types: [],
+              profilePicture: _pictureData != null
+                  ? base64Encode(_pictureData!)
+                  : null,
+            ),
+          );
         }
 
         _formKey.currentState?.reset();
         widget.callback.call();
         if (localContext.mounted) {
           Navigator.of(localContext).pop();
+          Notify.show(Translation.locale(localContext).added);
         }
-
-        Notify.show(Translation.locale(context).added);
 
         setState(() {
           _status = SubmissionStatus.success;

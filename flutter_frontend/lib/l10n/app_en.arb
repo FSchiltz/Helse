@@ -114,5 +114,41 @@
     "nodata": "no data",
     "@nodata": {},
     "notask": "no tasks",
-    "@notask": {}
+    "@notask": {},
+    "serverurl": "Server url",
+    "@serverurl": {},
+    "url": "url",
+    "@url": {},
+    "invalid": "Invalid {item}",
+    "@invalid": {
+        "placeholders": {
+            "item": {
+                "type": "String"
+            }
+        }
+    },
+    "login": "Login",
+    "@login": {},
+    "loginwith": "Login with {provider}",
+    "@loginwith": {
+        "placeholders": {
+            "provider": {
+                "type": "String"
+            }
+        }
+    },
+    "create": "Create",
+    "@create": {},
+    "createAccount": "Create your account",
+    "@createAccount": {},
+    "adminDescription": "This is the admin account for the server",
+    "@adminDescription": {},
+    "welcome": "Welcome",
+    "@welcome": {},
+    "welcomenew": "User created, welcome",
+    "@welcomenew": {},
+    "deleteUser": "Delete the user ?",
+    "@deleteUser": {},
+    "delete": "Delete",
+    "@delete": {}
 }
