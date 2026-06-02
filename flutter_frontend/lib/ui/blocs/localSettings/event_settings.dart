@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
+import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/localSettings/ordered_edit_item.dart';
 import 'package:helse/ui/common/loading_builder.dart';
@@ -31,16 +33,16 @@ class _EventSettingsState extends State<EventSettings> {
         .toList();
   }
 
-  void _submitEvent(List<OrderedItem> events) async {
+  void _submitEvent(List<OrderedItem> events, AppLocalizations locale) async {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
         await Dependencies.logics.settings.saveEvents(events, true);
 
-        Notify.show("Saved Successfully");
+        Notify.show(locale.saved);
       }
     } catch (ex) {
-      Notify.showError("Error: $ex");
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 
@@ -50,6 +52,7 @@ class _EventSettingsState extends State<EventSettings> {
     return LoadingBuilder(
       _getData,
       builder: (context, data, reset) {
+        var locale = Translation.locale(context);
         return Padding(
           padding: const EdgeInsets.all(32.0),
           child: Form(
@@ -60,7 +63,7 @@ class _EventSettingsState extends State<EventSettings> {
                 Row(
                   children: [
                     Text(
-                      "Events",
+                      locale.events,
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     SizedBox(width: 32),
@@ -72,10 +75,13 @@ class _EventSettingsState extends State<EventSettings> {
                           shape: const ContinuousRectangleBorder(),
                         ),
                         onPressed: () {
-                          _submitEvent(data.map((e) => e.ordered()).toList());
+                          _submitEvent(
+                            data.map((e) => e.ordered()).toList(),
+                            locale,
+                          );
                           reset();
                         },
-                        child: const Text("Save"),
+                        child: Text(locale.save),
                       ),
                     ),
                   ],
@@ -86,8 +92,8 @@ class _EventSettingsState extends State<EventSettings> {
                     child: FittedBox(
                       child: DataTable(
                         columns: [
-                          DataColumn(label: Expanded(child: Text("Name"))),
-                          DataColumn(label: Expanded(child: Text("Visible"))),
+                          DataColumn(label: Expanded(child: Text(locale.name))),
+                          DataColumn(label: Expanded(child: Text(locale.visible))),
                         ],
                         rows: data
                             .map(

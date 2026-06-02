@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 
 import 'square_text_field.dart';
 
@@ -7,7 +8,7 @@ class PasswordInput extends StatefulWidget {
   final String? Function(String? value)? validate;
   final FocusNode? nextFocus;
   final FocusNode? focus;
-  final String text;
+  final String? text;
 
   const PasswordInput({
     super.key,
@@ -15,7 +16,7 @@ class PasswordInput extends StatefulWidget {
     this.nextFocus,
     this.validate,
     this.focus,
-    this.text = "Password",
+    this.text,
   });
 
   @override
@@ -42,7 +43,7 @@ class _PasswordInputState extends State<PasswordInput> {
       controller: widget.controller,
       obscureText: _obscurePassword,
       focusNode: widget.focus,
-      label: widget.text,
+      label: widget.text ?? Translation.locale(context).password,
       icon: Icons.password_sharp,
       suffixIcon: iconButton,
       type: TextInputType.visiblePassword,

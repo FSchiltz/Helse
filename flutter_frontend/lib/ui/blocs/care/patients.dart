@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/care/patients_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
@@ -20,17 +21,14 @@ class Patients extends StatelessWidget {
       _getData,
       builder: (context, data, reset) {
         final cards = data.map((p) => PatientsCard(p, reset)).toList();
-
+        var locale = Translation.locale(context);
         return SizedBox(
           width: 320,
           child: Column(
             children: [
               Row(
                 children: [
-                  Text(
-                    "Patients",
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
+                  Text(locale.patients, style: Theme.of(context).textTheme.headlineSmall),
                   IconButton(
                     onPressed: () {
                       showDialog<void>(

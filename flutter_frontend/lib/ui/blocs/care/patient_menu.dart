@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/care/patient_add.dart';
 import 'package:helse/ui/blocs/care/share_patient_dialog.dart';
@@ -20,6 +21,7 @@ class _PatientMenuState extends State<PatientMenu> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
+    var locale = Translation.locale(context);
     return MenuAnchor(
       controller: _controller,
       childFocusNode: _buttonFocusNode,
@@ -38,7 +40,7 @@ class _PatientMenuState extends State<PatientMenu> {
         Container(
           margin: EdgeInsets.all(8),
           child: ElevatedButton.icon(
-            label: Text("Edit"),
+            label: Text(locale.edit),
             onPressed: () {
               showDialog<void>(
                 context: context,
@@ -53,7 +55,7 @@ class _PatientMenuState extends State<PatientMenu> {
         Container(          
           margin: EdgeInsets.all(8),
           child: ElevatedButton.icon(
-            label: Text("Share"),
+            label: Text(locale.share),
             onPressed: () {
               showDialog<void>(
                 context: context,
@@ -68,7 +70,7 @@ class _PatientMenuState extends State<PatientMenu> {
         Container(
           margin: EdgeInsets.all(8),
           child: ElevatedButton.icon(
-            label: Text('Import'),
+            label: Text(locale.import),
             onPressed: () {
               showDialog<void>(
                 context: context,

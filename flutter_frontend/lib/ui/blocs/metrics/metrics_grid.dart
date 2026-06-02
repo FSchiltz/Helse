@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/metrics/metrics_group.dart';
 
 import '../../../di/dependencies.dart';
@@ -70,7 +71,7 @@ class _MetricsGridState extends State<MetricsGrid> {
 
   Widget _getGrid(List<MetricGroup> cached) {
     if (cached.isEmpty) {
-      return const Text("No metrics");
+      return Text(Translation.locale(context).nodata);
     } else {
       return Column(
         children: cached

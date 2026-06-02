@@ -1,0 +1,182 @@
+{
+    "@@locale": "en",
+    "administration": "Administration",
+    "@administration": {},
+    "logout": "Logout",
+    "@logout": {},
+    "settings": "Settings",
+    "@settings": {},
+    "import": "Import",
+    "@import": {},
+    "days": "days",
+    "@days": {},
+    "months": "months",
+    "@months": {},
+    "years": "years",
+    "@years": {},
+    "yeartodate": "Year to date",
+    "@yeartodate": {},
+    "today": "Today",
+    "@today": {},
+    "importHistory": "File import history",
+    "@importHistory": {},
+    "syncHistory": "Health sync history",
+    "@syncHistory": {},
+    "initialrange": "Initial range",
+    "@initialrange": {},
+    "start": "start",
+    "@start": {},
+    "stop": "stop",
+    "@stop": {},
+    "end": "end",
+    "@end": {},
+    "notificationTime": "notification time",
+    "@notificationTime": {},
+    "error": "Error: {error}",
+    "@error": {
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "password": "Password",
+    "@password": {},
+    "username": "Username",
+    "@username": {},
+    "name": "Name",
+    "@name": {},
+    "surname": "Surname",
+    "@surname": {},
+    "confirmpassword": "Confirm Password",
+    "@confirmpassword": {},
+    "email": "Email",
+    "@email": {},
+    "type": "Type",
+    "@type": {},
+    "eventSettings": "Events Settings",
+    "@eventSettings": {},
+    "generalSettings": "General Settings",
+    "@generalSettings": {},
+    "metricSettings": "Metrics Settings",
+    "@metricSettings": {},
+    "userSettings": "Users Settings",
+    "@userSettings": {},
+    "added": "Added succesfully",
+    "@added": {},
+    "add": "Add",
+    "@add": {},
+    "addItem": "Add a new {item}",
+    "@addItem": {
+        "placeholders": {
+            "item": {
+                "type": "String"
+            }
+        }
+    },
+    "submit": "Submit",
+    "@submit": {},
+    "description": "Description",
+    "@description": {},
+    "addPatients": "Add a new patient",
+    "@addPatients": {},
+    "edit": "Edit",
+    "@edit": {},
+    "share": "Share",
+    "@share": {},
+    "patients": "Patients",
+    "@patients": {},
+    "ok": "OK",
+    "@ok": {},
+    "cancel": "Cancel",
+    "@cancel": {},
+    "deleteMetric": "Delete the metric ?",
+    "@deleteMetric": {},
+    "deleteEvent": "Delete the event ?",
+    "@deleteEvent": {},
+    "detailof": "Detail of {item}",
+    "@detailof": {
+        "placeholders": {
+            "item": {
+                "type": "String"
+            }
+        }
+    },
+    "range": "from {from} to {to}",
+    "@range": {
+        "placeholders": {
+            "from": {
+                "type": "String"
+            },
+            "to": {
+                "type": "String"
+            }
+        }
+    },
+    "nodata": "no data",
+    "@nodata": {},
+    "notask": "no tasks",
+    "@notask": {},
+    "serverurl": "Server url",
+    "@serverurl": {},
+    "url": "url",
+    "@url": {},
+    "invalid": "Invalid {item}",
+    "@invalid": {
+        "placeholders": {
+            "item": {
+                "type": "String"
+            }
+        }
+    },
+    "login": "Login",
+    "@login": {},
+    "loginwith": "Login with {provider}",
+    "@loginwith": {
+        "placeholders": {
+            "provider": {
+                "type": "String"
+            }
+        }
+    },
+    "create": "Create",
+    "@create": {},
+    "createAccount": "Create your account",
+    "@createAccount": {},
+    "adminDescription": "This is the admin account for the server",
+    "@adminDescription": {},
+    "welcome": "Welcome",
+    "@welcome": {},
+    "welcomenew": "User created, welcome",
+    "@welcomenew": {},
+    "deleteUser": "Delete the user ?",
+    "@deleteUser": {},
+    "delete": "Delete",
+    "@delete": {},
+    "saved": "Saved succefully",
+    "@saved": {},
+    "save": "Save",
+    "@save": {},
+    "events": "Events",
+    "@events": {},
+    "metrics": "Metrics",
+    "@metrics": {},
+    "metricgroups": "Metric Groups",
+    "@metricgroups": {},
+    "visible": "Visible",
+    "@visible": {},
+    "widgetType": "Widget type",
+    "@widgetType": {},
+    "detailType": "Detail type",
+    "@detailType": {},
+    "date": "Date",
+    "@date": {},
+    "value": "Value",
+    "@value": {},
+    "tag": "Tag",
+    "@tag": {},
+    "source": "Source",
+    "@source": {},
+    "treatment": "treatment",
+    "@treatment": {}
+}

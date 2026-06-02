@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/administration/users/delete_user.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
@@ -23,6 +24,7 @@ class _UsersViewState extends State<UsersView> {
     return LoadingBuilder(
       _getData,
       builder: (context, data, reset) {
+        var locale = Translation.locale(context);
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -50,13 +52,13 @@ class _UsersViewState extends State<UsersView> {
             SingleChildScrollView(
               child: FittedBox(
                 child: DataTable(
-                  columns: const [
+                  columns: [
                     DataColumn(label: Expanded(child: Text("Id"))),
-                    DataColumn(label: Expanded(child: Text("Type"))),
-                    DataColumn(label: Expanded(child: Text("Username"))),
-                    DataColumn(label: Expanded(child: Text("Email"))),
-                    DataColumn(label: Expanded(child: Text("Name"))),
-                    DataColumn(label: Expanded(child: Text("Surname"))),
+                    DataColumn(label: Expanded(child: Text(locale.type))),
+                    DataColumn(label: Expanded(child: Text(locale.username))),
+                    DataColumn(label: Expanded(child: Text(locale.email))),
+                    DataColumn(label: Expanded(child: Text(locale.name))),
+                    DataColumn(label: Expanded(child: Text(locale.surname))),
                     DataColumn(label: Expanded(child: Text(""))),
                   ],
                   rows: data

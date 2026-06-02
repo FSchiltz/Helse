@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
+import 'package:helse/l10n/app_localizations.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../logic/event.dart';
@@ -49,8 +51,9 @@ class _MetricAddState extends State<MetricAdd> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
+    var locale = Translation.locale(context);
     return SquareDialog(
-      title: Text("Add a new ${widget.type.name} value"),
+      title: Text(locale.addItem(widget.type.name)),
       actions: [
         Container(
           constraints: const BoxConstraints(maxWidth: 200),
@@ -62,8 +65,8 @@ class _MetricAddState extends State<MetricAdd> {
                     shape: const ContinuousRectangleBorder(),
                   ),
                   key: const Key('loginForm_continue_raisedButton'),
-                  onPressed: _submit,
-                  child: const Text('Submit'),
+                  onPressed: () => _submit(locale),
+                  child: Text(locale.submit),
                 ),
         ),
       ],
@@ -78,19 +81,19 @@ class _MetricAddState extends State<MetricAdd> {
                   SquareTextField(
                     theme: theme,
                     icon: Icons.add_sharp,
-                    label: "Value",
+                    label: locale.value,
                     controller: _value,
                   ),
                   const SizedBox(height: 20),
                   SquareTextField(
                     theme: theme,
                     icon: Icons.design_services_outlined,
-                    label: "Tag",
+                    label: locale.tag,
                     controller: _tag,
                   ),
                   const SizedBox(height: 20),
                   DateInput(
-                    "Date",
+                    locale.date,
                     _date,
                     (value) => setState(() {
                       _date = value ?? DateTime.now();
@@ -105,7 +108,7 @@ class _MetricAddState extends State<MetricAdd> {
     );
   }
 
-  void _submit() async {
+  void _submit(AppLocalizations locale) async {
     var localContext = context;
     try {
       setState(() {
@@ -131,13 +134,16 @@ class _MetricAddState extends State<MetricAdd> {
             value: _value.text,
             source: FileTypes.none,
           );
-          await Dependencies.services.metric.addMetrics(metric, person: widget.person);
+          await Dependencies.services.metric.addMetrics(
+            metric,
+            person: widget.person,
+          );
         }
 
         if (localContext.mounted) {
           Navigator.of(localContext).pop();
         }
-        Notify.show("Metric added");
+        Notify.show(locale.added);
 
         widget.callback();
         setState(() {
@@ -149,7 +155,7 @@ class _MetricAddState extends State<MetricAdd> {
         });
       }
     } catch (ex) {
-      Notify.showError("Error: $ex");
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 }

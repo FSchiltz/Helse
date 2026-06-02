@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 
 class DeleteMetric extends StatelessWidget {
   final Function callback;
@@ -6,13 +7,14 @@ class DeleteMetric extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var locale = Translation.locale(context);
     return AlertDialog(
       icon: const Icon(Icons.delete_sharp),
-      title: const Text('Delete the metric ?'),
+      title: Text(locale.deleteMetric),
       actions: <Widget>[
         TextButton(
           onPressed: () => Navigator.pop(context, 'Cancel'),
-          child: const Text('Cancel'),
+          child: Text(locale.cancel),
         ),
         TextButton(
           onPressed: () async {
@@ -21,7 +23,7 @@ class DeleteMetric extends StatelessWidget {
               Navigator.pop(context, 'OK');
             }
           },
-          child: const Text('OK'),
+          child: Text(locale.ok),
         ),
       ],
     );

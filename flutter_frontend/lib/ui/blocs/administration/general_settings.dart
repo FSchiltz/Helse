@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/administration/settings/gotify.dart';
 import 'package:helse/ui/blocs/administration/settings/oauth.dart';
 import 'package:helse/ui/blocs/administration/settings/proxy.dart';
@@ -19,7 +20,7 @@ class GeneralSettings extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16),
             child: Text(
-              'General Settings',
+              Translation.locale(context).generalSettings,
               style: Theme.of(context).textTheme.displaySmall,
             ),
           ),

@@ -47,35 +47,40 @@ class _CalendarViewState extends State<CalendarView> {
     }
 
     _onDaySelected(_focusedDay, _focusedDay);
+
+    if (widget.date.duration.inDays <= 7) {
+      _calendarFormat = CalendarFormat.twoWeeks;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TableCalendar<CalendarEvent>(
-          firstDay: widget.date.start,
-          lastDay: widget.date.end,
-          focusedDay: _focusedDay,
-          selectedDayPredicate: (day) {
-            return isSameDay(_selectedDay, day);
-          },
-          onPageChanged: (focusedDay) {
-            _focusedDay = focusedDay;
-          },
-          calendarFormat: _calendarFormat,
-          onFormatChanged: (format) => setState(() {
-            _calendarFormat = format;
-          }),
-          availableGestures: AvailableGestures.all,
-          calendarStyle: const CalendarStyle(
-            isTodayHighlighted: true,
-            //selectedDecoration: BoxDecoration(color: Colors.red),
-            outsideDaysVisible: false,
+        if (widget.date.duration.inHours > 24)
+          TableCalendar<CalendarEvent>(
+            firstDay: widget.date.start,
+            lastDay: widget.date.end,
+            focusedDay: _focusedDay,
+            selectedDayPredicate: (day) {
+              return isSameDay(_selectedDay, day);
+            },
+            onPageChanged: (focusedDay) {
+              _focusedDay = focusedDay;
+            },
+            calendarFormat: _calendarFormat,
+            onFormatChanged: (format) => setState(() {
+              _calendarFormat = format;
+            }),
+            availableGestures: AvailableGestures.all,
+            calendarStyle: const CalendarStyle(
+              isTodayHighlighted: true,
+              //selectedDecoration: BoxDecoration(color: Colors.red),
+              outsideDaysVisible: false,
+            ),
+            rangeSelectionMode: RangeSelectionMode.enforced,
+            onDaySelected: _onDaySelected,
           ),
-          rangeSelectionMode: RangeSelectionMode.enforced,
-          onDaySelected: _onDaySelected,
-        ),
         Text(
           "Showing events of ${DateHelper.formatDate(_selectedDay, context: context)}",
         ),

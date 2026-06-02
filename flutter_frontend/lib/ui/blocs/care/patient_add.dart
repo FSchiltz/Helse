@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 
@@ -66,41 +67,39 @@ class _PatientAddState extends State<PatientAdd> {
         _status = SubmissionStatus.inProgress;
       });
       try {
-        if(widget.edit != null){
+        if (widget.edit != null) {
           await Dependencies.services.user.updatePatient(
-          UpdatePatient(
-            id: widget.edit?.id,
-            name: _controllerName.text,
-            surname: _controllerSurname.text,
-            identifier: _controllerNiss.text,
-            profilePicture: _pictureData != null
-                ? base64Encode(_pictureData!)
-                : null,
-          ),
-        );
-        }
-        else{
-        // save the user
-        await Dependencies.services.user.addPerson(
-          PersonCreation(
-            name: _controllerName.text,
-            surname: _controllerSurname.text,
-            identifier: _controllerNiss.text,
-            types: [],
-            profilePicture: _pictureData != null
-                ? base64Encode(_pictureData!)
-                : null,
-          ),
-        );
+            UpdatePatient(
+              id: widget.edit?.id,
+              name: _controllerName.text,
+              surname: _controllerSurname.text,
+              identifier: _controllerNiss.text,
+              profilePicture: _pictureData != null
+                  ? base64Encode(_pictureData!)
+                  : null,
+            ),
+          );
+        } else {
+          // save the user
+          await Dependencies.services.user.addPerson(
+            PersonCreation(
+              name: _controllerName.text,
+              surname: _controllerSurname.text,
+              identifier: _controllerNiss.text,
+              types: [],
+              profilePicture: _pictureData != null
+                  ? base64Encode(_pictureData!)
+                  : null,
+            ),
+          );
         }
 
         _formKey.currentState?.reset();
         widget.callback.call();
         if (localContext.mounted) {
           Navigator.of(localContext).pop();
+          Notify.show(Translation.locale(localContext).added);
         }
-
-        Notify.show("Added succesfully");
 
         setState(() {
           _status = SubmissionStatus.success;
@@ -117,8 +116,9 @@ class _PatientAddState extends State<PatientAdd> {
 
   @override
   Widget build(BuildContext context) {
+    var locale = Translation.locale(context);
     return SquareDialog(
-      title: const Text("Add"),
+      title: Text(locale.add),
       actions: [
         _status == SubmissionStatus.inProgress
             ? const HelseLoader()
@@ -129,7 +129,7 @@ class _PatientAddState extends State<PatientAdd> {
                 ),
                 key: const Key('loginForm_continue_raisedButton'),
                 onPressed: _submit,
-                child: const Text('Submit'),
+                child: Text(locale.submit),
               ),
       ],
       content: Container(
@@ -141,7 +141,7 @@ class _PatientAddState extends State<PatientAdd> {
               child: Column(
                 children: [
                   Text(
-                    "Add a new patient",
+                    locale.addPatients,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 10),

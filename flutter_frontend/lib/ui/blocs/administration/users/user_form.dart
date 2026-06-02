@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/password_input.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.enums.swagger.dart';
@@ -95,7 +96,7 @@ class _UserFormState extends State<UserForm> {
         if (widget.controllerPassword != null) const SizedBox(height: 10),
         if (widget.controllerPassword != null)
           PasswordInput(
-            text: "Confirm Password",
+            text: Translation.locale(context).confirmpassword,
             controller: widget.controllerConFirmPassword,
             focus: _focusNodeConfirmPassword,
             validate: validateConfirmPassword,

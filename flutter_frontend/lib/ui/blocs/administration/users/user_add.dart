@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/administration/users/userright_input.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 
@@ -45,6 +46,7 @@ class _SignupState extends State<UserAdd> {
 
   @override
   Widget build(BuildContext context) {
+    var locale = Translation.locale(context);
     return SquareDialog(
       title: const Text("Add a new user"),
       actions: [
@@ -54,7 +56,7 @@ class _SignupState extends State<UserAdd> {
             shape: const ContinuousRectangleBorder(),
           ),
           onPressed: submit,
-          child: const Text("Create"),
+          child: Text(locale.create),
         ),
       ],
       content: Form(

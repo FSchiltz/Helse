@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/date.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/event.dart';
 import 'package:helse/logic/fit/task_bloc.dart';
 
@@ -10,10 +11,11 @@ class TaskStatusDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var locale = Translation.locale(context);
     return AlertDialog(
       title: Text(title),
       content: tasks.isEmpty
-          ? const Text('No tasks')
+          ? Text(locale.notask)
           : Scrollbar(
               interactive: true,
               child: SingleChildScrollView(
@@ -61,7 +63,7 @@ class TaskStatusDialog extends StatelessWidget {
                                     task.status ?? '',
                                     style: theme.bodySmall,
                                   ),
-                            
+
                                   if (task.progress != null &&
                                       (task.progress ?? 0) < 100)
                                     Row(
@@ -77,9 +79,7 @@ class TaskStatusDialog extends StatelessWidget {
                                           ),
                                         ),
                                         SizedBox(width: 12),
-                                        Expanded(
-                                          child: Text(task.state.name),
-                                        ),
+                                        Expanded(child: Text(task.state.name)),
                                       ],
                                     ),
                                   const SizedBox(height: 10),
