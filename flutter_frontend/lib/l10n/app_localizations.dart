@@ -511,6 +511,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Source'**
   String get source;
+
+  /// No description provided for @treatment.
+  ///
+  /// In en, this message translates to:
+  /// **'treatment'**
+  String get treatment;
 }
 
 class _AppLocalizationsDelegate

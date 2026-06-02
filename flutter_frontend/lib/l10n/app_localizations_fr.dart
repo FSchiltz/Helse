@@ -226,4 +226,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get source => 'Source';
+
+  @override
+  String get treatment => 'traitement';
 }
