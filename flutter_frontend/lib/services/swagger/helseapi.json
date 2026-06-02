@@ -2043,13 +2043,17 @@
           },
           "source": {
             "$ref": "#/components/schemas/FileTypes"
+          },
+          "sourceId": {
+            "type": "string"
           }
         }
       },
       "CreateMetric": {
         "required": [
           "date",
-          "value"
+          "value",
+          "sourceId"
         ],
         "type": "object",
         "properties": {
@@ -2076,6 +2080,9 @@
           },
           "source": {
             "$ref": "#/components/schemas/FileTypes"
+          },
+          "sourceId": {
+            "type": "string"
           }
         }
       },
@@ -2208,6 +2215,9 @@
           },
           "source": {
             "$ref": "#/components/schemas/FileTypes"
+          },
+          "sourceId": {
+            "type": "string"
           }
         }
       },
@@ -2463,7 +2473,8 @@
           "id",
           "person",
           "date",
-          "value"
+          "value",
+          "sourceId"
         ],
         "type": "object",
         "properties": {
@@ -2514,6 +2525,9 @@
           },
           "source": {
             "$ref": "#/components/schemas/FileTypes"
+          },
+          "sourceId": {
+            "type": "string"
           }
         }
       },
@@ -2699,6 +2713,7 @@
           "order": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
+              "null",
               "integer",
               "string"
             ],
@@ -3128,13 +3143,17 @@
           },
           "source": {
             "$ref": "#/components/schemas/FileTypes"
+          },
+          "sourceId": {
+            "type": "string"
           }
         }
       },
       "UpdateMetric": {
         "required": [
           "date",
-          "value"
+          "value",
+          "sourceId"
         ],
         "type": "object",
         "properties": {
@@ -3169,6 +3188,9 @@
           },
           "source": {
             "$ref": "#/components/schemas/FileTypes"
+          },
+          "sourceId": {
+            "type": "string"
           }
         }
       },

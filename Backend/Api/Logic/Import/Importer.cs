@@ -20,12 +20,14 @@ public abstract class Importer(IHealthContext db, long user, long patient)
         await using var transaction = await db.BeginTransactionAsync();
 
         // check if the event exists
-        var fromDb = await db.ExistsEvent(patient, e.Type, e.Start, e.Stop, (int)e.Source, e.Description);
+        var fromDb = await db.ExistsEvent(patient, e.Type, (int)e.Source, e.SourceId);
 
         if (!fromDb)
         {
             await db.Insert(e, patient, user);
         }
+
+        // TODO update
 
         await transaction.CommitAsync();
     }
@@ -35,12 +37,14 @@ public abstract class Importer(IHealthContext db, long user, long patient)
         await using var transaction = await db.BeginTransactionAsync();
 
         // check if the metric exists
-        var fromDb = await db.ExistsMetric(patient, metric.Type, metric.Value, (int)metric.Source, metric.Date);
+        var fromDb = await db.ExistsMetric(patient, metric.Type, (int)metric.Source, metric.SourceId);
 
         if (!fromDb)
         {
             await db.Insert(metric, patient, user);
         }
+
+        // TODO update
 
         await transaction.CommitAsync();
     }

@@ -14,6 +14,7 @@ public class MigrationHelper(MigrationSettings settings, ILogger<MigrationHelper
         var result = DeployChanges.To.PostgresqlDatabase(settings.ConnectionString)
             .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
             .LogTo(logger)
+            .WithTransactionPerScript()
             .Build()
             .PerformUpgrade();
 

@@ -69,4 +69,7 @@ public class Event
 
     [Column]
     public int Source { get; set; }
+
+    [Column]
+    public required string SourceId { get; set; }
 }

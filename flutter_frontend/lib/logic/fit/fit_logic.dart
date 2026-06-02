@@ -336,8 +336,9 @@ class FitLogic {
           date: point.dateFrom.toUtc(),
           value: _convertValue(point.value) ?? '',
           source: FileTypes.googlehealthconnect,
-          tag: point.typeString,
+          tag: point.recordingMethod.name,
           type: metricType,
+          sourceId: point.uuid
         );
         metrics.add(metric);
       }
@@ -348,7 +349,8 @@ class FitLogic {
           stop: point.dateTo.toUtc(),
           description: point.typeString,
           source: FileTypes.googlehealthconnect,
-          tag: _convertValue(point.value) ?? '',
+          sourceId: point.uuid,
+          tag: point.recordingMethod.name,
           type: eventType,
         );
         events.add(event);

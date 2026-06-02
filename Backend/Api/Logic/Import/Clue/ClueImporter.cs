@@ -38,7 +38,7 @@ public class ClueImporter(Stream file, IHealthContext db, long user, long patien
                 var metric = new CreateMetric
                 {
                     Type = (int)type,
-                    Tag = node.Id + value.Option,
+                    SourceId = node.Id + value.Option,
                     Source = FileTypes.Clue,
                     Date = DateTime.Parse(node.Date),
                     Value = $"{subValue}{value.Option?.Replace('_', ' ')}",

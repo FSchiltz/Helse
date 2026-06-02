@@ -1,4 +1,3 @@
-BEGIN;
 LOCK TABLE health.MetricType IN EXCLUSIVE MODE;
 
 ALTER TABLE health.MetricType ADD COLUMN Visible boolean NOT NULL DEFAULT TRUE;
@@ -29,5 +28,3 @@ INSERT INTO health.MetricType(id, description, name, unit, type, summaryType, us
 	VALUES (9, null, 'Menstruation', '', 0, 0, false),
     (10, null, 'Pain', '', 0, 0, false),
     (11, null, 'Mood', '', 0, 0, false);
-
-COMMIT;

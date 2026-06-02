@@ -1,5 +1,3 @@
-BEGIN;
-
 LOCK TABLE health.Eventtype IN EXCLUSIVE MODE;
 
 ALTER TABLE
@@ -63,5 +61,3 @@ INSERT INTO
   health.EventType(id, description, name, standalone, usereditable)
 VALUES
   (3, null, 'Workout', true, false);
-
-COMMIT;

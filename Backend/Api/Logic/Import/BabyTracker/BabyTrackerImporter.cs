@@ -71,8 +71,11 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
             Date = ToDate(item.FromDate),
             Source = FileTypes.BabyTracker,
             Type = (long)MetricTypes.Diaper,
+            SourceId = GetKey(item),
         });
     }
+
+    private static string GetKey(Record item) => $"{item.FromDate}_{item.ToDate}_{item.Subtype}";
 
     private async Task ImportLeisure(Record item)
     {
@@ -87,6 +90,7 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
                     Tag = item.Details,
                     Type = (int)EventTypes.Bath,
                     Source = FileTypes.BabyTracker,
+                    SourceId = GetKey(item),
                 });
                 break;
             default:
@@ -105,6 +109,7 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
             Tag = item.Details,
             Type = (int)EventTypes.Sleep,
             Source = FileTypes.BabyTracker,
+            SourceId = GetKey(item),
         });
     }
 
@@ -123,6 +128,7 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
             Date = ToDate(item.FromDate),
             Source = FileTypes.BabyTracker,
             Type = type,
+            SourceId = GetKey(item),
         });
     }
 
@@ -146,10 +152,11 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
             Tag = $"{item.Amount}{GetUnit(item.Unit)} {item.Details}",
             Type = (int)EventTypes.Feeding,
             Source = FileTypes.BabyTracker,
+            SourceId = GetKey(item),
         });
     }
 
-    private string GetUnit(string unit)
+    private static string GetUnit(string unit)
     {
         return unit.ToUpper() switch
         {
@@ -160,10 +167,7 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
         };
     }
 
-    private DateTime ToDate(string date)
-    {
-        return DateTime.Parse(date);
-    }
+    private static DateTime ToDate(string date) => DateTime.Parse(date);
 
     private async Task ImportHealth(Record item)
     {
@@ -176,6 +180,7 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
                     Date = ToDate(item.FromDate),
                     Source = FileTypes.BabyTracker,
                     Type = (int)MetricTypes.Medication,
+                    SourceId = GetKey(item),
                 });
                 break;
             case "HEALTH_MEDICATIONS":
@@ -185,6 +190,7 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
                     Date = ToDate(item.FromDate),
                     Source = FileTypes.BabyTracker,
                     Type = (int)MetricTypes.Medication,
+                    SourceId = GetKey(item),
                 });
                 break;
             case "HEALTH_TEMPERATURE":
@@ -194,6 +200,7 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
                     Date = ToDate(item.FromDate),
                     Source = FileTypes.BabyTracker,
                     Type = (int)MetricTypes.Temperature,
+                    SourceId = GetKey(item),
                 });
                 break;
             default:

@@ -124,6 +124,7 @@ class _MetricAddState extends State<MetricAdd> {
             tag: _tag.text,
             value: _value.text,
             source: FileTypes.none,
+            sourceId: "",
           );
           await Dependencies.services.metric.updateMetrics(metric);
         } else {
@@ -133,6 +134,7 @@ class _MetricAddState extends State<MetricAdd> {
             tag: _tag.text,
             value: _value.text,
             source: FileTypes.none,
+            sourceId: "",
           );
           await Dependencies.services.metric.addMetrics(
             metric,

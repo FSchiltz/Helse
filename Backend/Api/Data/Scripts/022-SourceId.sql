@@ -1,0 +1,9 @@
+ALTER TABLE
+    health.Metric
+ADD
+    COLUMN SourceId VARCHAR NOT NULL DEFAULT '';
+
+ALTER TABLE
+    health.Event
+ADD
+    COLUMN SourceId VARCHAR NOT NULL DEFAULT '';

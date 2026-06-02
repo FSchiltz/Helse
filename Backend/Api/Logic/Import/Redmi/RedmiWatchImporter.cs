@@ -11,7 +11,7 @@ using CsvHelper;
 
 namespace Api.Logic.Import.Redmi;
 
-public class RedmiWatch(Stream file, IHealthContext db, long user, long patient) : FileImporter(file, db, user, patient)
+public class RedmiWatchImporter(Stream file, IHealthContext db, long user, long patient) : FileImporter(file, db, user, patient)
 {
     private const string MaxSpo = "max_spo2";
     private const string MinSpo = "min_spo2";
@@ -84,9 +84,10 @@ public class RedmiWatch(Stream file, IHealthContext db, long user, long patient)
                         {
                             Start = DateTimeOffset.FromUnixTimeSeconds(item.Start_time).DateTime,
                             Stop = DateTimeOffset.FromUnixTimeSeconds(item.End_time).DateTime,
-                            Tag = item.GetKey(),
                             Type = (int)EventTypes.Sleep,
                             Description = item.State.ToString(),
+                            SourceId = item.GetKey(),
+                            Source = FileTypes.RedmiWatch,
                         });
                     }
                     break;
@@ -100,7 +101,7 @@ public class RedmiWatch(Stream file, IHealthContext db, long user, long patient)
 
                     await ImportMetric(new CreateMetric()
                     {
-                        Tag = record.GetKey(),
+                        SourceId = record.GetKey(),
                         Value = weight.Weight,
                         Date = DateTimeOffset.FromUnixTimeSeconds(weight.Time ?? weight.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Wheight,
@@ -117,7 +118,7 @@ public class RedmiWatch(Stream file, IHealthContext db, long user, long patient)
 
                     await ImportMetric(new CreateMetric()
                     {
-                        Tag = record.GetKey(),
+                        SourceId = record.GetKey(),
                         Value = steps.Steps.ToString(),
                         Date = DateTimeOffset.FromUnixTimeSeconds(steps.Time ?? steps.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Steps,
@@ -134,7 +135,7 @@ public class RedmiWatch(Stream file, IHealthContext db, long user, long patient)
 
                     await ImportMetric(new CreateMetric()
                     {
-                        Tag = record.GetKey(),
+                        SourceId = record.GetKey(),
                         Value = calorie.Calories.ToString(),
                         Date = DateTimeOffset.FromUnixTimeSeconds(calorie.Time ?? calorie.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Calories,
@@ -155,7 +156,7 @@ public class RedmiWatch(Stream file, IHealthContext db, long user, long patient)
 
                     await ImportMetric(new CreateMetric()
                     {
-                        Tag = record.GetKey(),
+                        SourceId = record.GetKey(),
                         Value = heart.Bpm.ToString(),
                         Date = DateTimeOffset.FromUnixTimeSeconds(heart.Time ?? heart.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Heart,
@@ -175,7 +176,7 @@ public class RedmiWatch(Stream file, IHealthContext db, long user, long patient)
 
                     await ImportMetric(new CreateMetric()
                     {
-                        Tag = record.GetKey(),
+                        SourceId = record.GetKey(),
                         Value = spo.Spo2.ToString(),
                         Date = DateTimeOffset.FromUnixTimeSeconds(spo.Time ?? spo.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Oxygen,

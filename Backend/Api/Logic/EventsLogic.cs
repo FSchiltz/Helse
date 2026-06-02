@@ -34,6 +34,7 @@ public static class EventsLogic
             Valid = x.Valid,
             NotificationTime = x.NotificationTime,
             Source = (Models.FileTypes)x.Source,
+            SourceId = x.SourceId,
         });
 
         return TypedResults.Ok(result);

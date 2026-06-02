@@ -156,7 +156,8 @@ public class HealthContextTests : IAsyncLifetime
             Type = 1,
             Start = DateTime.UtcNow,
             Stop = DateTime.UtcNow.AddHours(1),
-            Valid = true
+            Valid = true,
+            SourceId = string.Empty,
         };
         var id = (long)await _db.GetTable<Event>().InsertWithIdentityAsync(() => @event);
 
