@@ -10,7 +10,6 @@ import 'package:helse/worker.dart';
 import 'package:toastification/toastification.dart';
 import 'package:workmanager/workmanager.dart';
 
-import 'helpers/url_dummy.dart' if (dart.library.html) 'helpers/url.dart';
 import 'logic/account/authentication_logic.dart';
 import 'logic/account/authentication_bloc.dart';
 import 'ui/home.dart';
@@ -119,17 +118,7 @@ class AppState extends State<App> {
               child: child,
             );
           },
-          onGenerateRoute: (RouteSettings routeSettings) {
-          if (kIsWeb) {
-            var uri = Uri.base.queryParameters;
-
-            if (uri.containsKey("code")) {
-              Dependencies.services.authService.doAuthOnWeb(uri);
-              UrlHelper.removeParam();
-            }
-          }
-          return SplashPage.route();
-        },
+          onGenerateRoute: (RouteSettings routeSettings) => SplashPage.route(),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
         ),

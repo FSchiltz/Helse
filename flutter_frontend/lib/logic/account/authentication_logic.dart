@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:helse/helpers/url.dart';
 import 'package:helse/services/login_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/services/user_service.dart';
@@ -173,6 +174,7 @@ class AuthenticationLogic {
         issuer = await getClientId();
         redirect = await getRedirect();
       }
+      print('Auth with: $issuer - $redirect');
 
       await logIn(
         url: url,
@@ -215,6 +217,11 @@ class AuthenticationLogic {
           uri.queryParameters,
         );
         if (code != null) {
+          if (kIsWeb) {
+            UrlHelper.removeParam();
+            print("Auth code found");
+          }
+
           var url = await account.get(Account.url);
 
           set(AuthenticationStatus.unauthenticated);

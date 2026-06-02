@@ -30,6 +30,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
     // apply the theme
     var c = context;
+    // TODO use a bloc so loading the settings from the server can set the theme
     if (c.mounted) {
       App.of(c).changeTheme(value);
     }

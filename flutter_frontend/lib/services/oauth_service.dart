@@ -68,8 +68,6 @@ class OauthService extends ApiService {
     return code;
   }
 
-  void doAuthOnWeb(Map<String, String> uri) => getCode(uri);
-
   Future<void> _redirect(String authUrl) async {
     Dependencies.logics.authentication.set(AuthenticationStatus.unknown);
     var uri = Uri.parse(authUrl);
