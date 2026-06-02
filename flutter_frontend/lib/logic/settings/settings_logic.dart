@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
-import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/settings/health_settings.dart';
 import 'package:helse/services/setting_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
