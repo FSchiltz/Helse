@@ -84,9 +84,9 @@ class DateRangePicker extends StatelessWidget {
   }
 
   void _previousPeriod() {
-    var duration = Duration(seconds: _getDurationToMove().inSeconds * -1);
-    var start = initial.start.add(duration);
-    var end = initial.end.add(duration);
+    var duration = _getDurationToMove();
+    var start = initial.start.subtract(duration);
+    var end = initial.end.subtract(duration);
     _callBack(DateTimeRange(start: start, end: end));
   }
 

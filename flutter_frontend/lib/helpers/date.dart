@@ -94,7 +94,7 @@ class DateHelper {
     var now = today();
 
     var start = DateTime(now.year, 1, 1);
-    var end = now;
+    var end = now.add(Duration(days: 1));
 
     return DateTimeRange(start: start, end: end);
   }
