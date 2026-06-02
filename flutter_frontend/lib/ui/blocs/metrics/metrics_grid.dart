@@ -60,7 +60,7 @@ class _MetricsGridState extends State<MetricsGrid> {
     var cached = groups;
     return cached == null
         ? const HelseLoader()
-        : BlocListener<SettingsBloc, bool>(
+        : BlocListener<SettingsBloc<bool>, bool>(
             listener: (context, state) {
               _getData();
             },

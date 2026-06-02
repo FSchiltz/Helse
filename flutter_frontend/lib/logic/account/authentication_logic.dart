@@ -57,6 +57,7 @@ class AuthenticationLogic {
       await account.remove(Account.grant);
 
       _controller.add(AuthenticationStatus.authenticated);
+      Dependencies.logics.settings.loadSettings();
     } else {
       _controller.add(AuthenticationStatus.unauthenticated);
     }

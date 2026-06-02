@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/l10n/app_localizations.dart';
-import 'package:helse/main.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
@@ -27,13 +26,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     // save the settings
     _theme = value;
     await _submitTheme(locale);
-
-    // apply the theme
-    var c = context;
-    // TODO use a bloc so loading the settings from the server can set the theme
-    if (c.mounted) {
-      App.of(c).changeTheme(value);
-    }
   }
 
   Future<void> _submitTheme(AppLocalizations locale) async {
