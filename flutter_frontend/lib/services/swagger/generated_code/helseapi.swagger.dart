@@ -3768,10 +3768,18 @@ class PatientSettings {
 
   @JsonKey(name: 'patientId')
   final int? patientId;
-  @JsonKey(name: 'datePreset')
-  final dynamic datePreset;
-  @JsonKey(name: 'theme')
-  final dynamic theme;
+  @JsonKey(
+    name: 'datePreset',
+    toJson: datePresetNullableToJson,
+    fromJson: datePresetNullableFromJson,
+  )
+  final enums.DatePreset? datePreset;
+  @JsonKey(
+    name: 'theme',
+    toJson: interfaceThemeNullableToJson,
+    fromJson: interfaceThemeNullableFromJson,
+  )
+  final enums.InterfaceTheme? theme;
   @JsonKey(name: 'eventWidth')
   final int? eventWidth;
   @JsonKey(name: 'metrics', defaultValue: <OrderedItem>[])
@@ -5388,8 +5396,8 @@ extension $UserSettingsExtension on UserSettings {
   }
 
   UserSettings copyWithWrapped({
-    Wrapped<dynamic>? datePreset,
-    Wrapped<dynamic>? theme,
+    Wrapped<enums.DatePreset?>? datePreset,
+    Wrapped<enums.InterfaceTheme?>? theme,
     Wrapped<int?>? eventWidth,
     Wrapped<List<OrderedItem>?>? metrics,
     Wrapped<List<OrderedItem>?>? metricGroups,

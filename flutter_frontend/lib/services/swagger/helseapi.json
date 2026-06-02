@@ -2114,8 +2114,7 @@
           "Trimestre",
           "HalfYear",
           "Year",
-          "YearToDate",
-          null
+          "YearToDate"
         ]
       },
       "Event": {
@@ -2380,8 +2379,7 @@
         "enum": [
           "System",
           "Dark",
-          "Light",
-          null
+          "Light"
         ]
       },
       "JobId": {
@@ -2752,24 +2750,10 @@
             "format": "int64"
           },
           "datePreset": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/DatePreset"
-              }
-            ]
+            "$ref": "#/components/schemas/DatePreset"
           },
           "theme": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/InterfaceTheme"
-              }
-            ]
+            "$ref": "#/components/schemas/InterfaceTheme"
           },
           "eventWidth": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -3351,24 +3335,10 @@
         "type": "object",
         "properties": {
           "datePreset": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/DatePreset"
-              }
-            ]
+            "$ref": "#/components/schemas/DatePreset"
           },
           "theme": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/InterfaceTheme"
-              }
-            ]
+            "$ref": "#/components/schemas/InterfaceTheme"
           },
           "eventWidth": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
