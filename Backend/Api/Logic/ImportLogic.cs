@@ -123,9 +123,6 @@ public static class ImportLogic
         {
             person = user.Id;
         }
-        
- queue.Enqueue(new ImporterService.Job(id, ms, fileType, user.Id, person), $"Import from {fileType}{(patient is not null ? $" for {patient}" : string.Empty)}");
-
 
         Importer importer = new ListImporter(file, db, user.Id, person);
         await importer.Import(new LocalQueue(), Guid.NewGuid());
