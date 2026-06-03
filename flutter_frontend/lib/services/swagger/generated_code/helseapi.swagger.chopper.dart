@@ -1064,7 +1064,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<List<Treatment>>> _apiTreatmentGet({
+  Future<Response<List<Event>>> _apiTreatmentGet({
     required DateTime? start,
     required DateTime? end,
     int? personId,
@@ -1092,7 +1092,7 @@ final class _$Helseapi extends Helseapi {
       parameters: $params,
       tag: swaggerMetaData,
     );
-    return client.send<List<Treatment>, Treatment>($request);
+    return client.send<List<Event>, Event>($request);
   }
 
   @override

@@ -28,6 +28,7 @@ class _EventAddState extends State<EventAdd> {
   DateTime _stop = DateTime.now();
   DateTime? _notification;
   final TextEditingController _description = TextEditingController();
+  final TextEditingController _tag = TextEditingController();
 
   void _submit() async {
     var localContext = context;
@@ -38,7 +39,7 @@ class _EventAddState extends State<EventAdd> {
       });
 
       try {
-        if (widget.edit?.id != null) {
+        if (widget.edit != null) {
           var event = UpdateEvent(
             start: _start.toUtc(),
             stop: _stop.toUtc(),
@@ -46,6 +47,9 @@ class _EventAddState extends State<EventAdd> {
             description: _description.text,
             id: widget.edit?.id,
             notificationTime: _notification?.toUtc(),
+            source: widget.edit?.source,
+            sourceId: widget.edit?.sourceId,
+            tag: _tag.text,
           );
           await Dependencies.services.event.updateEvent(
             event,
@@ -58,6 +62,9 @@ class _EventAddState extends State<EventAdd> {
             type: widget.type.id,
             description: _description.text,
             notificationTime: _notification?.toUtc(),
+            source: FileTypes.none,
+            sourceId: '',
+            tag: _tag.text,
           );
           await Dependencies.services.event.addEvent(
             event,
@@ -93,6 +100,7 @@ class _EventAddState extends State<EventAdd> {
       _start = edit.start;
       _stop = edit.stop;
       _description.text = edit.description ?? '';
+      _tag.text = edit.tag ?? '';
     }
   }
 
@@ -127,6 +135,13 @@ class _EventAddState extends State<EventAdd> {
                   icon: Icons.description_sharp,
                   label: locale.description,
                   controller: _description,
+                ),
+                const SizedBox(height: 20),
+                SquareTextField(
+                  theme: theme,
+                  icon: Icons.tag_sharp,
+                  label: locale.tag,
+                  controller: _tag,
                 ),
                 const SizedBox(height: 20),
                 DateInput(

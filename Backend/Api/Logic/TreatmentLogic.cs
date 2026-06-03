@@ -12,7 +12,7 @@ namespace Api.Logic;
 /// </summary>
 public static class TreatmentLogic
 {
-    public static async Task<IResult> GetTypeAsync(IHealthContext db) => TypedResults.Ok(await db.GetEventTypes(false));
+    public static async Task<IResult> GetTypeAsync(IHealthContext db) => TypedResults.Ok(await db.GetEventTypes(false, true));
 
     public async static Task<IResult> PostAsync(CreateTreatment treatment, IUserContext db, HttpContext context)
     {
@@ -57,21 +57,19 @@ public static class TreatmentLogic
             return TypedResults.Forbid();
 
         var id = personId ?? user.PersonId;
-        var events = await db.GetEvents(id, start, end);
+        var events = await db.GetTreatmentEvents(id, start, end);
 
-        return TypedResults.Ok(events.GroupBy(x => x.TreatmentId).Select(t => new Treatment
+        return TypedResults.Ok(events.Select(x => new Event
         {
-            Events = [.. t.Select(x => new Event
-            {
-                Id = x.Id,
-                Type = x.Type,
-                Description = x.Description,
-                Stop = x.Stop,
-                File = x.FileId,
-                Start = x.Start,
-                Valid = x.Valid,
-                SourceId = x.SourceId,
-            })]
+            Id = x.Id,
+            Type = x.Type,
+            Description = x.Description,
+            Stop = x.Stop,
+            File = x.FileId,
+            Start = x.Start,
+            Valid = x.Valid,
+            SourceId = x.SourceId,
+            Person = x.PersonId,
         }));
     }
 }

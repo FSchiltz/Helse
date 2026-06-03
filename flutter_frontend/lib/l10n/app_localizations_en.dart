@@ -237,7 +237,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get patientsSettings => 'Patient Settings';
 
   @override
-  String get localSettings => 'Local Settings';
+  String get localSettings => 'Settings';
 
   @override
   String get general => 'General';

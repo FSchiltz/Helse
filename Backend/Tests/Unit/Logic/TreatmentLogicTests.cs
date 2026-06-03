@@ -19,9 +19,9 @@ public class TreatmentLogicTests
         var db = Substitute.For<IHealthContext>();
         EventType[] types =
         [
-            new() { Id = 1, Name = "Test" }
+            new() { Id = 1, Name = "Test", StandAlone = true }
         ];
-        db.GetEventTypes(false).Returns(types);
+        db.GetEventTypes(false, true).Returns(types);
 
         // Act
         var result = await TreatmentLogic.GetTypeAsync(db);

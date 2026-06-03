@@ -10,10 +10,17 @@ class CalendarEvent {
   CalendarEvent({required this.from, required this.to, required this.value});
 }
 
+class CalendarGroup {
+  final String name;
+  final List<CalendarEvent> events;
+
+  CalendarGroup({required this.name, required this.events});
+}
+
 class CalendarView extends StatefulWidget {
   final DateTimeRange date;
 
-  final Future<List<CalendarEvent>> Function(DateTime) getEventsForDay;
+  final Future<List<CalendarGroup>> Function(DateTime) getEventsForDay;
 
   const CalendarView(this.getEventsForDay, this.date, {super.key});
 
@@ -24,7 +31,7 @@ class CalendarView extends StatefulWidget {
 class _CalendarViewState extends State<CalendarView> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  List<CalendarEvent> _selectedEvents = [];
+  List<CalendarGroup> _selectedEvents = [];
   CalendarFormat _calendarFormat = CalendarFormat.month;
 
   Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
@@ -55,7 +62,9 @@ class _CalendarViewState extends State<CalendarView> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).textTheme;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.date.duration.inHours > 24)
           TableCalendar<CalendarEvent>(
@@ -81,18 +90,40 @@ class _CalendarViewState extends State<CalendarView> {
             rangeSelectionMode: RangeSelectionMode.enforced,
             onDaySelected: _onDaySelected,
           ),
-        Text(
-          "Showing events of ${DateHelper.formatDate(_selectedDay, context: context)}",
+        SizedBox(height: 12),
+        Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Text(
+            "Showing events of ${DateHelper.formatDate(_selectedDay, context: context)}",
+            style: theme.headlineSmall,
+          ),
         ),
         Flexible(
-          child: ListView.builder(
-            itemCount: _selectedEvents.length,
-            itemBuilder: (x, index) => Row(
-              children: [
-                Text(
-                  "${_selectedEvents[index].value} at ${DateHelper.formatTime(_selectedEvents[index].to, context: x)}",
-                ),
-              ],
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: ListView.builder(
+              itemCount: _selectedEvents.length,
+              itemBuilder: (x, index) {
+                var item = _selectedEvents[index];
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(item.name, style: theme.headlineSmall),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: item.events.length,
+                      itemBuilder: (x, index) => Row(
+                        children: [
+                          Text(
+                            "${item.events[index].value} at ${DateHelper.formatTime(item.events[index].to, context: x)}",
+                          ),
+                        ],
+                      ),
+                    ),
+                    Divider(),
+                  ],
+                );
+              },
             ),
           ),
         ),

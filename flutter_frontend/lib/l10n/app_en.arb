@@ -183,7 +183,7 @@
     "@showOnDashboard": {},
     "patientsSettings": "Patient Settings",
     "@patientsSettings": {},
-    "localSettings": "Local Settings",
+    "localSettings": "Settings",
     "@localSettings": {},
     "general": "General",
     "@general": {},

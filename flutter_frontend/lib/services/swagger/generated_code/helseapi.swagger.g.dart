@@ -597,20 +597,6 @@ Map<String, dynamic> _$TokenResponseToJson(TokenResponse instance) =>
       'refreshToken': instance.refreshToken,
     };
 
-Treatment _$TreatmentFromJson(Map<String, dynamic> json) => Treatment(
-  events:
-      (json['events'] as List<dynamic>?)
-          ?.map((e) => Event.fromJson(e as Map<String, dynamic>))
-          .toList() ??
-      [],
-  type: treatmentTypeNullableFromJson(json['type']),
-);
-
-Map<String, dynamic> _$TreatmentToJson(Treatment instance) => <String, dynamic>{
-  'events': instance.events?.map((e) => e.toJson()).toList(),
-  'type': treatmentTypeNullableToJson(instance.type),
-};
-
 UpdateEvent _$UpdateEventFromJson(Map<String, dynamic> json) => UpdateEvent(
   id: (json['id'] as num?)?.toInt(),
   type: (json['type'] as num).toInt(),

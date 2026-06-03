@@ -272,7 +272,7 @@ class _LoginState extends State<LoginPage> {
         setState(() {
           _loaded = SubmissionStatus.failure;
         });
-        Notify.showError(ex.toString());
+        Notify.showError("Invalid Url");
       }
     }
   }

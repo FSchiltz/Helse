@@ -54,7 +54,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
       simple: false,
     );
   }
-  
+
   void _resetMetric() {
     setState(() {
       _dummy = !_dummy;
@@ -98,19 +98,27 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
       body: LoadingBuilder(
         _getData,
         builder: (ctx, data, reset) {
-          Future<List<CalendarEvent>> getEventsForDay(DateTime day) async {
-            return data
-                .where(
-                  (x) =>
-                      day.year == x.date.year &&
-                      day.month == x.date.month &&
-                      day.day == x.date.day,
-                )
-                .map(
-                  (x) =>
-                      CalendarEvent(from: x.date, to: x.date, value: x.value),
-                )
-                .toList();
+          Future<List<CalendarGroup>> getEventsForDay(DateTime day) async {
+            return [
+              CalendarGroup(
+                name: '',
+                events: data
+                    .where(
+                      (x) =>
+                          day.year == x.date.year &&
+                          day.month == x.date.month &&
+                          day.day == x.date.day,
+                    )
+                    .map(
+                      (x) => CalendarEvent(
+                        from: x.date,
+                        to: x.date,
+                        value: x.value,
+                      ),
+                    )
+                    .toList(),
+              ),
+            ];
           }
 
           return data.isEmpty

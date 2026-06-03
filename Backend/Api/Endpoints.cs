@@ -209,7 +209,7 @@ public static class Endpoints
             .Produces((int)HttpStatusCode.Unauthorized);
 
         treatment.MapGet("/", TreatmentLogic.GetAsync)
-            .Produces<List<Treatment>>((int)HttpStatusCode.OK)
+            .Produces<List<Event>>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
 
         var eventsType = treatment.MapGroup("/type").RequireAuthorization();

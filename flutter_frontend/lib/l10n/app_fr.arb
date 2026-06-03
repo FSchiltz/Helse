@@ -71,5 +71,9 @@
     "source": "Source",
     "treatment": "traitement",
     "showOnDashboard": "Afficher sur le tableau de bord",
-    "patientsSettings": "Options des patients"
+    "patientsSettings": "Options des patients",
+     "localSettings": "Options",
+    "general": "Général",
+    "healthsync": "Synchro Health",
+    "users": "Utilisateurs"
 }

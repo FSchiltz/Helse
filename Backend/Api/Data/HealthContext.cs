@@ -75,18 +75,18 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     }
 
     /// <inheritdoc/>
-    public Task<Event[]> GetEvents(long user, RightType view, DateTime start, DateTime end)
+    public Task<Event[]> GetEvents(long user, RightType right, DateTime start, DateTime end)
     {
         return (from e in Db.GetTable<Event>()
                 join r in Db.GetTable<Models.Persons.Right>() on e.PersonId equals r.PersonId
                 where e.Start <= end && start <= e.Stop
-                where r.UserId == user && r.Type == (int)view
+                where r.UserId == user && r.Type == (int)right
                 select e)
             .ToArrayAsync();
     }
 
     /// <inheritdoc/>
-    public Task<Event[]> GetEvents(long id, DateTime start, DateTime end)
+    public Task<Event[]> GetTreatmentEvents(long id, DateTime start, DateTime end)
     {
         return Db.GetTable<Event>()
             .Where(x => x.PersonId == id
@@ -163,9 +163,9 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     }
 
     /// <inheritdoc/>
-    public Task<EventType[]> GetEventTypes(bool? all)
+    public Task<EventType[]> GetEventTypes(bool? all, bool standalone = false)
     {
-        IQueryable<EventType> query = Db.GetTable<EventType>();
+        IQueryable<EventType> query = Db.GetTable<EventType>().Where(x => x.StandAlone);
 
         if (all == false)
             query = query.Where(x => x.Visible);
