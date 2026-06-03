@@ -49,7 +49,6 @@ class _MetricsGroupState extends State<MetricsGroup> {
         widget.group.id,
       );
       if (model != null) {
-        await Dependencies.logics.settings.updateMetrics(model);
         var settings = await Dependencies.logics.settings.getMetrics();
         // filter using the user settings
 

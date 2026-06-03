@@ -94,7 +94,10 @@ class _MetricSettingsState extends State<MetricSettings> {
           ),
           Flexible(
             child: TabBarView(
-              children: [_metricsGrid(theme, locale), _metricGroupsGrid(theme, locale)],
+              children: [
+                _metricsGrid(theme, locale),
+                _metricGroupsGrid(theme, locale),
+              ],
             ),
           ),
         ],
@@ -159,6 +162,7 @@ class _MetricSettingsState extends State<MetricSettings> {
                                 child: EnumInput(
                                   value: item.graph,
                                   GraphKind.values
+                                      .where((e) => e.index > 0)
                                       .map((x) => DropDownItem(x, x.name))
                                       .toList(),
                                   (value) => item.graph = value ?? item.graph,
@@ -173,6 +177,7 @@ class _MetricSettingsState extends State<MetricSettings> {
                                 child: EnumInput(
                                   value: item.detailGraph,
                                   GraphKind.values
+                                      .where((e) => e.index > 0)
                                       .map((x) => DropDownItem(x, x.name))
                                       .toList(),
                                   (value) => item.detailGraph =

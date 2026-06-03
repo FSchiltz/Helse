@@ -50,6 +50,15 @@ class _MetricsGridState extends State<MetricsGrid> {
           groups = filtered;
         });
       }
+
+      var metrictypes = await Dependencies.services.metric.metricsType(
+        false,
+        null,
+      );
+
+      if (metrictypes != null) {
+        await Dependencies.logics.settings.updateMetrics(metrictypes);
+      }
     } catch (ex) {
       Notify.showError("$ex");
     }
