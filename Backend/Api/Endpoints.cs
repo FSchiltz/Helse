@@ -88,7 +88,7 @@ public static class Endpoints
        .Produces((int)HttpStatusCode.Unauthorized);
 
         patients.MapGet("/settings", SettingsLogic.GetPatientsSettings)
-        .Produces<PatientSettings>((int)HttpStatusCode.OK)
+        .Produces<PatientsSettings>((int)HttpStatusCode.OK)
        .Produces((int)HttpStatusCode.Unauthorized);
 
         patients.MapPost("/settings", SettingsLogic.PostPatientsSettingsAsync)

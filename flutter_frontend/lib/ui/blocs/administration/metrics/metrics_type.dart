@@ -52,9 +52,7 @@ class MetricTypeView extends StatelessWidget {
                     columns: const [
                       DataColumn(label: Expanded(child: Text("Id"))),
                       DataColumn(label: Expanded(child: Text("Name"))),
-                      DataColumn(
-                        label: Expanded(child: Text("Description")),
-                      ),
+                      DataColumn(label: Expanded(child: Text("Description"))),
                       DataColumn(label: Expanded(child: Text("Unit"))),
                       DataColumn(label: Expanded(child: Text("Type"))),
                       DataColumn(label: Expanded(child: Text("Summary"))),
@@ -74,24 +72,17 @@ class MetricTypeView extends StatelessWidget {
                               DataCell(Text(type.description ?? "")),
                               DataCell(Text(type.unit ?? "")),
                               DataCell(Text(type.type?.name ?? "")),
+                              DataCell(Text(type.summaryType?.name ?? "")),
                               DataCell(
-                                Text(type.summaryType?.name ?? ""),
+                                Checkbox(value: type.visible, onChanged: null),
                               ),
                               DataCell(
                                 Checkbox(
-                                  value: type.visible ?? false,
+                                  value: type.showOnDashboard,
                                   onChanged: null,
                                 ),
                               ),
-                              DataCell(
-                                Checkbox(
-                                  value: type.showOnDashboard ?? false,
-                                  onChanged: null,
-                                ),
-                              ),
-                              DataCell(
-                                Text(type.groupId?.toString() ?? ""),
-                              ),
+                              DataCell(Text(type.groupId.toString())),
                               DataCell(
                                 Row(
                                   children: [
@@ -99,13 +90,12 @@ class MetricTypeView extends StatelessWidget {
                                       onPressed: () {
                                         showDialog<void>(
                                           context: context,
-                                          builder:
-                                              (BuildContext context) {
-                                                return MetricTypeAdd(
-                                                  reset,
-                                                  edit: type,
-                                                );
-                                              },
+                                          builder: (BuildContext context) {
+                                            return MetricTypeAdd(
+                                              reset,
+                                              edit: type,
+                                            );
+                                          },
                                         );
                                       },
                                       icon: const Icon(Icons.edit_sharp),
@@ -116,9 +106,7 @@ class MetricTypeView extends StatelessWidget {
                                           await _deleteType(type);
                                           reset();
                                         },
-                                        icon: const Icon(
-                                          Icons.delete_sharp,
-                                        ),
+                                        icon: const Icon(Icons.delete_sharp),
                                       ),
                                   ],
                                 ),
@@ -140,10 +128,8 @@ class MetricTypeView extends StatelessWidget {
   Future<void> _deleteType(MetricType type) async {
     var id = type.id;
     try {
-      if (id != null) {
-        await Dependencies.services.metric.deleteMetricsType(id);
-        Notify.show('Metric ${type.name} deleted');
-      }
+      await Dependencies.services.metric.deleteMetricsType(id);
+      Notify.show('Metric ${type.name} deleted');
     } catch (ex) {
       Notify.showError('Error deleting metric ${type.name}');
     }

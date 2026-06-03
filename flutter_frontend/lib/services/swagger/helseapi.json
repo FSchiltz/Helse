@@ -439,7 +439,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PatientSettings"
+                  "$ref": "#/components/schemas/PatientsSettings"
                 }
               }
             }
@@ -457,7 +457,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserSettings"
+                "$ref": "#/components/schemas/PatientsSettings"
               }
             }
           },
@@ -2001,6 +2001,7 @@
       },
       "CreateEvent": {
         "required": [
+          "type",
           "start",
           "stop"
         ],
@@ -2053,6 +2054,7 @@
         "required": [
           "date",
           "value",
+          "type",
           "sourceId"
         ],
         "type": "object",
@@ -2119,6 +2121,8 @@
       },
       "Event": {
         "required": [
+          "id",
+          "type",
           "start",
           "stop"
         ],
@@ -2263,7 +2267,9 @@
       },
       "EventType": {
         "required": [
-          "name"
+          "name",
+          "id",
+          "userEditable"
         ],
         "type": "object",
         "properties": {
@@ -2474,6 +2480,7 @@
           "person",
           "date",
           "value",
+          "type",
           "sourceId"
         ],
         "type": "object",
@@ -2575,7 +2582,10 @@
       },
       "MetricType": {
         "required": [
-          "name"
+          "name",
+          "id",
+          "userEditable",
+          "groupId"
         ],
         "type": "object",
         "properties": {
@@ -2703,11 +2713,15 @@
       },
       "OrderedItem": {
         "required": [
-          "name"
+          "name",
+          "id"
         ],
         "type": "object",
         "properties": {
           "visible": {
+            "type": "boolean"
+          },
+          "showOnDashboard": {
             "type": "boolean"
           },
           "order": {
@@ -2779,6 +2793,20 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/OrderedItem"
+            }
+          }
+        }
+      },
+      "PatientsSettings": {
+        "type": "object",
+        "properties": {
+          "default": {
+            "$ref": "#/components/schemas/PatientSettings"
+          },
+          "patients": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PatientSettings"
             }
           }
         }
@@ -3093,6 +3121,7 @@
       },
       "UpdateEvent": {
         "required": [
+          "type",
           "start",
           "stop"
         ],
@@ -3153,6 +3182,7 @@
         "required": [
           "date",
           "value",
+          "type",
           "sourceId"
         ],
         "type": "object",

@@ -54,12 +54,12 @@ class SettingsLogic {
     var settings = await _userSettings();
     await _saveSettings(
       UserSettings(
-        eventWidth: settings.eventWidth,
+        eventWidth: settings.eventWidth ?? 0,
         events: settings.events,
         metricGroups: settings.metricGroups,
         metrics: settings.metrics,
         theme: theme,
-        datePreset: settings.datePreset,
+        datePreset: settings.datePreset ?? DatePreset.today,
       ),
       true,
     );
@@ -96,6 +96,7 @@ class SettingsLogic {
 
     var map = json.decode(encoded) as Map<String, Object?>;
     var object = UserSettings.fromJson(map);
+
     return object;
   }
 
@@ -107,12 +108,12 @@ class SettingsLogic {
     var settings = await _userSettings();
     await _saveSettings(
       UserSettings(
-        eventWidth: settings.eventWidth,
+        eventWidth: settings.eventWidth ?? 0,
         events: settings.events,
         metricGroups: settings.metricGroups,
         metrics: metric,
-        theme: settings.theme,
-        datePreset: settings.datePreset,
+        theme: settings.theme ?? InterfaceTheme.system,
+        datePreset: settings.datePreset ?? DatePreset.today,
       ),
       toServer,
     );
@@ -127,12 +128,12 @@ class SettingsLogic {
     var settings = await _userSettings();
     await _saveSettings(
       UserSettings(
-        eventWidth: settings.eventWidth,
+        eventWidth: settings.eventWidth ?? 0,
         events: events,
         metricGroups: settings.metricGroups,
         metrics: settings.metrics,
-        theme: settings.theme,
-        datePreset: settings.datePreset,
+        theme: settings.theme ?? InterfaceTheme.system,
+        datePreset: settings.datePreset ?? DatePreset.today,
       ),
       toServer,
     );
@@ -162,11 +163,11 @@ class SettingsLogic {
     var settings = await _userSettings();
     await _saveSettings(
       UserSettings(
-        eventWidth: settings.eventWidth,
+        eventWidth: settings.eventWidth ?? 0,
         events: settings.events,
         metricGroups: settings.metricGroups,
         metrics: settings.metrics,
-        theme: settings.theme,
+        theme: settings.theme ?? InterfaceTheme.system,
         datePreset: run,
       ),
       true,
@@ -195,12 +196,11 @@ class SettingsLogic {
             id: existing.id,
             order: existing.order,
             visible: existing.visible,
+            showOnDashboard: existing.showOnDashboard,
           ),
         );
       } else {
-        if (metric.id != null) {
-          metrics.add(getDefault(metric));
-        }
+        metrics.add(getDefault(metric));
       }
     }
 
@@ -224,20 +224,20 @@ class SettingsLogic {
             id: existing.id,
             order: existing.order,
             visible: existing.visible,
+            showOnDashboard: existing.showOnDashboard,
           ),
         );
       } else {
-        if (event.id != null) {
-          newEvents.add(
-            OrderedItem(
-              id: event.id!,
-              name: event.name,
-              graph: GraphKind.text,
-              detailGraph: GraphKind.text,
-              visible: event.visible,
-            ),
-          );
-        }
+        newEvents.add(
+          OrderedItem(
+            id: event.id,
+            name: event.name,
+            graph: GraphKind.text,
+            detailGraph: GraphKind.text,
+            visible: event.visible,
+            showOnDashboard: true,
+          ),
+        );
       }
     }
     await saveEvents(newEvents, false);
@@ -246,20 +246,22 @@ class SettingsLogic {
   OrderedItem getDefault(MetricType item) {
     if (item.type == MetricDataType.number) {
       return OrderedItem(
-        id: item.id ?? 0,
+        id: item.id,
         name: item.name,
         graph: GraphKind.bar,
         detailGraph: GraphKind.line,
         visible: item.visible,
+        showOnDashboard: true,
       );
     }
 
     return OrderedItem(
-      id: item.id ?? 0,
+      id: item.id,
       name: item.name,
       graph: GraphKind.text,
       detailGraph: GraphKind.text,
       visible: item.visible,
+      showOnDashboard: true,
     );
   }
 
@@ -271,8 +273,8 @@ class SettingsLogic {
         events: settings.events,
         metricGroups: metric,
         metrics: settings.metrics,
-        theme: settings.theme,
-        datePreset: settings.datePreset,
+        theme: settings.theme ?? InterfaceTheme.system,
+        datePreset: settings.datePreset ?? DatePreset.today,
       ),
       toServer,
     );
@@ -300,6 +302,7 @@ class SettingsLogic {
             graph: existing.graph,
             order: existing.order,
             visible: existing.visible,
+            showOnDashboard: existing.showOnDashboard,
           ),
         );
       } else {
@@ -310,7 +313,8 @@ class SettingsLogic {
               name: metric.name,
               graph: GraphKind.bar,
               detailGraph: GraphKind.line,
-              visible: metric.showOnDashboard,
+              visible: true,
+              showOnDashboard: metric.showOnDashboard ?? true,
             ),
           );
         }

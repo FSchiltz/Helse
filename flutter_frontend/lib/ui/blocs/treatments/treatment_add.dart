@@ -42,7 +42,7 @@ class _TreatementState extends State<TreatmentAdd> {
       var event = CreateEvent(
         start: _start,
         stop: _stop,
-        type: _type,
+        type: _type ?? 0,
         description: _description.text,
       );
       var treatment = CreateTreatment(events: [event], personId: widget.person);

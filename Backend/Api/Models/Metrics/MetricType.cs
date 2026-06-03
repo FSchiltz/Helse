@@ -12,13 +12,13 @@ public class MetricType
 
     public MetricDataType Type { get; set; }
 
-    public long Id { get; set; }
+    public required long Id { get; set; }
 
-    public bool UserEditable { get; set; }
+    public required bool UserEditable { get; set; }
 
     public bool Visible { get; set; }
 
     public bool ShowOnDashboard { get; set; }
 
-    public long GroupId { get; set; }
+    public required long GroupId { get; set; }
 }

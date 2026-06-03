@@ -36,9 +36,6 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
 
   Future<List<Metric>> _getData(bool refresh) async {
     var id = widget.type.id;
-    if (id == null) {
-      return [];
-    }
 
     var date = widget.date;
 

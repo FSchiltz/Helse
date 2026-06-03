@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/date.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:helse/ui/common/date_range_picker.dart';
 
 import 'blocs/events/events_grid.dart';
@@ -24,7 +25,14 @@ class _PatientDashboardState extends State<PatientDashboard> {
   }
 
   Future<void> _setDefaultRange() async {
-    var range = await Dependencies.logics.settings.getDateRange();
+    DatePreset range;
+
+    if (widget.person == null) {
+      range = await Dependencies.logics.settings.getDateRange();
+    } else {
+      range = await Dependencies.logics.patientsSettings.getPatientsDateRange();
+    }
+
     setState(() {
       date = DateHelper.getRange(range);
     });

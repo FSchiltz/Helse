@@ -25,10 +25,6 @@ class EventDetailPage extends StatefulWidget {
 
 class _EventDetailPageState extends State<EventDetailPage> {
   Future<List<Event>> _getData(bool refresh) async {
-    if (widget.type.id == null) {
-      return [];
-    }
-
     var date = widget.date;
     var start = DateTime(date.start.year, date.start.month, date.start.day);
     var end = DateTime(

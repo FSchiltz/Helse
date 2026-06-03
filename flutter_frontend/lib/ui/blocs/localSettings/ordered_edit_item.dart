@@ -2,6 +2,7 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class OrderedEditItem {
   bool visible;
+  bool showOnDashboard;
   int? order;
   String name;
   final int id;
@@ -15,6 +16,7 @@ class OrderedEditItem {
     required this.id,
     this.graph,
     this.detailGraph,
+    required this.showOnDashboard,
   });
 
   OrderedItem ordered() => OrderedItem(
@@ -24,5 +26,6 @@ class OrderedEditItem {
     id: id,
     order: order,
     visible: visible,
+    showOnDashboard: showOnDashboard,
   );
 }

@@ -8,7 +8,7 @@ public abstract class MetricBase
 
     public string? Tag { get; set; }
 
-    public long Type { get; set; }
+    public required long Type { get; set; }
 
     public FileTypes Source { get; set; }
 

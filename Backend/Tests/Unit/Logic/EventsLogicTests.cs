@@ -17,6 +17,8 @@ public class EventsLogicTests : LogicTests
         {
             Name = "",
             Description = "",
+            Id = 0,
+            UserEditable = true,
         };
 
         var users = SetupUser(UserType.User);
@@ -33,6 +35,8 @@ public class EventsLogicTests : LogicTests
         {
             Name = "",
             Description = "",
+            Id = 0,
+            UserEditable = true,
         };
 
         var users = SetupUser(UserType.Admin);

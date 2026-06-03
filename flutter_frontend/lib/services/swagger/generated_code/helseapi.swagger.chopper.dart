@@ -377,7 +377,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<PatientSettings>> _apiPatientsSettingsGet({
+  Future<Response<PatientsSettings>> _apiPatientsSettingsGet({
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
       summary: '',
@@ -396,12 +396,12 @@ final class _$Helseapi extends Helseapi {
       client.baseUrl,
       tag: swaggerMetaData,
     );
-    return client.send<PatientSettings, PatientSettings>($request);
+    return client.send<PatientsSettings, PatientsSettings>($request);
   }
 
   @override
   Future<Response<dynamic>> _apiPatientsSettingsPost({
-    required UserSettings? body,
+    required PatientsSettings? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
       summary: '',

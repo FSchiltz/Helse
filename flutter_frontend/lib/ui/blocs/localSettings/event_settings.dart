@@ -9,38 +9,51 @@ import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/statefull_check.dart';
 
 class EventSettings extends StatefulWidget {
-  const EventSettings({super.key});
+  final bool isPatient;
+  const EventSettings({super.key, this.isPatient = false});
 
   @override
   State<EventSettings> createState() => _EventSettingsState();
 }
 
 class _EventSettingsState extends State<EventSettings> {
-  final GlobalKey<FormState> _formKey = GlobalKey();
-
   Future<List<OrderedEditItem>> _getData(bool refresh) async {
-    return (await Dependencies.logics.settings.getEvents())
+    List<OrderedItem> items;
+    if (widget.isPatient) {
+      items = await Dependencies.logics.patientsSettings.getEvents();
+    } else {
+      items = await Dependencies.logics.settings.getEvents();
+    }
+
+    return items
         .map(
           (e) => OrderedEditItem(
             visible: e.visible ?? true,
             name: e.name,
-            id: e.id ?? 0,
+            id: e.id,
             detailGraph: e.detailGraph,
             graph: e.graph,
             order: e.order,
+            showOnDashboard: e.showOnDashboard ?? true,
           ),
         )
         .toList();
   }
 
-  void _submitEvent(List<OrderedItem> events, AppLocalizations locale) async {
+  Future<void> _submitEvent(
+    List<OrderedEditItem> events,
+    AppLocalizations locale,
+  ) async {
     try {
-      if (_formKey.currentState?.validate() ?? false) {
-        // save the user's settings
-        await Dependencies.logics.settings.saveEvents(events, true);
-
-        Notify.show(locale.saved);
+      var toSave = events.map((e) => e.ordered()).toList();
+      // save the user's settings
+      if (widget.isPatient) {
+        await Dependencies.logics.patientsSettings.saveEvents(toSave, true);
+      } else {
+        await Dependencies.logics.settings.saveEvents(toSave, true);
       }
+
+      Notify.show(locale.saved);
     } catch (ex) {
       Notify.showError(locale.error(ex.toString()));
     }
@@ -55,72 +68,68 @@ class _EventSettingsState extends State<EventSettings> {
         var locale = Translation.locale(context);
         return Padding(
           padding: const EdgeInsets.all(32.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      locale.events,
-                      style: Theme.of(context).textTheme.headlineSmall,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    locale.events,
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  SizedBox(width: 32),
+                  SizedBox(
+                    width: 120,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(40),
+                        shape: const ContinuousRectangleBorder(),
+                      ),
+                      onPressed: () async {
+                        await _submitEvent(data, locale);
+                        reset();
+                      },
+                      child: Text(locale.save),
                     ),
-                    SizedBox(width: 32),
-                    SizedBox(
-                      width: 120,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size.fromHeight(40),
-                          shape: const ContinuousRectangleBorder(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: FittedBox(
+                    child: DataTable(
+                      columns: [
+                        DataColumn(label: Expanded(child: Text(locale.name))),
+                        DataColumn(
+                          label: Expanded(child: Text(locale.visible)),
                         ),
-                        onPressed: () {
-                          _submitEvent(
-                            data.map((e) => e.ordered()).toList(),
-                            locale,
-                          );
-                          reset();
-                        },
-                        child: Text(locale.save),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: FittedBox(
-                      child: DataTable(
-                        columns: [
-                          DataColumn(label: Expanded(child: Text(locale.name))),
-                          DataColumn(label: Expanded(child: Text(locale.visible))),
-                        ],
-                        rows: data
-                            .map(
-                              (item) => DataRow(
-                                cells: [
-                                  DataCell(
-                                    Text(
-                                      item.name,
-                                      style: theme.textTheme.titleLarge,
-                                    ),
+                      ],
+                      rows: data
+                          .map(
+                            (item) => DataRow(
+                              cells: [
+                                DataCell(
+                                  Text(
+                                    item.name,
+                                    style: theme.textTheme.titleLarge,
                                   ),
-                                  DataCell(
-                                    StatefullCheck(
-                                      item.visible,
-                                      (value) => item.visible = value,
-                                    ),
+                                ),
+                                DataCell(
+                                  StatefullCheck(
+                                    item.visible,
+                                    (value) => item.visible = value,
                                   ),
-                                ],
-                              ),
-                            )
-                            .toList(),
-                      ),
+                                ),
+                              ],
+                            ),
+                          )
+                          .toList(),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },

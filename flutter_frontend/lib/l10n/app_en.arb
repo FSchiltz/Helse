@@ -178,5 +178,17 @@
     "source": "Source",
     "@source": {},
     "treatment": "treatment",
-    "@treatment": {}
+    "@treatment": {},
+    "showOnDashboard": "Show on dashboard",
+    "@showOnDashboard": {},
+    "patientsSettings": "Patient Settings",
+    "@patientsSettings": {},
+    "localSettings": "Local Settings",
+    "@localSettings": {},
+    "general": "General",
+    "@general": {},
+    "healthsync": "Health sync",
+    "@healthsync": {},
+    "users": "Users",
+    "@users": {}
 }

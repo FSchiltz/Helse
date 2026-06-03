@@ -32,8 +32,14 @@ class _EventsGridState extends State<EventsGrid> {
     try {
       var model = await Dependencies.services.event.eventsType(false);
       if (model != null) {
-        await Dependencies.logics.settings.updateEvents(model);
-        var settings = await Dependencies.logics.settings.getEvents();
+        List<OrderedItem> settings;
+        if (widget.person == null) {
+          await Dependencies.logics.settings.updateEvents(model);
+          settings = await Dependencies.logics.settings.getEvents();
+        } else {
+          await Dependencies.logics.patientsSettings.updateEvents(model);
+          settings = await Dependencies.logics.patientsSettings.getEvents();
+        }
 
         // filter using the user settings
         List<EventType> filtered = [];
@@ -72,7 +78,7 @@ class _EventsGridState extends State<EventsGrid> {
                         (type) => EventWidget(
                           type,
                           widget.date,
-                          key: Key(type.id?.toString() ?? ""),
+                          key: Key(type.id.toString()),
                           person: widget.person,
                         ),
                       )

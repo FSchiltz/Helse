@@ -10,7 +10,7 @@ public class EventType
 
     public bool Visible { get; set; }
 
-    public long Id { get; set; }
+    public required long Id { get; set; }
 
-    public bool UserEditable { get; set; }
+    public required bool UserEditable { get; set; }
 }

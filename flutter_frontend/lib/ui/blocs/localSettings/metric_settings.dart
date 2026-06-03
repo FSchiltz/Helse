@@ -10,7 +10,8 @@ import 'package:helse/ui/common/statefull_check.dart';
 import 'package:helse/ui/common/type_input.dart';
 
 class MetricSettings extends StatefulWidget {
-  const MetricSettings({super.key});
+  final bool isPatient;
+  const MetricSettings({super.key, this.isPatient = false});
 
   @override
   State<MetricSettings> createState() => _MetricSettingsState();
@@ -18,30 +19,44 @@ class MetricSettings extends StatefulWidget {
 
 class _MetricSettingsState extends State<MetricSettings> {
   Future<List<OrderedEditItem>> _getData(bool refresh) async {
-    return (await Dependencies.logics.settings.getMetrics())
+    List<OrderedItem> items;
+    if (widget.isPatient) {
+      items = await Dependencies.logics.patientsSettings.getMetrics();
+    } else {
+      items = await Dependencies.logics.settings.getMetrics();
+    }
+    return items
         .map(
           (e) => OrderedEditItem(
-            id: e.id ?? 0,
+            id: e.id,
             name: e.name,
             detailGraph: e.detailGraph,
             graph: e.graph,
-            visible: e.visible ?? false,
+            visible: e.visible ?? true,
             order: e.order,
+            showOnDashboard: e.showOnDashboard ?? true,
           ),
         )
         .toList();
   }
 
   Future<List<OrderedEditItem>> _getGroupData(bool reset) async {
-    return (await Dependencies.logics.settings.getMetricGroups())
+    List<OrderedItem> items;
+    if (widget.isPatient) {
+      items = await Dependencies.logics.patientsSettings.getMetricGroups();
+    } else {
+      items = await Dependencies.logics.settings.getMetricGroups();
+    }
+    return items
         .map(
           (e) => OrderedEditItem(
-            id: e.id ?? 0,
+            id: e.id,
             name: e.name,
             detailGraph: e.detailGraph,
             graph: e.graph,
             visible: e.visible ?? true,
             order: e.order,
+            showOnDashboard: e.showOnDashboard ?? true,
           ),
         )
         .toList();
@@ -54,7 +69,14 @@ class _MetricSettingsState extends State<MetricSettings> {
     try {
       var toSave = groups.map((e) => e.ordered()).toList();
       // save the user's settings
-      await Dependencies.logics.settings.saveMetricGroups(toSave, true);
+      if (widget.isPatient) {
+        await Dependencies.logics.patientsSettings.saveMetricGroups(
+          toSave,
+          true,
+        );
+      } else {
+        await Dependencies.logics.settings.saveMetricGroups(toSave, true);
+      }
 
       Notify.show(locale.saved);
     } catch (ex) {
@@ -69,7 +91,11 @@ class _MetricSettingsState extends State<MetricSettings> {
     try {
       var toSave = metrics.map((e) => e.ordered()).toList();
       // save the user's settings
-      await Dependencies.logics.settings.saveMetrics(toSave, true);
+      if (widget.isPatient) {
+        await Dependencies.logics.patientsSettings.saveMetrics(toSave, true);
+      } else {
+        await Dependencies.logics.settings.saveMetrics(toSave, true);
+      }
 
       Notify.show(locale.saved);
     } catch (ex) {
@@ -94,7 +120,10 @@ class _MetricSettingsState extends State<MetricSettings> {
           ),
           Flexible(
             child: TabBarView(
-              children: [_metricsGrid(theme, locale), _metricGroupsGrid(theme, locale)],
+              children: [
+                _metricsGrid(theme, locale),
+                _metricGroupsGrid(theme, locale),
+              ],
             ),
           ),
         ],
@@ -133,6 +162,9 @@ class _MetricSettingsState extends State<MetricSettings> {
                   columns: [
                     DataColumn(label: Expanded(child: Text(locale.name))),
                     DataColumn(label: Expanded(child: Text(locale.visible))),
+                    DataColumn(
+                      label: Expanded(child: Text(locale.showOnDashboard)),
+                    ),
                     DataColumn(label: Expanded(child: Text(locale.widgetType))),
                     DataColumn(label: Expanded(child: Text(locale.detailType))),
                   ],
@@ -153,12 +185,19 @@ class _MetricSettingsState extends State<MetricSettings> {
                               ),
                             ),
                             DataCell(
+                              StatefullCheck(
+                                item.showOnDashboard,
+                                (value) => item.showOnDashboard = value,
+                              ),
+                            ),
+                            DataCell(
                               SizedBox(
                                 width: 160,
                                 height: 45,
                                 child: EnumInput(
                                   value: item.graph,
                                   GraphKind.values
+                                      .where((e) => e.index > 0)
                                       .map((x) => DropDownItem(x, x.name))
                                       .toList(),
                                   (value) => item.graph = value ?? item.graph,
@@ -173,6 +212,7 @@ class _MetricSettingsState extends State<MetricSettings> {
                                 child: EnumInput(
                                   value: item.detailGraph,
                                   GraphKind.values
+                                      .where((e) => e.index > 0)
                                       .map((x) => DropDownItem(x, x.name))
                                       .toList(),
                                   (value) => item.detailGraph =

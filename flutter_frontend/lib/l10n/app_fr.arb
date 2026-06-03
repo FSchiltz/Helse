@@ -69,5 +69,7 @@
     "value": "Valeur",
     "tag": "Tag",
     "source": "Source",
-    "treatment": "traitement"
+    "treatment": "traitement",
+    "showOnDashboard": "Afficher sur le tableau de bord",
+    "patientsSettings": "Options des patients"
 }

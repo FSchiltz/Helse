@@ -229,4 +229,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get treatment => 'treatment';
+
+  @override
+  String get showOnDashboard => 'Show on dashboard';
+
+  @override
+  String get patientsSettings => 'Patient Settings';
+
+  @override
+  String get localSettings => 'Local Settings';
+
+  @override
+  String get general => 'General';
+
+  @override
+  String get healthsync => 'Health sync';
+
+  @override
+  String get users => 'Users';
 }

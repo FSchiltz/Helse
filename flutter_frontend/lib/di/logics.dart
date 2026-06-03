@@ -2,6 +2,7 @@ import 'package:helse/di/services.dart';
 import 'package:helse/logic/account/authentication_logic.dart';
 import 'package:helse/logic/fit/fit_logic.dart';
 import 'package:helse/logic/import_logic.dart';
+import 'package:helse/logic/settings/patients_settings_logic.dart';
 import 'package:helse/logic/settings/settings_logic.dart';
 import 'package:helse/services/account.dart';
 
@@ -10,14 +11,21 @@ class Logics {
   ImportLogic import = ImportLogic();
   FitLogic fit;
   SettingsLogic settings;
+  PatientsSettingsLogic patientsSettings;
 
-  Logics.build(this.authentication, this.settings, this.fit);
+  Logics.build(
+    this.authentication,
+    this.settings,
+    this.fit,
+    this.patientsSettings,
+  );
 
   factory Logics(Account account, Services service) {
     return Logics.build(
       AuthenticationLogic(account),
       SettingsLogic(account, service.settings),
       FitLogic(account),
+      PatientsSettingsLogic(account, service.settings),
     );
   }
 }

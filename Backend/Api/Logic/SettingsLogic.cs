@@ -36,7 +36,7 @@ public static class SettingsLogic
     public static async Task<IResult> GetPatientsSettings(IUserContext users, ISettingsContext settings, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
-        return error ?? TypedResults.Ok(await settings.GetSettings<UserSettings>(UserSettings.Name, user.Id));
+        return error ?? TypedResults.Ok(await settings.GetSettings<PatientsSettings>(PatientsSettings.Name, user.Id));
     }
 
     /// <summary>
@@ -46,7 +46,7 @@ public static class SettingsLogic
     /// <param name="users"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static async Task<IResult> PostPatientsSettingsAsync(UserSettings settings, IUserContext users, ISettingsContext db, HttpContext context, ILoggerFactory logger)
+    public static async Task<IResult> PostPatientsSettingsAsync(PatientsSettings settings, IUserContext users, ISettingsContext db, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger(nameof(SettingsLogic));
 

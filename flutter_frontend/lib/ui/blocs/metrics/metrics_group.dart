@@ -15,12 +15,14 @@ class MetricsGroup extends StatefulWidget {
   final int? person;
   final MetricGroup group;
   final DateTimeRange date;
+  final List<MetricType>? typesCache;
 
   const MetricsGroup({
     super.key,
     required this.date,
     required this.group,
     this.person,
+    this.typesCache,
   });
 
   @override
@@ -29,9 +31,13 @@ class MetricsGroup extends StatefulWidget {
 
 class _MetricsGroupState extends State<MetricsGroup> {
   List<Pair<MetricType, OrderedItem>>? types;
+
+  List<MetricType>? _cache;
   @override
   void initState() {
     super.initState();
+
+    _cache = widget.typesCache;
 
     if (widget.group.showOnDashboard == true) {
       _getData();
@@ -44,13 +50,26 @@ class _MetricsGroupState extends State<MetricsGroup> {
 
   void _getData() async {
     try {
-      var model = await Dependencies.services.metric.metricsType(
-        false,
-        widget.group.id,
-      );
+      List<MetricType>? model;
+
+      if (_cache != null) {
+        model = widget.typesCache;
+        _cache = null;
+      } else {
+        model = await Dependencies.services.metric.metricsType(
+          false,
+          widget.group.id,
+        );
+      }
+
       if (model != null) {
-        await Dependencies.logics.settings.updateMetrics(model);
-        var settings = await Dependencies.logics.settings.getMetrics();
+        List<OrderedItem> settings;
+
+        if (widget.person == null) {
+          settings = await Dependencies.logics.settings.getMetrics();
+        } else {
+          settings = await Dependencies.logics.patientsSettings.getMetrics();
+        }
         // filter using the user settings
 
         List<Pair<MetricType, OrderedItem>> filtered = [];
@@ -59,7 +78,9 @@ class _MetricsGroupState extends State<MetricsGroup> {
               settings.firstWhereOrNull((element) => element.id == item.id) ??
               Dependencies.logics.settings.getDefault(item);
 
-          if (setting.visible == true) filtered.add(Pair(item, setting));
+          if (setting.showOnDashboard == true) {
+            filtered.add(Pair(item, setting));
+          }
         }
 
         setState(() {
@@ -84,25 +105,26 @@ class _MetricsGroupState extends State<MetricsGroup> {
               _getData();
             },
             bloc: Dependencies.logics.settings.metrics,
-            child: (cached.isNotEmpty)
-                ? MetricWidgetsGrid(
-                    date: widget.date,
-                    person: widget.person,
-                    cached: cached,
-                    button: _openAll(context),
-                  )
-                : _openAll(context),
+            child: MetricWidgetsGrid(
+              date: widget.date,
+              person: widget.person,
+              cached: cached,
+            ),
           );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (widget.group.showTitle == true ||
-            widget.group.showOnDashboard != true)
-          Text(
-            widget.group.name,
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
+        Row(
+          children: [
+            Text(
+              widget.group.name,
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            SizedBox(width: 12),
+            _openAll(context),
+          ],
+        ),
         body,
         SizedBox(height: 12),
         Divider(height: 4),

@@ -2,7 +2,7 @@ namespace Api.Models.Events;
 
 public abstract class BaseEvent
 {
-    public int Type { get; set; }
+    public required int Type { get; set; }
 
     public string? Description { get; set; }
 

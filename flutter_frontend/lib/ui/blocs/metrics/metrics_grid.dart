@@ -23,6 +23,8 @@ class MetricsGrid extends StatefulWidget {
 class _MetricsGridState extends State<MetricsGrid> {
   List<MetricGroup>? groups;
 
+  List<MetricType>? typesCache;
+
   @override
   void initState() {
     super.initState();
@@ -31,13 +33,47 @@ class _MetricsGridState extends State<MetricsGrid> {
 
   void _getData() async {
     try {
-      var model = await Dependencies.services.metric.metricsGroup();
-      if (model != null) {
-        await Dependencies.logics.settings.updateMetricGroups(model);
-        var settings = await Dependencies.logics.settings.getMetricGroups();
-        // filter using the user settings
+      var metrictypes = await Dependencies.services.metric.metricsType(
+        false,
+        null,
+      );
 
-        List<MetricGroup> filtered = [];
+      List<MetricGroup> filtered = [];
+
+      List<MetricGroup>? model = await Dependencies.services.metric
+          .metricsGroup();
+
+      if (model == null) {
+        filtered = [];
+      } else {
+        List<OrderedItem> settings;
+        if (widget.person == null) {
+          if (metrictypes != null) {
+            await Dependencies.logics.settings.updateMetrics(metrictypes);
+            setState(() {
+              typesCache = metrictypes;
+            });
+          }
+
+          await Dependencies.logics.settings.updateMetricGroups(model);
+          settings = await Dependencies.logics.settings.getMetricGroups();
+          // filter using the user settings
+        } else {
+          if (metrictypes != null) {
+            await Dependencies.logics.patientsSettings.updateMetrics(
+              metrictypes,
+            );
+            setState(() {
+              typesCache = metrictypes;
+            });
+          }
+
+          await Dependencies.logics.patientsSettings.updateMetricGroups(model);
+          settings = await Dependencies.logics.patientsSettings
+              .getMetricGroups();
+          // filter using the user settings
+        }
+
         for (var item in model) {
           OrderedItem? setting = settings.firstWhereOrNull(
             (element) => element.id == item.id,
@@ -45,11 +81,11 @@ class _MetricsGridState extends State<MetricsGrid> {
 
           if (setting?.visible == true) filtered.add(item);
         }
-
-        setState(() {
-          groups = filtered;
-        });
       }
+      
+      setState(() {
+        groups = filtered;
+      });
     } catch (ex) {
       Notify.showError("$ex");
     }
@@ -65,11 +101,11 @@ class _MetricsGridState extends State<MetricsGrid> {
               _getData();
             },
             bloc: Dependencies.logics.settings.metrics,
-            child: _getGrid(cached),
+            child: _getGrid(cached, typesCache),
           );
   }
 
-  Widget _getGrid(List<MetricGroup> cached) {
+  Widget _getGrid(List<MetricGroup> cached, [List<MetricType>? typesCache]) {
     if (cached.isEmpty) {
       return Text(Translation.locale(context).nodata);
     } else {
@@ -81,6 +117,9 @@ class _MetricsGridState extends State<MetricsGrid> {
                 key: Key(type.id?.toString() ?? ""),
                 person: widget.person,
                 group: type,
+                typesCache: typesCache
+                    ?.where((e) => e.groupId == type.id)
+                    .toList(),
               ),
             )
             .toList(),

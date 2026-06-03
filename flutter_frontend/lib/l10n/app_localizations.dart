@@ -517,6 +517,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'treatment'**
   String get treatment;
+
+  /// No description provided for @showOnDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Show on dashboard'**
+  String get showOnDashboard;
+
+  /// No description provided for @patientsSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Settings'**
+  String get patientsSettings;
+
+  /// No description provided for @localSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Local Settings'**
+  String get localSettings;
+
+  /// No description provided for @general.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get general;
+
+  /// No description provided for @healthsync.
+  ///
+  /// In en, this message translates to:
+  /// **'Health sync'**
+  String get healthsync;
+
+  /// No description provided for @users.
+  ///
+  /// In en, this message translates to:
+  /// **'Users'**
+  String get users;
 }
 
 class _AppLocalizationsDelegate
