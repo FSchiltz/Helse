@@ -43,7 +43,7 @@ public class AuthTests(WebApplicationFactory<Program> factory) : IntegrationTest
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
-    [Theory(Skip = "not working")]
+    [Theory]
     [InlineData(statusUrl)]
     public async Task Get_Anonymous(string url)
     {
@@ -52,7 +52,7 @@ public class AuthTests(WebApplicationFactory<Program> factory) : IntegrationTest
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
-    [Fact(Skip = "not working")]
+    [Fact]
     public async Task Status()
     {
         var response = await _client.GetFromJsonAsync<Status>(statusUrl);
