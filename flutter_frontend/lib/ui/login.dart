@@ -358,7 +358,7 @@ class _LoginState extends State<LoginPage> {
     try {
       var created = await Dependencies.logics.authentication.startLogin(
         init: init,
-        oauth: oAuth == null,
+        oauth: oAuth != null,
         password: password,
         url: url,
         user: user,
@@ -375,7 +375,7 @@ class _LoginState extends State<LoginPage> {
         _status = SubmissionStatus.success;
       });
     } catch (ex) {
-      Notify.showError("Logging failed:$ex");
+      Notify.showError("Login failed:n$ex");
 
       // clear any info about the login
       await Dependencies.logics.authentication.logOut();
