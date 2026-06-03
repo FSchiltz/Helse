@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/care/patients_card.dart';
+import 'package:helse/ui/common/hamburger_menu.dart';
 import 'package:helse/ui/common/loading_builder.dart';
+import 'package:helse/ui/patient_settings.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -28,7 +30,11 @@ class Patients extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Text(locale.patients, style: Theme.of(context).textTheme.headlineSmall),
+                  Text(
+                    locale.patients,
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  SizedBox(width: 12),
                   IconButton(
                     onPressed: () {
                       showDialog<void>(
@@ -41,6 +47,19 @@ class Patients extends StatelessWidget {
                     icon: const Icon(Icons.add_sharp),
                     iconSize: 35,
                     color: theme.primary,
+                  ),
+                  Spacer(),
+                  HamburgerMenu(
+                    items: [
+                      MenuButton(locale.patientsSettings, Icons.edit_sharp, () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (context) => const PatientSettingsPage(),
+                          ),
+                        );
+                      }),
+                    ],
                   ),
                 ],
               ),

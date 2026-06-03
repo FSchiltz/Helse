@@ -4,84 +4,44 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/care/patient_add.dart';
 import 'package:helse/ui/blocs/care/share_patient_dialog.dart';
 import 'package:helse/ui/blocs/imports/file_import.dart';
+import 'package:helse/ui/common/hamburger_menu.dart';
 
-class PatientMenu extends StatefulWidget {
+class PatientMenu extends StatelessWidget {
   final Person person;
   final void Function() callback;
   const PatientMenu(this.person, this.callback, {super.key});
 
   @override
-  State<PatientMenu> createState() => _PatientMenuState();
-}
-
-class _PatientMenuState extends State<PatientMenu> {
-  final FocusNode _buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
-
-  final MenuController _controller = MenuController();
-  @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
     var locale = Translation.locale(context);
-    return MenuAnchor(
-      controller: _controller,
-      childFocusNode: _buttonFocusNode,
-      builder: (context, controller, child) => IconButton(
-        focusNode: _buttonFocusNode,
-        onPressed: () {
-          if (_controller.isOpen) {
-            controller.close();
-          } else {
-            controller.open();
-          }
-        },
-        icon: Icon(Icons.menu),
-      ),
-      menuChildren: [
-        Container(
-          margin: EdgeInsets.all(8),
-          child: ElevatedButton.icon(
-            label: Text(locale.edit),
-            onPressed: () {
-              showDialog<void>(
-                context: context,
-                builder: (BuildContext context) {
-                  return PatientAdd(widget.callback, edit: widget.person);
-                },
-              );
+    return HamburgerMenu(
+      items: [
+        MenuButton(locale.edit, Icons.edit_sharp, () {
+          showDialog<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return PatientAdd(callback, edit: person);
             },
-            icon: Icon(Icons.edit_sharp, color: theme.primary),
-          ),
-        ),
-        Container(          
-          margin: EdgeInsets.all(8),
-          child: ElevatedButton.icon(
-            label: Text(locale.share),
-            onPressed: () {
-              showDialog<void>(
-                context: context,
-                builder: (BuildContext context) {
-                  return SharePatientDialog(widget.person);
-                },
-              );
+          );
+        }),
+
+        MenuButton(locale.share, Icons.share_sharp, () {
+          showDialog<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return SharePatientDialog(person);
             },
-            icon: Icon(Icons.share_sharp, color: theme.primary),
-          ),
-        ),
-        Container(
-          margin: EdgeInsets.all(8),
-          child: ElevatedButton.icon(
-            label: Text(locale.import),
-            onPressed: () {
-              showDialog<void>(
-                context: context,
-                builder: (BuildContext context) {
-                  return FileImport(patient: widget.person.id);
-                },
-              );
+          );
+        }),
+
+        MenuButton(locale.import, Icons.upload_file_sharp, () {
+          showDialog<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return FileImport(patient: person.id);
             },
-            icon: Icon(Icons.upload_file_sharp, color: theme.primary),
-          ),
-        ),
+          );
+        }),
       ],
     );
   }

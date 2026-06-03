@@ -435,6 +435,24 @@ Map<String, dynamic> _$PatientSettingsToJson(PatientSettings instance) =>
       'events': instance.events?.map((e) => e.toJson()).toList(),
     };
 
+PatientsSettings _$PatientsSettingsFromJson(Map<String, dynamic> json) =>
+    PatientsSettings(
+      $default: json['default'] == null
+          ? null
+          : PatientSettings.fromJson(json['default'] as Map<String, dynamic>),
+      patients:
+          (json['patients'] as List<dynamic>?)
+              ?.map((e) => PatientSettings.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$PatientsSettingsToJson(PatientsSettings instance) =>
+    <String, dynamic>{
+      'default': instance.$default?.toJson(),
+      'patients': instance.patients?.map((e) => e.toJson()).toList(),
+    };
+
 Person _$PersonFromJson(Map<String, dynamic> json) => Person(
   id: (json['id'] as num).toInt(),
   userName: json['userName'] as String?,

@@ -54,4 +54,14 @@ class SettingService extends ApiService {
     var api = await getService();
     return await call(api.apiPersonSettingsGet) ?? const UserSettings();
   }
+
+    Future<void> savePatientsSettings(PatientsSettings settings) async {
+    var api = await getService();
+    await call(() => api.apiPatientsSettingsPost(body: settings));
+  }
+
+  Future<PatientsSettings> getPatientsSettings() async {
+    var api = await getService();
+    return await call(api.apiPatientsSettingsGet) ?? const PatientsSettings();
+  }
 }

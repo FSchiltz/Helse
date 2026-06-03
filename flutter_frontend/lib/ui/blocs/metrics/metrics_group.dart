@@ -63,7 +63,13 @@ class _MetricsGroupState extends State<MetricsGroup> {
       }
 
       if (model != null) {
-        var settings = await Dependencies.logics.settings.getMetrics();
+        List<OrderedItem> settings;
+
+        if (widget.person == null) {
+          settings = await Dependencies.logics.settings.getMetrics();
+        } else {
+          settings = await Dependencies.logics.settings.getPatientsMetrics();
+        }
         // filter using the user settings
 
         List<Pair<MetricType, OrderedItem>> filtered = [];

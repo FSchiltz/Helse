@@ -70,5 +70,6 @@
     "tag": "Tag",
     "source": "Source",
     "treatment": "traitement",
-    "showOnDashboard": "Afficher sur le tableau de bord"
+    "showOnDashboard": "Afficher sur le tableau de bord",
+    "patientsSettings": "Options des patients"
 }

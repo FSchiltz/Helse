@@ -232,4 +232,19 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get showOnDashboard => 'Afficher sur le tableau de bord';
+
+  @override
+  String get patientsSettings => 'Options des patients';
+
+  @override
+  String get localSettings => 'Local Settings';
+
+  @override
+  String get general => 'General';
+
+  @override
+  String get healthsync => 'Health sync';
+
+  @override
+  String get users => 'Users';
 }

@@ -10,7 +10,8 @@ import 'package:helse/ui/common/statefull_check.dart';
 import 'package:helse/ui/common/type_input.dart';
 
 class MetricSettings extends StatefulWidget {
-  const MetricSettings({super.key});
+  final bool isPatient;
+  const MetricSettings({super.key, this.isPatient = false});
 
   @override
   State<MetricSettings> createState() => _MetricSettingsState();
@@ -18,7 +19,13 @@ class MetricSettings extends StatefulWidget {
 
 class _MetricSettingsState extends State<MetricSettings> {
   Future<List<OrderedEditItem>> _getData(bool refresh) async {
-    return (await Dependencies.logics.settings.getMetrics())
+    List<OrderedItem> items;
+    if (widget.isPatient) {
+      items = await Dependencies.logics.settings.getPatientsMetrics();
+    } else {
+      items = await Dependencies.logics.settings.getMetrics();
+    }
+    return items
         .map(
           (e) => OrderedEditItem(
             id: e.id,
@@ -34,7 +41,13 @@ class _MetricSettingsState extends State<MetricSettings> {
   }
 
   Future<List<OrderedEditItem>> _getGroupData(bool reset) async {
-    return (await Dependencies.logics.settings.getMetricGroups())
+    List<OrderedItem> items;
+    if (widget.isPatient) {
+      items = await Dependencies.logics.settings.getPatientsMetricGroups();
+    } else {
+      items = await Dependencies.logics.settings.getMetricGroups();
+    }
+    return items
         .map(
           (e) => OrderedEditItem(
             id: e.id,
@@ -56,7 +69,14 @@ class _MetricSettingsState extends State<MetricSettings> {
     try {
       var toSave = groups.map((e) => e.ordered()).toList();
       // save the user's settings
-      await Dependencies.logics.settings.saveMetricGroups(toSave, true);
+      if (widget.isPatient) {
+        await Dependencies.logics.settings.savePatientsMetricGroups(
+          toSave,
+          true,
+        );
+      } else {
+        await Dependencies.logics.settings.saveMetricGroups(toSave, true);
+      }
 
       Notify.show(locale.saved);
     } catch (ex) {
@@ -71,7 +91,11 @@ class _MetricSettingsState extends State<MetricSettings> {
     try {
       var toSave = metrics.map((e) => e.ordered()).toList();
       // save the user's settings
-      await Dependencies.logics.settings.saveMetrics(toSave, true);
+      if (widget.isPatient) {
+        await Dependencies.logics.settings.savePatientsMetrics(toSave, true);
+      } else {
+        await Dependencies.logics.settings.saveMetrics(toSave, true);
+      }
 
       Notify.show(locale.saved);
     } catch (ex) {

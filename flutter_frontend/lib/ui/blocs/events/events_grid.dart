@@ -32,8 +32,14 @@ class _EventsGridState extends State<EventsGrid> {
     try {
       var model = await Dependencies.services.event.eventsType(false);
       if (model != null) {
-        await Dependencies.logics.settings.updateEvents(model);
-        var settings = await Dependencies.logics.settings.getEvents();
+        List<OrderedItem> settings;
+        if (widget.person == null) {
+          await Dependencies.logics.settings.updateEvents(model);
+          settings = await Dependencies.logics.settings.getEvents();
+        } else {
+          await Dependencies.logics.settings.updatePatientsEvents(model);
+          settings = await Dependencies.logics.settings.getPatientEvents();
+        }
 
         // filter using the user settings
         List<EventType> filtered = [];

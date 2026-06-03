@@ -439,7 +439,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PatientSettings"
+                  "$ref": "#/components/schemas/PatientsSettings"
                 }
               }
             }
@@ -457,7 +457,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserSettings"
+                "$ref": "#/components/schemas/PatientsSettings"
               }
             }
           },
@@ -2793,6 +2793,20 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/OrderedItem"
+            }
+          }
+        }
+      },
+      "PatientsSettings": {
+        "type": "object",
+        "properties": {
+          "default": {
+            "$ref": "#/components/schemas/PatientSettings"
+          },
+          "patients": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PatientSettings"
             }
           }
         }

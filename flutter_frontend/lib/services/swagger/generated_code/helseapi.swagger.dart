@@ -416,10 +416,10 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response<PatientSettings>> apiPatientsSettingsGet() {
+  Future<chopper.Response<PatientsSettings>> apiPatientsSettingsGet() {
     generatedMapping.putIfAbsent(
-      PatientSettings,
-      () => PatientSettings.fromJsonFactory,
+      PatientsSettings,
+      () => PatientsSettings.fromJsonFactory,
     );
 
     return _apiPatientsSettingsGet();
@@ -427,7 +427,7 @@ abstract class Helseapi extends ChopperService {
 
   ///
   @GET(path: '/api/patients/settings')
-  Future<chopper.Response<PatientSettings>> _apiPatientsSettingsGet({
+  Future<chopper.Response<PatientsSettings>> _apiPatientsSettingsGet({
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -443,7 +443,7 @@ abstract class Helseapi extends ChopperService {
 
   ///
   Future<chopper.Response> apiPatientsSettingsPost({
-    required UserSettings? body,
+    required PatientsSettings? body,
   }) {
     return _apiPatientsSettingsPost(body: body);
   }
@@ -451,7 +451,7 @@ abstract class Helseapi extends ChopperService {
   ///
   @POST(path: '/api/patients/settings', optionalBody: true)
   Future<chopper.Response> _apiPatientsSettingsPost({
-    @Body() required UserSettings? body,
+    @Body() required PatientsSettings? body,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -3895,6 +3895,70 @@ extension $PatientSettingsExtension on PatientSettings {
           ? metricGroups.value
           : this.metricGroups),
       events: (events != null ? events.value : this.events),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class PatientsSettings {
+  const PatientsSettings({this.$default, this.patients});
+
+  factory PatientsSettings.fromJson(Map<String, dynamic> json) =>
+      _$PatientsSettingsFromJson(json);
+
+  static const toJsonFactory = _$PatientsSettingsToJson;
+  Map<String, dynamic> toJson() => _$PatientsSettingsToJson(this);
+
+  @JsonKey(name: 'default')
+  final PatientSettings? $default;
+  @JsonKey(name: 'patients', defaultValue: <PatientSettings>[])
+  final List<PatientSettings>? patients;
+  static const fromJsonFactory = _$PatientsSettingsFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is PatientsSettings &&
+            (identical(other.$default, $default) ||
+                const DeepCollectionEquality().equals(
+                  other.$default,
+                  $default,
+                )) &&
+            (identical(other.patients, patients) ||
+                const DeepCollectionEquality().equals(
+                  other.patients,
+                  patients,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash($default) ^
+      const DeepCollectionEquality().hash(patients) ^
+      runtimeType.hashCode;
+}
+
+extension $PatientsSettingsExtension on PatientsSettings {
+  PatientsSettings copyWith({
+    PatientSettings? $default,
+    List<PatientSettings>? patients,
+  }) {
+    return PatientsSettings(
+      $default: $default ?? this.$default,
+      patients: patients ?? this.patients,
+    );
+  }
+
+  PatientsSettings copyWithWrapped({
+    Wrapped<PatientSettings?>? $default,
+    Wrapped<List<PatientSettings>?>? patients,
+  }) {
+    return PatientsSettings(
+      $default: ($default != null ? $default.value : this.$default),
+      patients: (patients != null ? patients.value : this.patients),
     );
   }
 }

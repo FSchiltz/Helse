@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/administration/event_settings.dart';
 import 'package:helse/ui/blocs/administration/general_settings.dart';
 import 'package:helse/ui/blocs/administration/metric_settings.dart';
@@ -9,38 +10,39 @@ import 'package:helse/ui/common/navigation_page.dart';
 class AdministrationPage extends StatelessWidget {
   const AdministrationPage({super.key});
 
-  static const List<MenuDestination> _destinations = [
+  @override
+  Widget build(BuildContext context) {
+    var locale = Translation.locale(context);
+    return NavigationPage(
+      locale.administration,
+      pages: [
+        const GeneralSettings(),
+        const UserSettings(),
+        const MetricSettings(),
+        const EventSettings(),
+      ],
+      menu: [
     MenuDestination(
       icon: Icon(Icons.settings_sharp),
       selectedIcon: Icon(Icons.settings),
-      label: 'General',
+      label: locale.general,
     ),
     MenuDestination(
       icon: Icon(Icons.person_search_sharp),
       selectedIcon: Icon(Icons.person),
-      label: 'Users',
+      label: locale.users,
     ),
     MenuDestination(
       icon: Icon(Icons.post_add_sharp),
       selectedIcon: Icon(Icons.analytics),
-      label: 'Metrics',
+      label: locale.metrics,
     ),
     MenuDestination(
       icon: Icon(Icons.event_repeat_sharp),
       selectedIcon: Icon(Icons.event),
-      label: 'Events',
+      label: locale.events,
     ),
-  ];
-
-  static final List<Widget> _pages = [
-    const GeneralSettings(),
-    const UserSettings(),
-    const MetricSettings(),
-    const EventSettings(),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return NavigationPage('Administrations', pages: _pages, menu: _destinations);
+  ],
+    );
   }
 }
