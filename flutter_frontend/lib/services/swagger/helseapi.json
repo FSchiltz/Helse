@@ -1361,7 +1361,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Treatment"
+                    "$ref": "#/components/schemas/Event"
                   }
                 }
               }
@@ -3099,25 +3099,6 @@
             "type": "string"
           }
         }
-      },
-      "Treatment": {
-        "type": "object",
-        "properties": {
-          "events": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Event"
-            }
-          },
-          "type": {
-            "$ref": "#/components/schemas/TreatmentType"
-          }
-        }
-      },
-      "TreatmentType": {
-        "enum": [
-          "Care"
-        ]
       },
       "UpdateEvent": {
         "required": [

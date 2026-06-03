@@ -57,7 +57,7 @@ public interface IHealthContext : IContext
     /// <param name="e">The event to update</param>
     Task Update(Api.Models.Events.UpdateEvent e);
 
-    Task<EventType[]> GetEventTypes(bool? all);
+    Task<EventType[]> GetEventTypes(bool? all, bool standalone = false);
 
     Task Insert(Api.Models.Events.EventType metric);
 
@@ -82,7 +82,7 @@ public interface IHealthContext : IContext
 
     Task<Models.Persons.Person[]> GetPatients(long id, DateTime now, RightType view);
     Task<Event[]> GetEvents(long id, RightType view, DateTime start, DateTime end);
-    Task<Event[]> GetEvents(long id, DateTime start, DateTime end);
+    Task<Event[]> GetTreatmentEvents(long id, DateTime start, DateTime end);
 
     Task<Models.Persons.Person[]> GetAllPatients();
 

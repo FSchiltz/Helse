@@ -49,7 +49,6 @@ class EventTypeView extends StatelessWidget {
                     DataColumn(label: Expanded(child: Text("Id"))),
                     DataColumn(label: Expanded(child: Text("Name"))),
                     DataColumn(label: Expanded(child: Text("Description"))),
-                    DataColumn(label: Expanded(child: Text("Is standalone"))),
                     DataColumn(label: Expanded(child: Text("Visible"))),
                     DataColumn(label: Expanded(child: Text(""))),
                   ],
@@ -60,9 +59,6 @@ class EventTypeView extends StatelessWidget {
                             DataCell(Text((type.id).toString())),
                             DataCell(Text(type.name)),
                             DataCell(Text(type.description ?? "")),
-                            DataCell(
-                              Checkbox(value: type.standAlone, onChanged: null),
-                            ),
                             DataCell(
                               Checkbox(value: type.visible, onChanged: null),
                             ),

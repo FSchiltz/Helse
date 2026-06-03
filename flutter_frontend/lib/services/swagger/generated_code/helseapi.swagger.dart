@@ -1125,12 +1125,12 @@ abstract class Helseapi extends ChopperService {
   ///@param start
   ///@param end
   ///@param personId
-  Future<chopper.Response<List<Treatment>>> apiTreatmentGet({
+  Future<chopper.Response<List<Event>>> apiTreatmentGet({
     required DateTime? start,
     required DateTime? end,
     int? personId,
   }) {
-    generatedMapping.putIfAbsent(Treatment, () => Treatment.fromJsonFactory);
+    generatedMapping.putIfAbsent(Event, () => Event.fromJsonFactory);
 
     return _apiTreatmentGet(start: start, end: end, personId: personId);
   }
@@ -1140,7 +1140,7 @@ abstract class Helseapi extends ChopperService {
   ///@param end
   ///@param personId
   @GET(path: '/api/treatment')
-  Future<chopper.Response<List<Treatment>>> _apiTreatmentGet({
+  Future<chopper.Response<List<Event>>> _apiTreatmentGet({
     @Query('start') required DateTime? start,
     @Query('end') required DateTime? end,
     @Query('personId') int? personId,
@@ -4747,62 +4747,6 @@ extension $TokenResponseExtension on TokenResponse {
 }
 
 @JsonSerializable(explicitToJson: true)
-class Treatment {
-  const Treatment({this.events, this.type});
-
-  factory Treatment.fromJson(Map<String, dynamic> json) =>
-      _$TreatmentFromJson(json);
-
-  static const toJsonFactory = _$TreatmentToJson;
-  Map<String, dynamic> toJson() => _$TreatmentToJson(this);
-
-  @JsonKey(name: 'events', defaultValue: <Event>[])
-  final List<Event>? events;
-  @JsonKey(
-    name: 'type',
-    toJson: treatmentTypeNullableToJson,
-    fromJson: treatmentTypeNullableFromJson,
-  )
-  final enums.TreatmentType? type;
-  static const fromJsonFactory = _$TreatmentFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is Treatment &&
-            (identical(other.events, events) ||
-                const DeepCollectionEquality().equals(other.events, events)) &&
-            (identical(other.type, type) ||
-                const DeepCollectionEquality().equals(other.type, type)));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(events) ^
-      const DeepCollectionEquality().hash(type) ^
-      runtimeType.hashCode;
-}
-
-extension $TreatmentExtension on Treatment {
-  Treatment copyWith({List<Event>? events, enums.TreatmentType? type}) {
-    return Treatment(events: events ?? this.events, type: type ?? this.type);
-  }
-
-  Treatment copyWithWrapped({
-    Wrapped<List<Event>?>? events,
-    Wrapped<enums.TreatmentType?>? type,
-  }) {
-    return Treatment(
-      events: (events != null ? events.value : this.events),
-      type: (type != null ? type.value : this.type),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
 class UpdateEvent {
   const UpdateEvent({
     this.id,
@@ -6111,74 +6055,6 @@ List<enums.RightType>? rightTypeNullableListFromJson(
   }
 
   return rightType.map((e) => rightTypeFromJson(e.toString())).toList();
-}
-
-String? treatmentTypeNullableToJson(enums.TreatmentType? treatmentType) {
-  return treatmentType?.value;
-}
-
-String? treatmentTypeToJson(enums.TreatmentType treatmentType) {
-  return treatmentType.value;
-}
-
-enums.TreatmentType treatmentTypeFromJson(
-  Object? treatmentType, [
-  enums.TreatmentType? defaultValue,
-]) {
-  return enums.TreatmentType.values.firstWhereOrNull(
-        (e) => e.value == treatmentType,
-      ) ??
-      defaultValue ??
-      enums.TreatmentType.swaggerGeneratedUnknown;
-}
-
-enums.TreatmentType? treatmentTypeNullableFromJson(
-  Object? treatmentType, [
-  enums.TreatmentType? defaultValue,
-]) {
-  if (treatmentType == null) {
-    return null;
-  }
-  return enums.TreatmentType.values.firstWhereOrNull(
-        (e) => e.value == treatmentType,
-      ) ??
-      defaultValue;
-}
-
-String treatmentTypeExplodedListToJson(
-  List<enums.TreatmentType>? treatmentType,
-) {
-  return treatmentType?.map((e) => e.value!).join(',') ?? '';
-}
-
-List<String> treatmentTypeListToJson(List<enums.TreatmentType>? treatmentType) {
-  if (treatmentType == null) {
-    return [];
-  }
-
-  return treatmentType.map((e) => e.value!).toList();
-}
-
-List<enums.TreatmentType> treatmentTypeListFromJson(
-  List? treatmentType, [
-  List<enums.TreatmentType>? defaultValue,
-]) {
-  if (treatmentType == null) {
-    return defaultValue ?? [];
-  }
-
-  return treatmentType.map((e) => treatmentTypeFromJson(e.toString())).toList();
-}
-
-List<enums.TreatmentType>? treatmentTypeNullableListFromJson(
-  List? treatmentType, [
-  List<enums.TreatmentType>? defaultValue,
-]) {
-  if (treatmentType == null) {
-    return defaultValue;
-  }
-
-  return treatmentType.map((e) => treatmentTypeFromJson(e.toString())).toList();
 }
 
 String? userTypeNullableToJson(enums.UserType? userType) {

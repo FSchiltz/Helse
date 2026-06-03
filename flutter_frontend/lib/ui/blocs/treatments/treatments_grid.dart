@@ -16,7 +16,7 @@ class TreatmentsGrid extends StatefulWidget {
 }
 
 class _TreatmentsGridState extends State<TreatmentsGrid> {
-  Future<List<Treatment>> _getData(bool refresh) async {
+  Future<List<Event>> _getData(bool refresh) async {
     var date = widget.date;
 
     var start = DateTime(date.start.year, date.start.month, date.start.day);
@@ -26,7 +26,11 @@ class _TreatmentsGridState extends State<TreatmentsGrid> {
       date.end.day,
     ).add(const Duration(days: 1));
 
-    return await Dependencies.services.treatement.treatments(start, end, person: widget.person) ??
+    return await Dependencies.services.treatement.treatments(
+          start,
+          end,
+          person: widget.person,
+        ) ??
         [];
   }
 
@@ -35,20 +39,9 @@ class _TreatmentsGridState extends State<TreatmentsGrid> {
     return LoadingBuilder(
       _getData,
       builder: (ctx, data, context) {
-        return ListView(
-          shrinkWrap: true,
-          children: data
-              .map(
-                (e) => Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: EventsTimelineGraph(
-                    e.events ?? List<Event>.empty(),
-                    widget.date,
-                    (e) => {},
-                  ),
-                ),
-              )
-              .toList(),
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: EventsTimelineGraph(data, widget.date, (e) => {}),
         );
       },
     );
