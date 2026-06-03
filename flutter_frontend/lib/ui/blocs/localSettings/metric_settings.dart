@@ -21,12 +21,13 @@ class _MetricSettingsState extends State<MetricSettings> {
     return (await Dependencies.logics.settings.getMetrics())
         .map(
           (e) => OrderedEditItem(
-            id: e.id ?? 0,
+            id: e.id,
             name: e.name,
             detailGraph: e.detailGraph,
             graph: e.graph,
-            visible: e.visible ?? false,
+            visible: e.visible ?? true,
             order: e.order,
+            showOnDashboard: e.showOnDashboard ?? true,
           ),
         )
         .toList();
@@ -36,12 +37,13 @@ class _MetricSettingsState extends State<MetricSettings> {
     return (await Dependencies.logics.settings.getMetricGroups())
         .map(
           (e) => OrderedEditItem(
-            id: e.id ?? 0,
+            id: e.id,
             name: e.name,
             detailGraph: e.detailGraph,
             graph: e.graph,
             visible: e.visible ?? true,
             order: e.order,
+            showOnDashboard: e.showOnDashboard ?? true,
           ),
         )
         .toList();
@@ -136,6 +138,9 @@ class _MetricSettingsState extends State<MetricSettings> {
                   columns: [
                     DataColumn(label: Expanded(child: Text(locale.name))),
                     DataColumn(label: Expanded(child: Text(locale.visible))),
+                    DataColumn(
+                      label: Expanded(child: Text(locale.showOnDashboard)),
+                    ),
                     DataColumn(label: Expanded(child: Text(locale.widgetType))),
                     DataColumn(label: Expanded(child: Text(locale.detailType))),
                   ],
@@ -153,6 +158,12 @@ class _MetricSettingsState extends State<MetricSettings> {
                               StatefullCheck(
                                 item.visible,
                                 (value) => item.visible = value,
+                              ),
+                            ),
+                            DataCell(
+                              StatefullCheck(
+                                item.showOnDashboard,
+                                (value) => item.showOnDashboard = value,
                               ),
                             ),
                             DataCell(

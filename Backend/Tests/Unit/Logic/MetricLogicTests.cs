@@ -20,6 +20,9 @@ public class MetricLogicTests : LogicTests
             Name = "",
             Type = MetricDataType.Text,
             SummaryType = MetricSummary.Sum,
+            Id = 0,
+            UserEditable = true,
+            GroupId = 1,
         };
 
         var users = SetupUser(Api.Data.Models.Persons.UserType.User);
@@ -37,6 +40,9 @@ public class MetricLogicTests : LogicTests
             Name = "",
             Type = MetricDataType.Text,
             SummaryType = MetricSummary.Sum,
+            Id = 0,
+            UserEditable = true,
+            GroupId = 1,
         };
 
         var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);
@@ -53,6 +59,9 @@ public class MetricLogicTests : LogicTests
             Name = "",
             Type = MetricDataType.Text,
             SummaryType = MetricSummary.Sum,
+            Id = 0,
+            UserEditable = true,
+            GroupId = 1,
         };
 
         var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);
@@ -69,6 +78,9 @@ public class MetricLogicTests : LogicTests
             Name = "",
             Type = MetricDataType.Text,
             SummaryType = MetricSummary.Latest,
+            Id = 0,
+            UserEditable = true,
+            GroupId = 1,
         };
 
         var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);
@@ -86,6 +98,9 @@ public class MetricLogicTests : LogicTests
             Name = "",
             Type = MetricDataType.Number,
             SummaryType = MetricSummary.Mean,
+            Id = 0,
+            UserEditable = true,
+            GroupId = 1,
         };
 
         var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);

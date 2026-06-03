@@ -41,7 +41,7 @@ Map<String, dynamic> _$CountRecordToJson(CountRecord instance) =>
     <String, dynamic>{'id': instance.id, 'count': instance.count};
 
 CreateEvent _$CreateEventFromJson(Map<String, dynamic> json) => CreateEvent(
-  type: (json['type'] as num?)?.toInt(),
+  type: (json['type'] as num).toInt(),
   description: json['description'] as String?,
   start: DateTime.parse(json['start'] as String),
   stop: DateTime.parse(json['stop'] as String),
@@ -69,7 +69,7 @@ CreateMetric _$CreateMetricFromJson(Map<String, dynamic> json) => CreateMetric(
   date: DateTime.parse(json['date'] as String),
   value: json['value'] as String,
   tag: json['tag'] as String?,
-  type: (json['type'] as num?)?.toInt(),
+  type: (json['type'] as num).toInt(),
   source: fileTypesNullableFromJson(json['source']),
   sourceId: json['sourceId'] as String,
 );
@@ -104,11 +104,11 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
   user: (json['user'] as num?)?.toInt(),
   file: (json['file'] as num?)?.toInt(),
   treatment: (json['treatment'] as num?)?.toInt(),
-  id: (json['id'] as num?)?.toInt(),
+  id: (json['id'] as num).toInt(),
   person: (json['person'] as num?)?.toInt(),
   valid: json['valid'] as bool?,
   address: (json['address'] as num?)?.toInt(),
-  type: (json['type'] as num?)?.toInt(),
+  type: (json['type'] as num).toInt(),
   description: json['description'] as String?,
   start: DateTime.parse(json['start'] as String),
   stop: DateTime.parse(json['stop'] as String),
@@ -168,8 +168,8 @@ EventType _$EventTypeFromJson(Map<String, dynamic> json) => EventType(
   description: json['description'] as String?,
   standAlone: json['standAlone'] as bool?,
   visible: json['visible'] as bool?,
-  id: (json['id'] as num?)?.toInt(),
-  userEditable: json['userEditable'] as bool?,
+  id: (json['id'] as num).toInt(),
+  userEditable: json['userEditable'] as bool,
 );
 
 Map<String, dynamic> _$EventTypeToJson(EventType instance) => <String, dynamic>{
@@ -265,7 +265,7 @@ Metric _$MetricFromJson(Map<String, dynamic> json) => Metric(
   date: DateTime.parse(json['date'] as String),
   value: json['value'] as String,
   tag: json['tag'] as String?,
-  type: (json['type'] as num?)?.toInt(),
+  type: (json['type'] as num).toInt(),
   source: fileTypesNullableFromJson(json['source']),
   sourceId: json['sourceId'] as String,
 );
@@ -305,11 +305,11 @@ MetricType _$MetricTypeFromJson(Map<String, dynamic> json) => MetricType(
   summaryType: metricSummaryNullableFromJson(json['summaryType']),
   description: json['description'] as String?,
   type: metricDataTypeNullableFromJson(json['type']),
-  id: (json['id'] as num?)?.toInt(),
-  userEditable: json['userEditable'] as bool?,
+  id: (json['id'] as num).toInt(),
+  userEditable: json['userEditable'] as bool,
   visible: json['visible'] as bool?,
   showOnDashboard: json['showOnDashboard'] as bool?,
-  groupId: (json['groupId'] as num?)?.toInt(),
+  groupId: (json['groupId'] as num).toInt(),
 );
 
 Map<String, dynamic> _$MetricTypeToJson(MetricType instance) =>
@@ -382,9 +382,10 @@ Map<String, dynamic> _$OauthProviderToJson(OauthProvider instance) =>
 
 OrderedItem _$OrderedItemFromJson(Map<String, dynamic> json) => OrderedItem(
   visible: json['visible'] as bool?,
+  showOnDashboard: json['showOnDashboard'] as bool?,
   order: (json['order'] as num?)?.toInt(),
   name: json['name'] as String,
-  id: (json['id'] as num?)?.toInt(),
+  id: (json['id'] as num).toInt(),
   graph: graphKindNullableFromJson(json['graph']),
   detailGraph: graphKindNullableFromJson(json['detailGraph']),
 );
@@ -392,6 +393,7 @@ OrderedItem _$OrderedItemFromJson(Map<String, dynamic> json) => OrderedItem(
 Map<String, dynamic> _$OrderedItemToJson(OrderedItem instance) =>
     <String, dynamic>{
       'visible': instance.visible,
+      'showOnDashboard': instance.showOnDashboard,
       'order': instance.order,
       'name': instance.name,
       'id': instance.id,
@@ -593,7 +595,7 @@ Map<String, dynamic> _$TreatmentToJson(Treatment instance) => <String, dynamic>{
 
 UpdateEvent _$UpdateEventFromJson(Map<String, dynamic> json) => UpdateEvent(
   id: (json['id'] as num?)?.toInt(),
-  type: (json['type'] as num?)?.toInt(),
+  type: (json['type'] as num).toInt(),
   description: json['description'] as String?,
   start: DateTime.parse(json['start'] as String),
   stop: DateTime.parse(json['stop'] as String),
@@ -623,7 +625,7 @@ UpdateMetric _$UpdateMetricFromJson(Map<String, dynamic> json) => UpdateMetric(
   date: DateTime.parse(json['date'] as String),
   value: json['value'] as String,
   tag: json['tag'] as String?,
-  type: (json['type'] as num?)?.toInt(),
+  type: (json['type'] as num).toInt(),
   source: fileTypesNullableFromJson(json['source']),
   sourceId: json['sourceId'] as String,
 );

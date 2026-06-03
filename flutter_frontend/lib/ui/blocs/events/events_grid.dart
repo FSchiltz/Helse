@@ -72,7 +72,7 @@ class _EventsGridState extends State<EventsGrid> {
                         (type) => EventWidget(
                           type,
                           widget.date,
-                          key: Key(type.id?.toString() ?? ""),
+                          key: Key(type.id.toString()),
                           person: widget.person,
                         ),
                       )

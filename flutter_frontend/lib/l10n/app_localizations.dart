@@ -517,6 +517,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'treatment'**
   String get treatment;
+
+  /// No description provided for @showOnDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Show on dashboard'**
+  String get showOnDashboard;
 }
 
 class _AppLocalizationsDelegate

@@ -8,7 +8,7 @@ public class Event : BaseEvent
 
     public long? Treatment { get; set; }
 
-    public long Id { get; set; }
+    public required long Id { get; set; }
 
     public long Person { get; set; }
 

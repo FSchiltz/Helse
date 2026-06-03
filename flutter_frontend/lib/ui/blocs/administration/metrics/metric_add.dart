@@ -39,9 +39,9 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
       controllerDescription.text = edit.description ?? "";
       controllerName.text = edit.name;
       controllerUnit.text = edit.unit ?? "";
-      _visible = edit.visible ?? false;
-      _showDashboard = edit.showOnDashboard ?? false;
-      _groupId = edit.groupId ?? 0;
+      _visible = edit.visible ?? true;
+      _showDashboard = edit.showOnDashboard ?? true;
+      _groupId = edit.groupId;
     }
     _loadGroup();
   }

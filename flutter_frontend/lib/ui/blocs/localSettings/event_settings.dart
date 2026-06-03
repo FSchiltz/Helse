@@ -24,10 +24,11 @@ class _EventSettingsState extends State<EventSettings> {
           (e) => OrderedEditItem(
             visible: e.visible ?? true,
             name: e.name,
-            id: e.id ?? 0,
+            id: e.id,
             detailGraph: e.detailGraph,
             graph: e.graph,
             order: e.order,
+            showOnDashboard: e.showOnDashboard ?? true,
           ),
         )
         .toList();
@@ -93,7 +94,9 @@ class _EventSettingsState extends State<EventSettings> {
                       child: DataTable(
                         columns: [
                           DataColumn(label: Expanded(child: Text(locale.name))),
-                          DataColumn(label: Expanded(child: Text(locale.visible))),
+                          DataColumn(
+                            label: Expanded(child: Text(locale.visible)),
+                          ),
                         ],
                         rows: data
                             .map(

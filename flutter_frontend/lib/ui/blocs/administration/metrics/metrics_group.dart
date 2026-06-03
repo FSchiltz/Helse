@@ -54,7 +54,7 @@ class MetricGroupView extends StatelessWidget {
                     DataColumn(label: Expanded(child: Text("Description"))),
                     DataColumn(label: Expanded(child: Text("Show title"))),
                     DataColumn(
-                      label: Expanded(child: Text("Show on dashboard")),
+                      label: Expanded(child: Text("Visible")),
                     ),
                     DataColumn(label: Expanded(child: Text(""))),
                   ],

@@ -49,9 +49,7 @@ class EventTypeView extends StatelessWidget {
                     DataColumn(label: Expanded(child: Text("Id"))),
                     DataColumn(label: Expanded(child: Text("Name"))),
                     DataColumn(label: Expanded(child: Text("Description"))),
-                    DataColumn(
-                      label: Expanded(child: Text("Is standalone")),
-                    ),
+                    DataColumn(label: Expanded(child: Text("Is standalone"))),
                     DataColumn(label: Expanded(child: Text("Visible"))),
                     DataColumn(label: Expanded(child: Text(""))),
                   ],
@@ -63,16 +61,10 @@ class EventTypeView extends StatelessWidget {
                             DataCell(Text(type.name)),
                             DataCell(Text(type.description ?? "")),
                             DataCell(
-                              Checkbox(
-                                value: type.standAlone ?? true,
-                                onChanged: null,
-                              ),
+                              Checkbox(value: type.standAlone, onChanged: null),
                             ),
                             DataCell(
-                              Checkbox(
-                                value: type.visible ?? false,
-                                onChanged: null,
-                              ),
+                              Checkbox(value: type.visible, onChanged: null),
                             ),
                             DataCell(
                               Row(
@@ -118,10 +110,8 @@ class EventTypeView extends StatelessWidget {
   Future<void> deleteType(EventType type) async {
     var id = type.id;
     try {
-      if (id != null) {
-        await Dependencies.services.event.deleteEventsType(id);
-        Notify.show('Event ${type.name} deleted');
-      }
+      await Dependencies.services.event.deleteEventsType(id);
+      Notify.show('Event ${type.name} deleted');
     } catch (ex) {
       Notify.showError('Error deleting event ${type.name}');
     }

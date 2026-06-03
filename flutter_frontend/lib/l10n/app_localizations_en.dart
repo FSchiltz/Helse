@@ -229,4 +229,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get treatment => 'treatment';
+
+  @override
+  String get showOnDashboard => 'Show on dashboard';
 }

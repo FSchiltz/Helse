@@ -178,5 +178,7 @@
     "source": "Source",
     "@source": {},
     "treatment": "treatment",
-    "@treatment": {}
+    "@treatment": {},
+    "showOnDashboard": "Show on dashboard",
+    "@showOnDashboard": {}
 }

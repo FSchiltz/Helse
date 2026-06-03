@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/helpers/pair.dart';
@@ -24,13 +25,22 @@ class _MetricGroupDetailState extends State<MetricGroupDetail> {
 
   void _getData() async {
     try {
-      var model = await Dependencies.services.metric.metricsType(false, widget.group.id);
+      var model = await Dependencies.services.metric.metricsType(
+        false,
+        widget.group.id,
+      );
       if (model != null) {
         List<Pair<MetricType, OrderedItem>> filtered = [];
-        for (var item in model) {
-          OrderedItem setting = Dependencies.logics.settings.getDefault(item);
 
-          filtered.add(Pair(item, setting));
+        var settings = await Dependencies.logics.settings.getMetrics();
+        for (var item in model) {
+          OrderedItem setting =
+              settings.firstWhereOrNull((element) => element.id == item.id) ??
+              Dependencies.logics.settings.getDefault(item);
+
+          if (setting.visible == true) {
+            filtered.add(Pair(item, setting));
+          }
         }
 
         setState(() {

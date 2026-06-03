@@ -1823,7 +1823,7 @@ extension $CountRecordExtension on CountRecord {
 @JsonSerializable(explicitToJson: true)
 class CreateEvent {
   const CreateEvent({
-    this.type,
+    required this.type,
     this.description,
     required this.start,
     required this.stop,
@@ -1840,7 +1840,7 @@ class CreateEvent {
   Map<String, dynamic> toJson() => _$CreateEventToJson(this);
 
   @JsonKey(name: 'type')
-  final int? type;
+  final int type;
   @JsonKey(name: 'description')
   final String? description;
   @JsonKey(name: 'start')
@@ -1932,7 +1932,7 @@ extension $CreateEventExtension on CreateEvent {
   }
 
   CreateEvent copyWithWrapped({
-    Wrapped<int?>? type,
+    Wrapped<int>? type,
     Wrapped<String?>? description,
     Wrapped<DateTime>? start,
     Wrapped<DateTime>? stop,
@@ -1962,7 +1962,7 @@ class CreateMetric {
     required this.date,
     required this.value,
     this.tag,
-    this.type,
+    required this.type,
     this.source,
     required this.sourceId,
   });
@@ -1980,7 +1980,7 @@ class CreateMetric {
   @JsonKey(name: 'tag')
   final String? tag;
   @JsonKey(name: 'type')
-  final int? type;
+  final int type;
   @JsonKey(
     name: 'source',
     toJson: fileTypesNullableToJson,
@@ -2049,7 +2049,7 @@ extension $CreateMetricExtension on CreateMetric {
     Wrapped<DateTime>? date,
     Wrapped<String>? value,
     Wrapped<String?>? tag,
-    Wrapped<int?>? type,
+    Wrapped<int>? type,
     Wrapped<enums.FileTypes?>? source,
     Wrapped<String>? sourceId,
   }) {
@@ -2128,11 +2128,11 @@ class Event {
     this.user,
     this.file,
     this.treatment,
-    this.id,
+    required this.id,
     this.person,
     this.valid,
     this.address,
-    this.type,
+    required this.type,
     this.description,
     required this.start,
     required this.stop,
@@ -2154,7 +2154,7 @@ class Event {
   @JsonKey(name: 'treatment')
   final int? treatment;
   @JsonKey(name: 'id')
-  final int? id;
+  final int id;
   @JsonKey(name: 'person')
   final int? person;
   @JsonKey(name: 'valid')
@@ -2162,7 +2162,7 @@ class Event {
   @JsonKey(name: 'address')
   final int? address;
   @JsonKey(name: 'type')
-  final int? type;
+  final int type;
   @JsonKey(name: 'description')
   final String? description;
   @JsonKey(name: 'start')
@@ -2298,11 +2298,11 @@ extension $EventExtension on Event {
     Wrapped<int?>? user,
     Wrapped<int?>? file,
     Wrapped<int?>? treatment,
-    Wrapped<int?>? id,
+    Wrapped<int>? id,
     Wrapped<int?>? person,
     Wrapped<bool?>? valid,
     Wrapped<int?>? address,
-    Wrapped<int?>? type,
+    Wrapped<int>? type,
     Wrapped<String?>? description,
     Wrapped<DateTime>? start,
     Wrapped<DateTime>? stop,
@@ -2441,8 +2441,8 @@ class EventType {
     this.description,
     this.standAlone,
     this.visible,
-    this.id,
-    this.userEditable,
+    required this.id,
+    required this.userEditable,
   });
 
   factory EventType.fromJson(Map<String, dynamic> json) =>
@@ -2460,9 +2460,9 @@ class EventType {
   @JsonKey(name: 'visible')
   final bool? visible;
   @JsonKey(name: 'id')
-  final int? id;
+  final int id;
   @JsonKey(name: 'userEditable')
-  final bool? userEditable;
+  final bool userEditable;
   static const fromJsonFactory = _$EventTypeFromJson;
 
   @override
@@ -2533,8 +2533,8 @@ extension $EventTypeExtension on EventType {
     Wrapped<String?>? description,
     Wrapped<bool?>? standAlone,
     Wrapped<bool?>? visible,
-    Wrapped<int?>? id,
-    Wrapped<bool?>? userEditable,
+    Wrapped<int>? id,
+    Wrapped<bool>? userEditable,
   }) {
     return EventType(
       name: (name != null ? name.value : this.name),
@@ -2945,7 +2945,7 @@ class Metric {
     required this.date,
     required this.value,
     this.tag,
-    this.type,
+    required this.type,
     this.source,
     required this.sourceId,
   });
@@ -2968,7 +2968,7 @@ class Metric {
   @JsonKey(name: 'tag')
   final String? tag;
   @JsonKey(name: 'type')
-  final int? type;
+  final int type;
   @JsonKey(
     name: 'source',
     toJson: fileTypesNullableToJson,
@@ -3055,7 +3055,7 @@ extension $MetricExtension on Metric {
     Wrapped<DateTime>? date,
     Wrapped<String>? value,
     Wrapped<String?>? tag,
-    Wrapped<int?>? type,
+    Wrapped<int>? type,
     Wrapped<enums.FileTypes?>? source,
     Wrapped<String>? sourceId,
   }) {
@@ -3183,11 +3183,11 @@ class MetricType {
     this.summaryType,
     this.description,
     this.type,
-    this.id,
-    this.userEditable,
+    required this.id,
+    required this.userEditable,
     this.visible,
     this.showOnDashboard,
-    this.groupId,
+    required this.groupId,
   });
 
   factory MetricType.fromJson(Map<String, dynamic> json) =>
@@ -3215,15 +3215,15 @@ class MetricType {
   )
   final enums.MetricDataType? type;
   @JsonKey(name: 'id')
-  final int? id;
+  final int id;
   @JsonKey(name: 'userEditable')
-  final bool? userEditable;
+  final bool userEditable;
   @JsonKey(name: 'visible')
   final bool? visible;
   @JsonKey(name: 'showOnDashboard')
   final bool? showOnDashboard;
   @JsonKey(name: 'groupId')
-  final int? groupId;
+  final int groupId;
   static const fromJsonFactory = _$MetricTypeFromJson;
 
   @override
@@ -3318,11 +3318,11 @@ extension $MetricTypeExtension on MetricType {
     Wrapped<enums.MetricSummary?>? summaryType,
     Wrapped<String?>? description,
     Wrapped<enums.MetricDataType?>? type,
-    Wrapped<int?>? id,
-    Wrapped<bool?>? userEditable,
+    Wrapped<int>? id,
+    Wrapped<bool>? userEditable,
     Wrapped<bool?>? visible,
     Wrapped<bool?>? showOnDashboard,
-    Wrapped<int?>? groupId,
+    Wrapped<int>? groupId,
   }) {
     return MetricType(
       name: (name != null ? name.value : this.name),
@@ -3637,9 +3637,10 @@ extension $OauthProviderExtension on OauthProvider {
 class OrderedItem {
   const OrderedItem({
     this.visible,
+    this.showOnDashboard,
     this.order,
     required this.name,
-    this.id,
+    required this.id,
     this.graph,
     this.detailGraph,
   });
@@ -3652,12 +3653,14 @@ class OrderedItem {
 
   @JsonKey(name: 'visible')
   final bool? visible;
+  @JsonKey(name: 'showOnDashboard')
+  final bool? showOnDashboard;
   @JsonKey(name: 'order')
   final int? order;
   @JsonKey(name: 'name')
   final String name;
   @JsonKey(name: 'id')
-  final int? id;
+  final int id;
   @JsonKey(
     name: 'graph',
     toJson: graphKindNullableToJson,
@@ -3681,6 +3684,11 @@ class OrderedItem {
                   other.visible,
                   visible,
                 )) &&
+            (identical(other.showOnDashboard, showOnDashboard) ||
+                const DeepCollectionEquality().equals(
+                  other.showOnDashboard,
+                  showOnDashboard,
+                )) &&
             (identical(other.order, order) ||
                 const DeepCollectionEquality().equals(other.order, order)) &&
             (identical(other.name, name) ||
@@ -3702,6 +3710,7 @@ class OrderedItem {
   @override
   int get hashCode =>
       const DeepCollectionEquality().hash(visible) ^
+      const DeepCollectionEquality().hash(showOnDashboard) ^
       const DeepCollectionEquality().hash(order) ^
       const DeepCollectionEquality().hash(name) ^
       const DeepCollectionEquality().hash(id) ^
@@ -3713,6 +3722,7 @@ class OrderedItem {
 extension $OrderedItemExtension on OrderedItem {
   OrderedItem copyWith({
     bool? visible,
+    bool? showOnDashboard,
     int? order,
     String? name,
     int? id,
@@ -3721,6 +3731,7 @@ extension $OrderedItemExtension on OrderedItem {
   }) {
     return OrderedItem(
       visible: visible ?? this.visible,
+      showOnDashboard: showOnDashboard ?? this.showOnDashboard,
       order: order ?? this.order,
       name: name ?? this.name,
       id: id ?? this.id,
@@ -3731,14 +3742,18 @@ extension $OrderedItemExtension on OrderedItem {
 
   OrderedItem copyWithWrapped({
     Wrapped<bool?>? visible,
+    Wrapped<bool?>? showOnDashboard,
     Wrapped<int?>? order,
     Wrapped<String>? name,
-    Wrapped<int?>? id,
+    Wrapped<int>? id,
     Wrapped<enums.GraphKind?>? graph,
     Wrapped<enums.GraphKind?>? detailGraph,
   }) {
     return OrderedItem(
       visible: (visible != null ? visible.value : this.visible),
+      showOnDashboard: (showOnDashboard != null
+          ? showOnDashboard.value
+          : this.showOnDashboard),
       order: (order != null ? order.value : this.order),
       name: (name != null ? name.value : this.name),
       id: (id != null ? id.value : this.id),
@@ -4727,7 +4742,7 @@ extension $TreatmentExtension on Treatment {
 class UpdateEvent {
   const UpdateEvent({
     this.id,
-    this.type,
+    required this.type,
     this.description,
     required this.start,
     required this.stop,
@@ -4746,7 +4761,7 @@ class UpdateEvent {
   @JsonKey(name: 'id')
   final int? id;
   @JsonKey(name: 'type')
-  final int? type;
+  final int type;
   @JsonKey(name: 'description')
   final String? description;
   @JsonKey(name: 'start')
@@ -4844,7 +4859,7 @@ extension $UpdateEventExtension on UpdateEvent {
 
   UpdateEvent copyWithWrapped({
     Wrapped<int?>? id,
-    Wrapped<int?>? type,
+    Wrapped<int>? type,
     Wrapped<String?>? description,
     Wrapped<DateTime>? start,
     Wrapped<DateTime>? stop,
@@ -4876,7 +4891,7 @@ class UpdateMetric {
     required this.date,
     required this.value,
     this.tag,
-    this.type,
+    required this.type,
     this.source,
     required this.sourceId,
   });
@@ -4896,7 +4911,7 @@ class UpdateMetric {
   @JsonKey(name: 'tag')
   final String? tag;
   @JsonKey(name: 'type')
-  final int? type;
+  final int type;
   @JsonKey(
     name: 'source',
     toJson: fileTypesNullableToJson,
@@ -4971,7 +4986,7 @@ extension $UpdateMetricExtension on UpdateMetric {
     Wrapped<DateTime>? date,
     Wrapped<String>? value,
     Wrapped<String?>? tag,
-    Wrapped<int?>? type,
+    Wrapped<int>? type,
     Wrapped<enums.FileTypes?>? source,
     Wrapped<String>? sourceId,
   }) {
