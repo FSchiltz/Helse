@@ -68,7 +68,7 @@ class _MetricsGroupState extends State<MetricsGroup> {
         if (widget.person == null) {
           settings = await Dependencies.logics.settings.getMetrics();
         } else {
-          settings = await Dependencies.logics.settings.getPatientsMetrics();
+          settings = await Dependencies.logics.patientsSettings.getMetrics();
         }
         // filter using the user settings
 

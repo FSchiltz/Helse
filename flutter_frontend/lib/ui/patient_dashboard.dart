@@ -30,7 +30,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
     if (widget.person == null) {
       range = await Dependencies.logics.settings.getDateRange();
     } else {
-      range = await Dependencies.logics.settings.getPatientsDateRange();
+      range = await Dependencies.logics.patientsSettings.getPatientsDateRange();
     }
 
     setState(() {

@@ -60,7 +60,7 @@ class _MetricsGridState extends State<MetricsGrid> {
           // filter using the user settings
         } else {
           if (metrictypes != null) {
-            await Dependencies.logics.settings.updatePatientsMetrics(
+            await Dependencies.logics.patientsSettings.updateMetrics(
               metrictypes,
             );
             setState(() {
@@ -68,9 +68,9 @@ class _MetricsGridState extends State<MetricsGrid> {
             });
           }
 
-          await Dependencies.logics.settings.updatePatientsMetricGroups(model);
-          settings = await Dependencies.logics.settings
-              .getPatientsMetricGroups();
+          await Dependencies.logics.patientsSettings.updateMetricGroups(model);
+          settings = await Dependencies.logics.patientsSettings
+              .getMetricGroups();
           // filter using the user settings
         }
 

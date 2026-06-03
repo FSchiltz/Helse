@@ -36,9 +36,9 @@ class _MetricGroupDetailState extends State<MetricGroupDetail> {
         if (widget.person == null) {
           settings = await Dependencies.logics.settings.getMetrics();
         } else {
-          settings = await Dependencies.logics.settings.getPatientsMetrics();
+          settings = await Dependencies.logics.patientsSettings.getMetrics();
         }
-        
+
         for (var item in model) {
           OrderedItem setting =
               settings.firstWhereOrNull((element) => element.id == item.id) ??

@@ -22,7 +22,7 @@ class _EventSettingsState extends State<EventSettings> {
   Future<List<OrderedEditItem>> _getData(bool refresh) async {
     List<OrderedItem> items;
     if (widget.isPatient) {
-      items = await Dependencies.logics.settings.getPatientEvents();
+      items = await Dependencies.logics.patientsSettings.getEvents();
     } else {
       items = await Dependencies.logics.settings.getEvents();
     }
@@ -47,7 +47,7 @@ class _EventSettingsState extends State<EventSettings> {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
         if (widget.isPatient) {
-          await Dependencies.logics.settings.savePatientsEvents(events, true);
+          await Dependencies.logics.patientsSettings.saveEvents(events, true);
         } else {
           await Dependencies.logics.settings.saveEvents(events, true);
         }

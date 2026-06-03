@@ -21,7 +21,7 @@ class _MetricSettingsState extends State<MetricSettings> {
   Future<List<OrderedEditItem>> _getData(bool refresh) async {
     List<OrderedItem> items;
     if (widget.isPatient) {
-      items = await Dependencies.logics.settings.getPatientsMetrics();
+      items = await Dependencies.logics.patientsSettings.getMetrics();
     } else {
       items = await Dependencies.logics.settings.getMetrics();
     }
@@ -43,7 +43,7 @@ class _MetricSettingsState extends State<MetricSettings> {
   Future<List<OrderedEditItem>> _getGroupData(bool reset) async {
     List<OrderedItem> items;
     if (widget.isPatient) {
-      items = await Dependencies.logics.settings.getPatientsMetricGroups();
+      items = await Dependencies.logics.patientsSettings.getMetricGroups();
     } else {
       items = await Dependencies.logics.settings.getMetricGroups();
     }
@@ -70,7 +70,7 @@ class _MetricSettingsState extends State<MetricSettings> {
       var toSave = groups.map((e) => e.ordered()).toList();
       // save the user's settings
       if (widget.isPatient) {
-        await Dependencies.logics.settings.savePatientsMetricGroups(
+        await Dependencies.logics.patientsSettings.saveMetricGroups(
           toSave,
           true,
         );
@@ -92,7 +92,7 @@ class _MetricSettingsState extends State<MetricSettings> {
       var toSave = metrics.map((e) => e.ordered()).toList();
       // save the user's settings
       if (widget.isPatient) {
-        await Dependencies.logics.settings.savePatientsMetrics(toSave, true);
+        await Dependencies.logics.patientsSettings.saveMetrics(toSave, true);
       } else {
         await Dependencies.logics.settings.saveMetrics(toSave, true);
       }
