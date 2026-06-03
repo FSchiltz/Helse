@@ -533,7 +533,7 @@ abstract class AppLocalizations {
   /// No description provided for @localSettings.
   ///
   /// In en, this message translates to:
-  /// **'Local Settings'**
+  /// **'Settings'**
   String get localSettings;
 
   /// No description provided for @general.

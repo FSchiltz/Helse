@@ -80,6 +80,8 @@ public static class PatientsLogic
             File = x.FileId,
             Start = x.Start,
             Valid = x.Valid,
+            Person = x.PersonId,
+            Tag = x.Tag
         }));
     }
 

@@ -237,14 +237,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get patientsSettings => 'Options des patients';
 
   @override
-  String get localSettings => 'Local Settings';
+  String get localSettings => 'Options';
 
   @override
-  String get general => 'General';
+  String get general => 'Général';
 
   @override
-  String get healthsync => 'Health sync';
+  String get healthsync => 'Synchro Health';
 
   @override
-  String get users => 'Users';
+  String get users => 'Utilisateurs';
 }

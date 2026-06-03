@@ -1,11 +1,14 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/calendar/calendar_view.dart';
 
 class Agenda extends StatelessWidget {
-  const Agenda({super.key});
+  final List<Person> data;
+  const Agenda(this.data, {super.key});
 
-  Future<List<CalendarEvent>> _getData(DateTime day) async {
+  Future<List<CalendarGroup>> _getData(DateTime day) async {
     var start = DateTime(day.year, day.month, day.day);
     var end = DateTime(
       day.year,
@@ -15,12 +18,23 @@ class Agenda extends StatelessWidget {
 
     var events = await Dependencies.services.event.agenda(start, end) ?? [];
     return events
+        .groupListsBy((e) => e.person)
+        .entries
         .map(
-          (x) => CalendarEvent(
-            from: x.start,
-            to: x.stop,
-            value: x.description ?? '',
-          ),
+          (e) {
+            var person = data.firstWhere((x) => x.id == e.key);
+            return CalendarGroup(
+            name: '${person.name} ${person.surname}',
+            events: e.value
+                .map(
+                  (x) => CalendarEvent(
+                    from: x.start,
+                    to: x.stop,
+                    value: '${x.description}',
+                  ),
+                )
+                .toList(),
+          );},
         )
         .toList();
   }
