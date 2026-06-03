@@ -70,7 +70,7 @@ public static class Endpoints
 
     public static void MapPatients(this RouteGroupBuilder api)
     {
-        var patients = api.MapGroup("/patients");
+        var patients = api.MapGroup("/patients").RequireAuthorization();
         patients.MapGet("/", PatientsLogic.GetPatientsAsync)
         .Produces<List<Person>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);

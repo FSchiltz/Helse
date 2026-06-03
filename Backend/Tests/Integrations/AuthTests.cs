@@ -14,7 +14,7 @@ public class AuthTests(WebApplicationFactory<Program> factory) : IntegrationTest
     const string statusUrl = "/api/status";
     const string authUrl = "/api/auth";
 
-    [Theory(Skip = "not working")]
+    [Theory]
     [InlineData("/api/admin/settings/oauth")]
     [InlineData("/api/admin/settings/proxy")]
     [InlineData(personUrl)]
@@ -32,10 +32,10 @@ public class AuthTests(WebApplicationFactory<Program> factory) : IntegrationTest
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
-    [Theory(Skip = "not working")]
+    [Theory]
     [InlineData("/api/patients/agenda")]
     [InlineData("/api/patients/share")]
-    [InlineData("/api/caregiver")]
+    [InlineData("/api/person/caregiver")]
     public async Task Get_NoPassword_2(string url)
     {
         var response = await _client.GetAsync(url);
