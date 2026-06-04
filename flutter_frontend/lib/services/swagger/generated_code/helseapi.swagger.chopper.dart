@@ -1547,7 +1547,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<dynamic>> _apiImportPost({
+  Future<Response<ImportsResult>> _apiImportPost({
     int? patient,
     required ImportData? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -1572,6 +1572,6 @@ final class _$Helseapi extends Helseapi {
       parameters: $params,
       tag: swaggerMetaData,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<ImportsResult, ImportsResult>($request);
   }
 }

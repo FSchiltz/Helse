@@ -4,8 +4,8 @@ using System.Text;
 using System.Text.Json;
 using Api.Data;
 using Api.Jobs;
-using Api.Models;
 using Api.Models.Events;
+using Api.Models.Imports;
 using Api.Models.Metrics;
 using CsvHelper;
 
@@ -57,7 +57,7 @@ public class RedmiWatchImporter(Stream file, IHealthContext db, long user, long 
         }
     }
 
-    public override async Task Import(IImportQueue queue, Guid id)
+    public override async Task<ImportsResult> Import(IImportQueue queue, Guid id)
     {
         // Remdi fiel are csv, we first convert them
         using var reader = new StreamReader(File);
@@ -65,9 +65,16 @@ public class RedmiWatchImporter(Stream file, IHealthContext db, long user, long 
 
         long read = 0;
 
+        long metricAdds = 0;
+        long metricSkips = 0;
+        long eventAdds = 0;
+        long eventSkips = 0;
         // for each record, find the type
         foreach (var record in csv.GetRecords<RedmiRecord>())
         {
+            CreateEvent[] createEvent = [];
+            CreateMetric[] createMetric = [];
+
             switch (record.Key)
             {
                 case Sleep:
@@ -78,18 +85,17 @@ public class RedmiWatchImporter(Stream file, IHealthContext db, long user, long 
                     if (sleep?.Items == null)
                         continue;
 
-                    foreach (var item in sleep.Items)
+
+                    createEvent = [.. sleep.Items.Select(item => new CreateEvent()
                     {
-                        await ImportEvent(new CreateEvent()
-                        {
-                            Start = DateTimeOffset.FromUnixTimeSeconds(item.Start_time).DateTime,
-                            Stop = DateTimeOffset.FromUnixTimeSeconds(item.End_time).DateTime,
-                            Type = (int)EventTypes.Sleep,
-                            Description = item.State.ToString(),
-                            SourceId = item.GetKey(),
-                            Source = FileTypes.RedmiWatch,
-                        });
-                    }
+                        Start = DateTimeOffset.FromUnixTimeSeconds(item.Start_time).DateTime,
+                        Stop = DateTimeOffset.FromUnixTimeSeconds(item.End_time).DateTime,
+                        Type = (int)EventTypes.Sleep,
+                        Description = item.State.ToString(),
+                        SourceId = item.GetKey(),
+                        Source = FileTypes.RedmiWatch,
+                    })];
+
                     break;
                 case Weight:
                     if (record.Value == null)
@@ -99,14 +105,14 @@ public class RedmiWatchImporter(Stream file, IHealthContext db, long user, long 
                     if (weight?.Weight == null)
                         continue;
 
-                    await ImportMetric(new CreateMetric()
+                    createMetric = [new CreateMetric()
                     {
                         SourceId = record.GetKey(),
                         Value = weight.Weight,
                         Date = DateTimeOffset.FromUnixTimeSeconds(weight.Time ?? weight.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Wheight,
                         Source = FileTypes.RedmiWatch,
-                    });
+                    }];
                     break;
                 case Steps:
                     if (record.Value == null)
@@ -116,14 +122,14 @@ public class RedmiWatchImporter(Stream file, IHealthContext db, long user, long 
                     if (steps?.Steps == null)
                         continue;
 
-                    await ImportMetric(new CreateMetric()
+                    createMetric = [new CreateMetric()
                     {
                         SourceId = record.GetKey(),
                         Value = steps.Steps.ToString(),
                         Date = DateTimeOffset.FromUnixTimeSeconds(steps.Time ?? steps.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Steps,
                         Source = FileTypes.RedmiWatch,
-                    });
+                    }];
                     break;
                 case Calories:
                     if (record.Value == null)
@@ -133,14 +139,15 @@ public class RedmiWatchImporter(Stream file, IHealthContext db, long user, long 
                     if (calorie?.Calories == null)
                         continue;
 
-                    await ImportMetric(new CreateMetric()
+                    createMetric = [
+                        new CreateMetric()
                     {
                         SourceId = record.GetKey(),
                         Value = calorie.Calories.ToString(),
                         Date = DateTimeOffset.FromUnixTimeSeconds(calorie.Time ?? calorie.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Calories,
                         Source = FileTypes.RedmiWatch,
-                    });
+                    }];
                     break;
                 case MaxHeart:
                 case MinHeart:
@@ -154,14 +161,14 @@ public class RedmiWatchImporter(Stream file, IHealthContext db, long user, long 
                     if (heart?.Bpm == null)
                         continue;
 
-                    await ImportMetric(new CreateMetric()
+                    createMetric = [new CreateMetric()
                     {
                         SourceId = record.GetKey(),
                         Value = heart.Bpm.ToString(),
                         Date = DateTimeOffset.FromUnixTimeSeconds(heart.Time ?? heart.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Heart,
                         Source = FileTypes.RedmiWatch,
-                    });
+                    }];
                     break;
                 case MaxSpo:
                 case MinSpo:
@@ -174,19 +181,46 @@ public class RedmiWatchImporter(Stream file, IHealthContext db, long user, long 
                     if (spo?.Spo2 == null)
                         continue;
 
-                    await ImportMetric(new CreateMetric()
+                    createMetric = [new CreateMetric()
                     {
                         SourceId = record.GetKey(),
                         Value = spo.Spo2.ToString(),
                         Date = DateTimeOffset.FromUnixTimeSeconds(spo.Time ?? spo.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Oxygen,
                         Source = FileTypes.RedmiWatch,
-                    });
+                    }];
                     break;
             }
 
+            foreach (var e in createEvent)
+            {
+                var added = await ImportEvent(e);
+                if (added)
+                {
+                    eventAdds++;
+                }
+                else
+                {
+                    eventSkips++;
+                }
+            }
+
+            foreach (var e in createMetric)
+            {
+                var added = await ImportMetric(e);
+                if (added)
+                {
+                    metricAdds++;
+                }
+                else
+                {
+                    metricSkips++;
+                }
+            }
             read = File.Position;
             queue.Progress(id, read / (double)File.Length * 100);
         }
+
+        return new(new(metricAdds, metricSkips, 0), new(eventAdds, eventSkips, 0));
     }
 }

@@ -28,9 +28,9 @@ class ImportService extends ApiService {
     return await call(() => api.apiImportIdGet(id: id));
   }
 
-  Future<void> importData(ImportData file) async {
+  Future<ImportsResult?> importData(ImportData file) async {
     var api = await getService();
-    await call(() => api.apiImportPost(body: file));
+    return await call(() => api.apiImportPost(body: file));
   }
 
   Future<List<JobResultInfo>> getJobs() async {

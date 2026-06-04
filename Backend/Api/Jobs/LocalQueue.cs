@@ -9,7 +9,6 @@ public sealed class LocalQueue : IImportQueue
 {
     public void Cancel(Guid id)
     {
-        throw new NotImplementedException();
     }
 
     public ValueTask<Job> DequeueAsync(CancellationToken token)
@@ -40,6 +39,10 @@ public sealed class LocalQueue : IImportQueue
     }
 
     public void Start(Guid id)
+    {
+    }
+
+    public void Status(Guid id, string status)
     {
     }
 

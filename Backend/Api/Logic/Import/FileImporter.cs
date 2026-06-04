@@ -1,5 +1,4 @@
 using Api.Data;
-using Api.Data.Models;
 
 namespace Api.Logic.Import;
 

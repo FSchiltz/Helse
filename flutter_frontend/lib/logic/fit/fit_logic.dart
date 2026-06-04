@@ -162,9 +162,6 @@ class FitLogic {
           )
         : now.add(Duration(days: -5));
 
-    int events = 0;
-    int metrics = 0;
-
     var firstRun = run == null;
 
     // don't sync if in the future
@@ -187,21 +184,26 @@ class FitLogic {
 
     // import to the server
     // TODO add a loop here if too much events
+    ImportsResult? result;
     if (converted.metrics?.isNotEmpty == true ||
         converted.events?.isNotEmpty == true) {
-      await Dependencies.services.import.importData(converted);
+      result = await Dependencies.services.import.importData(converted);
     }
-    events += converted.events?.length ?? 0;
-    metrics += converted.metrics?.length ?? 0;
 
     await account.set(Account.fitRun, now.toString());
-
+    var metrics = result?.metrics.imported ?? 0;
+    var events = result?.events.imported ?? 0;
+    
     var text =
         "Sync sucessful with $metrics metrics and $events events since $start";
     if (firstRun || metrics > 0 || events > 0) {
       firstRun = false;
       await account.set(Account.fitStatus, text);
     }
+
+    _executions.add(
+      Execution(DateTime.now(), SubmissionStatus.success, status: text),
+    );
 
     return text;
   }

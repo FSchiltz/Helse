@@ -9,6 +9,7 @@ using Api.Models.Treatments;
 using Api.Models.Admin;
 using Api.Jobs;
 using Api.Models.Settings;
+using Api.Models.Imports;
 
 namespace Api;
 
@@ -300,7 +301,7 @@ public static class Endpoints
             .Produces((int)HttpStatusCode.Unauthorized);
 
         import.MapPost("/", ImportLogic.PostListAsync)
-            .Produces((int)HttpStatusCode.NoContent)
+            .Produces<ImportsResult>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
     }
 

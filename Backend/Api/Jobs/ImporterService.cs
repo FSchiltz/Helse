@@ -1,11 +1,10 @@
 using Api.Data;
-using Api.Logic;
 using Api.Logic.Import;
 using Api.Logic.Import.BabyTracker;
 using Api.Logic.Import.Clue;
+using Api.Logic.Import.Google;
 using Api.Logic.Import.Redmi;
-using Api.Models;
-using LinqToDB.Tools;
+using Api.Models.Imports;
 
 namespace Api.Jobs;
 
@@ -30,7 +29,8 @@ public class ImporterService(IServiceProvider serviceProvider, IImportQueue queu
                     _ => throw new NotSupportedException("Invalid file type"),
                 };
                 queue.Start(job.Id);
-                await importer.Import(queue, job.Id);
+                var results = await importer.Import(queue, job.Id);
+                queue.Status(job.Id, $"Imported {results.Metrics.Imported} and skipped {results.Metrics.Skipped}. Imported {results.Events.Imported} and skipped {results.Events.Skipped}");
                 queue.Stop(job.Id);
 
             }

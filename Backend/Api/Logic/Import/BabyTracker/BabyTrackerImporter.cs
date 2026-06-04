@@ -2,8 +2,8 @@ using System.IO.Compression;
 using System.Text.Json;
 using Api.Data;
 using Api.Jobs;
-using Api.Models;
 using Api.Models.Events;
+using Api.Models.Imports;
 using Api.Models.Metrics;
 using CsvHelper;
 
@@ -16,9 +16,14 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
         PropertyNameCaseInsensitive = true,
     };
 
-    public override async Task Import(IImportQueue queue, Guid id)
+    public override async Task<ImportsResult> Import(IImportQueue queue, Guid id)
     {
         await using var zip = new ZipArchive(File);
+
+        long metricAdds = 0;
+        long metricSkips = 0;
+        long eventAdds = 0;
+        long eventSkips = 0;
         foreach (var file in zip.Entries)
         {
             queue.Progress(id, 0);
@@ -33,56 +38,86 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
             int count = 0;
             foreach (var item in json.Records)
             {
+                CreateEvent? createEvent = null;
+                CreateMetric? createMetric = null;
                 switch (item.Type.ToUpper())
                 {
                     case "HEALTH":
-                        await ImportHealth(item);
+                        createMetric = ImportHealth(item);
                         break;
                     case "PUMP":
                     case "FEEDING":
-                        await ImportPump(item);
+                        createEvent = ImportPump(item);
                         break;
                     case "GROWTH":
-                        await ImportGrowth(item);
+                        createMetric = ImportGrowth(item);
                         break;
                     case "SLEEPING":
-                        await ImportSleep(item);
+                        createEvent = ImportSleep(item);
                         break;
                     case "LEISURE":
-                        await ImportLeisure(item);
+                        createEvent = ImportLeisure(item);
                         break;
                     case "DIAPERING":
-                        await ImportDiaper(item);
+                        createMetric = ImportDiaper(item);
                         break;
                     default:
                         throw new NotSupportedException();
+                }
+
+                if (createEvent is not null)
+                {
+                    var added = await ImportEvent(createEvent);
+                    if (added)
+                    {
+                        eventAdds++;
+                    }
+                    else
+                    {
+                        eventSkips++;
+                    }
+                }
+
+                if (createMetric is not null)
+                {
+                    var added = await ImportMetric(createMetric);
+                    if (added)
+                    {
+                        metricAdds++;
+                    }
+                    else
+                    {
+                        metricSkips++;
+                    }
                 }
                 count++;
                 queue.Progress(id, count / (double)json.Records.Count);
             }
         }
+
+        return new(new(metricAdds, metricSkips, 0), new(eventAdds, eventSkips, 0));
     }
 
-    private async Task ImportDiaper(Record item)
+    private static CreateMetric ImportDiaper(Record item)
     {
-        await ImportMetric(new CreateMetric()
+        return new CreateMetric()
         {
             Value = item.Amount.ToString(),
             Date = ToDate(item.FromDate),
             Source = FileTypes.BabyTracker,
             Type = (long)MetricTypes.Diaper,
             SourceId = GetKey(item),
-        });
+        };
     }
 
     private static string GetKey(Record item) => $"{item.FromDate}_{item.ToDate}_{item.Subtype}";
 
-    private async Task ImportLeisure(Record item)
+    private static CreateEvent ImportLeisure(Record item)
     {
         switch (item.Subtype)
         {
             case "LEISURE_BATH":
-                await ImportEvent(new CreateEvent()
+                return new CreateEvent()
                 {
                     Start = ToDate(item.FromDate),
                     Stop = ToDate(item.ToDate ?? throw new InvalidDataException()),
@@ -91,17 +126,16 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
                     Type = (int)EventTypes.Bath,
                     Source = FileTypes.BabyTracker,
                     SourceId = GetKey(item),
-                });
-                break;
+                };
             default:
                 throw new NotSupportedException();
 
         }
     }
 
-    private async Task ImportSleep(Record item)
+    private static CreateEvent ImportSleep(Record item)
     {
-        await ImportEvent(new CreateEvent()
+        return new CreateEvent()
         {
             Start = ToDate(item.FromDate),
             Stop = ToDate(item.ToDate ?? throw new InvalidDataException()),
@@ -110,10 +144,10 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
             Type = (int)EventTypes.Sleep,
             Source = FileTypes.BabyTracker,
             SourceId = GetKey(item),
-        });
+        };
     }
 
-    private async Task ImportGrowth(Record item)
+    private static CreateMetric ImportGrowth(Record item)
     {
         var type = item.Subtype switch
         {
@@ -122,17 +156,17 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
             "GROWTH_WEIGHT" => (long)MetricTypes.Wheight,
             _ => throw new NotSupportedException(),
         };
-        await ImportMetric(new CreateMetric()
+        return new CreateMetric()
         {
             Value = item.Amount.ToString(),
             Date = ToDate(item.FromDate),
             Source = FileTypes.BabyTracker,
             Type = type,
             SourceId = GetKey(item),
-        });
+        };
     }
 
-    private async Task ImportPump(Record item)
+    private static CreateEvent ImportPump(Record item)
     {
         string description = item.Subtype.ToUpper() switch
         {
@@ -144,7 +178,7 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
             "BOTTLE" => "Bottle",
             _ => item.Subtype,
         };
-        await ImportEvent(new CreateEvent()
+        return new CreateEvent()
         {
             Start = ToDate(item.FromDate),
             Stop = ToDate(item.ToDate ?? throw new InvalidDataException()),
@@ -153,7 +187,7 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
             Type = (int)EventTypes.Feeding,
             Source = FileTypes.BabyTracker,
             SourceId = GetKey(item),
-        });
+        };
     }
 
     private static string GetUnit(string unit)
@@ -169,40 +203,37 @@ public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long
 
     private static DateTime ToDate(string date) => DateTime.Parse(date);
 
-    private async Task ImportHealth(Record item)
+    private static CreateMetric ImportHealth(Record item)
     {
         switch (item.Subtype.ToUpper())
         {
             case "HEALTH_VACCINATIONS":
-                await ImportMetric(new CreateMetric()
+                return new CreateMetric()
                 {
                     Value = "Vaccination: " + item.Details,
                     Date = ToDate(item.FromDate),
                     Source = FileTypes.BabyTracker,
                     Type = (int)MetricTypes.Medication,
                     SourceId = GetKey(item),
-                });
-                break;
+                };
             case "HEALTH_MEDICATIONS":
-                await ImportMetric(new CreateMetric()
+                return new CreateMetric()
                 {
                     Value = item.Details,
                     Date = ToDate(item.FromDate),
                     Source = FileTypes.BabyTracker,
                     Type = (int)MetricTypes.Medication,
                     SourceId = GetKey(item),
-                });
-                break;
+                };
             case "HEALTH_TEMPERATURE":
-                await ImportMetric(new CreateMetric()
+                return new CreateMetric()
                 {
                     Value = item.Amount.ToString(),
                     Date = ToDate(item.FromDate),
                     Source = FileTypes.BabyTracker,
                     Type = (int)MetricTypes.Temperature,
                     SourceId = GetKey(item),
-                });
-                break;
+                };
             default:
                 throw new NotSupportedException();
         }

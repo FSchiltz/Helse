@@ -1,6 +1,7 @@
 using Api.Data;
 using Api.Jobs;
 using Api.Models.Events;
+using Api.Models.Imports;
 using Api.Models.Metrics;
 
 namespace Api.Logic.Import;
@@ -13,10 +14,11 @@ namespace Api.Logic.Import;
 /// <param name="patient"></param>
 public abstract class Importer(IHealthContext db, long user, long patient)
 {
-    public abstract Task Import(IImportQueue queue, Guid id);
+    public abstract Task<ImportsResult> Import(IImportQueue queue, Guid id);
 
-    protected async Task ImportEvent(CreateEvent e)
+    protected async Task<bool> ImportEvent(CreateEvent e)
     {
+        bool added = false;
         await using var transaction = await db.BeginTransactionAsync();
 
         // check if the event exists
@@ -25,15 +27,19 @@ public abstract class Importer(IHealthContext db, long user, long patient)
         if (!fromDb)
         {
             await db.Insert(e, patient, user);
+            added = true;
         }
 
         // TODO update
 
         await transaction.CommitAsync();
+
+        return added;
     }
 
-    protected async Task ImportMetric(CreateMetric metric)
+    protected async Task<bool> ImportMetric(CreateMetric metric)
     {
+        bool added = false;
         await using var transaction = await db.BeginTransactionAsync();
 
         // check if the metric exists
@@ -42,10 +48,12 @@ public abstract class Importer(IHealthContext db, long user, long patient)
         if (!fromDb)
         {
             await db.Insert(metric, patient, user);
+            added = true;
         }
 
         // TODO update
 
         await transaction.CommitAsync();
+        return added;
     }
 }

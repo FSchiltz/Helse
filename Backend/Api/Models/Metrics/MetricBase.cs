@@ -1,3 +1,5 @@
+using Api.Models.Imports;
+
 namespace Api.Models.Metrics;
 
 public abstract class MetricBase

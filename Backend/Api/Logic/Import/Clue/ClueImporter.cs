@@ -1,8 +1,7 @@
 using System.Text.Json;
 using Api.Data;
-using Api.Data.Models;
 using Api.Jobs;
-using Api.Models;
+using Api.Models.Imports;
 using Api.Models.Metrics;
 
 namespace Api.Logic.Import.Clue;
@@ -14,21 +13,24 @@ public class ClueImporter(Stream file, IHealthContext db, long user, long patien
         PropertyNameCaseInsensitive = true
     };
 
-    public override async Task Import(IImportQueue queue, Guid id)
+    public override async Task<ImportsResult> Import(IImportQueue queue, Guid id)
     {
         // parse the file as an arry of json object
         var json = await JsonSerializer.DeserializeAsync<ClueItem[]>(File, _options);
         if (json is null)
         {
-            return;
+            return new(new(0, 0, 0), new(0, 0, 0));
         }
 
         int i = 0;
+        long skips = 0;
+        long adds = 0;
         foreach (var node in json)
         {
             if (node.Date is null || node.Value?.Any() != true)
             {
                 i++;
+                skips++;
                 continue;
             }
 
@@ -44,12 +46,22 @@ public class ClueImporter(Stream file, IHealthContext db, long user, long patien
                     Value = $"{subValue}{value.Option?.Replace('_', ' ')}",
                 };
                 // import the data
-                await ImportMetric(metric);
+                var added = await ImportMetric(metric);
+                if (added)
+                {
+                    adds++;
+                }
+                else
+                {
+                    skips++;
+                }
             }
 
             queue.Progress(id, i / json.Length * 100);
             i++;
         }
+
+        return new(new(adds, skips, 0), new(0, 0, 0));
     }
 
     private static (MetricTypes, string?) GetType(string? type) => type switch
