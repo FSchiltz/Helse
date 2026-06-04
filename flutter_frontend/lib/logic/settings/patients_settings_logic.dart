@@ -16,11 +16,22 @@ class PatientsSettingsLogic {
   PatientsSettingsLogic(this.account, this.service);
 
   Future<void> _savePatientsSettings(
-    PatientsSettings settings,
+    PatientSettings settings,
     bool toServer,
+    int? person,
   ) async {
+    var full = await _patientsSettings();
+    if (person == null) {
+      full = PatientsSettings($default: settings, patients: full.patients);
+    } else {
+      var patients =
+          full.patients?.where((e) => e.patientId != person).toList() ?? [];
+      patients.add(settings);
+      full = PatientsSettings($default: full.$default, patients: patients);
+    }
+
     if (toServer) {
-      await service.savePatientsSettings(settings);
+      await service.savePatientsSettings(full);
     }
 
     (await storage).setString(Account.patients, json.encode(settings.toJson()));
@@ -29,70 +40,67 @@ class PatientsSettingsLogic {
   Future<void> saveMetrics(
     List<OrderedItem> metric,
     bool toServer,
+    int? person,
   ) async {
-    var settings = await _patientSettings();
-    var d = settings.$default ?? PatientSettings();
+    var settings = await _patientSettings(person);
     await _savePatientsSettings(
-      PatientsSettings(
-        $default: PatientSettings(
-          eventWidth: d.eventWidth ?? 0,
-          events: d.events,
-          metricGroups: d.metricGroups,
-          metrics: metric,
-          theme: d.theme ?? InterfaceTheme.system,
-          datePreset: d.datePreset ?? DatePreset.today,
-          patientId: 0,
-        ),
+      PatientSettings(
+        eventWidth: settings.eventWidth ?? 0,
+        events: settings.events,
+        metricGroups: settings.metricGroups,
+        metrics: metric,
+        theme: settings.theme ?? InterfaceTheme.system,
+        datePreset: settings.datePreset ?? DatePreset.today,
+        patientId: 0,
       ),
       toServer,
+      person,
     );
   }
 
   Future<void> saveMetricGroups(
     List<OrderedItem> metric,
     bool toServer,
+    int? person,
   ) async {
-    var settings = await _patientSettings();
-    var d = settings.$default ?? PatientSettings(patientId: 0);
+    var settings = await _patientSettings(person);
     await _savePatientsSettings(
-      PatientsSettings(
-        $default: PatientSettings(
-          eventWidth: d.eventWidth ?? 0,
-          events: d.events,
-          metricGroups: metric,
-          metrics: d.metrics,
-          theme: d.theme ?? InterfaceTheme.system,
-          datePreset: d.datePreset ?? DatePreset.today,
-          patientId: 0,
-        ),
+      PatientSettings(
+        eventWidth: settings.eventWidth ?? 0,
+        events: settings.events,
+        metricGroups: metric,
+        metrics: settings.metrics,
+        theme: settings.theme ?? InterfaceTheme.system,
+        datePreset: settings.datePreset ?? DatePreset.today,
+        patientId: person ?? 0,
       ),
       toServer,
+      person,
     );
   }
 
   Future<void> saveEvents(
     List<OrderedItem> events,
     bool toServer,
+    int? person,
   ) async {
-    var settings = await _patientSettings();
-    var d = settings.$default ?? PatientSettings(patientId: 0);
+    var settings = await _patientSettings(person);
     await _savePatientsSettings(
-      PatientsSettings(
-        $default: PatientSettings(
-          eventWidth: d.eventWidth ?? 0,
-          events: events,
-          metricGroups: d.metricGroups,
-          metrics: d.metrics,
-          theme: d.theme ?? InterfaceTheme.system,
-          datePreset: d.datePreset ?? DatePreset.today,
-          patientId: 0,
-        ),
+      PatientSettings(
+        eventWidth: settings.eventWidth ?? 0,
+        events: events,
+        metricGroups: settings.metricGroups,
+        metrics: settings.metrics,
+        theme: settings.theme ?? InterfaceTheme.system,
+        datePreset: settings.datePreset ?? DatePreset.today,
+        patientId: person,
       ),
       toServer,
+      person,
     );
   }
 
-  Future<PatientsSettings> _patientSettings() async {
+  Future<PatientsSettings> _patientsSettings() async {
     var encoded = (await storage).getString(Account.patients);
     if (encoded == null) {
       return PatientsSettings();
@@ -100,44 +108,53 @@ class PatientsSettingsLogic {
 
     var map = json.decode(encoded) as Map<String, Object?>;
     var object = PatientsSettings.fromJson(map);
-
     return object;
   }
 
-  Future<List<OrderedItem>> getMetrics() async {
-    return (await _patientSettings()).$default?.metrics ?? [];
+  Future<PatientSettings> _patientSettings(int? person) async {
+    var object = await _patientsSettings();
+    if (person == null) {
+      return object.$default ?? PatientSettings();
+    }
+    var specificSettings = object.patients?.firstWhereOrNull(
+      (e) => e.patientId == person,
+    );
+
+    return specificSettings ?? object.$default ?? PatientSettings();
   }
 
-  Future<List<OrderedItem>> getEvents() async {
-    return (await _patientSettings()).$default?.events ?? [];
+  Future<List<OrderedItem>> getMetrics(int? person) async {
+    return (await _patientSettings(person)).metrics ?? [];
   }
 
-  Future<List<OrderedItem>> getMetricGroups() async {
-    return (await _patientSettings()).$default?.metricGroups ?? [];
+  Future<List<OrderedItem>> getEvents(int? person) async {
+    return (await _patientSettings(person)).events ?? [];
   }
 
-  Future<void> setDateRange(DatePreset run) async {
-    var settings = await _patientSettings();
-    var d = settings.$default ?? PatientSettings(patientId: 0);
+  Future<List<OrderedItem>> getMetricGroups(int? person) async {
+    return (await _patientSettings(person)).metricGroups ?? [];
+  }
+
+  Future<void> setDateRange(DatePreset run, int person) async {
+    var settings = await _patientSettings(person);
     await _savePatientsSettings(
-      PatientsSettings(
-        $default: PatientSettings(
-          eventWidth: d.eventWidth ?? 0,
-          events: d.events,
-          metricGroups: d.metricGroups,
-          metrics: d.metrics,
-          theme: d.theme ?? InterfaceTheme.system,
-          datePreset: run,
-          patientId: 0,
-        ),
+      PatientSettings(
+        eventWidth: settings.eventWidth ?? 0,
+        events: settings.events,
+        metricGroups: settings.metricGroups,
+        metrics: settings.metrics,
+        theme: settings.theme ?? InterfaceTheme.system,
+        datePreset: run,
+        patientId: 0,
       ),
       true,
+      person,
     );
   }
 
-  Future<DatePreset> getPatientsDateRange() async {
-    var settings = await _patientSettings();
-    return settings.$default?.datePreset ?? DatePreset.today;
+  Future<DatePreset> getPatientsDateRange(int? person) async {
+    var settings = await _patientSettings(person);
+    return settings.datePreset ?? DatePreset.today;
   }
 
   OrderedItem getDefault(MetricType item) {
@@ -163,7 +180,57 @@ class PatientsSettingsLogic {
   }
 
   Future<void> updateMetrics(List<MetricType> model) async {
-    var metrics = await getMetrics();
+    var settings = await _patientsSettings();
+    // update the default
+    await _updateMetrics(settings.$default?.metrics ?? [], model, null);
+
+    var patients = settings.patients;
+    if (patients != null) {
+      for (var patient in patients) {
+        await _updateMetrics(patient.metrics ?? [], model, patient.patientId);
+      }
+    }
+  }
+
+  Future<void> updateEvents(List<EventType> model) async {
+    var settings = await _patientsSettings();
+    // update the default
+    await _updateEvents(settings.$default?.events ?? [], model, null);
+
+    var patients = settings.patients;
+    if (patients != null) {
+      for (var patient in patients) {
+        await _updateEvents(patient.events ?? [], model, patient.patientId);
+      }
+    }
+  }
+
+  Future<void> updateMetricGroups(List<MetricGroup> model) async {
+    var settings = await _patientsSettings();
+    // update the default
+    await _updateMetricGroups(
+      settings.$default?.metricGroups ?? [],
+      model,
+      null,
+    );
+
+    var patients = settings.patients;
+    if (patients != null) {
+      for (var patient in patients) {
+        await _updateMetricGroups(
+          patient.metricGroups ?? [],
+          model,
+          patient.patientId,
+        );
+      }
+    }
+  }
+
+  Future<void> _updateMetrics(
+    List<OrderedItem> metrics,
+    List<MetricType> model,
+    int? patient,
+  ) async {
     for (var metric in model) {
       var existing = metrics.firstWhereOrNull(
         (element) => element.id == metric.id,
@@ -187,11 +254,14 @@ class PatientsSettingsLogic {
       }
     }
 
-    await saveMetrics(metrics, false);
+    await saveMetrics(metrics, false, patient);
   }
 
-  Future<void> updateEvents(List<EventType> model) async {
-    var events = await getEvents();
+  Future<void> _updateEvents(
+    List<OrderedItem> events,
+    List<EventType> model,
+    int? patient,
+  ) async {
     List<OrderedItem> newEvents = [];
     for (var event in model) {
       var existing = events.firstWhereOrNull(
@@ -223,11 +293,14 @@ class PatientsSettingsLogic {
         );
       }
     }
-    await saveEvents(newEvents, false);
+    await saveEvents(newEvents, false, patient);
   }
 
-  Future<void> updateMetricGroups(List<MetricGroup> model) async {
-    var metrics = await getMetricGroups();
+  Future<void> _updateMetricGroups(
+    List<OrderedItem> metrics,
+    List<MetricGroup> model,
+    int? patient,
+  ) async {
     List<OrderedItem> newMetrics = [];
     for (var metric in model) {
       var existing = metrics.firstWhereOrNull(
@@ -262,6 +335,6 @@ class PatientsSettingsLogic {
       }
     }
 
-    await saveMetricGroups(newMetrics, false);
+    await saveMetricGroups(newMetrics, false, patient);
   }
 }

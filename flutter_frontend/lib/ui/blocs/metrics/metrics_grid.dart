@@ -69,8 +69,9 @@ class _MetricsGridState extends State<MetricsGrid> {
           }
 
           await Dependencies.logics.patientsSettings.updateMetricGroups(model);
-          settings = await Dependencies.logics.patientsSettings
-              .getMetricGroups();
+          settings = await Dependencies.logics.patientsSettings.getMetricGroups(
+            widget.person,
+          );
           // filter using the user settings
         }
 
@@ -82,7 +83,7 @@ class _MetricsGridState extends State<MetricsGrid> {
           if (setting?.visible == true) filtered.add(item);
         }
       }
-      
+
       setState(() {
         groups = filtered;
       });
