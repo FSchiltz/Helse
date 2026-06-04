@@ -6,14 +6,18 @@ import 'package:helse/ui/common/menu_destination.dart';
 import 'package:helse/ui/common/navigation_page.dart';
 
 class PatientSettingsPage extends StatelessWidget {
-  const PatientSettingsPage({super.key});
+  final int? person;
+  const PatientSettingsPage(this.person, {super.key});
 
   @override
   Widget build(BuildContext context) {
     var locale = Translation.locale(context);
     return NavigationPage(
       locale.patientsSettings,
-      pages: [MetricSettings(isPatient: true), EventSettings(isPatient: true)],
+      pages: [
+        MetricSettings(isPatient: true, patient: person),
+        EventSettings(isPatient: true, patient: person),
+      ],
       menu: [
         MenuDestination(
           icon: Icon(Icons.post_add_sharp),

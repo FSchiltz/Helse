@@ -10,7 +10,8 @@ import 'package:helse/ui/common/statefull_check.dart';
 
 class EventSettings extends StatefulWidget {
   final bool isPatient;
-  const EventSettings({super.key, this.isPatient = false});
+  final int? patient;
+  const EventSettings({super.key, this.isPatient = false, this.patient});
 
   @override
   State<EventSettings> createState() => _EventSettingsState();
@@ -20,7 +21,7 @@ class _EventSettingsState extends State<EventSettings> {
   Future<List<OrderedEditItem>> _getData(bool refresh) async {
     List<OrderedItem> items;
     if (widget.isPatient) {
-      items = await Dependencies.logics.patientsSettings.getEvents();
+      items = await Dependencies.logics.patientsSettings.getEvents(widget.patient);
     } else {
       items = await Dependencies.logics.settings.getEvents();
     }
@@ -48,7 +49,7 @@ class _EventSettingsState extends State<EventSettings> {
       var toSave = events.map((e) => e.ordered()).toList();
       // save the user's settings
       if (widget.isPatient) {
-        await Dependencies.logics.patientsSettings.saveEvents(toSave, true);
+        await Dependencies.logics.patientsSettings.saveEvents(toSave, true, widget.patient);
       } else {
         await Dependencies.logics.settings.saveEvents(toSave, true);
       }

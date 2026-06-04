@@ -5,6 +5,7 @@ import 'package:helse/ui/blocs/care/patient_add.dart';
 import 'package:helse/ui/blocs/care/share_patient_dialog.dart';
 import 'package:helse/ui/blocs/imports/file_import.dart';
 import 'package:helse/ui/common/hamburger_menu.dart';
+import 'package:helse/ui/patient_settings.dart';
 
 class PatientMenu extends StatelessWidget {
   final Person person;
@@ -40,6 +41,15 @@ class PatientMenu extends StatelessWidget {
             builder: (BuildContext context) {
               return FileImport(patient: person.id);
             },
+          );
+        }),
+
+        MenuButton(locale.patientsSettings, Icons.edit_sharp, () {
+          Navigator.push(
+            context,
+            MaterialPageRoute<void>(
+              builder: (context) => PatientSettingsPage(person.id),
+            ),
           );
         }),
       ],

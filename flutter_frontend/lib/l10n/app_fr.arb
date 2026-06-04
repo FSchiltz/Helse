@@ -72,8 +72,14 @@
     "treatment": "traitement",
     "showOnDashboard": "Afficher sur le tableau de bord",
     "patientsSettings": "Options des patients",
-     "localSettings": "Options",
+    "localSettings": "Options",
     "general": "Général",
     "healthsync": "Synchro Health",
-    "users": "Utilisateurs"
+    "users": "Utilisateurs",
+    "enable": "Activer",
+    "lastRun": "Dernière execution",
+    "syncFit": "Synchronisation avec Google health",
+    "resetLastRun": "Réinitialiser la dernière execution",
+    "syncBackgroundToggle": "Synchroniser en arrière plan",
+    "syncHistoryToggle": "Synchroniser aussi les données historiques"
 }
