@@ -148,7 +148,7 @@ class FitLogic {
     await Dependencies.logics.settings.setBackgroundAccess(background);
   }
 
-  Future<void> sync() async {
+  Future<String> sync() async {
     var run = await Dependencies.logics.settings.getLastRun();
     var history = await Dependencies.logics.settings.getHasHistory() ?? false;
 
@@ -168,7 +168,7 @@ class FitLogic {
     var firstRun = run == null;
 
     // don't sync if in the future
-    if (start.compareTo(now) >= 0) return;
+    if (start.compareTo(now) >= 0) return "";
 
     var health = Health();
     await health.configure();
@@ -202,6 +202,8 @@ class FitLogic {
       firstRun = false;
       await account.set(Account.fitStatus, text);
     }
+
+    return text;
   }
 
   Future<bool> isEnabled() async {

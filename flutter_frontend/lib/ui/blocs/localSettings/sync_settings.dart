@@ -19,7 +19,6 @@ class _SyncSettingsState extends State<SyncSettings> {
   bool _healthEnabled = false;
   bool _background = false;
   bool _history = false;
-  final GlobalKey<FormState> _formKey = GlobalKey();
 
   @override
   void initState() {
@@ -39,24 +38,22 @@ class _SyncSettingsState extends State<SyncSettings> {
 
   Future<void> _submitHealth() async {
     try {
-      if (_formKey.currentState?.validate() ?? false) {
-        // save the user's settings
-        await Dependencies.logics.settings.saveHealth(
-          HealthSettings(_healthEnabled, _history, _background),
-        );
+      // save the user's settings
+      await Dependencies.logics.settings.saveHealth(
+        HealthSettings(_healthEnabled, _history, _background),
+      );
 
-        Notify.show("Saved Successfully");
-        if (_healthEnabled) {
-          await Dependencies.logics.fit.requestPermissions();
-        }
+      Notify.show("Saved Successfully");
+      if (_healthEnabled) {
+        await Dependencies.logics.fit.requestPermissions();
+      }
 
-        if (_history) {
-          await Dependencies.logics.fit.requestHistoryPermissions();
-        }
+      if (_history) {
+        await Dependencies.logics.fit.requestHistoryPermissions();
+      }
 
-        if (_background) {
-          await Dependencies.logics.fit.requestBackgroundPermission();
-        }
+      if (_background) {
+        await Dependencies.logics.fit.requestBackgroundPermission();
       }
     } catch (ex) {
       Notify.showError("Error: $ex");
@@ -82,95 +79,92 @@ class _SyncSettingsState extends State<SyncSettings> {
       builder: (context, data, reset) {
         return Padding(
           padding: const EdgeInsets.all(32),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  locale.syncFit,
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  height: 50,
-                  child: Row(
-                    children: [
-                      Text(locale.enable),
-                      CustomSwitch(
-                        value: _healthEnabled,
-                        onChanged: (bool? value) async {
-                          setState(() {
-                            _healthEnabled = value == true;
-                          });
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                locale.syncFit,
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 50,
+                child: Row(
+                  children: [
+                    Text(locale.enable),
+                    CustomSwitch(
+                      value: _healthEnabled,
+                      onChanged: (bool? value) async {
+                        setState(() {
+                          _healthEnabled = value == true;
+                        });
 
-                          await _submitHealth();
-                          reset();
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  height: 50,
-                  child: Row(
-                    children: [
-                      Text(locale.syncHistoryToggle),
-                      CustomSwitch(
-                        value: _history,
-                        onChanged: (bool? value) async {
-                          setState(() {
-                            _healthEnabled = value == true;
-                          });
-
-                          await _submitHealth();
-                          reset();
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  height: 50,
-                  child: Row(
-                    children: [
-                      Text(locale.syncBackgroundToggle),
-                      CustomSwitch(
-                        value: _healthEnabled,
-                        onChanged: (bool? value) async {
-                          setState(() {
-                            _healthEnabled = value == true;
-                          });
-
-                          await _submitHealth();
-                          reset();
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  locale.lastRun(_lastRun ?? ''),
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  width: 160,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(40),
-                      shape: const ContinuousRectangleBorder(),
+                        await _submitHealth();
+                        reset();
+                      },
                     ),
-                    onPressed: _resetLastRun,
-                    child: Text(locale.resetLastRun),
-                  ),
+                  ],
                 ),
-                const SizedBox(height: 40),
-              ],
-            ),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 50,
+                child: Row(
+                  children: [
+                    Text(locale.syncHistoryToggle),
+                    CustomSwitch(
+                      value: _history,
+                      onChanged: (bool? value) async {
+                        setState(() {
+                          _history = value == true;
+                        });
+
+                        await _submitHealth();
+                        reset();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 50,
+                child: Row(
+                  children: [
+                    Text(locale.syncBackgroundToggle),
+                    CustomSwitch(
+                      value: _background,
+                      onChanged: (bool? value) async {
+                        setState(() {
+                          _background = value == true;
+                        });
+
+                        await _submitHealth();
+                        reset();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                locale.lastRun(_lastRun ?? ''),
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: 160,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(40),
+                    shape: const ContinuousRectangleBorder(),
+                  ),
+                  onPressed: _resetLastRun,
+                  child: Text(locale.resetLastRun),
+                ),
+              ),
+              const SizedBox(height: 40),
+            ],
           ),
         );
       },

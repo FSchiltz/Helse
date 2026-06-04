@@ -11,8 +11,11 @@ class Blocs {
   factory Blocs(Logics logic) {
     return Blocs.build(
       TaskBloc(
-        logic.fit.checkRun,
-        const Duration(minutes: 1),
+        () async {
+          await logic.fit.checkRun();
+          return await logic.fit.sync();
+        },
+        const Duration(minutes: 5),
         logic.fit.isEnabled,
       ),
       StatusBloc(
