@@ -3,7 +3,7 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class LoginService extends ApiService {
   LoginService(super.account);
-  Future<TokenResponse?> login(Connection connection) async {
+  Future<ConnectionResponse?> login(Connection connection) async {
     var api = await getService();
     var response = await api.apiAuthPost(body: connection);
 

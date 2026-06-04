@@ -15,7 +15,7 @@ public interface IUserContext : IContext
 
     Task<long> Count();
 
-    Task<PersonFromDb?> Get(string? identifier);
+    Task<User?> Get(string? identifier);
 
     Task<PersonFromDb?> Get(long id);
 
@@ -45,5 +45,5 @@ public interface IUserContext : IContext
 
     Task LinkOauth(OauthUser oauthUser);
 
-    Task<PersonFromDb?> Get(string user, string issuer);
+    Task<User?> Get(string user, string issuer);
 }

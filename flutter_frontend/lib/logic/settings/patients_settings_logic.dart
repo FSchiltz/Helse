@@ -105,9 +105,7 @@ class PatientsSettingsLogic {
       return PatientsSettings();
     }
 
-    var map = json.decode(encoded) as Map<String, Object?>;
-    var object = PatientsSettings.fromJson(map);
-    return object;
+    return PatientsSettings.fromJson(json.decode(encoded) as Map<String, Object?>);
   }
 
   Future<PatientSettings> _patientSettings(int? person) async {

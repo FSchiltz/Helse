@@ -6,10 +6,10 @@ namespace Api.Helpers.Auth;
 
 public static class PasswordHelper
 {
-    public static async Task<(bool, TokenInfo?)> ConnectPassword(Connection user, IUserContext db, ILogger log)
+    public static async Task<(bool, Data.Models.Persons.User?)> ConnectPassword(Connection user, IUserContext db, ILogger log)
     {
         // auth
-        var fromDb = await db.TokenFromDb(user.User);
+        var fromDb = await db.Get(user.User);
 
         if (fromDb is null)
             return (false, null);

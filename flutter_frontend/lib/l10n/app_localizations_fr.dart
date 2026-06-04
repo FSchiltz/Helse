@@ -249,22 +249,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get users => 'Utilisateurs';
 
   @override
-  String get enable => 'Enable';
+  String get enable => 'Activer';
 
   @override
   String lastRun(String date) {
-    return 'Last run: $date';
+    return 'Dernière execution';
   }
 
   @override
-  String get resetLastRun => 'Reset last run';
+  String get resetLastRun => 'Réinitialiser la dernière execution';
 
   @override
-  String get syncFit => 'Sync from Google Health';
+  String get syncFit => 'Synchronisation avec Google health';
 
   @override
-  String get syncBackgroundToggle => 'Sync in the background';
+  String get syncBackgroundToggle => 'Synchroniser en arrière plan';
 
   @override
-  String get syncHistoryToggle => 'Sync also historical data';
+  String get syncHistoryToggle => 'Synchroniser aussi les données historiques';
 }

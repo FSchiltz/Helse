@@ -80,28 +80,23 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
 
     public Task<long> Count() => Db.GetTable<User>().LongCountAsync();
 
-    public Task<PersonFromDb?> Get(string? identifier)
+    public async Task<User?> Get(string? identifier)
     {
         if (identifier is null)
-            return Task.FromResult(default(PersonFromDb?));
+            return null;
 
-        return (from u in Db.GetTable<User>()
-                join p in Db.GetTable<Models.Persons.Person>() on u.PersonId equals p.Id
-                where u.Identifier == identifier
-                select new PersonFromDb(u, p))
-                                 .FirstOrDefaultAsync();
+        return await Db.GetTable<User>().FirstOrDefaultAsync(x => x.Identifier == identifier);
     }
 
-    public Task<PersonFromDb?> Get(string? identifier, string issuer)
+    public async Task<User?> Get(string? identifier, string issuer)
     {
         if (identifier is null)
-            return Task.FromResult(default(PersonFromDb?));
+            return null;
 
-        return (from o in Db.GetTable<OauthUser>()
-                join u in Db.GetTable<User>() on o.UserId equals u.Id
-                join p in Db.GetTable<Models.Persons.Person>() on u.PersonId equals p.Id
-                where o.OauthSub == identifier && o.Provider == issuer
-                select new PersonFromDb(u, p))
+        return await (from o in Db.GetTable<OauthUser>()
+                      join u in Db.GetTable<User>() on o.UserId equals u.Id
+                      where o.OauthSub == identifier && o.Provider == issuer
+                      select u)
                                  .FirstOrDefaultAsync();
     }
 

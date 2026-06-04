@@ -1,10 +1,9 @@
-using System.Diagnostics;
 using System.Text.Json.Serialization;
 using Api;
 using Api.Data;
 using Api.Helpers.Auth;
 using Api.Jobs;
-using Api.Logic.Auth;
+using Api.Logic;
 using LinqToDB;
 using LinqToDB.AspNet;
 using LinqToDB.AspNet.Logging;
@@ -75,7 +74,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorizationBuilder()
     .SetDefaultPolicy(new AuthorizationPolicyBuilder()
-            .RequireClaim("token", ["access"])
+            .RequireClaim("token", ["access", "refresh"])
             .Build());
 
 builder.Services.AddSingleton(new MigrationSettings(connection));

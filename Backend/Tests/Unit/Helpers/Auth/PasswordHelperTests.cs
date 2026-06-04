@@ -1,4 +1,5 @@
 using Api.Data;
+using Api.Data.Models.Persons;
 using Api.Helpers;
 using Api.Helpers.Auth;
 using Api.Models;
@@ -18,13 +19,13 @@ public class PasswordHelperTests
         const string password = "TestPassword123!";
         var hash = TokenService.Hash(password);
 
-        db.Get("testuser").Returns(new PersonFromDb(new()
+        db.Get("testuser").Returns(new User()
         {
             Id = 1,
             Identifier = "",
             Password = hash,
             Type = 1,
-        }, new()));
+        });
 
         var user = new Connection("testuser", password,  null, null);
 
@@ -46,13 +47,13 @@ public class PasswordHelperTests
         var wrongPassword = "WrongPassword456!";
         var hash = TokenService.Hash(correctPassword);
 
-        db.Get("testuser").Returns(new PersonFromDb(new()
+        db.Get("testuser").Returns(new User()
         {
             Id = 1,
             Identifier = "",
             Password = hash,
             Type = 1,
-        }, new()));
+        });
 
         var user = new Connection("testuser", wrongPassword, null, null);
 
@@ -71,7 +72,7 @@ public class PasswordHelperTests
         var db = Substitute.For<IUserContext>();
         var logger = Substitute.For<ILogger<object>>();
 
-        db.Get("unknownuser").Returns(default(PersonFromDb?));
+        db.Get("unknownuser").Returns(default(User?));
         var user = new Connection("unknownuser", "password",  null, null);
 
         // Act

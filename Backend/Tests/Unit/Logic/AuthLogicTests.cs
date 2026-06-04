@@ -1,5 +1,5 @@
 using Api.Data;
-using Api.Logic.Auth;
+using Api.Logic;
 using Api.Models.Settings.Admin;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;

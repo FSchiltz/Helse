@@ -1,20 +1,17 @@
 using System.Text;
 using Api.Data;
-using Api.Helpers;
+using Api.Data.Models.Persons;
 using Api.Helpers.Auth;
 using Api.Models;
+using Api.Models.Persons;
 using Api.Models.Settings.Admin;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Api.Logic.Auth;
+namespace Api.Logic;
 
 public record OauthConnection(string Name, string Url, string ClientId, bool AutoLogin);
 
 public record Status(bool Init, bool ExternalAuth, string? Error, OauthConnection[] Oauths);
-
-public record TokenResponse(string AccessToken, string RefreshToken);
 
 /// <summary>
 /// Logic over user authentication and right
@@ -65,67 +62,76 @@ public static class AuthLogic
         return TypedResults.Ok(new Status(true, isAuth, null, oauths));
     }
 
+    public static async Task<IResult> RefreshAsync(IUserContext users, TokenService token, HttpContext context)
+    {
+        var user = context.User.GetUser("refresh");
+        if (user != null)
+        {
+            // the refresh token is valid
+            var fromDb = await users.Get(user);
+            if (fromDb is not null)
+            {
+                var accessToken = token.GetAccessToken(fromDb, DateTime.UtcNow.AddMinutes(10));
+
+                var roles = GetRoles(fromDb.Type);
+                return TypedResults.Ok(new ConnectionResponse(accessToken, null, roles));
+            }
+        }
+
+        return TypedResults.Unauthorized();
+    }
+
     /// <summary>
     /// Connect and get a token
     /// </summary>
     /// <returns></returns>
-    public static async Task<IResult> AuthAsync(Connection user, ISettingsContext settings, IUserContext users, HttpContext context, TokenService token, ILoggerFactory logger)
+    public static async Task<IResult> AuthAsync(Connection user, ISettingsContext settings, IUserContext users, TokenService token, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger("Auth");
 
         var proxy = await settings.GetSettings<Proxy>(Proxy.Name);
         var oauth = await settings.GetSettings<Oauth>(Oauth.Name);
         bool logged = false;
-        TokenInfo? fromDb = null;
-        bool needNewRefreshToken = true;
+        User? fromDb = null;
 
-        var auth = await context.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
-        if (auth.Succeeded)
+        // Unauth call
+        if (proxy?.ProxyAuth == true && proxy.Header is not null)
         {
-            // The user just wants a new access token
-            var claimsPrincipal = auth.Principal;
-            var userNameFromRefreshToken = claimsPrincipal.GetUser("refresh");
-            if (userNameFromRefreshToken is not null)
-            {
-                // the refresh token is valid
-                fromDb = await users.TokenFromDb(userNameFromRefreshToken);
-                logged = true;
-                needNewRefreshToken = false;
-            }
+            log.LogInformation("Connexion by header");
+            (logged, fromDb) = await ProxyAuthHelper.ConnectHeader(users, context, proxy, log);
         }
-        else
+
+        if (!logged && oauth.Enabled && user.Issuer is not null)
         {
-            // Unauth call
-            if (proxy?.ProxyAuth == true && proxy.Header is not null)
-            {
-                log.LogInformation("Connexion by header");
-                (logged, fromDb) = await ProxyAuthHelper.ConnectHeader(users, context, proxy, log);
-            }
+            log.LogInformation("Logging from oauth using {client}", user.Issuer);
+            (logged, fromDb) = await OauthHelper.ConnectOauth(users, oauth, user, log);
+        }
 
-            if (!logged && oauth.Enabled && user.Issuer is not null)
-            {
-                log.LogInformation("Logging from oauth using {client}", user.Issuer);
-                (logged, fromDb) = await OauthHelper.ConnectOauth(users, oauth, user, log);
-            }
-
-            // Custom auth didn't work, fall back on password
-            if (!logged)
-            {
-                // Fallback on the password if the other means failed
-                log.LogInformation("Connexion by username");
-                (logged, fromDb) = await PasswordHelper.ConnectPassword(user, users, log);
-            }
+        // Custom auth didn't work, fall back on password
+        if (!logged)
+        {
+            // Fallback on the password if the other means failed
+            log.LogInformation("Connexion by username");
+            (logged, fromDb) = await PasswordHelper.ConnectPassword(user, users, log);
         }
 
         if (!logged || fromDb is null)
             return TypedResults.Unauthorized();
 
         log.LogDebug("Connexion validated");
+        var roles = GetRoles(fromDb.Type);
 
         var accessToken = token.GetAccessToken(fromDb, DateTime.UtcNow.AddMinutes(1));
-        var refreshToken = needNewRefreshToken ? token.GetRefreshToken(fromDb, DateTime.UtcNow.AddDays(30)) : string.Empty;
+        var refreshToken = token.GetRefreshToken(fromDb, DateTime.UtcNow.AddDays(30));
 
-        return TypedResults.Ok(new TokenResponse(accessToken, refreshToken));
+        return TypedResults.Ok(new ConnectionResponse(accessToken, refreshToken, roles));
+    }
+
+    private static Models.Persons.UserType[] GetRoles(int type)
+    {
+        return [.. Enum.GetValues<Data.Models.Persons.UserType>()
+                              .Where(e => ((Data.Models.Persons.UserType)type).HasFlag(e))
+                              .Cast<Models.Persons.UserType>()];
     }
 
     internal static SymmetricSecurityKey GenerateKey(string keyConfig)

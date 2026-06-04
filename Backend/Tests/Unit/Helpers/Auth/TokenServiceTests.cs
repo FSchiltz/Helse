@@ -71,7 +71,11 @@ public class TokenServiceTests
         var service = new TokenService(config);
 
         var hash = TokenService.Hash("pass");
-        var tokenInfo = new TokenInfo(1, "User", "testuser", hash, "Doe", "John", "test@example.com");
+        var tokenInfo = new Api.Data.Models.Persons.User()
+        {
+            Identifier = "id",
+            Password = "pppp",
+        };
         var expires = DateTime.UtcNow.AddHours(1);
 
         // Act
@@ -90,7 +94,11 @@ public class TokenServiceTests
         var config = new TokenConfig("issuer", "audience", key);
         var service = new TokenService(config);
 
-        var tokenInfo = new TokenInfo(1, "User", "testuser", "pass", "Doe", "John", "test@example.com");
+        var tokenInfo = new Api.Data.Models.Persons.User()
+        {
+            Identifier = "id",
+            Password = "pppp",
+        };
         var expires = DateTime.UtcNow.AddHours(1);
 
         // Act
@@ -109,7 +117,11 @@ public class TokenServiceTests
         var config = new TokenConfig("issuer", "audience", key);
         var service = new TokenService(config);
 
-        var tokenInfo = new TokenInfo(1, "User", "testuser", "pass", "Doe", "John", "test@example.com");
+        var tokenInfo = new Api.Data.Models.Persons.User()
+        {
+            Identifier = "id",
+            Password = "pppp",
+        };
         var expires = DateTime.UtcNow.AddHours(1);
 
         // Act
@@ -128,7 +140,11 @@ public class TokenServiceTests
         var config = new TokenConfig("issuer", "audience", key);
         var service = new TokenService(config);
 
-        var tokenInfo = new TokenInfo(1, "User", "testuser", "pass", "Doe", "John", null);
+        var tokenInfo = new Api.Data.Models.Persons.User()
+        {
+            Identifier = "id",
+            Password = "pppp",
+        };
         var expires = DateTime.UtcNow.AddHours(1);
 
         // Act

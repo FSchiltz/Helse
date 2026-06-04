@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Token storage abstraction
@@ -5,11 +8,10 @@ class Account {
   final storage = SharedPreferences.getInstance();
 
   static const url = "urlPath";
-  static const token = "sessionToken";
   static const grant = "grant";
   static const redirect = "redirect";
   static const clientid = "clientid";
-  static const refresh = "refresh";
+  static const _refresh = "refresh";
   static const fitRun = "fitLastRun";
   static const fitHistory = "fitHistory";
   static const fitBackground = "fitBackground";
@@ -34,16 +36,27 @@ class Account {
 
   Future<void> clean() async {
     var s = await storage;
-    await s.remove(token);
     await s.remove(grant);
     await s.remove(redirect);
     await s.remove(clientid);
-    await s.remove(refresh);
+    await s.remove(_refresh);
     await s.remove(fitRun);
     await s.remove(fitHistory);
     await s.remove(fitStatus);
     await s.remove(patients);
     await s.remove(health);
     await s.remove(settings);
+  }
+
+  Future<ConnectionResponse?> getToken() async {
+    var token = await get(Account._refresh);
+    if (token == null) return null;
+    return ConnectionResponse.fromJson(
+      json.decode(token) as Map<String, Object?>,
+    );
+  }
+
+  Future<void> setToken(ConnectionResponse token) async {
+    await set(_refresh, json.encode(token.toJson()));
   }
 }

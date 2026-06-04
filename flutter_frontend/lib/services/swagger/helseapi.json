@@ -32,7 +32,29 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TokenResponse"
+                  "$ref": "#/components/schemas/ConnectionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/refresh": {
+      "get": {
+        "tags": [
+          "AuthLogic"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionResponse"
                 }
               }
             }
@@ -1965,6 +1987,31 @@
           }
         }
       },
+      "ConnectionResponse": {
+        "required": [
+          "accessToken",
+          "refreshToken",
+          "roles"
+        ],
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserType"
+            }
+          }
+        }
+      },
       "CountByDate": {
         "required": [
           "date",
@@ -2820,6 +2867,7 @@
           "patientId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
+              "null",
               "integer",
               "string"
             ],
@@ -3147,21 +3195,6 @@
           }
         }
       },
-      "TokenResponse": {
-        "required": [
-          "accessToken",
-          "refreshToken"
-        ],
-        "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string"
-          },
-          "refreshToken": {
-            "type": "string"
-          }
-        }
-      },
       "UpdateEvent": {
         "required": [
           "type",
@@ -3457,6 +3490,7 @@
       },
       "UserType": {
         "enum": [
+          "Patient",
           "Admin",
           "Caregiver",
           "User"

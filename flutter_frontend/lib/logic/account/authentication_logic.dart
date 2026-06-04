@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:app_links/app_links.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:helse/services/login_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/services/user_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:helse/helpers/url_dummy.dart' if (dart.library.html) 'package:helse/helpers/url.dart';
+import 'package:helse/helpers/url_dummy.dart'
+    if (dart.library.html) 'package:helse/helpers/url.dart';
 
 import '../../services/account.dart';
 import '../../di/dependencies.dart';
@@ -30,7 +30,7 @@ class AuthenticationLogic {
 
   /// Check if the user is logged in
   Future<bool> checkLogin() async {
-    var token = await account.get(Account.refresh);
+    var token = (await account.getToken())?.refreshToken;
     if (token != null && token.isNotEmpty && !JwtDecoder.isExpired(token)) {
       _controller.add(AuthenticationStatus.authenticated);
       return true;
@@ -51,9 +51,8 @@ class AuthenticationLogic {
     await account.set(Account.url, url);
     var token = await LoginService(account).login(connection);
 
-    if (token?.refreshToken != null) {
-      await account.set(Account.refresh, token?.refreshToken ?? '');
-      await account.set(Account.token, token?.accessToken ?? '');
+    if (token != null && token.refreshToken != null) {
+      await account.setToken(token);
       await account.remove(Account.grant);
 
       _controller.add(AuthenticationStatus.authenticated);
@@ -64,31 +63,9 @@ class AuthenticationLogic {
   }
 
   Future<Person> getUser() async {
-    var token = await account.get(Account.refresh);
-    if (token == null) throw StateError("Not connected");
+    var response = await account.getToken();
 
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-    var data = decodedToken["roles"] as String?;
-    if (data == null) {
-      return const Person(types: [UserType.swaggerGeneratedUnknown], id: 0);
-    }
-
-    var name = decodedToken["name"] as String?;
-    if (name?.isEmpty ?? true) name = null;
-
-    var surname = decodedToken["surname"] as String?;
-
-    if (surname?.isEmpty ?? true) surname = null;
-
-    var splitted = data.split(';');
-    List<UserType> roles = splitted
-        .map(
-          (e) =>
-              UserType.values.firstWhereOrNull((x) => x.value == e) ??
-              UserType.swaggerGeneratedUnknown,
-        )
-        .toList();
-    return Person(types: roles, name: name, surname: surname, id: 0);
+    return Person(types: response?.roles ?? [], id: 0);
   }
 
   /// Init the account for a first connection
@@ -114,12 +91,6 @@ class AuthenticationLogic {
   }
 
   void dispose() => _controller.close();
-
-  /// Get the current token
-  Future<bool> isAuth() async {
-    var token = await account.get(Account.refresh);
-    return token != null;
-  }
 
   Future<String?> getGrant() {
     return account.get(Account.grant);

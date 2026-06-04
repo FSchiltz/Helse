@@ -1,11 +1,9 @@
 using System.Net;
 using Api.Logic;
-using Api.Logic.Auth;
 using Api.Models.Events;
 using Api.Models.Metrics;
 using Api.Models.Persons;
 using Api.Models.Settings.Admin;
-using Api.Models.Treatments;
 using Api.Models.Admin;
 using Api.Jobs;
 using Api.Models.Settings;
@@ -21,7 +19,11 @@ public static class Endpoints
         api.MapPost("/auth", AuthLogic.AuthAsync)
         .AllowAnonymous()
         .WithDescription("Get a connection token")
-        .Produces<TokenResponse>((int)HttpStatusCode.OK)
+        .Produces<ConnectionResponse>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        api.MapGet("/refresh", AuthLogic.RefreshAsync)
+        .Produces<ConnectionResponse>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
         api.MapGet("/status", AuthLogic.StatusAsync)

@@ -21,6 +21,20 @@ Map<String, dynamic> _$ConnectionToJson(Connection instance) =>
       'redirect': instance.redirect,
     };
 
+ConnectionResponse _$ConnectionResponseFromJson(Map<String, dynamic> json) =>
+    ConnectionResponse(
+      accessToken: json['accessToken'] as String,
+      refreshToken: json['refreshToken'] as String?,
+      roles: userTypeListFromJson(json['roles'] as List?),
+    );
+
+Map<String, dynamic> _$ConnectionResponseToJson(ConnectionResponse instance) =>
+    <String, dynamic>{
+      'accessToken': instance.accessToken,
+      'refreshToken': instance.refreshToken,
+      'roles': userTypeListToJson(instance.roles),
+    };
+
 CountByDate _$CountByDateFromJson(Map<String, dynamic> json) => CountByDate(
   date: DateTime.parse(json['date'] as String),
   count: (json['count'] as num).toInt(),
@@ -611,18 +625,6 @@ Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
   'error': instance.error,
   'oauths': instance.oauths.map((e) => e.toJson()).toList(),
 };
-
-TokenResponse _$TokenResponseFromJson(Map<String, dynamic> json) =>
-    TokenResponse(
-      accessToken: json['accessToken'] as String,
-      refreshToken: json['refreshToken'] as String,
-    );
-
-Map<String, dynamic> _$TokenResponseToJson(TokenResponse instance) =>
-    <String, dynamic>{
-      'accessToken': instance.accessToken,
-      'refreshToken': instance.refreshToken,
-    };
 
 UpdateEvent _$UpdateEventFromJson(Map<String, dynamic> json) => UpdateEvent(
   id: (json['id'] as num?)?.toInt(),
