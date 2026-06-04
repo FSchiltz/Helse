@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/settings/health_settings.dart';
 import 'package:helse/ui/common/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
@@ -16,6 +17,8 @@ class _SyncSettingsState extends State<SyncSettings> {
   bool _isSupported = false;
   String? _lastRun;
   bool _healthEnabled = false;
+  bool _background = false;
+  bool _history = false;
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   @override
@@ -26,10 +29,11 @@ class _SyncSettingsState extends State<SyncSettings> {
   }
 
   Future<int> _getData(bool refresh) async {
-    _healthEnabled =
-        (await Dependencies.logics.settings.getHealth()).syncHealth;
+    var health = await Dependencies.logics.settings.getHealth();
+    _healthEnabled = health.syncHealth;
     _lastRun = await Dependencies.logics.settings.getLastRun();
-
+    _background = health.background;
+    _history = health.history;
     return 1;
   }
 
@@ -38,12 +42,20 @@ class _SyncSettingsState extends State<SyncSettings> {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user's settings
         await Dependencies.logics.settings.saveHealth(
-          HealthSettings(_healthEnabled),
+          HealthSettings(_healthEnabled, _history, _background),
         );
 
         Notify.show("Saved Successfully");
         if (_healthEnabled) {
           await Dependencies.logics.fit.requestPermissions();
+        }
+
+        if (_history) {
+          await Dependencies.logics.fit.requestHistoryPermissions();
+        }
+
+        if (_background) {
+          await Dependencies.logics.fit.requestBackgroundPermission();
         }
       }
     } catch (ex) {
@@ -64,6 +76,7 @@ class _SyncSettingsState extends State<SyncSettings> {
       return Center(child: Text("Not supported"));
     }
 
+    var locale = Translation.locale(context);
     return LoadingBuilder(
       _getData,
       builder: (context, data, reset) {
@@ -75,7 +88,7 @@ class _SyncSettingsState extends State<SyncSettings> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Sync from Google Health",
+                  locale.syncFit,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 10),
@@ -83,7 +96,47 @@ class _SyncSettingsState extends State<SyncSettings> {
                   height: 50,
                   child: Row(
                     children: [
-                      const Text("Enable"),
+                      Text(locale.enable),
+                      CustomSwitch(
+                        value: _healthEnabled,
+                        onChanged: (bool? value) async {
+                          setState(() {
+                            _healthEnabled = value == true;
+                          });
+
+                          await _submitHealth();
+                          reset();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  height: 50,
+                  child: Row(
+                    children: [
+                      Text(locale.syncHistoryToggle),
+                      CustomSwitch(
+                        value: _history,
+                        onChanged: (bool? value) async {
+                          setState(() {
+                            _healthEnabled = value == true;
+                          });
+
+                          await _submitHealth();
+                          reset();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  height: 50,
+                  child: Row(
+                    children: [
+                      Text(locale.syncBackgroundToggle),
                       CustomSwitch(
                         value: _healthEnabled,
                         onChanged: (bool? value) async {
@@ -100,7 +153,7 @@ class _SyncSettingsState extends State<SyncSettings> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  "Last run: $_lastRun",
+                  locale.lastRun(_lastRun ?? ''),
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 10),
@@ -112,7 +165,7 @@ class _SyncSettingsState extends State<SyncSettings> {
                       shape: const ContinuousRectangleBorder(),
                     ),
                     onPressed: _resetLastRun,
-                    child: const Text("Rest last run"),
+                    child: Text(locale.resetLastRun),
                   ),
                 ),
                 const SizedBox(height: 40),

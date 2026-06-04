@@ -112,7 +112,11 @@ class FitLogic {
     // the ACTIVITY_RECOGNITION permission, we need to request the permission first.
     // This requires a special request authorization call.
     await Permission.activityRecognition.request();
+  }
 
+  Future<void> requestHistoryPermissions() async {
+    var health = Health();
+    await health.configure();
     bool history = false;
     bool available = await health.isHealthDataHistoryAvailable();
     bool authorized = await health.isHealthDataHistoryAuthorized();
@@ -125,6 +129,23 @@ class FitLogic {
     }
 
     await Dependencies.logics.settings.setHasHistory(history);
+  }
+
+  Future<void> requestBackgroundPermission() async {
+    var health = Health();
+    await health.configure();
+    bool background = false;
+    bool backgroundAvailable = await health.isHealthDataInBackgroundAvailable();
+    bool isBakcground = await health.isHealthDataInBackgroundAuthorized();
+    if (backgroundAvailable) {
+      if (!isBakcground) {
+        background = await health.requestHealthDataInBackgroundAuthorization();
+      } else {
+        background = isBakcground;
+      }
+    }
+
+    await Dependencies.logics.settings.setBackgroundAccess(background);
   }
 
   Future<void> sync() async {
@@ -151,10 +172,14 @@ class FitLogic {
 
     var health = Health();
     await health.configure();
+    var existingTypes = _types
+        .where((e) => health.isDataTypeAvailable(e))
+        .toList();
+
     List<HealthDataPoint> healthData = await health.getHealthDataFromTypes(
       startTime: start,
       endTime: now,
-      types: _types,
+      types: existingTypes,
     );
 
     // convert to import data
@@ -338,7 +363,7 @@ class FitLogic {
           source: FileTypes.googlehealthconnect,
           tag: point.recordingMethod.name,
           type: metricType,
-          sourceId: point.uuid
+          sourceId: point.uuid,
         );
         metrics.add(metric);
       }
