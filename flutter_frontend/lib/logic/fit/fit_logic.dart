@@ -157,7 +157,7 @@ class FitLogic {
     var start = run == null
         ? now.add(
             (history)
-                ? const Duration(days: -30 * 12 * 5)
+                ? const Duration(days: -30 * 12 * 10)
                 : const Duration(days: -35),
           )
         : now.add(Duration(days: -5));
@@ -193,7 +193,7 @@ class FitLogic {
     await account.set(Account.fitRun, now.toString());
     var metrics = result?.metrics.imported ?? 0;
     var events = result?.events.imported ?? 0;
-    
+
     var text =
         "Sync sucessful with $metrics metrics and $events events since $start";
     if (firstRun || metrics > 0 || events > 0) {
@@ -360,6 +360,7 @@ class FitLogic {
         // do nothing for now
       }
 
+      // the uuid is not unique because some events have subevents
       if (metricType != null) {
         var metric = CreateMetric(
           date: point.dateFrom.toUtc(),
@@ -367,7 +368,7 @@ class FitLogic {
           source: FileTypes.googlehealthconnect,
           tag: point.recordingMethod.name,
           type: metricType,
-          sourceId: point.uuid,
+          sourceId: '${point.uuid}_${point.dateFrom}',
         );
         metrics.add(metric);
       }
@@ -378,7 +379,7 @@ class FitLogic {
           stop: point.dateTo.toUtc(),
           description: point.typeString,
           source: FileTypes.googlehealthconnect,
-          sourceId: point.uuid,
+          sourceId: '${point.uuid}_${point.type.name}_${point.dateFrom}',
           tag: point.recordingMethod.name,
           type: eventType,
         );
