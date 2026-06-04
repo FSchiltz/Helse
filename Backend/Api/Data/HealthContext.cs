@@ -1,5 +1,4 @@
 using System.Data;
-using System.Diagnostics;
 using Api.Data.Models.Health;
 using Api.Models.Persons;
 using LinqToDB;
