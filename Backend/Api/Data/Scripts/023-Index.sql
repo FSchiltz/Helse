@@ -1,3 +1,3 @@
 
-CREATE INDEX healthMetricSourcid ON health.Metric (SourceId) INCLUDE (PersonId, Source, Type);
-CREATE INDEX healthEventSourcid ON health.Event (SourceId) INCLUDE (PersonId, Source, Type);
+CREATE INDEX healthMetricSourcid ON health.Metric (PersonId, Source,SourceId, Type);
+CREATE INDEX healthEventSourcid ON health.Event (PersonId, Source,SourceId, Type);
