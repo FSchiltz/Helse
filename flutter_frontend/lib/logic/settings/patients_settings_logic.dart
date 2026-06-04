@@ -18,14 +18,16 @@ class PatientsSettingsLogic {
   Future<void> _savePatientsSettings(
     PatientSettings settings,
     bool toServer,
-    int? person,
   ) async {
     var full = await _patientsSettings();
-    if (person == null) {
+    if (settings.patientId == null) {
       full = PatientsSettings($default: settings, patients: full.patients);
     } else {
       var patients =
-          full.patients?.where((e) => e.patientId != person).toList() ?? [];
+          full.patients
+              ?.where((e) => e.patientId != settings.patientId)
+              .toList() ??
+          [];
       patients.add(settings);
       full = PatientsSettings($default: full.$default, patients: patients);
     }
@@ -34,7 +36,7 @@ class PatientsSettingsLogic {
       await service.savePatientsSettings(full);
     }
 
-    (await storage).setString(Account.patients, json.encode(settings.toJson()));
+    (await storage).setString(Account.patients, json.encode(full.toJson()));
   }
 
   Future<void> saveMetrics(
@@ -51,10 +53,9 @@ class PatientsSettingsLogic {
         metrics: metric,
         theme: settings.theme ?? InterfaceTheme.system,
         datePreset: settings.datePreset ?? DatePreset.today,
-        patientId: 0,
+        patientId: person,
       ),
       toServer,
-      person,
     );
   }
 
@@ -72,10 +73,9 @@ class PatientsSettingsLogic {
         metrics: settings.metrics,
         theme: settings.theme ?? InterfaceTheme.system,
         datePreset: settings.datePreset ?? DatePreset.today,
-        patientId: person ?? 0,
+        patientId: person,
       ),
       toServer,
-      person,
     );
   }
 
@@ -96,7 +96,6 @@ class PatientsSettingsLogic {
         patientId: person,
       ),
       toServer,
-      person,
     );
   }
 
@@ -145,10 +144,9 @@ class PatientsSettingsLogic {
         metrics: settings.metrics,
         theme: settings.theme ?? InterfaceTheme.system,
         datePreset: run,
-        patientId: 0,
+        patientId: person,
       ),
       true,
-      person,
     );
   }
 
