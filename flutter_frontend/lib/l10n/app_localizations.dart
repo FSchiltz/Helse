@@ -553,6 +553,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Users'**
   String get users;
+
+  /// No description provided for @enable.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable'**
+  String get enable;
+
+  /// No description provided for @lastRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Last run: {date}'**
+  String lastRun(String date);
+
+  /// No description provided for @resetLastRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset last run'**
+  String get resetLastRun;
+
+  /// No description provided for @syncFit.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync from Google Health'**
+  String get syncFit;
+
+  /// No description provided for @syncBackgroundToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync in the background'**
+  String get syncBackgroundToggle;
+
+  /// No description provided for @syncHistoryToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync also historical data'**
+  String get syncHistoryToggle;
 }
 
 class _AppLocalizationsDelegate

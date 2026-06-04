@@ -64,4 +64,9 @@ public sealed class ImportQueue : IImportQueue
         _results[id].Status = JobStatus.Cancel;
         _results[id].Stop = DateTime.Now;
     }
+
+    public void Status(Guid id, string status)
+    {
+        _results[id].Result = status;
+    }
 }

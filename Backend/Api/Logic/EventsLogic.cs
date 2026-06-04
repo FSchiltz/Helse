@@ -1,6 +1,7 @@
 using Api.Data;
 using Api.Helpers;
 using Api.Models.Events;
+using Api.Models.Imports;
 using Api.Models.Persons;
 using LinqToDB;
 
@@ -33,7 +34,7 @@ public static class EventsLogic
             Start = DateTime.SpecifyKind(x.Start, DateTimeKind.Utc),
             Valid = x.Valid,
             NotificationTime = x.NotificationTime,
-            Source = (Models.FileTypes)x.Source,
+            Source = (FileTypes)x.Source,
             SourceId = x.SourceId,
             Tag = x.Tag,            
         });

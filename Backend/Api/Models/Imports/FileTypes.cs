@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Api.Models;
+namespace Api.Models.Imports;
 
 /// <summary>
 /// Import file type supported by the app

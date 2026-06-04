@@ -112,7 +112,11 @@ class FitLogic {
     // the ACTIVITY_RECOGNITION permission, we need to request the permission first.
     // This requires a special request authorization call.
     await Permission.activityRecognition.request();
+  }
 
+  Future<void> requestHistoryPermissions() async {
+    var health = Health();
+    await health.configure();
     bool history = false;
     bool available = await health.isHealthDataHistoryAvailable();
     bool authorized = await health.isHealthDataHistoryAuthorized();
@@ -127,7 +131,24 @@ class FitLogic {
     await Dependencies.logics.settings.setHasHistory(history);
   }
 
-  Future<void> sync() async {
+  Future<void> requestBackgroundPermission() async {
+    var health = Health();
+    await health.configure();
+    bool background = false;
+    bool backgroundAvailable = await health.isHealthDataInBackgroundAvailable();
+    bool isBakcground = await health.isHealthDataInBackgroundAuthorized();
+    if (backgroundAvailable) {
+      if (!isBakcground) {
+        background = await health.requestHealthDataInBackgroundAuthorization();
+      } else {
+        background = isBakcground;
+      }
+    }
+
+    await Dependencies.logics.settings.setBackgroundAccess(background);
+  }
+
+  Future<String> sync() async {
     var run = await Dependencies.logics.settings.getLastRun();
     var history = await Dependencies.logics.settings.getHasHistory() ?? false;
 
@@ -141,20 +162,21 @@ class FitLogic {
           )
         : now.add(Duration(days: -5));
 
-    int events = 0;
-    int metrics = 0;
-
     var firstRun = run == null;
 
     // don't sync if in the future
-    if (start.compareTo(now) >= 0) return;
+    if (start.compareTo(now) >= 0) return "";
 
     var health = Health();
     await health.configure();
+    var existingTypes = _types
+        .where((e) => health.isDataTypeAvailable(e))
+        .toList();
+
     List<HealthDataPoint> healthData = await health.getHealthDataFromTypes(
       startTime: start,
       endTime: now,
-      types: _types,
+      types: existingTypes,
     );
 
     // convert to import data
@@ -162,21 +184,28 @@ class FitLogic {
 
     // import to the server
     // TODO add a loop here if too much events
+    ImportsResult? result;
     if (converted.metrics?.isNotEmpty == true ||
         converted.events?.isNotEmpty == true) {
-      await Dependencies.services.import.importData(converted);
+      result = await Dependencies.services.import.importData(converted);
     }
-    events += converted.events?.length ?? 0;
-    metrics += converted.metrics?.length ?? 0;
 
     await account.set(Account.fitRun, now.toString());
-
+    var metrics = result?.metrics.imported ?? 0;
+    var events = result?.events.imported ?? 0;
+    
     var text =
         "Sync sucessful with $metrics metrics and $events events since $start";
     if (firstRun || metrics > 0 || events > 0) {
       firstRun = false;
       await account.set(Account.fitStatus, text);
     }
+
+    _executions.add(
+      Execution(DateTime.now(), SubmissionStatus.success, status: text),
+    );
+
+    return text;
   }
 
   Future<bool> isEnabled() async {
@@ -338,7 +367,7 @@ class FitLogic {
           source: FileTypes.googlehealthconnect,
           tag: point.recordingMethod.name,
           type: metricType,
-          sourceId: point.uuid
+          sourceId: point.uuid,
         );
         metrics.add(metric);
       }

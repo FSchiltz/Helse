@@ -1608,17 +1608,22 @@ abstract class Helseapi extends ChopperService {
 
   ///
   ///@param patient
-  Future<chopper.Response> apiImportPost({
+  Future<chopper.Response<ImportsResult>> apiImportPost({
     int? patient,
     required ImportData? body,
   }) {
+    generatedMapping.putIfAbsent(
+      ImportsResult,
+      () => ImportsResult.fromJsonFactory,
+    );
+
     return _apiImportPost(patient: patient, body: body);
   }
 
   ///
   ///@param patient
   @POST(path: '/api/import', optionalBody: true)
-  Future<chopper.Response> _apiImportPost({
+  Future<chopper.Response<ImportsResult>> _apiImportPost({
     @Query('patient') int? patient,
     @Body() required ImportData? body,
     @chopper.Tag()
@@ -2725,6 +2730,137 @@ extension $ImportDataExtension on ImportData {
 }
 
 @JsonSerializable(explicitToJson: true)
+class ImportResult {
+  const ImportResult({
+    required this.imported,
+    required this.skipped,
+    required this.failed,
+  });
+
+  factory ImportResult.fromJson(Map<String, dynamic> json) =>
+      _$ImportResultFromJson(json);
+
+  static const toJsonFactory = _$ImportResultToJson;
+  Map<String, dynamic> toJson() => _$ImportResultToJson(this);
+
+  @JsonKey(name: 'imported')
+  final int imported;
+  @JsonKey(name: 'skipped')
+  final int skipped;
+  @JsonKey(name: 'failed')
+  final int failed;
+  static const fromJsonFactory = _$ImportResultFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is ImportResult &&
+            (identical(other.imported, imported) ||
+                const DeepCollectionEquality().equals(
+                  other.imported,
+                  imported,
+                )) &&
+            (identical(other.skipped, skipped) ||
+                const DeepCollectionEquality().equals(
+                  other.skipped,
+                  skipped,
+                )) &&
+            (identical(other.failed, failed) ||
+                const DeepCollectionEquality().equals(other.failed, failed)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(imported) ^
+      const DeepCollectionEquality().hash(skipped) ^
+      const DeepCollectionEquality().hash(failed) ^
+      runtimeType.hashCode;
+}
+
+extension $ImportResultExtension on ImportResult {
+  ImportResult copyWith({int? imported, int? skipped, int? failed}) {
+    return ImportResult(
+      imported: imported ?? this.imported,
+      skipped: skipped ?? this.skipped,
+      failed: failed ?? this.failed,
+    );
+  }
+
+  ImportResult copyWithWrapped({
+    Wrapped<int>? imported,
+    Wrapped<int>? skipped,
+    Wrapped<int>? failed,
+  }) {
+    return ImportResult(
+      imported: (imported != null ? imported.value : this.imported),
+      skipped: (skipped != null ? skipped.value : this.skipped),
+      failed: (failed != null ? failed.value : this.failed),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class ImportsResult {
+  const ImportsResult({required this.metrics, required this.events});
+
+  factory ImportsResult.fromJson(Map<String, dynamic> json) =>
+      _$ImportsResultFromJson(json);
+
+  static const toJsonFactory = _$ImportsResultToJson;
+  Map<String, dynamic> toJson() => _$ImportsResultToJson(this);
+
+  @JsonKey(name: 'metrics')
+  final ImportResult metrics;
+  @JsonKey(name: 'events')
+  final ImportResult events;
+  static const fromJsonFactory = _$ImportsResultFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is ImportsResult &&
+            (identical(other.metrics, metrics) ||
+                const DeepCollectionEquality().equals(
+                  other.metrics,
+                  metrics,
+                )) &&
+            (identical(other.events, events) ||
+                const DeepCollectionEquality().equals(other.events, events)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(metrics) ^
+      const DeepCollectionEquality().hash(events) ^
+      runtimeType.hashCode;
+}
+
+extension $ImportsResultExtension on ImportsResult {
+  ImportsResult copyWith({ImportResult? metrics, ImportResult? events}) {
+    return ImportsResult(
+      metrics: metrics ?? this.metrics,
+      events: events ?? this.events,
+    );
+  }
+
+  ImportsResult copyWithWrapped({
+    Wrapped<ImportResult>? metrics,
+    Wrapped<ImportResult>? events,
+  }) {
+    return ImportsResult(
+      metrics: (metrics != null ? metrics.value : this.metrics),
+      events: (events != null ? events.value : this.events),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class JobId {
   const JobId({required this.id});
 
@@ -2773,6 +2909,7 @@ class JobResult {
     this.error,
     required this.start,
     this.stop,
+    this.result,
   });
 
   factory JobResult.fromJson(Map<String, dynamic> json) =>
@@ -2799,6 +2936,8 @@ class JobResult {
   final DateTime start;
   @JsonKey(name: 'stop')
   final DateTime? stop;
+  @JsonKey(name: 'result')
+  final String? result;
   static const fromJsonFactory = _$JobResultFromJson;
 
   @override
@@ -2824,7 +2963,9 @@ class JobResult {
             (identical(other.start, start) ||
                 const DeepCollectionEquality().equals(other.start, start)) &&
             (identical(other.stop, stop) ||
-                const DeepCollectionEquality().equals(other.stop, stop)));
+                const DeepCollectionEquality().equals(other.stop, stop)) &&
+            (identical(other.result, result) ||
+                const DeepCollectionEquality().equals(other.result, result)));
   }
 
   @override
@@ -2839,6 +2980,7 @@ class JobResult {
       const DeepCollectionEquality().hash(error) ^
       const DeepCollectionEquality().hash(start) ^
       const DeepCollectionEquality().hash(stop) ^
+      const DeepCollectionEquality().hash(result) ^
       runtimeType.hashCode;
 }
 
@@ -2851,6 +2993,7 @@ extension $JobResultExtension on JobResult {
     String? error,
     DateTime? start,
     DateTime? stop,
+    String? result,
   }) {
     return JobResult(
       description: description ?? this.description,
@@ -2860,6 +3003,7 @@ extension $JobResultExtension on JobResult {
       error: error ?? this.error,
       start: start ?? this.start,
       stop: stop ?? this.stop,
+      result: result ?? this.result,
     );
   }
 
@@ -2871,6 +3015,7 @@ extension $JobResultExtension on JobResult {
     Wrapped<String?>? error,
     Wrapped<DateTime>? start,
     Wrapped<DateTime?>? stop,
+    Wrapped<String?>? result,
   }) {
     return JobResult(
       description: (description != null ? description.value : this.description),
@@ -2880,6 +3025,7 @@ extension $JobResultExtension on JobResult {
       error: (error != null ? error.value : this.error),
       start: (start != null ? start.value : this.start),
       stop: (stop != null ? stop.value : this.stop),
+      result: (result != null ? result.value : this.result),
     );
   }
 }

@@ -12,6 +12,7 @@ class Account {
   static const refresh = "refresh";
   static const fitRun = "fitLastRun";
   static const fitHistory = "fitHistory";
+  static const fitBackground = "fitBackground";
   static const fitStatus = 'fitStatus';
   static const health = 'health';
   static const settings = 'settings';

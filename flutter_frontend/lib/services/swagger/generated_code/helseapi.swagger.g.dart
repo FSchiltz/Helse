@@ -222,6 +222,31 @@ Map<String, dynamic> _$ImportDataToJson(ImportData instance) =>
       'events': instance.events?.map((e) => e.toJson()).toList(),
     };
 
+ImportResult _$ImportResultFromJson(Map<String, dynamic> json) => ImportResult(
+  imported: (json['imported'] as num).toInt(),
+  skipped: (json['skipped'] as num).toInt(),
+  failed: (json['failed'] as num).toInt(),
+);
+
+Map<String, dynamic> _$ImportResultToJson(ImportResult instance) =>
+    <String, dynamic>{
+      'imported': instance.imported,
+      'skipped': instance.skipped,
+      'failed': instance.failed,
+    };
+
+ImportsResult _$ImportsResultFromJson(Map<String, dynamic> json) =>
+    ImportsResult(
+      metrics: ImportResult.fromJson(json['metrics'] as Map<String, dynamic>),
+      events: ImportResult.fromJson(json['events'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$ImportsResultToJson(ImportsResult instance) =>
+    <String, dynamic>{
+      'metrics': instance.metrics.toJson(),
+      'events': instance.events.toJson(),
+    };
+
 JobId _$JobIdFromJson(Map<String, dynamic> json) =>
     JobId(id: json['id'] as String);
 
@@ -237,6 +262,7 @@ JobResult _$JobResultFromJson(Map<String, dynamic> json) => JobResult(
   error: json['error'] as String?,
   start: DateTime.parse(json['start'] as String),
   stop: json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
+  result: json['result'] as String?,
 );
 
 Map<String, dynamic> _$JobResultToJson(JobResult instance) => <String, dynamic>{
@@ -247,6 +273,7 @@ Map<String, dynamic> _$JobResultToJson(JobResult instance) => <String, dynamic>{
   'error': instance.error,
   'start': instance.start.toIso8601String(),
   'stop': instance.stop?.toIso8601String(),
+  'result': instance.result,
 };
 
 JobResultInfo _$JobResultInfoFromJson(Map<String, dynamic> json) =>

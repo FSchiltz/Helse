@@ -247,4 +247,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get users => 'Users';
+
+  @override
+  String get enable => 'Enable';
+
+  @override
+  String lastRun(String date) {
+    return 'Last run: $date';
+  }
+
+  @override
+  String get resetLastRun => 'Reset last run';
+
+  @override
+  String get syncFit => 'Sync from Google Health';
+
+  @override
+  String get syncBackgroundToggle => 'Sync in the background';
+
+  @override
+  String get syncHistoryToggle => 'Sync also historical data';
 }

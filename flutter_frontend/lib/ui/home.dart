@@ -114,13 +114,35 @@ class _HomeState extends State<Home> {
                   },
                 ),
               ),
+              BlocProvider<TaskBloc>.value(
+                value: Dependencies.blocs.fit,
+                child: BlocBuilder<TaskBloc, SubmissionStatus>(
+                  builder: (context, state) {
+                    Color? color;
+                    bool static = true;
+                    switch (state) {
+                      case SubmissionStatus.success:
+                        color = Colors.green;
+                        break;
+                      case SubmissionStatus.failure:
+                        color = Colors.red;
+                        break;
+                      case SubmissionStatus.inProgress:
+                        static = false;
+                        break;
+                      default:
+                        color = null;
+                    }
 
-              HelseLoader(
-                static: true,
-                size: 22,
-                onTouch: () => _showSynchroRuns(context),
+                    return HelseLoader(
+                      static: static,
+                      color: color,
+                      size: 22,
+                      onTouch: () => _showSynchroRuns(context),
+                    );
+                  },
+                ),
               ),
-
               PopupMenuButton(
                 icon: Icon(
                   Icons.menu_sharp,

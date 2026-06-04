@@ -2,8 +2,8 @@ using Api.Data;
 using Api.Helpers;
 using Api.Jobs;
 using Api.Logic.Import;
-using Api.Models;
 using Api.Models.Events;
+using Api.Models.Imports;
 using Api.Models.Metrics;
 using Api.Models.Persons;
 using LinqToDB;
@@ -125,9 +125,9 @@ public static class ImportLogic
         }
 
         Importer importer = new ListImporter(file, db, user.Id, person);
-        await importer.Import(new LocalQueue(), Guid.NewGuid());
+        var results = await importer.Import(new LocalQueue(), Guid.NewGuid());
 
         // TODO return a asyncenumerable to stream the progress
-        return TypedResults.NoContent();
+        return TypedResults.Ok(results);
     }
 }

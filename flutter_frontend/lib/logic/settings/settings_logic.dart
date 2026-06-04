@@ -33,7 +33,7 @@ class SettingsLogic {
   Future<HealthSettings> getHealth() async {
     var encoded = (await storage).getString(Account.health);
     if (encoded == null) {
-      return HealthSettings(false);
+      return HealthSettings(false, false, false);
     }
 
     return HealthSettings.fromJson(json.decode(encoded));
@@ -153,6 +153,10 @@ class SettingsLogic {
 
   Future<void> setHasHistory(bool run) async {
     await (await storage).setBool(Account.fitHistory, run);
+  }
+
+  Future<void> setBackgroundAccess(bool authorized) async {
+    await (await storage).setBool(Account.fitBackground, authorized);
   }
 
   Future<bool?> getHasHistory() async {

@@ -1,7 +1,6 @@
 import 'package:helse/di/dependencies.dart';
 import 'package:workmanager/workmanager.dart';
 
-
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
@@ -21,6 +20,9 @@ void callbackDispatcher() {
 Future<void> syncDataWithServer() async {
   Dependencies.init();
   if (await Dependencies.logics.fit.isEnabled()) {
-    await Dependencies.logics.fit.sync();
+    var settings = await Dependencies.logics.settings.getHealth();
+    if (settings.background) {
+      await Dependencies.logics.fit.sync();
+    }
   }
 }

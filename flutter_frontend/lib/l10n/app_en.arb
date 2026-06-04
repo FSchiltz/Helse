@@ -190,5 +190,23 @@
     "healthsync": "Health sync",
     "@healthsync": {},
     "users": "Users",
-    "@users": {}
+    "@users": {},
+    "enable": "Enable",
+    "@enable": {},
+    "lastRun": "Last run: {date}",
+    "@lastRun": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "resetLastRun": "Reset last run",
+    "@resetLastRun": {},
+    "syncFit": "Sync from Google Health",
+    "@syncFit": {},
+    "syncBackgroundToggle": "Sync in the background",
+    "@syncBackgroundToggle": {},
+    "syncHistoryToggle": "Sync also historical data",
+    "@syncHistoryToggle": {}
 }
