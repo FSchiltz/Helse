@@ -36,12 +36,10 @@ abstract class ApiService {
     var client = Helseapi.create(
       baseUrl: url,
       interceptors: [
-        HeadersInterceptor({'Authorization': 'Bearer $refresh'}),
+        HeadersInterceptor({'Authorization': 'Bearer ${refresh?.refreshToken}'}),
       ],
     );
-    var response = await client.apiAuthPost(
-      body: const Connection(user: "", password: ""),
-    );
+    var response = await client.apiRefreshGet();
     var connection = response.body;
     if (connection != null) {
       var token = ConnectionResponse(

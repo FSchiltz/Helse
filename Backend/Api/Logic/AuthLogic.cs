@@ -121,7 +121,7 @@ public static class AuthLogic
         log.LogDebug("Connexion validated");
         var roles = GetRoles(fromDb.Type);
 
-        var accessToken = token.GetAccessToken(fromDb, DateTime.UtcNow.AddMinutes(1));
+        var accessToken = token.GetAccessToken(fromDb, DateTime.UtcNow.AddMinutes(10));
         var refreshToken = token.GetRefreshToken(fromDb, DateTime.UtcNow.AddDays(30));
 
         return TypedResults.Ok(new ConnectionResponse(accessToken, refreshToken, roles));
@@ -130,7 +130,7 @@ public static class AuthLogic
     private static Models.Persons.UserType[] GetRoles(int type)
     {
         return [.. Enum.GetValues<Data.Models.Persons.UserType>()
-                              .Where(e => ((Data.Models.Persons.UserType)type).HasFlag(e))
+                              .Where(e => e != Data.Models.Persons.UserType.Patient && ((Data.Models.Persons.UserType)type).HasFlag(e))
                               .Cast<Models.Persons.UserType>()];
     }
 

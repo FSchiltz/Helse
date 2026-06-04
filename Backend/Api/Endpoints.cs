@@ -23,6 +23,7 @@ public static class Endpoints
         .Produces((int)HttpStatusCode.Unauthorized);
 
         api.MapGet("/refresh", AuthLogic.RefreshAsync)
+        .RequireAuthorization()
         .Produces<ConnectionResponse>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
