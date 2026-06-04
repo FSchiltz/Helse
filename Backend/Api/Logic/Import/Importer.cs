@@ -19,7 +19,6 @@ public abstract class Importer(IHealthContext db, long user, long patient)
     protected async Task<bool> ImportEvent(CreateEvent e)
     {
         bool added = false;
-        await using var transaction = await db.BeginTransactionAsync();
 
         // check if the event exists
         var fromDb = await db.ExistsEvent(patient, e.Type, (int)e.Source, e.SourceId);
@@ -29,10 +28,10 @@ public abstract class Importer(IHealthContext db, long user, long patient)
             await db.Insert(e, patient, user);
             added = true;
         }
-
-        // TODO update
-
-        await transaction.CommitAsync();
+        else
+        {
+            // TODO update
+        }
 
         return added;
     }
@@ -40,7 +39,6 @@ public abstract class Importer(IHealthContext db, long user, long patient)
     protected async Task<bool> ImportMetric(CreateMetric metric)
     {
         bool added = false;
-        await using var transaction = await db.BeginTransactionAsync();
 
         // check if the metric exists
         var fromDb = await db.ExistsMetric(patient, metric.Type, (int)metric.Source, metric.SourceId);
@@ -50,10 +48,11 @@ public abstract class Importer(IHealthContext db, long user, long patient)
             await db.Insert(metric, patient, user);
             added = true;
         }
+        else
+        {
+            // TODO update
+        }
 
-        // TODO update
-
-        await transaction.CommitAsync();
         return added;
     }
 }
