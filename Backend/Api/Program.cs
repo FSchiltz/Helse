@@ -25,9 +25,6 @@ builder.Services.AddOpenApi("helseapi");
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder => builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader()));
 var connection = builder.Configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("Database configuration missing");
 
-LinqToDB.Data.DataConnection.TraceSwitch.Level = TraceLevel.Verbose;
-LinqToDB.Data.DataConnection.TurnTraceSwitchOn();
-
 builder.Services.AddLinqToDBContext<DataConnection>((provider, options) =>
             {
                 return options
@@ -36,12 +33,7 @@ builder.Services.AddLinqToDBContext<DataConnection>((provider, options) =>
                                IdentifierQuoteMode = LinqToDB.DataProvider.PostgreSQL.PostgreSQLIdentifierQuoteMode.None
                            })
                            //default logging will log everything using the ILoggerFactory configured in the provider
-                           .UseDefaultLogging(provider)
-                           .UseTracing(info =>
-                           {
-    System.Diagnostics.Debug.WriteLine("\n\n" + info.Operation.ToString() + "."
-       + info.TraceInfoStep + " @@@@@@@@@@@@@@@@\n" + info.SqlText);
-});
+                           .UseDefaultLogging(provider);
             });
 
 var config = builder.Configuration.GetRequiredSection("Jwt");

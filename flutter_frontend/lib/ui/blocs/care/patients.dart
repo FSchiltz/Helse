@@ -48,7 +48,7 @@ class Patients extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute<void>(
-                        builder: (context) => const PatientSettingsPage(),
+                        builder: (context) => const PatientSettingsPage(null),
                       ),
                     );
                   }),
