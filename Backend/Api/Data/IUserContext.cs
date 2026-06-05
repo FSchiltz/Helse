@@ -46,4 +46,12 @@ public interface IUserContext : IContext
     Task LinkOauth(OauthUser oauthUser);
 
     Task<User?> Get(string user, string issuer);
+
+    Task<Models.Persons.Session?> GetSession(long id, Guid? userSession);
+
+    Task<Models.Persons.Session[]> GetSessions(long id);
+
+    Task AddSession(Models.Persons.Session session);
+
+    Task DeleteSession(long userId, Guid session);
 }

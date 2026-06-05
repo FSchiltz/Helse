@@ -18,6 +18,50 @@ public record Status(bool Init, bool ExternalAuth, string? Error, OauthConnectio
 /// </summary>
 public static class AuthLogic
 {
+    public static async Task<IResult> LogoutAsync(IUserContext users, HttpContext context, ILoggerFactory logger)
+    {
+        // TODO add make it work with the access token(that will remove all sessions)
+        var log = logger.CreateLogger(nameof(AuthLogic));
+        var user = context.User.GetUser(TokenHelper.Refresh);
+        var userSession = context.User.GetSession();
+        if (user != null && userSession != null)
+        {
+            var fromDb = await users.Get(user);
+            if (fromDb is not null)
+            {
+                await users.DeleteSession(fromDb.Id, userSession.Value);
+                return TypedResults.NoContent();
+            }
+        }
+
+        return TypedResults.Unauthorized();
+    }
+
+    public static async Task<IResult> GetSessions(IUserContext users, HttpContext context, ILoggerFactory logger)
+    {
+        var log = logger.CreateLogger(nameof(AuthLogic));
+        var user = context.User.GetUser();
+        var userSession = context.User.GetSession();
+        if (user != null && userSession != null)
+        {
+            var fromDb = await users.Get(user);
+            if (fromDb is not null)
+            {
+                var sessions = await users.GetSessions(fromDb.Id);
+                return TypedResults.Ok(sessions.Select(x => new Models.Persons.Session
+                {
+                    Ip = x.Ip,
+                    Location = x.Location,
+                    SessionId = x.SessionId,
+                    Start = x.Start,
+                    Stop = x.Stop,
+                    UserAgent = x.UserAgent,
+                }));
+            }
+        }
+
+        return TypedResults.Unauthorized();
+    }
     /// <summary>
     /// Return true if the server is correctly installed
     /// If false, some steps are missing:
@@ -75,20 +119,26 @@ public static class AuthLogic
     public static async Task<IResult> RefreshAsync(IUserContext users, TokenService token, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger(nameof(AuthLogic));
-        var user = context.User.GetUser("refresh");
-        if (user != null)
+        var user = context.User.GetUser(TokenHelper.Refresh);
+        var userSession = context.User.GetSession();
+        if (user != null && userSession != null)
         {
             // the refresh token is valid
             var fromDb = await users.Get(user);
             if (fromDb is not null)
             {
-                var accessToken = token.GetAccessToken(fromDb, TokenValidity(false));
+                var session = await users.GetSession(fromDb.Id, userSession);
 
-                var roles = GetRoles(fromDb.Type);
+                if (session != null && session.Stop < DateTime.UtcNow)
+                {
+                    var accessToken = token.GetAccessToken(fromDb, TokenValidity(false));
 
-                log.LogInformation("Refreshed access for user {user}", user);
+                    var roles = GetRoles(fromDb.Type);
 
-                return TypedResults.Ok(new ConnectionResponse(accessToken, null, roles));
+                    log.LogInformation("Refreshed access for user {user}", user);
+
+                    return TypedResults.Ok(new ConnectionResponse(accessToken, null, roles));
+                }
             }
         }
 
@@ -138,7 +188,18 @@ public static class AuthLogic
         var roles = GetRoles(fromDb.Type);
 
         var accessToken = token.GetAccessToken(fromDb, TokenValidity(false));
-        var refreshToken = token.GetRefreshToken(fromDb, TokenValidity(true));
+        var sessionId = Guid.NewGuid();
+        var refreshValidity = TokenValidity(true);
+        var refreshToken = token.GetRefreshToken(fromDb, refreshValidity);
+        await users.AddSession(new()
+        {
+            Ip = context.Connection.RemoteIpAddress?.ToString(),
+            SessionId = sessionId,
+            Start = DateTime.UtcNow,
+            Stop = refreshValidity,
+            UserId = fromDb.Id,
+            UserAgent = context.Request.Headers.UserAgent,
+        });
 
         return TypedResults.Ok(new ConnectionResponse(accessToken, refreshToken, roles));
     }

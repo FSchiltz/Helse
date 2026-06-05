@@ -229,4 +229,26 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
             Provider = oauthUser.Provider,
         });
     }
+
+    public Task<Models.Persons.Session?> GetSession(long id, Guid? userSession)
+    {
+        return Db.GetTable<Models.Persons.Session>().Where(x => x.UserId == id && x.SessionId == userSession).SingleOrDefaultAsync();
+    }
+
+    public Task<Models.Persons.Session[]> GetSessions(long id)
+    {
+        return Db.GetTable<Models.Persons.Session>().Where(x => x.UserId == id).ToArrayAsync();
+    }
+
+    public Task AddSession(Models.Persons.Session session)
+    {
+        return Db.GetTable<Models.Persons.Session>().InsertAsync(() => session);
+    }
+
+    public Task DeleteSession(long userId, Guid session)
+    {
+        return Db.GetTable<Models.Persons.Session>()
+        .Where(x => x.UserId == userId && x.SessionId == session)
+        .DeleteAsync();
+    }
 }

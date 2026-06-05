@@ -31,6 +31,16 @@ public static class Endpoints
         .AllowAnonymous()
         .WithDescription("Check if the server install is ready")
         .Produces<Status>((int)HttpStatusCode.OK);
+
+        api.MapGet("/logout", AuthLogic.LogoutAsync)
+        .RequireAuthorization()
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        api.MapGet("/sessions", AuthLogic.GetSessions)
+        .RequireAuthorization()
+        .Produces<Session[]>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
     }
 
     public static void MapPerson(this RouteGroupBuilder api)

@@ -9,5 +9,3 @@ public enum UserType
     Caregiver = 2,
     User = 4,
 }
-
-public record ConnectionResponse(string AccessToken, string? RefreshToken, Models.Persons.UserType[] Roles);
