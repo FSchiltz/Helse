@@ -267,4 +267,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get syncHistoryToggle => 'Synchroniser aussi les données historiques';
+
+  @override
+  String get sessions => 'Sessions de connexion';
 }

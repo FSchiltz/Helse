@@ -1,6 +1,6 @@
 CREATE TABLE person.Sessions (
     UserId BIGINT NOT NULL,
-    SessionId UUID NOT NULL,
+    SessionId VARCHAR NOT NULL,
     Ip VARCHAR NULL,
     Location VARCHAR NULL,
     Start TIMESTAMP NOT NULL,

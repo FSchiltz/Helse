@@ -230,25 +230,41 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
         });
     }
 
-    public Task<Models.Persons.Session?> GetSession(long id, Guid? userSession)
+    public Task<Sessions?> GetSession(long id, string userSession)
     {
-        return Db.GetTable<Models.Persons.Session>().Where(x => x.UserId == id && x.SessionId == userSession).SingleOrDefaultAsync();
+        return Db.GetTable<Sessions>().Where(x => x.UserId == id && x.SessionId == userSession).SingleOrDefaultAsync();
     }
 
-    public Task<Models.Persons.Session[]> GetSessions(long id)
+    public Task<Sessions[]> GetSessions(long id)
     {
-        return Db.GetTable<Models.Persons.Session>().Where(x => x.UserId == id).ToArrayAsync();
+        return Db.GetTable<Sessions>().Where(x => x.UserId == id).ToArrayAsync();
     }
 
-    public Task AddSession(Models.Persons.Session session)
+    public Task AddSession(Sessions session)
     {
-        return Db.GetTable<Models.Persons.Session>().InsertAsync(() => session);
+        return Db.GetTable<Sessions>().InsertAsync(() => new()
+        {
+            Location = session.Location,
+            SessionId = session.SessionId,
+            Start = session.Start,
+            Stop = session.Stop,
+            UserAgent = session.UserAgent,
+            UserId = session.UserId,
+            Ip = session.Ip,
+        });
     }
 
-    public Task DeleteSession(long userId, Guid session)
+    public Task DeleteSession(long userId, string session)
     {
-        return Db.GetTable<Models.Persons.Session>()
+        return Db.GetTable<Sessions>()
         .Where(x => x.UserId == userId && x.SessionId == session)
+        .DeleteAsync();
+    }
+
+    public Task DeleteSession(long userId, DateTime dateTime)
+    {
+        return Db.GetTable<Sessions>()
+        .Where(x => x.UserId == userId && x.Stop < dateTime)
         .DeleteAsync();
     }
 }

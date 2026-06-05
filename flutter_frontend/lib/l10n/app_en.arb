@@ -208,5 +208,7 @@
     "syncBackgroundToggle": "Sync in the background",
     "@syncBackgroundToggle": {},
     "syncHistoryToggle": "Sync also historical data",
-    "@syncHistoryToggle": {}
+    "@syncHistoryToggle": {},
+    "sessions" : "Connection sessions",
+    "@sessions" : {}
 }

@@ -81,5 +81,6 @@
     "syncFit": "Synchronisation avec Google health",
     "resetLastRun": "Réinitialiser la dernière execution",
     "syncBackgroundToggle": "Synchroniser en arrière plan",
-    "syncHistoryToggle": "Synchroniser aussi les données historiques"
+    "syncHistoryToggle": "Synchroniser aussi les données historiques",
+    "sessions": "Sessions de connexion"
 }

@@ -588,6 +588,24 @@ Map<String, dynamic> _$RightToJson(Right instance) => <String, dynamic>{
   'type': rightTypeNullableToJson(instance.type),
 };
 
+Session _$SessionFromJson(Map<String, dynamic> json) => Session(
+  sessionId: json['sessionId'] as String,
+  ip: json['ip'] as String?,
+  location: json['location'] as String?,
+  userAgent: json['userAgent'] as String?,
+  start: json['start'] == null ? null : DateTime.parse(json['start'] as String),
+  stop: json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
+);
+
+Map<String, dynamic> _$SessionToJson(Session instance) => <String, dynamic>{
+  'sessionId': instance.sessionId,
+  'ip': instance.ip,
+  'location': instance.location,
+  'userAgent': instance.userAgent,
+  'start': instance.start?.toIso8601String(),
+  'stop': instance.stop?.toIso8601String(),
+};
+
 Smtp _$SmtpFromJson(Map<String, dynamic> json) => Smtp(
   enabled: json['enabled'] as bool?,
   smtpHost: json['smtpHost'] as String?,

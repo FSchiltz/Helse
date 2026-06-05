@@ -589,6 +589,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sync also historical data'**
   String get syncHistoryToggle;
+
+  /// No description provided for @sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection sessions'**
+  String get sessions;
 }
 
 class _AppLocalizationsDelegate

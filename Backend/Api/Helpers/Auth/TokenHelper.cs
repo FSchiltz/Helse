@@ -19,7 +19,7 @@ public static class TokenHelper
         return claim?.Value;
     }
 
-    public static Guid? GetSession(this ClaimsPrincipal claims)
+    public static string? GetSession(this ClaimsPrincipal claims)
     {
         if (!claims.Claims.Any(x => x.Type == "token" && x.Value == "refresh"))
         {
@@ -32,6 +32,6 @@ public static class TokenHelper
             return null;
         }
 
-        return Guid.Parse(claim.Value);
+        return claim.Value;
     }
 }

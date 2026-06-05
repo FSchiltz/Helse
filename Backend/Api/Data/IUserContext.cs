@@ -47,11 +47,13 @@ public interface IUserContext : IContext
 
     Task<User?> Get(string user, string issuer);
 
-    Task<Models.Persons.Session?> GetSession(long id, Guid? userSession);
+    Task<Sessions?> GetSession(long id, string userSession);
 
-    Task<Models.Persons.Session[]> GetSessions(long id);
+    Task<Sessions[]> GetSessions(long id);
 
-    Task AddSession(Models.Persons.Session session);
+    Task AddSession(Sessions session);
 
-    Task DeleteSession(long userId, Guid session);
+    Task DeleteSession(long userId, string session);
+
+    Task DeleteSession(long userId, DateTime dateTime);
 }

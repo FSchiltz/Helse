@@ -131,6 +131,50 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
+  Future<chopper.Response> apiLogoutGet() {
+    return _apiLogoutGet();
+  }
+
+  ///
+  @GET(path: '/api/logout')
+  Future<chopper.Response> _apiLogoutGet({
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["AuthLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  Future<chopper.Response<List<Session>>> apiSessionsGet() {
+    generatedMapping.putIfAbsent(Session, () => Session.fromJsonFactory);
+
+    return _apiSessionsGet();
+  }
+
+  ///
+  @GET(path: '/api/sessions')
+  Future<chopper.Response<List<Session>>> _apiSessionsGet({
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["AuthLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
   Future<chopper.Response<UserId>> apiPersonPost({
     required PersonCreation? body,
   }) {
@@ -4718,6 +4762,116 @@ extension $RightExtension on Right {
       start: (start != null ? start.value : this.start),
       stop: (stop != null ? stop.value : this.stop),
       type: (type != null ? type.value : this.type),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class Session {
+  const Session({
+    required this.sessionId,
+    this.ip,
+    this.location,
+    this.userAgent,
+    this.start,
+    this.stop,
+  });
+
+  factory Session.fromJson(Map<String, dynamic> json) =>
+      _$SessionFromJson(json);
+
+  static const toJsonFactory = _$SessionToJson;
+  Map<String, dynamic> toJson() => _$SessionToJson(this);
+
+  @JsonKey(name: 'sessionId')
+  final String sessionId;
+  @JsonKey(name: 'ip')
+  final String? ip;
+  @JsonKey(name: 'location')
+  final String? location;
+  @JsonKey(name: 'userAgent')
+  final String? userAgent;
+  @JsonKey(name: 'start')
+  final DateTime? start;
+  @JsonKey(name: 'stop')
+  final DateTime? stop;
+  static const fromJsonFactory = _$SessionFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is Session &&
+            (identical(other.sessionId, sessionId) ||
+                const DeepCollectionEquality().equals(
+                  other.sessionId,
+                  sessionId,
+                )) &&
+            (identical(other.ip, ip) ||
+                const DeepCollectionEquality().equals(other.ip, ip)) &&
+            (identical(other.location, location) ||
+                const DeepCollectionEquality().equals(
+                  other.location,
+                  location,
+                )) &&
+            (identical(other.userAgent, userAgent) ||
+                const DeepCollectionEquality().equals(
+                  other.userAgent,
+                  userAgent,
+                )) &&
+            (identical(other.start, start) ||
+                const DeepCollectionEquality().equals(other.start, start)) &&
+            (identical(other.stop, stop) ||
+                const DeepCollectionEquality().equals(other.stop, stop)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(sessionId) ^
+      const DeepCollectionEquality().hash(ip) ^
+      const DeepCollectionEquality().hash(location) ^
+      const DeepCollectionEquality().hash(userAgent) ^
+      const DeepCollectionEquality().hash(start) ^
+      const DeepCollectionEquality().hash(stop) ^
+      runtimeType.hashCode;
+}
+
+extension $SessionExtension on Session {
+  Session copyWith({
+    String? sessionId,
+    String? ip,
+    String? location,
+    String? userAgent,
+    DateTime? start,
+    DateTime? stop,
+  }) {
+    return Session(
+      sessionId: sessionId ?? this.sessionId,
+      ip: ip ?? this.ip,
+      location: location ?? this.location,
+      userAgent: userAgent ?? this.userAgent,
+      start: start ?? this.start,
+      stop: stop ?? this.stop,
+    );
+  }
+
+  Session copyWithWrapped({
+    Wrapped<String>? sessionId,
+    Wrapped<String?>? ip,
+    Wrapped<String?>? location,
+    Wrapped<String?>? userAgent,
+    Wrapped<DateTime?>? start,
+    Wrapped<DateTime?>? stop,
+  }) {
+    return Session(
+      sessionId: (sessionId != null ? sessionId.value : this.sessionId),
+      ip: (ip != null ? ip.value : this.ip),
+      location: (location != null ? location.value : this.location),
+      userAgent: (userAgent != null ? userAgent.value : this.userAgent),
+      start: (start != null ? start.value : this.start),
+      stop: (stop != null ? stop.value : this.stop),
     );
   }
 }

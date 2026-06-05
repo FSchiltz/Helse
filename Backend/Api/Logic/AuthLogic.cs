@@ -29,7 +29,7 @@ public static class AuthLogic
             var fromDb = await users.Get(user);
             if (fromDb is not null)
             {
-                await users.DeleteSession(fromDb.Id, userSession.Value);
+                await users.DeleteSession(fromDb.Id, userSession);
                 return TypedResults.NoContent();
             }
         }
@@ -41,8 +41,7 @@ public static class AuthLogic
     {
         var log = logger.CreateLogger(nameof(AuthLogic));
         var user = context.User.GetUser();
-        var userSession = context.User.GetSession();
-        if (user != null && userSession != null)
+        if (user != null)
         {
             var fromDb = await users.Get(user);
             if (fromDb is not null)
@@ -56,7 +55,7 @@ public static class AuthLogic
                     Start = x.Start,
                     Stop = x.Stop,
                     UserAgent = x.UserAgent,
-                }));
+                }).ToArray());
             }
         }
 
@@ -191,15 +190,21 @@ public static class AuthLogic
         var sessionId = Guid.NewGuid();
         var refreshValidity = TokenValidity(true);
         var refreshToken = token.GetRefreshToken(fromDb, refreshValidity);
-        await users.AddSession(new()
+        var userIp = context.Connection.RemoteIpAddress?.ToString();
+        var userSession = new Sessions()
         {
-            Ip = context.Connection.RemoteIpAddress?.ToString(),
-            SessionId = sessionId,
+            SessionId = sessionId.ToString(),
             Start = DateTime.UtcNow,
             Stop = refreshValidity,
             UserId = fromDb.Id,
-            UserAgent = context.Request.Headers.UserAgent,
-        });
+            UserAgent = context.Request.Headers.UserAgent.ToString(),
+            Ip = userIp,
+            Location = null,
+        };
+
+        // clean up old sessions
+        await users.DeleteSession(fromDb.Id, DateTime.UtcNow.AddDays(-30));
+        await users.AddSession(userSession);
 
         return TypedResults.Ok(new ConnectionResponse(accessToken, refreshToken, roles));
     }

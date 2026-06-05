@@ -36,7 +36,9 @@ abstract class ApiService {
     var client = Helseapi.create(
       baseUrl: url,
       interceptors: [
-        HeadersInterceptor({'Authorization': 'Bearer ${refresh?.refreshToken}'}),
+        HeadersInterceptor({
+          'Authorization': 'Bearer ${refresh?.refreshToken}',
+        }),
       ],
     );
     var response = await client.apiRefreshGet();
@@ -57,7 +59,10 @@ abstract class ApiService {
     var url = override ?? Uri.parse(await account.get(Account.url) ?? '');
 
     // first we try to get a new refresh token if needed
-    var token = (await account.getToken())?.accessToken;
+    String? token;
+    var settings = await account.getToken();
+
+    token = settings?.accessToken;
     if (token != null && token.isNotEmpty) {
       if (JwtDecoder.isExpired(token)) {
         token = await _refreshToken();

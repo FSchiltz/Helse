@@ -91,6 +91,52 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
+  Future<Response<dynamic>> _apiLogoutGet({
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["AuthLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/logout');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<List<Session>>> _apiSessionsGet({
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["AuthLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/sessions');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      tag: swaggerMetaData,
+    );
+    return client.send<List<Session>, Session>($request);
+  }
+
+  @override
   Future<Response<UserId>> _apiPersonPost({
     required PersonCreation? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
