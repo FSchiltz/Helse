@@ -62,6 +62,16 @@ public static class AuthLogic
         return TypedResults.Ok(new Status(true, isAuth, null, oauths));
     }
 
+    private static DateTime TokenValidity(bool longLife)
+    {
+        if (longLife)
+        {
+            return DateTime.UtcNow.AddDays(30);
+        }
+
+        return DateTime.UtcNow.AddMinutes(5);
+    }
+
     public static async Task<IResult> RefreshAsync(IUserContext users, TokenService token, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger(nameof(AuthLogic));
@@ -71,8 +81,8 @@ public static class AuthLogic
             // the refresh token is valid
             var fromDb = await users.Get(user);
             if (fromDb is not null)
-            {                
-                var accessToken = token.GetAccessToken(fromDb, DateTime.UtcNow.AddMinutes(5));
+            {
+                var accessToken = token.GetAccessToken(fromDb, TokenValidity(false));
 
                 var roles = GetRoles(fromDb.Type);
 
@@ -127,8 +137,8 @@ public static class AuthLogic
         log.LogDebug("Connexion validated");
         var roles = GetRoles(fromDb.Type);
 
-        var accessToken = token.GetAccessToken(fromDb, DateTime.UtcNow.AddMinutes(5));
-        var refreshToken = token.GetRefreshToken(fromDb, DateTime.UtcNow.AddDays(30));
+        var accessToken = token.GetAccessToken(fromDb, TokenValidity(false));
+        var refreshToken = token.GetRefreshToken(fromDb, TokenValidity(true));
 
         return TypedResults.Ok(new ConnectionResponse(accessToken, refreshToken, roles));
     }
