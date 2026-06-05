@@ -29,7 +29,7 @@ public static class AuthLogic
     /// <returns></returns>
     public static async Task<IResult> StatusAsync(ISettingsContext settings, IUserContext users, HttpContext context, ILoggerFactory logger)
     {
-        var log = logger.CreateLogger("Auth");
+        var log = logger.CreateLogger(nameof(AuthLogic));
 
         // check if the server is already init
         var count = await users.Count();
@@ -62,8 +62,9 @@ public static class AuthLogic
         return TypedResults.Ok(new Status(true, isAuth, null, oauths));
     }
 
-    public static async Task<IResult> RefreshAsync(IUserContext users, TokenService token, HttpContext context)
+    public static async Task<IResult> RefreshAsync(IUserContext users, TokenService token, HttpContext context, ILoggerFactory logger)
     {
+        var log = logger.CreateLogger(nameof(AuthLogic));
         var user = context.User.GetUser("refresh");
         if (user != null)
         {
@@ -74,9 +75,14 @@ public static class AuthLogic
                 var accessToken = token.GetAccessToken(fromDb, DateTime.UtcNow.AddMinutes(10));
 
                 var roles = GetRoles(fromDb.Type);
+
+                log.LogWarning("Refreshed access for user {user}", user);
+
                 return TypedResults.Ok(new ConnectionResponse(accessToken, null, roles));
             }
         }
+
+        log.LogWarning("Failed attempt to use a refresh token");
 
         return TypedResults.Unauthorized();
     }
@@ -87,7 +93,7 @@ public static class AuthLogic
     /// <returns></returns>
     public static async Task<IResult> AuthAsync(Connection user, ISettingsContext settings, IUserContext users, TokenService token, HttpContext context, ILoggerFactory logger)
     {
-        var log = logger.CreateLogger("Auth");
+        var log = logger.CreateLogger(nameof(AuthLogic));
 
         var proxy = await settings.GetSettings<Proxy>(Proxy.Name);
         var oauth = await settings.GetSettings<Oauth>(Oauth.Name);
