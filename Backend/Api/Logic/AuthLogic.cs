@@ -20,16 +20,29 @@ public static class AuthLogic
 {
     public static async Task<IResult> LogoutAsync(IUserContext users, HttpContext context, ILoggerFactory logger)
     {
-        // TODO add make it work with the access token(that will remove all sessions)
         var log = logger.CreateLogger(nameof(AuthLogic));
-        var user = context.User.GetUser(TokenHelper.Refresh);
-        var userSession = context.User.GetSession();
-        if (user != null && userSession != null)
+        var isRefresh = context.User.IsRefresh();
+        if (isRefresh)
         {
+            var user = context.User.GetUser(TokenHelper.Refresh);
+            var userSession = context.User.GetSession();
+            if (user != null && userSession != null)
+            {
+                var fromDb = await users.Get(user);
+                if (fromDb is not null)
+                {
+                    await users.DeleteSession(fromDb.Id, userSession);
+                    return TypedResults.NoContent();
+                }
+            }
+        }
+        else
+        {
+            var user = context.User.GetUser(TokenHelper.Access);
             var fromDb = await users.Get(user);
             if (fromDb is not null)
             {
-                await users.DeleteSession(fromDb.Id, userSession);
+                await users.DeleteSession(fromDb.Id);
                 return TypedResults.NoContent();
             }
         }
@@ -112,7 +125,7 @@ public static class AuthLogic
             return DateTime.UtcNow.AddDays(30);
         }
 
-        return DateTime.UtcNow.AddMinutes(5);
+        return DateTime.UtcNow.AddMinutes(10);
     }
 
     public static async Task<IResult> RefreshAsync(IUserContext users, TokenService token, HttpContext context, ILoggerFactory logger)
@@ -128,7 +141,7 @@ public static class AuthLogic
             {
                 var session = await users.GetSession(fromDb.Id, userSession);
 
-                if (session != null && session.Stop < DateTime.UtcNow)
+                if (session != null && session.Stop >= DateTime.UtcNow)
                 {
                     var accessToken = token.GetAccessToken(fromDb, TokenValidity(false));
 
@@ -189,7 +202,7 @@ public static class AuthLogic
         var accessToken = token.GetAccessToken(fromDb, TokenValidity(false));
         var sessionId = Guid.NewGuid();
         var refreshValidity = TokenValidity(true);
-        var refreshToken = token.GetRefreshToken(fromDb, refreshValidity);
+        var refreshToken = token.GetRefreshToken(fromDb, refreshValidity, sessionId);
         var userIp = context.Connection.RemoteIpAddress?.ToString();
         var userSession = new Sessions()
         {

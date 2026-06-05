@@ -7,6 +7,11 @@ public static class TokenHelper
     public const string Access = "access";
     public const string Refresh = "refresh";
 
+    public static bool IsRefresh(this ClaimsPrincipal claims)
+    {
+        return claims.Claims.Any(x => x.Type == "token" && x.Value == Refresh);
+    }
+
     public static string? GetUser(this ClaimsPrincipal claims, string tokenType = Access)
     {
         if (!claims.Claims.Any(x => x.Type == "token" && x.Value == tokenType))

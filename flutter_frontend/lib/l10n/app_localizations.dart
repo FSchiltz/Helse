@@ -595,6 +595,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Connection sessions'**
   String get sessions;
+
+  /// No description provided for @cleanSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove all sessions'**
+  String get cleanSessions;
 }
 
 class _AppLocalizationsDelegate

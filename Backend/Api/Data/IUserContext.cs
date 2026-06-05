@@ -56,4 +56,6 @@ public interface IUserContext : IContext
     Task DeleteSession(long userId, string session);
 
     Task DeleteSession(long userId, DateTime dateTime);
+
+    Task DeleteSession(long userId);
 }

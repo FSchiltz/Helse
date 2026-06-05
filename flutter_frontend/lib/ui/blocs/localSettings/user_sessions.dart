@@ -20,10 +20,7 @@ class UserSessions extends StatelessWidget {
         elevation: 10,
         title: Padding(
           padding: const EdgeInsets.all(32),
-          child: Text(
-            locale.sessions,
-            style: theme.textTheme.displaySmall,
-          ),
+          child: Text(locale.sessions, style: theme.textTheme.displaySmall),
         ),
       ),
       body: SafeArea(
@@ -37,9 +34,32 @@ class UserSessions extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text('${data.length} sessions', style: theme.textTheme.headlineLarge,),
+                    child: Row(
+                      children: [
+                        Text(
+                          '${data.length} sessions',
+                          style: theme.textTheme.headlineLarge,
+                        ),
+                        Spacer(),
+                        SizedBox(
+                          width: 200,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size.fromHeight(40),
+                              shape: const ContinuousRectangleBorder(),
+                            ),
+                            onPressed: () async {
+                              await Dependencies.services.user.logout(true);
+                              await Dependencies.logics.authentication
+                                  .logOutLocal();
+                            },
+                            child: Text(locale.cleanSessions),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 12,),
+                  SizedBox(height: 12),
                   Flexible(
                     child: SingleChildScrollView(
                       child: ListView.builder(

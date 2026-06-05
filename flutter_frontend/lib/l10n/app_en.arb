@@ -209,6 +209,8 @@
     "@syncBackgroundToggle": {},
     "syncHistoryToggle": "Sync also historical data",
     "@syncHistoryToggle": {},
-    "sessions" : "Connection sessions",
-    "@sessions" : {}
+    "sessions": "Connection sessions",
+    "@sessions": {},
+    "cleanSessions": "Remove all sessions",
+    "@cleanSessions": {}
 }

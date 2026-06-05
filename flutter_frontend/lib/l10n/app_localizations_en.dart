@@ -270,4 +270,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sessions => 'Connection sessions';
+
+  @override
+  String get cleanSessions => 'Remove all sessions';
 }

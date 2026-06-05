@@ -79,7 +79,7 @@ public class TokenServiceTests
         var expires = DateTime.UtcNow.AddHours(1);
 
         // Act
-        var token = service.GetRefreshToken(tokenInfo, expires);
+        var token = service.GetRefreshToken(tokenInfo, expires, Guid.NewGuid());
 
         // Assert
         Assert.NotNull(token);
@@ -125,7 +125,7 @@ public class TokenServiceTests
         var expires = DateTime.UtcNow.AddHours(1);
 
         // Act
-        var token = service.GetRefreshToken(tokenInfo, expires);
+        var token = service.GetRefreshToken(tokenInfo, expires, Guid.NewGuid());
 
         // Assert
         Assert.NotNull(token);
@@ -148,7 +148,7 @@ public class TokenServiceTests
         var expires = DateTime.UtcNow.AddHours(1);
 
         // Act
-        var token = service.GetRefreshToken(tokenInfo, expires);
+        var token = service.GetRefreshToken(tokenInfo, expires, Guid.NewGuid());
 
         // Assert
         Assert.NotNull(token);

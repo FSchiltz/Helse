@@ -267,4 +267,10 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
         .Where(x => x.UserId == userId && x.Stop < dateTime)
         .DeleteAsync();
     }
+
+    public Task DeleteSession(long userId)
+    {return Db.GetTable<Sessions>()
+        .Where(x => x.UserId == userId)
+        .DeleteAsync();
+    }
 }

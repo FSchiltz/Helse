@@ -55,20 +55,23 @@ abstract class ApiService {
     return null;
   }
 
-  Future<Helseapi> getService({Uri? override}) async {
+  Future<Helseapi> getService({Uri? override, bool sendRefresh = false}) async {
     var url = override ?? Uri.parse(await account.get(Account.url) ?? '');
 
     // first we try to get a new refresh token if needed
     String? token;
     var settings = await account.getToken();
 
-    token = settings?.accessToken;
-    if (token != null && token.isNotEmpty) {
-      if (JwtDecoder.isExpired(token)) {
-        token = await _refreshToken();
+    if (sendRefresh) {
+      token = settings?.refreshToken;
+    } else {
+      token = settings?.accessToken;
+      if (token != null && token.isNotEmpty) {
+        if (JwtDecoder.isExpired(token)) {
+          token = await _refreshToken();
+        }
       }
     }
-
     return Helseapi.create(
       baseUrl: url,
       interceptors: [

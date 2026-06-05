@@ -22,14 +22,14 @@ public class TokenService(TokenConfig config)
         return new PasswordHasher<User>().VerifyHashedPassword(User.Empty, hash, password);
     }
 
-    public string GetRefreshToken(User info, DateTime expires)
+    public string GetRefreshToken(User info, DateTime expires, Guid sessionId)
     {
         var claims = new List<Claim>
             {
                 new(JwtRegisteredClaimNames.NameId, info.Identifier),
                 new("token", "refresh"),
+                new("session", sessionId.ToString()),
              };
-
 
         return GetToken(claims, expires);
     }
