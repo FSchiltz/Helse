@@ -44,7 +44,7 @@ public static class AuthLogic
 
         OauthConnection[] oauths = [];
         var oauth = await settings.GetSettings<Oauth>(Oauth.Name);
-        if (oauth.Enabled == true)
+        if (oauth.Enabled)
         {
             oauths = [.. oauth.Providers.Select(p => new OauthConnection(p.Name, p.Url, p.ClientId, p.AutoLogin))];
         }
@@ -71,12 +71,12 @@ public static class AuthLogic
             // the refresh token is valid
             var fromDb = await users.Get(user);
             if (fromDb is not null)
-            {
-                var accessToken = token.GetAccessToken(fromDb, DateTime.UtcNow.AddMinutes(10));
+            {                
+                var accessToken = token.GetAccessToken(fromDb, DateTime.UtcNow.AddMinutes(5));
 
                 var roles = GetRoles(fromDb.Type);
 
-                log.LogWarning("Refreshed access for user {user}", user);
+                log.LogInformation("Refreshed access for user {user}", user);
 
                 return TypedResults.Ok(new ConnectionResponse(accessToken, null, roles));
             }
@@ -127,7 +127,7 @@ public static class AuthLogic
         log.LogDebug("Connexion validated");
         var roles = GetRoles(fromDb.Type);
 
-        var accessToken = token.GetAccessToken(fromDb, DateTime.UtcNow.AddMinutes(10));
+        var accessToken = token.GetAccessToken(fromDb, DateTime.UtcNow.AddMinutes(5));
         var refreshToken = token.GetRefreshToken(fromDb, DateTime.UtcNow.AddDays(30));
 
         return TypedResults.Ok(new ConnectionResponse(accessToken, refreshToken, roles));
