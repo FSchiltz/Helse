@@ -148,6 +148,8 @@ enum UserType {
   @JsonValue(null)
   swaggerGeneratedUnknown(null),
 
+  @JsonValue('Patient')
+  patient('Patient'),
   @JsonValue('Admin')
   admin('Admin'),
   @JsonValue('Caregiver')

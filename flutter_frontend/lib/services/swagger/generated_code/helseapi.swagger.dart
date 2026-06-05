@@ -53,12 +53,12 @@ abstract class Helseapi extends ChopperService {
   }
 
   ///
-  Future<chopper.Response<TokenResponse>> apiAuthPost({
+  Future<chopper.Response<ConnectionResponse>> apiAuthPost({
     required Connection? body,
   }) {
     generatedMapping.putIfAbsent(
-      TokenResponse,
-      () => TokenResponse.fromJsonFactory,
+      ConnectionResponse,
+      () => ConnectionResponse.fromJsonFactory,
     );
 
     return _apiAuthPost(body: body);
@@ -66,11 +66,37 @@ abstract class Helseapi extends ChopperService {
 
   ///
   @POST(path: '/api/auth', optionalBody: true)
-  Future<chopper.Response<TokenResponse>> _apiAuthPost({
+  Future<chopper.Response<ConnectionResponse>> _apiAuthPost({
     @Body() required Connection? body,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: 'Get a connection token',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["AuthLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  Future<chopper.Response<ConnectionResponse>> apiRefreshGet() {
+    generatedMapping.putIfAbsent(
+      ConnectionResponse,
+      () => ConnectionResponse.fromJsonFactory,
+    );
+
+    return _apiRefreshGet();
+  }
+
+  ///
+  @GET(path: '/api/refresh')
+  Future<chopper.Response<ConnectionResponse>> _apiRefreshGet({
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
       summary: '',
       operationId: '',
       consumes: [],
@@ -94,6 +120,50 @@ abstract class Helseapi extends ChopperService {
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: 'Check if the server install is ready',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["AuthLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  Future<chopper.Response> apiLogoutGet() {
+    return _apiLogoutGet();
+  }
+
+  ///
+  @GET(path: '/api/logout')
+  Future<chopper.Response> _apiLogoutGet({
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["AuthLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  Future<chopper.Response<List<Session>>> apiSessionsGet() {
+    generatedMapping.putIfAbsent(Session, () => Session.fromJsonFactory);
+
+    return _apiSessionsGet();
+  }
+
+  ///
+  @GET(path: '/api/sessions')
+  Future<chopper.Response<List<Session>>> _apiSessionsGet({
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
       summary: '',
       operationId: '',
       consumes: [],
@@ -1723,6 +1793,89 @@ extension $ConnectionExtension on Connection {
       password: (password != null ? password.value : this.password),
       issuer: (issuer != null ? issuer.value : this.issuer),
       redirect: (redirect != null ? redirect.value : this.redirect),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class ConnectionResponse {
+  const ConnectionResponse({
+    required this.accessToken,
+    this.refreshToken,
+    required this.roles,
+  });
+
+  factory ConnectionResponse.fromJson(Map<String, dynamic> json) =>
+      _$ConnectionResponseFromJson(json);
+
+  static const toJsonFactory = _$ConnectionResponseToJson;
+  Map<String, dynamic> toJson() => _$ConnectionResponseToJson(this);
+
+  @JsonKey(name: 'accessToken')
+  final String accessToken;
+  @JsonKey(name: 'refreshToken')
+  final String? refreshToken;
+  @JsonKey(
+    name: 'roles',
+    toJson: userTypeListToJson,
+    fromJson: userTypeListFromJson,
+  )
+  final List<enums.UserType> roles;
+  static const fromJsonFactory = _$ConnectionResponseFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is ConnectionResponse &&
+            (identical(other.accessToken, accessToken) ||
+                const DeepCollectionEquality().equals(
+                  other.accessToken,
+                  accessToken,
+                )) &&
+            (identical(other.refreshToken, refreshToken) ||
+                const DeepCollectionEquality().equals(
+                  other.refreshToken,
+                  refreshToken,
+                )) &&
+            (identical(other.roles, roles) ||
+                const DeepCollectionEquality().equals(other.roles, roles)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(accessToken) ^
+      const DeepCollectionEquality().hash(refreshToken) ^
+      const DeepCollectionEquality().hash(roles) ^
+      runtimeType.hashCode;
+}
+
+extension $ConnectionResponseExtension on ConnectionResponse {
+  ConnectionResponse copyWith({
+    String? accessToken,
+    String? refreshToken,
+    List<enums.UserType>? roles,
+  }) {
+    return ConnectionResponse(
+      accessToken: accessToken ?? this.accessToken,
+      refreshToken: refreshToken ?? this.refreshToken,
+      roles: roles ?? this.roles,
+    );
+  }
+
+  ConnectionResponse copyWithWrapped({
+    Wrapped<String>? accessToken,
+    Wrapped<String?>? refreshToken,
+    Wrapped<List<enums.UserType>>? roles,
+  }) {
+    return ConnectionResponse(
+      accessToken: (accessToken != null ? accessToken.value : this.accessToken),
+      refreshToken: (refreshToken != null
+          ? refreshToken.value
+          : this.refreshToken),
+      roles: (roles != null ? roles.value : this.roles),
     );
   }
 }
@@ -4614,6 +4767,116 @@ extension $RightExtension on Right {
 }
 
 @JsonSerializable(explicitToJson: true)
+class Session {
+  const Session({
+    required this.sessionId,
+    this.ip,
+    this.location,
+    this.userAgent,
+    this.start,
+    this.stop,
+  });
+
+  factory Session.fromJson(Map<String, dynamic> json) =>
+      _$SessionFromJson(json);
+
+  static const toJsonFactory = _$SessionToJson;
+  Map<String, dynamic> toJson() => _$SessionToJson(this);
+
+  @JsonKey(name: 'sessionId')
+  final String sessionId;
+  @JsonKey(name: 'ip')
+  final String? ip;
+  @JsonKey(name: 'location')
+  final String? location;
+  @JsonKey(name: 'userAgent')
+  final String? userAgent;
+  @JsonKey(name: 'start')
+  final DateTime? start;
+  @JsonKey(name: 'stop')
+  final DateTime? stop;
+  static const fromJsonFactory = _$SessionFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is Session &&
+            (identical(other.sessionId, sessionId) ||
+                const DeepCollectionEquality().equals(
+                  other.sessionId,
+                  sessionId,
+                )) &&
+            (identical(other.ip, ip) ||
+                const DeepCollectionEquality().equals(other.ip, ip)) &&
+            (identical(other.location, location) ||
+                const DeepCollectionEquality().equals(
+                  other.location,
+                  location,
+                )) &&
+            (identical(other.userAgent, userAgent) ||
+                const DeepCollectionEquality().equals(
+                  other.userAgent,
+                  userAgent,
+                )) &&
+            (identical(other.start, start) ||
+                const DeepCollectionEquality().equals(other.start, start)) &&
+            (identical(other.stop, stop) ||
+                const DeepCollectionEquality().equals(other.stop, stop)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(sessionId) ^
+      const DeepCollectionEquality().hash(ip) ^
+      const DeepCollectionEquality().hash(location) ^
+      const DeepCollectionEquality().hash(userAgent) ^
+      const DeepCollectionEquality().hash(start) ^
+      const DeepCollectionEquality().hash(stop) ^
+      runtimeType.hashCode;
+}
+
+extension $SessionExtension on Session {
+  Session copyWith({
+    String? sessionId,
+    String? ip,
+    String? location,
+    String? userAgent,
+    DateTime? start,
+    DateTime? stop,
+  }) {
+    return Session(
+      sessionId: sessionId ?? this.sessionId,
+      ip: ip ?? this.ip,
+      location: location ?? this.location,
+      userAgent: userAgent ?? this.userAgent,
+      start: start ?? this.start,
+      stop: stop ?? this.stop,
+    );
+  }
+
+  Session copyWithWrapped({
+    Wrapped<String>? sessionId,
+    Wrapped<String?>? ip,
+    Wrapped<String?>? location,
+    Wrapped<String?>? userAgent,
+    Wrapped<DateTime?>? start,
+    Wrapped<DateTime?>? stop,
+  }) {
+    return Session(
+      sessionId: (sessionId != null ? sessionId.value : this.sessionId),
+      ip: (ip != null ? ip.value : this.ip),
+      location: (location != null ? location.value : this.location),
+      userAgent: (userAgent != null ? userAgent.value : this.userAgent),
+      start: (start != null ? start.value : this.start),
+      stop: (stop != null ? stop.value : this.stop),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class Smtp {
   const Smtp({
     this.enabled,
@@ -4825,69 +5088,6 @@ extension $StatusExtension on Status {
           : this.externalAuth),
       error: (error != null ? error.value : this.error),
       oauths: (oauths != null ? oauths.value : this.oauths),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
-class TokenResponse {
-  const TokenResponse({required this.accessToken, required this.refreshToken});
-
-  factory TokenResponse.fromJson(Map<String, dynamic> json) =>
-      _$TokenResponseFromJson(json);
-
-  static const toJsonFactory = _$TokenResponseToJson;
-  Map<String, dynamic> toJson() => _$TokenResponseToJson(this);
-
-  @JsonKey(name: 'accessToken')
-  final String accessToken;
-  @JsonKey(name: 'refreshToken')
-  final String refreshToken;
-  static const fromJsonFactory = _$TokenResponseFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is TokenResponse &&
-            (identical(other.accessToken, accessToken) ||
-                const DeepCollectionEquality().equals(
-                  other.accessToken,
-                  accessToken,
-                )) &&
-            (identical(other.refreshToken, refreshToken) ||
-                const DeepCollectionEquality().equals(
-                  other.refreshToken,
-                  refreshToken,
-                )));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(accessToken) ^
-      const DeepCollectionEquality().hash(refreshToken) ^
-      runtimeType.hashCode;
-}
-
-extension $TokenResponseExtension on TokenResponse {
-  TokenResponse copyWith({String? accessToken, String? refreshToken}) {
-    return TokenResponse(
-      accessToken: accessToken ?? this.accessToken,
-      refreshToken: refreshToken ?? this.refreshToken,
-    );
-  }
-
-  TokenResponse copyWithWrapped({
-    Wrapped<String>? accessToken,
-    Wrapped<String>? refreshToken,
-  }) {
-    return TokenResponse(
-      accessToken: (accessToken != null ? accessToken.value : this.accessToken),
-      refreshToken: (refreshToken != null
-          ? refreshToken.value
-          : this.refreshToken),
     );
   }
 }

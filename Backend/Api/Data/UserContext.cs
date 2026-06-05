@@ -80,28 +80,23 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
 
     public Task<long> Count() => Db.GetTable<User>().LongCountAsync();
 
-    public Task<PersonFromDb?> Get(string? identifier)
+    public async Task<User?> Get(string? identifier)
     {
         if (identifier is null)
-            return Task.FromResult(default(PersonFromDb?));
+            return null;
 
-        return (from u in Db.GetTable<User>()
-                join p in Db.GetTable<Models.Persons.Person>() on u.PersonId equals p.Id
-                where u.Identifier == identifier
-                select new PersonFromDb(u, p))
-                                 .FirstOrDefaultAsync();
+        return await Db.GetTable<User>().FirstOrDefaultAsync(x => x.Identifier == identifier);
     }
 
-    public Task<PersonFromDb?> Get(string? identifier, string issuer)
+    public async Task<User?> Get(string? identifier, string issuer)
     {
         if (identifier is null)
-            return Task.FromResult(default(PersonFromDb?));
+            return null;
 
-        return (from o in Db.GetTable<OauthUser>()
-                join u in Db.GetTable<User>() on o.UserId equals u.Id
-                join p in Db.GetTable<Models.Persons.Person>() on u.PersonId equals p.Id
-                where o.OauthSub == identifier && o.Provider == issuer
-                select new PersonFromDb(u, p))
+        return await (from o in Db.GetTable<OauthUser>()
+                      join u in Db.GetTable<User>() on o.UserId equals u.Id
+                      where o.OauthSub == identifier && o.Provider == issuer
+                      select u)
                                  .FirstOrDefaultAsync();
     }
 
@@ -233,5 +228,49 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
             OauthSub = oauthUser.OauthSub,
             Provider = oauthUser.Provider,
         });
+    }
+
+    public Task<Sessions?> GetSession(long id, string userSession)
+    {
+        return Db.GetTable<Sessions>().Where(x => x.UserId == id && x.SessionId == userSession).SingleOrDefaultAsync();
+    }
+
+    public Task<Sessions[]> GetSessions(long id)
+    {
+        return Db.GetTable<Sessions>().Where(x => x.UserId == id).ToArrayAsync();
+    }
+
+    public Task AddSession(Sessions session)
+    {
+        return Db.GetTable<Sessions>().InsertAsync(() => new()
+        {
+            Location = session.Location,
+            SessionId = session.SessionId,
+            Start = session.Start,
+            Stop = session.Stop,
+            UserAgent = session.UserAgent,
+            UserId = session.UserId,
+            Ip = session.Ip,
+        });
+    }
+
+    public Task DeleteSession(long userId, string session)
+    {
+        return Db.GetTable<Sessions>()
+        .Where(x => x.UserId == userId && x.SessionId == session)
+        .DeleteAsync();
+    }
+
+    public Task DeleteSession(long userId, DateTime dateTime)
+    {
+        return Db.GetTable<Sessions>()
+        .Where(x => x.UserId == userId && x.Stop < dateTime)
+        .DeleteAsync();
+    }
+
+    public Task DeleteSession(long userId)
+    {return Db.GetTable<Sessions>()
+        .Where(x => x.UserId == userId)
+        .DeleteAsync();
     }
 }

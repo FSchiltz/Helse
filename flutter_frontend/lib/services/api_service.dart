@@ -18,8 +18,6 @@ abstract class ApiService {
       switch (response.statusCode) {
         case 401:
           // no auth, we remove the token and return null;
-          // TODO get a new access_token if the refresh is still valid
-          account.remove(Account.token);
           Dependencies.logics.authentication.logOut();
           result = null;
           break;
@@ -32,28 +30,48 @@ abstract class ApiService {
     return result;
   }
 
-  Future<Helseapi> getService({Uri? override}) async {
+  Future<String?> _refreshToken() async {
+    var url = Uri.parse(await account.get(Account.url) ?? '');
+    var refresh = await account.getToken();
+    var client = Helseapi.create(
+      baseUrl: url,
+      interceptors: [
+        HeadersInterceptor({
+          'Authorization': 'Bearer ${refresh?.refreshToken}',
+        }),
+      ],
+    );
+    var response = await client.apiRefreshGet();
+    var connection = response.body;
+    if (connection != null) {
+      var token = ConnectionResponse(
+        accessToken: connection.accessToken,
+        roles: connection.roles,
+        refreshToken: refresh?.refreshToken,
+      );
+      await account.setToken(token);
+      return token.accessToken;
+    }
+    return null;
+  }
+
+  Future<Helseapi> getService({Uri? override, bool sendRefresh = false}) async {
     var url = override ?? Uri.parse(await account.get(Account.url) ?? '');
 
     // first we try to get a new refresh token if needed
-    var token = await account.get(Account.token);
-    if (token != null && token.isNotEmpty) {
-      if (JwtDecoder.isExpired(token)) {
-        var refresh = await account.get(Account.refresh);
-        var client = Helseapi.create(
-          baseUrl: url,
-          interceptors: [
-            HeadersInterceptor({'Authorization': 'Bearer $refresh'}),
-          ],
-        );
-        var response = await client.apiAuthPost(
-          body: const Connection(user: "", password: ""),
-        );
-        token = response.body?.accessToken ?? '';
-        await account.set(Account.token, token);
+    String? token;
+    var settings = await account.getToken();
+
+    if (sendRefresh) {
+      token = settings?.refreshToken;
+    } else {
+      token = settings?.accessToken;
+      if (token != null && token.isNotEmpty) {
+        if (JwtDecoder.isExpired(token)) {
+          token = await _refreshToken();
+        }
       }
     }
-
     return Helseapi.create(
       baseUrl: url,
       interceptors: [

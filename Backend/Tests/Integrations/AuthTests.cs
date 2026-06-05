@@ -1,4 +1,4 @@
-using Api.Logic.Auth;
+using Api.Logic;
 using Api.Models;
 using Api.Models.Persons;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -92,9 +92,9 @@ public class AuthTests(WebApplicationFactory<Program> factory) : IntegrationTest
         var auth = await _client.PostAsJsonAsync(authUrl, new Connection(admin.UserName, admin.Password, null, null));
         Assert.NotNull(auth);
 
-        var token = JsonSerializer.Deserialize<TokenResponse>(await auth.Content.ReadAsStringAsync());
+        var token = JsonSerializer.Deserialize<ConnectionResponse>(await auth.Content.ReadAsStringAsync());
         Assert.NotNull(token);
-        Assert.NotNull(token.AccessToken);
+        Assert.NotNull(token.Roles);
 
         // try to create a new person with the right
         _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.AccessToken);

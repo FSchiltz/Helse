@@ -177,13 +177,13 @@ public static class PersonLogic
         {
             var user = await db.Get(userName);
             // else check if user is admin
-            userId = user?.User.Id ?? 0;
+            userId = user?.Id ?? 0;
 
-            userHasRole = user?.User.HasRight(Data.Models.Persons.UserType.Admin) == true;
+            userHasRole = user?.HasRight(Data.Models.Persons.UserType.Admin) == true;
 
             // Care giver can add new patients without admin right
             // TODO move to a create patien endpoint
-            userHasRole = userHasRole || user?.User.HasRight(Data.Models.Persons.UserType.Caregiver) == true;
+            userHasRole = userHasRole || user?.HasRight(Data.Models.Persons.UserType.Caregiver) == true;
         }
 
         if (!userHasRole)

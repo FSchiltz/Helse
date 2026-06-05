@@ -86,8 +86,7 @@ public class UserContextTests : IAsyncLifetime
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("john_user", result.User.Identifier);
-        Assert.Equal("John", result.Person.Name);
+        Assert.Equal("john_user", result.Identifier);
     }
 
     [Fact(Skip = "Not working")]

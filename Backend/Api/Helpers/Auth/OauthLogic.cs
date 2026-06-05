@@ -41,12 +41,12 @@ public static class OauthHelper
         public string? Token_type { get; set; }
     }
 
-    public static async Task<(bool logged, TokenInfo? fromDb)> ConnectOauth(IUserContext db, Oauth oauth, Connection user, ILogger log)
+    public static async Task<(bool logged, Data.Models.Persons.User? fromDb)> ConnectOauth(IUserContext db, Oauth oauth, Connection user, ILogger log)
     {
         var provider = oauth.Providers.First(p => p.ClientId == user.Issuer);
         var token = await provider.GetOauthTokenAsync(user);
 
-        var fromDb = await db.TokenFromDb(token.User, provider.ClientId);
+        var fromDb = await db.Get(token.User, provider.ClientId);
 
         var logged = false;
         if (fromDb is null)
@@ -62,7 +62,7 @@ public static class OauthHelper
                 long? id = null;
                 if (existing != null)
                 {
-                    id = existing.User.Id;
+                    id = existing.Id;
                 }
                 else
                 {
@@ -87,7 +87,7 @@ public static class OauthHelper
                 await transaction.CommitAsync();
 
                 logged = true;
-                fromDb = await db.TokenFromDb(token.User, provider.ClientId);
+                fromDb = await db.Get(token.User, provider.ClientId);
             }
         }
         else

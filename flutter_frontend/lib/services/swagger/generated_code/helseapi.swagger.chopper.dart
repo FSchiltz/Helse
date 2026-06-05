@@ -19,7 +19,7 @@ final class _$Helseapi extends Helseapi {
   final Type definitionType = Helseapi;
 
   @override
-  Future<Response<TokenResponse>> _apiAuthPost({
+  Future<Response<ConnectionResponse>> _apiAuthPost({
     required Connection? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: 'Get a connection token',
@@ -41,7 +41,30 @@ final class _$Helseapi extends Helseapi {
       body: $body,
       tag: swaggerMetaData,
     );
-    return client.send<TokenResponse, TokenResponse>($request);
+    return client.send<ConnectionResponse, ConnectionResponse>($request);
+  }
+
+  @override
+  Future<Response<ConnectionResponse>> _apiRefreshGet({
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["AuthLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/refresh');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      tag: swaggerMetaData,
+    );
+    return client.send<ConnectionResponse, ConnectionResponse>($request);
   }
 
   @override
@@ -65,6 +88,52 @@ final class _$Helseapi extends Helseapi {
       tag: swaggerMetaData,
     );
     return client.send<Status, Status>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiLogoutGet({
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["AuthLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/logout');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<List<Session>>> _apiSessionsGet({
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["AuthLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/sessions');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      tag: swaggerMetaData,
+    );
+    return client.send<List<Session>, Session>($request);
   }
 
   @override

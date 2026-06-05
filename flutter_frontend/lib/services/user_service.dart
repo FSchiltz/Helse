@@ -55,4 +55,14 @@ class UserService extends ApiService {
       ),
     );
   }
+
+  Future<List<Session>> getSessions() async {
+    var api = await getService();
+    return (await call(api.apiSessionsGet)) ?? [];
+  }
+
+  Future<void> logout(bool all) async {
+    var api = await getService(sendRefresh: !all);
+    await call(api.apiLogoutGet);
+  }
 }

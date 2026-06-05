@@ -3,7 +3,6 @@ using Api.Data;
 using Api.Data.Models.Persons;
 using Api.Helpers.Auth;
 using Api.Models.Persons;
-using Microsoft.OpenApi;
 
 namespace Api.Helpers;
 
@@ -46,39 +45,6 @@ public static class RightsHelper
         if (user is null)
             return (TypedResults.Unauthorized(), User.Empty);
 
-        return (null, user.User);
-    }
-
-    public static async Task<TokenInfo?> TokenFromDb(this IUserContext db, string user, string issuer)
-    {
-        var fromDb = await db.Get(user, issuer);
-        return Token(fromDb);
-    }
-
-    private static TokenInfo? Token(PersonFromDb? fromDb)
-    {
-        if (fromDb is null)
-            return null;
-
-        var types = string.Join(';', Enum.GetValues<Data.Models.Persons.UserType>()
-                      .Cast<Data.Models.Persons.UserType>()
-                      .Where(e => ((Data.Models.Persons.UserType)fromDb.User.Type).HasFlag(e))
-                      .Select(e => e.GetDisplayName()));
-
-        return new(
-            Id: fromDb.User.Id,
-            Role: types,
-            Identifier: fromDb.User.Identifier,
-            Password: fromDb.User.Password,
-            Surname: fromDb.Person.Surname,
-            Name: fromDb.Person.Name,
-            Email: fromDb.User.Email);
-    }
-
-    public static async Task<TokenInfo?> TokenFromDb(this IUserContext db, string user)
-    {
-        var fromDb = await db.Get(user);
-
-        return Token(fromDb);
+        return (null, user);
     }
 }

@@ -1,11 +1,9 @@
 using System.Net;
 using Api.Logic;
-using Api.Logic.Auth;
 using Api.Models.Events;
 using Api.Models.Metrics;
 using Api.Models.Persons;
 using Api.Models.Settings.Admin;
-using Api.Models.Treatments;
 using Api.Models.Admin;
 using Api.Jobs;
 using Api.Models.Settings;
@@ -21,13 +19,28 @@ public static class Endpoints
         api.MapPost("/auth", AuthLogic.AuthAsync)
         .AllowAnonymous()
         .WithDescription("Get a connection token")
-        .Produces<TokenResponse>((int)HttpStatusCode.OK)
+        .Produces<ConnectionResponse>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        api.MapGet("/refresh", AuthLogic.RefreshAsync)
+        .RequireAuthorization()
+        .Produces<ConnectionResponse>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
         api.MapGet("/status", AuthLogic.StatusAsync)
         .AllowAnonymous()
         .WithDescription("Check if the server install is ready")
         .Produces<Status>((int)HttpStatusCode.OK);
+
+        api.MapGet("/logout", AuthLogic.LogoutAsync)
+        .RequireAuthorization()
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        api.MapGet("/sessions", AuthLogic.GetSessions)
+        .RequireAuthorization()
+        .Produces<Session[]>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
     }
 
     public static void MapPerson(this RouteGroupBuilder api)

@@ -21,6 +21,20 @@ Map<String, dynamic> _$ConnectionToJson(Connection instance) =>
       'redirect': instance.redirect,
     };
 
+ConnectionResponse _$ConnectionResponseFromJson(Map<String, dynamic> json) =>
+    ConnectionResponse(
+      accessToken: json['accessToken'] as String,
+      refreshToken: json['refreshToken'] as String?,
+      roles: userTypeListFromJson(json['roles'] as List?),
+    );
+
+Map<String, dynamic> _$ConnectionResponseToJson(ConnectionResponse instance) =>
+    <String, dynamic>{
+      'accessToken': instance.accessToken,
+      'refreshToken': instance.refreshToken,
+      'roles': userTypeListToJson(instance.roles),
+    };
+
 CountByDate _$CountByDateFromJson(Map<String, dynamic> json) => CountByDate(
   date: DateTime.parse(json['date'] as String),
   count: (json['count'] as num).toInt(),
@@ -574,6 +588,24 @@ Map<String, dynamic> _$RightToJson(Right instance) => <String, dynamic>{
   'type': rightTypeNullableToJson(instance.type),
 };
 
+Session _$SessionFromJson(Map<String, dynamic> json) => Session(
+  sessionId: json['sessionId'] as String,
+  ip: json['ip'] as String?,
+  location: json['location'] as String?,
+  userAgent: json['userAgent'] as String?,
+  start: json['start'] == null ? null : DateTime.parse(json['start'] as String),
+  stop: json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
+);
+
+Map<String, dynamic> _$SessionToJson(Session instance) => <String, dynamic>{
+  'sessionId': instance.sessionId,
+  'ip': instance.ip,
+  'location': instance.location,
+  'userAgent': instance.userAgent,
+  'start': instance.start?.toIso8601String(),
+  'stop': instance.stop?.toIso8601String(),
+};
+
 Smtp _$SmtpFromJson(Map<String, dynamic> json) => Smtp(
   enabled: json['enabled'] as bool?,
   smtpHost: json['smtpHost'] as String?,
@@ -611,18 +643,6 @@ Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
   'error': instance.error,
   'oauths': instance.oauths.map((e) => e.toJson()).toList(),
 };
-
-TokenResponse _$TokenResponseFromJson(Map<String, dynamic> json) =>
-    TokenResponse(
-      accessToken: json['accessToken'] as String,
-      refreshToken: json['refreshToken'] as String,
-    );
-
-Map<String, dynamic> _$TokenResponseToJson(TokenResponse instance) =>
-    <String, dynamic>{
-      'accessToken': instance.accessToken,
-      'refreshToken': instance.refreshToken,
-    };
 
 UpdateEvent _$UpdateEventFromJson(Map<String, dynamic> json) => UpdateEvent(
   id: (json['id'] as num?)?.toInt(),

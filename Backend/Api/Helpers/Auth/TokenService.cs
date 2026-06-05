@@ -1,15 +1,14 @@
-using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 using Api.Data.Models.Persons;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Api.Helpers.Auth;
 
 public record TokenConfig(string Issuer, string Audience, SymmetricSecurityKey Key);
 
-public record TokenInfo(long Id, string Role, string Identifier, string Password, string? Surname, string? Name, string? Email);
+public record TokenInfo(long Id, string Role);
 
 public class TokenService(TokenConfig config)
 {
@@ -23,26 +22,19 @@ public class TokenService(TokenConfig config)
         return new PasswordHasher<User>().VerifyHashedPassword(User.Empty, hash, password);
     }
 
-    public string GetRefreshToken(TokenInfo info, DateTime expires)
+    public string GetRefreshToken(User info, DateTime expires, Guid sessionId)
     {
         var claims = new List<Claim>
             {
                 new(JwtRegisteredClaimNames.NameId, info.Identifier),
-                new("roles", info.Role),
-                new("surname", info.Surname ?? string.Empty),
-                new("name", info.Name ?? string.Empty),
                 new("token", "refresh"),
+                new("session", sessionId.ToString()),
              };
 
-        if (info.Email != null)
-        {
-            claims.Add(
-            new Claim(JwtRegisteredClaimNames.Email, info.Email));
-        }
         return GetToken(claims, expires);
     }
 
-    public string GetAccessToken(TokenInfo info, DateTime expires)
+    public string GetAccessToken(User info, DateTime expires)
     {
         var claims = new List<Claim>
             {

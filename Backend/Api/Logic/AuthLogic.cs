@@ -1,26 +1,79 @@
 using System.Text;
 using Api.Data;
-using Api.Helpers;
+using Api.Data.Models.Persons;
 using Api.Helpers.Auth;
 using Api.Models;
+using Api.Models.Persons;
 using Api.Models.Settings.Admin;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Api.Logic.Auth;
+namespace Api.Logic;
 
 public record OauthConnection(string Name, string Url, string ClientId, bool AutoLogin);
 
 public record Status(bool Init, bool ExternalAuth, string? Error, OauthConnection[] Oauths);
-
-public record TokenResponse(string AccessToken, string RefreshToken);
 
 /// <summary>
 /// Logic over user authentication and right
 /// </summary>
 public static class AuthLogic
 {
+    public static async Task<IResult> LogoutAsync(IUserContext users, HttpContext context, ILoggerFactory logger)
+    {
+        var log = logger.CreateLogger(nameof(AuthLogic));
+        var isRefresh = context.User.IsRefresh();
+        if (isRefresh)
+        {
+            var user = context.User.GetUser(TokenHelper.Refresh);
+            var userSession = context.User.GetSession();
+            if (user != null && userSession != null)
+            {
+                var fromDb = await users.Get(user);
+                if (fromDb is not null)
+                {
+                    await users.DeleteSession(fromDb.Id, userSession);
+                    return TypedResults.NoContent();
+                }
+            }
+        }
+        else
+        {
+            var user = context.User.GetUser(TokenHelper.Access);
+            var fromDb = await users.Get(user);
+            if (fromDb is not null)
+            {
+                await users.DeleteSession(fromDb.Id);
+                return TypedResults.NoContent();
+            }
+        }
+
+        return TypedResults.Unauthorized();
+    }
+
+    public static async Task<IResult> GetSessions(IUserContext users, HttpContext context, ILoggerFactory logger)
+    {
+        var log = logger.CreateLogger(nameof(AuthLogic));
+        var user = context.User.GetUser();
+        if (user != null)
+        {
+            var fromDb = await users.Get(user);
+            if (fromDb is not null)
+            {
+                var sessions = await users.GetSessions(fromDb.Id);
+                return TypedResults.Ok(sessions.Select(x => new Models.Persons.Session
+                {
+                    Ip = x.Ip,
+                    Location = x.Location,
+                    SessionId = x.SessionId,
+                    Start = x.Start,
+                    Stop = x.Stop,
+                    UserAgent = x.UserAgent,
+                }).ToArray());
+            }
+        }
+
+        return TypedResults.Unauthorized();
+    }
     /// <summary>
     /// Return true if the server is correctly installed
     /// If false, some steps are missing:
@@ -32,7 +85,7 @@ public static class AuthLogic
     /// <returns></returns>
     public static async Task<IResult> StatusAsync(ISettingsContext settings, IUserContext users, HttpContext context, ILoggerFactory logger)
     {
-        var log = logger.CreateLogger("Auth");
+        var log = logger.CreateLogger(nameof(AuthLogic));
 
         // check if the server is already init
         var count = await users.Count();
@@ -47,7 +100,7 @@ public static class AuthLogic
 
         OauthConnection[] oauths = [];
         var oauth = await settings.GetSettings<Oauth>(Oauth.Name);
-        if (oauth.Enabled == true)
+        if (oauth.Enabled)
         {
             oauths = [.. oauth.Providers.Select(p => new OauthConnection(p.Name, p.Url, p.ClientId, p.AutoLogin))];
         }
@@ -65,67 +118,115 @@ public static class AuthLogic
         return TypedResults.Ok(new Status(true, isAuth, null, oauths));
     }
 
+    private static DateTime TokenValidity(bool longLife)
+    {
+        if (longLife)
+        {
+            return DateTime.UtcNow.AddDays(30);
+        }
+
+        return DateTime.UtcNow.AddMinutes(10);
+    }
+
+    public static async Task<IResult> RefreshAsync(IUserContext users, TokenService token, HttpContext context, ILoggerFactory logger)
+    {
+        var log = logger.CreateLogger(nameof(AuthLogic));
+        var user = context.User.GetUser(TokenHelper.Refresh);
+        var userSession = context.User.GetSession();
+        if (user != null && userSession != null)
+        {
+            // the refresh token is valid
+            var fromDb = await users.Get(user);
+            if (fromDb is not null)
+            {
+                var session = await users.GetSession(fromDb.Id, userSession);
+
+                if (session != null && session.Stop >= DateTime.UtcNow)
+                {
+                    var accessToken = token.GetAccessToken(fromDb, TokenValidity(false));
+
+                    var roles = GetRoles(fromDb.Type);
+
+                    log.LogInformation("Refreshed access for user {user}", user);
+
+                    return TypedResults.Ok(new ConnectionResponse(accessToken, null, roles));
+                }
+            }
+        }
+
+        log.LogWarning("Failed attempt to use a refresh token");
+
+        return TypedResults.Unauthorized();
+    }
+
     /// <summary>
     /// Connect and get a token
     /// </summary>
     /// <returns></returns>
-    public static async Task<IResult> AuthAsync(Connection user, ISettingsContext settings, IUserContext users, HttpContext context, TokenService token, ILoggerFactory logger)
+    public static async Task<IResult> AuthAsync(Connection user, ISettingsContext settings, IUserContext users, TokenService token, HttpContext context, ILoggerFactory logger)
     {
-        var log = logger.CreateLogger("Auth");
+        var log = logger.CreateLogger(nameof(AuthLogic));
 
         var proxy = await settings.GetSettings<Proxy>(Proxy.Name);
         var oauth = await settings.GetSettings<Oauth>(Oauth.Name);
         bool logged = false;
-        TokenInfo? fromDb = null;
-        bool needNewRefreshToken = true;
+        User? fromDb = null;
 
-        var auth = await context.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
-        if (auth.Succeeded)
+        // Unauth call
+        if (proxy?.ProxyAuth == true && proxy.Header is not null)
         {
-            // The user just wants a new access token
-            var claimsPrincipal = auth.Principal;
-            var userNameFromRefreshToken = claimsPrincipal.GetUser("refresh");
-            if (userNameFromRefreshToken is not null)
-            {
-                // the refresh token is valid
-                fromDb = await users.TokenFromDb(userNameFromRefreshToken);
-                logged = true;
-                needNewRefreshToken = false;
-            }
+            log.LogInformation("Connexion by header");
+            (logged, fromDb) = await ProxyAuthHelper.ConnectHeader(users, context, proxy, log);
         }
-        else
+
+        if (!logged && oauth.Enabled && user.Issuer is not null)
         {
-            // Unauth call
-            if (proxy?.ProxyAuth == true && proxy.Header is not null)
-            {
-                log.LogInformation("Connexion by header");
-                (logged, fromDb) = await ProxyAuthHelper.ConnectHeader(users, context, proxy, log);
-            }
+            log.LogInformation("Logging from oauth using {client}", user.Issuer);
+            (logged, fromDb) = await OauthHelper.ConnectOauth(users, oauth, user, log);
+        }
 
-            if (!logged && oauth.Enabled && user.Issuer is not null)
-            {
-                log.LogInformation("Logging from oauth using {client}", user.Issuer);
-                (logged, fromDb) = await OauthHelper.ConnectOauth(users, oauth, user, log);
-            }
-
-            // Custom auth didn't work, fall back on password
-            if (!logged)
-            {
-                // Fallback on the password if the other means failed
-                log.LogInformation("Connexion by username");
-                (logged, fromDb) = await PasswordHelper.ConnectPassword(user, users, log);
-            }
+        // Custom auth didn't work, fall back on password
+        if (!logged)
+        {
+            // Fallback on the password if the other means failed
+            log.LogInformation("Connexion by username");
+            (logged, fromDb) = await PasswordHelper.ConnectPassword(user, users, log);
         }
 
         if (!logged || fromDb is null)
             return TypedResults.Unauthorized();
 
         log.LogDebug("Connexion validated");
+        var roles = GetRoles(fromDb.Type);
 
-        var accessToken = token.GetAccessToken(fromDb, DateTime.UtcNow.AddMinutes(1));
-        var refreshToken = needNewRefreshToken ? token.GetRefreshToken(fromDb, DateTime.UtcNow.AddDays(30)) : string.Empty;
+        var accessToken = token.GetAccessToken(fromDb, TokenValidity(false));
+        var sessionId = Guid.NewGuid();
+        var refreshValidity = TokenValidity(true);
+        var refreshToken = token.GetRefreshToken(fromDb, refreshValidity, sessionId);
+        var userIp = context.Connection.RemoteIpAddress?.ToString();
+        var userSession = new Sessions()
+        {
+            SessionId = sessionId.ToString(),
+            Start = DateTime.UtcNow,
+            Stop = refreshValidity,
+            UserId = fromDb.Id,
+            UserAgent = context.Request.Headers.UserAgent.ToString(),
+            Ip = userIp,
+            Location = null,
+        };
 
-        return TypedResults.Ok(new TokenResponse(accessToken, refreshToken));
+        // clean up old sessions
+        await users.DeleteSession(fromDb.Id, DateTime.UtcNow.AddDays(-30));
+        await users.AddSession(userSession);
+
+        return TypedResults.Ok(new ConnectionResponse(accessToken, refreshToken, roles));
+    }
+
+    private static Models.Persons.UserType[] GetRoles(int type)
+    {
+        return [.. Enum.GetValues<Data.Models.Persons.UserType>()
+                              .Where(e => e != Data.Models.Persons.UserType.Patient && ((Data.Models.Persons.UserType)type).HasFlag(e))
+                              .Cast<Models.Persons.UserType>()];
     }
 
     internal static SymmetricSecurityKey GenerateKey(string keyConfig)

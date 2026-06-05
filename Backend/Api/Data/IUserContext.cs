@@ -15,7 +15,7 @@ public interface IUserContext : IContext
 
     Task<long> Count();
 
-    Task<PersonFromDb?> Get(string? identifier);
+    Task<User?> Get(string? identifier);
 
     Task<PersonFromDb?> Get(long id);
 
@@ -45,5 +45,17 @@ public interface IUserContext : IContext
 
     Task LinkOauth(OauthUser oauthUser);
 
-    Task<PersonFromDb?> Get(string user, string issuer);
+    Task<User?> Get(string user, string issuer);
+
+    Task<Sessions?> GetSession(long id, string userSession);
+
+    Task<Sessions[]> GetSessions(long id);
+
+    Task AddSession(Sessions session);
+
+    Task DeleteSession(long userId, string session);
+
+    Task DeleteSession(long userId, DateTime dateTime);
+
+    Task DeleteSession(long userId);
 }

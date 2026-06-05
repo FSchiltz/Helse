@@ -25,13 +25,13 @@ public abstract class LogicTests
     protected static IUserContext SetupUser(UserType user)
     {
         var users = Substitute.For<IUserContext>();
-        users.Get("test").Returns(new PersonFromDb(new()
+        users.Get("test").Returns(new User()
         {
             Id = 1,
             Identifier = "",
             Password = "",
             Type = (int)user,
-        }, new()));
+        });
 
         return users;
     }
