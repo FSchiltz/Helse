@@ -36,6 +36,7 @@ class _NavigatorChartState extends State<NavigatorChart> {
   }
 
   void _applyNavigatorRange() {
+    _navigatorDebounce?.cancel();
     final total = widget.date.duration.inMilliseconds;
 
     final start = widget.date.start.add(
@@ -89,6 +90,40 @@ class _NavigatorChartState extends State<NavigatorChart> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _syncNavigator();
+  }
+
+  @override
+  void didUpdateWidget(covariant NavigatorChart oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.subDate != widget.subDate || oldWidget.date != widget.date) {
+      _syncNavigator();
+    }
+  }
+
+  void _syncNavigator() {
+    final total = widget.date.duration.inMilliseconds;
+
+    if (total <= 0) return;
+
+    _navigatorStart =
+        widget.subDate.start.difference(widget.date.start).inMilliseconds /
+        total;
+
+    _navigatorEnd =
+        widget.subDate.end.difference(widget.date.start).inMilliseconds / total;
+  }
+
+  @override
+  void dispose() {
+    _navigatorDebounce?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
 
@@ -107,8 +142,9 @@ class _NavigatorChartState extends State<NavigatorChart> {
                 'date': Variable(accessor: (MetricGrouped d) => d.date),
                 'value': Variable(accessor: (MetricGrouped d) => d.value),
               },
-              padding: (_)=> EdgeInsets.zero,
-              
+              padding: (_) => EdgeInsets.zero,
+
+              axes: [],
               marks: [
                 AreaMark(
                   position: Varset('date') * Varset('value'),
@@ -119,7 +155,7 @@ class _NavigatorChartState extends State<NavigatorChart> {
                   position: Varset('date') * Varset('value'),
                   size: SizeEncode(value: 2),
                   color: ColorEncode(value: theme.primary),
-                  shape: ShapeEncode(value: BasicLineShape(smooth: true))
+                  shape: ShapeEncode(value: BasicLineShape(smooth: true)),
                 ),
               ],
             ),
