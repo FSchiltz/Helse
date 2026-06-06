@@ -81,7 +81,7 @@ class _MetricGraphState extends State<MetricGraph> {
         Container(
           padding: const EdgeInsets.only(left: 24.0, right: 24),
           child: SizedBox(
-            height: 70,
+            height: 60,
             child: NavigatorChart(
               groupedMetrics,
               widget.date,

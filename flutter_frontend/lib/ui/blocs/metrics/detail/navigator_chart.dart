@@ -220,7 +220,7 @@ class _NavigatorChartState extends State<NavigatorChart> {
             ],
             isCurved: true,
             curveSmoothness: 0.01,
-            barWidth: 2,
+            barWidth: 1,
             color: theme.primary,
             dotData: const FlDotData(show: false),
           ),
