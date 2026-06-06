@@ -60,7 +60,7 @@ class UserSessions extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 12),
-                  Flexible(
+                  Expanded(
                     child: SingleChildScrollView(
                       child: ListView.builder(
                         shrinkWrap: true,
@@ -75,27 +75,25 @@ class UserSessions extends StatelessWidget {
                             padding: const EdgeInsets.all(8.0),
                             child: Card(
                               color: color,
-                              child: Flexible(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Text(session.userAgent ?? ''),
-                                          SizedBox(width: 12),
-                                          Text(session.ip ?? ''),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(session.start?.toString() ?? ''),
-                                          SizedBox(width: 12),
-                                          Text(session.stop?.toString() ?? ''),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(session.userAgent ?? ''),
+                                        SizedBox(width: 12),
+                                        Text(session.ip ?? ''),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(session.start?.toString() ?? ''),
+                                        SizedBox(width: 12),
+                                        Text(session.stop?.toString() ?? ''),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
