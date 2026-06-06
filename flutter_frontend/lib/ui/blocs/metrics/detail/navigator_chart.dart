@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:graphic/graphic.dart';
 import 'package:helse/ui/blocs/metrics/metric_group.dart';
 
 class NavigatorChart extends StatefulWidget {
@@ -136,30 +136,51 @@ class _NavigatorChartState extends State<NavigatorChart> {
 
         return Stack(
           children: [
-            Chart(
-              data: widget.metrics,
-              variables: {
-                'date': Variable(accessor: (MetricGrouped d) => d.date),
-                'value': Variable(accessor: (MetricGrouped d) => d.value),
-              },
-              padding: (_) => EdgeInsets.zero,
+            SizedBox.expand(
+              child: LineChart(
+                LineChartData(
+                  minX: widget.date.start.millisecondsSinceEpoch.toDouble(),
+                  maxX: widget.date.end.millisecondsSinceEpoch.toDouble(),
 
-              axes: [],
-              marks: [
-                AreaMark(
-                  position: Varset('date') * Varset('value'),
-                  shape: ShapeEncode(value: BasicAreaShape(smooth: true)),
-                  color: ColorEncode(value: theme.primary.withAlpha(50)),
+                  borderData: FlBorderData(show: false),
+
+                  gridData: const FlGridData(show: false),
+
+                  titlesData: const FlTitlesData(
+                    leftTitles: AxisTitles(),
+                    rightTitles: AxisTitles(),
+                    topTitles: AxisTitles(),
+                    bottomTitles: AxisTitles(),
+                  ),
+
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: [
+                        for (var metric in widget.metrics)
+                          FlSpot(
+                            metric.date.millisecondsSinceEpoch.toDouble(),
+                            metric.value,
+                          ),
+                      ],
+
+                      isCurved: true,
+                      curveSmoothness: 0.01,
+
+                      barWidth: 2,
+
+                      color: theme.primary,
+
+                      belowBarData: BarAreaData(
+                        show: true,
+                        color: theme.primary.withAlpha(40),
+                      ),
+
+                      dotData: const FlDotData(show: false),
+                    ),
+                  ],
                 ),
-                LineMark(
-                  position: Varset('date') * Varset('value'),
-                  size: SizeEncode(value: 2),
-                  color: ColorEncode(value: theme.primary),
-                  shape: ShapeEncode(value: BasicLineShape(smooth: true)),
-                ),
-              ],
+              ),
             ),
-
             Positioned(
               left: left,
               width: right - left,
