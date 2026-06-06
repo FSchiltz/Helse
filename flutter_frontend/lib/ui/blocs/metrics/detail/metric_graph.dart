@@ -4,11 +4,10 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
-import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/blocs/metrics/delete_metric.dart';
-import 'package:helse/ui/blocs/metrics/metric_add.dart';
+import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
+import 'package:helse/ui/blocs/metrics/detail/navigator_chart.dart';
 import 'package:helse/ui/blocs/metrics/metric_group.dart';
 import 'package:helse/ui/common/date_range_picker.dart';
 
@@ -40,6 +39,7 @@ class MetricGraph extends StatefulWidget {
 class _MetricGraphState extends State<MetricGraph> {
   MetricGrouped? _metric;
   List<MetricGrouped> filteredMetrics = [];
+  List<MetricGrouped> groupedMetrics = [];
 
   final StreamController<Map<String, Set<int>>?> _selection =
       StreamController.broadcast();
@@ -62,21 +62,13 @@ class _MetricGraphState extends State<MetricGraph> {
     super.initState();
     subDate = widget.date;
     _selection.stream.listen(_onData);
-    filteredMetrics = _group(widget.metrics);
+    var initGroup = _group(widget.metrics);
+    filteredMetrics = initGroup;
+    groupedMetrics = initGroup;
   }
 
   @override
   Widget build(BuildContext context) {
-    return _getGraph(context);
-  }
-
-  void _selectionChanged(MetricGrouped metric) {
-    setState(() {
-      _metric = metric;
-    });
-  }
-
-  Widget _getGraph(BuildContext context) {
     final metric = _metric;
     var locale = Translation.locale(context);
 
@@ -95,30 +87,20 @@ class _MetricGraphState extends State<MetricGraph> {
             ),
           ),
         ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 80,
+          child: NavigatorChart(groupedMetrics, widget.date, _setDate),
+        ),
         Flexible(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: SingleChildScrollView(
               child: Center(
-                child: PaginatedDataTable(
-                  rowsPerPage: 50,
-                  showEmptyRows: false,
-                  primary: true,
-                  columns: [
-                    DataColumn(label: Expanded(child: Text("Id"))),
-                    DataColumn(label: Expanded(child: Text(locale.value))),
-                    DataColumn(label: Expanded(child: Text(locale.date))),
-                    DataColumn(label: Expanded(child: Text(locale.tag))),
-                    DataColumn(label: Expanded(child: Text(locale.source))),
-                    DataColumn(label: Expanded(child: Text(""))),
-                  ],
-                  source: MetricDataSource(
-                    metric?.metrics ?? [],
-                    context,
-                    widget.person,
-                    widget.type,
-                    reset: widget.reset,
-                  ),
+                child: MetricDataTable(
+                  locale: locale,
+                  metric: metric,
+                  widget: widget,
                 ),
               ),
             ),
@@ -126,6 +108,12 @@ class _MetricGraphState extends State<MetricGraph> {
         ),
       ],
     );
+  }
+
+  void _selectionChanged(MetricGrouped metric) {
+    setState(() {
+      _metric = metric;
+    });
   }
 
   Widget _grapichChart(BuildContext context) {
@@ -256,7 +244,7 @@ class _MetricGraphState extends State<MetricGraph> {
   }
 
   List<MetricGrouped> _group(List<Metric> filter) {
-    var buckets = 200;
+    var buckets = max(50, min(500, (subDate.duration.inHours * 4).round()));
     // First create the buckets
     var bucketLength = subDate.duration.inMilliseconds / buckets;
 
@@ -302,74 +290,4 @@ class _MetricGraphState extends State<MetricGraph> {
 
     return groups;
   }
-}
-
-class MetricDataSource extends DataTableSource {
-  final List<Metric> metrics;
-  final BuildContext context;
-  final int? person;
-  final MetricType type;
-  final void Function() reset;
-
-  MetricDataSource(
-    this.metrics,
-    this.context,
-    this.person,
-    this.type, {
-    required this.reset,
-  });
-
-  @override
-  DataRow? getRow(int index) {
-    var m = metrics[index];
-    return DataRow(
-      cells: [
-        DataCell(Text((m.id).toString())),
-        DataCell(Text('${m.value} ${type.unit}')),
-        DataCell(Text(DateHelper.format(m.date.toLocal(), context: context))),
-        DataCell(Text(m.tag.toString())),
-        DataCell(Text(m.source.toString())),
-        DataCell(
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {
-                  showDialog<void>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return MetricAdd(type, reset, person: person, edit: m);
-                    },
-                  );
-                },
-                icon: const Icon(Icons.edit_sharp),
-              ),
-              IconButton(
-                onPressed: () {
-                  showDialog<void>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return DeleteMetric(() async {
-                        await Dependencies.services.metric.deleteMetrics(m.id);
-                        reset();
-                      }, person: person);
-                    },
-                  );
-                },
-                icon: const Icon(Icons.delete_sharp),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  @override
-  bool get isRowCountApproximate => false;
-
-  @override
-  int get rowCount => metrics.length;
-
-  @override
-  int get selectedRowCount => 0;
 }
