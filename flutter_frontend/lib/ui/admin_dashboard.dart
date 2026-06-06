@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/date.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/ui/common/common_card.dart';
 
 class AdminDashBoard extends StatefulWidget {
   const AdminDashBoard({super.key});
@@ -123,35 +124,52 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
           ListView.builder(
             itemCount: _jobs.length,
             shrinkWrap: true,
+            padding: EdgeInsets.all(8),
             itemBuilder: (context, index) {
               var job = _jobs[index];
               var task = job.result;
               var theme = Theme.of(context).textTheme;
-              return Row(
-                children: [
-                  Text(
-                    '${task.description} at ${DateHelper.format(task.start, context: context)}',
-                    style: theme.bodyLarge,
-                  ),
-                  Text(
-                    task.status?.name.toString() ?? '',
-                    style: theme.bodySmall,
-                  ),
-
-                  if (task.progress != null && (task.progress ?? 0) < 100) ...[
-                    SizedBox(width: 12),
-                    Text('${task.progress?.toStringAsFixed(2)}%'),
-                    SizedBox(width: 8),
-                    SizedBox(
-                      width: 100,
-                      child: LinearProgressIndicator(
-                        value: (task.progress ?? 0) / 100,
+              return CommonCard(
+                child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        '${task.description} at ${DateHelper.format(task.start, context: context)}',
+                        style: theme.bodyLarge,
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        task.status?.name.toString() ?? '',
+                        style: theme.bodyLarge,
+                      ),
+                    ),
+                
+                    if (task.progress != null &&
+                        (task.progress ?? 0) < 100) ...[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          '${task.progress?.toStringAsFixed(2)}%',
+                          style: theme.bodyLarge,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          width: 200,
+                          height: 12,
+                          child: LinearProgressIndicator(
+                            value: (task.progress ?? 0) / 100,
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
-
-                  const SizedBox(height: 10),
-                ],
+                ),
               );
             },
           ),
@@ -236,40 +254,43 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            SizedBox(
-              height: 300,
-              child: BarChart(
-                BarChartData(
-                  barGroups: barGroups,
-                  gridData: const FlGridData(show: true),
-                  borderData: FlBorderData(show: true),
-                  titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 36,
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: SizedBox(
+                height: 300,
+                child: BarChart(
+                  BarChartData(
+                    barGroups: barGroups,
+                    gridData: const FlGridData(show: true),
+                    borderData: FlBorderData(show: true),
+                    titlesData: FlTitlesData(
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: 60,
+                        ),
                       ),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 36,
-                        getTitlesWidget: (value, meta) {
-                          return SideTitleWidget(
-                            meta: meta,
-                            child: Text(
-                              labelForIndex(value, counts),
-                              style: const TextStyle(fontSize: 10),
-                            ),
-                          );
-                        },
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: 36,
+                          getTitlesWidget: (value, meta) {
+                            return SideTitleWidget(
+                              meta: meta,
+                              child: Text(
+                                labelForIndex(value, counts),
+                                style: const TextStyle(fontSize: 10),
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                    topTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    rightTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                      topTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      rightTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
                     ),
                   ),
                 ),

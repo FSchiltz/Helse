@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/blocs/events/event_detail_page.dart';
 import 'package:helse/ui/blocs/events/events_summary.dart';
+import 'package:helse/ui/common/common_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -54,63 +55,61 @@ class _EventWidgetState extends State<EventWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: const ContinuousRectangleBorder(),
-                    ),
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (context) => EventDetailPage(
-                          date: widget.date,
-                          type: widget.type,
-                          person: widget.person,
-                        ),
-                      ),
-                    ),
+    return CommonCard(
+      padding: false,
+      child: InkWell(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (context) => EventDetailPage(
+              date: widget.date,
+              type: widget.type,
+              person: widget.person,
+            ),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                     child: Text(
                       widget.type.name,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    showDialog<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return EventAdd(
-                          _resetEvents,
-                          widget.type,
-                          person: widget.person,
-                        );
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.add_sharp),
-                ),
-              ],
-            ),
-            LoadingBuilder(
-              _getData,
-              builder: (ctx, data, reset) {
-                return Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: EventsSummary(data, widget.date),
-                );
-              },
-            ),
-          ],
+                  IconButton(
+                    onPressed: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return EventAdd(
+                            _resetEvents,
+                            widget.type,
+                            person: widget.person,
+                          );
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.add_sharp),
+                  ),
+                ],
+              ),
+              LoadingBuilder(
+                _getData,
+                builder: (ctx, data, reset) {
+                  return Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: EventsSummary(data, widget.date),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

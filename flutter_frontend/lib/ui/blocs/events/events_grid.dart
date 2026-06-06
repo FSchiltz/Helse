@@ -76,11 +76,14 @@ class _EventsGridState extends State<EventsGrid> {
               children:
                   types
                       ?.map(
-                        (type) => EventWidget(
-                          type,
-                          widget.date,
-                          key: Key(type.id.toString()),
-                          person: widget.person,
+                        (type) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12.0),
+                          child: EventWidget(
+                            type,
+                            widget.date,
+                            key: Key(type.id.toString()),
+                            person: widget.person,
+                          ),
                         ),
                       )
                       .toList() ??

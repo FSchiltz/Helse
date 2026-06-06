@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/ui/common/common_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
 class UserSessions extends StatelessWidget {
@@ -71,31 +72,25 @@ class UserSessions extends StatelessWidget {
                           Color color = isActive == true
                               ? theme.colorScheme.primaryContainer
                               : theme.colorScheme.errorContainer;
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Card(
-                              color: color,
-                              child: Padding(
-                                padding: const EdgeInsets.all(12.0),
-                                child: Column(
+                          return CommonCard(
+                            color: color,
+                            child: Column(
+                              children: [
+                                Row(
                                   children: [
-                                    Row(
-                                      children: [
-                                        Text(session.userAgent ?? ''),
-                                        SizedBox(width: 12),
-                                        Text(session.ip ?? ''),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(session.start?.toString() ?? ''),
-                                        SizedBox(width: 12),
-                                        Text(session.stop?.toString() ?? ''),
-                                      ],
-                                    ),
+                                    Text(session.userAgent ?? ''),
+                                    SizedBox(width: 12),
+                                    Text(session.ip ?? ''),
                                   ],
                                 ),
-                              ),
+                                Row(
+                                  children: [
+                                    Text(session.start?.toString() ?? ''),
+                                    SizedBox(width: 12),
+                                    Text(session.stop?.toString() ?? ''),
+                                  ],
+                                ),
+                              ],
                             ),
                           );
                         },

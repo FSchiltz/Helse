@@ -126,9 +126,7 @@ class _MetricsGroupState extends State<MetricsGroup> {
           ],
         ),
         body,
-        SizedBox(height: 12),
-        Divider(height: 4),
-        SizedBox(height: 32),
+        SizedBox(height: 16),
       ],
     );
   }
