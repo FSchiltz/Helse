@@ -50,10 +50,10 @@ class _MetricGraphState extends State<MetricGraph> {
     var filter = widget.metrics
         .where((x) => x.date.isAfter(value.start) && x.date.isBefore(value.end))
         .toList();
-
+    var grouped = _group(filter);
     setState(() {
       subDate = value;
-      filteredMetrics = _group(filter);
+      filteredMetrics = grouped;
     });
   }
 
@@ -78,19 +78,11 @@ class _MetricGraphState extends State<MetricGraph> {
           padding: const EdgeInsets.all(8.0),
           child: DateRangePicker(_setDate, subDate, range: widget.date),
         ),
-        Expanded(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: SizedBox(
-              width: _getWidth(widget.date, context),
-              child: _grapichChart(context),
-            ),
-          ),
-        ),
+        Expanded(child: _grapichChart(context)),
         const SizedBox(height: 12),
         SizedBox(
           height: 80,
-          child: NavigatorChart(groupedMetrics, widget.date, _setDate),
+          child: NavigatorChart(groupedMetrics, widget.date, subDate, _setDate),
         ),
         Flexible(
           child: Padding(
@@ -215,32 +207,6 @@ class _MetricGraphState extends State<MetricGraph> {
 
     var metric = filteredMetrics[click.value.first];
     _selectionChanged(metric);
-  }
-
-  double _getWidth(DateTimeRange<DateTime> date, BuildContext context) {
-    int ticks;
-
-    if (date.duration.inDays >= 1) {
-      ticks = date.duration.inDays;
-    }
-
-    if (date.duration.inHours > 1) {
-      ticks = date.duration.inHours;
-    }
-
-    if (date.duration.inSeconds > 10) {
-      ticks = date.duration.inSeconds;
-    }
-
-    ticks = date.duration.inMilliseconds;
-
-    double screen = max(3000, MediaQuery.sizeOf(context).width);
-    double width = ticks * 50;
-    if (width > screen) {
-      return screen;
-    }
-
-    return width;
   }
 
   List<MetricGrouped> _group(List<Metric> filter) {

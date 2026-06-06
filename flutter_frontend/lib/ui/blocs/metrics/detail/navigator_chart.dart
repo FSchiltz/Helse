@@ -7,8 +7,15 @@ import 'package:helse/ui/blocs/metrics/metric_group.dart';
 class NavigatorChart extends StatefulWidget {
   final List<MetricGrouped> metrics;
   final DateTimeRange date;
+  final DateTimeRange subDate;
   final void Function(DateTimeRange<DateTime> value) setDate;
-  const NavigatorChart(this.metrics, this.date, this.setDate, {super.key});
+  const NavigatorChart(
+    this.metrics,
+    this.date,
+    this.subDate,
+    this.setDate, {
+    super.key,
+  });
 
   @override
   State<NavigatorChart> createState() => _NavigatorChartState();
@@ -100,19 +107,21 @@ class _NavigatorChartState extends State<NavigatorChart> {
                 'date': Variable(accessor: (MetricGrouped d) => d.date),
                 'value': Variable(accessor: (MetricGrouped d) => d.value),
               },
+              padding: (_)=> EdgeInsets.zero,
+              
               marks: [
                 AreaMark(
                   position: Varset('date') * Varset('value'),
                   shape: ShapeEncode(value: BasicAreaShape(smooth: true)),
-                  color: ColorEncode(value: theme.primary.withOpacity(.15)),
+                  color: ColorEncode(value: theme.primary.withAlpha(50)),
                 ),
                 LineMark(
                   position: Varset('date') * Varset('value'),
                   size: SizeEncode(value: 2),
                   color: ColorEncode(value: theme.primary),
+                  shape: ShapeEncode(value: BasicLineShape(smooth: true))
                 ),
               ],
-              axes: [],
             ),
 
             Positioned(
@@ -143,7 +152,7 @@ class _NavigatorChartState extends State<NavigatorChart> {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: theme.primary.withOpacity(.12),
+                    color: theme.primary.withAlpha(20),
                     border: Border.all(color: theme.primary, width: 2),
                     borderRadius: BorderRadius.circular(8),
                   ),
