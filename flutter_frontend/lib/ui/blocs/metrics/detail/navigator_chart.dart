@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:helse/ui/blocs/metrics/metric_group.dart';
 
 class NavigatorChart extends StatefulWidget {
@@ -9,11 +10,13 @@ class NavigatorChart extends StatefulWidget {
   final DateTimeRange date;
   final DateTimeRange subDate;
   final void Function(DateTimeRange<DateTime> value) setDate;
+  final GraphKind graphKind;
   const NavigatorChart(
     this.metrics,
     this.date,
     this.subDate,
-    this.setDate, {
+    this.setDate,
+    this.graphKind, {
     super.key,
   });
 
@@ -51,6 +54,7 @@ class _NavigatorChartState extends State<NavigatorChart> {
   }
 
   Widget _navigatorHandle(bool isLeft, double width) {
+    var theme = Theme.of(context).colorScheme;
     return GestureDetector(
       onHorizontalDragUpdate: (details) {
         final delta = details.delta.dx / width;
@@ -81,10 +85,9 @@ class _NavigatorChartState extends State<NavigatorChart> {
       child: Container(
         width: 20,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
-          borderRadius: BorderRadius.circular(10),
+          color: theme.secondary,
         ),
-        child: const Icon(Icons.drag_indicator, color: Colors.white, size: 14),
+        child: Icon(Icons.drag_indicator, color: theme.onSecondary, size: 14),
       ),
     );
   }
@@ -136,51 +139,7 @@ class _NavigatorChartState extends State<NavigatorChart> {
 
         return Stack(
           children: [
-            SizedBox.expand(
-              child: LineChart(
-                LineChartData(
-                  minX: widget.date.start.millisecondsSinceEpoch.toDouble(),
-                  maxX: widget.date.end.millisecondsSinceEpoch.toDouble(),
-
-                  borderData: FlBorderData(show: false),
-
-                  gridData: const FlGridData(show: false),
-
-                  titlesData: const FlTitlesData(
-                    leftTitles: AxisTitles(),
-                    rightTitles: AxisTitles(),
-                    topTitles: AxisTitles(),
-                    bottomTitles: AxisTitles(),
-                  ),
-
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: [
-                        for (var metric in widget.metrics)
-                          FlSpot(
-                            metric.date.millisecondsSinceEpoch.toDouble(),
-                            metric.value,
-                          ),
-                      ],
-
-                      isCurved: true,
-                      curveSmoothness: 0.01,
-
-                      barWidth: 2,
-
-                      color: theme.primary,
-
-                      belowBarData: BarAreaData(
-                        show: true,
-                        color: theme.primary.withAlpha(40),
-                      ),
-
-                      dotData: const FlDotData(show: false),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            SizedBox.expand(child: _navigatorGraph(theme)),
             Positioned(
               left: left,
               width: right - left,
@@ -209,8 +168,8 @@ class _NavigatorChartState extends State<NavigatorChart> {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: theme.primary.withAlpha(20),
-                    border: Border.all(color: theme.primary, width: 2),
+                    color: theme.secondaryContainer.withAlpha(150),
+                    border: Border.all(color: theme.secondary, width: 2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
@@ -218,14 +177,14 @@ class _NavigatorChartState extends State<NavigatorChart> {
             ),
 
             Positioned(
-              left: left - 10,
+              left: left,
               top: 0,
               bottom: 0,
               child: _navigatorHandle(true, width),
             ),
 
             Positioned(
-              left: right - 10,
+              left: right - 20,
               top: 0,
               bottom: 0,
               child: _navigatorHandle(false, width),
@@ -233,6 +192,40 @@ class _NavigatorChartState extends State<NavigatorChart> {
           ],
         );
       },
+    );
+  }
+
+  Widget _navigatorGraph(ColorScheme theme) {
+    return LineChart(
+      LineChartData(
+        minX: widget.date.start.millisecondsSinceEpoch.toDouble(),
+        maxX: widget.date.end.millisecondsSinceEpoch.toDouble(),
+        borderData: FlBorderData(show: false),
+        gridData: const FlGridData(show: false),
+        titlesData: const FlTitlesData(
+          leftTitles: AxisTitles(),
+          rightTitles: AxisTitles(),
+          topTitles: AxisTitles(),
+          bottomTitles: AxisTitles(),
+        ),
+
+        lineBarsData: [
+          LineChartBarData(
+            spots: [
+              for (var metric in widget.metrics)
+                FlSpot(
+                  metric.date.millisecondsSinceEpoch.toDouble(),
+                  metric.value,
+                ),
+            ],
+            isCurved: true,
+            curveSmoothness: 0.01,
+            barWidth: 2,
+            color: theme.primary,
+            dotData: const FlDotData(show: false),
+          ),
+        ],
+      ),
     );
   }
 }
