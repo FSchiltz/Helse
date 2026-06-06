@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
 import 'package:helse/ui/blocs/metrics/metric_group.dart';
@@ -15,8 +17,18 @@ class NavigatorChart extends StatefulWidget {
 class _NavigatorChartState extends State<NavigatorChart> {
   double _navigatorStart = 0.0;
   double _navigatorEnd = 1.0;
-  
-  void _updateNavigatorRange() {
+  Timer? _navigatorDebounce;
+
+  void _scheduleNavigatorUpdate() {
+    _navigatorDebounce?.cancel();
+
+    _navigatorDebounce = Timer(
+      const Duration(milliseconds: 150),
+      _applyNavigatorRange,
+    );
+  }
+
+  void _applyNavigatorRange() {
     final total = widget.date.duration.inMilliseconds;
 
     final start = widget.date.start.add(
@@ -37,19 +49,26 @@ class _NavigatorChartState extends State<NavigatorChart> {
 
         setState(() {
           if (isLeft) {
-            _navigatorStart = (_navigatorStart + delta).clamp(
-              0.0,
-              _navigatorEnd - 0.05,
-            );
+            setState(() {
+              _navigatorStart = (_navigatorStart + delta).clamp(
+                0.0,
+                _navigatorEnd - 0.05,
+              );
+            });
           } else {
-            _navigatorEnd = (_navigatorEnd + delta).clamp(
-              _navigatorStart + 0.05,
-              1.0,
-            );
+            setState(() {
+              _navigatorEnd = (_navigatorEnd + delta).clamp(
+                _navigatorStart + 0.05,
+                1.0,
+              );
+            });
           }
         });
 
-        _updateNavigatorRange();
+        _scheduleNavigatorUpdate();
+      },
+      onHorizontalDragEnd: (_) {
+        _applyNavigatorRange();
       },
       child: Container(
         width: 20,
@@ -116,7 +135,11 @@ class _NavigatorChartState extends State<NavigatorChart> {
                     _navigatorEnd = _navigatorStart + range;
                   });
 
-                  _updateNavigatorRange();
+                  _scheduleNavigatorUpdate();
+                },
+
+                onHorizontalDragEnd: (_) {
+                  _applyNavigatorRange();
                 },
                 child: Container(
                   decoration: BoxDecoration(
