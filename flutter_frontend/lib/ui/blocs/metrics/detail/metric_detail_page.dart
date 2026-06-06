@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
-import '../../../di/dependencies.dart';
-import '../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../calendar/calendar_view.dart';
-import 'metric_add.dart';
+import '../../../../di/dependencies.dart';
+import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
+import '../../calendar/calendar_view.dart';
+import '../metric_add.dart';
 import 'metric_graph.dart';
 
 class MetricDetailPage extends StatefulWidget {

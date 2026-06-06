@@ -1,11 +1,11 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
-import 'package:helse/ui/blocs/metrics/metric_detail_page.dart';
+import 'package:helse/ui/blocs/metrics/detail/metric_detail_page.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
-import '../../../services/swagger/generated_code/helseapi.swagger.dart';
-import 'metric_add.dart';
+import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
+import '../metric_add.dart';
 import 'metric_condensed.dart';
 
 class MetricWidget extends StatefulWidget {
