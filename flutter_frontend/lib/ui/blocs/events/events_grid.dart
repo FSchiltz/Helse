@@ -37,9 +37,10 @@ class _EventsGridState extends State<EventsGrid> {
           await Dependencies.logics.settings.updateEvents(model);
           settings = await Dependencies.logics.settings.getEvents();
         } else {
-
           await Dependencies.logics.patientsSettings.updateEvents(model);
-          settings = await Dependencies.logics.patientsSettings.getEvents(widget.person);
+          settings = await Dependencies.logics.patientsSettings.getEvents(
+            widget.person,
+          );
         }
 
         // filter using the user settings
@@ -70,21 +71,27 @@ class _EventsGridState extends State<EventsGrid> {
               _getData();
             },
             bloc: Dependencies.logics.settings.events,
-            child: ListView(
-              shrinkWrap: true,
-              physics: const BouncingScrollPhysics(),
-              children:
-                  types
-                      ?.map(
-                        (type) => EventWidget(
-                          type,
-                          widget.date,
-                          key: Key(type.id.toString()),
-                          person: widget.person,
-                        ),
-                      )
-                      .toList() ??
-                  [],
+            child: Align(
+              alignment: AlignmentGeometry.topLeft,
+              child: Wrap(
+                runAlignment: WrapAlignment.start,
+                alignment: WrapAlignment.start,
+                children:
+                    types
+                        ?.map(
+                          (type) => Padding(
+                            padding: const EdgeInsets.only(bottom: 12.0),
+                            child: EventWidget(
+                              type,
+                              widget.date,
+                              key: Key(type.id.toString()),
+                              person: widget.person,
+                            ),
+                          ),
+                        )
+                        .toList() ??
+                    [],
+              ),
             ),
           );
   }

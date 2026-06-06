@@ -30,14 +30,12 @@ abstract class ApiService {
     return result;
   }
 
-  Future<String?> _refreshToken() async {
-    var url = Uri.parse(await account.get(Account.url) ?? '');
-    var refresh = await account.getToken();
+  Future<String?> _refreshToken(ConnectionResponse? settings, Uri url) async {
     var client = Helseapi.create(
       baseUrl: url,
       interceptors: [
         HeadersInterceptor({
-          'Authorization': 'Bearer ${refresh?.refreshToken}',
+          'Authorization': 'Bearer ${settings?.refreshToken}',
         }),
       ],
     );
@@ -47,7 +45,7 @@ abstract class ApiService {
       var token = ConnectionResponse(
         accessToken: connection.accessToken,
         roles: connection.roles,
-        refreshToken: refresh?.refreshToken,
+        refreshToken: settings?.refreshToken,
       );
       await account.setToken(token);
       return token.accessToken;
@@ -66,10 +64,8 @@ abstract class ApiService {
       token = settings?.refreshToken;
     } else {
       token = settings?.accessToken;
-      if (token != null && token.isNotEmpty) {
-        if (JwtDecoder.isExpired(token)) {
-          token = await _refreshToken();
-        }
+      if (token == null || token.isNotEmpty || _isExpired(token)) {
+        token = await _refreshToken(settings, url);
       }
     }
     return Helseapi.create(
@@ -78,5 +74,12 @@ abstract class ApiService {
         HeadersInterceptor({'Authorization': 'Bearer $token'}),
       ],
     );
+  }
+
+  bool _isExpired(String token) {
+    try {
+      return JwtDecoder.isExpired(token);
+    } catch (error) {}
+    return true;
   }
 }

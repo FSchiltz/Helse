@@ -17,7 +17,10 @@ class EventsSummary extends StatelessWidget {
     return (events.isEmpty
         ? Padding(
             padding: const EdgeInsets.only(top: 16.0),
-            child: Text(Translation.locale(context).nodata, style: Theme.of(context).textTheme.labelLarge),
+            child: Text(
+              Translation.locale(context).nodata,
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
           )
         : EventTimeline(events, date));
   }
@@ -27,13 +30,13 @@ class EventTimeline extends StatelessWidget {
   final List<EventSummary> userData;
   final DateTimeRange date;
 
-  const EventTimeline(
-    this.userData,
-    this.date, {
-    super.key,
-  });
+  const EventTimeline(this.userData, this.date, {super.key});
 
-  List<Widget> buildChartBars(List<EventSummary> data, ColorScheme colorScheme, {required double width}) {
+  List<Widget> buildChartBars(
+    List<EventSummary> data,
+    ColorScheme colorScheme, {
+    required double width,
+  }) {
     List<Widget> chartBars = [];
 
     int tick = 0;
@@ -42,14 +45,21 @@ class EventTimeline extends StatelessWidget {
     var coeff = min(150 / max, 60.0);
 
     for (var d in data) {
-        chartBars.add(Padding(
+      chartBars.add(
+        Padding(
           padding: EdgeInsets.all(4.0 * width),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
-            children: _map(d.data, tick, colorScheme.primary, coeff: coeff, widthCoeff: width),
+            children: _map(
+              d.data,
+              tick,
+              colorScheme.primary,
+              coeff: coeff,
+              widthCoeff: width,
+            ),
           ),
-        ));
-      
+        ),
+      );
 
       tick++;
     }
@@ -67,48 +77,63 @@ class EventTimeline extends StatelessWidget {
         return SizedBox(
           height: 160,
           child: Row(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: buildChartBars(userData, Theme.of(context).colorScheme, width: widthCoeff),
+            children: buildChartBars(
+              userData,
+              Theme.of(context).colorScheme,
+              width: widthCoeff,
+            ),
           ),
         );
       },
     );
   }
 
-  List<Widget> _map(Map<String, dynamic> p, int tick, Color empty, {required double coeff, required double widthCoeff}) {
+  List<Widget> _map(
+    Map<String, dynamic> p,
+    int tick,
+    Color empty, {
+    required double coeff,
+    required double widthCoeff,
+  }) {
     List<Widget> widgets = [];
 
     for (var entry in p.entries) {
       var count = entry.value as int?;
       if (count != null && count > 0) {
-        widgets.add(Tooltip(
-          message: entry.key,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Dependencies.theme.stateColor(entry.key),
+        widgets.add(
+          Tooltip(
+            message: entry.key,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Dependencies.theme.stateColor(entry.key),
+              ),
+              width: 20 * widthCoeff,
+              height: coeff * count,
             ),
-            width: 20 * widthCoeff,
-            height: coeff * count,
           ),
-        ));
+        );
       }
     }
 
     if (widgets.isEmpty) {
-      widgets.add(SizedBox(
-        width: 20 * widthCoeff,
-        child: Center(
-          child: Container(
-            decoration: BoxDecoration(
-              color: empty,
-              borderRadius: BorderRadius.circular(12),
+      widgets.add(
+        SizedBox(
+          width: 20 * widthCoeff,
+          child: Center(
+            child: Container(
+              decoration: BoxDecoration(
+                color: empty,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              width: 4,
+              height: 4,
             ),
-            width: 4,
-            height: 4,
           ),
         ),
-      ));
+      );
     }
 
     return widgets;

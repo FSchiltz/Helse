@@ -345,6 +345,9 @@ class _LoginState extends State<LoginPage> {
     var url = _url;
     if (init == null || url == null) {
       Notify.showError('Server not yet init');
+      setState(() {
+        _status = SubmissionStatus.initial;
+      });
       return;
     }
 
@@ -353,6 +356,9 @@ class _LoginState extends State<LoginPage> {
 
     if (oAuth == null && (user.isEmpty || password.isEmpty)) {
       Notify.showError("Invalid login flow");
+      setState(() {
+        _status = SubmissionStatus.initial;
+      });
       return;
     }
     try {

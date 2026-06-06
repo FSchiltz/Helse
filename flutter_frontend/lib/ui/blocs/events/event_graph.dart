@@ -6,6 +6,7 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/events/delete_event.dart';
 import 'package:helse/ui/blocs/events/events_add.dart';
 import 'package:helse/ui/blocs/events/events_timeline_graph.dart';
+import 'package:helse/ui/common/common_card.dart';
 import 'package:helse/ui/common/date_range_picker.dart';
 
 class EventsGraph extends StatefulWidget {
@@ -82,12 +83,7 @@ class _EventsGraphState extends State<EventsGraph> {
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0),
-            ),
-            shadowColor: Theme.of(context).colorScheme.shadow,
-            elevation: 2,
+          child: CommonCard(          
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Wrap(

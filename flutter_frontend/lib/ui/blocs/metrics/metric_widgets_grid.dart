@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/pair.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/metric_widget.dart';
+import 'package:helse/ui/common/common_card.dart';
 
 class MetricWidgetsGrid extends StatelessWidget {
   const MetricWidgetsGrid({
@@ -19,11 +20,8 @@ class MetricWidgetsGrid extends StatelessWidget {
   List<Widget> _buildGrid() {
     List<Widget> items = cached
         .map(
-          (type) => Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0),
-            ),
-            elevation: 2,
+          (type) => CommonCard(
+            padding: false,
             child: MetricWidget(
               type.a,
               type.b,

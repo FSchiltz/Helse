@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/foundation.dart';
+import 'package:helse/logic/account/settings_migration.dart';
 import 'package:helse/services/login_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/services/user_service.dart';
@@ -30,6 +31,7 @@ class AuthenticationLogic {
 
   /// Check if the user is logged in
   Future<bool> checkLogin() async {
+   await SettingsMigration(account).migrate();
     var token = (await account.getToken())?.refreshToken;
     if (token != null && token.isNotEmpty && !JwtDecoder.isExpired(token)) {
       _controller.add(AuthenticationStatus.authenticated);
