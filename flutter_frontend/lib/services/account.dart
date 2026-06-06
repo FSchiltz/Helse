@@ -11,7 +11,7 @@ class Account {
   static const grant = "grant";
   static const redirect = "redirect";
   static const clientid = "clientid";
-  static const _refresh = "refresh";
+  static const refresh = "refresh";
   static const fitRun = "fitLastRun";
   static const fitHistory = "fitHistory";
   static const fitBackground = "fitBackground";
@@ -39,7 +39,7 @@ class Account {
     await s.remove(grant);
     await s.remove(redirect);
     await s.remove(clientid);
-    await s.remove(_refresh);
+    await s.remove(refresh);
     await s.remove(fitRun);
     await s.remove(fitHistory);
     await s.remove(fitStatus);
@@ -49,7 +49,7 @@ class Account {
   }
 
   Future<ConnectionResponse?> getToken() async {
-    var token = await get(Account._refresh);
+    var token = await get(Account.refresh);
     if (token == null) return null;
     return ConnectionResponse.fromJson(
       json.decode(token) as Map<String, Object?>,
@@ -57,6 +57,6 @@ class Account {
   }
 
   Future<void> setToken(ConnectionResponse token) async {
-    await set(_refresh, json.encode(token.toJson()));
+    await set(refresh, json.encode(token.toJson()));
   }
 }
