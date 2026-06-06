@@ -78,9 +78,8 @@ class _MetricGraphState extends State<MetricGraph> {
           padding: const EdgeInsets.all(8.0),
           child: DateRangePicker(_setDate, subDate, range: widget.date),
         ),
-        Expanded(child: _grapichChart(context)),
         Container(
-          padding: const EdgeInsets.all(24.0),          
+          padding: const EdgeInsets.only(left: 24.0, right: 24),
           child: SizedBox(
             height: 70,
             child: NavigatorChart(
@@ -92,6 +91,7 @@ class _MetricGraphState extends State<MetricGraph> {
             ),
           ),
         ),
+        Expanded(child: _grapichChart(context)),
         Flexible(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
