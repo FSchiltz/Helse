@@ -84,9 +84,7 @@ class _NavigatorChartState extends State<NavigatorChart> {
       },
       child: Container(
         width: 20,
-        decoration: BoxDecoration(
-          color: theme.secondary,
-        ),
+        decoration: BoxDecoration(color: theme.secondary),
         child: Icon(Icons.drag_indicator, color: theme.onSecondary, size: 14),
       ),
     );
@@ -137,59 +135,65 @@ class _NavigatorChartState extends State<NavigatorChart> {
         final left = width * _navigatorStart;
         final right = width * _navigatorEnd;
 
-        return Stack(
+        return Column(
           children: [
-            SizedBox.expand(child: _navigatorGraph(theme)),
-            Positioned(
-              left: left,
-              width: right - left,
-              top: 0,
-              bottom: 0,
-              child: GestureDetector(
-                onHorizontalDragUpdate: (details) {
-                  final delta = details.delta.dx / width;
+            SizedBox(
+              height: 60,
+              child: Stack(
+                children: [
+                  SizedBox.expand(child: _navigatorGraph(theme)),
+                  Positioned(
+                    left: left,
+                    width: right - left,
+                    top: 0,
+                    bottom: 0,
+                    child: GestureDetector(
+                      onHorizontalDragUpdate: (details) {
+                        final delta = details.delta.dx / width;
+                        final range = _navigatorEnd - _navigatorStart;
 
-                  final range = _navigatorEnd - _navigatorStart;
+                        setState(() {
+                          _navigatorStart = (_navigatorStart + delta).clamp(
+                            0.0,
+                            1.0 - range,
+                          );
 
-                  setState(() {
-                    _navigatorStart = (_navigatorStart + delta).clamp(
-                      0.0,
-                      1.0 - range,
-                    );
+                          _navigatorEnd = _navigatorStart + range;
+                        });
 
-                    _navigatorEnd = _navigatorStart + range;
-                  });
+                        _scheduleNavigatorUpdate();
+                      },
 
-                  _scheduleNavigatorUpdate();
-                },
-
-                onHorizontalDragEnd: (_) {
-                  _applyNavigatorRange();
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: theme.secondaryContainer.withAlpha(150),
-                    border: Border.all(color: theme.secondary, width: 2),
-                    borderRadius: BorderRadius.circular(8),
+                      onHorizontalDragEnd: (_) {
+                        _applyNavigatorRange();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: theme.secondaryContainer.withAlpha(150),
+                          border: Border.all(color: theme.secondary, width: 2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+
+                  Positioned(
+                    left: left,
+                    top: 0,
+                    bottom: 0,
+                    child: _navigatorHandle(true, width),
+                  ),
+
+                  Positioned(
+                    left: right - 20,
+                    top: 0,
+                    bottom: 0,
+                    child: _navigatorHandle(false, width),
+                  ),
+                ],
               ),
             ),
-
-            Positioned(
-              left: left,
-              top: 0,
-              bottom: 0,
-              child: _navigatorHandle(true, width),
-            ),
-
-            Positioned(
-              left: right - 20,
-              top: 0,
-              bottom: 0,
-              child: _navigatorHandle(false, width),
-            ),
-          ],
+            ],
         );
       },
     );

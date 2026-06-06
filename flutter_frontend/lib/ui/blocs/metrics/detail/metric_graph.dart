@@ -71,24 +71,20 @@ class _MetricGraphState extends State<MetricGraph> {
   Widget build(BuildContext context) {
     final metric = _metric;
     var locale = Translation.locale(context);
-
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: DateRangePicker(_setDate, subDate, range: widget.date),
         ),
-        Container(
-          padding: const EdgeInsets.only(left: 24.0, right: 24),
-          child: SizedBox(
-            height: 60,
-            child: NavigatorChart(
-              groupedMetrics,
-              widget.date,
-              subDate,
-              _setDate,
-              widget.settings,
-            ),
+        Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: NavigatorChart(
+            groupedMetrics,
+            widget.date,
+            subDate,
+            _setDate,
+            widget.settings,
           ),
         ),
         Expanded(child: _grapichChart(context)),
