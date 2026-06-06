@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/ui/blocs/metrics/detail/metric_graph_2.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../calendar/calendar_view.dart';
 import 'metric_add.dart';
-import 'metric_graph.dart';
+import 'detail/metric_graph.dart';
 
 class MetricDetailPage extends StatefulWidget {
   const MetricDetailPage({
@@ -131,7 +132,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
               : (widget.type.type == MetricDataType.text ||
                         widget.settings == GraphKind.text
                     ? CalendarView(getEventsForDay, widget.date)
-                    : MetricGraph(
+                    : MetricGraph2(
                         data,
                         widget.date,
                         widget.settings,

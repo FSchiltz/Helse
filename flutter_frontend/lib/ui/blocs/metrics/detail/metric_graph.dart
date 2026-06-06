@@ -12,7 +12,7 @@ import 'package:helse/ui/blocs/metrics/metric_add.dart';
 import 'package:helse/ui/blocs/metrics/metric_group.dart';
 import 'package:helse/ui/common/date_range_picker.dart';
 
-import '../../../helpers/date.dart';
+import '../../../../helpers/date.dart';
 
 class MetricGraph extends StatefulWidget {
   final List<Metric> metrics;
