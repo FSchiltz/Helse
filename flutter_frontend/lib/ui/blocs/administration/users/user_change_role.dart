@@ -52,7 +52,7 @@ class _ChangeRoleState extends State<ChangeRole> {
             children: [
               UserRightInput(
                   value: types,
-                  UserType.values.toList(),
+                  UserType.values.where((e)=> e.index > 0).toList(),
                   (value) => setState(() {
                         types = value;
                       })),

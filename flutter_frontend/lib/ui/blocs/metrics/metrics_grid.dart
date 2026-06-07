@@ -110,7 +110,8 @@ class _MetricsGridState extends State<MetricsGrid> {
     if (cached.isEmpty) {
       return Text(Translation.of(context).nodata);
     } else {
-      return Column(
+      return Wrap(
+        
         children: cached
             .map(
               (type) => MetricsGroup(

@@ -67,7 +67,7 @@ class _SignupState extends State<UserAdd> {
             children: [
               UserRightInput(
                 value: _type,
-                UserType.values.toList(),
+                UserType.values.where((e) => e.index > 0).toList(),
                 (value) => setState(() {
                   _type = value;
                 }),
