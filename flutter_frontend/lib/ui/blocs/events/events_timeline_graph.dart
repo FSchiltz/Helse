@@ -243,7 +243,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
         var end = n.stop.toLocal();
 
         var width = _distanceInMinutes(start, end);
-        var color = Dependencies.theme.stateColor(n.description ?? '');
+        var color = Dependencies.theme.stateColor(n.description ?? '', context);
         var left = _distanceToLeftBorder(start, skipped);
         if (width > 0) {
           chartGroup.add(
