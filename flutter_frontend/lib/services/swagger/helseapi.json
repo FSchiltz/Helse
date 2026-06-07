@@ -125,6 +125,31 @@
         }
       }
     },
+    "/api/units": {
+      "get": {
+        "tags": [
+          "CommonLogic"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Unit"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/api/person": {
       "post": {
         "tags": [
@@ -787,7 +812,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MetricType"
+                "$ref": "#/components/schemas/CreateMetricType"
               }
             }
           },
@@ -810,7 +835,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MetricType"
+                "$ref": "#/components/schemas/UpdateMetricType"
               }
             }
           },
@@ -2153,6 +2178,15 @@
         ],
         "type": "object",
         "properties": {
+          "unit": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
           "date": {
             "type": "string",
             "format": "date-time"
@@ -2179,6 +2213,57 @@
           },
           "sourceId": {
             "type": "string"
+          }
+        }
+      },
+      "CreateMetricType": {
+        "required": [
+          "unit",
+          "name",
+          "userEditable",
+          "groupId"
+        ],
+        "type": "object",
+        "properties": {
+          "unit": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "summaryType": {
+            "$ref": "#/components/schemas/MetricSummary"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "type": {
+            "$ref": "#/components/schemas/MetricDataType"
+          },
+          "userEditable": {
+            "type": "boolean"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "showOnDashboard": {
+            "type": "boolean"
+          },
+          "groupId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
           }
         }
       },
@@ -2658,6 +2743,16 @@
             ],
             "format": "int64"
           },
+          "unit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Unit"
+              }
+            ]
+          },
           "date": {
             "type": "string",
             "format": "date-time"
@@ -2731,21 +2826,27 @@
       },
       "MetricType": {
         "required": [
-          "name",
           "id",
+          "unit",
+          "name",
           "userEditable",
           "groupId"
         ],
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string"
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
           },
           "unit": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "$ref": "#/components/schemas/Unit"
+          },
+          "name": {
+            "type": "string"
           },
           "summaryType": {
             "$ref": "#/components/schemas/MetricSummary"
@@ -2758,14 +2859,6 @@
           },
           "type": {
             "$ref": "#/components/schemas/MetricDataType"
-          },
-          "id": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int64"
           },
           "userEditable": {
             "type": "boolean"
@@ -3272,6 +3365,57 @@
           }
         }
       },
+      "Unit": {
+        "required": [
+          "type",
+          "id",
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/UnitType"
+          },
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "code": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "baseUnit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Unit"
+              }
+            ]
+          }
+        }
+      },
+      "UnitType": {
+        "enum": [
+          "None",
+          "Distance",
+          "Wheight",
+          "Frequency",
+          "Temperature",
+          "Power",
+          "Factor"
+        ]
+      },
       "UpdateEvent": {
         "required": [
           "type",
@@ -3348,6 +3492,15 @@
             ],
             "format": "int64"
           },
+          "unit": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
           "date": {
             "type": "string",
             "format": "date-time"
@@ -3374,6 +3527,66 @@
           },
           "sourceId": {
             "type": "string"
+          }
+        }
+      },
+      "UpdateMetricType": {
+        "required": [
+          "id",
+          "unit",
+          "name",
+          "userEditable",
+          "groupId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "unit": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "summaryType": {
+            "$ref": "#/components/schemas/MetricSummary"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "type": {
+            "$ref": "#/components/schemas/MetricDataType"
+          },
+          "userEditable": {
+            "type": "boolean"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "showOnDashboard": {
+            "type": "boolean"
+          },
+          "groupId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
           }
         }
       },
@@ -3578,6 +3791,9 @@
   "tags": [
     {
       "name": "AuthLogic"
+    },
+    {
+      "name": "CommonLogic"
     },
     {
       "name": "PersonLogic"

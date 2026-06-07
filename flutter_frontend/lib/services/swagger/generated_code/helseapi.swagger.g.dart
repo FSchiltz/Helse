@@ -80,6 +80,7 @@ Map<String, dynamic> _$CreateEventToJson(CreateEvent instance) =>
     };
 
 CreateMetric _$CreateMetricFromJson(Map<String, dynamic> json) => CreateMetric(
+  unit: (json['unit'] as num?)?.toInt(),
   date: DateTime.parse(json['date'] as String),
   value: json['value'] as String,
   tag: json['tag'] as String?,
@@ -90,12 +91,39 @@ CreateMetric _$CreateMetricFromJson(Map<String, dynamic> json) => CreateMetric(
 
 Map<String, dynamic> _$CreateMetricToJson(CreateMetric instance) =>
     <String, dynamic>{
+      'unit': instance.unit,
       'date': instance.date.toIso8601String(),
       'value': instance.value,
       'tag': instance.tag,
       'type': instance.type,
       'source': fileTypesNullableToJson(instance.source),
       'sourceId': instance.sourceId,
+    };
+
+CreateMetricType _$CreateMetricTypeFromJson(Map<String, dynamic> json) =>
+    CreateMetricType(
+      unit: (json['unit'] as num).toInt(),
+      name: json['name'] as String,
+      summaryType: metricSummaryNullableFromJson(json['summaryType']),
+      description: json['description'] as String?,
+      type: metricDataTypeNullableFromJson(json['type']),
+      userEditable: json['userEditable'] as bool,
+      visible: json['visible'] as bool?,
+      showOnDashboard: json['showOnDashboard'] as bool?,
+      groupId: (json['groupId'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$CreateMetricTypeToJson(CreateMetricType instance) =>
+    <String, dynamic>{
+      'unit': instance.unit,
+      'name': instance.name,
+      'summaryType': metricSummaryNullableToJson(instance.summaryType),
+      'description': instance.description,
+      'type': metricDataTypeNullableToJson(instance.type),
+      'userEditable': instance.userEditable,
+      'visible': instance.visible,
+      'showOnDashboard': instance.showOnDashboard,
+      'groupId': instance.groupId,
     };
 
 CreateTreatment _$CreateTreatmentFromJson(Map<String, dynamic> json) =>
@@ -303,6 +331,7 @@ Metric _$MetricFromJson(Map<String, dynamic> json) => Metric(
   id: (json['id'] as num).toInt(),
   person: (json['person'] as num).toInt(),
   user: (json['user'] as num?)?.toInt(),
+  unit: json['unit'],
   date: DateTime.parse(json['date'] as String),
   value: json['value'] as String,
   tag: json['tag'] as String?,
@@ -315,6 +344,7 @@ Map<String, dynamic> _$MetricToJson(Metric instance) => <String, dynamic>{
   'id': instance.id,
   'person': instance.person,
   'user': instance.user,
+  'unit': instance.unit,
   'date': instance.date.toIso8601String(),
   'value': instance.value,
   'tag': instance.tag,
@@ -341,12 +371,12 @@ Map<String, dynamic> _$MetricGroupToJson(MetricGroup instance) =>
     };
 
 MetricType _$MetricTypeFromJson(Map<String, dynamic> json) => MetricType(
+  id: (json['id'] as num).toInt(),
+  unit: Unit.fromJson(json['unit'] as Map<String, dynamic>),
   name: json['name'] as String,
-  unit: json['unit'] as String?,
   summaryType: metricSummaryNullableFromJson(json['summaryType']),
   description: json['description'] as String?,
   type: metricDataTypeNullableFromJson(json['type']),
-  id: (json['id'] as num).toInt(),
   userEditable: json['userEditable'] as bool,
   visible: json['visible'] as bool?,
   showOnDashboard: json['showOnDashboard'] as bool?,
@@ -355,12 +385,12 @@ MetricType _$MetricTypeFromJson(Map<String, dynamic> json) => MetricType(
 
 Map<String, dynamic> _$MetricTypeToJson(MetricType instance) =>
     <String, dynamic>{
+      'id': instance.id,
+      'unit': instance.unit.toJson(),
       'name': instance.name,
-      'unit': instance.unit,
       'summaryType': metricSummaryNullableToJson(instance.summaryType),
       'description': instance.description,
       'type': metricDataTypeNullableToJson(instance.type),
-      'id': instance.id,
       'userEditable': instance.userEditable,
       'visible': instance.visible,
       'showOnDashboard': instance.showOnDashboard,
@@ -644,6 +674,22 @@ Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
   'oauths': instance.oauths.map((e) => e.toJson()).toList(),
 };
 
+Unit _$UnitFromJson(Map<String, dynamic> json) => Unit(
+  type: unitTypeFromJson(json['type']),
+  id: (json['id'] as num).toInt(),
+  code: json['code'] as String,
+  description: json['description'] as String?,
+  baseUnit: json['baseUnit'],
+);
+
+Map<String, dynamic> _$UnitToJson(Unit instance) => <String, dynamic>{
+  'type': unitTypeToJson(instance.type),
+  'id': instance.id,
+  'code': instance.code,
+  'description': instance.description,
+  'baseUnit': instance.baseUnit,
+};
+
 UpdateEvent _$UpdateEventFromJson(Map<String, dynamic> json) => UpdateEvent(
   id: (json['id'] as num?)?.toInt(),
   type: (json['type'] as num).toInt(),
@@ -673,6 +719,7 @@ Map<String, dynamic> _$UpdateEventToJson(UpdateEvent instance) =>
 
 UpdateMetric _$UpdateMetricFromJson(Map<String, dynamic> json) => UpdateMetric(
   id: (json['id'] as num?)?.toInt(),
+  unit: (json['unit'] as num?)?.toInt(),
   date: DateTime.parse(json['date'] as String),
   value: json['value'] as String,
   tag: json['tag'] as String?,
@@ -684,12 +731,41 @@ UpdateMetric _$UpdateMetricFromJson(Map<String, dynamic> json) => UpdateMetric(
 Map<String, dynamic> _$UpdateMetricToJson(UpdateMetric instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'unit': instance.unit,
       'date': instance.date.toIso8601String(),
       'value': instance.value,
       'tag': instance.tag,
       'type': instance.type,
       'source': fileTypesNullableToJson(instance.source),
       'sourceId': instance.sourceId,
+    };
+
+UpdateMetricType _$UpdateMetricTypeFromJson(Map<String, dynamic> json) =>
+    UpdateMetricType(
+      id: (json['id'] as num).toInt(),
+      unit: (json['unit'] as num).toInt(),
+      name: json['name'] as String,
+      summaryType: metricSummaryNullableFromJson(json['summaryType']),
+      description: json['description'] as String?,
+      type: metricDataTypeNullableFromJson(json['type']),
+      userEditable: json['userEditable'] as bool,
+      visible: json['visible'] as bool?,
+      showOnDashboard: json['showOnDashboard'] as bool?,
+      groupId: (json['groupId'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$UpdateMetricTypeToJson(UpdateMetricType instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'unit': instance.unit,
+      'name': instance.name,
+      'summaryType': metricSummaryNullableToJson(instance.summaryType),
+      'description': instance.description,
+      'type': metricDataTypeNullableToJson(instance.type),
+      'userEditable': instance.userEditable,
+      'visible': instance.visible,
+      'showOnDashboard': instance.showOnDashboard,
+      'groupId': instance.groupId,
     };
 
 UpdatePatient _$UpdatePatientFromJson(Map<String, dynamic> json) =>

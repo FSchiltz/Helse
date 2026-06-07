@@ -1,3 +1,4 @@
+using Api.Data.Models.Common;
 using Api.Data.Models.Health;
 using Api.Models.Persons;
 
@@ -10,7 +11,7 @@ public interface IHealthContext : IContext
 {
     /// <summary>
     /// Insert a new event into the database
-    /// </summary> 
+    /// </summary>
     /// <param name="e">The event</param>
     /// <param name="person">The person to which add the event to</param>
     /// <param name="user">The user making the addition</param>
@@ -65,23 +66,30 @@ public interface IHealthContext : IContext
 
     Task<int> DeleteEventType(long id);
 
-    Task<MetricType[]> GetMetricTypes(bool? all, long? group);
+    Task<WithUnit<MetricType>[]> GetMetricTypes(bool? all, long? group);
 
     Task<int> DeleteMetricType(long id);
 
-    Task Update(Api.Models.Metrics.MetricType metric);
+    Task Update(Api.Models.Metrics.UpdateMetricType metric);
 
-    Task Insert(Api.Models.Metrics.MetricType metric);
+    Task Insert(Api.Models.Metrics.CreateMetricType metric);
 
     Task DeleteMetric(long id);
-    Task<Metric?> GetMetric(long id);
-    Task<Metric[]> GetMetrics(long id, long type, DateTime start, DateTime end);
+
+    Task<WithUnit<Metric>?> GetMetric(long id);
+
+    Task<WithUnit<Metric>[]> GetMetrics(long id, long type, DateTime start, DateTime end);
+
     Task<Metric[]> GetSummaryMetrics(int tile, long id, int type, Api.Models.Metrics.MetricSummary action, DateTime start, DateTime end);
+
     Task Insert(Api.Models.Metrics.CreateMetric metric, long person, long id);
+
     Task Update(Api.Models.Metrics.UpdateMetric metric);
 
     Task<Models.Persons.Person[]> GetPatients(long id, DateTime now, RightType view);
+
     Task<Event[]> GetEvents(long id, RightType view, DateTime start, DateTime end);
+
     Task<Event[]> GetTreatmentEvents(long id, DateTime start, DateTime end);
 
     Task<Models.Persons.Person[]> GetAllPatients();
@@ -95,7 +103,7 @@ public interface IHealthContext : IContext
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    Task<MetricType?> GetMetricType(int type);
+    Task<WithUnit<MetricType>?> GetMetricType(int type);
 
     /// <summary>
     /// Get the last metric in the given time frame if any

@@ -212,5 +212,11 @@
     "sessions": "Connection sessions",
     "@sessions": {},
     "cleanSessions": "Remove all sessions",
-    "@cleanSessions": {}
+    "@cleanSessions": {},
+    "constants": "Constants",
+    "@constants": {},
+    "id": "Id",
+    "@id": {},
+    "code": "Code",
+    "@code": {}
 }

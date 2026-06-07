@@ -14,12 +14,12 @@ class MetricService extends ApiService {
     await call(() => api.apiMetricsIdDelete(id: id));
   }
 
-  Future<void> addMetricsType(MetricType metric) async {
+  Future<void> addMetricsType(CreateMetricType metric) async {
     var api = await getService();
     await call(() => api.apiMetricsTypePost(body: metric));
   }
 
-  Future<void> updateMetricsType(MetricType metric) async {
+  Future<void> updateMetricsType(UpdateMetricType metric) async {
     var api = await getService();
     await call(() => api.apiMetricsTypePut(body: metric));
   }

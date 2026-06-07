@@ -49,7 +49,8 @@ builder.Services.AddSingleton<TokenService>()
     .AddTransient<IUserContext, UserContext>()
     .AddTransient<ISettingsContext, SettingsContext>()
     .AddTransient<IHealthContext, HealthContext>()
-    .AddTransient<IStatsContext, StatsContext>();
+    .AddTransient<IStatsContext, StatsContext>()
+    .AddTransient<ICommonContext,CommonContext>();
 
 builder.Services.AddAuthentication(options =>
   {

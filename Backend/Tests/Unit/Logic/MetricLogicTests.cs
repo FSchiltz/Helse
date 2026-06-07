@@ -15,14 +15,14 @@ public class MetricLogicTests : LogicTests
     [Fact]
     public async Task MetricType_NonAdmin()
     {
-        var type = new MetricType()
+        var type = new CreateMetricType()
         {
             Name = "",
             Type = MetricDataType.Text,
             SummaryType = MetricSummary.Sum,
-            Id = 0,
             UserEditable = true,
             GroupId = 1,
+            Unit = 0,
         };
 
         var users = SetupUser(Api.Data.Models.Persons.UserType.User);
@@ -35,14 +35,14 @@ public class MetricLogicTests : LogicTests
     [Fact]
     public async Task MetricType_AddTextSumAsync()
     {
-        var type = new MetricType()
+        var type = new CreateMetricType()
         {
             Name = "",
             Type = MetricDataType.Text,
             SummaryType = MetricSummary.Sum,
-            Id = 0,
             UserEditable = true,
             GroupId = 1,
+            Unit = 0,
         };
 
         var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);
@@ -54,14 +54,14 @@ public class MetricLogicTests : LogicTests
     [Fact]
     public async Task MetricType_AddTextMeanAsync()
     {
-        var type = new MetricType()
+        var type = new CreateMetricType()
         {
             Name = "",
             Type = MetricDataType.Text,
             SummaryType = MetricSummary.Sum,
-            Id = 0,
             UserEditable = true,
             GroupId = 1,
+            Unit = 0,
         };
 
         var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);
@@ -73,14 +73,14 @@ public class MetricLogicTests : LogicTests
     [Fact]
     public async Task MetricType_Text()
     {
-        var type = new MetricType()
+        var type = new CreateMetricType()
         {
             Name = "",
             Type = MetricDataType.Text,
             SummaryType = MetricSummary.Latest,
-            Id = 0,
             UserEditable = true,
             GroupId = 1,
+            Unit = 0,
         };
 
         var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);
@@ -93,14 +93,14 @@ public class MetricLogicTests : LogicTests
     [Fact]
     public async Task MetricType_Number()
     {
-        var type = new MetricType()
+        var type = new CreateMetricType()
         {
             Name = "",
             Type = MetricDataType.Number,
             SummaryType = MetricSummary.Mean,
-            Id = 0,
             UserEditable = true,
             GroupId = 1,
+            Unit = 0,
         };
 
         var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);

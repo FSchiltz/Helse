@@ -1,5 +1,6 @@
 import 'package:helse/services/account.dart';
 import 'package:helse/services/admin_service.dart';
+import 'package:helse/services/common_service.dart';
 import 'package:helse/services/event_service.dart';
 import 'package:helse/services/helper_service.dart';
 import 'package:helse/services/import_service.dart';
@@ -19,6 +20,7 @@ class Services {
   AdminService admin;
   TreatmentService treatement;
   SettingService settings;
+  CommonService common;
 
   Services.build(
     this.authService,
@@ -30,6 +32,7 @@ class Services {
     this.treatement,
     this.import,
     this.settings,
+    this.common,
   );
 
   factory Services(Account account) {
@@ -43,6 +46,7 @@ class Services {
       TreatmentService(account),
       ImportService(account),
       SettingService(account),
+      CommonService(account),
     );
   }
 }

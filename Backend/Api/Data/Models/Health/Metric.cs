@@ -44,4 +44,7 @@ public class Metric
 
     [Column]
     public string SourceId { get; set; } = string.Empty;
+
+    [Column]
+    public int? Unit { get; set; }
 }

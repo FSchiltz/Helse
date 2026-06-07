@@ -4,7 +4,7 @@ import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
-import 'metric_add.dart';
+import 'metric_type_add.dart';
 
 class MetricTypeView extends StatelessWidget {
   const MetricTypeView({super.key});
@@ -70,7 +70,7 @@ class MetricTypeView extends StatelessWidget {
                               DataCell(Text((type.id).toString())),
                               DataCell(Text(type.name)),
                               DataCell(Text(type.description ?? "")),
-                              DataCell(Text(type.unit ?? "")),
+                              DataCell(Text(type.unit.code)),
                               DataCell(Text(type.type?.name ?? "")),
                               DataCell(Text(type.summaryType?.name ?? "")),
                               DataCell(

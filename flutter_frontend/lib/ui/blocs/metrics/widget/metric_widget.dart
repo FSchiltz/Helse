@@ -37,7 +37,6 @@ class _MetricWidgetState extends State<MetricWidget> {
   Future<List<Metric>> _getData(bool refresh) async {
     var id = widget.type.id;
 
-
     var date = widget.date;
 
     var start = DateTime(date.start.year, date.start.month, date.start.day);
@@ -156,8 +155,8 @@ class _MetricWidgetState extends State<MetricWidget> {
         break;
     }
 
-    if (type.unit != null) {
-      value += ' ${type.unit}';
+    if (type.unit.code.isNotEmpty) {
+      value += ' ${type.unit.code}';
     }
 
     return value;

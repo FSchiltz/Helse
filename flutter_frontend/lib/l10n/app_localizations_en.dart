@@ -273,4 +273,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cleanSessions => 'Remove all sessions';
+
+  @override
+  String get constants => 'Constants';
+
+  @override
+  String get id => 'Id';
+
+  @override
+  String get code => 'Code';
 }
