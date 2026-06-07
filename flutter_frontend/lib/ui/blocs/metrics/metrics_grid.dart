@@ -110,21 +110,25 @@ class _MetricsGridState extends State<MetricsGrid> {
     if (cached.isEmpty) {
       return Text(Translation.of(context).nodata);
     } else {
-      return Wrap(
-        
-        children: cached
-            .map(
-              (type) => MetricsGroup(
-                date: widget.date,
-                key: Key(type.id?.toString() ?? ""),
-                person: widget.person,
-                group: type,
-                typesCache: typesCache
-                    ?.where((e) => e.groupId == type.id)
-                    .toList(),
-              ),
-            )
-            .toList(),
+      return Align(
+        alignment: AlignmentGeometry.topLeft,
+        child: Wrap(
+          alignment: WrapAlignment.start,
+          crossAxisAlignment: WrapCrossAlignment.start,
+          children: cached
+              .map(
+                (type) => MetricsGroup(
+                  date: widget.date,
+                  key: Key(type.id?.toString() ?? ""),
+                  person: widget.person,
+                  group: type,
+                  typesCache: typesCache
+                      ?.where((e) => e.groupId == type.id)
+                      .toList(),
+                ),
+              )
+              .toList(),
+        ),
       );
     }
   }

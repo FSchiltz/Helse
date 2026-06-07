@@ -92,9 +92,21 @@ class _MetricsGroupState extends State<MetricsGroup> {
   Widget build(BuildContext context) {
     var cached = types;
 
-    Widget body;
-
-    body = cached == null
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              widget.group.name,
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            SizedBox(width: 12),
+            _openAll(context),
+          ],
+        ),
+        cached == null
         ? const HelseLoader()
         : BlocListener<SettingsBloc<bool>, bool>(
             listener: (context, state) {
@@ -106,22 +118,7 @@ class _MetricsGroupState extends State<MetricsGroup> {
               person: widget.person,
               cached: cached,
             ),
-          );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              widget.group.name,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            SizedBox(width: 12),
-            _openAll(context),
-          ],
-        ),
-        body,
+          ),
         SizedBox(height: 16),
       ],
     );
