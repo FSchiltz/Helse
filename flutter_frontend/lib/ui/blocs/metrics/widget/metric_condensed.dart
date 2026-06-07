@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -29,7 +30,12 @@ class MetricCondensed extends StatelessWidget {
           )
         : (type.type == MetricDataType.text
               ? const Center()
-              : WidgetGraph(metrics, date, settings.graph ?? GraphKind.text));
+              : WidgetGraph(
+                  metrics,
+                  date,
+                  type,
+                  settings.graph ?? GraphKind.text,
+                ));
   }
 }
 
@@ -38,10 +44,12 @@ class WidgetGraph extends StatelessWidget {
   final DateTimeRange date;
   final GraphKind settings;
   final DateTimeRange? highlight;
+  final MetricType type;
 
   const WidgetGraph(
     this.metrics,
     this.date,
+    this.type,
     this.settings, {
     super.key,
     this.highlight,
@@ -69,7 +77,12 @@ class WidgetGraph extends StatelessWidget {
       bar.add(
         BarChartGroupData(
           x: item.x.toInt(),
-          barRods: [BarChartRodData(toY: item.y)],
+          barRods: [
+            BarChartRodData(
+              toY: item.y,
+              color: Dependencies.theme.stateColor(type.id.toString()),
+            ),
+          ],
         ),
       );
     }
@@ -119,9 +132,9 @@ class WidgetGraph extends StatelessWidget {
             if (highlight != null)
               LineChartBarData(
                 barWidth: 4,
-                color: Theme.of(context).colorScheme.secondaryContainer,
+                color: Dependencies.theme.stateColor(type.id.toString()),
                 aboveBarData: BarAreaData(
-                  color: Theme.of(context).colorScheme.secondaryContainer,
+                  color: Dependencies.theme.stateColor(type.id.toString()),
                   show: true,
                 ),
                 spots: _getHighLight(),
@@ -129,6 +142,7 @@ class WidgetGraph extends StatelessWidget {
               ),
             LineChartBarData(
               barWidth: 4,
+              color: Dependencies.theme.stateColor(type.id.toString()),
               spots: _getSpot(metrics),
               isCurved: true,
               curveSmoothness: 0.2,

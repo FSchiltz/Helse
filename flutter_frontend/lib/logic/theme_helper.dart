@@ -9,7 +9,7 @@ class ThemeHelper {
       return colors[state]!;
     } else {
       var r = Random();
-      var color = Color.fromRGBO(r.nextInt(55) + 100, r.nextInt(105) + 150, r.nextInt(105) + 100, 1);
+      var color = Color.fromRGBO(r.nextInt(155) + 100, r.nextInt(105) + 150, r.nextInt(155) + 100, 1);
       colors[state] = color;
       return color;
     }
