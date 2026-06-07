@@ -39,13 +39,7 @@ class _MetricsGroupState extends State<MetricsGroup> {
 
     _cache = widget.typesCache;
 
-    if (widget.group.showOnDashboard == true) {
-      _getData();
-    } else {
-      setState(() {
-        types = [];
-      });
-    }
+    _getData();
   }
 
   void _getData() async {
@@ -68,7 +62,9 @@ class _MetricsGroupState extends State<MetricsGroup> {
         if (widget.person == null) {
           settings = await Dependencies.logics.settings.getMetrics();
         } else {
-          settings = await Dependencies.logics.patientsSettings.getMetrics(widget.person);
+          settings = await Dependencies.logics.patientsSettings.getMetrics(
+            widget.person,
+          );
         }
         // filter using the user settings
 
