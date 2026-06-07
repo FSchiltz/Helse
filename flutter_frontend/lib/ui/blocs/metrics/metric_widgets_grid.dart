@@ -20,6 +20,8 @@ class MetricWidgetsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
+      runSpacing: 6,
+      spacing: 6,
       children: cached
           .map(
             (type) => ConstrainedBox(

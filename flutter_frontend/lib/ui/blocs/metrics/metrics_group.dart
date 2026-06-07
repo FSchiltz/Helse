@@ -91,36 +91,41 @@ class _MetricsGroupState extends State<MetricsGroup> {
   @override
   Widget build(BuildContext context) {
     var cached = types;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              widget.group.name,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            SizedBox(width: 12),
-            _openAll(context),
-          ],
-        ),
-        cached == null
-        ? const HelseLoader()
-        : BlocListener<SettingsBloc<bool>, bool>(
-            listener: (context, state) {
-              _getData();
-            },
-            bloc: Dependencies.logics.settings.metrics,
-            child: MetricWidgetsGrid(
-              date: widget.date,
-              person: widget.person,
-              cached: cached,
-            ),
+    var theme = Theme.of(context).colorScheme;
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(left: BorderSide(color: theme.secondary, width: 2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(width: 8),
+              Text(
+                widget.group.name,
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              SizedBox(width: 12),
+              _openAll(context),
+            ],
           ),
-        SizedBox(height: 16),
-      ],
+          cached == null
+              ? const HelseLoader()
+              : BlocListener<SettingsBloc<bool>, bool>(
+                  listener: (context, state) {
+                    _getData();
+                  },
+                  bloc: Dependencies.logics.settings.metrics,
+                  child: MetricWidgetsGrid(
+                    date: widget.date,
+                    person: widget.person,
+                    cached: cached,
+                  ),
+                ),
+        ],
+      ),
     );
   }
 

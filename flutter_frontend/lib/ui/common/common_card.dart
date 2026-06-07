@@ -14,13 +14,17 @@ class CommonCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget content;
+    EdgeInsets? margin;
     if (padding) {
       content = Padding(padding: EdgeInsetsGeometry.all(16), child: child);
+      margin = null;
     } else {
       content = child;
+      margin = EdgeInsets.all(0);
     }
 
     return Card(
+      margin: margin,
       elevation: 2,
       color: color ?? Theme.of(context).colorScheme.surfaceContainerHighest,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),

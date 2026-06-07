@@ -114,7 +114,7 @@ class _MetricsGridState extends State<MetricsGrid> {
         alignment: AlignmentGeometry.topLeft,
         child: Wrap(
           spacing: 24,
-          runSpacing: 8,
+          runSpacing: 16,
           alignment: WrapAlignment.start,
           crossAxisAlignment: WrapCrossAlignment.start,
           children: cached
