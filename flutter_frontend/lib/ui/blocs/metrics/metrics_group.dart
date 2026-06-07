@@ -94,7 +94,7 @@ class _MetricsGroupState extends State<MetricsGroup> {
     var theme = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
-        border: Border(left: BorderSide(color: theme.secondary, width: 2)),
+        border: Border(left: BorderSide(color: theme.tertiary, width: 1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,7 +102,7 @@ class _MetricsGroupState extends State<MetricsGroup> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(width: 8),
+              SizedBox(width: 6),
               Text(
                 widget.group.name,
                 style: Theme.of(context).textTheme.headlineSmall,
