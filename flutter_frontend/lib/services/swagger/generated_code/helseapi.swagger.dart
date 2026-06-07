@@ -175,6 +175,29 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
+  Future<chopper.Response<List<Unit>>> apiUnitsGet() {
+    generatedMapping.putIfAbsent(Unit, () => Unit.fromJsonFactory);
+
+    return _apiUnitsGet();
+  }
+
+  ///
+  @GET(path: '/api/units')
+  Future<chopper.Response<List<Unit>>> _apiUnitsGet({
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["CommonLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
   Future<chopper.Response<UserId>> apiPersonPost({
     required PersonCreation? body,
   }) {
@@ -705,14 +728,16 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response> apiMetricsTypePost({required MetricType? body}) {
+  Future<chopper.Response> apiMetricsTypePost({
+    required CreateMetricType? body,
+  }) {
     return _apiMetricsTypePost(body: body);
   }
 
   ///
   @POST(path: '/api/metrics/type', optionalBody: true)
   Future<chopper.Response> _apiMetricsTypePost({
-    @Body() required MetricType? body,
+    @Body() required CreateMetricType? body,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -727,14 +752,16 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response> apiMetricsTypePut({required MetricType? body}) {
+  Future<chopper.Response> apiMetricsTypePut({
+    required UpdateMetricType? body,
+  }) {
     return _apiMetricsTypePut(body: body);
   }
 
   ///
   @PUT(path: '/api/metrics/type', optionalBody: true)
   Future<chopper.Response> _apiMetricsTypePut({
-    @Body() required MetricType? body,
+    @Body() required UpdateMetricType? body,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -2117,6 +2144,7 @@ extension $CreateEventExtension on CreateEvent {
 @JsonSerializable(explicitToJson: true)
 class CreateMetric {
   const CreateMetric({
+    this.unit,
     required this.date,
     required this.value,
     this.tag,
@@ -2131,6 +2159,8 @@ class CreateMetric {
   static const toJsonFactory = _$CreateMetricToJson;
   Map<String, dynamic> toJson() => _$CreateMetricToJson(this);
 
+  @JsonKey(name: 'unit')
+  final int? unit;
   @JsonKey(name: 'date')
   final DateTime date;
   @JsonKey(name: 'value')
@@ -2153,6 +2183,8 @@ class CreateMetric {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is CreateMetric &&
+            (identical(other.unit, unit) ||
+                const DeepCollectionEquality().equals(other.unit, unit)) &&
             (identical(other.date, date) ||
                 const DeepCollectionEquality().equals(other.date, date)) &&
             (identical(other.value, value) ||
@@ -2175,6 +2207,7 @@ class CreateMetric {
 
   @override
   int get hashCode =>
+      const DeepCollectionEquality().hash(unit) ^
       const DeepCollectionEquality().hash(date) ^
       const DeepCollectionEquality().hash(value) ^
       const DeepCollectionEquality().hash(tag) ^
@@ -2186,6 +2219,7 @@ class CreateMetric {
 
 extension $CreateMetricExtension on CreateMetric {
   CreateMetric copyWith({
+    int? unit,
     DateTime? date,
     String? value,
     String? tag,
@@ -2194,6 +2228,7 @@ extension $CreateMetricExtension on CreateMetric {
     String? sourceId,
   }) {
     return CreateMetric(
+      unit: unit ?? this.unit,
       date: date ?? this.date,
       value: value ?? this.value,
       tag: tag ?? this.tag,
@@ -2204,6 +2239,7 @@ extension $CreateMetricExtension on CreateMetric {
   }
 
   CreateMetric copyWithWrapped({
+    Wrapped<int?>? unit,
     Wrapped<DateTime>? date,
     Wrapped<String>? value,
     Wrapped<String?>? tag,
@@ -2212,12 +2248,171 @@ extension $CreateMetricExtension on CreateMetric {
     Wrapped<String>? sourceId,
   }) {
     return CreateMetric(
+      unit: (unit != null ? unit.value : this.unit),
       date: (date != null ? date.value : this.date),
       value: (value != null ? value.value : this.value),
       tag: (tag != null ? tag.value : this.tag),
       type: (type != null ? type.value : this.type),
       source: (source != null ? source.value : this.source),
       sourceId: (sourceId != null ? sourceId.value : this.sourceId),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class CreateMetricType {
+  const CreateMetricType({
+    required this.unit,
+    required this.name,
+    this.summaryType,
+    this.description,
+    this.type,
+    required this.userEditable,
+    this.visible,
+    this.showOnDashboard,
+    required this.groupId,
+  });
+
+  factory CreateMetricType.fromJson(Map<String, dynamic> json) =>
+      _$CreateMetricTypeFromJson(json);
+
+  static const toJsonFactory = _$CreateMetricTypeToJson;
+  Map<String, dynamic> toJson() => _$CreateMetricTypeToJson(this);
+
+  @JsonKey(name: 'unit')
+  final int unit;
+  @JsonKey(name: 'name')
+  final String name;
+  @JsonKey(
+    name: 'summaryType',
+    toJson: metricSummaryNullableToJson,
+    fromJson: metricSummaryNullableFromJson,
+  )
+  final enums.MetricSummary? summaryType;
+  @JsonKey(name: 'description')
+  final String? description;
+  @JsonKey(
+    name: 'type',
+    toJson: metricDataTypeNullableToJson,
+    fromJson: metricDataTypeNullableFromJson,
+  )
+  final enums.MetricDataType? type;
+  @JsonKey(name: 'userEditable')
+  final bool userEditable;
+  @JsonKey(name: 'visible')
+  final bool? visible;
+  @JsonKey(name: 'showOnDashboard')
+  final bool? showOnDashboard;
+  @JsonKey(name: 'groupId')
+  final int groupId;
+  static const fromJsonFactory = _$CreateMetricTypeFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is CreateMetricType &&
+            (identical(other.unit, unit) ||
+                const DeepCollectionEquality().equals(other.unit, unit)) &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.summaryType, summaryType) ||
+                const DeepCollectionEquality().equals(
+                  other.summaryType,
+                  summaryType,
+                )) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )) &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.userEditable, userEditable) ||
+                const DeepCollectionEquality().equals(
+                  other.userEditable,
+                  userEditable,
+                )) &&
+            (identical(other.visible, visible) ||
+                const DeepCollectionEquality().equals(
+                  other.visible,
+                  visible,
+                )) &&
+            (identical(other.showOnDashboard, showOnDashboard) ||
+                const DeepCollectionEquality().equals(
+                  other.showOnDashboard,
+                  showOnDashboard,
+                )) &&
+            (identical(other.groupId, groupId) ||
+                const DeepCollectionEquality().equals(other.groupId, groupId)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(unit) ^
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(summaryType) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(userEditable) ^
+      const DeepCollectionEquality().hash(visible) ^
+      const DeepCollectionEquality().hash(showOnDashboard) ^
+      const DeepCollectionEquality().hash(groupId) ^
+      runtimeType.hashCode;
+}
+
+extension $CreateMetricTypeExtension on CreateMetricType {
+  CreateMetricType copyWith({
+    int? unit,
+    String? name,
+    enums.MetricSummary? summaryType,
+    String? description,
+    enums.MetricDataType? type,
+    bool? userEditable,
+    bool? visible,
+    bool? showOnDashboard,
+    int? groupId,
+  }) {
+    return CreateMetricType(
+      unit: unit ?? this.unit,
+      name: name ?? this.name,
+      summaryType: summaryType ?? this.summaryType,
+      description: description ?? this.description,
+      type: type ?? this.type,
+      userEditable: userEditable ?? this.userEditable,
+      visible: visible ?? this.visible,
+      showOnDashboard: showOnDashboard ?? this.showOnDashboard,
+      groupId: groupId ?? this.groupId,
+    );
+  }
+
+  CreateMetricType copyWithWrapped({
+    Wrapped<int>? unit,
+    Wrapped<String>? name,
+    Wrapped<enums.MetricSummary?>? summaryType,
+    Wrapped<String?>? description,
+    Wrapped<enums.MetricDataType?>? type,
+    Wrapped<bool>? userEditable,
+    Wrapped<bool?>? visible,
+    Wrapped<bool?>? showOnDashboard,
+    Wrapped<int>? groupId,
+  }) {
+    return CreateMetricType(
+      unit: (unit != null ? unit.value : this.unit),
+      name: (name != null ? name.value : this.name),
+      summaryType: (summaryType != null ? summaryType.value : this.summaryType),
+      description: (description != null ? description.value : this.description),
+      type: (type != null ? type.value : this.type),
+      userEditable: (userEditable != null
+          ? userEditable.value
+          : this.userEditable),
+      visible: (visible != null ? visible.value : this.visible),
+      showOnDashboard: (showOnDashboard != null
+          ? showOnDashboard.value
+          : this.showOnDashboard),
+      groupId: (groupId != null ? groupId.value : this.groupId),
     );
   }
 }
@@ -3241,6 +3436,7 @@ class Metric {
     required this.id,
     required this.person,
     this.user,
+    this.unit,
     required this.date,
     required this.value,
     this.tag,
@@ -3260,6 +3456,8 @@ class Metric {
   final int person;
   @JsonKey(name: 'user')
   final int? user;
+  @JsonKey(name: 'unit')
+  final dynamic unit;
   @JsonKey(name: 'date')
   final DateTime date;
   @JsonKey(name: 'value')
@@ -3288,6 +3486,8 @@ class Metric {
                 const DeepCollectionEquality().equals(other.person, person)) &&
             (identical(other.user, user) ||
                 const DeepCollectionEquality().equals(other.user, user)) &&
+            (identical(other.unit, unit) ||
+                const DeepCollectionEquality().equals(other.unit, unit)) &&
             (identical(other.date, date) ||
                 const DeepCollectionEquality().equals(other.date, date)) &&
             (identical(other.value, value) ||
@@ -3313,6 +3513,7 @@ class Metric {
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(person) ^
       const DeepCollectionEquality().hash(user) ^
+      const DeepCollectionEquality().hash(unit) ^
       const DeepCollectionEquality().hash(date) ^
       const DeepCollectionEquality().hash(value) ^
       const DeepCollectionEquality().hash(tag) ^
@@ -3327,6 +3528,7 @@ extension $MetricExtension on Metric {
     int? id,
     int? person,
     int? user,
+    dynamic unit,
     DateTime? date,
     String? value,
     String? tag,
@@ -3338,6 +3540,7 @@ extension $MetricExtension on Metric {
       id: id ?? this.id,
       person: person ?? this.person,
       user: user ?? this.user,
+      unit: unit ?? this.unit,
       date: date ?? this.date,
       value: value ?? this.value,
       tag: tag ?? this.tag,
@@ -3351,6 +3554,7 @@ extension $MetricExtension on Metric {
     Wrapped<int>? id,
     Wrapped<int>? person,
     Wrapped<int?>? user,
+    Wrapped<dynamic>? unit,
     Wrapped<DateTime>? date,
     Wrapped<String>? value,
     Wrapped<String?>? tag,
@@ -3362,6 +3566,7 @@ extension $MetricExtension on Metric {
       id: (id != null ? id.value : this.id),
       person: (person != null ? person.value : this.person),
       user: (user != null ? user.value : this.user),
+      unit: (unit != null ? unit.value : this.unit),
       date: (date != null ? date.value : this.date),
       value: (value != null ? value.value : this.value),
       tag: (tag != null ? tag.value : this.tag),
@@ -3477,12 +3682,12 @@ extension $MetricGroupExtension on MetricGroup {
 @JsonSerializable(explicitToJson: true)
 class MetricType {
   const MetricType({
+    required this.id,
+    required this.unit,
     required this.name,
-    this.unit,
     this.summaryType,
     this.description,
     this.type,
-    required this.id,
     required this.userEditable,
     this.visible,
     this.showOnDashboard,
@@ -3495,10 +3700,12 @@ class MetricType {
   static const toJsonFactory = _$MetricTypeToJson;
   Map<String, dynamic> toJson() => _$MetricTypeToJson(this);
 
+  @JsonKey(name: 'id')
+  final int id;
+  @JsonKey(name: 'unit')
+  final Unit unit;
   @JsonKey(name: 'name')
   final String name;
-  @JsonKey(name: 'unit')
-  final String? unit;
   @JsonKey(
     name: 'summaryType',
     toJson: metricSummaryNullableToJson,
@@ -3513,8 +3720,6 @@ class MetricType {
     fromJson: metricDataTypeNullableFromJson,
   )
   final enums.MetricDataType? type;
-  @JsonKey(name: 'id')
-  final int id;
   @JsonKey(name: 'userEditable')
   final bool userEditable;
   @JsonKey(name: 'visible')
@@ -3529,10 +3734,12 @@ class MetricType {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is MetricType &&
-            (identical(other.name, name) ||
-                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
             (identical(other.unit, unit) ||
                 const DeepCollectionEquality().equals(other.unit, unit)) &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
             (identical(other.summaryType, summaryType) ||
                 const DeepCollectionEquality().equals(
                   other.summaryType,
@@ -3545,8 +3752,6 @@ class MetricType {
                 )) &&
             (identical(other.type, type) ||
                 const DeepCollectionEquality().equals(other.type, type)) &&
-            (identical(other.id, id) ||
-                const DeepCollectionEquality().equals(other.id, id)) &&
             (identical(other.userEditable, userEditable) ||
                 const DeepCollectionEquality().equals(
                   other.userEditable,
@@ -3571,12 +3776,12 @@ class MetricType {
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(unit) ^
+      const DeepCollectionEquality().hash(name) ^
       const DeepCollectionEquality().hash(summaryType) ^
       const DeepCollectionEquality().hash(description) ^
       const DeepCollectionEquality().hash(type) ^
-      const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(userEditable) ^
       const DeepCollectionEquality().hash(visible) ^
       const DeepCollectionEquality().hash(showOnDashboard) ^
@@ -3586,24 +3791,24 @@ class MetricType {
 
 extension $MetricTypeExtension on MetricType {
   MetricType copyWith({
+    int? id,
+    Unit? unit,
     String? name,
-    String? unit,
     enums.MetricSummary? summaryType,
     String? description,
     enums.MetricDataType? type,
-    int? id,
     bool? userEditable,
     bool? visible,
     bool? showOnDashboard,
     int? groupId,
   }) {
     return MetricType(
-      name: name ?? this.name,
+      id: id ?? this.id,
       unit: unit ?? this.unit,
+      name: name ?? this.name,
       summaryType: summaryType ?? this.summaryType,
       description: description ?? this.description,
       type: type ?? this.type,
-      id: id ?? this.id,
       userEditable: userEditable ?? this.userEditable,
       visible: visible ?? this.visible,
       showOnDashboard: showOnDashboard ?? this.showOnDashboard,
@@ -3612,24 +3817,24 @@ extension $MetricTypeExtension on MetricType {
   }
 
   MetricType copyWithWrapped({
+    Wrapped<int>? id,
+    Wrapped<Unit>? unit,
     Wrapped<String>? name,
-    Wrapped<String?>? unit,
     Wrapped<enums.MetricSummary?>? summaryType,
     Wrapped<String?>? description,
     Wrapped<enums.MetricDataType?>? type,
-    Wrapped<int>? id,
     Wrapped<bool>? userEditable,
     Wrapped<bool?>? visible,
     Wrapped<bool?>? showOnDashboard,
     Wrapped<int>? groupId,
   }) {
     return MetricType(
-      name: (name != null ? name.value : this.name),
+      id: (id != null ? id.value : this.id),
       unit: (unit != null ? unit.value : this.unit),
+      name: (name != null ? name.value : this.name),
       summaryType: (summaryType != null ? summaryType.value : this.summaryType),
       description: (description != null ? description.value : this.description),
       type: (type != null ? type.value : this.type),
-      id: (id != null ? id.value : this.id),
       userEditable: (userEditable != null
           ? userEditable.value
           : this.userEditable),
@@ -5093,6 +5298,106 @@ extension $StatusExtension on Status {
 }
 
 @JsonSerializable(explicitToJson: true)
+class Unit {
+  const Unit({
+    this.type,
+    required this.id,
+    required this.code,
+    this.description,
+    this.baseUnit,
+  });
+
+  factory Unit.fromJson(Map<String, dynamic> json) => _$UnitFromJson(json);
+
+  static const toJsonFactory = _$UnitToJson;
+  Map<String, dynamic> toJson() => _$UnitToJson(this);
+
+  @JsonKey(
+    name: 'type',
+    toJson: unitTypeNullableToJson,
+    fromJson: unitTypeNullableFromJson,
+  )
+  final enums.UnitType? type;
+  @JsonKey(name: 'id')
+  final int id;
+  @JsonKey(name: 'code')
+  final String code;
+  @JsonKey(name: 'description')
+  final String? description;
+  @JsonKey(name: 'baseUnit')
+  final dynamic baseUnit;
+  static const fromJsonFactory = _$UnitFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is Unit &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.code, code) ||
+                const DeepCollectionEquality().equals(other.code, code)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )) &&
+            (identical(other.baseUnit, baseUnit) ||
+                const DeepCollectionEquality().equals(
+                  other.baseUnit,
+                  baseUnit,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(code) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(baseUnit) ^
+      runtimeType.hashCode;
+}
+
+extension $UnitExtension on Unit {
+  Unit copyWith({
+    enums.UnitType? type,
+    int? id,
+    String? code,
+    String? description,
+    dynamic baseUnit,
+  }) {
+    return Unit(
+      type: type ?? this.type,
+      id: id ?? this.id,
+      code: code ?? this.code,
+      description: description ?? this.description,
+      baseUnit: baseUnit ?? this.baseUnit,
+    );
+  }
+
+  Unit copyWithWrapped({
+    Wrapped<enums.UnitType?>? type,
+    Wrapped<int>? id,
+    Wrapped<String>? code,
+    Wrapped<String?>? description,
+    Wrapped<dynamic>? baseUnit,
+  }) {
+    return Unit(
+      type: (type != null ? type.value : this.type),
+      id: (id != null ? id.value : this.id),
+      code: (code != null ? code.value : this.code),
+      description: (description != null ? description.value : this.description),
+      baseUnit: (baseUnit != null ? baseUnit.value : this.baseUnit),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class UpdateEvent {
   const UpdateEvent({
     this.id,
@@ -5242,6 +5547,7 @@ extension $UpdateEventExtension on UpdateEvent {
 class UpdateMetric {
   const UpdateMetric({
     this.id,
+    this.unit,
     required this.date,
     required this.value,
     this.tag,
@@ -5258,6 +5564,8 @@ class UpdateMetric {
 
   @JsonKey(name: 'id')
   final int? id;
+  @JsonKey(name: 'unit')
+  final int? unit;
   @JsonKey(name: 'date')
   final DateTime date;
   @JsonKey(name: 'value')
@@ -5282,6 +5590,8 @@ class UpdateMetric {
         (other is UpdateMetric &&
             (identical(other.id, id) ||
                 const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.unit, unit) ||
+                const DeepCollectionEquality().equals(other.unit, unit)) &&
             (identical(other.date, date) ||
                 const DeepCollectionEquality().equals(other.date, date)) &&
             (identical(other.value, value) ||
@@ -5305,6 +5615,7 @@ class UpdateMetric {
   @override
   int get hashCode =>
       const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(unit) ^
       const DeepCollectionEquality().hash(date) ^
       const DeepCollectionEquality().hash(value) ^
       const DeepCollectionEquality().hash(tag) ^
@@ -5317,6 +5628,7 @@ class UpdateMetric {
 extension $UpdateMetricExtension on UpdateMetric {
   UpdateMetric copyWith({
     int? id,
+    int? unit,
     DateTime? date,
     String? value,
     String? tag,
@@ -5326,6 +5638,7 @@ extension $UpdateMetricExtension on UpdateMetric {
   }) {
     return UpdateMetric(
       id: id ?? this.id,
+      unit: unit ?? this.unit,
       date: date ?? this.date,
       value: value ?? this.value,
       tag: tag ?? this.tag,
@@ -5337,6 +5650,7 @@ extension $UpdateMetricExtension on UpdateMetric {
 
   UpdateMetric copyWithWrapped({
     Wrapped<int?>? id,
+    Wrapped<int?>? unit,
     Wrapped<DateTime>? date,
     Wrapped<String>? value,
     Wrapped<String?>? tag,
@@ -5346,12 +5660,181 @@ extension $UpdateMetricExtension on UpdateMetric {
   }) {
     return UpdateMetric(
       id: (id != null ? id.value : this.id),
+      unit: (unit != null ? unit.value : this.unit),
       date: (date != null ? date.value : this.date),
       value: (value != null ? value.value : this.value),
       tag: (tag != null ? tag.value : this.tag),
       type: (type != null ? type.value : this.type),
       source: (source != null ? source.value : this.source),
       sourceId: (sourceId != null ? sourceId.value : this.sourceId),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class UpdateMetricType {
+  const UpdateMetricType({
+    required this.id,
+    required this.unit,
+    required this.name,
+    this.summaryType,
+    this.description,
+    this.type,
+    required this.userEditable,
+    this.visible,
+    this.showOnDashboard,
+    required this.groupId,
+  });
+
+  factory UpdateMetricType.fromJson(Map<String, dynamic> json) =>
+      _$UpdateMetricTypeFromJson(json);
+
+  static const toJsonFactory = _$UpdateMetricTypeToJson;
+  Map<String, dynamic> toJson() => _$UpdateMetricTypeToJson(this);
+
+  @JsonKey(name: 'id')
+  final int id;
+  @JsonKey(name: 'unit')
+  final int unit;
+  @JsonKey(name: 'name')
+  final String name;
+  @JsonKey(
+    name: 'summaryType',
+    toJson: metricSummaryNullableToJson,
+    fromJson: metricSummaryNullableFromJson,
+  )
+  final enums.MetricSummary? summaryType;
+  @JsonKey(name: 'description')
+  final String? description;
+  @JsonKey(
+    name: 'type',
+    toJson: metricDataTypeNullableToJson,
+    fromJson: metricDataTypeNullableFromJson,
+  )
+  final enums.MetricDataType? type;
+  @JsonKey(name: 'userEditable')
+  final bool userEditable;
+  @JsonKey(name: 'visible')
+  final bool? visible;
+  @JsonKey(name: 'showOnDashboard')
+  final bool? showOnDashboard;
+  @JsonKey(name: 'groupId')
+  final int groupId;
+  static const fromJsonFactory = _$UpdateMetricTypeFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is UpdateMetricType &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.unit, unit) ||
+                const DeepCollectionEquality().equals(other.unit, unit)) &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.summaryType, summaryType) ||
+                const DeepCollectionEquality().equals(
+                  other.summaryType,
+                  summaryType,
+                )) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )) &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.userEditable, userEditable) ||
+                const DeepCollectionEquality().equals(
+                  other.userEditable,
+                  userEditable,
+                )) &&
+            (identical(other.visible, visible) ||
+                const DeepCollectionEquality().equals(
+                  other.visible,
+                  visible,
+                )) &&
+            (identical(other.showOnDashboard, showOnDashboard) ||
+                const DeepCollectionEquality().equals(
+                  other.showOnDashboard,
+                  showOnDashboard,
+                )) &&
+            (identical(other.groupId, groupId) ||
+                const DeepCollectionEquality().equals(other.groupId, groupId)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(unit) ^
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(summaryType) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(userEditable) ^
+      const DeepCollectionEquality().hash(visible) ^
+      const DeepCollectionEquality().hash(showOnDashboard) ^
+      const DeepCollectionEquality().hash(groupId) ^
+      runtimeType.hashCode;
+}
+
+extension $UpdateMetricTypeExtension on UpdateMetricType {
+  UpdateMetricType copyWith({
+    int? id,
+    int? unit,
+    String? name,
+    enums.MetricSummary? summaryType,
+    String? description,
+    enums.MetricDataType? type,
+    bool? userEditable,
+    bool? visible,
+    bool? showOnDashboard,
+    int? groupId,
+  }) {
+    return UpdateMetricType(
+      id: id ?? this.id,
+      unit: unit ?? this.unit,
+      name: name ?? this.name,
+      summaryType: summaryType ?? this.summaryType,
+      description: description ?? this.description,
+      type: type ?? this.type,
+      userEditable: userEditable ?? this.userEditable,
+      visible: visible ?? this.visible,
+      showOnDashboard: showOnDashboard ?? this.showOnDashboard,
+      groupId: groupId ?? this.groupId,
+    );
+  }
+
+  UpdateMetricType copyWithWrapped({
+    Wrapped<int>? id,
+    Wrapped<int>? unit,
+    Wrapped<String>? name,
+    Wrapped<enums.MetricSummary?>? summaryType,
+    Wrapped<String?>? description,
+    Wrapped<enums.MetricDataType?>? type,
+    Wrapped<bool>? userEditable,
+    Wrapped<bool?>? visible,
+    Wrapped<bool?>? showOnDashboard,
+    Wrapped<int>? groupId,
+  }) {
+    return UpdateMetricType(
+      id: (id != null ? id.value : this.id),
+      unit: (unit != null ? unit.value : this.unit),
+      name: (name != null ? name.value : this.name),
+      summaryType: (summaryType != null ? summaryType.value : this.summaryType),
+      description: (description != null ? description.value : this.description),
+      type: (type != null ? type.value : this.type),
+      userEditable: (userEditable != null
+          ? userEditable.value
+          : this.userEditable),
+      visible: (visible != null ? visible.value : this.visible),
+      showOnDashboard: (showOnDashboard != null
+          ? showOnDashboard.value
+          : this.showOnDashboard),
+      groupId: (groupId != null ? groupId.value : this.groupId),
     );
   }
 }
@@ -6401,6 +6884,68 @@ List<enums.RightType>? rightTypeNullableListFromJson(
   }
 
   return rightType.map((e) => rightTypeFromJson(e.toString())).toList();
+}
+
+String? unitTypeNullableToJson(enums.UnitType? unitType) {
+  return unitType?.value;
+}
+
+String? unitTypeToJson(enums.UnitType unitType) {
+  return unitType.value;
+}
+
+enums.UnitType unitTypeFromJson(
+  Object? unitType, [
+  enums.UnitType? defaultValue,
+]) {
+  return enums.UnitType.values.firstWhereOrNull((e) => e.value == unitType) ??
+      defaultValue ??
+      enums.UnitType.swaggerGeneratedUnknown;
+}
+
+enums.UnitType? unitTypeNullableFromJson(
+  Object? unitType, [
+  enums.UnitType? defaultValue,
+]) {
+  if (unitType == null) {
+    return null;
+  }
+  return enums.UnitType.values.firstWhereOrNull((e) => e.value == unitType) ??
+      defaultValue;
+}
+
+String unitTypeExplodedListToJson(List<enums.UnitType>? unitType) {
+  return unitType?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> unitTypeListToJson(List<enums.UnitType>? unitType) {
+  if (unitType == null) {
+    return [];
+  }
+
+  return unitType.map((e) => e.value!).toList();
+}
+
+List<enums.UnitType> unitTypeListFromJson(
+  List? unitType, [
+  List<enums.UnitType>? defaultValue,
+]) {
+  if (unitType == null) {
+    return defaultValue ?? [];
+  }
+
+  return unitType.map((e) => unitTypeFromJson(e.toString())).toList();
+}
+
+List<enums.UnitType>? unitTypeNullableListFromJson(
+  List? unitType, [
+  List<enums.UnitType>? defaultValue,
+]) {
+  if (unitType == null) {
+    return defaultValue;
+  }
+
+  return unitType.map((e) => unitTypeFromJson(e.toString())).toList();
 }
 
 String? userTypeNullableToJson(enums.UserType? userType) {

@@ -137,6 +137,29 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
+  Future<Response<List<Unit>>> _apiUnitsGet({
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["CommonLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/units');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      tag: swaggerMetaData,
+    );
+    return client.send<List<Unit>, Unit>($request);
+  }
+
+  @override
   Future<Response<UserId>> _apiPersonPost({
     required PersonCreation? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -647,7 +670,7 @@ final class _$Helseapi extends Helseapi {
 
   @override
   Future<Response<dynamic>> _apiMetricsTypePost({
-    required MetricType? body,
+    required CreateMetricType? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
       summary: '',
@@ -673,7 +696,7 @@ final class _$Helseapi extends Helseapi {
 
   @override
   Future<Response<dynamic>> _apiMetricsTypePut({
-    required MetricType? body,
+    required UpdateMetricType? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
       summary: '',

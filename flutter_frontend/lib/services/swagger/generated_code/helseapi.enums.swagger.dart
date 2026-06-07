@@ -144,6 +144,30 @@ enum RightType {
   const RightType(this.value);
 }
 
+enum UnitType {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue('None')
+  none('None'),
+  @JsonValue('Distance')
+  distance('Distance'),
+  @JsonValue('Wheight')
+  wheight('Wheight'),
+  @JsonValue('Frequency')
+  frequency('Frequency'),
+  @JsonValue('Temperature')
+  temperature('Temperature'),
+  @JsonValue('Power')
+  power('Power'),
+  @JsonValue('Factor')
+  factor('Factor');
+
+  final String? value;
+
+  const UnitType(this.value);
+}
+
 enum UserType {
   @JsonValue(null)
   swaggerGeneratedUnknown(null),
