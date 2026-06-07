@@ -43,6 +43,8 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
       _visible = edit.visible ?? true;
       _showDashboard = edit.showOnDashboard ?? true;
       _groupId = edit.groupId;
+      _type = edit.type ?? MetricDataType.text;
+      _metricSummary = edit.summaryType;
     }
     _loadGroup();
     _loadUnit();
