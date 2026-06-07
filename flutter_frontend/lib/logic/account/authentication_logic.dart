@@ -35,6 +35,7 @@ class AuthenticationLogic {
     var token = (await account.getToken())?.refreshToken;
     if (token != null && token.isNotEmpty && !JwtDecoder.isExpired(token)) {
       _controller.add(AuthenticationStatus.authenticated);
+      await Dependencies.logics.settings.loadSettings();
       return true;
     }
 
@@ -58,7 +59,7 @@ class AuthenticationLogic {
       await account.remove(Account.grant);
 
       _controller.add(AuthenticationStatus.authenticated);
-      Dependencies.logics.settings.loadSettings();
+      await Dependencies.logics.settings.loadSettings();
     } else {
       _controller.add(AuthenticationStatus.unauthenticated);
     }
