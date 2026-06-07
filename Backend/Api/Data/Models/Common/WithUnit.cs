@@ -15,10 +15,10 @@ public record LinkedUnits(Units Unit, Units? BaseUnit)
             Type = (UnitType)Unit.Type,
             BaseUnit = BaseUnit is null ? null : new()
             {
-                Code = Unit.Code,
-                Id = Unit.Id,
-                Description = Unit.Description,
-                Type = (UnitType)Unit.Type,
+                Code = BaseUnit.Code,
+                Id = BaseUnit.Id,
+                Description = BaseUnit.Description,
+                Type = (UnitType)BaseUnit.Type,
             },
         };
     }

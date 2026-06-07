@@ -601,6 +601,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Remove all sessions'**
   String get cleanSessions;
+
+  /// No description provided for @constants.
+  ///
+  /// In en, this message translates to:
+  /// **'Constants'**
+  String get constants;
+
+  /// No description provided for @id.
+  ///
+  /// In en, this message translates to:
+  /// **'Id'**
+  String get id;
+
+  /// No description provided for @code.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get code;
 }
 
 class _AppLocalizationsDelegate

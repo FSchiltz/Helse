@@ -58,11 +58,11 @@ ALTER TABLE
 ADD
     CONSTRAINT FK_MetricType_To_Units FOREIGN KEY (Unit) REFERENCES Common.Units (Id);
 
-UPDATE Health.Metric SET Unit = 8 WHERE Id = 1;
-UPDATE Health.Metric SET Unit = 11 WHERE Id = 2;
-UPDATE Health.Metric SET Unit = 6  WHERE Id = 3;
-UPDATE Health.Metric SET Unit = 2 WHERE Id = 4;
-UPDATE Health.Metric SET Unit = 9 WHERE Id = 5;
-UPDATE Health.Metric SET Unit = 10 WHERE Id = 7;
-UPDATE Health.Metric SET Unit = 1 WHERE Id = 8;
-UPDATE Health.Metric SET Unit = 2 WHERE Id = 17;
+UPDATE Health.MetricType SET Unit = 8 WHERE Id = 1;
+UPDATE Health.MetricType SET Unit = 11 WHERE Id = 2;
+UPDATE Health.MetricType SET Unit = 6  WHERE Id = 3;
+UPDATE Health.MetricType SET Unit = 2 WHERE Id = 4;
+UPDATE Health.MetricType SET Unit = 9 WHERE Id = 5;
+UPDATE Health.MetricType SET Unit = 10 WHERE Id = 7;
+UPDATE Health.MetricType SET Unit = 1 WHERE Id = 8;
+UPDATE Health.MetricType SET Unit = 2 WHERE Id = 17;

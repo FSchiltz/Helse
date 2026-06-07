@@ -5300,7 +5300,7 @@ extension $StatusExtension on Status {
 @JsonSerializable(explicitToJson: true)
 class Unit {
   const Unit({
-    this.type,
+    required this.type,
     required this.id,
     required this.code,
     this.description,
@@ -5312,12 +5312,8 @@ class Unit {
   static const toJsonFactory = _$UnitToJson;
   Map<String, dynamic> toJson() => _$UnitToJson(this);
 
-  @JsonKey(
-    name: 'type',
-    toJson: unitTypeNullableToJson,
-    fromJson: unitTypeNullableFromJson,
-  )
-  final enums.UnitType? type;
+  @JsonKey(name: 'type', toJson: unitTypeToJson, fromJson: unitTypeFromJson)
+  final enums.UnitType type;
   @JsonKey(name: 'id')
   final int id;
   @JsonKey(name: 'code')
@@ -5381,7 +5377,7 @@ extension $UnitExtension on Unit {
   }
 
   Unit copyWithWrapped({
-    Wrapped<enums.UnitType?>? type,
+    Wrapped<enums.UnitType>? type,
     Wrapped<int>? id,
     Wrapped<String>? code,
     Wrapped<String?>? description,

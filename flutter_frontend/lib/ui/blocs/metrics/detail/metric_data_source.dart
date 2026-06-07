@@ -26,7 +26,7 @@ class MetricDataSource extends DataTableSource {
     return DataRow(
       cells: [
         DataCell(Text((m.id).toString())),
-        DataCell(Text('${m.value} ${type.unit}')),
+        DataCell(Text('${m.value} ${type.unit.code}')),
         DataCell(Text(DateHelper.format(m.date.toLocal(), context: context))),
         DataCell(Text(m.tag.toString())),
         DataCell(Text(m.source.toString())),

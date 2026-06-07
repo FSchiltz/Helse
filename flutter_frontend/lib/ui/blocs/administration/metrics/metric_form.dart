@@ -5,8 +5,7 @@ import 'package:helse/ui/common/square_text_field.dart';
 import '../../../common/statefull_check.dart';
 import '../../../common/type_input.dart';
 
-class MetricAddForm extends StatelessWidget {
-  final TextEditingController controllerUnit;
+class MetricTypeAddForm extends StatelessWidget {
   final TextEditingController controllerName;
   final TextEditingController controllerDescription;
   final void Function(MetricSummary? value) summaryCallback;
@@ -14,6 +13,7 @@ class MetricAddForm extends StatelessWidget {
   final MetricSummary? summary;
   final MetricDataType? type;
   final List<MetricGroup> groups;
+  final List<Unit> units;
 
   final void Function(bool value) visibleCallback;
   final void Function(bool value) showCallback;
@@ -25,11 +25,12 @@ class MetricAddForm extends StatelessWidget {
   final FocusNode focusNodeUnit = FocusNode();
 
   final int group;
+  final int unit;
   final void Function(int value) groupCallback;
+  final void Function(int value) unitCallback;
 
-  MetricAddForm({
+  MetricTypeAddForm({
     super.key,
-    required this.controllerUnit,
     required this.controllerName,
     required this.controllerDescription,
     required this.summaryCallback,
@@ -41,8 +42,11 @@ class MetricAddForm extends StatelessWidget {
     required this.group,
     required this.groupCallback,
     required this.groups,
+    required this.unit,
+    required this.units,
+    required this.unitCallback,
     required this.showDashboard,
-    required this.showCallback
+    required this.showCallback,
   });
 
   @override
@@ -70,12 +74,13 @@ class MetricAddForm extends StatelessWidget {
           onEditingComplete: () => focusNodeUnit.requestFocus(),
         ),
         const SizedBox(height: 10),
-        SquareTextField(
-          controller: controllerUnit,
-          icon: Icons.email_sharp,
-          focusNode: focusNodeUnit,
-          theme: theme,
-          label: "Unit",
+        EnumInput(
+          value: unit,
+          units
+              .map((x) => DropDownItem(x.id, x.description ?? x.code))
+              .toList(),
+          (value) => unitCallback.call(value ?? 0),
+          label: 'Unit',
         ),
         const SizedBox(height: 10),
         EnumInput(
@@ -83,6 +88,13 @@ class MetricAddForm extends StatelessWidget {
           MetricDataType.values.map((x) => DropDownItem(x, x.name)).toList(),
           (value) => typeCallback.call(value),
           label: 'Type',
+        ),
+        SizedBox(height: 10),
+        EnumInput(
+          value: group,
+          groups.map((x) => DropDownItem(x.id, x.name)).toList(),
+          (value) => groupCallback.call(value ?? 0),
+          label: 'Group',
         ),
         const SizedBox(height: 10),
         EnumInput(
@@ -100,7 +112,8 @@ class MetricAddForm extends StatelessWidget {
               StatefullCheck(visible, visibleCallback),
             ],
           ),
-        ),const SizedBox(height: 10),
+        ),
+        const SizedBox(height: 10),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
@@ -110,12 +123,6 @@ class MetricAddForm extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: 10,),
-        EnumInput(
-          value: group,
-          groups.map((x) => DropDownItem(x.id, x.name)).toList(),
-          (value) => groupCallback.call(value ?? 0),
-          label: 'Summary',)
       ],
     );
   }

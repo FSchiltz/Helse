@@ -19,7 +19,6 @@ class MetricTypeAdd extends StatefulWidget {
 class _MetricTypeAddState extends State<MetricTypeAdd> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
-  final TextEditingController controllerUnit = TextEditingController();
   final TextEditingController controllerName = TextEditingController();
   final TextEditingController controllerDescription = TextEditingController();
   MetricSummary? _metricSummary;
@@ -27,8 +26,10 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
   bool _visible = true;
   bool _showDashboard = true;
   int _groupId = 0;
+  int _unit = 0;
 
   List<MetricGroup> _groups = [];
+  List<Unit> _units = [];
 
   @override
   void initState() {
@@ -38,12 +39,13 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
       // this is not a new addition, just an edit
       controllerDescription.text = edit.description ?? "";
       controllerName.text = edit.name;
-      controllerUnit.text = edit.unit ?? "";
+      _unit = edit.unit.id;
       _visible = edit.visible ?? true;
       _showDashboard = edit.showOnDashboard ?? true;
       _groupId = edit.groupId;
     }
     _loadGroup();
+    _loadUnit();
   }
 
   @override
@@ -66,10 +68,9 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
             children: [
-              MetricAddForm(
+              MetricTypeAddForm(
                 controllerDescription: controllerDescription,
                 controllerName: controllerName,
-                controllerUnit: controllerUnit,
                 type: _type,
                 summary: _metricSummary,
                 summaryCallback: (MetricSummary? value) => setState(() {
@@ -91,6 +92,11 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
                 showCallback: (bool value) => setState(() {
                   _showDashboard = value;
                 }),
+                unit: _unit,
+                unitCallback: (int value) => setState(() {
+                  _unit = value;
+                }),
+                units: _units,
               ),
             ],
           ),
@@ -103,25 +109,36 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
     var localContext = context;
     try {
       if (_formKey.currentState?.validate() ?? false) {
-        var metric = MetricType(
-          description: controllerDescription.text,
-          name: controllerName.text,
-          unit: controllerUnit.text,
-          summaryType: _metricSummary,
-          type: _type,
-          id: widget.edit?.id ?? 0,
-          visible: _visible,
-          showOnDashboard: _showDashboard,
-          groupId: _groupId,
-          userEditable: true,
-        );
         String text;
 
         if (widget.edit == null) {
           text = "Added";
+          var metric = CreateMetricType(
+            description: controllerDescription.text,
+            name: controllerName.text,
+            unit: _unit,
+            summaryType: _metricSummary,
+            type: _type,
+            visible: _visible,
+            showOnDashboard: _showDashboard,
+            groupId: _groupId,
+            userEditable: true,
+          );
           await Dependencies.services.metric.addMetricsType(metric);
         } else {
           text = "Updated";
+          var metric = UpdateMetricType(
+            description: controllerDescription.text,
+            name: controllerName.text,
+            unit: _unit,
+            summaryType: _metricSummary,
+            type: _type,
+            id: widget.edit?.id ?? 0,
+            visible: _visible,
+            showOnDashboard: _showDashboard,
+            groupId: _groupId,
+            userEditable: true,
+          );
           await Dependencies.services.metric.updateMetricsType(metric);
         }
 
@@ -142,7 +159,6 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
   void dispose() {
     controllerDescription.dispose();
     controllerName.dispose();
-    controllerUnit.dispose();
     super.dispose();
   }
 
@@ -151,6 +167,13 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
     result.add(MetricGroup(name: "Choose", description: '', id: 0));
     setState(() {
       _groups = result;
+    });
+  }
+
+  Future<void> _loadUnit() async {
+    var result = await Dependencies.services.common.getUnits();
+    setState(() {
+      _units = result;
     });
   }
 }

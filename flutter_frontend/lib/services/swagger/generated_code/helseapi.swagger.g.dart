@@ -675,7 +675,7 @@ Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
 };
 
 Unit _$UnitFromJson(Map<String, dynamic> json) => Unit(
-  type: unitTypeNullableFromJson(json['type']),
+  type: unitTypeFromJson(json['type']),
   id: (json['id'] as num).toInt(),
   code: json['code'] as String,
   description: json['description'] as String?,
@@ -683,7 +683,7 @@ Unit _$UnitFromJson(Map<String, dynamic> json) => Unit(
 );
 
 Map<String, dynamic> _$UnitToJson(Unit instance) => <String, dynamic>{
-  'type': unitTypeNullableToJson(instance.type),
+  'type': unitTypeToJson(instance.type),
   'id': instance.id,
   'code': instance.code,
   'description': instance.description,

@@ -2,7 +2,7 @@ namespace Api.Models.Common;
 
 public class Unit
 {
-    public UnitType Type { get; set; }
+    public required UnitType Type { get; set; }
 
     public required int Id { get; set; }
 
