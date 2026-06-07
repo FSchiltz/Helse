@@ -87,7 +87,7 @@ public static class EventHelpers
     /// <returns></returns>
     private static (int BucketCount, double SecondPerBucket) GetSteps(DateTime start, DateTime end)
     {
-        const int maxBucket = 60;
+        const int maxBucket = 200;
         var duration = end - start;
         if (duration.TotalSeconds <= maxBucket)
         {

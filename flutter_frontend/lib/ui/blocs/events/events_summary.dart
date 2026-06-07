@@ -47,7 +47,7 @@ class EventTimeline extends StatelessWidget {
     for (var d in data) {
       chartBars.add(
         Padding(
-          padding: EdgeInsets.all(4.0 * width),
+          padding: EdgeInsets.all(1.0 * width),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: _map(
@@ -69,7 +69,7 @@ class EventTimeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var maxWidth = (userData.length) * 28.0;
+    var maxWidth = (userData.length) * 14.0;
 
     return LayoutBuilder(
       builder: (b, constraints) {
@@ -110,7 +110,7 @@ class EventTimeline extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Dependencies.theme.stateColor(entry.key),
               ),
-              width: 20 * widthCoeff,
+              width: 12 * widthCoeff,
               height: coeff * count,
             ),
           ),
@@ -119,21 +119,7 @@ class EventTimeline extends StatelessWidget {
     }
 
     if (widgets.isEmpty) {
-      widgets.add(
-        SizedBox(
-          width: 20 * widthCoeff,
-          child: Center(
-            child: Container(
-              decoration: BoxDecoration(
-                color: empty,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              width: 4,
-              height: 4,
-            ),
-          ),
-        ),
-      );
+      widgets.add(SizedBox(width: 12 * widthCoeff));
     }
 
     return widgets;
