@@ -12,7 +12,7 @@ class LocalSettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var locale = Translation.locale(context);
+    var locale = Translation.of(context);
     return NavigationPage(
       locale.localSettings,
       pages: [

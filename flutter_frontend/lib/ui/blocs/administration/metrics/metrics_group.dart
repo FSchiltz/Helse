@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/administration/metrics/metric_group_add.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
@@ -15,6 +16,7 @@ class MetricGroupView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var locale = Translation.of(context);
     return LoadingBuilder(
       _getGroupData,
       builder: (context, data, reset) {
@@ -45,17 +47,18 @@ class MetricGroupView extends StatelessWidget {
                 ],
               ),
             ),
+            Text(
+              "Setup the default metric group information for new user. Those settings can be overidden by the user",
+            ),
             SingleChildScrollView(
               child: FittedBox(
                 child: DataTable(
-                  columns: const [
-                    DataColumn(label: Expanded(child: Text("Id"))),
-                    DataColumn(label: Expanded(child: Text("Name"))),
-                    DataColumn(label: Expanded(child: Text("Description"))),
+                  columns:  [
+                    DataColumn(label: Expanded(child: Text(locale.id))),
+                    DataColumn(label: Expanded(child: Text(locale.name))),
+                    DataColumn(label: Expanded(child: Text(locale.description))),
                     DataColumn(label: Expanded(child: Text("Show title"))),
-                    DataColumn(
-                      label: Expanded(child: Text("Visible")),
-                    ),
+                    DataColumn(label: Expanded(child: Text(locale.visible))),
                     DataColumn(label: Expanded(child: Text(""))),
                   ],
                   rows: data
@@ -77,7 +80,7 @@ class MetricGroupView extends StatelessWidget {
                                 onChanged: null,
                               ),
                             ),
-                
+
                             DataCell(
                               Row(
                                 children: [

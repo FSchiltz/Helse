@@ -14,7 +14,7 @@ class UserSettings extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
-            Translation.locale(context).userSettings,
+            Translation.of(context).userSettings,
             style: Theme.of(context).textTheme.displaySmall,
           ),
           const SizedBox(height: 20),

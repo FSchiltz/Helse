@@ -91,7 +91,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
           ),
         ],
         title: Text(
-          Translation.locale(context).detailof(widget.type.name),
+          Translation.of(context).detailof(widget.type.name),
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),
@@ -124,7 +124,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
           return data.isEmpty
               ? Center(
                   child: Text(
-                    Translation.locale(context).nodata,
+                    Translation.of(context).nodata,
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                 )

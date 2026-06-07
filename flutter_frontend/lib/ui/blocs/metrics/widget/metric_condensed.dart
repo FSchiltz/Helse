@@ -23,7 +23,7 @@ class MetricCondensed extends StatelessWidget {
     return metrics.isEmpty
         ? Center(
             child: Text(
-              Translation.locale(context).nodata,
+              Translation.of(context).nodata,
               style: Theme.of(context).textTheme.labelLarge,
             ),
           )

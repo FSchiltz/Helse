@@ -20,7 +20,7 @@ class GeneralSettings extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16),
             child: Text(
-              Translation.locale(context).generalSettings,
+              Translation.of(context).generalSettings,
               style: Theme.of(context).textTheme.displaySmall,
             ),
           ),

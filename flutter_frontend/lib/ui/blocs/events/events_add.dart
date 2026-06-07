@@ -32,7 +32,7 @@ class _EventAddState extends State<EventAdd> {
 
   void _submit() async {
     var localContext = context;
-    var locale = Translation.locale(context);
+    var locale = Translation.of(context);
     try {
       setState(() {
         _status = SubmissionStatus.inProgress;
@@ -107,7 +107,7 @@ class _EventAddState extends State<EventAdd> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
-    var locale = Translation.locale(context);
+    var locale = Translation.of(context);
     return SquareDialog(
       title: Text(locale.addItem(widget.type.name)),
       actions: [

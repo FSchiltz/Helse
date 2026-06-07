@@ -35,7 +35,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
         ? Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: Text(
-              Translation.locale(context).nodata,
+              Translation.of(context).nodata,
               style: Theme.of(context).textTheme.labelLarge,
             ),
           )

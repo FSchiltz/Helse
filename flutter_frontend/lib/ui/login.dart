@@ -49,7 +49,7 @@ class _LoginState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
-    var locale = Translation.locale(context);
+    var locale = Translation.of(context);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       body: SafeArea(
@@ -289,7 +289,7 @@ class _LoginState extends State<LoginPage> {
       });
 
       if (mounted) {
-        var locale = Translation.locale(context);
+        var locale = Translation.of(context);
         await _urlChanged(url, locale);
       }
     }

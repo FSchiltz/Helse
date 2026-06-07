@@ -73,7 +73,7 @@ class _SyncSettingsState extends State<SyncSettings> {
       return Center(child: Text("Not supported"));
     }
 
-    var locale = Translation.locale(context);
+    var locale = Translation.of(context);
     return LoadingBuilder(
       _getData,
       builder: (context, data, reset) {

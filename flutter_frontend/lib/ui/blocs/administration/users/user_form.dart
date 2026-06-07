@@ -96,7 +96,7 @@ class _UserFormState extends State<UserForm> {
         if (widget.controllerPassword != null) const SizedBox(height: 10),
         if (widget.controllerPassword != null)
           PasswordInput(
-            text: Translation.locale(context).confirmpassword,
+            text: Translation.of(context).confirmpassword,
             controller: widget.controllerConFirmPassword,
             focus: _focusNodeConfirmPassword,
             validate: validateConfirmPassword,

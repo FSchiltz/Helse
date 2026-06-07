@@ -9,6 +9,7 @@ class MetricSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var locale = Translation.of(context);
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: DefaultTabController(
@@ -17,14 +18,17 @@ class MetricSettings extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-             Translation.locale(context).metricSettings,
+              Translation.of(context).metricSettings,
               style: Theme.of(context).textTheme.displaySmall,
             ),
             MetricSettingsView(),
             TabBar(
               tabs: [
-                Tab(icon: Icon(Icons.post_add_sharp), text: 'Metrics'),
-                Tab(icon: Icon(Icons.group_add_sharp), text: 'Metric Groups'),
+                Tab(icon: Icon(Icons.post_add_sharp), text: locale.metrics),
+                Tab(
+                  icon: Icon(Icons.group_add_sharp),
+                  text: locale.metricgroups,
+                ),
               ],
             ),
             Flexible(

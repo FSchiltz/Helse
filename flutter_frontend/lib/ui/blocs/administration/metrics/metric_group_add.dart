@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 import 'package:helse/ui/common/square_text_field.dart';
 import 'package:helse/ui/common/statefull_check.dart';
@@ -44,6 +45,7 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
+    var locale = Translation.of(context);
     return SquareDialog(
       title: const Text("Add a new metric type"),
       actions: [
@@ -53,7 +55,7 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
             shape: const ContinuousRectangleBorder(),
           ),
           onPressed: submit,
-          child: Text(widget.edit == null ? "Create" : "Update"),
+          child: Text(widget.edit == null ? locale.create : locale.edit),
         ),
       ],
       content: Form(
@@ -69,7 +71,7 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
                     icon: Icons.person_sharp,
                     controller: controllerName,
                     focusNode: focusNodeName,
-                    label: "Name",
+                    label: locale.name,
                     validator: validateName,
                     onEditingComplete: () =>
                         focusNodeDescription.requestFocus(),
@@ -80,7 +82,7 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
                     theme: theme,
                     controller: controllerDescription,
                     focusNode: focusNodeDescription,
-                    label: "Description",
+                    label: locale.description,
                   ),
 
                   const SizedBox(height: 10),
@@ -88,7 +90,7 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       children: [
-                        const Text("Show title: "),
+                        const Text("Show title"),
                         StatefullCheck(
                           _visible,
                           (bool value) => setState(() {
@@ -103,7 +105,7 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       children: [
-                        const Text("Show on dashboard: "),
+                        Text(locale.visible),
                         StatefullCheck(
                           _showDashboard,
                           (bool value) => setState(() {

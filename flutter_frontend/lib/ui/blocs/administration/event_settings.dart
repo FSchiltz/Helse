@@ -14,7 +14,7 @@ class EventSettings extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            Translation.locale(context).eventSettings,
+            Translation.of(context).eventSettings,
             style: Theme.of(context).textTheme.displaySmall,
           ),
           const SizedBox(height: 20),

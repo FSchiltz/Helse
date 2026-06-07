@@ -108,7 +108,7 @@ class _MetricsGridState extends State<MetricsGrid> {
 
   Widget _getGrid(List<MetricGroup> cached, [List<MetricType>? typesCache]) {
     if (cached.isEmpty) {
-      return Text(Translation.locale(context).nodata);
+      return Text(Translation.of(context).nodata);
     } else {
       return Column(
         children: cached

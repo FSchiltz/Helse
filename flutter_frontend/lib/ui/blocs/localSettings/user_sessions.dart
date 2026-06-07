@@ -14,7 +14,7 @@ class UserSessions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var locale = Translation.locale(context);
+    var locale = Translation.of(context);
     var theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
