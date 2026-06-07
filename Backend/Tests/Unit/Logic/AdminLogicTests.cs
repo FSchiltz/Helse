@@ -1,4 +1,5 @@
 using Api.Data;
+using Api.Data.Models.Common;
 using Api.Data.Models.Health;
 using Api.Data.Models.Persons;
 using Api.Logic;
@@ -90,7 +91,13 @@ public class AdminLogicTests : LogicTests
         var metricCounts = new Dictionary<long, int> { { 1, 8 } };
         stats.CountMetricsByType(start, end).Returns(metricCounts);
 
-        MetricType[] metricTypes = [new() { Id = 1, Name = "Blood Pressure" }];
+        WithUnit<MetricType>[] metricTypes = [
+            new(new() { 
+                Id = 1, 
+                Name = "Blood Pressure",
+                Unit = 0, 
+            }, null),
+        ];
         health.GetMetricTypes(true, null).Returns(metricTypes);
 
         // Act
@@ -147,7 +154,7 @@ public class AdminLogicTests : LogicTests
         var eventCounts = new Dictionary<int, int> { { 1, 17 } };
         stats.CountEventsByType(start, end).Returns(eventCounts);
 
-        EventType[] eventTypes =[new() { Id = 1, Name = "Doctor Visit" } ];
+        EventType[] eventTypes = [new() { Id = 1, Name = "Doctor Visit" }];
         health.GetEventTypes(true).Returns(eventTypes);
 
         // Act

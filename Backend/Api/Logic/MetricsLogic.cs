@@ -1,5 +1,7 @@
 using Api.Data;
+using Api.Data.Models.Common;
 using Api.Helpers;
+using Api.Models.Common;
 using Api.Models.Imports;
 using Api.Models.Metrics;
 using Api.Models.Persons;
@@ -26,15 +28,16 @@ public static class MetricsLogic
 
         return TypedResults.Ok(metrics.Select(x => new Metric
         {
-            Value = x.Value,
-            Date = DateTime.SpecifyKind(x.Date, DateTimeKind.Utc),
-            Id = x.Id,
+            Value = x.Item.Value,
+            Date = DateTime.SpecifyKind(x.Item.Date, DateTimeKind.Utc),
+            Id = x.Item.Id,
             Person = user.PersonId,
-            Type = x.Type,
-            Tag = x.Tag,
-            User = x.UserId,
-            Source = (FileTypes)x.Source,
-            SourceId = x.SourceId,
+            Type = x.Item.Type,
+            Tag = x.Item.Tag,
+            User = x.Item.UserId,
+            Source = (FileTypes)x.Item.Source,
+            SourceId = x.Item.SourceId,
+            Unit = x.Unit?.ToUnit(),
         }));
     }
 
@@ -51,7 +54,7 @@ public static class MetricsLogic
         var metricType = await db.GetMetricType(type) ?? throw new InvalidDataException("Incorrect metric type: " + type);
 
         Data.Models.Health.Metric[] metrics;
-        if (metricType.Type == (long)MetricDataType.Text)
+        if (metricType.Item.Type == (long)MetricDataType.Text)
         {
             var last = await db.GetLastMetrics(id, type, start, end);
             if (last is not null)
@@ -61,7 +64,8 @@ public static class MetricsLogic
         }
         else
         {
-            metrics = await db.GetSummaryMetrics(tile, id, type, (MetricSummary)metricType.SummaryType, start, end);
+            // TODO take into account metric that have a different unit than the parent
+            metrics = await db.GetSummaryMetrics(tile, id, type, (MetricSummary)metricType.Item.SummaryType, start, end);
         }
 
         return TypedResults.Ok(metrics.Select(x => new Metric
@@ -78,7 +82,7 @@ public static class MetricsLogic
         }));
     }
 
-    public static async Task<IResult> CreateAsync(CreateMetric metric, long? personId, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> CreateAsync(CreateMetric metric, long? personId, IUserContext users, IHealthContext db, ICommonContext commonDb, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -89,24 +93,40 @@ public static class MetricsLogic
 
         // TODO add caching here
         var type = await db.GetMetricType((int)metric.Type);
+        Units? unit = null;
 
-        Validate(metric, type);
+        if (metric.Unit is not null)
+        {
+            unit = (await commonDb.GetUnitAsync(metric.Unit.Value))?.Unit;
+        }
+
+        Validate(metric, unit, type);
 
         await db.Insert(metric, personId ?? user.PersonId, user.Id);
 
         return TypedResults.NoContent();
     }
 
-    private static void Validate(MetricBase metric, Data.Models.Health.MetricType? type)
+    private static void Validate(CreateMetric metric, Units? unit, WithUnit<Data.Models.Health.MetricType>? type)
     {
         if (type == null)
             throw new InvalidDataException("Type not found");
 
-        if ((MetricDataType)type.Type == MetricDataType.Number && !int.TryParse(metric.Value, out var _))
+        if ((MetricDataType)type.Item.Type == MetricDataType.Number && !int.TryParse(metric.Value, out var _))
             throw new InvalidDataException("The metric value is not a number");
+
+        if (metric.Unit is not null)
+        {
+            ArgumentNullException.ThrowIfNull(unit);
+
+            if (unit.Type != type.Unit?.Unit.Type)
+            {
+                throw new InvalidDataException("The metric unit is not in the correct type");
+            }
+        }
     }
 
-    public static async Task<IResult> UpdateAsync(UpdateMetric metric, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> UpdateAsync(UpdateMetric metric, IUserContext users, IHealthContext db, ICommonContext commonDb, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -114,12 +134,17 @@ public static class MetricsLogic
 
         var existing = await db.GetMetric(metric.Id) ?? throw new InvalidDataException("Id not found");
 
-        if (existing.PersonId != user.PersonId && !await users.ValidateCaregiverAsync(user, existing.PersonId, RightType.Edit))
+        if (existing.Item.PersonId != user.PersonId && !await users.ValidateCaregiverAsync(user, existing.Item.PersonId, RightType.Edit))
             return TypedResults.Forbid();
 
         var type = await db.GetMetricType((int)metric.Type);
+        Units? unit = null;
 
-        Validate(metric, type);
+        if (metric.Unit is not null)
+        {
+            unit = (await commonDb.GetUnitAsync(metric.Unit.Value))?.Unit;
+        }
+        Validate(metric, unit, type);
 
         await db.Update(metric);
 
@@ -138,7 +163,7 @@ public static class MetricsLogic
         if (existing is null)
             return TypedResults.NoContent();
 
-        if (user.PersonId != existing.PersonId && !await users.ValidateCaregiverAsync(user, existing.PersonId, RightType.Edit))
+        if (user.PersonId != existing.Item.PersonId && !await users.ValidateCaregiverAsync(user, existing.Item.PersonId, RightType.Edit))
             return TypedResults.Forbid();
 
         await db.DeleteMetric(id);
@@ -148,21 +173,21 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> GetTypeAsync(bool? all, long? group, IHealthContext db) => TypedResults.Ok((await db.GetMetricTypes(all, group)).Select(metric => new MetricType
+    public static async Task<IResult> GetTypeAsync(bool? all, long? group, IHealthContext db) => TypedResults.Ok((await db.GetMetricTypes(all, group)).Select(x => new MetricType
     {
-        Name = metric.Name,
-        Description = metric.Description,
-        SummaryType = (MetricSummary)metric.SummaryType,
-        Type = (MetricDataType)metric.Type,
-        Unit = metric.Unit,
-        Id = metric.Id,
-        Visible = metric.Visible,
-        UserEditable = metric.UserEditable,
-        ShowOnDashboard = metric.ShowOnDashboard,
-        GroupId = metric.GroupId
+        Name = x.Item.Name,
+        Description = x.Item.Description,
+        SummaryType = (MetricSummary)x.Item.SummaryType,
+        Type = (MetricDataType)x.Item.Type,
+        Unit = x.Unit?.ToUnit() ?? throw new InvalidDataException("Missing Unit"),
+        Id = x.Item.Id,
+        Visible = x.Item.Visible,
+        UserEditable = x.Item.UserEditable,
+        ShowOnDashboard = x.Item.ShowOnDashboard,
+        GroupId = x.Item.GroupId
     }));
 
-    public static async Task<IResult> CreateTypeAsync(MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> CreateTypeAsync(CreateMetricType metric, IUserContext users, IHealthContext db, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
@@ -178,7 +203,7 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> UpdateTypeAsync(MetricType metric, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> UpdateTypeAsync(UpdateMetricType metric, IUserContext users, IHealthContext db, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)

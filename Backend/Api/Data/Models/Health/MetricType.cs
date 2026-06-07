@@ -15,7 +15,7 @@ public class MetricType
     public string? Description { get; set; }
 
     [Column]
-    public string? Unit { get; set; }
+    public required int Unit { get; set; }
 
     [Column]
     public long Type { get; set; }

@@ -8,7 +8,7 @@ CREATE TABLE Common.Units (
     BaseUnit INT NULL,
     ConversionFactor NUMERIC NULL,
     Formula VARCHAR NULL,
-    CONSTRAINT FK_Units_To_Units FOREIGN KEY (BaseUnit) REFERENCES Common.Units (Id),
+    CONSTRAINT FK_Units_To_Units FOREIGN KEY (BaseUnit) REFERENCES Common.Units (Id)
 );
 
 INSERT INTO
@@ -29,10 +29,10 @@ VALUES
     (5, 'g', 'Gram', 2, null, null),
     (6, 'kg', 'Kilogram', 2, 5, 1000),
     (7, 'mg', 'Milligram', 2, 5, 0.001),
-    (8, 'bpm', 'BPM', 3, null null),
-    (9, 'C', 'Celsius', 4, null null),
-    (10, 'kcal', 'Calories', 5, null null),
-    (11, '%', 'Percent', 6, null null),
+    (8, 'bpm', 'BPM', 3, null, null),
+    (9, 'C', 'Celsius', 4, null, null),
+    (10, 'kcal', 'Calories', 5, null, null),
+    (11, '%', 'Percent', 6, null, null)
 ;
 
 ALTER TABLE
@@ -41,7 +41,7 @@ ADD
     COLUMN Unit INT NULL;
 
 ALTER TABLE
-    Heath.Metric
+    Health.Metric
 ADD
     CONSTRAINT FK_Metric_To_Units FOREIGN KEY (Unit) REFERENCES Common.Units (Id);
 
@@ -54,6 +54,15 @@ ADD
     COLUMN Unit INT NOT NULL DEFAULT 0;
 
 ALTER TABLE
-    Heath.MetricType
+    Health.MetricType
 ADD
     CONSTRAINT FK_MetricType_To_Units FOREIGN KEY (Unit) REFERENCES Common.Units (Id);
+
+UPDATE Health.Metric SET Unit = 8 WHERE Id = 1;
+UPDATE Health.Metric SET Unit = 11 WHERE Id = 2;
+UPDATE Health.Metric SET Unit = 6  WHERE Id = 3;
+UPDATE Health.Metric SET Unit = 2 WHERE Id = 4;
+UPDATE Health.Metric SET Unit = 9 WHERE Id = 5;
+UPDATE Health.Metric SET Unit = 10 WHERE Id = 7;
+UPDATE Health.Metric SET Unit = 1 WHERE Id = 8;
+UPDATE Health.Metric SET Unit = 2 WHERE Id = 17;

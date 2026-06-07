@@ -8,6 +8,7 @@ using Api.Models.Admin;
 using Api.Jobs;
 using Api.Models.Settings;
 using Api.Models.Imports;
+using Api.Models.Common;
 
 namespace Api;
 
@@ -287,6 +288,14 @@ public static class Endpoints
             .Produces((int)HttpStatusCode.Unauthorized);
     }
 
+    public static void MapCommon(this RouteGroupBuilder api)
+    {
+        api.MapGet("/units", CommonLogic.GetUnitsAsync)
+        .RequireAuthorization()
+        .Produces<Unit[]>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+    }
+
     public static void MapImports(this RouteGroupBuilder api)
     {
         /* Importer endpoint */
@@ -323,6 +332,7 @@ public static class Endpoints
         api.MapAuth();
         api.MapPerson();
         api.MapPatients();
+        api.MapCommon();
 
         api.MapMetrics();
         api.MapEvents();

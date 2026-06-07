@@ -83,7 +83,8 @@ public class HealthContextTests : IAsyncLifetime
         {
             Name = "HeartRate",
             Type = (int)Api.Models.Metrics.MetricDataType.Number,
-            SummaryType = (int)Api.Models.Metrics.MetricSummary.Mean
+            SummaryType = (int)Api.Models.Metrics.MetricSummary.Mean,
+            Unit = 0,
         };
         await _db.GetTable<MetricType>().InsertAsync(() => metricType);
 
@@ -95,7 +96,7 @@ public class HealthContextTests : IAsyncLifetime
         // Assert
         Assert.NotNull(result);
         Assert.Single(result);
-        Assert.Equal("HeartRate", result[0].Name);
+        Assert.Equal("HeartRate", result[0].Item.Name);
     }
 
     [Fact(Skip = "Not working")]
@@ -119,7 +120,8 @@ public class HealthContextTests : IAsyncLifetime
         {
             Name = "Temperature",
             Type = (int)Api.Models.Metrics.MetricDataType.Number,
-            SummaryType = (int)Api.Models.Metrics.MetricSummary.Mean
+            SummaryType = (int)Api.Models.Metrics.MetricSummary.Mean,
+            Unit = 0,
         };
         var id = (int)(long)await _db.GetTable<MetricType>().InsertWithIdentityAsync(() => metricType);
 
@@ -130,7 +132,7 @@ public class HealthContextTests : IAsyncLifetime
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("Temperature", result.Name);
+        Assert.Equal("Temperature", result.Item.Name);
     }
 
     [Fact(Skip = "Not working")]
