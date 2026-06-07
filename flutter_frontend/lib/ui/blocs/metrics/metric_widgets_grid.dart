@@ -19,28 +19,24 @@ class MetricWidgetsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (cached.isNotEmpty) {
-      return Wrap(
-        children: cached
-            .map(
-              (type) => ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: 200, maxHeight: 200),
-                child: CommonCard(
-                  padding: false,
-                  child: MetricWidget(
-                    type.a,
-                    type.b,
-                    date,
-                    key: Key(type.a.id.toString()),
-                    person: person,
-                  ),
+    return Wrap(
+      children: cached
+          .map(
+            (type) => ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 200, maxHeight: 200),
+              child: CommonCard(
+                padding: false,
+                child: MetricWidget(
+                  type.a,
+                  type.b,
+                  date,
+                  key: Key(type.a.id.toString()),
+                  person: person,
                 ),
               ),
-            )
-            .toList(),
-      );
-    } else {
-      return Container();
-    }
+            ),
+          )
+          .toList(),
+    );
   }
 }
