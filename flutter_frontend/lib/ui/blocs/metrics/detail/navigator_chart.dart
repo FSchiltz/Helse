@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -40,14 +41,16 @@ class _NavigatorChartState extends State<NavigatorChart> {
 
   void _applyNavigatorRange() {
     _navigatorDebounce?.cancel();
+    var navigatorStart = _navigatorStart;
+    var navigatorEnd = _navigatorEnd;
     final total = widget.date.duration.inMilliseconds;
 
     final start = widget.date.start.add(
-      Duration(milliseconds: (total * _navigatorStart).round()),
+      Duration(milliseconds: (total * navigatorStart).round()),
     );
 
     final end = widget.date.start.add(
-      Duration(milliseconds: (total * _navigatorEnd).round()),
+      Duration(milliseconds: (total * navigatorEnd).round()),
     );
 
     widget.setDate(DateTimeRange(start: start, end: end));
@@ -108,7 +111,9 @@ class _NavigatorChartState extends State<NavigatorChart> {
   void _syncNavigator() {
     final total = widget.date.duration.inMilliseconds;
 
-    if (total <= 0) return;
+    if (total <= 0) {
+      return;
+    }
 
     _navigatorStart =
         widget.subDate.start.difference(widget.date.start).inMilliseconds /
@@ -193,7 +198,7 @@ class _NavigatorChartState extends State<NavigatorChart> {
                 ],
               ),
             ),
-            ],
+          ],
         );
       },
     );
@@ -204,6 +209,7 @@ class _NavigatorChartState extends State<NavigatorChart> {
       LineChartData(
         minX: widget.date.start.millisecondsSinceEpoch.toDouble(),
         maxX: widget.date.end.millisecondsSinceEpoch.toDouble(),
+        minY: 0,
         borderData: FlBorderData(show: false),
         gridData: const FlGridData(show: false),
         titlesData: const FlTitlesData(
@@ -212,6 +218,7 @@ class _NavigatorChartState extends State<NavigatorChart> {
           topTitles: AxisTitles(),
           bottomTitles: AxisTitles(),
         ),
+        lineTouchData: LineTouchData(enabled: false),
 
         lineBarsData: [
           LineChartBarData(

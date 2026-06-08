@@ -120,7 +120,7 @@ class _MetricGraphState extends State<MetricGraph> {
       marks = [
         PointMark(
           position: Varset('date') * Varset('value'),
-          size: SizeEncode(value: 5),
+          size: SizeEncode(value: 3),
           color: ColorEncode(value: theme.secondary),
           selected: {
             'touchMove': {1},
@@ -172,7 +172,7 @@ class _MetricGraphState extends State<MetricGraph> {
         ),
         'value': Variable(
           accessor: (MetricGrouped datumn) => datumn.value,
-          scale: LinearScale(),
+          scale: LinearScale(min: 0),
         ),
         'min': Variable(
           accessor: (MetricGrouped datumn) => datumn.min,
@@ -214,20 +214,22 @@ class _MetricGraphState extends State<MetricGraph> {
   }
 
   List<MetricGrouped> _group(List<Metric> filter) {
-    var buckets = max(50, min(500, (subDate.duration.inHours * 4).round()));
+    debugPrint("Grouping data");
+    final stopwatch = Stopwatch()..start();
+    final buckets = max(50, min(300, (subDate.duration.inHours * 4).round()));
     // First create the buckets
-    var bucketLength = subDate.duration.inMilliseconds / buckets;
+    final bucketLength = subDate.duration.inMilliseconds / buckets;
 
     List<MetricGrouped> groups = [];
     var start = subDate.start;
     var end = subDate.start.add(Duration(milliseconds: bucketLength.toInt()));
 
     for (int i = 0; i < buckets; i++) {
-      var items = filter
+      final items = filter
           .where((e) => e.date.isAfter(start) && e.date.isBefore(end))
           .toList();
 
-      var values = items.map((e) => double.parse(e.value)).toList();
+      final values = items.map((e) => double.parse(e.value)).toList();
       if (values.isNotEmpty) {
         double min = values.min;
         double max = values.max;
@@ -258,6 +260,7 @@ class _MetricGraphState extends State<MetricGraph> {
       end = end.add(Duration(milliseconds: bucketLength.toInt()));
     }
 
+    debugPrint('_group() executed in ${stopwatch.elapsed}');
     return groups;
   }
 }
