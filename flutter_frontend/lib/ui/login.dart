@@ -284,11 +284,11 @@ class _LoginState extends State<LoginPage> {
 
     if (url != null && url.isNotEmpty) {
       textController.text = url;
-      setState(() {
-        _url = url;
-      });
 
       if (mounted) {
+        setState(() {
+          _url = url;
+        });
         var locale = Translation.of(context);
         await _urlChanged(url, locale);
       }

@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/ui/blocs/events/sleep_transition_painter.dart';
 
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 
@@ -22,65 +23,12 @@ class EventLayout {
   });
 }
 
-class SleepTransitionPainter extends CustomPainter {
-  final List<EventLayout> layouts;
-
-  SleepTransitionPainter(this.layouts);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (layouts.length < 2) return;
-
-    final sorted = [...layouts]
-      ..sort((a, b) => a.event.start.compareTo(b.event.start));
-
-    for (int i = 0; i < sorted.length - 1; i++) {
-      final current = sorted[i];
-      final next = sorted[i + 1];
-
-      final gap = next.event.start
-          .difference(current.event.stop)
-          .inMinutes
-          .abs();
-
-      if (gap > 15) continue;
-
-      final connectorX = current.right;
-      List<Color> colors;
-      if (current.centerY > next.centerY) {
-        colors = [next.color.withAlpha(150), current.color.withAlpha(150)];
-      } else {
-        colors = [current.color.withAlpha(150), next.color.withAlpha(150)];
-      }
-      final paint = Paint()
-        ..shader =
-            LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: colors,
-              stops: const [0.0, 1.0],
-            ).createShader(
-              Rect.fromLTRB(
-                connectorX - 1,
-                min(current.centerY, next.centerY),
-                connectorX + 1,
-                max(current.centerY, next.centerY),
-              ),
-            )
-        ..strokeWidth = 2
-        ..strokeCap = StrokeCap.round
-        ..style = PaintingStyle.stroke;
-
-      final path = Path()
-        ..moveTo(connectorX - 1, current.centerY)
-        ..lineTo(next.left + 1, next.centerY);
-
-      canvas.drawPath(path, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant SleepTransitionPainter oldDelegate) => true;
+class TimelineItems {
+  final List<Widget> header = [];
+  final List<Widget> headerDay = [];
+  final List<Widget> grid = [];
+  final List<DateTimeRange> skipped = [];
+  final List<Widget> bars = [];
 }
 
 class EventsTimelineGraph extends StatefulWidget {
@@ -100,6 +48,7 @@ class EventsTimelineGraph extends StatefulWidget {
 }
 
 class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
+  static const double rowLabelWidth = 120.0;
   static const int skippedWidth = 32;
   static const int widthCoef = 2;
   final double boxWidth = 60.0 * widthCoef;
@@ -109,6 +58,12 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
 
   @override
   Widget build(BuildContext context) {
+    final labels = widget.events
+        .map((e) => e.description ?? '')
+        .toSet()
+        .toList();
+    final rowCount = labels.length;
+
     return widget.events.isEmpty
         ? Padding(
             padding: const EdgeInsets.only(top: 16.0),
@@ -117,20 +72,22 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
               style: Theme.of(context).textTheme.labelLarge,
             ),
           )
-        : buildChart(widget.events, context);
+        : Row(
+            children: [
+              Flexible(child: buildRowLabels(labels)),
+              Flexible(child: buildChart(widget.events, rowCount, context)),
+            ],
+          );
   }
 
-  Widget buildChart(List<Event> events, BuildContext context) {
-    var viewRange = _minutesBetween(widget.date.start, widget.date.end) / 60;
-
-    List<Widget> headerItems = [];
-    List<Widget> headerDayItems = [];
-    List<Widget> gridColumns = [];
+  TimelineItems _group(List<Event> events) {
+    final stopwatch = Stopwatch()..start();
+    final timeline = TimelineItems();
     DateTime tempDate = widget.date.start;
     bool skipping = false;
-    List<DateTimeRange> skipped = [];
     DateTime startSkipping = widget.date.start;
 
+    var viewRange = _minutesBetween(widget.date.start, widget.date.end) / 60;
     for (int i = 0; i <= viewRange; i++) {
       var currentDate = tempDate;
       tempDate = tempDate.add(const Duration(hours: 1));
@@ -143,23 +100,25 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
 
       if (existing.isNotEmpty) {
         if (skipping || currentDate.hour < 1) {
-          headerDayItems.add(buildDayHeader(tempDate, context));
+          timeline.headerDay.add(buildDayHeader(tempDate, context));
         } else {
-          headerDayItems.add(_fillerWidget());
+          timeline.headerDay.add(_fillerWidget());
         }
 
-        headerItems.add(buildHeader(currentDate, context));
-        gridColumns.add(buildGrid());
+        timeline.header.add(buildHeader(currentDate, context));
+        timeline.grid.add(buildGrid());
 
         if (skipping) {
           skipping = false;
-          skipped.add(DateTimeRange(start: startSkipping, end: currentDate));
+          timeline.skipped.add(
+            DateTimeRange(start: startSkipping, end: currentDate),
+          );
         }
       } else {
         if (!skipping) {
-          headerItems.add(_skipWidget(context));
-          gridColumns.add(_skipWidget(context));
-          headerDayItems.add(_skipWidget(context));
+          timeline.header.add(_skipWidget(context));
+          timeline.grid.add(_skipWidget(context));
+          timeline.headerDay.add(_skipWidget(context));
           skipping = true;
           startSkipping = currentDate;
         }
@@ -167,15 +126,17 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     }
 
     if (skipping) {
-      skipped.add(DateTimeRange(start: startSkipping, end: tempDate));
+      timeline.skipped.add(DateTimeRange(start: startSkipping, end: tempDate));
     }
 
-    final chartBars = buildChartBars(events, skipped);
-    final rowCount = events
-        .map((e) => e.description)
-        .toSet()
-        .length
-        .clamp(1, 9999);
+    buildChartBars(events, timeline);
+
+    debugPrint('grouped in ${stopwatch.elapsed} with $viewRange bucket');
+    return timeline;
+  }
+
+  Widget buildChart(List<Event> events, int rowCount, BuildContext context) {
+    final timeline = _group(events);
 
     return Scrollbar(
       interactive: true,
@@ -188,13 +149,13 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
           child: Stack(
             fit: StackFit.loose,
             children: [
-              Row(children: gridColumns),
-              SizedBox(height: 25.0, child: Row(children: headerDayItems)),
+              Row(children: timeline.grid),
+              SizedBox(height: 25.0, child: Row(children: timeline.headerDay)),
               Container(
                 margin: const EdgeInsets.only(top: 25.0),
                 child: SizedBox(
                   height: 25.0,
-                  child: Row(children: headerItems),
+                  child: Row(children: timeline.header),
                 ),
               ),
               Positioned(
@@ -211,9 +172,12 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
               Container(
                 margin: const EdgeInsets.only(top: 50.0),
                 child: SizedBox(
-                  width: max(gridColumns.length * boxWidth, 500),
+                  width: max(timeline.grid.length * boxWidth, 500),
                   height: rowCount * 29.0 + 40,
-                  child: Stack(clipBehavior: Clip.none, children: chartBars),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: timeline.bars,
+                  ),
                 ),
               ),
             ],
@@ -290,10 +254,31 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     return max(6, _minutesBetween(start, end));
   }
 
-  List<Widget> buildChartBars(
-    List<Event> events,
-    List<DateTimeRange<DateTime>> skipped,
-  ) {
+  Widget buildRowLabels(List<String> labels) {
+    return SizedBox(
+      width: rowLabelWidth,
+      child: Column(
+        children: labels.map((label) {
+          return SizedBox(
+            height: 29.0,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Text(
+                  label,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  void buildChartBars(List<Event> events, TimelineItems timeline) {
     _eventLayouts.clear();
 
     final Map<String?, List<Event>> orderedData = {};
@@ -302,7 +287,6 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
       orderedData.putIfAbsent(n.description, () => []).add(n);
     }
 
-    final List<Widget> bars = [];
     int rowIndex = 0;
 
     for (final group in orderedData.entries) {
@@ -317,7 +301,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
           n.description ?? '',
           context,
         );
-        final left = _distanceToLeftBorder(start, skipped);
+        final left = _distanceToLeftBorder(start, timeline.skipped);
 
         _eventLayouts.add(
           EventLayout(
@@ -329,7 +313,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
           ),
         );
 
-        bars.add(
+        timeline.bars.add(
           Positioned(
             left: left,
             top: rowTop,
@@ -345,15 +329,6 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
                     color: color.withAlpha(150),
                     borderRadius: BorderRadius.circular(3),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: Text(
-                      n.description ?? "",
-                      maxLines: 1,
-                      overflow: TextOverflow.clip,
-                      style: const TextStyle(fontSize: 10),
-                    ),
-                  ),
                 ),
               ),
             ),
@@ -363,8 +338,6 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
 
       rowIndex++;
     }
-
-    return bars;
   }
 
   Widget _skipWidget(BuildContext context) => Container(
