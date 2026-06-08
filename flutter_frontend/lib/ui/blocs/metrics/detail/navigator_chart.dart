@@ -51,17 +51,11 @@ class _NavigatorChartState extends State<NavigatorChart> {
         setState(() {
           if (isLeft) {
             setState(() {
-              _navigatorStart = (_navigatorStart + delta).clamp(
-                0.0,
-                _navigatorEnd - 0.05,
-              );
+              _navigatorStart += delta;
             });
           } else {
             setState(() {
-              _navigatorEnd = (_navigatorEnd + delta).clamp(
-                _navigatorStart + 0.05,
-                1.0,
-              );
+              _navigatorEnd += delta;
             });
           }
         });
@@ -70,9 +64,9 @@ class _NavigatorChartState extends State<NavigatorChart> {
         _applyNavigatorRange();
       },
       child: Container(
-        width: 20,
+        width: 10,
         decoration: BoxDecoration(color: theme.secondary),
-        child: Icon(Icons.drag_indicator, color: theme.onSecondary, size: 14),
+        child: Icon(Icons.drag_indicator, color: theme.onSecondary, size: 10),
       ),
     );
   }
@@ -199,7 +193,7 @@ class _NavigatorChartState extends State<NavigatorChart> {
                   ),
 
                   Positioned(
-                    left: right - 20,
+                    left: right - 10,
                     top: 0,
                     bottom: 0,
                     child: _navigatorHandle(false, width),
