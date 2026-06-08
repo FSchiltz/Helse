@@ -637,6 +637,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Summary'**
   String get summary;
+
+  /// No description provided for @total.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get total;
+
+  /// No description provided for @mean.
+  ///
+  /// In en, this message translates to:
+  /// **'Average'**
+  String get mean;
 }
 
 class _AppLocalizationsDelegate

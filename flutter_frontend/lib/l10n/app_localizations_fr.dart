@@ -291,4 +291,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get summary => 'Résumé';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get mean => 'Average';
 }

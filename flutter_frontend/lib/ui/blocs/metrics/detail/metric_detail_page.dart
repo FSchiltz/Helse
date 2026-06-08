@@ -51,7 +51,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
       start,
       end,
       person: widget.person,
-      simple: false,
+      tile: null,
     );
   }
 

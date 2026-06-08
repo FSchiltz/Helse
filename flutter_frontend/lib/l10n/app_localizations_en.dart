@@ -291,4 +291,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get summary => 'Summary';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get mean => 'Average';
 }

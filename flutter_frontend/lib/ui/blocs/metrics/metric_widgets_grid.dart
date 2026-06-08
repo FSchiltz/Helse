@@ -11,11 +11,13 @@ class MetricWidgetsGrid extends StatelessWidget {
     required this.date,
     this.person,
     this.extend,
+    this.tile = 30,
   });
   final DateTimeRange<DateTime> date;
   final int? person;
   final List<Pair<MetricType, OrderedItem>> cached;
   final double? extend;
+  final int tile;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,10 @@ class MetricWidgetsGrid extends StatelessWidget {
       children: cached
           .map(
             (type) => ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 200, maxHeight: 200),
+              constraints: BoxConstraints(
+                maxWidth: extend ?? 200,
+                maxHeight: 200,
+              ),
               child: CommonCard(
                 padding: false,
                 child: MetricWidget(
@@ -34,6 +39,7 @@ class MetricWidgetsGrid extends StatelessWidget {
                   date,
                   key: Key(type.a.id.toString()),
                   person: person,
+                  tile: tile,
                 ),
               ),
             ),

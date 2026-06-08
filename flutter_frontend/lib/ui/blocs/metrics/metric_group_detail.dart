@@ -36,7 +36,9 @@ class _MetricGroupDetailState extends State<MetricGroupDetail> {
         if (widget.person == null) {
           settings = await Dependencies.logics.settings.getMetrics();
         } else {
-          settings = await Dependencies.logics.patientsSettings.getMetrics(widget.person);
+          settings = await Dependencies.logics.patientsSettings.getMetrics(
+            widget.person,
+          );
         }
 
         for (var item in model) {
@@ -78,16 +80,21 @@ class _MetricGroupDetailState extends State<MetricGroupDetail> {
       ),
       body: cached == null
           ? const HelseLoader()
-          : BlocListener<SettingsBloc<bool>, bool>(
-              listener: (context, state) {
-                _getData();
-              },
-              bloc: Dependencies.logics.settings.metrics,
-              child: MetricWidgetsGrid(
-                cached: cached,
-                person: widget.person,
-                date: widget.date,
-                extend: 400,
+          : LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                child: BlocListener<SettingsBloc<bool>, bool>(
+                  listener: (context, state) {
+                    _getData();
+                  },
+                  bloc: Dependencies.logics.settings.metrics,
+                  child: MetricWidgetsGrid(
+                    cached: cached,
+                    person: widget.person,
+                    date: widget.date,
+                    extend: constraints.maxWidth,
+                    tile: 100,
+                  ),
+                ),
               ),
             ),
     );
