@@ -24,7 +24,7 @@ class _UsersViewState extends State<UsersView> {
     return LoadingBuilder(
       _getData,
       builder: (context, data, reset) {
-        var locale = Translation.locale(context);
+        var locale = Translation.of(context);
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,

@@ -46,7 +46,7 @@ class _SignupState extends State<UserAdd> {
 
   @override
   Widget build(BuildContext context) {
-    var locale = Translation.locale(context);
+    var locale = Translation.of(context);
     return SquareDialog(
       title: const Text("Add a new user"),
       actions: [
@@ -67,7 +67,7 @@ class _SignupState extends State<UserAdd> {
             children: [
               UserRightInput(
                 value: _type,
-                UserType.values.toList(),
+                UserType.values.where((e) => e.index > 0).toList(),
                 (value) => setState(() {
                   _type = value;
                 }),

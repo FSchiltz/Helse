@@ -65,7 +65,7 @@ class _EventsGraphState extends State<EventsGraph> {
   Widget build(BuildContext context) {
     var event = _event;
     var id = _event?.id;
-    var locale = Translation.locale(context);
+    var locale = Translation.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [

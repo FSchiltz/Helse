@@ -67,7 +67,7 @@ class _TreatementState extends State<TreatmentAdd> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
-    var locale = Translation.locale(context);
+    var locale = Translation.of(context);
     return SquareDialog(
       title:  Text(locale.addItem(locale.treatment)),
       actions: [

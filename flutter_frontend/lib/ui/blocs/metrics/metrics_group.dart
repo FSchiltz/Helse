@@ -39,13 +39,7 @@ class _MetricsGroupState extends State<MetricsGroup> {
 
     _cache = widget.typesCache;
 
-    if (widget.group.showOnDashboard == true) {
-      _getData();
-    } else {
-      setState(() {
-        types = [];
-      });
-    }
+    _getData();
   }
 
   void _getData() async {
@@ -68,7 +62,9 @@ class _MetricsGroupState extends State<MetricsGroup> {
         if (widget.person == null) {
           settings = await Dependencies.logics.settings.getMetrics();
         } else {
-          settings = await Dependencies.logics.patientsSettings.getMetrics(widget.person);
+          settings = await Dependencies.logics.patientsSettings.getMetrics(
+            widget.person,
+          );
         }
         // filter using the user settings
 
@@ -95,39 +91,41 @@ class _MetricsGroupState extends State<MetricsGroup> {
   @override
   Widget build(BuildContext context) {
     var cached = types;
-
-    Widget body;
-
-    body = cached == null
-        ? const HelseLoader()
-        : BlocListener<SettingsBloc<bool>, bool>(
-            listener: (context, state) {
-              _getData();
-            },
-            bloc: Dependencies.logics.settings.metrics,
-            child: MetricWidgetsGrid(
-              date: widget.date,
-              person: widget.person,
-              cached: cached,
-            ),
-          );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              widget.group.name,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            SizedBox(width: 12),
-            _openAll(context),
-          ],
-        ),
-        body,
-        SizedBox(height: 16),
-      ],
+    var theme = Theme.of(context).colorScheme;
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(left: BorderSide(color: theme.tertiary, width: 1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(width: 6),
+              Text(
+                widget.group.name,
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              SizedBox(width: 12),
+              _openAll(context),
+            ],
+          ),
+          cached == null
+              ? const HelseLoader()
+              : BlocListener<SettingsBloc<bool>, bool>(
+                  listener: (context, state) {
+                    _getData();
+                  },
+                  bloc: Dependencies.logics.settings.metrics,
+                  child: MetricWidgetsGrid(
+                    date: widget.date,
+                    person: widget.person,
+                    cached: cached,
+                  ),
+                ),
+        ],
+      ),
     );
   }
 

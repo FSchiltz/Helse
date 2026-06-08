@@ -98,7 +98,7 @@ class _PatientAddState extends State<PatientAdd> {
         widget.callback.call();
         if (localContext.mounted) {
           Navigator.of(localContext).pop();
-          Notify.show(Translation.locale(localContext).added);
+          Notify.show(Translation.of(localContext).added);
         }
 
         setState(() {
@@ -116,7 +116,7 @@ class _PatientAddState extends State<PatientAdd> {
 
   @override
   Widget build(BuildContext context) {
-    var locale = Translation.locale(context);
+    var locale = Translation.of(context);
     return SquareDialog(
       title: Text(locale.add),
       actions: [

@@ -16,7 +16,7 @@ class Patients extends StatelessWidget {
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
     final cards = data.map((p) => PatientsCard(p, reset)).toList();
-    var locale = Translation.locale(context);
+    var locale = Translation.of(context);
     return SizedBox(
       width: 320,
       child: Column(

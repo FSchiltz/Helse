@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/square_text_field.dart';
 
@@ -52,7 +53,7 @@ class MetricTypeAddForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
-
+    var locale = Translation.of(context);
     return Column(
       children: [
         SquareTextField(
@@ -60,7 +61,7 @@ class MetricTypeAddForm extends StatelessWidget {
           icon: Icons.person_sharp,
           controller: controllerName,
           focusNode: focusNodeName,
-          label: "Name",
+          label: locale.name,
           validator: validateName,
           onEditingComplete: () => focusNodeDescription.requestFocus(),
         ),
@@ -70,7 +71,7 @@ class MetricTypeAddForm extends StatelessWidget {
           theme: theme,
           controller: controllerDescription,
           focusNode: focusNodeDescription,
-          label: "Description",
+          label: locale.description,
           onEditingComplete: () => focusNodeUnit.requestFocus(),
         ),
         const SizedBox(height: 10),
@@ -80,7 +81,7 @@ class MetricTypeAddForm extends StatelessWidget {
               .map((x) => DropDownItem(x.id, x.description ?? x.code))
               .toList(),
           (value) => unitCallback.call(value ?? 0),
-          label: 'Unit',
+          label: locale.unit,
         ),
         const SizedBox(height: 10),
         EnumInput(
@@ -94,21 +95,21 @@ class MetricTypeAddForm extends StatelessWidget {
           value: group,
           groups.map((x) => DropDownItem(x.id, x.name)).toList(),
           (value) => groupCallback.call(value ?? 0),
-          label: 'Group',
+          label: locale.group,
         ),
         const SizedBox(height: 10),
         EnumInput(
           value: summary,
           MetricSummary.values.map((x) => DropDownItem(x, x.name)).toList(),
           (value) => summaryCallback.call(value),
-          label: 'Summary',
+          label: locale.summary,
         ),
         const SizedBox(height: 10),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
-              const Text("Visible: "),
+              Text(locale.visible),
               StatefullCheck(visible, visibleCallback),
             ],
           ),

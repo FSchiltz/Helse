@@ -619,6 +619,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Code'**
   String get code;
+
+  /// No description provided for @unit.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get unit;
+
+  /// No description provided for @group.
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get group;
+
+  /// No description provided for @summary.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
+  String get summary;
 }
 
 class _AppLocalizationsDelegate

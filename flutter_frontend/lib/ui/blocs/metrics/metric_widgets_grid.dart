@@ -17,38 +17,28 @@ class MetricWidgetsGrid extends StatelessWidget {
   final List<Pair<MetricType, OrderedItem>> cached;
   final double? extend;
 
-  List<Widget> _buildGrid() {
-    List<Widget> items = cached
-        .map(
-          (type) => CommonCard(
-            padding: false,
-            child: MetricWidget(
-              type.a,
-              type.b,
-              date,
-              key: Key(type.a.id.toString()),
-              person: person,
-            ),
-          ),
-        )
-        .toList();
-
-    return items;
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (cached.isNotEmpty) {
-      return GridView.extent(
-        maxCrossAxisExtent: extend ?? 200,
-        shrinkWrap: true,
-        crossAxisSpacing: 2,
-        mainAxisSpacing: 2,
-        physics: const BouncingScrollPhysics(),
-        children: _buildGrid(),
-      );
-    } else {
-      return Container();
-    }
+    return Wrap(
+      runSpacing: 6,
+      spacing: 6,
+      children: cached
+          .map(
+            (type) => ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 200, maxHeight: 200),
+              child: CommonCard(
+                padding: false,
+                child: MetricWidget(
+                  type.a,
+                  type.b,
+                  date,
+                  key: Key(type.a.id.toString()),
+                  person: person,
+                ),
+              ),
+            ),
+          )
+          .toList(),
+    );
   }
 }

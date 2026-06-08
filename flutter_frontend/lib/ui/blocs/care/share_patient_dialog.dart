@@ -36,7 +36,7 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
 
   @override
   Widget build(BuildContext context) {
-    var locale = Translation.locale(context);
+    var locale = Translation.of(context);
     return SquareDialog(
       title: Text("${locale.share} ${widget.patient.name} ${widget.patient.surname}"),
       content: LoadingBuilder(

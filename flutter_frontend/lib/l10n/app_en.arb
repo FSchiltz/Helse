@@ -218,5 +218,11 @@
     "id": "Id",
     "@id": {},
     "code": "Code",
-    "@code": {}
+    "@code": {},
+    "unit": "Unit",
+    "@unit": {},
+    "group": "Group",
+    "@group": {},
+    "summary" : "Summary",
+    "@summary" : {}
 }

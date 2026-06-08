@@ -282,4 +282,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get code => 'Code';
+
+  @override
+  String get unit => 'Unit';
+
+  @override
+  String get group => 'Group';
+
+  @override
+  String get summary => 'Summary';
 }

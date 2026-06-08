@@ -108,7 +108,7 @@ class _MetricSettingsState extends State<MetricSettings> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var locale = Translation.locale(context);
+    var locale = Translation.of(context);
     return DefaultTabController(
       length: 2,
       child: Column(

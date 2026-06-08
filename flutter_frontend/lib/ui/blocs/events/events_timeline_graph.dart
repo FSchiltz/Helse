@@ -35,7 +35,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
         ? Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: Text(
-              Translation.locale(context).nodata,
+              Translation.of(context).nodata,
               style: Theme.of(context).textTheme.labelLarge,
             ),
           )
@@ -243,7 +243,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
         var end = n.stop.toLocal();
 
         var width = _distanceInMinutes(start, end);
-        var color = Dependencies.theme.stateColor(n.description ?? '');
+        var color = Dependencies.theme.stateColor(n.description ?? '', context);
         var left = _distanceToLeftBorder(start, skipped);
         if (width > 0) {
           chartGroup.add(

@@ -150,7 +150,7 @@ class _HomeState extends State<Home> {
                   color: theme.colorScheme.onSurface,
                 ),
                 itemBuilder: (context) {
-                  var locale = Translation.locale(context);
+                  var locale = Translation.of(context);
                   return [
                     PopupMenuItem<int>(
                       value: 0,
@@ -258,13 +258,13 @@ class _HomeState extends State<Home> {
     var tasks = Dependencies.logics.fit.executions();
 
     if (context.mounted) {
-      _showTaskDialog(context, tasks, Translation.locale(context).syncHistory);
+      _showTaskDialog(context, tasks, Translation.of(context).syncHistory);
     }
   }
 
   void _showJobs(BuildContext context) {
     var tasks = Dependencies.logics.import.executions();
-    _showTaskDialog(context, tasks, Translation.locale(context).importHistory);
+    _showTaskDialog(context, tasks, Translation.of(context).importHistory);
   }
 
   void _showTaskDialog(

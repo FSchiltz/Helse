@@ -49,7 +49,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    var locale = Translation.locale(context);
+    var locale = Translation.of(context);
     return Scaffold(
       appBar: AppBar(
         actions: [

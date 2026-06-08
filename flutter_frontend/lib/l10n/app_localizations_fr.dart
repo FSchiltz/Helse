@@ -272,14 +272,23 @@ class AppLocalizationsFr extends AppLocalizations {
   String get sessions => 'Sessions de connexion';
 
   @override
-  String get cleanSessions => 'Remove all sessions';
+  String get cleanSessions => 'Supprimer toutes les sessions';
 
   @override
-  String get constants => 'Constants';
+  String get constants => 'Constantes';
 
   @override
   String get id => 'Id';
 
   @override
   String get code => 'Code';
+
+  @override
+  String get unit => 'Unité';
+
+  @override
+  String get group => 'Groupe';
+
+  @override
+  String get summary => 'Résumé';
 }

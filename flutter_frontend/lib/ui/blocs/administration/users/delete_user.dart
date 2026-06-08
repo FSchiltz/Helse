@@ -10,7 +10,7 @@ class DeleteUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var locale = Translation.locale(context);
+    var locale = Translation.of(context);
     return AlertDialog(
       icon: const Icon(Icons.delete_sharp),
       title: Text(locale.deleteUser),

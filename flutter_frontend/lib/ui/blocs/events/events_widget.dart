@@ -55,64 +55,60 @@ class _EventWidgetState extends State<EventWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return CommonCard(
-      padding: false,
-      child: InkWell(
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (context) => EventDetailPage(
-              date: widget.date,
-              type: widget.type,
-              person: widget.person,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(width: 6),
+            Text(
+              widget.type.name,
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            SizedBox(width: 12),
+            IconButton(
+              onPressed: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return EventAdd(
+                      _resetEvents,
+                      widget.type,
+                      person: widget.person,
+                    );
+                  },
+                );
+              },
+              icon: const Icon(Icons.add_sharp),
+            ),
+          ],
+        ),
+        CommonCard(
+          padding: false,
+          child: InkWell(
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (context) => EventDetailPage(
+                  date: widget.date,
+                  type: widget.type,
+                  person: widget.person,
+                ),
+              ),
+            ),
+            child: LoadingBuilder(
+              _getData,
+              builder: (ctx, data, reset) {
+                return Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: EventsSummary(data, widget.date),
+                );
+              },
             ),
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                    child: Text(
-                      widget.type.name,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      showDialog<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return EventAdd(
-                            _resetEvents,
-                            widget.type,
-                            person: widget.person,
-                          );
-                        },
-                      );
-                    },
-                    icon: const Icon(Icons.add_sharp),
-                  ),
-                ],
-              ),
-              LoadingBuilder(
-                _getData,
-                builder: (ctx, data, reset) {
-                  return Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: EventsSummary(data, widget.date),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
+      ],
     );
   }
 }

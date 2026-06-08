@@ -1,17 +1,27 @@
 import 'dart:math';
-import 'dart:ui';
+
+import 'package:flutter/material.dart';
 
 class ThemeHelper {
   final Map<String, Color> colors = {};
 
-  Color stateColor(String state) {
+  Color stateColor(String state, BuildContext context) {
     if (colors.containsKey(state)) {
       return colors[state]!;
     } else {
       var r = Random();
-      var color = Color.fromRGBO(r.nextInt(55) + 100, r.nextInt(105) + 150, r.nextInt(105) + 100, 1);
+      var color = Color.fromRGBO(
+        r.nextInt(155) + 100,
+        r.nextInt(155) + 100,
+        r.nextInt(155) + 100,
+        1,
+      );
       colors[state] = color;
-      return color;
+
+      var brightness = MediaQuery.of(context).platformBrightness;
+      if(brightness == Brightness.dark)      return color;
+
+      return Color.from(red: color.r /2, green: color.g/ 2, blue: color.b /2, alpha: 1);
     }
   }
 }

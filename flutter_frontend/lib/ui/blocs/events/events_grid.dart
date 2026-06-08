@@ -64,6 +64,7 @@ class _EventsGridState extends State<EventsGrid> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
     return types == null
         ? const HelseLoader()
         : BlocListener<SettingsBloc<bool>, bool>(
@@ -76,11 +77,20 @@ class _EventsGridState extends State<EventsGrid> {
               child: Wrap(
                 runAlignment: WrapAlignment.start,
                 alignment: WrapAlignment.start,
+                spacing: 24,
+                runSpacing: 16,
                 children:
                     types
                         ?.map(
-                          (type) => Padding(
-                            padding: const EdgeInsets.only(bottom: 12.0),
+                          (type) => Container(
+                            decoration: BoxDecoration(
+                              border: Border(
+                                left: BorderSide(
+                                  color: theme.tertiary,
+                                  width: 1,
+                                ),
+                              ),
+                            ),
                             child: EventWidget(
                               type,
                               widget.date,

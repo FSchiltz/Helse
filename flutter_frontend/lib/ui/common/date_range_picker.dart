@@ -29,7 +29,7 @@ class DateRangePicker extends StatelessWidget {
       presets.add(
         MenuItemButton(
           onPressed: () => setDate(preset),
-          child: Text(Translation.locale(context).initialrange),
+          child: Text(Translation.of(context).initialrange),
         ),
       );
     }

@@ -63,7 +63,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     return LoadingBuilder(
       _getData,
       builder: (context, data, reset) {
-        var locale = Translation.locale(context);
+        var locale = Translation.of(context);
         return Padding(
           padding: const EdgeInsets.all(32.0),
           child: Column(

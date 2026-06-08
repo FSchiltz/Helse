@@ -4,23 +4,13 @@ namespace Api.Helpers;
 
 public static class EventHelpers
 {
-    private const int DayPerMonth = 30;
-    private const int DayPerYear = 365;
-    private enum Steps
-    {
-        Hours,
-        Days,
-        Months,
-        Years,
-    }
-
     public static EventSummary[] Summarize(this IEnumerable<Data.Models.Health.Event> events, DateTime start, DateTime end)
     {
         // first find the number of steps
-        var (kind, count) = GetSteps(start, end);
+        var (bucketCount, secondPerBucket) = GetSteps(start, end);
 
         // create the list of summary
-        var data = new EventSummary[count];
+        var data = new EventSummary[bucketCount];
         for (int i = 0; i < data.Length; i++)
         {
             data[i] = new EventSummary([]);
@@ -30,8 +20,8 @@ public static class EventHelpers
         foreach (var e in events)
         {
             // cut the steps into the different summary    
-            var steps = Cut(kind, e, start, end);
-            if (steps.Count > count)
+            var steps = Cut(secondPerBucket, e, start, end);
+            if (steps.Count > bucketCount)
                 throw new Exception("Date mismatched");
 
             // add to the existing summary
@@ -52,7 +42,7 @@ public static class EventHelpers
         return data;
     }
 
-    private static List<(int, int)> Cut(Steps kind, Data.Models.Health.Event e, DateTime start, DateTime end)
+    private static List<(int, int)> Cut(double secondPerBucket, Data.Models.Health.Event e, DateTime start, DateTime end)
     {
         var steps = new List<(int, int)>();
         var startDate = start;
@@ -60,7 +50,7 @@ public static class EventHelpers
 
         do
         {
-            var endDate = AddDuration(startDate, kind);
+            var endDate = startDate.AddSeconds(secondPerBucket);
 
             // First check if the event is inside the current tick
             if (e.Start < endDate && e.Stop > startDate)
@@ -68,14 +58,8 @@ public static class EventHelpers
                 // end and start of the common range between the tick and the event
                 var eventEnd = Min(end, endDate);
                 var eventStart = Max(start, startDate);
+                var count = (int)((eventEnd - eventStart).TotalSeconds / secondPerBucket);
 
-                var count = kind switch
-                {
-                    Steps.Hours => (int)(eventEnd - eventStart).TotalHours,
-                    Steps.Days => (int)(eventEnd - eventStart).TotalDays,
-                    Steps.Months => (int)(eventEnd - eventStart).TotalDays / DayPerMonth,
-                    _ => (int)(eventEnd - eventStart).TotalDays / DayPerYear,
-                };
                 steps.Add((tick, count));
             }
             else
@@ -92,15 +76,8 @@ public static class EventHelpers
     }
 
     public static DateTime Min(DateTime date1, DateTime date2) => date1 < date2 ? date1 : date2;
-    public static DateTime Max(DateTime date1, DateTime date2) => date1 > date2 ? date1 : date2;
 
-    private static DateTime AddDuration(DateTime date, Steps kind) => kind switch
-    {
-        Steps.Hours => date.AddHours(1),
-        Steps.Days => date.AddDays(1),
-        Steps.Months => date.AddMonths(1),
-        _ => date.AddYears(1),
-    };
+    public static DateTime Max(DateTime date1, DateTime date2) => date1 > date2 ? date1 : date2;
 
     /// <summary>
     /// Find the best steps between two date
@@ -108,28 +85,15 @@ public static class EventHelpers
     /// <param name="start"></param>
     /// <param name="end"></param>
     /// <returns></returns>
-    private static (Steps, int) GetSteps(DateTime start, DateTime end)
+    private static (int BucketCount, double SecondPerBucket) GetSteps(DateTime start, DateTime end)
     {
+        const int maxBucket = 200;
         var duration = end - start;
-        if (duration.TotalHours <= 24 * 7)
+        if (duration.TotalSeconds <= maxBucket)
         {
-            // less than a week, we can show in hour
-            return (Steps.Hours, (int)duration.TotalHours);
+            return ((int)duration.TotalSeconds, 1);
         }
 
-        var totalDays = Math.Ceiling(duration.TotalDays);
-        if (totalDays <= DayPerMonth * 3)
-        {
-            // less than 3 month, show in day
-            return (Steps.Days, (int)totalDays);
-        }
-
-        if (totalDays <= DayPerYear * 3)
-        {
-            // less than 3 year
-            return (Steps.Months, (int)Math.Ceiling(totalDays / DayPerMonth));
-        }
-
-        return (Steps.Years, (int)Math.Ceiling(totalDays / DayPerYear));
+        return (maxBucket, duration.TotalSeconds / maxBucket);
     }
 }

@@ -18,7 +18,7 @@ class EventsSummary extends StatelessWidget {
         ? Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: Text(
-              Translation.locale(context).nodata,
+              Translation.of(context).nodata,
               style: Theme.of(context).textTheme.labelLarge,
             ),
           )
@@ -34,26 +34,27 @@ class EventTimeline extends StatelessWidget {
 
   List<Widget> buildChartBars(
     List<EventSummary> data,
-    ColorScheme colorScheme, {
+    BuildContext context, {
     required double width,
   }) {
+    var theme = Theme.of(context).colorScheme;
     List<Widget> chartBars = [];
 
     int tick = 0;
-
     int max = userData.map((x) => x.data.values.map((y) => y as int).sum).max;
     var coeff = min(150 / max, 60.0);
 
     for (var d in data) {
       chartBars.add(
         Padding(
-          padding: EdgeInsets.all(4.0 * width),
+          padding: EdgeInsets.all(1.0 * width),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: _map(
               d.data,
               tick,
-              colorScheme.primary,
+              theme.primary,
+              context,
               coeff: coeff,
               widthCoeff: width,
             ),
@@ -69,7 +70,7 @@ class EventTimeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var maxWidth = (userData.length) * 28.0;
+    var maxWidth = (userData.length) * 14.0;
 
     return LayoutBuilder(
       builder: (b, constraints) {
@@ -80,11 +81,7 @@ class EventTimeline extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: buildChartBars(
-              userData,
-              Theme.of(context).colorScheme,
-              width: widthCoeff,
-            ),
+            children: buildChartBars(userData, context, width: widthCoeff),
           ),
         );
       },
@@ -94,7 +91,8 @@ class EventTimeline extends StatelessWidget {
   List<Widget> _map(
     Map<String, dynamic> p,
     int tick,
-    Color empty, {
+    Color empty,
+    BuildContext context, {
     required double coeff,
     required double widthCoeff,
   }) {
@@ -108,9 +106,9 @@ class EventTimeline extends StatelessWidget {
             message: entry.key,
             child: Container(
               decoration: BoxDecoration(
-                color: Dependencies.theme.stateColor(entry.key),
+                color: Dependencies.theme.stateColor(entry.key, context),
               ),
-              width: 20 * widthCoeff,
+              width: 12 * widthCoeff,
               height: coeff * count,
             ),
           ),
@@ -119,21 +117,7 @@ class EventTimeline extends StatelessWidget {
     }
 
     if (widgets.isEmpty) {
-      widgets.add(
-        SizedBox(
-          width: 20 * widthCoeff,
-          child: Center(
-            child: Container(
-              decoration: BoxDecoration(
-                color: empty,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              width: 4,
-              height: 4,
-            ),
-          ),
-        ),
-      );
+      widgets.add(SizedBox(width: 12 * widthCoeff));
     }
 
     return widgets;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 
@@ -15,6 +16,7 @@ class MetricTypeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var locale = Translation.of(context);
     return LoadingBuilder(
       _getData,
       builder: (context, data, reset) {
@@ -45,18 +47,21 @@ class MetricTypeView extends StatelessWidget {
                 ],
               ),
             ),
+            Text(
+              "Setup the default metric type information for new user. Those settings can be overidden by the user",
+            ),
             Flexible(
               child: SingleChildScrollView(
                 child: FittedBox(
                   child: DataTable(
-                    columns: const [
-                      DataColumn(label: Expanded(child: Text("Id"))),
-                      DataColumn(label: Expanded(child: Text("Name"))),
-                      DataColumn(label: Expanded(child: Text("Description"))),
+                    columns:  [
+                      DataColumn(label: Expanded(child: Text(locale.id))),
+                      DataColumn(label: Expanded(child: Text(locale.name))),
+                      DataColumn(label: Expanded(child: Text(locale.description))),
                       DataColumn(label: Expanded(child: Text("Unit"))),
-                      DataColumn(label: Expanded(child: Text("Type"))),
+                      DataColumn(label: Expanded(child: Text(locale.type))),
                       DataColumn(label: Expanded(child: Text("Summary"))),
-                      DataColumn(label: Expanded(child: Text("Visible"))),
+                      DataColumn(label: Expanded(child: Text(locale.visible))),
                       DataColumn(
                         label: Expanded(child: Text("Show on dashboard")),
                       ),

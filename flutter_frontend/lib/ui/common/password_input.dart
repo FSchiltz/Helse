@@ -43,7 +43,7 @@ class _PasswordInputState extends State<PasswordInput> {
       controller: widget.controller,
       obscureText: _obscurePassword,
       focusNode: widget.focus,
-      label: widget.text ?? Translation.locale(context).password,
+      label: widget.text ?? Translation.of(context).password,
       icon: Icons.password_sharp,
       suffixIcon: iconButton,
       type: TextInputType.visiblePassword,

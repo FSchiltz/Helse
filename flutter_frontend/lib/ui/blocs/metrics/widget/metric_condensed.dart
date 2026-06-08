@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -23,13 +24,18 @@ class MetricCondensed extends StatelessWidget {
     return metrics.isEmpty
         ? Center(
             child: Text(
-              Translation.locale(context).nodata,
+              Translation.of(context).nodata,
               style: Theme.of(context).textTheme.labelLarge,
             ),
           )
         : (type.type == MetricDataType.text
               ? const Center()
-              : WidgetGraph(metrics, date, settings.graph ?? GraphKind.text));
+              : WidgetGraph(
+                  metrics,
+                  date,
+                  type,
+                  settings.graph ?? GraphKind.text,
+                ));
   }
 }
 
@@ -37,14 +43,14 @@ class WidgetGraph extends StatelessWidget {
   final List<Metric> metrics;
   final DateTimeRange date;
   final GraphKind settings;
-  final DateTimeRange? highlight;
+  final MetricType type;
 
   const WidgetGraph(
     this.metrics,
     this.date,
+    this.type,
     this.settings, {
     super.key,
-    this.highlight,
   });
 
   List<FlSpot> _getSpot(List<Metric> raw) {
@@ -59,7 +65,7 @@ class WidgetGraph extends StatelessWidget {
     return spots;
   }
 
-  List<BarChartGroupData> _getBar(List<Metric> raw) {
+  List<BarChartGroupData> _getBar(List<Metric> raw, BuildContext context) {
     var spots = _getSpot(raw);
 
     // now we have the min and max Y and X value, we can build the spots
@@ -69,7 +75,12 @@ class WidgetGraph extends StatelessWidget {
       bar.add(
         BarChartGroupData(
           x: item.x.toInt(),
-          barRods: [BarChartRodData(toY: item.y)],
+          barRods: [
+            BarChartRodData(
+              toY: item.y,
+              color: Dependencies.theme.stateColor(type.id.toString(), context),
+            ),
+          ],
         ),
       );
     }
@@ -98,7 +109,7 @@ class WidgetGraph extends StatelessWidget {
           ),
           borderData: FlBorderData(show: false),
           gridData: const FlGridData(show: false),
-          barGroups: _getBar(metrics),
+          barGroups: _getBar(metrics, context),
         ),
       );
     } else {
@@ -115,20 +126,10 @@ class WidgetGraph extends StatelessWidget {
           ),
           borderData: FlBorderData(show: false),
           gridData: const FlGridData(show: false),
-          lineBarsData: [
-            if (highlight != null)
-              LineChartBarData(
-                barWidth: 4,
-                color: Theme.of(context).colorScheme.secondaryContainer,
-                aboveBarData: BarAreaData(
-                  color: Theme.of(context).colorScheme.secondaryContainer,
-                  show: true,
-                ),
-                spots: _getHighLight(),
-                dotData: const FlDotData(show: false),
-              ),
+          lineBarsData: [           
             LineChartBarData(
               barWidth: 4,
+              color: Dependencies.theme.stateColor(type.id.toString(), context),
               spots: _getSpot(metrics),
               isCurved: true,
               curveSmoothness: 0.2,
@@ -138,17 +139,5 @@ class WidgetGraph extends StatelessWidget {
         ),
       );
     }
-  }
-
-  List<FlSpot> _getHighLight() {
-    var range = highlight;
-    if (range == null) return [];
-
-    // first we need the range fo the highlight
-    var coeff = 16 / date.end.difference(date.start).inHours;
-    var start = range.start.difference(date.start).inHours * coeff;
-    var end = range.end.difference(date.start).inHours * coeff;
-
-    return [FlSpot(start, 0), FlSpot(end, 0)];
   }
 }

@@ -70,7 +70,7 @@ class _MetricGraphState extends State<MetricGraph> {
   @override
   Widget build(BuildContext context) {
     final metric = _metric;
-    var locale = Translation.locale(context);
+    var locale = Translation.of(context);
     return Column(
       children: [
         Padding(
