@@ -83,88 +83,70 @@ class _EventsGraphState extends State<EventsGraph> {
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: CommonCard(          
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Wrap(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Text(
-                      'Selected${event != null ? ' (${event.id})' : ''}:',
+          child: CommonCard(
+            child: Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text('Selected: '),
+                if (event != null) Text('(${event.id})'),
+                if (event != null) Text(' ${event.description} '),
+                if (event != null)
+                  Text(
+                    locale.range(
+                      DateHelper.format(
+                        event.start.toLocal(),
+                        context: context,
+                      ),
+                      DateHelper.format(event.stop.toLocal(), context: context),
                     ),
                   ),
-                  if (event != null)
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Text(event.description.toString()),
+                if (event != null && event.tag != null)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(event.tag.toString()),
+                  ),
+                if (event != null)
+                  SizedBox(
+                    width: 40,
+                    child: IconButton(
+                      onPressed: () {
+                        showDialog<void>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return EventAdd(
+                              widget.reset,
+                              widget.type,
+                              person: widget.person,
+                              edit: event,
+                            );
+                          },
+                        );
+                      },
+                      icon: const Icon(Icons.edit_sharp),
                     ),
-                  if (event != null)
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Text(
-                        locale.range(
-                          DateHelper.format(
-                            event.start.toLocal(),
-                            context: context,
-                          ),
-                          DateHelper.format(
-                            event.stop.toLocal(),
-                            context: context,
-                          ),
-                        ),
-                      ),
+                  ),
+                if (id != null)
+                  SizedBox(
+                    width: 40,
+                    child: IconButton(
+                      onPressed: () {
+                        showDialog<void>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return DeleteEvent(() async {
+                              await Dependencies.services.event.deleteEvent(id);
+                              widget.reset();
+                              setState(() {
+                                _event = null;
+                              });
+                            }, person: widget.person);
+                          },
+                        );
+                      },
+                      icon: const Icon(Icons.delete_sharp),
                     ),
-                  if (event != null && event.tag != null)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(event.tag.toString()),
-                    ),
-                  if (event != null)
-                    SizedBox(
-                      width: 40,
-                      child: IconButton(
-                        onPressed: () {
-                          showDialog<void>(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return EventAdd(
-                                widget.reset,
-                                widget.type,
-                                person: widget.person,
-                                edit: event,
-                              );
-                            },
-                          );
-                        },
-                        icon: const Icon(Icons.edit_sharp),
-                      ),
-                    ),
-                  if (id != null)
-                    SizedBox(
-                      width: 40,
-                      child: IconButton(
-                        onPressed: () {
-                          showDialog<void>(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return DeleteEvent(() async {
-                                await Dependencies.services.event.deleteEvent(
-                                  id,
-                                );
-                                widget.reset();
-                                setState(() {
-                                  _event = null;
-                                });
-                              }, person: widget.person);
-                            },
-                          );
-                        },
-                        icon: const Icon(Icons.delete_sharp),
-                      ),
-                    ),
-                ],
-              ),
+                  ),
+              ],
             ),
           ),
         ),
