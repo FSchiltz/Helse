@@ -1,6 +1,3 @@
-import 'dart:async';
-import 'dart:developer';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
@@ -28,19 +25,8 @@ class NavigatorChart extends StatefulWidget {
 class _NavigatorChartState extends State<NavigatorChart> {
   double _navigatorStart = 0.0;
   double _navigatorEnd = 1.0;
-  Timer? _navigatorDebounce;
-
-  void _scheduleNavigatorUpdate() {
-    _navigatorDebounce?.cancel();
-
-    _navigatorDebounce = Timer(
-      const Duration(milliseconds: 150),
-      _applyNavigatorRange,
-    );
-  }
 
   void _applyNavigatorRange() {
-    _navigatorDebounce?.cancel();
     var navigatorStart = _navigatorStart;
     var navigatorEnd = _navigatorEnd;
     final total = widget.date.duration.inMilliseconds;
@@ -79,8 +65,6 @@ class _NavigatorChartState extends State<NavigatorChart> {
             });
           }
         });
-
-        _scheduleNavigatorUpdate();
       },
       onHorizontalDragEnd: (_) {
         _applyNavigatorRange();
@@ -124,12 +108,6 @@ class _NavigatorChartState extends State<NavigatorChart> {
   }
 
   @override
-  void dispose() {
-    _navigatorDebounce?.cancel();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
 
@@ -140,13 +118,46 @@ class _NavigatorChartState extends State<NavigatorChart> {
         final left = width * _navigatorStart;
         final right = width * _navigatorEnd;
 
+        debugPrint('created navigator for ${widget.date}');
         return Column(
           children: [
             SizedBox(
               height: 60,
               child: Stack(
                 children: [
-                  SizedBox.expand(child: _navigatorGraph(theme)),
+                  LineChart(
+                    LineChartData(
+                      minX: widget.date.start.millisecondsSinceEpoch.toDouble(),
+                      maxX: widget.date.end.millisecondsSinceEpoch.toDouble(),
+                      minY: 0,
+                      borderData: FlBorderData(show: false),
+                      gridData: const FlGridData(show: false),
+                      titlesData: const FlTitlesData(
+                        leftTitles: AxisTitles(),
+                        rightTitles: AxisTitles(),
+                        topTitles: AxisTitles(),
+                        bottomTitles: AxisTitles(),
+                      ),
+                      lineTouchData: LineTouchData(enabled: false),
+
+                      lineBarsData: [
+                        LineChartBarData(
+                          spots: [
+                            for (var metric in widget.metrics)
+                              FlSpot(
+                                metric.date.millisecondsSinceEpoch.toDouble(),
+                                metric.value,
+                              ),
+                          ],
+                          isCurved: true,
+                          curveSmoothness: 0.01,
+                          barWidth: 1,
+                          color: theme.primary,
+                          dotData: const FlDotData(show: false),
+                        ),
+                      ],
+                    ),
+                  ),
                   Positioned(
                     left: left,
                     width: right - left,
@@ -165,8 +176,6 @@ class _NavigatorChartState extends State<NavigatorChart> {
 
                           _navigatorEnd = _navigatorStart + range;
                         });
-
-                        _scheduleNavigatorUpdate();
                       },
 
                       onHorizontalDragEnd: (_) {
@@ -201,42 +210,6 @@ class _NavigatorChartState extends State<NavigatorChart> {
           ],
         );
       },
-    );
-  }
-
-  Widget _navigatorGraph(ColorScheme theme) {
-    return LineChart(
-      LineChartData(
-        minX: widget.date.start.millisecondsSinceEpoch.toDouble(),
-        maxX: widget.date.end.millisecondsSinceEpoch.toDouble(),
-        minY: 0,
-        borderData: FlBorderData(show: false),
-        gridData: const FlGridData(show: false),
-        titlesData: const FlTitlesData(
-          leftTitles: AxisTitles(),
-          rightTitles: AxisTitles(),
-          topTitles: AxisTitles(),
-          bottomTitles: AxisTitles(),
-        ),
-        lineTouchData: LineTouchData(enabled: false),
-
-        lineBarsData: [
-          LineChartBarData(
-            spots: [
-              for (var metric in widget.metrics)
-                FlSpot(
-                  metric.date.millisecondsSinceEpoch.toDouble(),
-                  metric.value,
-                ),
-            ],
-            isCurved: true,
-            curveSmoothness: 0.01,
-            barWidth: 1,
-            color: theme.primary,
-            dotData: const FlDotData(show: false),
-          ),
-        ],
-      ),
     );
   }
 }

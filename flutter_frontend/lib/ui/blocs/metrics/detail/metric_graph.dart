@@ -47,9 +47,8 @@ class _MetricGraphState extends State<MetricGraph> {
   DateTimeRange subDate = DateHelper.now();
 
   void _setDate(DateTimeRange value) {
-    var filter = widget.metrics
-        .where((x) => x.date.isAfter(value.start) && x.date.isBefore(value.end))
-        .toList();
+    debugPrint('set date with $value');
+    var filter = _filter(widget.metrics, value);
     var grouped = _group(filter);
     setState(() {
       subDate = value;
@@ -159,50 +158,54 @@ class _MetricGraphState extends State<MetricGraph> {
       ];
     }
 
-    return Chart(
-      data: filteredMetrics,
-      variables: {
-        'date': Variable(
-          accessor: (MetricGrouped datumn) => datumn.date.toLocal(),
-          scale: TimeScale(
-            min: subDate.start,
-            max: subDate.end,
-            formatter: (time) => DateHelper.format(time, context: context),
-          ),
-        ),
-        'value': Variable(
-          accessor: (MetricGrouped datumn) => datumn.value,
-          scale: LinearScale(min: 0),
-        ),
-        'min': Variable(
-          accessor: (MetricGrouped datumn) => datumn.min,
-          scale: LinearScale(),
-        ),
-        'max': Variable(
-          accessor: (MetricGrouped datumn) => datumn.max,
-          scale: LinearScale(),
-        ),
-      },
-      marks: marks,
-      selections: {
-        'hover': PointSelection(on: {GestureType.hover}, dim: Dim.x),
-        'click': PointSelection(
-          on: {
-            GestureType.tap,
-            GestureType.tapDown,
-            GestureType.longPressMoveUpdate,
-          },
-          dim: Dim.x,
-        ),
-      },
-      crosshair: CrosshairGuide(followPointer: [false, false]),
-      tooltip: TooltipGuide(
-        followPointer: [true, true],
-        align: Alignment.topLeft,
-        offset: const Offset(0, -0),
-      ),
-      axes: [Defaults.horizontalAxis, Defaults.verticalAxis],
-    );
+    debugPrint('creted graph for $subDate and ${filteredMetrics.length}');
+    return filteredMetrics.isEmpty
+        ? Text('No data')
+        : Chart(
+            data: filteredMetrics,
+            variables: {
+              'date': Variable(
+                accessor: (MetricGrouped datumn) => datumn.date.toLocal(),
+                scale: TimeScale(
+                  min: subDate.start,
+                  max: subDate.end,
+                  formatter: (time) =>
+                      DateHelper.format(time, context: context),
+                ),
+              ),
+              'value': Variable(
+                accessor: (MetricGrouped datumn) => datumn.value,
+                scale: LinearScale(min: 0),
+              ),
+              'min': Variable(
+                accessor: (MetricGrouped datumn) => datumn.min,
+                scale: LinearScale(),
+              ),
+              'max': Variable(
+                accessor: (MetricGrouped datumn) => datumn.max,
+                scale: LinearScale(),
+              ),
+            },
+            marks: marks,
+            selections: {
+              'hover': PointSelection(on: {GestureType.hover}, dim: Dim.x),
+              'click': PointSelection(
+                on: {
+                  GestureType.tap,
+                  GestureType.tapDown,
+                  GestureType.longPressMoveUpdate,
+                },
+                dim: Dim.x,
+              ),
+            },
+            crosshair: CrosshairGuide(followPointer: [false, false]),
+            tooltip: TooltipGuide(
+              followPointer: [true, true],
+              align: Alignment.topLeft,
+              offset: const Offset(0, -0),
+            ),
+            axes: [Defaults.horizontalAxis, Defaults.verticalAxis],
+          );
   }
 
   void _onData(Map<String, Set<int>>? event) {
@@ -214,53 +217,65 @@ class _MetricGraphState extends State<MetricGraph> {
   }
 
   List<MetricGrouped> _group(List<Metric> filter) {
-    debugPrint("Grouping data");
     final stopwatch = Stopwatch()..start();
-    final buckets = max(50, min(300, (subDate.duration.inHours * 4).round()));
+    final buckets = min(filter.length, 1000);
+
     // First create the buckets
     final bucketLength = subDate.duration.inMilliseconds / buckets;
 
-    List<MetricGrouped> groups = [];
-    var start = subDate.start;
-    var end = subDate.start.add(Duration(milliseconds: bucketLength.toInt()));
+    debugPrint(
+      'grouping with buckets: $buckets and bucket lenght: $bucketLength for $subDate',
+    );
+    Map<int, MetricGrouped> groups = {};
 
-    for (int i = 0; i < buckets; i++) {
-      final items = filter
-          .where((e) => e.date.isAfter(start) && e.date.isBefore(end))
-          .toList();
-
-      final values = items.map((e) => double.parse(e.value)).toList();
-      if (values.isNotEmpty) {
-        double min = values.min;
-        double max = values.max;
-        if (min > max) {
-          throw StateError("issue");
-        }
-
-        double mean = values.reduce((a, b) => a + b) / values.length;
-        if (mean > max) {
-          throw StateError("issue");
-        }
-        if (mean < min) {
-          throw StateError("issue");
-        }
-
-        groups.add(
-          MetricGrouped(
-            start.add(Duration(milliseconds: (bucketLength / 2).toInt())),
-            mean,
-            items,
-            min: min,
-            max: max,
-          ),
+    for (var metric in filter) {
+      final value = double.parse(metric.value);
+      // find the bucket
+      final duration = metric.date.difference(subDate.start);
+      final index = (duration.inMilliseconds / bucketLength).toInt();
+      final bucket = groups[index];
+      // if it does not exists create it
+      if (bucket == null) {
+        final start = subDate.start.add(
+          Duration(milliseconds: (index * bucketLength).toInt()),
         );
-      }
+        groups[index] = MetricGrouped(
+          start.add(Duration(milliseconds: (bucketLength / 2).toInt())),
+          value,
+          [metric],
+          max: value,
+          min: value,
+        );
+      } else {
+        if (value > bucket.max) {
+          bucket.max = value;
+        }
 
-      start = end;
-      end = end.add(Duration(milliseconds: bucketLength.toInt()));
+        if (value < bucket.min) {
+          bucket.min = value;
+        }
+
+        bucket.value = (bucket.value + value) / 2;
+        bucket.metrics.add(metric);
+      }
     }
 
-    debugPrint('_group() executed in ${stopwatch.elapsed}');
-    return groups;
+    var metrics = groups.values.toList();
+    debugPrint(
+      '_group() executed in ${stopwatch.elapsed} with ${metrics.length} bucket',
+    );
+    return metrics;
+  }
+
+  List<Metric> _filter(List<Metric> metrics, DateTimeRange<DateTime> value) {
+    final stopwatch = Stopwatch()..start();
+    debugPrint('Filter for $value');
+    var metrics = widget.metrics
+        .where((x) => x.date.isAfter(value.start) && x.date.isBefore(value.end))
+        .toList();
+    debugPrint(
+      '_filter() executed in ${stopwatch.elapsed} with ${metrics.length} items',
+    );
+    return metrics;
   }
 }
