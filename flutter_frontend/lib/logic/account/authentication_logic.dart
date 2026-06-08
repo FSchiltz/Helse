@@ -58,8 +58,9 @@ class AuthenticationLogic {
       await account.setToken(token);
       await account.remove(Account.grant);
 
-      _controller.add(AuthenticationStatus.authenticated);
+      // todo add a bloc for the settings and load async
       await Dependencies.logics.settings.loadSettings();
+      _controller.add(AuthenticationStatus.authenticated);
     } else {
       _controller.add(AuthenticationStatus.unauthenticated);
     }
@@ -154,7 +155,7 @@ class AuthenticationLogic {
         issuer = await getClientId();
         redirect = await getRedirect();
       }
-      print('Auth with: $issuer - $redirect');
+      debugPrint('Auth with: $issuer - $redirect');
 
       await logIn(
         url: url,
