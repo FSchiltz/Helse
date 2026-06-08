@@ -45,13 +45,31 @@ class SleepTransitionPainter extends CustomPainter {
 
       if (gap > 15) continue;
 
+      final connectorX = current.right;
+      List<Color> colors;
+      if (current.centerY > next.centerY) {
+        colors = [next.color.withAlpha(150), current.color.withAlpha(150)];
+      } else {
+        colors = [current.color.withAlpha(150), next.color.withAlpha(150)];
+      }
       final paint = Paint()
-        ..color = current.color.withAlpha(150)
+        ..shader =
+            LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: colors,
+              stops: const [0.0, 1.0],
+            ).createShader(
+              Rect.fromLTRB(
+                connectorX - 1,
+                min(current.centerY, next.centerY),
+                connectorX + 1,
+                max(current.centerY, next.centerY),
+              ),
+            )
         ..strokeWidth = 2
         ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke;
-
-      final connectorX = current.right;
 
       final path = Path()
         ..moveTo(connectorX - 1, current.centerY)
