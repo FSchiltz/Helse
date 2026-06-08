@@ -2,17 +2,18 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/ui/blocs/metrics/metric_group.dart';
 
 class WidgetGraph extends StatelessWidget {
   final List<Metric> metrics;
-  final DateTimeRange date;
+  final DateTimeRange range;
   final GraphKind settings;
   final MetricType type;
   final int tile;
 
   const WidgetGraph(
     this.metrics,
-    this.date,
+    this.range,
     this.type,
     this.settings, {
     super.key,
@@ -21,10 +22,33 @@ class WidgetGraph extends StatelessWidget {
 
   List<FlSpot> _getSpot(List<Metric> raw) {
     List<FlSpot> spots = [];
+    final bucketLength = range.duration.inMilliseconds / tile;
 
-    for (final item in raw) {
-      var x = double.parse(item.tag ?? "0");
-      var y = (double.parse(item.value) * 10).roundToDouble() / 10;
+    Map<int, MetricGrouped> groups = {};
+
+    for (var metric in raw) {
+      final value = double.parse(metric.value);
+      // find the bucket
+      final duration = metric.date.difference(range.start);
+      final index = (duration.inMilliseconds / bucketLength).toInt();
+      final bucket = groups[index];
+      // if it does not exists create it
+      if (bucket == null) {
+        final start = range.start.add(
+          Duration(milliseconds: (index * bucketLength).toInt()),
+        );
+        var date = start.add(
+          Duration(milliseconds: (bucketLength / 2).toInt()),
+        );
+        groups[index] = MetricGrouped(date, value, []);
+      } else {
+        bucket.value = (bucket.value + value) / 2;
+      }
+    }
+
+    for (final item in groups.entries) {
+      var x = item.value.date.millisecondsSinceEpoch.toDouble();
+      var y = item.value.value;
       spots.add(FlSpot(x, y));
     }
 
@@ -66,7 +90,7 @@ class WidgetGraph extends StatelessWidget {
   Widget _getGraph(BuildContext context) {
     if (settings == GraphKind.bar) {
       return BarChart(
-        BarChartData(
+        BarChartData(          
           barTouchData: BarTouchData(enabled: false),
           titlesData: const FlTitlesData(
             leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -82,8 +106,8 @@ class WidgetGraph extends StatelessWidget {
     } else {
       return LineChart(
         LineChartData(
-          minX: 0,
-          maxX: tile.toDouble(),
+          minX: range.start.millisecondsSinceEpoch.toDouble(),
+          maxX: range.end.millisecondsSinceEpoch.toDouble(),
           lineTouchData: const LineTouchData(enabled: false),
           titlesData: const FlTitlesData(
             leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -99,7 +123,7 @@ class WidgetGraph extends StatelessWidget {
               color: Dependencies.theme.stateColor(type.id.toString(), context),
               spots: _getSpot(metrics),
               isCurved: true,
-              curveSmoothness: 0.2,
+              curveSmoothness: 0.02,
               dotData: const FlDotData(show: false),
             ),
           ],

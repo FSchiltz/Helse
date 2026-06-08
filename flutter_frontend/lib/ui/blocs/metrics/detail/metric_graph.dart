@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
@@ -83,6 +84,7 @@ class _MetricGraphState extends State<MetricGraph> {
             widget.date,
             subDate,
             _setDate,
+            widget.type,
             widget.settings,
           ),
         ),
@@ -112,15 +114,18 @@ class _MetricGraphState extends State<MetricGraph> {
   }
 
   Widget _grapichChart(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
-
     List<Mark<Shape>> marks;
     if (widget.settings == GraphKind.line) {
       marks = [
         PointMark(
           position: Varset('date') * Varset('value'),
           size: SizeEncode(value: 3),
-          color: ColorEncode(value: theme.secondary),
+          color: ColorEncode(
+            value: Dependencies.theme.stateColor(
+              widget.type.id.toString(),
+              context,
+            ),
+          ),
           selected: {
             'touchMove': {1},
           },
@@ -128,8 +133,13 @@ class _MetricGraphState extends State<MetricGraph> {
         ),
         LineMark(
           position: Varset('date') * Varset('value'),
-          size: SizeEncode(value: 3),
-          color: ColorEncode(value: theme.primary),
+          size: SizeEncode(value: 2),
+          color: ColorEncode(
+            value: Dependencies.theme.stateColor(
+              widget.type.id.toString(),
+              context,
+            ),
+          ),
         ),
         /*
         LineMark(
@@ -149,7 +159,12 @@ class _MetricGraphState extends State<MetricGraph> {
       marks = [
         IntervalMark(
           size: SizeEncode(value: 5),
-          color: ColorEncode(value: theme.primary),
+          color: ColorEncode(
+            value: Dependencies.theme.stateColor(
+              widget.type.id.toString(),
+              context,
+            ),
+          ),
           selected: {
             'touchMove': {1},
           },

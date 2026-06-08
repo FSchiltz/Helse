@@ -115,9 +115,13 @@ class _MetricWidgetState extends State<MetricWidget> {
                 ),
                 if (data.isNotEmpty)
                   Expanded(
-                    child: Text(
-                      _getTextInfo(data, widget.type, context),
-                      style: Theme.of(context).textTheme.bodyMedium,
+                    child: Align(
+                      alignment: AlignmentGeometry.topLeft,
+                      child: Text(
+                        _getTextInfo(data, widget.type, context),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        textAlign: TextAlign.start,
+                      ),
                     ),
                   ),
                 Flexible(

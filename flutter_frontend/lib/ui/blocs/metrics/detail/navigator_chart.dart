@@ -1,7 +1,7 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/metric_group.dart';
+import 'package:helse/ui/blocs/metrics/widget/widget_graph.dart';
 
 class NavigatorChart extends StatefulWidget {
   final List<MetricGrouped> metrics;
@@ -9,11 +9,13 @@ class NavigatorChart extends StatefulWidget {
   final DateTimeRange subDate;
   final void Function(DateTimeRange<DateTime> value) setDate;
   final GraphKind graphKind;
+  final MetricType type;
   const NavigatorChart(
     this.metrics,
     this.date,
     this.subDate,
     this.setDate,
+    this.type,
     this.graphKind, {
     super.key,
   });
@@ -119,38 +121,23 @@ class _NavigatorChartState extends State<NavigatorChart> {
               height: 60,
               child: Stack(
                 children: [
-                  LineChart(
-                    LineChartData(
-                      minX: widget.date.start.millisecondsSinceEpoch.toDouble(),
-                      maxX: widget.date.end.millisecondsSinceEpoch.toDouble(),
-                      minY: 0,
-                      borderData: FlBorderData(show: false),
-                      gridData: const FlGridData(show: false),
-                      titlesData: const FlTitlesData(
-                        leftTitles: AxisTitles(),
-                        rightTitles: AxisTitles(),
-                        topTitles: AxisTitles(),
-                        bottomTitles: AxisTitles(),
-                      ),
-                      lineTouchData: LineTouchData(enabled: false),
-
-                      lineBarsData: [
-                        LineChartBarData(
-                          spots: [
-                            for (var metric in widget.metrics)
-                              FlSpot(
-                                metric.date.millisecondsSinceEpoch.toDouble(),
-                                metric.value,
-                              ),
-                          ],
-                          isCurved: true,
-                          curveSmoothness: 0.01,
-                          barWidth: 1,
-                          color: theme.primary,
-                          dotData: const FlDotData(show: false),
-                        ),
-                      ],
-                    ),
+                  WidgetGraph(
+                    widget.metrics
+                        .map(
+                          (e) => Metric(
+                            id: 0,
+                            date: e.date,
+                            value: e.value.toString(),
+                            type: 0,
+                            sourceId: '',
+                            person: 0,
+                          ),
+                        )
+                        .toList(),
+                    widget.date,
+                    widget.type,
+                    widget.graphKind,
+                    tile: widget.metrics.length,
                   ),
                   Positioned(
                     left: left,
