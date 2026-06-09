@@ -144,44 +144,41 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
       child: SingleChildScrollView(
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Stack(
-            fit: StackFit.loose,
-            children: [
-              Row(children: timeline.grid),
-              SizedBox(height: 25.0, child: Row(children: timeline.headerDay)),
-              Container(
-                margin: const EdgeInsets.only(top: 25.0),
-                child: SizedBox(
-                  height: 25.0,
-                  child: Row(children: timeline.header),
+        child: Stack(
+          fit: StackFit.loose,
+          children: [
+            Row(children: timeline.grid),
+            SizedBox(height: 25.0, child: Row(children: timeline.headerDay)),
+            Container(
+              margin: const EdgeInsets.only(top: 25.0),
+              child: SizedBox(
+                height: 25.0,
+                child: Row(children: timeline.header),
+              ),
+            ),
+            Positioned(
+              top: 50,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: IgnorePointer(
+                child: CustomPaint(
+                  painter: SleepTransitionPainter(_eventLayouts),
                 ),
               ),
-              Positioned(
-                top: 50,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: IgnorePointer(
-                  child: CustomPaint(
-                    painter: SleepTransitionPainter(_eventLayouts),
-                  ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(top: 50.0),
+              child: SizedBox(
+                width: max(timeline.grid.length * boxWidth, 500),
+                height: rowCount * 29.0 + 40,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: timeline.bars,
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.only(top: 50.0),
-                child: SizedBox(
-                  width: max(timeline.grid.length * boxWidth, 500),
-                  height: rowCount * 29.0 + 40,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: timeline.bars,
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -258,11 +255,12 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     return SizedBox(
       width: rowLabelWidth,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: labels.map((label) {
           return SizedBox(
             height: 29.0,
             child: Align(
-              alignment: Alignment.centerLeft,
+              alignment: Alignment.centerRight,
               child: Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: Text(
