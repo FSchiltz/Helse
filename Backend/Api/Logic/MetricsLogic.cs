@@ -97,7 +97,7 @@ public static class MetricsLogic
 
         if (metric.Unit is not null)
         {
-            unit = (await commonDb.GetUnitAsync(metric.Unit.Value))?.Unit;
+            unit = await commonDb.GetUnitAsync(metric.Unit.Value);
         }
 
         Validate(metric, unit, type);
@@ -142,7 +142,7 @@ public static class MetricsLogic
 
         if (metric.Unit is not null)
         {
-            unit = (await commonDb.GetUnitAsync(metric.Unit.Value))?.Unit;
+            unit = await commonDb.GetUnitAsync(metric.Unit.Value);
         }
         Validate(metric, unit, type);
 

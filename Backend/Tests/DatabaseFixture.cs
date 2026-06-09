@@ -76,6 +76,7 @@ public class DatabaseFixture : IAsyncLifetime
         await db.ExecuteAsync("CREATE SCHEMA health;");
         await db.ExecuteAsync("CREATE SCHEMA person;");
         await db.ExecuteAsync("CREATE SCHEMA common;");
+        await db.ExecuteAsync("CREATE SCHEMA admin;");
         await db.CreateTableAsync<Event>();
         await db.CreateTableAsync<EventType>();
         await db.CreateTableAsync<Metric>();
@@ -86,5 +87,6 @@ public class DatabaseFixture : IAsyncLifetime
         await db.CreateTableAsync<MetricGroup>();
         await db.CreateTableAsync<Right>();
         await db.CreateTableAsync<Settings>();
+        await db.CreateTableAsync<Api.Data.Models.Admin.Settings>();
     }
 }

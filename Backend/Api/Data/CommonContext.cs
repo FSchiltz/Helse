@@ -6,18 +6,18 @@ namespace Api.Data;
 
 public class CommonContext(DataConnection db) : ICommonContext
 {
-    public Task<LinkedUnits?> GetUnitAsync(int unitsId)
+    public Task<Units?> GetUnitAsync(int unitsId)
     {
-        return db.GetTable<Units>()
-        .LeftJoin(db.GetTable<Units>(), (x, y) => x.BaseUnit == y.Id, (x, y) => new LinkedUnits(x, y))
-        .FirstOrDefaultAsync(x => x.Unit.Id == unitsId);
+        IQueryable<Units> query = db.GetTable<Units>()
+        .LoadWith(x => x.BaseUnitObject);
+
+        return query.FirstOrDefaultAsync(x => x.Id == unitsId);
     }
 
-    public Task<LinkedUnits[]> GetUnitsAsync()
+    public Task<Units[]> GetUnitsAsync()
     {
-        return db.GetTable<Units>()
-        .LeftJoin(db.GetTable<Units>(), (x, y) => x.BaseUnit == y.Id, (x, y) => new LinkedUnits(x, y))
-        .ToArrayAsync();
-    }
+        IQueryable<Units> query = db.GetTable<Units>().LoadWith(x => x.BaseUnitObject);
 
+        return query.ToArrayAsync();
+    }
 }
