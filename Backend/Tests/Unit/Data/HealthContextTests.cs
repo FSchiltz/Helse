@@ -1,5 +1,4 @@
 using Api.Data;
-using Api.Data.Models.Common;
 using Api.Data.Models.Health;
 using Api.Data.Models.Persons;
 using LinqToDB;
@@ -8,24 +7,15 @@ using LinqToDB.Data;
 namespace Tests.Unit.Data;
 
 [Collection("Database collection")]
-public class HealthContextTests(DatabaseFixture database) : IAsyncLifetime
+public class HealthContextTests(DatabaseFixture fixture) : IAsyncLifetime
 {
     private DataConnection _db = null!;
 
     public async ValueTask InitializeAsync()
     {
-        var temp = await database.GetTempDB();
+        var temp = await fixture.GetTempDB();
         _db = new DataConnection(x => new DataOptions().UsePostgreSQL(temp));
-        await _db.ExecuteAsync("CREATE SCHEMA health;");
-        await _db.ExecuteAsync("CREATE SCHEMA person;");
-        await _db.ExecuteAsync("CREATE SCHEMA common;");
-        await _db.CreateTableAsync<Event>();
-        await _db.CreateTableAsync<EventType>();
-        await _db.CreateTableAsync<Metric>();
-        await _db.CreateTableAsync<MetricType>();
-        await _db.CreateTableAsync<Person>();
-        await _db.CreateTableAsync<User>();
-        await _db.CreateTableAsync<Units>();
+        await DatabaseFixture.InitForUnit(_db);
     }
 
     public async ValueTask DisposeAsync()
@@ -98,14 +88,25 @@ public class HealthContextTests(DatabaseFixture database) : IAsyncLifetime
     public async Task GetMetricTypes_ReturnsMetricTypes_WhenExist()
     {
         // Arrange
-        var metricType = new MetricType
+        var groupid = (long)await _db.GetTable<MetricGroup>().InsertWithIdentityAsync(() => new MetricGroup()
+        {
+            Description = "",
+            Name = "",
+            ShowOnDashboard = true,
+            ShowTitle = true,
+        }, token: TestContext.Current.CancellationToken);
+
+        await _db.GetTable<MetricType>().InsertAsync(() => new MetricType
         {
             Name = "HeartRate",
             Type = (int)Api.Models.Metrics.MetricDataType.Number,
             SummaryType = (int)Api.Models.Metrics.MetricSummary.Mean,
             Unit = 0,
-        };
-        await _db.GetTable<MetricType>().InsertAsync(() => metricType, token: TestContext.Current.CancellationToken);
+            UserEditable = true,
+            ShowOnDashboard = true,
+            Visible = true,
+            GroupId = groupid,
+        }, token: TestContext.Current.CancellationToken);
 
         var context = new HealthContext(_db);
 
@@ -135,7 +136,15 @@ public class HealthContextTests(DatabaseFixture database) : IAsyncLifetime
     public async Task GetMetricType_ReturnsMetricType_WhenFound()
     {
         // Arrange
-        var id = (int)await _db.GetTable<MetricType>().InsertWithIdentityAsync(() => new MetricType
+        var groupid = (long)await _db.GetTable<MetricGroup>().InsertWithIdentityAsync(() => new MetricGroup()
+        {
+            Description = "",
+            Name = "",
+            ShowOnDashboard = true,
+            ShowTitle = true,
+        }, token: TestContext.Current.CancellationToken);
+
+        var id = (long)await _db.GetTable<MetricType>().InsertWithIdentityAsync(() => new MetricType
         {
             Name = "Temperature",
             Type = (int)Api.Models.Metrics.MetricDataType.Number,
@@ -144,6 +153,7 @@ public class HealthContextTests(DatabaseFixture database) : IAsyncLifetime
             UserEditable = true,
             Visible = true,
             ShowOnDashboard = true,
+            GroupId = groupid,
         }, token: TestContext.Current.CancellationToken);
 
         var context = new HealthContext(_db);
@@ -172,17 +182,35 @@ public class HealthContextTests(DatabaseFixture database) : IAsyncLifetime
     [Fact]
     public async Task GetEvent_ReturnsEvent_WhenFound()
     {
-        // Arrange
-        var @event = new Event
+        var person = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
         {
-            PersonId = 1,
+            Identifier = "",
+            Name = "",
+            Created = DateTime.Now,
+        }, token: TestContext.Current.CancellationToken);
+
+        var user = (long)await _db.GetTable<User>().InsertWithIdentityAsync(() => new User
+        {
+            Identifier = "",
+            Password = "",
+            PersonId = person,
+            Created = DateTime.Now,
+            Type = 1,
+        }, token: TestContext.Current.CancellationToken);
+
+        var id = (long)await _db.GetTable<Event>().InsertWithIdentityAsync(() => new Event
+        {
+            PersonId = person,
+            UserId = user,
             Type = 1,
             Start = DateTime.UtcNow,
             Stop = DateTime.UtcNow.AddHours(1),
             Valid = true,
             SourceId = string.Empty,
-        };
-        var id = (long)await _db.GetTable<Event>().InsertWithIdentityAsync(() => @event, token: TestContext.Current.CancellationToken);
+            NotificationSent = false,
+            Created = DateTime.Now,
+            Source = 0,
+        }, token: TestContext.Current.CancellationToken);
 
         var context = new HealthContext(_db);
 

@@ -103,7 +103,7 @@ public interface IHealthContext : IContext
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    Task<WithUnit<MetricType>?> GetMetricType(int type);
+    Task<WithUnit<MetricType>?> GetMetricType(long type);
 
     /// <summary>
     /// Get the last metric in the given time frame if any

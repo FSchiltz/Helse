@@ -159,7 +159,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     }
 
     /// <inheritdoc/>
-    public Task<WithUnit<MetricType>?> GetMetricType(int type) => MetricTypeQuery().FirstOrDefaultAsync(x => x.Item.Id == type);
+    public Task<WithUnit<MetricType>?> GetMetricType(long type) => MetricTypeQuery().FirstOrDefaultAsync(x => x.Item.Id == type);
 
     /// <inheritdoc/>
     public Task<Models.Persons.Person[]> GetPatients(long user, DateTime now, RightType right)

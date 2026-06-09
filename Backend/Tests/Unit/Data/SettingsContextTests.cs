@@ -6,15 +6,16 @@ using LinqToDB.Data;
 
 namespace Tests.Unit.Data;
 
-public class SettingsContextTests : IAsyncLifetime
+[Collection("Database collection")]
+public class SettingsContextTests(DatabaseFixture fixture) : IAsyncLifetime
 {
     private DataConnection _db = null!;
 
     public async ValueTask InitializeAsync()
     {
-        // Create in-memory SQLite database
-        _db = new DataConnection("SQLite.MS", x => new LinqToDB.DataOptions().UseSQLite("Data Source=:memory:"));
-        await _db.CreateTableAsync<Settings>();
+        var temp = await fixture.GetTempDB();
+        _db = new DataConnection(x => new DataOptions().UsePostgreSQL(temp));
+        await DatabaseFixture.InitForUnit(_db);
     }
 
     public async ValueTask DisposeAsync()
@@ -56,7 +57,7 @@ public class SettingsContextTests : IAsyncLifetime
                 }],
         };
         var json = System.Text.Json.JsonSerializer.Serialize(settings);
-        await _db.GetTable<Settings>().InsertAsync(() => new Settings { Name = "oauth", Blob = json });
+        await _db.GetTable<Settings>().InsertAsync(() => new Settings { Name = "oauth", Blob = json }, token: TestContext.Current.CancellationToken);
 
         var context = new SettingsContext(_db);
 
@@ -82,7 +83,7 @@ public class SettingsContextTests : IAsyncLifetime
         await context.Upsert("proxy", json);
 
         // Assert
-        var saved = await _db.GetTable<Settings>().Where(s => s.Name == "proxy").FirstOrDefaultAsync();
+        var saved = await _db.GetTable<Settings>().Where(s => s.Name == "proxy").FirstOrDefaultAsync(token: TestContext.Current.CancellationToken);
         Assert.NotNull(saved);
         Assert.Equal(json, saved.Blob);
     }
@@ -93,7 +94,7 @@ public class SettingsContextTests : IAsyncLifetime
         // Arrange
         var oldSettings = new Proxy { ProxyAuth = false };
         var oldJson = System.Text.Json.JsonSerializer.Serialize(oldSettings);
-        await _db.GetTable<Settings>().InsertAsync(() => new Settings { Name = "proxy", Blob = oldJson });
+        await _db.GetTable<Settings>().InsertAsync(() => new Settings { Name = "proxy", Blob = oldJson }, token: TestContext.Current.CancellationToken);
 
         var newSettings = new Proxy { ProxyAuth = true, Header = "X-Auth-New" };
         var newJson = System.Text.Json.JsonSerializer.Serialize(newSettings);
@@ -103,7 +104,7 @@ public class SettingsContextTests : IAsyncLifetime
         await context.Upsert("proxy", newJson);
 
         // Assert
-        var saved = await _db.GetTable<Settings>().Where(s => s.Name == "proxy").FirstOrDefaultAsync();
+        var saved = await _db.GetTable<Settings>().Where(s => s.Name == "proxy").FirstOrDefaultAsync(token: TestContext.Current.CancellationToken);
         Assert.NotNull(saved);
         Assert.Equal(newJson, saved.Blob);
     }

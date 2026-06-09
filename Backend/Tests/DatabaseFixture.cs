@@ -1,3 +1,6 @@
+using Api.Data.Models.Common;
+using Api.Data.Models.Health;
+using Api.Data.Models.Persons;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using LinqToDB;
@@ -66,5 +69,22 @@ public class DatabaseFixture : IAsyncLifetime
         var result = await _db.ExecuteAsync($"CREATE DATABASE {name};");
 
         return GetDatabaseConnection(name);
+    }
+
+    internal static async Task InitForUnit(DataConnection db)
+    {
+        await db.ExecuteAsync("CREATE SCHEMA health;");
+        await db.ExecuteAsync("CREATE SCHEMA person;");
+        await db.ExecuteAsync("CREATE SCHEMA common;");
+        await db.CreateTableAsync<Event>();
+        await db.CreateTableAsync<EventType>();
+        await db.CreateTableAsync<Metric>();
+        await db.CreateTableAsync<MetricType>();
+        await db.CreateTableAsync<Person>();
+        await db.CreateTableAsync<User>();
+        await db.CreateTableAsync<Units>();
+        await db.CreateTableAsync<MetricGroup>();
+        await db.CreateTableAsync<Right>();
+        await db.CreateTableAsync<Settings>();
     }
 }
