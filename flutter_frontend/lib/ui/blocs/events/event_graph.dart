@@ -77,17 +77,29 @@ class _EventsGraphState extends State<EventsGraph> {
           padding: const EdgeInsets.all(8.0),
           child: DateRangePicker(_setDate, subDate, range: widget.range),
         ),
-        NavigatorChart(
-          widget.range,
-          subDate,
-          _setDate,
-          graph: EventsSummary(_group(widget.events), widget.range),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: NavigatorChart(
+            widget.range,
+            subDate,
+            _setDate,
+            graph: EventsSummary(
+              _group(widget.events, widget.range),
+              widget.range,
+            ),
+          ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: (filteredEvents.length < 1000)
+          child: (filteredEvents.length < 200)
               ? EventsTimelineGraph(filteredEvents, subDate, _selectionChanged)
-              : Text('Too much data : ${filteredEvents.length}'),
+              : SizedBox(
+                  height: 300,
+                  child: EventsSummary(
+                    _group(filteredEvents, subDate),
+                    subDate,
+                  ),
+                ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -162,12 +174,12 @@ class _EventsGraphState extends State<EventsGraph> {
     );
   }
 
-  List<EventSummary> _group(List<Event> events) {
+  List<EventSummary> _group(List<Event> events, DateTimeRange range) {
     final stopwatch = Stopwatch()..start();
     final buckets = min(events.length, 1000);
 
     // First create the buckets
-    final bucketLength = widget.range.duration.inMilliseconds / buckets;
+    final bucketLength = range.duration.inMilliseconds / buckets;
 
     debugPrint(
       'grouping with buckets: $buckets and bucket lenght: $bucketLength for $subDate',
@@ -180,7 +192,7 @@ class _EventsGraphState extends State<EventsGraph> {
 
     for (var event in events) {
       // find the bucket
-      final duration = event.start.difference(widget.range.start);
+      final duration = event.start.difference(range.start);
       final index = (duration.inMilliseconds / bucketLength).toInt();
       final bucketCount =
           event.stop.difference(event.start).inMilliseconds / bucketLength;
