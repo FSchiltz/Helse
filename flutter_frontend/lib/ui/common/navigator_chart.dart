@@ -111,7 +111,7 @@ class _NavigatorChartState extends State<NavigatorChart> {
         return Column(
           children: [
             SizedBox(
-              height: 60,
+              height: 65,
               child: Stack(
                 children: [
                   widget.graph,

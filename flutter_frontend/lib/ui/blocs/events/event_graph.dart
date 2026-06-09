@@ -79,13 +79,15 @@ class _EventsGraphState extends State<EventsGraph> {
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: NavigatorChart(
-            widget.range,
-            subDate,
-            _setDate,
-            graph: EventsSummary(
-              _group(widget.events, widget.range),
+          child: SizedBox(
+            child: NavigatorChart(
               widget.range,
+              subDate,
+              _setDate,
+              graph: EventsSummary(
+                _group(widget.events, widget.range),
+                widget.range,
+              ),
             ),
           ),
         ),
