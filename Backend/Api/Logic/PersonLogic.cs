@@ -124,6 +124,7 @@ public static class PersonLogic
             Type = (int)x.Type,
             PersonId = personId,
             Start = now > x.Start ? now : x.Start,
+            Created = now,
         });
 
         await using var transaction = await users.BeginTransactionAsync();

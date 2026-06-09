@@ -37,7 +37,14 @@ public class TreatmentLogicTests
     {
         // Arrange
         var db = Substitute.For<IUserContext>();
-        var user = new Api.Data.Models.Persons.User { Id = 1, PersonId = 1, Identifier = "test", Password = "pass" };
+        var user = new Api.Data.Models.Persons.User
+        {
+            Id = 1,
+            PersonId = 1,
+            Identifier = "test",
+            Password = "pass",
+            Created = DateTime.Now,
+        };
         db.Get(Arg.Any<string>()).Returns(user);
         db.BeginTransactionAsync().Returns(Substitute.For<ITransaction>());
         db.HasRightAsync(1, 1, RightType.Edit, Arg.Any<DateTime>()).Returns(new Api.Models.Persons.Right());

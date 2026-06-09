@@ -24,6 +24,6 @@ public class Person
     [Column]
     public byte[]? ProfilePicture { get; set; }
 
-    [Column]
-    public DateTime Created { get; set; }
+    [Column, NotNull]
+    public required DateTime Created { get; set; }
 }

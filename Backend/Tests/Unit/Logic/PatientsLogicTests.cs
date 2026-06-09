@@ -16,7 +16,8 @@ public class PatientsLogicTests : LogicTests
         var db = Substitute.For<IHealthContext>();
         Api.Data.Models.Persons.Person[] persons =
         [
-            new() { Id = 1, Name = "Test", Surname = "User" }
+            new() { Id = 1, Name = "Test", Surname = "User",
+            Created = DateTime.Now,}
         ];
         db.GetPatients(1, Arg.Any<DateTime>(), RightType.View).Returns(persons);
 

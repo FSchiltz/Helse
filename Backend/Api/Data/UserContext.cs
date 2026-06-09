@@ -113,6 +113,7 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
                 Name = newUser.Name,
                 Surname = newUser.Surname,
                 ProfilePicture = newUser.ProfilePicture,
+                Created = DateTime.Now,
             });
     }
 
@@ -127,6 +128,7 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
                     Email = newUser.Email,
                     PersonId = id,
                     Type = (int)newUser.Types.Cast<Models.Persons.UserType>().Aggregate((a, b) => a | b),
+                    Created = DateTime.Now,
                 });
     }
 
@@ -137,7 +139,8 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
             UserId = userId,
             Start = DateTime.UtcNow,
             PersonId = id,
-            Type = (int)right
+            Type = (int)right,
+            Created = DateTime.Now,
         });
     }
 
@@ -269,7 +272,8 @@ public class UserContext(DataConnection db) : BaseContext(db), IUserContext
     }
 
     public Task DeleteSession(long userId)
-    {return Db.GetTable<Sessions>()
+    {
+        return Db.GetTable<Sessions>()
         .Where(x => x.UserId == userId)
         .DeleteAsync();
     }

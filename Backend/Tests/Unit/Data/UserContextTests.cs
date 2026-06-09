@@ -40,11 +40,22 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task Count_ReturnsCorrectCount_WhenUsersExist()
     {
         // Arrange
-        var person = new Person { Name = "Test", Identifier = "test", Birth = DateTime.UtcNow };
-        var personId = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => person, token: TestContext.Current.CancellationToken);
+        var personId = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
+        {
+            Name = "Test",
+            Identifier = "test",
+            Birth = DateTime.UtcNow,
+            Created = DateTime.Now,
+        }, token: TestContext.Current.CancellationToken);
 
-        var user = new User { PersonId = personId, Identifier = "testuser", Password = "hashed", Type = 0 };
-        await _db.GetTable<User>().InsertAsync(() => user, token: TestContext.Current.CancellationToken);
+        await _db.GetTable<User>().InsertAsync(() => new User
+        {
+            PersonId = personId,
+            Identifier = "testuser",
+            Password = "hashed",
+            Type = 0,
+            Created = DateTime.Now,
+        }, token: TestContext.Current.CancellationToken);
 
         var context = new UserContext(_db);
 
@@ -72,11 +83,23 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task Get_ReturnsUser_WhenUserExists()
     {
         // Arrange
-        var person = new Person { Name = "John", Identifier = "john", Birth = DateTime.UtcNow };
-        var personId = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => person, token: TestContext.Current.CancellationToken);
+        var personId = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
+        {
+            Name = "John",
+            Identifier = "john",
+            Birth = DateTime.UtcNow,
+            Created = DateTime.Now,
+        }, token: TestContext.Current.CancellationToken);
 
-        var user = new User { PersonId = personId, Identifier = "john_user", Password = "hashed", Type = 1, Email = "john@example.com" };
-        await _db.GetTable<User>().InsertAsync(() => user, token: TestContext.Current.CancellationToken);
+        await _db.GetTable<User>().InsertAsync(() => new User
+        {
+            PersonId = personId,
+            Identifier = "john_user",
+            Password = "hashed",
+            Type = 1,
+            Email = "john@example.com",
+            Created = DateTime.Now,
+        }, token: TestContext.Current.CancellationToken);
 
         var context = new UserContext(_db);
 
@@ -92,14 +115,30 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task HasRightAsync_ReturnsNull_WhenNoRight()
     {
         // Arrange
-        var person1 = new Person { Name = "Person1", Identifier = "p1", Birth = DateTime.UtcNow };
-        var person1Id = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => person1, token: TestContext.Current.CancellationToken);
+        var person1Id = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
+        {
+            Name = "Person1",
+            Identifier = "p1",
+            Birth = DateTime.UtcNow,
+            Created = DateTime.Now,
+        }, token: TestContext.Current.CancellationToken);
 
-        var person2 = new Person { Name = "Person2", Identifier = "p2", Birth = DateTime.UtcNow };
-        var person2Id = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => person2, token: TestContext.Current.CancellationToken);
+        var person2Id = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
+        {
+            Name = "Person2",
+            Identifier = "p2",
+            Birth = DateTime.UtcNow,
+            Created = DateTime.Now,
+        }, token: TestContext.Current.CancellationToken);
 
-        var user = new User { PersonId = person1Id, Identifier = "user", Password = "pass", Type = 0 };
-        var userId = (long)await _db.GetTable<User>().InsertWithIdentityAsync(() => user, token: TestContext.Current.CancellationToken);
+        var userId = (long)await _db.GetTable<User>().InsertWithIdentityAsync(() => new User
+        {
+            PersonId = person1Id,
+            Identifier = "user",
+            Password = "pass",
+            Type = 0,
+            Created = DateTime.Now,
+        }, token: TestContext.Current.CancellationToken);
 
         var context = new UserContext(_db);
         var now = DateTime.UtcNow;
@@ -115,25 +154,41 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task HasRightAsync_ReturnsRight_WhenRightExists()
     {
         // Arrange
-        var person1 = new Person { Name = "Person1", Identifier = "p1", Birth = DateTime.UtcNow };
-        var person1Id = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => person1, token: TestContext.Current.CancellationToken);
+        var person1Id = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
+        {
+            Name = "Person1",
+            Identifier = "p1",
+            Birth = DateTime.UtcNow,
+            Created = DateTime.Now,
+        }, token: TestContext.Current.CancellationToken);
 
-        var person2 = new Person { Name = "Person2", Identifier = "p2", Birth = DateTime.UtcNow };
-        var person2Id = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => person2, token: TestContext.Current.CancellationToken);
+        var person2Id = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
+        {
+            Name = "Person2",
+            Identifier = "p2",
+            Birth = DateTime.UtcNow,
+            Created = DateTime.Now,
+        }, token: TestContext.Current.CancellationToken);
 
-        var user = new User { PersonId = person1Id, Identifier = "user", Password = "pass", Type = 0 };
-        var userId = (long)await _db.GetTable<User>().InsertWithIdentityAsync(() => user, token: TestContext.Current.CancellationToken);
+        var userId = (long)await _db.GetTable<User>().InsertWithIdentityAsync(() => new User
+        {
+            PersonId = person1Id,
+            Identifier = "user",
+            Password = "pass",
+            Type = 0,
+            Created = DateTime.Now
+        }, token: TestContext.Current.CancellationToken);
 
         var now = DateTime.UtcNow;
-        var right = new Right
+        await _db.GetTable<Right>().InsertAsync(() => new Right
         {
             UserId = userId,
             PersonId = person2Id,
             Type = (int)Api.Models.Persons.RightType.View,
             Start = now.AddHours(-1),
-            Stop = now.AddHours(1)
-        };
-        await _db.GetTable<Right>().InsertAsync(() => right, token: TestContext.Current.CancellationToken);
+            Stop = now.AddHours(1),
+            Created = DateTime.Now,
+        }, token: TestContext.Current.CancellationToken);
 
         var context = new UserContext(_db);
 

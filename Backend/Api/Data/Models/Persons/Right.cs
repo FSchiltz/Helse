@@ -29,6 +29,6 @@ public class Right
     [Column, NotNull]
     public int Type { get; set; }
 
-    [Column]
-    public DateTime Created { get; set; }
+    [Column, NotNull]
+    public required DateTime Created { get; set; }
 }
