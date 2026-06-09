@@ -2,7 +2,7 @@ using LinqToDB.Mapping;
 
 namespace Api.Data.Models.Common;
 
-[Table(Schema = "Common")]
+[Table(Schema = "common")]
 public class Units
 {
     [Column]

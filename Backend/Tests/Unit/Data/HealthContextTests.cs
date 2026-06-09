@@ -1,4 +1,5 @@
 using Api.Data;
+using Api.Data.Models.Common;
 using Api.Data.Models.Health;
 using Api.Data.Models.Persons;
 using LinqToDB;
@@ -17,12 +18,14 @@ public class HealthContextTests(DatabaseFixture database) : IAsyncLifetime
         _db = new DataConnection(x => new DataOptions().UsePostgreSQL(temp));
         await _db.ExecuteAsync("CREATE SCHEMA health;");
         await _db.ExecuteAsync("CREATE SCHEMA person;");
+        await _db.ExecuteAsync("CREATE SCHEMA common;");
         await _db.CreateTableAsync<Event>();
         await _db.CreateTableAsync<EventType>();
         await _db.CreateTableAsync<Metric>();
         await _db.CreateTableAsync<MetricType>();
         await _db.CreateTableAsync<Person>();
         await _db.CreateTableAsync<User>();
+        await _db.CreateTableAsync<Units>();
     }
 
     public async ValueTask DisposeAsync()
@@ -49,8 +52,23 @@ public class HealthContextTests(DatabaseFixture database) : IAsyncLifetime
     public async Task GetEventTypes_ReturnsEventTypes_WhenExist()
     {
         // Arrange
-        await _db.GetTable<EventType>().InsertAsync(() => new EventType { Name = "Type1", Description = "First type" }, token: TestContext.Current.CancellationToken);
-        await _db.GetTable<EventType>().InsertAsync(() => new EventType { Name = "Type2", Description = "Second type" }, token: TestContext.Current.CancellationToken);
+        await _db.GetTable<EventType>().InsertAsync(() => new EventType
+        {
+            Name = "Type1",
+            Description = "First type",
+            StandAlone = true,
+            UserEditable = true,
+            Visible = true,
+        }, token: TestContext.Current.CancellationToken);
+
+        await _db.GetTable<EventType>().InsertAsync(() => new EventType
+        {
+            Name = "Type2",
+            Description = "Second type",
+            StandAlone = true,
+            UserEditable = true,
+            Visible = true,
+        }, token: TestContext.Current.CancellationToken);
 
         var context = new HealthContext(_db);
 
