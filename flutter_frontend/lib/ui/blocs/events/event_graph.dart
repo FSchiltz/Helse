@@ -172,7 +172,11 @@ class _EventsGraphState extends State<EventsGraph> {
     debugPrint(
       'grouping with buckets: $buckets and bucket lenght: $bucketLength for $subDate',
     );
-    Map<int, EventSummary> groups = {};
+
+    final groups = List<EventSummary>.generate(
+      buckets,
+      (_) => EventSummary(data: {}),
+    );
 
     for (var event in events) {
       // find the bucket
@@ -184,20 +188,16 @@ class _EventsGraphState extends State<EventsGraph> {
       for (var i = 0; i < bucketCount; i++) {
         final bucket = groups[index + i];
         // if it does not exists create it
-        if (bucket == null) {
-          groups[index + i] = EventSummary(data: {event.description ?? '': 1});
+        final dataRow = bucket.data[event.description ?? ''];
+        if (dataRow == null) {
+          bucket.data[event.description ?? ''] = 1;
         } else {
-          final dataRow = bucket.data[event.description ?? ''];
-          if (dataRow == null) {
-            bucket.data[event.description ?? ''] = 1;
-          } else {
-            bucket.data[event.description ?? ''] = (dataRow as int) + 1;
-          }
+          bucket.data[event.description ?? ''] = (dataRow as int) + 1;
         }
       }
     }
 
     debugPrint('_group() executed in ${stopwatch.elapsed}');
-    return groups.values.toList();
+    return groups.toList();
   }
 }
