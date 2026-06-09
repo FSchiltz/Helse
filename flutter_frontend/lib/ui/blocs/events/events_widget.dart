@@ -100,7 +100,8 @@ class _EventWidgetState extends State<EventWidget> {
             child: LoadingBuilder(
               _getData,
               builder: (ctx, data, reset) {
-                return Padding(
+                return Container(
+                  height: 200,
                   padding: const EdgeInsets.all(12.0),
                   child: EventsSummary(data, widget.date),
                 );

@@ -35,23 +35,12 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
   }
 
   Future<List<Metric>> _getData(bool refresh) async {
-    var id = widget.type.id;
-
-    var date = widget.date;
-
-    var start = DateTime(date.start.year, date.start.month, date.start.day);
-    var end = DateTime(
-      date.end.year,
-      date.end.month,
-      date.end.day,
-    ).add(const Duration(days: 1));
-
     return await Dependencies.services.metric.metrics(
-      id,
-      start,
-      end,
+      widget.type.id,
+      widget.date.start,
+      widget.date.end,
       person: widget.person,
-      simple: false,
+      tile: null,
     );
   }
 
@@ -103,12 +92,6 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
               CalendarGroup(
                 name: '',
                 events: data
-                    .where(
-                      (x) =>
-                          day.year == x.date.year &&
-                          day.month == x.date.month &&
-                          day.day == x.date.day,
-                    )
                     .map(
                       (x) => CalendarEvent(
                         from: x.date,

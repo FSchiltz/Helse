@@ -223,6 +223,10 @@
     "@unit": {},
     "group": "Group",
     "@group": {},
-    "summary" : "Summary",
-    "@summary" : {}
+    "summary": "Summary",
+    "@summary": {},
+    "total": "Total",
+    "@total": {},
+    "mean": "Average",
+    "@mean": {}
 }

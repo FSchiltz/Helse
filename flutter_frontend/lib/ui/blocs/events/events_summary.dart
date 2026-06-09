@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
@@ -32,19 +31,22 @@ class EventTimeline extends StatelessWidget {
 
   const EventTimeline(this.userData, this.date, {super.key});
 
-  List<Widget> buildChartBars(
-    List<EventSummary> data,
+  List<Widget> _buildChartBars(
+    List<EventSummary> events,
     BuildContext context, {
     required double width,
+    required double height,
   }) {
     var theme = Theme.of(context).colorScheme;
     List<Widget> chartBars = [];
 
     int tick = 0;
     int max = userData.map((x) => x.data.values.map((y) => y as int).sum).max;
-    var coeff = min(150 / max, 60.0);
+    var coeff =
+        (height / max) *
+        0.95; // remove 5% of the height to fix some overflow on the graph
 
-    for (var d in data) {
+    for (var d in events) {
       chartBars.add(
         Padding(
           padding: EdgeInsets.all(1.0 * width),
@@ -70,18 +72,20 @@ class EventTimeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var maxWidth = (userData.length) * 14.0;
+    double maxWidth = (userData.length) * 14.0;
 
     return LayoutBuilder(
       builder: (b, constraints) {
-        var widthCoeff = min(1.0, constraints.maxWidth / maxWidth);
-        return SizedBox(
-          height: 160,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: buildChartBars(userData, context, width: widthCoeff),
+        var widthCoeff = constraints.maxWidth / maxWidth;
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: _buildChartBars(
+            userData,
+            context,
+            width: widthCoeff,
+            height: constraints.maxHeight,
           ),
         );
       },
@@ -109,7 +113,7 @@ class EventTimeline extends StatelessWidget {
                 color: Dependencies.theme.stateColor(entry.key, context),
               ),
               width: 12 * widthCoeff,
-              height: coeff * count,
+              height: (coeff * count).ceilToDouble(),
             ),
           ),
         );

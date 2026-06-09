@@ -1,23 +1,16 @@
-import 'dart:async';
-
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
-import 'package:helse/ui/blocs/metrics/metric_group.dart';
 
 class NavigatorChart extends StatefulWidget {
-  final List<MetricGrouped> metrics;
   final DateTimeRange date;
   final DateTimeRange subDate;
   final void Function(DateTimeRange<DateTime> value) setDate;
-  final GraphKind graphKind;
+  final Widget graph;
   const NavigatorChart(
-    this.metrics,
     this.date,
     this.subDate,
-    this.setDate,
-    this.graphKind, {
+    this.setDate, {
     super.key,
+    required this.graph,
   });
 
   @override
@@ -27,27 +20,18 @@ class NavigatorChart extends StatefulWidget {
 class _NavigatorChartState extends State<NavigatorChart> {
   double _navigatorStart = 0.0;
   double _navigatorEnd = 1.0;
-  Timer? _navigatorDebounce;
-
-  void _scheduleNavigatorUpdate() {
-    _navigatorDebounce?.cancel();
-
-    _navigatorDebounce = Timer(
-      const Duration(milliseconds: 150),
-      _applyNavigatorRange,
-    );
-  }
 
   void _applyNavigatorRange() {
-    _navigatorDebounce?.cancel();
+    var navigatorStart = _navigatorStart;
+    var navigatorEnd = _navigatorEnd;
     final total = widget.date.duration.inMilliseconds;
 
     final start = widget.date.start.add(
-      Duration(milliseconds: (total * _navigatorStart).round()),
+      Duration(milliseconds: (total * navigatorStart).round()),
     );
 
     final end = widget.date.start.add(
-      Duration(milliseconds: (total * _navigatorEnd).round()),
+      Duration(milliseconds: (total * navigatorEnd).round()),
     );
 
     widget.setDate(DateTimeRange(start: start, end: end));
@@ -62,30 +46,22 @@ class _NavigatorChartState extends State<NavigatorChart> {
         setState(() {
           if (isLeft) {
             setState(() {
-              _navigatorStart = (_navigatorStart + delta).clamp(
-                0.0,
-                _navigatorEnd - 0.05,
-              );
+              _navigatorStart += delta;
             });
           } else {
             setState(() {
-              _navigatorEnd = (_navigatorEnd + delta).clamp(
-                _navigatorStart + 0.05,
-                1.0,
-              );
+              _navigatorEnd += delta;
             });
           }
         });
-
-        _scheduleNavigatorUpdate();
       },
       onHorizontalDragEnd: (_) {
         _applyNavigatorRange();
       },
       child: Container(
-        width: 20,
+        width: 10,
         decoration: BoxDecoration(color: theme.secondary),
-        child: Icon(Icons.drag_indicator, color: theme.onSecondary, size: 14),
+        child: Icon(Icons.drag_indicator, color: theme.onSecondary, size: 10),
       ),
     );
   }
@@ -108,7 +84,9 @@ class _NavigatorChartState extends State<NavigatorChart> {
   void _syncNavigator() {
     final total = widget.date.duration.inMilliseconds;
 
-    if (total <= 0) return;
+    if (total <= 0) {
+      return;
+    }
 
     _navigatorStart =
         widget.subDate.start.difference(widget.date.start).inMilliseconds /
@@ -116,12 +94,6 @@ class _NavigatorChartState extends State<NavigatorChart> {
 
     _navigatorEnd =
         widget.subDate.end.difference(widget.date.start).inMilliseconds / total;
-  }
-
-  @override
-  void dispose() {
-    _navigatorDebounce?.cancel();
-    super.dispose();
   }
 
   @override
@@ -135,13 +107,14 @@ class _NavigatorChartState extends State<NavigatorChart> {
         final left = width * _navigatorStart;
         final right = width * _navigatorEnd;
 
+        debugPrint('created navigator for ${widget.date}');
         return Column(
           children: [
             SizedBox(
-              height: 60,
+              height: 65,
               child: Stack(
                 children: [
-                  SizedBox.expand(child: _navigatorGraph(theme)),
+                  widget.graph,
                   Positioned(
                     left: left,
                     width: right - left,
@@ -160,8 +133,6 @@ class _NavigatorChartState extends State<NavigatorChart> {
 
                           _navigatorEnd = _navigatorStart + range;
                         });
-
-                        _scheduleNavigatorUpdate();
                       },
 
                       onHorizontalDragEnd: (_) {
@@ -185,7 +156,7 @@ class _NavigatorChartState extends State<NavigatorChart> {
                   ),
 
                   Positioned(
-                    left: right - 20,
+                    left: right - 10,
                     top: 0,
                     bottom: 0,
                     child: _navigatorHandle(false, width),
@@ -193,43 +164,9 @@ class _NavigatorChartState extends State<NavigatorChart> {
                 ],
               ),
             ),
-            ],
+          ],
         );
       },
-    );
-  }
-
-  Widget _navigatorGraph(ColorScheme theme) {
-    return LineChart(
-      LineChartData(
-        minX: widget.date.start.millisecondsSinceEpoch.toDouble(),
-        maxX: widget.date.end.millisecondsSinceEpoch.toDouble(),
-        borderData: FlBorderData(show: false),
-        gridData: const FlGridData(show: false),
-        titlesData: const FlTitlesData(
-          leftTitles: AxisTitles(),
-          rightTitles: AxisTitles(),
-          topTitles: AxisTitles(),
-          bottomTitles: AxisTitles(),
-        ),
-
-        lineBarsData: [
-          LineChartBarData(
-            spots: [
-              for (var metric in widget.metrics)
-                FlSpot(
-                  metric.date.millisecondsSinceEpoch.toDouble(),
-                  metric.value,
-                ),
-            ],
-            isCurved: true,
-            curveSmoothness: 0.01,
-            barWidth: 1,
-            color: theme.primary,
-            dotData: const FlDotData(show: false),
-          ),
-        ],
-      ),
     );
   }
 }

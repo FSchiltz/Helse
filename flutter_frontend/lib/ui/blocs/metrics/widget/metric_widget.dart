@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_detail_page.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
@@ -13,6 +14,7 @@ class MetricWidget extends StatefulWidget {
   final DateTimeRange date;
   final int? person;
   final OrderedItem settings;
+  final int tile;
 
   const MetricWidget(
     this.type,
@@ -20,6 +22,7 @@ class MetricWidget extends StatefulWidget {
     this.date, {
     super.key,
     this.person,
+    required this.tile,
   });
 
   @override
@@ -35,23 +38,12 @@ class _MetricWidgetState extends State<MetricWidget> {
   }
 
   Future<List<Metric>> _getData(bool refresh) async {
-    var id = widget.type.id;
-
-    var date = widget.date;
-
-    var start = DateTime(date.start.year, date.start.month, date.start.day);
-    var end = DateTime(
-      date.end.year,
-      date.end.month,
-      date.end.day,
-    ).add(const Duration(days: 1));
-
     return await Dependencies.services.metric.metrics(
-      id,
-      start,
-      end,
+      widget.type.id,
+      widget.date.start,
+      widget.date.end,
       person: widget.person,
-      simple: true,
+      tile: widget.tile,
     );
   }
 
@@ -112,9 +104,13 @@ class _MetricWidgetState extends State<MetricWidget> {
                 ),
                 if (data.isNotEmpty)
                   Expanded(
-                    child: Text(
-                      _getTextInfo(data, widget.type),
-                      style: Theme.of(context).textTheme.bodyLarge,
+                    child: Align(
+                      alignment: AlignmentGeometry.topLeft,
+                      child: Text(
+                        _getTextInfo(data, widget.type, context),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        textAlign: TextAlign.start,
+                      ),
                     ),
                   ),
                 Flexible(
@@ -123,6 +119,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                     widget.type,
                     widget.settings,
                     widget.date,
+                    tile: widget.tile,
                   ),
                 ),
               ],
@@ -133,21 +130,21 @@ class _MetricWidgetState extends State<MetricWidget> {
     );
   }
 
-  String _getTextInfo(List<Metric> metrics, MetricType type) {
+  String _getTextInfo(
+    List<Metric> metrics,
+    MetricType type,
+    BuildContext context,
+  ) {
+    var locale = Translation.of(context);
     String? value;
     switch (type.summaryType) {
       case MetricSummary.sum:
-        value = metrics
-            .map((metric) => double.parse(metric.value))
-            .sum
-            .toString();
+        value =
+            '${locale.total} ${metrics.map((metric) => double.parse(metric.value)).sum}';
         break;
       case MetricSummary.mean:
         value =
-            (metrics.map((metric) => double.parse(metric.value)).sum /
-                    metrics.length)
-                .round()
-                .toString();
+            '${locale.mean} ${(metrics.map((metric) => double.parse(metric.value)).sum / metrics.length).round()}';
         break;
       case MetricSummary.latest:
       default:

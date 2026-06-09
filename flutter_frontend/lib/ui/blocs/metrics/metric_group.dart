@@ -3,11 +3,11 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 class MetricGrouped {
   final List<Metric> metrics;
   final DateTime date;
-  final double value;
-  final double max;
-  final double min;
+  double value;
+  double max;
+  double min;
 
-  const MetricGrouped(
+  MetricGrouped(
     this.date,
     this.value,
     this.metrics, {

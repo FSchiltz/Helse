@@ -34,14 +34,14 @@ class MetricService extends ApiService {
     DateTime? start,
     DateTime? end, {
     int? person,
-    bool simple = false,
+    int? tile,
   }) async {
     var api = await getService();
     List<Metric>? metrics;
-    if (simple) {
+    if (tile != null) {
       metrics = await call(
         () => api.apiMetricsSummaryGet(
-          tile: 16,
+          tile: tile,
           type: type,
           start: start?.toUtc(),
           end: end?.toUtc(),

@@ -26,7 +26,7 @@ class CommonCard extends StatelessWidget {
     return Card(
       margin: margin,
       elevation: 2,
-      color: color ?? Theme.of(context).colorScheme.surfaceContainerHighest,
+      color: color ?? Theme.of(context).colorScheme.surfaceContainerLow,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
       shadowColor: Theme.of(context).colorScheme.shadow,
       child: content,

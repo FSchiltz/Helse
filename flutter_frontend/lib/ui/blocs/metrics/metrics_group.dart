@@ -122,6 +122,7 @@ class _MetricsGroupState extends State<MetricsGroup> {
                     date: widget.date,
                     person: widget.person,
                     cached: cached,
+                    tile: 60,
                   ),
                 ),
         ],

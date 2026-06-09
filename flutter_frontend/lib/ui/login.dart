@@ -284,11 +284,11 @@ class _LoginState extends State<LoginPage> {
 
     if (url != null && url.isNotEmpty) {
       textController.text = url;
-      setState(() {
-        _url = url;
-      });
 
       if (mounted) {
+        setState(() {
+          _url = url;
+        });
         var locale = Translation.of(context);
         await _urlChanged(url, locale);
       }
@@ -333,6 +333,7 @@ class _LoginState extends State<LoginPage> {
   }
 
   Future<void> _submit(AppLocalizations locale, {String? oAuth}) async {
+    debugPrint('Login started');
     setState(() {
       _status = SubmissionStatus.inProgress;
     });
@@ -377,10 +378,12 @@ class _LoginState extends State<LoginPage> {
       } else {
         Notify.show(locale.welcome);
       }
+      debugPrint('Login successful');
       setState(() {
         _status = SubmissionStatus.success;
       });
     } catch (ex) {
+      debugPrint('error of login: $ex');
       Notify.showError("Login failed:n$ex");
 
       // clear any info about the login
