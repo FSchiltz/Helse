@@ -48,7 +48,6 @@ class EventsTimelineGraph extends StatefulWidget {
 }
 
 class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
-  static const double rowLabelWidth = 120.0;
   static const int skippedWidth = 32;
   static const int widthCoef = 2;
   final double boxWidth = 60.0 * widthCoef;
@@ -73,8 +72,9 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
             ),
           )
         : Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Flexible(child: buildRowLabels(labels)),
+              buildRowLabels(labels),
               Expanded(
                 child: Scrollbar(
                   interactive: true,
@@ -246,27 +246,20 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
   }
 
   Widget buildRowLabels(List<String> labels) {
-    return SizedBox(
-      width: rowLabelWidth,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: labels.map((label) {
-          return SizedBox(
-            height: 29.0,
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: Text(
-                  label,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-              ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: labels.map((label) {
+        return SizedBox(
+          height: 29.0,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(label, overflow: TextOverflow.ellipsis, maxLines: 1),
             ),
-          );
-        }).toList(),
-      ),
+          ),
+        );
+      }).toList(),
     );
   }
 
