@@ -251,7 +251,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
   int _distanceInMinutes(DateTime start, DateTime end) {
     if (start.compareTo(widget.date.start) < 0) start = widget.date.start;
     if (end.compareTo(widget.date.end) > 0) end = widget.date.end;
-    return max(6, _minutesBetween(start, end));
+    return max(1, _minutesBetween(start, end));
   }
 
   Widget buildRowLabels(List<String> labels) {
