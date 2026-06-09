@@ -8,7 +8,8 @@ import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
-import 'package:helse/ui/blocs/metrics/detail/navigator_chart.dart';
+import 'package:helse/ui/blocs/metrics/widget/widget_graph.dart';
+import 'package:helse/ui/common/navigator_chart.dart';
 import 'package:helse/ui/blocs/metrics/metric_group.dart';
 import 'package:helse/ui/common/date_range_picker.dart';
 
@@ -80,12 +81,28 @@ class _MetricGraphState extends State<MetricGraph> {
         Padding(
           padding: const EdgeInsets.all(24.0),
           child: NavigatorChart(
-            groupedMetrics,
             widget.date,
             subDate,
             _setDate,
-            widget.type,
-            widget.settings,
+            graph: WidgetGraph(
+              widget.metrics
+                  .map(
+                    (e) => Metric(
+                      id: 0,
+                      date: e.date,
+                      value: e.value.toString(),
+                      type: 0,
+                      sourceId: '',
+                      person: 0,
+                    ),
+                  )
+                  .toList(),
+              widget.date,
+              widget.type,
+              widget.settings,
+              tile: widget.metrics.length,
+              width: 1
+            ),
           ),
         ),
         Expanded(child: _grapichChart(context)),
@@ -231,9 +248,9 @@ class _MetricGraphState extends State<MetricGraph> {
     _selectionChanged(metric);
   }
 
-  List<MetricGrouped> _group(List<Metric> filter) {
+  List<MetricGrouped> _group(List<Metric> metrics) {
     final stopwatch = Stopwatch()..start();
-    final buckets = min(filter.length, 1000);
+    final buckets = min(metrics.length, 1000);
 
     // First create the buckets
     final bucketLength = subDate.duration.inMilliseconds / buckets;
@@ -243,7 +260,7 @@ class _MetricGraphState extends State<MetricGraph> {
     );
     Map<int, MetricGrouped> groups = {};
 
-    for (var metric in filter) {
+    for (var metric in metrics) {
       final value = double.parse(metric.value);
       // find the bucket
       final duration = metric.date.difference(subDate.start);
@@ -275,11 +292,11 @@ class _MetricGraphState extends State<MetricGraph> {
       }
     }
 
-    var metrics = groups.values.toList();
+    var grouped = groups.values.toList();
     debugPrint(
-      '_group() executed in ${stopwatch.elapsed} with ${metrics.length} bucket',
+      '_group() executed in ${stopwatch.elapsed} with ${grouped.length} bucket',
     );
-    return metrics;
+    return grouped;
   }
 
   List<Metric> _filter(List<Metric> metrics, DateTimeRange<DateTime> value) {

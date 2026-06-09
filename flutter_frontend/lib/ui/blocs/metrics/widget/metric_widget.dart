@@ -22,7 +22,7 @@ class MetricWidget extends StatefulWidget {
     this.date, {
     super.key,
     this.person,
-    this.tile = 30,
+    this.tile = 60,
   });
 
   @override

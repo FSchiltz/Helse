@@ -1,23 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/blocs/metrics/metric_group.dart';
-import 'package:helse/ui/blocs/metrics/widget/widget_graph.dart';
 
 class NavigatorChart extends StatefulWidget {
-  final List<MetricGrouped> metrics;
   final DateTimeRange date;
   final DateTimeRange subDate;
   final void Function(DateTimeRange<DateTime> value) setDate;
-  final GraphKind graphKind;
-  final MetricType type;
+  final Widget graph;
   const NavigatorChart(
-    this.metrics,
     this.date,
     this.subDate,
-    this.setDate,
-    this.type,
-    this.graphKind, {
+    this.setDate, {
     super.key,
+    required this.graph,
   });
 
   @override
@@ -121,24 +114,7 @@ class _NavigatorChartState extends State<NavigatorChart> {
               height: 60,
               child: Stack(
                 children: [
-                  WidgetGraph(
-                    widget.metrics
-                        .map(
-                          (e) => Metric(
-                            id: 0,
-                            date: e.date,
-                            value: e.value.toString(),
-                            type: 0,
-                            sourceId: '',
-                            person: 0,
-                          ),
-                        )
-                        .toList(),
-                    widget.date,
-                    widget.type,
-                    widget.graphKind,
-                    tile: widget.metrics.length,
-                  ),
+                  widget.graph,
                   Positioned(
                     left: left,
                     width: right - left,

@@ -84,10 +84,10 @@ class _EventDetailPageState extends State<EventDetailPage> {
         _getData,
         builder: (context, data, reset) {
           return EventsGraph(
-            date: widget.date,
+            range: widget.date,
             person: widget.person,
             type: widget.type,
-            data: data,
+            events: data,
             reset: reset,
           );
         },

@@ -10,6 +10,7 @@ class WidgetGraph extends StatelessWidget {
   final GraphKind settings;
   final MetricType type;
   final int tile;
+  final double? width;
 
   const WidgetGraph(
     this.metrics,
@@ -18,6 +19,7 @@ class WidgetGraph extends StatelessWidget {
     this.settings, {
     super.key,
     required this.tile,
+    this.width,
   });
 
   List<FlSpot> _getSpot(List<Metric> raw) {
@@ -69,7 +71,7 @@ class WidgetGraph extends StatelessWidget {
             BarChartRodData(
               toY: item.y,
               color: Dependencies.theme.stateColor(type.id.toString(), context),
-              width: 2,
+              width: width ?? 2,
             ),
           ],
         ),
@@ -90,7 +92,7 @@ class WidgetGraph extends StatelessWidget {
   Widget _getGraph(BuildContext context) {
     if (settings == GraphKind.bar) {
       return BarChart(
-        BarChartData(          
+        BarChartData(
           barTouchData: BarTouchData(enabled: false),
           titlesData: const FlTitlesData(
             leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -119,7 +121,7 @@ class WidgetGraph extends StatelessWidget {
           gridData: const FlGridData(show: false),
           lineBarsData: [
             LineChartBarData(
-              barWidth: 3,
+              barWidth: width ?? 3,
               color: Dependencies.theme.stateColor(type.id.toString(), context),
               spots: _getSpot(metrics),
               isCurved: true,
