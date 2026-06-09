@@ -8,7 +8,8 @@ using System.Text.Json;
 
 namespace Tests.Integrations;
 
-public class AuthTests(WebApplicationFactory<Program> factory) : IntegrationTest(factory)
+[Collection("Database collection")]
+public class AuthTests(WebApplicationFactory<Program> factory, DatabaseFixture fixture) : IntegrationTest(factory, fixture)
 {
     const string personUrl = "/api/person";
     const string statusUrl = "/api/status";
@@ -27,7 +28,8 @@ public class AuthTests(WebApplicationFactory<Program> factory) : IntegrationTest
     [InlineData("/api/patients")]
     public async Task Get_NoPassword(string url)
     {
-        var response = await _client.GetAsync(url, TestContext.Current.CancellationToken);
+        var client = await ClientAsync();
+        var response = await client.GetAsync(url, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
@@ -38,30 +40,33 @@ public class AuthTests(WebApplicationFactory<Program> factory) : IntegrationTest
     [InlineData("/api/person/caregiver")]
     public async Task Get_NoPassword_2(string url)
     {
-        var response = await _client.GetAsync(url, TestContext.Current.CancellationToken);
+        var client = await ClientAsync();
+        var response = await client.GetAsync(url, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
-    [Theory(Skip = "not working")]
+    [Theory]
     [InlineData(statusUrl)]
     public async Task Get_Anonymous(string url)
     {
-        var response = await _client.GetAsync(url, TestContext.Current.CancellationToken);
+        var client = await ClientAsync();
+        var response = await client.GetAsync(url, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
-    [Fact(Skip = "not working")]
+    [Fact]
     public async Task Status()
     {
-        var response = await _client.GetFromJsonAsync<Status>(statusUrl, cancellationToken: TestContext.Current.CancellationToken);
+        var client = await ClientAsync();
+        var response = await client.GetFromJsonAsync<Status>(statusUrl, cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.NotNull(response);
         Assert.False(response.Init);
     }
 
-    [Fact(Skip = "not working")]
+    [Fact]
     public async Task FirstConnection()
     {
         // create the first user (shoudl allow)
@@ -74,22 +79,23 @@ public class AuthTests(WebApplicationFactory<Program> factory) : IntegrationTest
         };
 
 
-        var response = await _client.PostAsJsonAsync<PersonCreation>(personUrl, admin, cancellationToken: TestContext.Current.CancellationToken);
+        var client = await ClientAsync();
+        var response = await client.PostAsJsonAsync<PersonCreation>(personUrl, admin, cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(response);
         Assert.True(response.IsSuccessStatusCode);
 
         // get the status
-        var status = await _client.GetFromJsonAsync<Status>(statusUrl, cancellationToken: TestContext.Current.CancellationToken);
+        var status = await client.GetFromJsonAsync<Status>(statusUrl, cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(status);
         Assert.True(status.Init);
 
         // try to create a new person witouth the right
-        var wrongPerson = await _client.PostAsJsonAsync<PersonCreation>(personUrl, admin, cancellationToken: TestContext.Current.CancellationToken);
+        var wrongPerson = await client.PostAsJsonAsync<PersonCreation>(personUrl, admin, cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(wrongPerson);
         Assert.False(wrongPerson.IsSuccessStatusCode);
 
         // Connect 
-        var auth = await _client.PostAsJsonAsync(authUrl, new Connection(admin.UserName, admin.Password, null, null), cancellationToken: TestContext.Current.CancellationToken);
+        var auth = await client.PostAsJsonAsync(authUrl, new Connection(admin.UserName, admin.Password, null, null), cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(auth);
 
         var token = JsonSerializer.Deserialize<ConnectionResponse>(await auth.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
@@ -97,8 +103,8 @@ public class AuthTests(WebApplicationFactory<Program> factory) : IntegrationTest
         Assert.NotNull(token.Roles);
 
         // try to create a new person with the right
-        _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.AccessToken);
-        var correct = await _client.PostAsJsonAsync<PersonCreation>(personUrl, new PersonCreation
+        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.AccessToken);
+        var correct = await client.PostAsJsonAsync<PersonCreation>(personUrl, new PersonCreation
         {
             UserName = "user",
             Password = "password",
