@@ -135,14 +135,16 @@ public class HealthContextTests(DatabaseFixture database) : IAsyncLifetime
     public async Task GetMetricType_ReturnsMetricType_WhenFound()
     {
         // Arrange
-        var metricType = new MetricType
+        var id = (int)await _db.GetTable<MetricType>().InsertWithIdentityAsync(() => new MetricType
         {
             Name = "Temperature",
             Type = (int)Api.Models.Metrics.MetricDataType.Number,
             SummaryType = (int)Api.Models.Metrics.MetricSummary.Mean,
             Unit = 0,
-        };
-        var id = (int)await _db.GetTable<MetricType>().InsertWithIdentityAsync(() => metricType, token: TestContext.Current.CancellationToken);
+            UserEditable = true,
+            Visible = true,
+            ShowOnDashboard = true,
+        }, token: TestContext.Current.CancellationToken);
 
         var context = new HealthContext(_db);
 
