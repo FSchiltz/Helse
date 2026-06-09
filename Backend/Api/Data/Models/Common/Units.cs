@@ -20,6 +20,9 @@ public class Units
     [Column]
     public int? BaseUnit { get; set; }
 
+    [Association(ThisKey = nameof(BaseUnit), OtherKey = nameof(Common.Units.Id))]
+    public Units? BaseUnitObject { get; set; }
+
     [Column]
     public double? ConversionFactor { get; set; }
 

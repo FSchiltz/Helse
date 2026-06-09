@@ -116,7 +116,7 @@ public class HealthContextTests(DatabaseFixture fixture) : IAsyncLifetime
         // Assert
         Assert.NotNull(result);
         Assert.Single(result);
-        Assert.Equal("HeartRate", result[0].Item.Name);
+        Assert.Equal("HeartRate", result[0].Name);
     }
 
     [Fact]
@@ -163,7 +163,7 @@ public class HealthContextTests(DatabaseFixture fixture) : IAsyncLifetime
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("Temperature", result.Item.Name);
+        Assert.Equal("Temperature", result.Name);
     }
 
     [Fact]

@@ -110,56 +110,49 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
             .UpdateAsync();
     }
 
-    private IQueryable<WithUnit<Metric>> MetricQuery()
+    /// <inheritdoc/>
+    public Task<Metric?> GetMetric(long id)
     {
-        return from metric in Db.GetTable<Metric>()
-               from unit in Db.GetTable<Units>().Where(o => o.Id == metric.Unit).DefaultIfEmpty()
-               from baseunit in Db.GetTable<Units>().Where(o => o.Id == unit.BaseUnit).DefaultIfEmpty()
-               select new WithUnit<Metric>(metric, unit, baseunit);
+        IQueryable<Metric> query = Db.GetTable<Metric>().LoadWith(x => x.Unit);
+        return query.FirstOrDefaultAsync(x => x.Id == id);
     }
 
     /// <inheritdoc/>
-    public Task<WithUnit<Metric>?> GetMetric(long id) => MetricQuery().FirstOrDefaultAsync(x => x.Item.Id == id);
-
-    /// <inheritdoc/>
-    public Task<WithUnit<Metric>[]> GetMetrics(long id, long type, DateTime start, DateTime end)
+    public Task<Metric[]> GetMetrics(long id, long type, DateTime start, DateTime end)
     {
-        return MetricQuery()
-            .Where(x => x.Item.PersonId == id
-                && x.Item.Type == type
-                && x.Item.Date <= end && x.Item.Date >= start)
-                                .OrderBy(x => x.Item.Date)
+        IQueryable<Metric> query = Db.GetTable<Metric>().LoadWith(x => x.Unit);
+        return query.Where(x => x.PersonId == id
+                && x.Type == type
+                && x.Date <= end && x.Date >= start)
+            .OrderBy(x => x.Date)
             .ToArrayAsync();
     }
 
-    private IQueryable<WithUnit<MetricType>> MetricTypeQuery()
-    {
-        return from metric in Db.GetTable<MetricType>()
-               from unit in Db.GetTable<Units>().Where(o => o.Id == metric.Unit).DefaultIfEmpty()
-               from baseunit in Db.GetTable<Units>().Where(o => o.Id == unit.BaseUnit).DefaultIfEmpty()
-               select new WithUnit<MetricType>(metric, unit, baseunit);
-    }
-
     /// <inheritdoc/>
-    public Task<WithUnit<MetricType>[]> GetMetricTypes(bool? all, long? group)
+    public Task<MetricType[]> GetMetricTypes(bool? all, long? group)
     {
-        var query = MetricTypeQuery();
+        IQueryable<MetricType> query = Db.GetTable<MetricType>().LoadWith(x => x.UnitObject);
 
         if (all == false)
         {
-            query = query.Where(x => x.Item.Visible);
+            query = query.Where(x => x.Visible);
         }
 
         if (group is not null)
         {
-            query = query.Where(x => x.Item.GroupId == group);
+            query = query.Where(x => x.GroupId == group);
         }
 
-        return query.OrderBy(x => x.Item.Id).ToArrayAsync();
+        return query.OrderBy(x => x.Id).ToArrayAsync();
     }
 
     /// <inheritdoc/>
-    public Task<WithUnit<MetricType>?> GetMetricType(long type) => MetricTypeQuery().FirstOrDefaultAsync(x => x.Item.Id == type);
+    public Task<MetricType?> GetMetricType(long type)
+    {
+        IQueryable<MetricType> query = Db.GetTable<MetricType>().LoadWith(x => x.UnitObject);
+
+        return query.FirstOrDefaultAsync(x => x.Id == type);
+    }
 
     /// <inheritdoc/>
     public Task<Models.Persons.Person[]> GetPatients(long user, DateTime now, RightType right)

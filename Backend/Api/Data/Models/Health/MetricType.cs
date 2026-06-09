@@ -1,3 +1,4 @@
+using Api.Data.Models.Common;
 using LinqToDB.Mapping;
 
 namespace Api.Data.Models.Health;
@@ -16,6 +17,9 @@ public class MetricType
 
     [Column]
     public required int Unit { get; set; }
+
+    [Association(ThisKey = nameof(Unit), OtherKey = nameof(Common.Units.Id))]
+    public Units? UnitObject { get; set; }
 
     [Column]
     public long Type { get; set; }
