@@ -254,7 +254,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
           child: Align(
             alignment: Alignment.centerRight,
             child: Padding(
-              padding: const EdgeInsets.only(left: 8.0),
+              padding: const EdgeInsets.only(left: 8.0, right: 4),
               child: Text(label, overflow: TextOverflow.ellipsis, maxLines: 1),
             ),
           ),
