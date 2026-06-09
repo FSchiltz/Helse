@@ -66,6 +66,7 @@ dependencies:
   web: ^1.1.1
   chunked_uploader: ^1.1.0
   workmanager: ^0.9.0+3
+  simple_icons: ^16.23.0
 
 dev_dependencies:
   flutter_test:
