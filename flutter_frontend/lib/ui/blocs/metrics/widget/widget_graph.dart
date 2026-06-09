@@ -126,7 +126,22 @@ class WidgetGraph extends StatelessWidget {
               spots: _getSpot(metrics),
               isCurved: true,
               curveSmoothness: 0.02,
-              dotData: const FlDotData(show: false),
+              dotData: FlDotData(
+                show: true,
+                getDotPainter: (spot, percent, barData, index) =>
+                    FlDotCirclePainter(
+                      color: Dependencies.theme.stateColor(
+                        type.id.toString(),
+                        context,
+                      ),
+                      strokeColor: Dependencies.theme.stateColor(
+                        type.id.toString(),
+                        context,
+                      ),
+                      radius: barData.spots.length > 1 ? 0 : 2,
+                      strokeWidth: 0,
+                    ),
+              ),
             ),
           ],
         ),
