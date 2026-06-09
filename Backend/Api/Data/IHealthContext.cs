@@ -66,7 +66,7 @@ public interface IHealthContext : IContext
 
     Task<int> DeleteEventType(long id);
 
-    Task<WithUnit<MetricType>[]> GetMetricTypes(bool? all, long? group);
+    Task<MetricType[]> GetMetricTypes(bool? all, long? group);
 
     Task<int> DeleteMetricType(long id);
 
@@ -76,9 +76,9 @@ public interface IHealthContext : IContext
 
     Task DeleteMetric(long id);
 
-    Task<WithUnit<Metric>?> GetMetric(long id);
+    Task<Metric?> GetMetric(long id);
 
-    Task<WithUnit<Metric>[]> GetMetrics(long id, long type, DateTime start, DateTime end);
+    Task<Metric[]> GetMetrics(long id, long type, DateTime start, DateTime end);
 
     Task<Metric[]> GetSummaryMetrics(int tile, long id, int type, Api.Models.Metrics.MetricSummary action, DateTime start, DateTime end);
 
@@ -103,7 +103,7 @@ public interface IHealthContext : IContext
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    Task<WithUnit<MetricType>?> GetMetricType(int type);
+    Task<MetricType?> GetMetricType(long type);
 
     /// <summary>
     /// Get the last metric in the given time frame if any

@@ -75,6 +75,7 @@ public class TokenServiceTests
         {
             Identifier = "id",
             Password = "pppp",
+            Created = DateTime.Now,
         };
         var expires = DateTime.UtcNow.AddHours(1);
 
@@ -98,6 +99,7 @@ public class TokenServiceTests
         {
             Identifier = "id",
             Password = "pppp",
+            Created = DateTime.Now,
         };
         var expires = DateTime.UtcNow.AddHours(1);
 
@@ -121,6 +123,7 @@ public class TokenServiceTests
         {
             Identifier = "id",
             Password = "pppp",
+            Created = DateTime.Now,
         };
         var expires = DateTime.UtcNow.AddHours(1);
 
@@ -144,6 +147,7 @@ public class TokenServiceTests
         {
             Identifier = "id",
             Password = "pppp",
+            Created = DateTime.Now,
         };
         var expires = DateTime.UtcNow.AddHours(1);
 

@@ -25,6 +25,7 @@ public class PasswordHelperTests
             Identifier = "",
             Password = hash,
             Type = 1,
+            Created = DateTime.Now,
         });
 
         var user = new Connection("testuser", password,  null, null);
@@ -53,6 +54,7 @@ public class PasswordHelperTests
             Identifier = "",
             Password = hash,
             Type = 1,
+            Created = DateTime.Now,
         });
 
         var user = new Connection("testuser", wrongPassword, null, null);

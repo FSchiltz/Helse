@@ -31,6 +31,7 @@ public abstract class LogicTests
             Identifier = "",
             Password = "",
             Type = (int)user,
+            Created = DateTime.Now,
         });
 
         return users;

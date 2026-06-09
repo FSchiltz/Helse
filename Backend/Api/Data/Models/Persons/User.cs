@@ -9,6 +9,7 @@ public class User
     {
         Identifier = string.Empty,
         Password = string.Empty,
+        Created = DateTime.Now,
     };
 
     [PrimaryKey, Identity]
@@ -40,6 +41,6 @@ public class User
         return ((UserType)Type).HasFlag(type);
     }
 
-    [Column]
-    public DateTime Created { get; set; }
+    [Column, NotNull]
+    public required DateTime Created { get; set; }
 }

@@ -13,7 +13,14 @@ public class RightsHelperTests
     {
         // Arrange
         var db = Substitute.For<IUserContext>();
-        var user = new User { Id = 1, Identifier = "caregiver", Password = "pass", Type = (int)UserType.Caregiver };
+        var user = new User
+        {
+            Id = 1,
+            Identifier = "caregiver",
+            Password = "pass",
+            Type = (int)UserType.Caregiver,
+            Created = DateTime.Now,
+        };
         var right = new Api.Models.Persons.Right { Start = DateTime.UtcNow };
         db.HasRightAsync(1, 2, Api.Models.Persons.RightType.View, Arg.Any<DateTime>()).Returns(right);
 
@@ -29,7 +36,14 @@ public class RightsHelperTests
     {
         // Arrange
         var db = Substitute.For<IUserContext>();
-        var user = new User { Id = 1, Identifier = "caregiver", Password = "pass", Type = (int)UserType.Caregiver };
+        var user = new User
+        {
+            Id = 1,
+            Identifier = "caregiver",
+            Password = "pass",
+            Type = (int)UserType.Caregiver,
+            Created = DateTime.Now,
+        };
         db.HasRightAsync(1, 2, Api.Models.Persons.RightType.View, Arg.Any<DateTime>()).Returns((Api.Models.Persons.Right?)null);
 
         // Act
@@ -44,7 +58,14 @@ public class RightsHelperTests
     {
         // Arrange
         var db = Substitute.For<IUserContext>();
-        var user = new User { Id = 1, Identifier = "user", Password = "pass", Type = (int)UserType.User };
+        var user = new User
+        {
+            Id = 1,
+            Identifier = "user",
+            Password = "pass",
+            Type = (int)UserType.User,
+            Created = DateTime.Now,
+        };
         db.Get("testuser").Returns(user);
 
         var claims = new ClaimsIdentity(

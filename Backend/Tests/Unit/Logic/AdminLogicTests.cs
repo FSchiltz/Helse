@@ -91,12 +91,12 @@ public class AdminLogicTests : LogicTests
         var metricCounts = new Dictionary<long, int> { { 1, 8 } };
         stats.CountMetricsByType(start, end).Returns(metricCounts);
 
-        WithUnit<MetricType>[] metricTypes = [
-            new(new() { 
-                Id = 1, 
+        MetricType[] metricTypes = [
+            new() {
+                Id = 1,
                 Name = "Blood Pressure",
-                Unit = 0, 
-            }, null),
+                Unit = 0,
+            },
         ];
         health.GetMetricTypes(true, null).Returns(metricTypes);
 

@@ -1,3 +1,4 @@
+using Api.Data.Models.Common;
 using Api.Data.Models.Persons;
 using LinqToDB.Mapping;
 
@@ -47,4 +48,7 @@ public class Metric
 
     [Column]
     public int? Unit { get; set; }
+
+    [Association(ThisKey = nameof(Unit), OtherKey = nameof(Common.Units.Id))]
+    public Units? UnitObject { get; set; }
 }

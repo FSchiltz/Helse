@@ -20,7 +20,9 @@ public class PersonLogicTests : LogicTests
 
         users.GetUsers().Returns(
         [
-            new(new Api.Data.Models.Persons.User { Id = 1, Identifier = "test", Password = "pass" }, new Api.Data.Models.Persons.Person { Id = 1, Name = "Test" })
+            new(new Api.Data.Models.Persons.User { Id = 1, Identifier = "test", Password = "pass",
+            Created = DateTime.Now, }, new Api.Data.Models.Persons.Person { Id = 1, Name = "Test",
+            Created = DateTime.Now, })
         ]);
         users.GetRights(Arg.Any<DateTime>()).Returns([]);
 

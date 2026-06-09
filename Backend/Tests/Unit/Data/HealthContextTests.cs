@@ -6,29 +6,25 @@ using LinqToDB.Data;
 
 namespace Tests.Unit.Data;
 
-public class HealthContextTests : IAsyncLifetime
+[Collection("Database collection")]
+public class HealthContextTests(DatabaseFixture fixture) : IAsyncLifetime
 {
     private DataConnection _db = null!;
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
-        // Create in-memory SQLite database
-        _db = new DataConnection("SQLite.MS", x => new LinqToDB.DataOptions().UseSQLite("Data Source=:memory:"));
-        await _db.CreateTableAsync<Event>();
-        await _db.CreateTableAsync<EventType>();
-        await _db.CreateTableAsync<Metric>();
-        await _db.CreateTableAsync<MetricType>();
-        await _db.CreateTableAsync<Person>();
-        await _db.CreateTableAsync<User>();
+        var temp = await fixture.GetTempDB();
+        _db = new DataConnection(x => new DataOptions().UsePostgreSQL(temp));
+        await DatabaseFixture.InitForUnit(_db);
     }
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         if (_db != null)
             await _db.DisposeAsync();
     }
 
-    [Fact(Skip = "Not working")]
+    [Fact]
     public async Task GetEventTypes_ReturnsEmpty_WhenNoneExist()
     {
         // Arrange
@@ -42,14 +38,27 @@ public class HealthContextTests : IAsyncLifetime
         Assert.Empty(result);
     }
 
-    [Fact(Skip = "Not working")]
+    [Fact]
     public async Task GetEventTypes_ReturnsEventTypes_WhenExist()
     {
         // Arrange
-        var eventType1 = new EventType { Name = "Type1", Description = "First type" };
-        var eventType2 = new EventType { Name = "Type2", Description = "Second type" };
-        await _db.GetTable<EventType>().InsertAsync(() => eventType1);
-        await _db.GetTable<EventType>().InsertAsync(() => eventType2);
+        await _db.GetTable<EventType>().InsertAsync(() => new EventType
+        {
+            Name = "Type1",
+            Description = "First type",
+            StandAlone = true,
+            UserEditable = true,
+            Visible = true,
+        }, token: TestContext.Current.CancellationToken);
+
+        await _db.GetTable<EventType>().InsertAsync(() => new EventType
+        {
+            Name = "Type2",
+            Description = "Second type",
+            StandAlone = true,
+            UserEditable = true,
+            Visible = true,
+        }, token: TestContext.Current.CancellationToken);
 
         var context = new HealthContext(_db);
 
@@ -61,7 +70,7 @@ public class HealthContextTests : IAsyncLifetime
         Assert.Equal(2, result.Length);
     }
 
-    [Fact(Skip = "Not working")]
+    [Fact]
     public async Task GetMetricTypes_ReturnsEmpty_WhenNoneExist()
     {
         // Arrange
@@ -75,18 +84,29 @@ public class HealthContextTests : IAsyncLifetime
         Assert.Empty(result);
     }
 
-    [Fact(Skip = "Not working")]
+    [Fact]
     public async Task GetMetricTypes_ReturnsMetricTypes_WhenExist()
     {
         // Arrange
-        var metricType = new MetricType
+        var groupid = (long)await _db.GetTable<MetricGroup>().InsertWithIdentityAsync(() => new MetricGroup()
+        {
+            Description = "",
+            Name = "",
+            ShowOnDashboard = true,
+            ShowTitle = true,
+        }, token: TestContext.Current.CancellationToken);
+
+        await _db.GetTable<MetricType>().InsertAsync(() => new MetricType
         {
             Name = "HeartRate",
             Type = (int)Api.Models.Metrics.MetricDataType.Number,
             SummaryType = (int)Api.Models.Metrics.MetricSummary.Mean,
             Unit = 0,
-        };
-        await _db.GetTable<MetricType>().InsertAsync(() => metricType);
+            UserEditable = true,
+            ShowOnDashboard = true,
+            Visible = true,
+            GroupId = groupid,
+        }, token: TestContext.Current.CancellationToken);
 
         var context = new HealthContext(_db);
 
@@ -96,10 +116,10 @@ public class HealthContextTests : IAsyncLifetime
         // Assert
         Assert.NotNull(result);
         Assert.Single(result);
-        Assert.Equal("HeartRate", result[0].Item.Name);
+        Assert.Equal("HeartRate", result[0].Name);
     }
 
-    [Fact(Skip = "Not working")]
+    [Fact]
     public async Task GetMetricType_ReturnsNull_WhenNotFound()
     {
         // Arrange
@@ -112,18 +132,29 @@ public class HealthContextTests : IAsyncLifetime
         Assert.Null(result);
     }
 
-    [Fact(Skip = "Not working")]
+    [Fact]
     public async Task GetMetricType_ReturnsMetricType_WhenFound()
     {
         // Arrange
-        var metricType = new MetricType
+        var groupid = (long)await _db.GetTable<MetricGroup>().InsertWithIdentityAsync(() => new MetricGroup()
+        {
+            Description = "",
+            Name = "",
+            ShowOnDashboard = true,
+            ShowTitle = true,
+        }, token: TestContext.Current.CancellationToken);
+
+        var id = (long)await _db.GetTable<MetricType>().InsertWithIdentityAsync(() => new MetricType
         {
             Name = "Temperature",
             Type = (int)Api.Models.Metrics.MetricDataType.Number,
             SummaryType = (int)Api.Models.Metrics.MetricSummary.Mean,
             Unit = 0,
-        };
-        var id = (int)(long)await _db.GetTable<MetricType>().InsertWithIdentityAsync(() => metricType);
+            UserEditable = true,
+            Visible = true,
+            ShowOnDashboard = true,
+            GroupId = groupid,
+        }, token: TestContext.Current.CancellationToken);
 
         var context = new HealthContext(_db);
 
@@ -132,10 +163,10 @@ public class HealthContextTests : IAsyncLifetime
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("Temperature", result.Item.Name);
+        Assert.Equal("Temperature", result.Name);
     }
 
-    [Fact(Skip = "Not working")]
+    [Fact]
     public async Task GetEvent_ReturnsNull_WhenNotFound()
     {
         // Arrange
@@ -148,20 +179,38 @@ public class HealthContextTests : IAsyncLifetime
         Assert.Null(result);
     }
 
-    [Fact(Skip = "Not working")]
+    [Fact]
     public async Task GetEvent_ReturnsEvent_WhenFound()
     {
-        // Arrange
-        var @event = new Event
+        var person = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
         {
-            PersonId = 1,
+            Identifier = "",
+            Name = "",
+            Created = DateTime.Now,
+        }, token: TestContext.Current.CancellationToken);
+
+        var user = (long)await _db.GetTable<User>().InsertWithIdentityAsync(() => new User
+        {
+            Identifier = "",
+            Password = "",
+            PersonId = person,
+            Created = DateTime.Now,
+            Type = 1,
+        }, token: TestContext.Current.CancellationToken);
+
+        var id = (long)await _db.GetTable<Event>().InsertWithIdentityAsync(() => new Event
+        {
+            PersonId = person,
+            UserId = user,
             Type = 1,
             Start = DateTime.UtcNow,
             Stop = DateTime.UtcNow.AddHours(1),
             Valid = true,
             SourceId = string.Empty,
-        };
-        var id = (long)await _db.GetTable<Event>().InsertWithIdentityAsync(() => @event);
+            NotificationSent = false,
+            Created = DateTime.Now,
+            Source = 0,
+        }, token: TestContext.Current.CancellationToken);
 
         var context = new HealthContext(_db);
 
