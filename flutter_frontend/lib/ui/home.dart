@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/fit/status_bloc.dart';
 import 'package:helse/ui/blocs/localSettings/user_sessions.dart';
+import 'package:simple_icons/simple_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../di/dependencies.dart';
 import '../logic/event.dart';
@@ -85,6 +87,17 @@ class _HomeState extends State<Home> {
             elevation: 1,
             centerTitle: true,
             actions: [
+              IconButton(
+                onPressed: () {
+                  final uri = Uri.parse(
+                    'https://github.com/FSchiltz/Helse/issues/new',
+                  );
+
+                  launchUrl(uri, mode: LaunchMode.externalApplication);
+                },
+                icon: Icon(SimpleIcons.github, color: theme.colorScheme.onPrimaryContainer,
+                ),
+              ),
               BlocProvider<StatusBloc>.value(
                 value: Dependencies.blocs.jobs,
                 child: BlocBuilder<StatusBloc, SubmissionStatus>(
