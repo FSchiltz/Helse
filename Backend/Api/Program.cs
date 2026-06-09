@@ -22,10 +22,11 @@ builder.Services.AddOpenApi("helseapi");
 
 //services cors
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder => builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader()));
-var connection = builder.Configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("Database configuration missing");
 
 builder.Services.AddLinqToDBContext<DataConnection>((provider, options) =>
             {
+                var connection = builder.Configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("Database configuration missing");
+
                 return options
                            .UsePostgreSQL(connection, LinqToDB.DataProvider.PostgreSQL.PostgreSQLVersion.v15, (x) => new()
                            {
@@ -50,7 +51,7 @@ builder.Services.AddSingleton<TokenService>()
     .AddTransient<ISettingsContext, SettingsContext>()
     .AddTransient<IHealthContext, HealthContext>()
     .AddTransient<IStatsContext, StatsContext>()
-    .AddTransient<ICommonContext,CommonContext>();
+    .AddTransient<ICommonContext, CommonContext>();
 
 builder.Services.AddAuthentication(options =>
   {
@@ -78,7 +79,7 @@ builder.Services.AddAuthorizationBuilder()
             .RequireClaim("token", ["access", "refresh"])
             .Build());
 
-builder.Services.AddSingleton(new MigrationSettings(connection));
+builder.Services.Configure<MigrationSettings>(builder.Configuration.GetSection(MigrationSettings.Name));
 builder.Services.AddHostedService<MigrationHelper>();
 builder.Services.AddHostedService<EventNotificationService>();
 builder.Services.AddHostedService<ImporterService>()

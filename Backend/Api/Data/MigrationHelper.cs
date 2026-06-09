@@ -1,17 +1,23 @@
 using System.Reflection;
 using DbUp;
+using Microsoft.Extensions.Options;
 
 namespace Api.Data;
 
-public record MigrationSettings(string ConnectionString);
+public class MigrationSettings
+{
+    public static string Name => "ConnectionStrings";
 
-public class MigrationHelper(MigrationSettings settings, ILogger<MigrationHelper> logger) : IHostedService
+    public required string Default { get; set; }
+}
+
+public class MigrationHelper(IOptions<MigrationSettings> settings, ILogger<MigrationHelper> logger) : IHostedService
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        EnsureDatabase.For.PostgresqlDatabase(settings.ConnectionString);
+        EnsureDatabase.For.PostgresqlDatabase(settings.Value.Default);
 
-        var result = DeployChanges.To.PostgresqlDatabase(settings.ConnectionString)
+        var result = DeployChanges.To.PostgresqlDatabase(settings.Value.Default)
             .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
             .LogTo(logger)
             .WithTransactionPerScript()

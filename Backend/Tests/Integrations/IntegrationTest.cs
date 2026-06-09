@@ -13,6 +13,17 @@ public abstract class IntegrationTest(WebApplicationFactory<Program> factory, Da
     public async Task<HttpClient> ClientAsync()
     {
         var connection = await fixture.GetTempDB();
-         
+        return factory
+                 .WithWebHostBuilder(builder =>
+                    builder
+                        .ConfigureAppConfiguration((_, config) => config.AddInMemoryCollection([new("ConnectionStrings:Default", connection)]))
+                        .ConfigureTestServices(services =>
+                        {
+                            var db = services.Single(d => d.ServiceType == typeof(DataConnection));
+                            services.Remove(db);
+                            // Create open SqliteConnection so EF won't automatically close it.
+                            services.AddSingleton(new DataConnection((_) => new DataOptions().UsePostgreSQL(connection)));
+                        }))
+                 .CreateClient();
     }
 }
