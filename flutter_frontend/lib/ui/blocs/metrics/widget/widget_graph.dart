@@ -26,7 +26,13 @@ class WidgetGraph extends StatelessWidget {
     List<FlSpot> spots = [];
     final bucketLength = range.duration.inMilliseconds / tile;
 
-    Map<int, MetricGrouped> groups = {};
+    final groups = List<MetricGrouped>.generate(tile, (index) {
+      final start = range.start.add(
+        Duration(milliseconds: (index * bucketLength).toInt()),
+      );
+      var date = start.add(Duration(milliseconds: (bucketLength / 2).toInt()));
+      return MetricGrouped(date, 0, []);
+    });
 
     for (var metric in raw) {
       final value = double.parse(metric.value);
@@ -35,22 +41,16 @@ class WidgetGraph extends StatelessWidget {
       final index = (duration.inMilliseconds / bucketLength).toInt();
       final bucket = groups[index];
       // if it does not exists create it
-      if (bucket == null) {
-        final start = range.start.add(
-          Duration(milliseconds: (index * bucketLength).toInt()),
-        );
-        var date = start.add(
-          Duration(milliseconds: (bucketLength / 2).toInt()),
-        );
-        groups[index] = MetricGrouped(date, value, []);
-      } else {
-        bucket.value = (bucket.value + value) / 2;
-      }
+      bucket.value = (bucket.value + value) / 2;
     }
 
-    for (final item in groups.entries) {
-      var x = item.value.date.millisecondsSinceEpoch.toDouble();
-      var y = item.value.value;
+    for (final item in groups) {
+      var y = item.value;
+      if (settings == GraphKind.line && y == 0) {
+        // skip empty items for line graph to make it pretty
+        continue;
+      }
+      var x = item.date.millisecondsSinceEpoch.toDouble();
       spots.add(FlSpot(x, y));
     }
 

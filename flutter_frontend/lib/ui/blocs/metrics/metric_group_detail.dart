@@ -92,7 +92,7 @@ class _MetricGroupDetailState extends State<MetricGroupDetail> {
                     person: widget.person,
                     date: widget.date,
                     extend: constraints.maxWidth,
-                    tile: 100,
+                    tile: 200,
                   ),
                 ),
               ),
