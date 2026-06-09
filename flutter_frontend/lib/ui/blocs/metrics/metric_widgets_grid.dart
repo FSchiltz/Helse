@@ -11,7 +11,7 @@ class MetricWidgetsGrid extends StatelessWidget {
     required this.date,
     this.person,
     this.extend,
-    this.tile = 60,
+    required this.tile,
   });
   final DateTimeRange<DateTime> date;
   final int? person;

@@ -22,7 +22,7 @@ class MetricWidget extends StatefulWidget {
     this.date, {
     super.key,
     this.person,
-    this.tile = 60,
+    required this.tile,
   });
 
   @override
@@ -38,21 +38,10 @@ class _MetricWidgetState extends State<MetricWidget> {
   }
 
   Future<List<Metric>> _getData(bool refresh) async {
-    var id = widget.type.id;
-
-    var date = widget.date;
-
-    var start = DateTime(date.start.year, date.start.month, date.start.day);
-    var end = DateTime(
-      date.end.year,
-      date.end.month,
-      date.end.day,
-    ).add(const Duration(days: 1));
-
     return await Dependencies.services.metric.metrics(
-      id,
-      start,
-      end,
+      widget.type.id,
+      widget.date.start,
+      widget.date.end,
       person: widget.person,
       tile: widget.tile,
     );
