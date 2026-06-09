@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
@@ -43,7 +42,9 @@ class EventTimeline extends StatelessWidget {
 
     int tick = 0;
     int max = userData.map((x) => x.data.values.map((y) => y as int).sum).max;
-    var coeff = (height / max) * 0.95; // remove 5% of the height to fix some overflow on the graph
+    var coeff =
+        (height / max) *
+        0.95; // remove 5% of the height to fix some overflow on the graph
 
     for (var d in events) {
       chartBars.add(
@@ -71,11 +72,11 @@ class EventTimeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var maxWidth = (userData.length) * 14.0;
+    double maxWidth = (userData.length) * 14.0;
 
     return LayoutBuilder(
       builder: (b, constraints) {
-        var widthCoeff = min(1.0, constraints.maxWidth / maxWidth);
+        var widthCoeff = constraints.maxWidth / maxWidth;
         return Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
