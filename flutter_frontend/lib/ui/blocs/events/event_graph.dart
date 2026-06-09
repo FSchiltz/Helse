@@ -91,6 +91,7 @@ class _EventsGraphState extends State<EventsGraph> {
             ),
           ),
         ),
+        SizedBox(height: 12),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: (filteredEvents.length < 200)

@@ -75,7 +75,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
         : Row(
             children: [
               Flexible(child: buildRowLabels(labels)),
-              Flexible(
+              Expanded(
                 child: Scrollbar(
                   interactive: true,
                   controller: _scrollController,
