@@ -5,26 +5,26 @@ using LinqToDB.Data;
 
 namespace Tests.Unit.Data;
 
-public class UserContextTests : IAsyncLifetime
+public class UserContextTests (DatabaseFixture fixture): IAsyncLifetime
 {
     private DataConnection _db = null!;
 
-    public async Task InitializeAsync()
-    {
+    public async ValueTask InitializeAsync()
+    {        
         // Create in-memory SQLite database
-        _db = new DataConnection("SQLite.MS",  x=> new DataOptions().UseSQLite("Data Source=:memory:"));
+        _db = new DataConnection("SQLite.MS", x => new DataOptions().UsePostgreSQL("Data Source=:memory:"));
         await _db.CreateTableAsync<Person>();
         await _db.CreateTableAsync<User>();
         await _db.CreateTableAsync<Right>();
     }
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         if (_db != null)
             await _db.DisposeAsync();
     }
 
-    [Fact(Skip = "Not working")]
+    [Fact]
     public async Task Count_ReturnsZero_WhenNoUsers()
     {
         // Arrange
@@ -37,7 +37,7 @@ public class UserContextTests : IAsyncLifetime
         Assert.Equal(0, count);
     }
 
-    [Fact(Skip = "Not working")]
+    [Fact]
     public async Task Count_ReturnsCorrectCount_WhenUsersExist()
     {
         // Arrange
@@ -56,7 +56,7 @@ public class UserContextTests : IAsyncLifetime
         Assert.Equal(1, count);
     }
 
-    [Fact(Skip = "Not working")]
+    [Fact]
     public async Task Get_ReturnsNull_WhenUserNotFound()
     {
         // Arrange
@@ -69,7 +69,7 @@ public class UserContextTests : IAsyncLifetime
         Assert.Null(result);
     }
 
-    [Fact(Skip = "Not working")]
+    [Fact]
     public async Task Get_ReturnsUser_WhenUserExists()
     {
         // Arrange
@@ -89,7 +89,7 @@ public class UserContextTests : IAsyncLifetime
         Assert.Equal("john_user", result.Identifier);
     }
 
-    [Fact(Skip = "Not working")]
+    [Fact]
     public async Task HasRightAsync_ReturnsNull_WhenNoRight()
     {
         // Arrange
@@ -112,7 +112,7 @@ public class UserContextTests : IAsyncLifetime
         Assert.Null(result);
     }
 
-    [Fact(Skip = "Not working")]
+    [Fact]
     public async Task HasRightAsync_ReturnsRight_WhenRightExists()
     {
         // Arrange

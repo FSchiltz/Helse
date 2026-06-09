@@ -9,7 +9,7 @@ public class TestMigrationHelper(MigrationSettings settings) : IHostedService
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var result = DeployChanges.To.SqliteDatabase(settings.ConnectionString)
+        var result = DeployChanges.To.PostgresqlDatabase(settings.ConnectionString)
             .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
             .Build()
             .PerformUpgrade();

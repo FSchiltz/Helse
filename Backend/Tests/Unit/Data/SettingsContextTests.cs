@@ -10,14 +10,14 @@ public class SettingsContextTests : IAsyncLifetime
 {
     private DataConnection _db = null!;
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         // Create in-memory SQLite database
         _db = new DataConnection("SQLite.MS", x => new LinqToDB.DataOptions().UseSQLite("Data Source=:memory:"));
         await _db.CreateTableAsync<Settings>();
     }
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         if (_db != null)
             await _db.DisposeAsync();
