@@ -247,7 +247,7 @@ class PatientsSettingsLogic {
             order: existing.order,
             visible: existing.visible,
             showOnDashboard: existing.showOnDashboard,
-            parent: existing.parent,
+            parent: metric.groupId,
           ),
         );
       } else {

@@ -107,148 +107,33 @@ class _MetricSettingsState extends State<MetricSettings> {
     }
   }
 
+  
+  Future<(List<OrderedEditItem>, List<OrderedEditItem>)> _getTreeData(
+    bool refresh,
+  ) async {
+    final groups = await _getGroupData(refresh);
+    final metrics = await _getData(refresh);
+    return (groups, metrics);
+  }
+
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
-    var locale = Translation.of(context);
-    return DefaultTabController(
-      length: 2,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          TabBar(
-            tabs: [
-              Tab(icon: Icon(Icons.post_add_sharp), text: locale.metrics),
-              Tab(icon: Icon(Icons.group_add_sharp), text: locale.metricgroups),
-            ],
-          ),
-          Flexible(
-            child: TabBarView(
-              children: [
-                _metricsGrid(theme, locale),
-                _metricGroupsGrid(theme, locale),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+    final theme = Theme.of(context);
+    final locale = Translation.of(context);
 
-  Widget _metricsGrid(ThemeData theme, AppLocalizations locale) {
     return LoadingBuilder(
-      _getData,
-      builder: (context, data, reset) => Padding(
-        padding: const EdgeInsets.all(32.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 120,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(40),
-                    shape: const ContinuousRectangleBorder(),
-                  ),
-                  onPressed: () async {
-                    await _submitMetrics(data, locale);
-                    reset();
-                  },
-                  child: Text(locale.save),
-                ),
-              ),
-              const SizedBox(height: 20),
-              FittedBox(
-                child: DataTable(
-                  dataRowMinHeight: 48,
-                  dataRowMaxHeight: 60,
-                  columns: [
-                    DataColumn(label: Expanded(child: Text(locale.name))),
-                    DataColumn(label: Expanded(child: Text(locale.visible))),
-                    DataColumn(
-                      label: Expanded(child: Text(locale.showOnDashboard)),
-                    ),
-                    DataColumn(label: Expanded(child: Text(locale.widgetType))),
-                    DataColumn(label: Expanded(child: Text(locale.detailType))),
-                  ],
-                  rows: data
-                      .map(
-                        (item) => DataRow(
-                          cells: [
-                            DataCell(
-                              Text(
-                                item.name,
-                                style: theme.textTheme.titleLarge,
-                              ),
-                            ),
-                            DataCell(
-                              StatefullCheck(
-                                item.visible,
-                                (value) => item.visible = value,
-                              ),
-                            ),
-                            DataCell(
-                              StatefullCheck(
-                                item.showOnDashboard,
-                                (value) => item.showOnDashboard = value,
-                              ),
-                            ),
-                            DataCell(
-                              SizedBox(
-                                width: 160,
-                                height: 45,
-                                child: EnumInput(
-                                  value: item.graph,
-                                  GraphKind.values
-                                      .where((e) => e.index > 0)
-                                      .map((x) => DropDownItem(x, x.name))
-                                      .toList(),
-                                  (value) => item.graph = value ?? item.graph,
-                                  label: locale.type,
-                                ),
-                              ),
-                            ),
-                            DataCell(
-                              SizedBox(
-                                width: 160,
-                                height: 45,
-                                child: EnumInput(
-                                  value: item.detailGraph,
-                                  GraphKind.values
-                                      .where((e) => e.index > 0)
-                                      .map((x) => DropDownItem(x, x.name))
-                                      .toList(),
-                                  (value) => item.detailGraph =
-                                      value ?? item.detailGraph,
-                                  label: locale.type,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                      .toList(),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+      _getTreeData,
+      builder: (context, tree, reset) {
+        final groups = tree.$1;
+        final metrics = tree.$2;
 
-  Widget _metricGroupsGrid(ThemeData theme, AppLocalizations locale) {
-    return LoadingBuilder(
-      _getGroupData,
-      builder: (context, data, reset) {
         return Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: SizedBox(
                   width: 120,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -256,46 +141,115 @@ class _MetricSettingsState extends State<MetricSettings> {
                       shape: const ContinuousRectangleBorder(),
                     ),
                     onPressed: () async {
-                      await _submitMetricGroups(data, locale);
+                      await _submitMetricGroups(groups, locale);
+                      await _submitMetrics(metrics, locale);
                       reset();
                     },
                     child: Text(locale.save),
                   ),
                 ),
-                const SizedBox(height: 20),
-                FittedBox(
-                  child: DataTable(
-                    columns: [
-                      DataColumn(label: Expanded(child: Text(locale.name))),
-                      DataColumn(label: Expanded(child: Text(locale.visible))),
-                    ],
-                    rows: data
-                        .map(
-                          (item) => DataRow(
-                            cells: [
-                              DataCell(
-                                Text(
-                                  item.name,
-                                  style: theme.textTheme.titleLarge,
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: ListView(
+                  children: groups.expand<Widget>((group) {
+                    final children = metrics
+                        .where((m) => m.parent == group.id)
+                        .toList();
+
+                    return [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.folder),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                group.name,
+                                style: theme.textTheme.titleLarge,
+                              ),
+                            ),
+                            StatefullCheck(
+                              group.visible,
+                              (value) {
+                                group.visible = value;
+                                for (final metric in children) {
+                                  metric.visible = value;
+                                }
+                                setState(() {});
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      ...children.map(
+                        (item) => Padding(
+                          padding: const EdgeInsets.only(left: 48),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.subdirectory_arrow_right,
+                                size: 18,
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Text(item.name),
+                              ),
+                              Expanded(
+                                child: StatefullCheck(
+                                  item.visible,
+                                  (v) => item.visible = v,
                                 ),
                               ),
-                              DataCell(
-                                StatefullCheck(
-                                  item.visible,
-                                  (value) => item.visible = value,
+                              Expanded(
+                                child: StatefullCheck(
+                                  item.showOnDashboard,
+                                  (v) => item.showOnDashboard = v,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: EnumInput(
+                                  value: item.graph,
+                                  GraphKind.values
+                                      .where((e) => e.index > 0)
+                                      .map((x) => DropDownItem(x, x.name))
+                                      .toList(),
+                                  (v) => item.graph = v ?? item.graph,
+                                  label: locale.type,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: EnumInput(
+                                  value: item.detailGraph,
+                                  GraphKind.values
+                                      .where((e) => e.index > 0)
+                                      .map((x) => DropDownItem(x, x.name))
+                                      .toList(),
+                                  (v) => item.detailGraph =
+                                      v ?? item.detailGraph,
+                                  label: locale.type,
                                 ),
                               ),
                             ],
                           ),
-                        )
-                        .toList(),
-                  ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ];
+                  }).toList(),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
     );
   }
+
 }
