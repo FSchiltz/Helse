@@ -131,4 +131,19 @@ class DateHelper {
     var hours = duration - Duration(days: duration.inDays);
     return '${hours.inHours}h ${_minutes(duration)}';
   }
+
+  static DateTime max(DateTime date1, DateTime date2) {
+    if (date1.isAfter(date2)) {
+      return date1;
+    }
+    return date2;
+  }
+
+  static DateTime min(DateTime date1, DateTime date2) {
+    if (date1.isAfter(date2)) {
+      return date2;
+    }
+
+    return date1;
+  }
 }
