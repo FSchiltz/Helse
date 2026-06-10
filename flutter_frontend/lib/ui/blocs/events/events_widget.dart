@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart' hide Interval;
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/date.dart';
 import 'package:helse/ui/blocs/events/event_detail_page.dart';
 import 'package:helse/ui/blocs/events/events_summary.dart';
 import 'package:helse/ui/common/common_card.dart';
@@ -121,11 +122,19 @@ class _EventWidgetState extends State<EventWidget> {
 
     var duration = Duration();
     for (var interval in data) {
-      duration =
-          duration +
-          DateTimeRange(start: interval.start, end: interval.stop).duration;
+      var range = DateTimeRange(
+        start: interval.start,
+        end: interval.stop,
+      ).duration;
+      duration = duration + range;
     }
 
-    return Text(duration.toString());
+    var averageDuration = Duration(
+      milliseconds: (duration.inMilliseconds / data.length).toInt(),
+    );
+
+    return Text(
+      "Total of ${DateHelper.formatDuration(duration)} in ${data.length} sessions with an average of ${DateHelper.formatDuration(averageDuration)}",
+    );
   }
 }

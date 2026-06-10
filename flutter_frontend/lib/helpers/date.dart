@@ -98,4 +98,35 @@ class DateHelper {
 
     return DateTimeRange(start: start, end: end);
   }
+
+  static String formatDuration(Duration duration) {
+    if (duration.inMinutes < 1) {
+      return _seconds(duration);
+    }
+
+    if (duration.inHours < 1) {
+      return _minutes(duration);
+    }
+
+    if (duration.inDays < 1) {
+      return _hours(duration);
+    }
+
+    return '${duration.inDays} days ${_hours(duration)}';
+  }
+
+  static String _seconds(Duration duration) {
+    var seconds = duration - Duration(minutes: duration.inMinutes);
+    return "${seconds.inSeconds}s";
+  }
+
+  static String _minutes(Duration duration) {
+    var minutes = duration - Duration(hours: duration.inHours);
+    return "${minutes.inMinutes}m ${_seconds(duration)}";
+  }
+
+  static String _hours(Duration duration) {
+    var hours = duration - Duration(days: duration.inDays);
+    return '${hours.inHours}h ${_minutes(duration)}';
+  }
 }
