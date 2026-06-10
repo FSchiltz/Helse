@@ -4330,6 +4330,7 @@ class OrderedItem {
     required this.id,
     this.graph,
     this.detailGraph,
+    this.parent,
   });
 
   factory OrderedItem.fromJson(Map<String, dynamic> json) =>
@@ -4360,6 +4361,8 @@ class OrderedItem {
     fromJson: graphKindNullableFromJson,
   )
   final enums.GraphKind? detailGraph;
+  @JsonKey(name: 'parent')
+  final int? parent;
   static const fromJsonFactory = _$OrderedItemFromJson;
 
   @override
@@ -4388,7 +4391,9 @@ class OrderedItem {
                 const DeepCollectionEquality().equals(
                   other.detailGraph,
                   detailGraph,
-                )));
+                )) &&
+            (identical(other.parent, parent) ||
+                const DeepCollectionEquality().equals(other.parent, parent)));
   }
 
   @override
@@ -4403,6 +4408,7 @@ class OrderedItem {
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(graph) ^
       const DeepCollectionEquality().hash(detailGraph) ^
+      const DeepCollectionEquality().hash(parent) ^
       runtimeType.hashCode;
 }
 
@@ -4415,6 +4421,7 @@ extension $OrderedItemExtension on OrderedItem {
     int? id,
     enums.GraphKind? graph,
     enums.GraphKind? detailGraph,
+    int? parent,
   }) {
     return OrderedItem(
       visible: visible ?? this.visible,
@@ -4424,6 +4431,7 @@ extension $OrderedItemExtension on OrderedItem {
       id: id ?? this.id,
       graph: graph ?? this.graph,
       detailGraph: detailGraph ?? this.detailGraph,
+      parent: parent ?? this.parent,
     );
   }
 
@@ -4435,6 +4443,7 @@ extension $OrderedItemExtension on OrderedItem {
     Wrapped<int>? id,
     Wrapped<enums.GraphKind?>? graph,
     Wrapped<enums.GraphKind?>? detailGraph,
+    Wrapped<int?>? parent,
   }) {
     return OrderedItem(
       visible: (visible != null ? visible.value : this.visible),
@@ -4446,6 +4455,7 @@ extension $OrderedItemExtension on OrderedItem {
       id: (id != null ? id.value : this.id),
       graph: (graph != null ? graph.value : this.graph),
       detailGraph: (detailGraph != null ? detailGraph.value : this.detailGraph),
+      parent: (parent != null ? parent.value : this.parent),
     );
   }
 }

@@ -201,6 +201,7 @@ class SettingsLogic {
             order: existing.order,
             visible: existing.visible,
             showOnDashboard: existing.showOnDashboard,
+            parent: metric.groupId,
           ),
         );
       } else {
@@ -256,6 +257,7 @@ class SettingsLogic {
         detailGraph: GraphKind.line,
         visible: item.visible,
         showOnDashboard: true,
+        parent: item.groupId,
       );
     }
 
@@ -266,6 +268,7 @@ class SettingsLogic {
       detailGraph: GraphKind.text,
       visible: item.visible,
       showOnDashboard: true,
+      parent: item.groupId,
     );
   }
 

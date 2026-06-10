@@ -3047,6 +3047,15 @@
           },
           "detailGraph": {
             "$ref": "#/components/schemas/GraphKind"
+          },
+          "parent": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
           }
         }
       },

@@ -105,7 +105,9 @@ class PatientsSettingsLogic {
       return PatientsSettings();
     }
 
-    return PatientsSettings.fromJson(json.decode(encoded) as Map<String, Object?>);
+    return PatientsSettings.fromJson(
+      json.decode(encoded) as Map<String, Object?>,
+    );
   }
 
   Future<PatientSettings> _patientSettings(int? person) async {
@@ -162,6 +164,7 @@ class PatientsSettingsLogic {
         detailGraph: GraphKind.line,
         visible: item.visible,
         showOnDashboard: true,
+        parent: item.groupId,
       );
     }
 
@@ -172,6 +175,7 @@ class PatientsSettingsLogic {
       detailGraph: GraphKind.text,
       visible: item.visible,
       showOnDashboard: true,
+      parent: item.groupId,
     );
   }
 
@@ -243,6 +247,7 @@ class PatientsSettingsLogic {
             order: existing.order,
             visible: existing.visible,
             showOnDashboard: existing.showOnDashboard,
+            parent: metric.groupId,
           ),
         );
       } else {
