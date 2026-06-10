@@ -1,3 +1,4 @@
+using Api.Models.Common;
 using Api.Models.Events;
 
 namespace Api.Helpers;
@@ -16,7 +17,7 @@ public static class EventHelpers
             data[i] = new EventSummary([]);
         }
 
-        List<Duration> durations = [];
+        List<Interval> durations = [];
 
         // add each summary in the data
         foreach (var e in events)
@@ -46,7 +47,7 @@ public static class EventHelpers
         return new(data, [.. durations]);
     }
 
-    private static void AddToDuration(DateTime start, DateTime stop, List<Duration> durations)
+    private static void AddToDuration(DateTime start, DateTime stop, List<Interval> durations)
     {
         // find the duration to which this interval belong
         var duration = durations.FirstOrDefault(x => stop >= x.Start && start <= x.Stop);
