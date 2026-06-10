@@ -101,7 +101,7 @@ class _MetricGraphState extends State<MetricGraph> {
               widget.type,
               widget.settings,
               tile: widget.metrics.length,
-              width: 1
+              width: 1,
             ),
           ),
         ),
@@ -250,13 +250,19 @@ class _MetricGraphState extends State<MetricGraph> {
 
   List<MetricGrouped> _group(List<Metric> metrics) {
     final stopwatch = Stopwatch()..start();
-    final buckets = min(metrics.length, 1000);
+    final max = 500;
+    if (metrics.length <= max) {
+      // no need to group
+      return metrics
+          .map((e) => MetricGrouped(e.date, double.parse(e.value), [e]))
+          .toList();
+    }
 
     // First create the buckets
-    final bucketLength = subDate.duration.inMilliseconds / buckets;
+    final bucketLength = subDate.duration.inMilliseconds / max;
 
     debugPrint(
-      'grouping with buckets: $buckets and bucket lenght: $bucketLength for $subDate',
+      'grouping with buckets: $max and bucket lenght: $bucketLength for $subDate',
     );
     Map<int, MetricGrouped> groups = {};
 
