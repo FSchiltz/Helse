@@ -106,7 +106,8 @@ class DateHelper {
     }
 
     if (duration.inHours < 1) {
-      return _minutes(duration);
+      var minutes = duration - Duration(hours: duration.inHours);
+      return "${minutes.inMinutes}m ${_seconds(duration)}";
     }
 
     if (duration.inDays < 1) {
@@ -123,7 +124,7 @@ class DateHelper {
 
   static String _minutes(Duration duration) {
     var minutes = duration - Duration(hours: duration.inHours);
-    return "${minutes.inMinutes}m ${_seconds(duration)}";
+    return "${minutes.inMinutes}m";
   }
 
   static String _hours(Duration duration) {

@@ -28,12 +28,15 @@ class EventInformation extends StatelessWidget {
     );
 
     var locale = Translation.of(context);
-    return Text(
-      locale.eventInformationSummary(
-        DateHelper.formatDuration(duration, locale),
-        data.length.toString(),
-        DateHelper.formatDuration(averageDuration, locale),
-      ),
+    return Wrap(
+      runSpacing: 2,
+      spacing: 12,
+      children: [
+        Text('${locale.total} ${DateHelper.formatDuration(duration, locale)}'),
+        Text(
+          '${locale.mean} ${DateHelper.formatDuration(averageDuration, locale)}',
+        ),
+      ],
     );
   }
 }
