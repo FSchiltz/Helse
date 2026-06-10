@@ -4,7 +4,7 @@ namespace Api.Helpers;
 
 public static class EventHelpers
 {
-    public static EventSummary[] Summarize(this IEnumerable<Data.Models.Health.Event> events, DateTime start, DateTime end)
+    public static EventStats Summarize(this Data.Models.Health.Event[] events, DateTime start, DateTime end)
     {
         // first find the number of steps
         var (bucketCount, secondPerBucket) = GetSteps(start, end);
@@ -16,9 +16,13 @@ public static class EventHelpers
             data[i] = new EventSummary([]);
         }
 
+        List<Duration> durations = [];
+
         // add each summary in the data
         foreach (var e in events)
         {
+            AddToDuration(e.Start, e.Stop, durations);
+
             // cut the steps into the different summary    
             var steps = Cut(secondPerBucket, e, start, end);
             if (steps.Count > bucketCount)
@@ -39,7 +43,35 @@ public static class EventHelpers
             }
         }
 
-        return data;
+        return new(data, [.. durations]);
+    }
+
+    private static void AddToDuration(DateTime start, DateTime stop, List<Duration> durations)
+    {
+        // find the duration to which this interval belong
+        var duration = durations.FirstOrDefault(x => stop >= x.Start && start <= x.Stop);
+        if (duration is null)
+        {
+            durations.Add(new()
+            {
+                Start = start,
+                Stop = stop,
+            });
+        }
+        else
+        {
+            if (start < duration.Start)
+            {
+                // the event is before, we add to the start
+                duration.Start = start;
+            }
+
+            if (stop > duration.Stop)
+            {
+                // the event is after
+                duration.Stop = stop;
+            }
+        }
     }
 
     private static List<(int, int)> Cut(double secondPerBucket, Data.Models.Health.Event e, DateTime start, DateTime end)

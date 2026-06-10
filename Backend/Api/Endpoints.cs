@@ -177,7 +177,7 @@ public static class Endpoints
         var events = api.MapGroup("/events").RequireAuthorization();
 
         events.MapGet("/summary", EventsLogic.GetSummaryAsync)
-        .Produces<EventSummary[]>((int)HttpStatusCode.OK)
+        .Produces<Models.Events.EventStats>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
         events.MapGet("/", EventsLogic.GetAsync)
@@ -280,11 +280,11 @@ public static class Endpoints
             .Produces((int)HttpStatusCode.Unauthorized);
 
         stats.MapGet("/events", AdminLogic.GetEventStatsAsync)
-            .Produces<EventStats>((int)HttpStatusCode.OK)
+            .Produces<Models.Admin.EventStats>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
 
         stats.MapGet("/metrics", AdminLogic.GetMetricStatsAsync)
-            .Produces<EventStats>((int)HttpStatusCode.OK)
+            .Produces<Models.Admin.EventStats>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
     }
 
