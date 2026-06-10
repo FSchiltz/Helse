@@ -28,9 +28,12 @@ class EnumInput<T> extends StatelessWidget {
         labelText: label ?? 'Type',
         prefixIcon: const Icon(Icons.list_sharp),
         prefixIconColor: theme.primary,
+        isDense:  true,
         filled: true,
         fillColor: theme.surface,
         border: SquareOutlineInputBorder(theme.primary),
+        contentPadding: null,
+        
       ),
     );
   }
