@@ -276,15 +276,15 @@ public static class Endpoints
 
         var stats = admin.MapGroup("/stats").RequireAuthorization();
         stats.MapGet("/users", AdminLogic.GetUserStatsAsync)
-            .Produces<UserStats>((int)HttpStatusCode.OK)
+            .Produces<UserCreationStats>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
 
         stats.MapGet("/events", AdminLogic.GetEventStatsAsync)
-            .Produces<Models.Admin.EventStats>((int)HttpStatusCode.OK)
+            .Produces<EventsCreationStats>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
 
         stats.MapGet("/metrics", AdminLogic.GetMetricStatsAsync)
-            .Produces<Models.Admin.EventStats>((int)HttpStatusCode.OK)
+            .Produces<EventsCreationStats>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
     }
 

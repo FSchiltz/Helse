@@ -1,3 +1,5 @@
+using Api.Models.Common;
+
 namespace Api.Models.Admin;
 
-public record MetricStats(CountByDate[] Events, CountRecord[] EventCounts);
+public record MetricCreationStats(CountByDate[] Events, CountRecord[] EventCounts);

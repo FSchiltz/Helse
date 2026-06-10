@@ -1,4 +1,4 @@
-using Api.Models.Admin;
+using Api.Models.Common;
 
 namespace Api.Data;
 
