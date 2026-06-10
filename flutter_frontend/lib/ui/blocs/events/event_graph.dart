@@ -199,10 +199,12 @@ class _EventsGraphState extends State<EventsGraph> {
 
     for (var event in events) {
       // find the bucket
-      final duration = event.start.difference(range.start);
+      // events can start and end outside of the asked range so we need to clamp them
+      final start = DateHelper.max(event.start, range.start);
+      final stop = DateHelper.min(event.stop, range.end);
+      final duration = start.difference(range.start);
       final index = (duration.inMilliseconds / bucketLength).toInt();
-      final bucketCount =
-          event.stop.difference(event.start).inMilliseconds / bucketLength;
+      final bucketCount = stop.difference(start).inMilliseconds / bucketLength;
 
       for (var i = 0; i < bucketCount; i++) {
         final bucket = groups[index + i];
