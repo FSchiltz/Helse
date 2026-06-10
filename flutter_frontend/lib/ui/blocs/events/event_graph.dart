@@ -224,11 +224,14 @@ class _EventsGraphState extends State<EventsGraph> {
 
   List<Interval> _getDurations(List<Event> events) {
     List<MutableInterval> durations = [];
+    final delta = Duration(seconds: 10);
     for (var e in events) {
+      final expandedStart = e.start.subtract(delta);
+      final expandedStop = e.stop.add(delta);
       var duration = durations.firstWhereOrNull(
         (x) =>
-            (e.stop.isAfter(x.start) || e.stop.isAtSameMomentAs(x.start)) &&
-            (e.start.isBefore(x.stop) || e.start.isAtSameMomentAs(x.stop)),
+            (expandedStop.isAfter(x.start) || expandedStop.isAtSameMomentAs(x.start)) &&
+            (expandedStart.isBefore(x.stop) || expandedStart.isAtSameMomentAs(x.stop)),
       );
       if (duration == null) {
         durations.add(MutableInterval(start: e.start, stop: e.stop));
