@@ -19,108 +19,59 @@ class MetricSettings extends StatefulWidget {
 }
 
 class _MetricSettingsState extends State<MetricSettings> {
-  Future<List<OrderedEditItem>> _getData(bool refresh) async {
-    List<OrderedItem> items;
+  Future<(List<OrderedEditItem>, List<OrderedEditItem>)> _getData(
+    bool refresh,
+  ) async {
+    List<OrderedItem> metrics;
+    List<OrderedItem> groups;
     if (widget.isPatient) {
-      items = await Dependencies.logics.patientsSettings.getMetrics(
+      metrics = await Dependencies.logics.patientsSettings.getMetrics(
+        widget.patient,
+      );
+      groups = await Dependencies.logics.patientsSettings.getMetricGroups(
         widget.patient,
       );
     } else {
-      items = await Dependencies.logics.settings.getMetrics();
+      metrics = await Dependencies.logics.settings.getMetrics();
+      groups = await Dependencies.logics.settings.getMetricGroups();
     }
-    return items
-        .map(
-          (e) => OrderedEditItem(
-            id: e.id,
-            name: e.name,
-            detailGraph: e.detailGraph,
-            graph: e.graph,
-            visible: e.visible ?? true,
-            order: e.order,
-            showOnDashboard: e.showOnDashboard ?? true,
-            parent: e.parent,
-          ),
-        )
-        .toList();
+
+    var editGroups = groups.map((e) => OrderedEditItem.of(e)).toList();
+    var editMetrics = metrics.map((e) => OrderedEditItem.of(e)).toList();
+
+    return (editGroups, editMetrics);
   }
 
-  Future<List<OrderedEditItem>> _getGroupData(bool reset) async {
-    List<OrderedItem> items;
-    if (widget.isPatient) {
-      items = await Dependencies.logics.patientsSettings.getMetricGroups(
-        widget.patient,
-      );
-    } else {
-      items = await Dependencies.logics.settings.getMetricGroups();
-    }
-    return items
-        .map(
-          (e) => OrderedEditItem(
-            id: e.id,
-            name: e.name,
-            detailGraph: e.detailGraph,
-            graph: e.graph,
-            visible: e.visible ?? true,
-            order: e.order,
-            showOnDashboard: e.showOnDashboard ?? true,
-            parent: e.parent,
-          ),
-        )
-        .toList();
-  }
-
-  Future<void> _submitMetricGroups(
+  Future<void> _submit(
+    List<OrderedEditItem> metrics,
     List<OrderedEditItem> groups,
     AppLocalizations locale,
   ) async {
     try {
-      var toSave = groups.map((e) => e.ordered()).toList();
-      // save the user's settings
-      if (widget.isPatient) {
-        await Dependencies.logics.patientsSettings.saveMetricGroups(
-          toSave,
-          true,
-          widget.patient,
-        );
-      } else {
-        await Dependencies.logics.settings.saveMetricGroups(toSave, true);
-      }
-
-      Notify.show(locale.saved);
-    } catch (ex) {
-      Notify.showError(locale.error(ex.toString()));
-    }
-  }
-
-  Future<void> _submitMetrics(
-    List<OrderedEditItem> metrics,
-    AppLocalizations locale,
-  ) async {
-    try {
-      var toSave = metrics.map((e) => e.ordered()).toList();
+      var metricsToSave = metrics.map((e) => e.ordered()).toList();
+      var groupsToSave = groups.map((e) => e.ordered()).toList();
       // save the user's settings
       if (widget.isPatient) {
         await Dependencies.logics.patientsSettings.saveMetrics(
-          toSave,
+          metricsToSave,
+          true,
+          widget.patient,
+        );
+
+        await Dependencies.logics.patientsSettings.saveMetricGroups(
+          groupsToSave,
           true,
           widget.patient,
         );
       } else {
-        await Dependencies.logics.settings.saveMetrics(toSave, true);
+        await Dependencies.logics.settings.saveMetrics(metricsToSave, true);
+        await Dependencies.logics.settings.saveMetricGroups(groupsToSave, true);
       }
 
       Notify.show(locale.saved);
     } catch (ex) {
       Notify.showError(locale.error(ex.toString()));
     }
-  }
-
-  Future<(List<OrderedEditItem>, List<OrderedEditItem>)> _getTreeData(
-    bool refresh,
-  ) async {
-    final groups = await _getGroupData(refresh);
-    final metrics = await _getData(refresh);
-    return (groups, metrics);
   }
 
   @override
@@ -129,7 +80,7 @@ class _MetricSettingsState extends State<MetricSettings> {
     final locale = Translation.of(context);
 
     return LoadingBuilder(
-      _getTreeData,
+      _getData,
       builder: (context, tree, reset) {
         final groups = tree.$1;
         final metrics = tree.$2;
@@ -148,8 +99,7 @@ class _MetricSettingsState extends State<MetricSettings> {
                       shape: const ContinuousRectangleBorder(),
                     ),
                     onPressed: () async {
-                      await _submitMetricGroups(groups, locale);
-                      await _submitMetrics(metrics, locale);
+                      await _submit(metrics, groups, locale);
                       reset();
                     },
                     child: Text(locale.save),
@@ -180,60 +130,95 @@ class _MetricSettingsState extends State<MetricSettings> {
                             ),
                             StatefullCheck(group.visible, (value) {
                               group.visible = value;
-                              for (final metric in children) {
-                                metric.visible = value;
-                              }
-                              setState(() {});
                             }),
                           ],
                         ),
                       ),
-                      ...children.map(
-                        (item) => Padding(
-                          padding: const EdgeInsets.only(left: 48),
-                          child: Row(
-                            children: [
-                              Divider(thickness: 2),
-                              Expanded(flex: 3, child: Text(item.name)),
-                              Expanded(
-                                child: StatefullCheck(
-                                  item.visible,
-                                  (v) => item.visible = v,
-                                ),
+                      Flexible(
+                        child: DataTable(
+                          dataRowMinHeight: 48,
+                          dataRowMaxHeight: 60,
+                          columns: [
+                            DataColumn(
+                              label: Expanded(child: Text(locale.name)),
+                            ),
+                            DataColumn(
+                              label: Expanded(child: Text(locale.visible)),
+                            ),
+                            DataColumn(
+                              label: Expanded(
+                                child: Text(locale.showOnDashboard),
                               ),
-                              Expanded(
-                                child: StatefullCheck(
-                                  item.showOnDashboard,
-                                  (v) => item.showOnDashboard = v,
+                            ),
+                            DataColumn(
+                              label: Expanded(child: Text(locale.widgetType)),
+                            ),
+                            DataColumn(
+                              label: Expanded(child: Text(locale.detailType)),
+                            ),
+                          ],
+                          rows: children
+                              .map(
+                                (item) => DataRow(
+                                  cells: [
+                                    DataCell(
+                                      Text(
+                                        item.name,
+                                        style: theme.textTheme.titleLarge,
+                                      ),
+                                    ),
+                                    DataCell(
+                                      StatefullCheck(
+                                        item.visible,
+                                        (value) => item.visible = value,
+                                      ),
+                                    ),
+                                    DataCell(
+                                      StatefullCheck(
+                                        item.showOnDashboard,
+                                        (value) => item.showOnDashboard = value,
+                                      ),
+                                    ),
+                                    DataCell(
+                                      SizedBox(
+                                        width: 160,
+                                        height: 45,
+                                        child: EnumInput(
+                                          value: item.graph,
+                                          GraphKind.values
+                                              .where((e) => e.index > 0)
+                                              .map(
+                                                (x) => DropDownItem(x, x.name),
+                                              )
+                                              .toList(),
+                                          (value) =>
+                                              item.graph = value ?? item.graph,
+                                          label: locale.type,
+                                        ),
+                                      ),
+                                    ),
+                                    DataCell(
+                                      SizedBox(
+                                        width: 160,
+                                        height: 45,
+                                        child: EnumInput(
+                                          value: item.detailGraph,
+                                          GraphKind.values
+                                              .where((e) => e.index > 0)
+                                              .map(
+                                                (x) => DropDownItem(x, x.name),
+                                              )
+                                              .toList(),
+                                          (value) => item.detailGraph =
+                                              value ?? item.detailGraph,
+                                          label: locale.type,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: EnumInput(
-                                  value: item.graph,
-                                  GraphKind.values
-                                      .where((e) => e.index > 0)
-                                      .map((x) => DropDownItem(x, x.name))
-                                      .toList(),
-                                  (v) => item.graph = v ?? item.graph,
-                                  label: locale.type,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: EnumInput(
-                                  value: item.detailGraph,
-                                  GraphKind.values
-                                      .where((e) => e.index > 0)
-                                      .map((x) => DropDownItem(x, x.name))
-                                      .toList(),
-                                  (v) =>
-                                      item.detailGraph = v ?? item.detailGraph,
-                                  label: locale.type,
-                                ),
-                              ),
-                            ],
-                          ),
+                              )
+                              .toList(),
                         ),
                       ),
                       const SizedBox(height: 16),
