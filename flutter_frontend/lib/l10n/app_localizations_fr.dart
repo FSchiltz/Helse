@@ -296,5 +296,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get total => 'Total';
 
   @override
-  String get mean => 'Average';
+  String get mean => 'Moyenne';
+
+  @override
+  String eventInformationSummary(String total, String length, String mean) {
+    return 'Total de $total en $length sessions avec une moyenne de $mean';
+  }
 }

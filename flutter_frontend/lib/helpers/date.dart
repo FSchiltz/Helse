@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:intl/intl.dart';
 
@@ -99,7 +100,7 @@ class DateHelper {
     return DateTimeRange(start: start, end: end);
   }
 
-  static String formatDuration(Duration duration) {
+  static String formatDuration(Duration duration, AppLocalizations locale) {
     if (duration.inMinutes < 1) {
       return _seconds(duration);
     }
@@ -112,7 +113,7 @@ class DateHelper {
       return _hours(duration);
     }
 
-    return '${duration.inDays} days ${_hours(duration)}';
+    return '${duration.inDays} ${locale.days} ${_hours(duration)}';
   }
 
   static String _seconds(Duration duration) {

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart' hide Interval;
 import 'package:helse/helpers/date.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class EventInformation extends StatelessWidget {
-  const EventInformation({
-    super.key,
-    required this.data,
-  });
+  const EventInformation({super.key, required this.data});
 
   final List<Interval> data;
 
@@ -29,8 +27,13 @@ class EventInformation extends StatelessWidget {
       milliseconds: (duration.inMilliseconds / data.length).toInt(),
     );
 
+    var locale = Translation.of(context);
     return Text(
-      "Total of ${DateHelper.formatDuration(duration)} in ${data.length} sessions with an average of ${DateHelper.formatDuration(averageDuration)}",
+      locale.eventInformationSummary(
+        DateHelper.formatDuration(duration, locale),
+        data.length.toString(),
+        DateHelper.formatDuration(averageDuration, locale),
+      ),
     );
   }
 }
