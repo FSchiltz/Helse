@@ -8,6 +8,7 @@ class OrderedEditItem {
   final int id;
   GraphKind? graph;
   GraphKind? detailGraph;
+  final int? parent;
 
   OrderedEditItem({
     required this.visible,
@@ -17,6 +18,7 @@ class OrderedEditItem {
     this.graph,
     this.detailGraph,
     required this.showOnDashboard,
+    this.parent,
   });
 
   OrderedItem ordered() => OrderedItem(

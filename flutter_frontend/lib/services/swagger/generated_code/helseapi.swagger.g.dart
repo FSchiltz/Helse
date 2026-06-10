@@ -510,6 +510,7 @@ OrderedItem _$OrderedItemFromJson(Map<String, dynamic> json) => OrderedItem(
   id: (json['id'] as num).toInt(),
   graph: graphKindNullableFromJson(json['graph']),
   detailGraph: graphKindNullableFromJson(json['detailGraph']),
+  parent: (json['parent'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$OrderedItemToJson(OrderedItem instance) =>
@@ -521,6 +522,7 @@ Map<String, dynamic> _$OrderedItemToJson(OrderedItem instance) =>
       'id': instance.id,
       'graph': graphKindNullableToJson(instance.graph),
       'detailGraph': graphKindNullableToJson(instance.detailGraph),
+      'parent': instance.parent,
     };
 
 PatientSettings _$PatientSettingsFromJson(Map<String, dynamic> json) =>

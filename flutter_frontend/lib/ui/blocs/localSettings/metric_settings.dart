@@ -36,6 +36,7 @@ class _MetricSettingsState extends State<MetricSettings> {
             visible: e.visible ?? true,
             order: e.order,
             showOnDashboard: e.showOnDashboard ?? true,
+            parent: e.parent,
           ),
         )
         .toList();
@@ -58,6 +59,7 @@ class _MetricSettingsState extends State<MetricSettings> {
             visible: e.visible ?? true,
             order: e.order,
             showOnDashboard: e.showOnDashboard ?? true,
+            parent: e.parent,
           ),
         )
         .toList();
