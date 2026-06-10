@@ -228,5 +228,19 @@
     "total": "Total",
     "@total": {},
     "mean": "Average",
-    "@mean": {}
+    "@mean": {},
+    "eventInformationSummary": "Total of {total} in {length} sessions with an average of {mean}",
+    "@eventInformationSummary": {
+        "placeholders": {
+            "total": {
+                "type": "String"
+            },
+            "length": {
+                "type": "String"
+            },
+            "mean": {
+                "type": "String"
+            }
+        }
+    }
 }

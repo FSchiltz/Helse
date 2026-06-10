@@ -1,4 +1,4 @@
-namespace Api.Models.Admin;
+namespace Api.Models.Common;
 
 public record CountByDate(DateTime Date, int Count);
 

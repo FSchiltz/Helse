@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:intl/intl.dart';
 
@@ -97,5 +98,36 @@ class DateHelper {
     var end = now.add(Duration(days: 1));
 
     return DateTimeRange(start: start, end: end);
+  }
+
+  static String formatDuration(Duration duration, AppLocalizations locale) {
+    if (duration.inMinutes < 1) {
+      return _seconds(duration);
+    }
+
+    if (duration.inHours < 1) {
+      return _minutes(duration);
+    }
+
+    if (duration.inDays < 1) {
+      return _hours(duration);
+    }
+
+    return '${duration.inDays} ${locale.days} ${_hours(duration)}';
+  }
+
+  static String _seconds(Duration duration) {
+    var seconds = duration - Duration(minutes: duration.inMinutes);
+    return "${seconds.inSeconds}s";
+  }
+
+  static String _minutes(Duration duration) {
+    var minutes = duration - Duration(hours: duration.inHours);
+    return "${minutes.inMinutes}m ${_seconds(duration)}";
+  }
+
+  static String _hours(Duration duration) {
+    var hours = duration - Duration(days: duration.inDays);
+    return '${hours.inHours}h ${_minutes(duration)}';
   }
 }

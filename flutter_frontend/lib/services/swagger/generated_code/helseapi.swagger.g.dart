@@ -180,23 +180,43 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
   'sourceId': instance.sourceId,
 };
 
+EventCreationStats _$EventCreationStatsFromJson(Map<String, dynamic> json) =>
+    EventCreationStats(
+      events:
+          (json['events'] as List<dynamic>?)
+              ?.map((e) => CountByDate.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      eventCounts:
+          (json['eventCounts'] as List<dynamic>?)
+              ?.map((e) => CountRecord.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$EventCreationStatsToJson(EventCreationStats instance) =>
+    <String, dynamic>{
+      'events': instance.events.map((e) => e.toJson()).toList(),
+      'eventCounts': instance.eventCounts.map((e) => e.toJson()).toList(),
+    };
+
 EventStats _$EventStatsFromJson(Map<String, dynamic> json) => EventStats(
-  events:
-      (json['events'] as List<dynamic>?)
-          ?.map((e) => CountByDate.fromJson(e as Map<String, dynamic>))
+  summaries:
+      (json['summaries'] as List<dynamic>?)
+          ?.map((e) => EventSummary.fromJson(e as Map<String, dynamic>))
           .toList() ??
       [],
-  eventCounts:
-      (json['eventCounts'] as List<dynamic>?)
-          ?.map((e) => CountRecord.fromJson(e as Map<String, dynamic>))
+  durations:
+      (json['durations'] as List<dynamic>?)
+          ?.map((e) => Interval.fromJson(e as Map<String, dynamic>))
           .toList() ??
       [],
 );
 
 Map<String, dynamic> _$EventStatsToJson(EventStats instance) =>
     <String, dynamic>{
-      'events': instance.events.map((e) => e.toJson()).toList(),
-      'eventCounts': instance.eventCounts.map((e) => e.toJson()).toList(),
+      'summaries': instance.summaries.map((e) => e.toJson()).toList(),
+      'durations': instance.durations.map((e) => e.toJson()).toList(),
     };
 
 EventSummary _$EventSummaryFromJson(Map<String, dynamic> json) =>
@@ -289,6 +309,16 @@ Map<String, dynamic> _$ImportsResultToJson(ImportsResult instance) =>
       'events': instance.events.toJson(),
     };
 
+Interval _$IntervalFromJson(Map<String, dynamic> json) => Interval(
+  start: DateTime.parse(json['start'] as String),
+  stop: DateTime.parse(json['stop'] as String),
+);
+
+Map<String, dynamic> _$IntervalToJson(Interval instance) => <String, dynamic>{
+  'start': instance.start.toIso8601String(),
+  'stop': instance.stop.toIso8601String(),
+};
+
 JobId _$JobIdFromJson(Map<String, dynamic> json) =>
     JobId(id: json['id'] as String);
 
@@ -351,6 +381,27 @@ Map<String, dynamic> _$MetricToJson(Metric instance) => <String, dynamic>{
   'type': instance.type,
   'source': fileTypesNullableToJson(instance.source),
   'sourceId': instance.sourceId,
+};
+
+MetricCreationStats _$MetricCreationStatsFromJson(Map<String, dynamic> json) =>
+    MetricCreationStats(
+      events:
+          (json['events'] as List<dynamic>?)
+              ?.map((e) => CountByDate.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      eventCounts:
+          (json['eventCounts'] as List<dynamic>?)
+              ?.map((e) => CountRecord.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$MetricCreationStatsToJson(
+  MetricCreationStats instance,
+) => <String, dynamic>{
+  'events': instance.events.map((e) => e.toJson()).toList(),
+  'eventCounts': instance.eventCounts.map((e) => e.toJson()).toList(),
 };
 
 MetricGroup _$MetricGroupFromJson(Map<String, dynamic> json) => MetricGroup(
@@ -815,6 +866,20 @@ Map<String, dynamic> _$UpdatePersonToJson(UpdatePerson instance) =>
       'phone': instance.phone,
     };
 
+UserCreationStats _$UserCreationStatsFromJson(Map<String, dynamic> json) =>
+    UserCreationStats(
+      userCount:
+          (json['userCount'] as List<dynamic>?)
+              ?.map((e) => CountRecord.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$UserCreationStatsToJson(UserCreationStats instance) =>
+    <String, dynamic>{
+      'userCount': instance.userCount.map((e) => e.toJson()).toList(),
+    };
+
 UserId _$UserIdFromJson(Map<String, dynamic> json) => UserId(
   person: (json['person'] as num).toInt(),
   user: (json['user'] as num?)?.toInt(),
@@ -855,18 +920,6 @@ Map<String, dynamic> _$UserSettingsToJson(UserSettings instance) =>
       'metricGroups': instance.metricGroups?.map((e) => e.toJson()).toList(),
       'events': instance.events?.map((e) => e.toJson()).toList(),
     };
-
-UserStats _$UserStatsFromJson(Map<String, dynamic> json) => UserStats(
-  userCount:
-      (json['userCount'] as List<dynamic>?)
-          ?.map((e) => CountRecord.fromJson(e as Map<String, dynamic>))
-          .toList() ??
-      [],
-);
-
-Map<String, dynamic> _$UserStatsToJson(UserStats instance) => <String, dynamic>{
-  'userCount': instance.userCount.map((e) => e.toJson()).toList(),
-};
 
 ApiImportTypePost$RequestBody _$ApiImportTypePost$RequestBodyFromJson(
   Map<String, dynamic> json,

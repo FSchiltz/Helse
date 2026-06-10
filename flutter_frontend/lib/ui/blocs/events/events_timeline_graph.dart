@@ -167,7 +167,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
           ),
         ),
         Container(
-          margin: const EdgeInsets.only(top: 50.0),
+          margin: const EdgeInsets.only(top: 52.0),
           child: SizedBox(
             width: max(timeline.grid.length * boxWidth, 500),
             height: rowCount * 29.0 + 40,
@@ -246,20 +246,23 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
   }
 
   Widget buildRowLabels(List<String> labels) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: labels.map((label) {
-        return SizedBox(
-          height: 29.0,
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 4),
-              child: Text(label, overflow: TextOverflow.ellipsis, maxLines: 1),
+    return Padding(
+      padding: const EdgeInsets.only(top: 6.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: labels.map((label) {
+          return SizedBox(
+            height: 29.0,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8.0, right: 4),
+                child: Text(label, overflow: TextOverflow.ellipsis, maxLines: 1),
+              ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 

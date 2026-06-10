@@ -649,6 +649,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Average'**
   String get mean;
+
+  /// No description provided for @eventInformationSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Total of {total} in {length} sessions with an average of {mean}'**
+  String eventInformationSummary(String total, String length, String mean);
 }
 
 class _AppLocalizationsDelegate

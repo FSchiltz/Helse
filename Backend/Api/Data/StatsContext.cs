@@ -1,7 +1,7 @@
 using System.Data;
 using Api.Data.Models.Health;
 using Api.Data.Models.Persons;
-using Api.Models.Admin;
+using Api.Models.Common;
 using LinqToDB;
 using LinqToDB.Data;
 

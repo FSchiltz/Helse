@@ -874,7 +874,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<List<EventSummary>>> _apiEventsSummaryGet({
+  Future<Response<EventStats>> _apiEventsSummaryGet({
     required int? type,
     required DateTime? start,
     required DateTime? end,
@@ -904,7 +904,7 @@ final class _$Helseapi extends Helseapi {
       parameters: $params,
       tag: swaggerMetaData,
     );
-    return client.send<List<EventSummary>, EventSummary>($request);
+    return client.send<EventStats, EventStats>($request);
   }
 
   @override
@@ -1430,7 +1430,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<UserStats>> _apiAdminStatsUsersGet({
+  Future<Response<UserCreationStats>> _apiAdminStatsUsersGet({
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
       summary: '',
@@ -1449,11 +1449,11 @@ final class _$Helseapi extends Helseapi {
       client.baseUrl,
       tag: swaggerMetaData,
     );
-    return client.send<UserStats, UserStats>($request);
+    return client.send<UserCreationStats, UserCreationStats>($request);
   }
 
   @override
-  Future<Response<EventStats>> _apiAdminStatsEventsGet({
+  Future<Response<EventCreationStats>> _apiAdminStatsEventsGet({
     required DateTime? start,
     required DateTime? end,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -1479,11 +1479,11 @@ final class _$Helseapi extends Helseapi {
       parameters: $params,
       tag: swaggerMetaData,
     );
-    return client.send<EventStats, EventStats>($request);
+    return client.send<EventCreationStats, EventCreationStats>($request);
   }
 
   @override
-  Future<Response<EventStats>> _apiAdminStatsMetricsGet({
+  Future<Response<MetricCreationStats>> _apiAdminStatsMetricsGet({
     required DateTime? start,
     required DateTime? end,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -1509,7 +1509,7 @@ final class _$Helseapi extends Helseapi {
       parameters: $params,
       tag: swaggerMetaData,
     );
-    return client.send<EventStats, EventStats>($request);
+    return client.send<MetricCreationStats, MetricCreationStats>($request);
   }
 
   @override

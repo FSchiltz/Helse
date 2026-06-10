@@ -1,6 +1,7 @@
 using Api.Data;
 using Api.Helpers;
 using Api.Models.Admin;
+using Api.Models.Common;
 
 namespace Api.Logic;
 
@@ -14,7 +15,7 @@ public static class AdminLogic
 
         var allUsers = await stats.GetUserSumary();
 
-        return TypedResults.Ok(new UserStats(allUsers));
+        return TypedResults.Ok(new UserCreationStats(allUsers));
     }
 
 
@@ -33,7 +34,7 @@ public static class AdminLogic
             .Select(x => new CountRecord(types.First(t => t.Id == x.Key).Name, x.Value))
             .ToArray();
 
-        return TypedResults.Ok(new MetricStats(events, countWithDescription));
+        return TypedResults.Ok(new MetricCreationStats(events, countWithDescription));
     }
 
     public async static Task<IResult> GetEventStatsAsync(DateTime start, DateTime end, IUserContext users, IHealthContext health, IStatsContext stats, HttpContext context)
@@ -51,6 +52,6 @@ public static class AdminLogic
             .Select(x => new CountRecord(eventTypes.First(t => t.Id == x.Key).Name, x.Value))
             .ToArray();
 
-        return TypedResults.Ok(new EventStats(events, countWithDescription));
+        return TypedResults.Ok(new EventCreationStats(events, countWithDescription));
     }
 }

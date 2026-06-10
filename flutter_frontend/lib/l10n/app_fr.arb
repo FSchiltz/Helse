@@ -89,5 +89,8 @@
     "cleanSessions": "Supprimer toutes les sessions",
     "unit": "Unité",
     "group": "Groupe",
-    "summary": "Résumé"
+    "summary": "Résumé",
+    "total": "Total",
+    "mean": "Moyenne",
+    "eventInformationSummary": "Total de {total} en {length} sessions avec une moyenne de {mean}"
 }

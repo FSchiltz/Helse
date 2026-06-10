@@ -4,6 +4,7 @@ using Api.Data.Models.Health;
 using Api.Data.Models.Persons;
 using Api.Logic;
 using Api.Models.Admin;
+using Api.Models.Common;
 using NSubstitute;
 
 namespace Tests.Unit.Logic;
@@ -44,7 +45,7 @@ public class AdminLogicTests : LogicTests
         var result = await AdminLogic.GetUserStatsAsync(users, stats, context);
 
         // Assert
-        var okResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<UserStats>>(result);
+        var okResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<UserCreationStats>>(result);
         Assert.NotNull(okResult.Value);
         Assert.Equal(2, okResult.Value.UserCount.Length);
     }
@@ -104,7 +105,7 @@ public class AdminLogicTests : LogicTests
         var result = await AdminLogic.GetMetricStatsAsync(start, end, users, health, stats, context);
 
         // Assert
-        var okResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<MetricStats>>(result);
+        var okResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<MetricCreationStats>>(result);
         Assert.NotNull(okResult.Value);
         Assert.Equal(2, okResult.Value.Events.Length);
         Assert.Single(okResult.Value.EventCounts);
@@ -161,7 +162,7 @@ public class AdminLogicTests : LogicTests
         var result = await AdminLogic.GetEventStatsAsync(start, end, users, health, stats, context);
 
         // Assert
-        var okResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<EventStats>>(result);
+        var okResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<EventCreationStats>>(result);
         Assert.NotNull(okResult.Value);
         Assert.Equal(2, okResult.Value.Events.Length);
         Assert.Single(okResult.Value.EventCounts);

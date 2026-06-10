@@ -1,11 +1,13 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart' hide Interval;
 import 'package:helse/helpers/date.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/events/delete_event.dart';
+import 'package:helse/ui/blocs/events/event_information.dart';
 import 'package:helse/ui/blocs/events/events_add.dart';
 import 'package:helse/ui/blocs/events/events_summary.dart';
 import 'package:helse/ui/blocs/events/events_timeline_graph.dart';
@@ -91,6 +93,8 @@ class _EventsGraphState extends State<EventsGraph> {
             ),
           ),
         ),
+        SizedBox(height: 12),
+        EventInformation(data: _getDurations(filteredEvents)),
         SizedBox(height: 12),
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -215,4 +219,37 @@ class _EventsGraphState extends State<EventsGraph> {
     debugPrint('_group() executed in ${stopwatch.elapsed}');
     return groups.toList();
   }
+
+  List<Interval> _getDurations(List<Event> events) {
+    List<MutableInterval> durations = [];
+    for (var e in events) {
+      var duration = durations.firstWhereOrNull(
+        (x) =>
+            (e.stop.isAfter(x.start) || e.stop.isAtSameMomentAs(x.start)) &&
+            (e.start.isBefore(x.stop) || e.start.isAtSameMomentAs(x.stop)),
+      );
+      if (duration == null) {
+        durations.add(MutableInterval(start: e.start, stop: e.stop));
+      } else {
+        if (e.start.isBefore(duration.start)) {
+          // the event is before, we add to the start
+          duration.start = e.start;
+        }
+
+        if (e.stop.isAfter(duration.stop)) {
+          // the event is after
+          duration.stop = e.stop;
+        }
+      }
+    }
+    return durations
+        .map((e) => Interval(start: e.start, stop: e.stop))
+        .toList();
+  }
+}
+
+class MutableInterval {
+  DateTime start;
+  DateTime stop;
+  MutableInterval({required this.start, required this.stop});
 }

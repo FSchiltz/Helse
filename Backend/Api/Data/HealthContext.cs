@@ -120,7 +120,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     /// <inheritdoc/>
     public Task<Metric[]> GetMetrics(long id, long type, DateTime start, DateTime end)
     {
-        IQueryable<Metric> query = Db.GetTable<Metric>().LoadWith(x => x.Unit);
+        IQueryable<Metric> query = Db.GetTable<Metric>().LoadWith(x => x.UnitObject);
         return query.Where(x => x.PersonId == id
                 && x.Type == type
                 && x.Date <= end && x.Date >= start)
