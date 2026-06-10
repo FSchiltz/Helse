@@ -1082,10 +1082,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/EventSummary"
-                  }
+                  "$ref": "#/components/schemas/EventStats"
                 }
               }
             }
@@ -1701,7 +1698,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserStats"
+                  "$ref": "#/components/schemas/UserCreationStats"
                 }
               }
             }
@@ -1743,7 +1740,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EventStats"
+                  "$ref": "#/components/schemas/EventCreationStats"
                 }
               }
             }
@@ -1785,7 +1782,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EventStats"
+                  "$ref": "#/components/schemas/MetricCreationStats"
                 }
               }
             }
@@ -2404,7 +2401,7 @@
           }
         }
       },
-      "EventStats": {
+      "EventCreationStats": {
         "required": [
           "events",
           "eventCounts"
@@ -2421,6 +2418,27 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CountRecord"
+            }
+          }
+        }
+      },
+      "EventStats": {
+        "required": [
+          "summaries",
+          "durations"
+        ],
+        "type": "object",
+        "properties": {
+          "summaries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EventSummary"
+            }
+          },
+          "durations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Interval"
             }
           }
         }
@@ -2616,6 +2634,23 @@
           "Light"
         ]
       },
+      "Interval": {
+        "required": [
+          "start",
+          "stop"
+        ],
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "stop": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "JobId": {
         "required": [
           "id"
@@ -2779,6 +2814,27 @@
           },
           "sourceId": {
             "type": "string"
+          }
+        }
+      },
+      "MetricCreationStats": {
+        "required": [
+          "events",
+          "eventCounts"
+        ],
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountByDate"
+            }
+          },
+          "eventCounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountRecord"
+            }
           }
         }
       },
@@ -3701,6 +3757,20 @@
           }
         }
       },
+      "UserCreationStats": {
+        "required": [
+          "userCount"
+        ],
+        "type": "object",
+        "properties": {
+          "userCount": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountRecord"
+            }
+          }
+        }
+      },
       "UserId": {
         "required": [
           "person",
@@ -3760,20 +3830,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/OrderedItem"
-            }
-          }
-        }
-      },
-      "UserStats": {
-        "required": [
-          "userCount"
-        ],
-        "type": "object",
-        "properties": {
-          "userCount": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CountRecord"
             }
           }
         }

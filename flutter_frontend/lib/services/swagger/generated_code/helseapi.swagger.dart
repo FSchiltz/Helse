@@ -934,16 +934,13 @@ abstract class Helseapi extends ChopperService {
   ///@param start
   ///@param end
   ///@param personId
-  Future<chopper.Response<List<EventSummary>>> apiEventsSummaryGet({
+  Future<chopper.Response<EventStats>> apiEventsSummaryGet({
     required int? type,
     required DateTime? start,
     required DateTime? end,
     int? personId,
   }) {
-    generatedMapping.putIfAbsent(
-      EventSummary,
-      () => EventSummary.fromJsonFactory,
-    );
+    generatedMapping.putIfAbsent(EventStats, () => EventStats.fromJsonFactory);
 
     return _apiEventsSummaryGet(
       type: type,
@@ -959,7 +956,7 @@ abstract class Helseapi extends ChopperService {
   ///@param end
   ///@param personId
   @GET(path: '/api/events/summary')
-  Future<chopper.Response<List<EventSummary>>> _apiEventsSummaryGet({
+  Future<chopper.Response<EventStats>> _apiEventsSummaryGet({
     @Query('type') required int? type,
     @Query('start') required DateTime? start,
     @Query('end') required DateTime? end,
@@ -1481,15 +1478,18 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response<UserStats>> apiAdminStatsUsersGet() {
-    generatedMapping.putIfAbsent(UserStats, () => UserStats.fromJsonFactory);
+  Future<chopper.Response<UserCreationStats>> apiAdminStatsUsersGet() {
+    generatedMapping.putIfAbsent(
+      UserCreationStats,
+      () => UserCreationStats.fromJsonFactory,
+    );
 
     return _apiAdminStatsUsersGet();
   }
 
   ///
   @GET(path: '/api/admin/stats/users')
-  Future<chopper.Response<UserStats>> _apiAdminStatsUsersGet({
+  Future<chopper.Response<UserCreationStats>> _apiAdminStatsUsersGet({
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -1506,11 +1506,14 @@ abstract class Helseapi extends ChopperService {
   ///
   ///@param start
   ///@param end
-  Future<chopper.Response<EventStats>> apiAdminStatsEventsGet({
+  Future<chopper.Response<EventCreationStats>> apiAdminStatsEventsGet({
     required DateTime? start,
     required DateTime? end,
   }) {
-    generatedMapping.putIfAbsent(EventStats, () => EventStats.fromJsonFactory);
+    generatedMapping.putIfAbsent(
+      EventCreationStats,
+      () => EventCreationStats.fromJsonFactory,
+    );
 
     return _apiAdminStatsEventsGet(start: start, end: end);
   }
@@ -1519,7 +1522,7 @@ abstract class Helseapi extends ChopperService {
   ///@param start
   ///@param end
   @GET(path: '/api/admin/stats/events')
-  Future<chopper.Response<EventStats>> _apiAdminStatsEventsGet({
+  Future<chopper.Response<EventCreationStats>> _apiAdminStatsEventsGet({
     @Query('start') required DateTime? start,
     @Query('end') required DateTime? end,
     @chopper.Tag()
@@ -1538,11 +1541,14 @@ abstract class Helseapi extends ChopperService {
   ///
   ///@param start
   ///@param end
-  Future<chopper.Response<EventStats>> apiAdminStatsMetricsGet({
+  Future<chopper.Response<MetricCreationStats>> apiAdminStatsMetricsGet({
     required DateTime? start,
     required DateTime? end,
   }) {
-    generatedMapping.putIfAbsent(EventStats, () => EventStats.fromJsonFactory);
+    generatedMapping.putIfAbsent(
+      MetricCreationStats,
+      () => MetricCreationStats.fromJsonFactory,
+    );
 
     return _apiAdminStatsMetricsGet(start: start, end: end);
   }
@@ -1551,7 +1557,7 @@ abstract class Helseapi extends ChopperService {
   ///@param start
   ///@param end
   @GET(path: '/api/admin/stats/metrics')
-  Future<chopper.Response<EventStats>> _apiAdminStatsMetricsGet({
+  Future<chopper.Response<MetricCreationStats>> _apiAdminStatsMetricsGet({
     @Query('start') required DateTime? start,
     @Query('end') required DateTime? end,
     @chopper.Tag()
@@ -2687,25 +2693,25 @@ extension $EventExtension on Event {
 }
 
 @JsonSerializable(explicitToJson: true)
-class EventStats {
-  const EventStats({required this.events, required this.eventCounts});
+class EventCreationStats {
+  const EventCreationStats({required this.events, required this.eventCounts});
 
-  factory EventStats.fromJson(Map<String, dynamic> json) =>
-      _$EventStatsFromJson(json);
+  factory EventCreationStats.fromJson(Map<String, dynamic> json) =>
+      _$EventCreationStatsFromJson(json);
 
-  static const toJsonFactory = _$EventStatsToJson;
-  Map<String, dynamic> toJson() => _$EventStatsToJson(this);
+  static const toJsonFactory = _$EventCreationStatsToJson;
+  Map<String, dynamic> toJson() => _$EventCreationStatsToJson(this);
 
   @JsonKey(name: 'events', defaultValue: <CountByDate>[])
   final List<CountByDate> events;
   @JsonKey(name: 'eventCounts', defaultValue: <CountRecord>[])
   final List<CountRecord> eventCounts;
-  static const fromJsonFactory = _$EventStatsFromJson;
+  static const fromJsonFactory = _$EventCreationStatsFromJson;
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other is EventStats &&
+        (other is EventCreationStats &&
             (identical(other.events, events) ||
                 const DeepCollectionEquality().equals(other.events, events)) &&
             (identical(other.eventCounts, eventCounts) ||
@@ -2725,24 +2731,88 @@ class EventStats {
       runtimeType.hashCode;
 }
 
-extension $EventStatsExtension on EventStats {
-  EventStats copyWith({
+extension $EventCreationStatsExtension on EventCreationStats {
+  EventCreationStats copyWith({
     List<CountByDate>? events,
     List<CountRecord>? eventCounts,
   }) {
-    return EventStats(
+    return EventCreationStats(
       events: events ?? this.events,
       eventCounts: eventCounts ?? this.eventCounts,
     );
   }
 
-  EventStats copyWithWrapped({
+  EventCreationStats copyWithWrapped({
     Wrapped<List<CountByDate>>? events,
     Wrapped<List<CountRecord>>? eventCounts,
   }) {
-    return EventStats(
+    return EventCreationStats(
       events: (events != null ? events.value : this.events),
       eventCounts: (eventCounts != null ? eventCounts.value : this.eventCounts),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class EventStats {
+  const EventStats({required this.summaries, required this.durations});
+
+  factory EventStats.fromJson(Map<String, dynamic> json) =>
+      _$EventStatsFromJson(json);
+
+  static const toJsonFactory = _$EventStatsToJson;
+  Map<String, dynamic> toJson() => _$EventStatsToJson(this);
+
+  @JsonKey(name: 'summaries', defaultValue: <EventSummary>[])
+  final List<EventSummary> summaries;
+  @JsonKey(name: 'durations', defaultValue: <Interval>[])
+  final List<Interval> durations;
+  static const fromJsonFactory = _$EventStatsFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is EventStats &&
+            (identical(other.summaries, summaries) ||
+                const DeepCollectionEquality().equals(
+                  other.summaries,
+                  summaries,
+                )) &&
+            (identical(other.durations, durations) ||
+                const DeepCollectionEquality().equals(
+                  other.durations,
+                  durations,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(summaries) ^
+      const DeepCollectionEquality().hash(durations) ^
+      runtimeType.hashCode;
+}
+
+extension $EventStatsExtension on EventStats {
+  EventStats copyWith({
+    List<EventSummary>? summaries,
+    List<Interval>? durations,
+  }) {
+    return EventStats(
+      summaries: summaries ?? this.summaries,
+      durations: durations ?? this.durations,
+    );
+  }
+
+  EventStats copyWithWrapped({
+    Wrapped<List<EventSummary>>? summaries,
+    Wrapped<List<Interval>>? durations,
+  }) {
+    return EventStats(
+      summaries: (summaries != null ? summaries.value : this.summaries),
+      durations: (durations != null ? durations.value : this.durations),
     );
   }
 }
@@ -3209,6 +3279,58 @@ extension $ImportsResultExtension on ImportsResult {
 }
 
 @JsonSerializable(explicitToJson: true)
+class Interval {
+  const Interval({required this.start, required this.stop});
+
+  factory Interval.fromJson(Map<String, dynamic> json) =>
+      _$IntervalFromJson(json);
+
+  static const toJsonFactory = _$IntervalToJson;
+  Map<String, dynamic> toJson() => _$IntervalToJson(this);
+
+  @JsonKey(name: 'start')
+  final DateTime start;
+  @JsonKey(name: 'stop')
+  final DateTime stop;
+  static const fromJsonFactory = _$IntervalFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is Interval &&
+            (identical(other.start, start) ||
+                const DeepCollectionEquality().equals(other.start, start)) &&
+            (identical(other.stop, stop) ||
+                const DeepCollectionEquality().equals(other.stop, stop)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(start) ^
+      const DeepCollectionEquality().hash(stop) ^
+      runtimeType.hashCode;
+}
+
+extension $IntervalExtension on Interval {
+  Interval copyWith({DateTime? start, DateTime? stop}) {
+    return Interval(start: start ?? this.start, stop: stop ?? this.stop);
+  }
+
+  Interval copyWithWrapped({
+    Wrapped<DateTime>? start,
+    Wrapped<DateTime>? stop,
+  }) {
+    return Interval(
+      start: (start != null ? start.value : this.start),
+      stop: (stop != null ? stop.value : this.stop),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class JobId {
   const JobId({required this.id});
 
@@ -3573,6 +3695,67 @@ extension $MetricExtension on Metric {
       type: (type != null ? type.value : this.type),
       source: (source != null ? source.value : this.source),
       sourceId: (sourceId != null ? sourceId.value : this.sourceId),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class MetricCreationStats {
+  const MetricCreationStats({required this.events, required this.eventCounts});
+
+  factory MetricCreationStats.fromJson(Map<String, dynamic> json) =>
+      _$MetricCreationStatsFromJson(json);
+
+  static const toJsonFactory = _$MetricCreationStatsToJson;
+  Map<String, dynamic> toJson() => _$MetricCreationStatsToJson(this);
+
+  @JsonKey(name: 'events', defaultValue: <CountByDate>[])
+  final List<CountByDate> events;
+  @JsonKey(name: 'eventCounts', defaultValue: <CountRecord>[])
+  final List<CountRecord> eventCounts;
+  static const fromJsonFactory = _$MetricCreationStatsFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is MetricCreationStats &&
+            (identical(other.events, events) ||
+                const DeepCollectionEquality().equals(other.events, events)) &&
+            (identical(other.eventCounts, eventCounts) ||
+                const DeepCollectionEquality().equals(
+                  other.eventCounts,
+                  eventCounts,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(events) ^
+      const DeepCollectionEquality().hash(eventCounts) ^
+      runtimeType.hashCode;
+}
+
+extension $MetricCreationStatsExtension on MetricCreationStats {
+  MetricCreationStats copyWith({
+    List<CountByDate>? events,
+    List<CountRecord>? eventCounts,
+  }) {
+    return MetricCreationStats(
+      events: events ?? this.events,
+      eventCounts: eventCounts ?? this.eventCounts,
+    );
+  }
+
+  MetricCreationStats copyWithWrapped({
+    Wrapped<List<CountByDate>>? events,
+    Wrapped<List<CountRecord>>? eventCounts,
+  }) {
+    return MetricCreationStats(
+      events: (events != null ? events.value : this.events),
+      eventCounts: (eventCounts != null ? eventCounts.value : this.eventCounts),
     );
   }
 }
@@ -6094,6 +6277,51 @@ extension $UpdatePersonExtension on UpdatePerson {
 }
 
 @JsonSerializable(explicitToJson: true)
+class UserCreationStats {
+  const UserCreationStats({required this.userCount});
+
+  factory UserCreationStats.fromJson(Map<String, dynamic> json) =>
+      _$UserCreationStatsFromJson(json);
+
+  static const toJsonFactory = _$UserCreationStatsToJson;
+  Map<String, dynamic> toJson() => _$UserCreationStatsToJson(this);
+
+  @JsonKey(name: 'userCount', defaultValue: <CountRecord>[])
+  final List<CountRecord> userCount;
+  static const fromJsonFactory = _$UserCreationStatsFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is UserCreationStats &&
+            (identical(other.userCount, userCount) ||
+                const DeepCollectionEquality().equals(
+                  other.userCount,
+                  userCount,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(userCount) ^ runtimeType.hashCode;
+}
+
+extension $UserCreationStatsExtension on UserCreationStats {
+  UserCreationStats copyWith({List<CountRecord>? userCount}) {
+    return UserCreationStats(userCount: userCount ?? this.userCount);
+  }
+
+  UserCreationStats copyWithWrapped({Wrapped<List<CountRecord>>? userCount}) {
+    return UserCreationStats(
+      userCount: (userCount != null ? userCount.value : this.userCount),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class UserId {
   const UserId({required this.person, this.user});
 
@@ -6260,51 +6488,6 @@ extension $UserSettingsExtension on UserSettings {
           ? metricGroups.value
           : this.metricGroups),
       events: (events != null ? events.value : this.events),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
-class UserStats {
-  const UserStats({required this.userCount});
-
-  factory UserStats.fromJson(Map<String, dynamic> json) =>
-      _$UserStatsFromJson(json);
-
-  static const toJsonFactory = _$UserStatsToJson;
-  Map<String, dynamic> toJson() => _$UserStatsToJson(this);
-
-  @JsonKey(name: 'userCount', defaultValue: <CountRecord>[])
-  final List<CountRecord> userCount;
-  static const fromJsonFactory = _$UserStatsFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is UserStats &&
-            (identical(other.userCount, userCount) ||
-                const DeepCollectionEquality().equals(
-                  other.userCount,
-                  userCount,
-                )));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(userCount) ^ runtimeType.hashCode;
-}
-
-extension $UserStatsExtension on UserStats {
-  UserStats copyWith({List<CountRecord>? userCount}) {
-    return UserStats(userCount: userCount ?? this.userCount);
-  }
-
-  UserStats copyWithWrapped({Wrapped<List<CountRecord>>? userCount}) {
-    return UserStats(
-      userCount: (userCount != null ? userCount.value : this.userCount),
     );
   }
 }

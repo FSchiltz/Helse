@@ -280,11 +280,11 @@ public static class Endpoints
             .Produces((int)HttpStatusCode.Unauthorized);
 
         stats.MapGet("/events", AdminLogic.GetEventStatsAsync)
-            .Produces<EventsCreationStats>((int)HttpStatusCode.OK)
+            .Produces<EventCreationStats>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
 
         stats.MapGet("/metrics", AdminLogic.GetMetricStatsAsync)
-            .Produces<EventsCreationStats>((int)HttpStatusCode.OK)
+            .Produces<MetricCreationStats>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
     }
 

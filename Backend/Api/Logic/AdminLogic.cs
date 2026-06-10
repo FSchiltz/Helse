@@ -52,6 +52,6 @@ public static class AdminLogic
             .Select(x => new CountRecord(eventTypes.First(t => t.Id == x.Key).Name, x.Value))
             .ToArray();
 
-        return TypedResults.Ok(new EventsCreationStats(events, countWithDescription));
+        return TypedResults.Ok(new EventCreationStats(events, countWithDescription));
     }
 }

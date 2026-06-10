@@ -162,7 +162,7 @@ public class AdminLogicTests : LogicTests
         var result = await AdminLogic.GetEventStatsAsync(start, end, users, health, stats, context);
 
         // Assert
-        var okResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<EventsCreationStats>>(result);
+        var okResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<EventCreationStats>>(result);
         Assert.NotNull(okResult.Value);
         Assert.Equal(2, okResult.Value.Events.Length);
         Assert.Single(okResult.Value.EventCounts);
