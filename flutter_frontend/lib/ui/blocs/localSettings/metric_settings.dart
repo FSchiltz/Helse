@@ -22,7 +22,9 @@ class _MetricSettingsState extends State<MetricSettings> {
   Future<List<OrderedEditItem>> _getData(bool refresh) async {
     List<OrderedItem> items;
     if (widget.isPatient) {
-      items = await Dependencies.logics.patientsSettings.getMetrics(widget.patient);
+      items = await Dependencies.logics.patientsSettings.getMetrics(
+        widget.patient,
+      );
     } else {
       items = await Dependencies.logics.settings.getMetrics();
     }
@@ -45,7 +47,9 @@ class _MetricSettingsState extends State<MetricSettings> {
   Future<List<OrderedEditItem>> _getGroupData(bool reset) async {
     List<OrderedItem> items;
     if (widget.isPatient) {
-      items = await Dependencies.logics.patientsSettings.getMetricGroups(widget.patient);
+      items = await Dependencies.logics.patientsSettings.getMetricGroups(
+        widget.patient,
+      );
     } else {
       items = await Dependencies.logics.settings.getMetricGroups();
     }
@@ -76,7 +80,7 @@ class _MetricSettingsState extends State<MetricSettings> {
         await Dependencies.logics.patientsSettings.saveMetricGroups(
           toSave,
           true,
-          widget.patient
+          widget.patient,
         );
       } else {
         await Dependencies.logics.settings.saveMetricGroups(toSave, true);
@@ -96,7 +100,11 @@ class _MetricSettingsState extends State<MetricSettings> {
       var toSave = metrics.map((e) => e.ordered()).toList();
       // save the user's settings
       if (widget.isPatient) {
-        await Dependencies.logics.patientsSettings.saveMetrics(toSave, true, widget.patient);
+        await Dependencies.logics.patientsSettings.saveMetrics(
+          toSave,
+          true,
+          widget.patient,
+        );
       } else {
         await Dependencies.logics.settings.saveMetrics(toSave, true);
       }
@@ -107,7 +115,6 @@ class _MetricSettingsState extends State<MetricSettings> {
     }
   }
 
-  
   Future<(List<OrderedEditItem>, List<OrderedEditItem>)> _getTreeData(
     bool refresh,
   ) async {
@@ -165,24 +172,19 @@ class _MetricSettingsState extends State<MetricSettings> {
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.folder),
-                            const SizedBox(width: 8),
-                            Expanded(
+                            Flexible(
                               child: Text(
                                 group.name,
                                 style: theme.textTheme.titleLarge,
                               ),
                             ),
-                            StatefullCheck(
-                              group.visible,
-                              (value) {
-                                group.visible = value;
-                                for (final metric in children) {
-                                  metric.visible = value;
-                                }
-                                setState(() {});
-                              },
-                            ),
+                            StatefullCheck(group.visible, (value) {
+                              group.visible = value;
+                              for (final metric in children) {
+                                metric.visible = value;
+                              }
+                              setState(() {});
+                            }),
                           ],
                         ),
                       ),
@@ -191,14 +193,8 @@ class _MetricSettingsState extends State<MetricSettings> {
                           padding: const EdgeInsets.only(left: 48),
                           child: Row(
                             children: [
-                              const Icon(
-                                Icons.subdirectory_arrow_right,
-                                size: 18,
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Text(item.name),
-                              ),
+                              Divider(thickness: 2),
+                              Expanded(flex: 3, child: Text(item.name)),
                               Expanded(
                                 child: StatefullCheck(
                                   item.visible,
@@ -231,8 +227,8 @@ class _MetricSettingsState extends State<MetricSettings> {
                                       .where((e) => e.index > 0)
                                       .map((x) => DropDownItem(x, x.name))
                                       .toList(),
-                                  (v) => item.detailGraph =
-                                      v ?? item.detailGraph,
+                                  (v) =>
+                                      item.detailGraph = v ?? item.detailGraph,
                                   label: locale.type,
                                 ),
                               ),
@@ -251,5 +247,4 @@ class _MetricSettingsState extends State<MetricSettings> {
       },
     );
   }
-
 }
