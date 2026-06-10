@@ -49,8 +49,7 @@ public static class EventHelpers
 
     private static void AddToDuration(DateTime start, DateTime stop, List<Interval> durations)
     {
-        // find the duration to which this interval belong
-        var duration = durations.FirstOrDefault(x => stop >= x.Start && start <= x.Stop);
+        var duration = durations.FirstOrDefault(x => stop.AddSeconds(10) >= x.Start && start.AddSeconds(-10) <= x.Stop);
         if (duration is null)
         {
             durations.Add(new()
