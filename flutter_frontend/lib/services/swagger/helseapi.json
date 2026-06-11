@@ -2040,7 +2040,7 @@
               "integer",
               "string"
             ],
-            "format": "int32"
+            "format": "int64"
           }
         }
       },
