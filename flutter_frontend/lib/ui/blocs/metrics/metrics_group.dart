@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/ui/blocs/metrics/metric_group_detail.dart';
 import 'package:helse/ui/blocs/metrics/metric_widgets_grid.dart';
 
@@ -95,7 +94,7 @@ class _MetricsGroupState extends State<MetricsGroup> {
 
     var color = Dependencies.theme.stateColor(
       "${widget.group.id}",
-      StateType.metricGroup,
+      StateType.metricsgroup,
       context,
     );
     return Container(

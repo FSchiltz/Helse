@@ -1744,6 +1744,73 @@ abstract class Helseapi extends ChopperService {
 }
 
 @JsonSerializable(explicitToJson: true)
+class ColorValue {
+  const ColorValue({
+    required this.key,
+    required this.type,
+    required this.value,
+  });
+
+  factory ColorValue.fromJson(Map<String, dynamic> json) =>
+      _$ColorValueFromJson(json);
+
+  static const toJsonFactory = _$ColorValueToJson;
+  Map<String, dynamic> toJson() => _$ColorValueToJson(this);
+
+  @JsonKey(name: 'key')
+  final String key;
+  @JsonKey(name: 'type', toJson: stateTypeToJson, fromJson: stateTypeFromJson)
+  final enums.StateType type;
+  @JsonKey(name: 'value')
+  final int value;
+  static const fromJsonFactory = _$ColorValueFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is ColorValue &&
+            (identical(other.key, key) ||
+                const DeepCollectionEquality().equals(other.key, key)) &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.value, value) ||
+                const DeepCollectionEquality().equals(other.value, value)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(key) ^
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(value) ^
+      runtimeType.hashCode;
+}
+
+extension $ColorValueExtension on ColorValue {
+  ColorValue copyWith({String? key, enums.StateType? type, int? value}) {
+    return ColorValue(
+      key: key ?? this.key,
+      type: type ?? this.type,
+      value: value ?? this.value,
+    );
+  }
+
+  ColorValue copyWithWrapped({
+    Wrapped<String>? key,
+    Wrapped<enums.StateType>? type,
+    Wrapped<int>? value,
+  }) {
+    return ColorValue(
+      key: (key != null ? key.value : this.key),
+      type: (type != null ? type.value : this.type),
+      value: (value != null ? value.value : this.value),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class Connection {
   const Connection({
     required this.user,
@@ -4483,6 +4550,7 @@ class PatientSettings {
     this.metrics,
     this.metricGroups,
     this.events,
+    this.colors,
   });
 
   factory PatientSettings.fromJson(Map<String, dynamic> json) =>
@@ -4513,6 +4581,8 @@ class PatientSettings {
   final List<OrderedItem>? metricGroups;
   @JsonKey(name: 'events', defaultValue: <OrderedItem>[])
   final List<OrderedItem>? events;
+  @JsonKey(name: 'colors', defaultValue: <ColorValue>[])
+  final List<ColorValue>? colors;
   static const fromJsonFactory = _$PatientSettingsFromJson;
 
   @override
@@ -4547,7 +4617,9 @@ class PatientSettings {
                   metricGroups,
                 )) &&
             (identical(other.events, events) ||
-                const DeepCollectionEquality().equals(other.events, events)));
+                const DeepCollectionEquality().equals(other.events, events)) &&
+            (identical(other.colors, colors) ||
+                const DeepCollectionEquality().equals(other.colors, colors)));
   }
 
   @override
@@ -4562,6 +4634,7 @@ class PatientSettings {
       const DeepCollectionEquality().hash(metrics) ^
       const DeepCollectionEquality().hash(metricGroups) ^
       const DeepCollectionEquality().hash(events) ^
+      const DeepCollectionEquality().hash(colors) ^
       runtimeType.hashCode;
 }
 
@@ -4574,6 +4647,7 @@ extension $PatientSettingsExtension on PatientSettings {
     List<OrderedItem>? metrics,
     List<OrderedItem>? metricGroups,
     List<OrderedItem>? events,
+    List<ColorValue>? colors,
   }) {
     return PatientSettings(
       patientId: patientId ?? this.patientId,
@@ -4583,6 +4657,7 @@ extension $PatientSettingsExtension on PatientSettings {
       metrics: metrics ?? this.metrics,
       metricGroups: metricGroups ?? this.metricGroups,
       events: events ?? this.events,
+      colors: colors ?? this.colors,
     );
   }
 
@@ -4594,6 +4669,7 @@ extension $PatientSettingsExtension on PatientSettings {
     Wrapped<List<OrderedItem>?>? metrics,
     Wrapped<List<OrderedItem>?>? metricGroups,
     Wrapped<List<OrderedItem>?>? events,
+    Wrapped<List<ColorValue>?>? colors,
   }) {
     return PatientSettings(
       patientId: (patientId != null ? patientId.value : this.patientId),
@@ -4605,6 +4681,7 @@ extension $PatientSettingsExtension on PatientSettings {
           ? metricGroups.value
           : this.metricGroups),
       events: (events != null ? events.value : this.events),
+      colors: (colors != null ? colors.value : this.colors),
     );
   }
 }
@@ -6401,6 +6478,7 @@ class UserSettings {
     this.metrics,
     this.metricGroups,
     this.events,
+    this.colors,
   });
 
   factory UserSettings.fromJson(Map<String, dynamic> json) =>
@@ -6429,6 +6507,8 @@ class UserSettings {
   final List<OrderedItem>? metricGroups;
   @JsonKey(name: 'events', defaultValue: <OrderedItem>[])
   final List<OrderedItem>? events;
+  @JsonKey(name: 'colors', defaultValue: <ColorValue>[])
+  final List<ColorValue>? colors;
   static const fromJsonFactory = _$UserSettingsFromJson;
 
   @override
@@ -6458,7 +6538,9 @@ class UserSettings {
                   metricGroups,
                 )) &&
             (identical(other.events, events) ||
-                const DeepCollectionEquality().equals(other.events, events)));
+                const DeepCollectionEquality().equals(other.events, events)) &&
+            (identical(other.colors, colors) ||
+                const DeepCollectionEquality().equals(other.colors, colors)));
   }
 
   @override
@@ -6472,6 +6554,7 @@ class UserSettings {
       const DeepCollectionEquality().hash(metrics) ^
       const DeepCollectionEquality().hash(metricGroups) ^
       const DeepCollectionEquality().hash(events) ^
+      const DeepCollectionEquality().hash(colors) ^
       runtimeType.hashCode;
 }
 
@@ -6483,6 +6566,7 @@ extension $UserSettingsExtension on UserSettings {
     List<OrderedItem>? metrics,
     List<OrderedItem>? metricGroups,
     List<OrderedItem>? events,
+    List<ColorValue>? colors,
   }) {
     return UserSettings(
       datePreset: datePreset ?? this.datePreset,
@@ -6491,6 +6575,7 @@ extension $UserSettingsExtension on UserSettings {
       metrics: metrics ?? this.metrics,
       metricGroups: metricGroups ?? this.metricGroups,
       events: events ?? this.events,
+      colors: colors ?? this.colors,
     );
   }
 
@@ -6501,6 +6586,7 @@ extension $UserSettingsExtension on UserSettings {
     Wrapped<List<OrderedItem>?>? metrics,
     Wrapped<List<OrderedItem>?>? metricGroups,
     Wrapped<List<OrderedItem>?>? events,
+    Wrapped<List<ColorValue>?>? colors,
   }) {
     return UserSettings(
       datePreset: (datePreset != null ? datePreset.value : this.datePreset),
@@ -6511,6 +6597,7 @@ extension $UserSettingsExtension on UserSettings {
           ? metricGroups.value
           : this.metricGroups),
       events: (events != null ? events.value : this.events),
+      colors: (colors != null ? colors.value : this.colors),
     );
   }
 }
@@ -7086,6 +7173,68 @@ List<enums.RightType>? rightTypeNullableListFromJson(
   }
 
   return rightType.map((e) => rightTypeFromJson(e.toString())).toList();
+}
+
+String? stateTypeNullableToJson(enums.StateType? stateType) {
+  return stateType?.value;
+}
+
+String? stateTypeToJson(enums.StateType stateType) {
+  return stateType.value;
+}
+
+enums.StateType stateTypeFromJson(
+  Object? stateType, [
+  enums.StateType? defaultValue,
+]) {
+  return enums.StateType.values.firstWhereOrNull((e) => e.value == stateType) ??
+      defaultValue ??
+      enums.StateType.swaggerGeneratedUnknown;
+}
+
+enums.StateType? stateTypeNullableFromJson(
+  Object? stateType, [
+  enums.StateType? defaultValue,
+]) {
+  if (stateType == null) {
+    return null;
+  }
+  return enums.StateType.values.firstWhereOrNull((e) => e.value == stateType) ??
+      defaultValue;
+}
+
+String stateTypeExplodedListToJson(List<enums.StateType>? stateType) {
+  return stateType?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> stateTypeListToJson(List<enums.StateType>? stateType) {
+  if (stateType == null) {
+    return [];
+  }
+
+  return stateType.map((e) => e.value!).toList();
+}
+
+List<enums.StateType> stateTypeListFromJson(
+  List? stateType, [
+  List<enums.StateType>? defaultValue,
+]) {
+  if (stateType == null) {
+    return defaultValue ?? [];
+  }
+
+  return stateType.map((e) => stateTypeFromJson(e.toString())).toList();
+}
+
+List<enums.StateType>? stateTypeNullableListFromJson(
+  List? stateType, [
+  List<enums.StateType>? defaultValue,
+]) {
+  if (stateType == null) {
+    return defaultValue;
+  }
+
+  return stateType.map((e) => stateTypeFromJson(e.toString())).toList();
 }
 
 String? unitTypeNullableToJson(enums.UnitType? unitType) {

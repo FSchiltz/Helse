@@ -13,7 +13,6 @@ class Account {
   static const clientid = "clientid";
   static const refresh = "refresh";
   static const fitRun = "fitLastRun";
-  static const colors = "colors";
   static const fitHistory = "fitHistory";
   static const fitBackground = "fitBackground";
   static const fitStatus = 'fitStatus';

@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/ui/common/loader.dart';
 
 import '../../../di/dependencies.dart';
@@ -83,7 +82,7 @@ class _EventsGridState extends State<EventsGrid> {
                     types?.map((type) {
                       var color = Dependencies.theme.stateColor(
                         "${type.id}",
-                        StateType.event,
+                        StateType.events,
                         context,
                       );
                       return Container(

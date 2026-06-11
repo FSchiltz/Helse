@@ -1,32 +1,17 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-
-enum StateType { event, eventValue, metric, metricGroup, metricValue }
-
-extension HexColor on Color {
-  /// Prefixes a hash sign if [leadingHashSign] is set to `true` (default is `true`).
-  String toHex({bool leadingHashSign = true}) =>
-      '${leadingHashSign ? '#' : ''}'
-      '${a.toByte().toRadixString(16).padLeft(2, '0')}'
-      '${r.toByte().toRadixString(16).padLeft(2, '0')}'
-      '${g.toByte().toRadixString(16).padLeft(2, '0')}'
-      '${b.toByte().toRadixString(16).padLeft(2, '0')}';
-}
-
-extension Byte on double {
-  int toByte() {
-    return (this * 255).round().clamp(0, 255);
-  }
-}
+import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 
 class ThemeHelper {
-  final Map<String, Color> colors = {};
+  final Map<StateType, Map<String, Color>> colors = {};
 
   Color stateColor(String state, StateType type, BuildContext context) {
-    var key = "${type.name}_$state";
-    if (colors.containsKey(key)) {
-      return colors[key]!;
+    var group = colors[type];
+    group ??= colors[type] = {};
+
+    if (group.containsKey(state)) {
+      return group[state]!;
     } else {
       var r = Random();
       var color = Color.fromRGBO(
@@ -35,7 +20,7 @@ class ThemeHelper {
         r.nextInt(155) + 100,
         1,
       );
-      colors[key] = color;
+      group[state] = color;
 
       var brightness = MediaQuery.of(context).platformBrightness;
       if (brightness == Brightness.dark) return color;
@@ -49,7 +34,7 @@ class ThemeHelper {
     }
   }
 
-  void setColors(Map<String, Color> map) {
+  void setColors(Map<StateType, Map<String, Color>> map) {
     colors.addEntries(map.entries);
   }
 }

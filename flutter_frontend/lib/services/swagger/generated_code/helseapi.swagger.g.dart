@@ -6,6 +6,19 @@ part of 'helseapi.swagger.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+ColorValue _$ColorValueFromJson(Map<String, dynamic> json) => ColorValue(
+  key: json['key'] as String,
+  type: stateTypeFromJson(json['type']),
+  value: (json['value'] as num).toInt(),
+);
+
+Map<String, dynamic> _$ColorValueToJson(ColorValue instance) =>
+    <String, dynamic>{
+      'key': instance.key,
+      'type': stateTypeToJson(instance.type),
+      'value': instance.value,
+    };
+
 Connection _$ConnectionFromJson(Map<String, dynamic> json) => Connection(
   user: json['user'] as String,
   password: json['password'] as String,
@@ -552,6 +565,11 @@ PatientSettings _$PatientSettingsFromJson(Map<String, dynamic> json) =>
               ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
+      colors:
+          (json['colors'] as List<dynamic>?)
+              ?.map((e) => ColorValue.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
 
 Map<String, dynamic> _$PatientSettingsToJson(PatientSettings instance) =>
@@ -563,6 +581,7 @@ Map<String, dynamic> _$PatientSettingsToJson(PatientSettings instance) =>
       'metrics': instance.metrics?.map((e) => e.toJson()).toList(),
       'metricGroups': instance.metricGroups?.map((e) => e.toJson()).toList(),
       'events': instance.events?.map((e) => e.toJson()).toList(),
+      'colors': instance.colors?.map((e) => e.toJson()).toList(),
     };
 
 PatientsSettings _$PatientsSettingsFromJson(Map<String, dynamic> json) =>
@@ -917,6 +936,11 @@ UserSettings _$UserSettingsFromJson(Map<String, dynamic> json) => UserSettings(
           ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
           .toList() ??
       [],
+  colors:
+      (json['colors'] as List<dynamic>?)
+          ?.map((e) => ColorValue.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
 );
 
 Map<String, dynamic> _$UserSettingsToJson(UserSettings instance) =>
@@ -927,6 +951,7 @@ Map<String, dynamic> _$UserSettingsToJson(UserSettings instance) =>
       'metrics': instance.metrics?.map((e) => e.toJson()).toList(),
       'metricGroups': instance.metricGroups?.map((e) => e.toJson()).toList(),
       'events': instance.events?.map((e) => e.toJson()).toList(),
+      'colors': instance.colors?.map((e) => e.toJson()).toList(),
     };
 
 ApiImportTypePost$RequestBody _$ApiImportTypePost$RequestBodyFromJson(

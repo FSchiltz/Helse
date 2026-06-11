@@ -46,15 +46,7 @@ class PatientsSettingsLogic {
   ) async {
     var settings = await _patientSettings(person);
     await _savePatientsSettings(
-      PatientSettings(
-        eventWidth: settings.eventWidth ?? 0,
-        events: settings.events,
-        metricGroups: settings.metricGroups,
-        metrics: metric,
-        theme: settings.theme ?? InterfaceTheme.system,
-        datePreset: settings.datePreset ?? DatePreset.today,
-        patientId: person,
-      ),
+      settings.copyWith(metrics: metric, patientId: person),
       toServer,
     );
   }
@@ -66,15 +58,7 @@ class PatientsSettingsLogic {
   ) async {
     var settings = await _patientSettings(person);
     await _savePatientsSettings(
-      PatientSettings(
-        eventWidth: settings.eventWidth ?? 0,
-        events: settings.events,
-        metricGroups: metric,
-        metrics: settings.metrics,
-        theme: settings.theme ?? InterfaceTheme.system,
-        datePreset: settings.datePreset ?? DatePreset.today,
-        patientId: person,
-      ),
+      settings.copyWith(metricGroups: metric, patientId: person),
       toServer,
     );
   }
@@ -86,15 +70,7 @@ class PatientsSettingsLogic {
   ) async {
     var settings = await _patientSettings(person);
     await _savePatientsSettings(
-      PatientSettings(
-        eventWidth: settings.eventWidth ?? 0,
-        events: events,
-        metricGroups: settings.metricGroups,
-        metrics: settings.metrics,
-        theme: settings.theme ?? InterfaceTheme.system,
-        datePreset: settings.datePreset ?? DatePreset.today,
-        patientId: person,
-      ),
+      settings.copyWith(events: events, patientId: person),
       toServer,
     );
   }
@@ -137,15 +113,7 @@ class PatientsSettingsLogic {
   Future<void> setDateRange(DatePreset run, int person) async {
     var settings = await _patientSettings(person);
     await _savePatientsSettings(
-      PatientSettings(
-        eventWidth: settings.eventWidth ?? 0,
-        events: settings.events,
-        metricGroups: settings.metricGroups,
-        metrics: settings.metrics,
-        theme: settings.theme ?? InterfaceTheme.system,
-        datePreset: run,
-        patientId: person,
-      ),
+      settings.copyWith(datePreset: run, patientId: person),
       true,
     );
   }

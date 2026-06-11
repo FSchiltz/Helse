@@ -3,7 +3,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/ui/blocs/events/sleep_transition_painter.dart';
 
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -299,7 +298,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
         final width = _distanceInMinutes(start, end);
         final color = Dependencies.theme.stateColor(
           n.description ?? '',
-          StateType.eventValue,
+          StateType.eventsvalue,
           context,
         );
         final left = _distanceToLeftBorder(start, timeline.skipped);

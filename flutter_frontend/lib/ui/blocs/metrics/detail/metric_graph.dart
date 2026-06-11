@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
 import 'package:helse/ui/blocs/metrics/widget/widget_graph.dart';
@@ -133,7 +132,7 @@ class _MetricGraphState extends State<MetricGraph> {
   Widget _grapichChart(BuildContext context) {
     var color = Dependencies.theme.stateColor(
       widget.type.id.toString(),
-      StateType.metric,
+      StateType.metrics,
       context,
     );
 

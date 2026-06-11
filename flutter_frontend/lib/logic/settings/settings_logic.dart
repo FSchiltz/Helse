@@ -5,7 +5,6 @@ import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/settings/health_settings.dart';
-import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/setting_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -78,9 +77,6 @@ class SettingsLogic {
   }
 
   Future<void> loadSettings() async {
-    // load the settings that are only client side first.
-    Dependencies.theme.setColors(await getColors());
-
     var serverSettings = await service.getPersonSettings();
     print("Settings loaded from server");
 
@@ -89,6 +85,7 @@ class SettingsLogic {
       json.encode(serverSettings.toJson()),
     );
     init = true;
+    Dependencies.theme.setColors(await getColors());
     metrics.changed(true);
     events.changed(true);
     themebloc.changed(serverSettings.theme ?? InterfaceTheme.system);
@@ -112,17 +109,7 @@ class SettingsLogic {
 
   Future<void> saveMetrics(List<OrderedItem> metric, bool toServer) async {
     var settings = await _userSettings();
-    await _saveSettings(
-      UserSettings(
-        eventWidth: settings.eventWidth ?? 0,
-        events: settings.events,
-        metricGroups: settings.metricGroups,
-        metrics: metric,
-        theme: settings.theme ?? InterfaceTheme.system,
-        datePreset: settings.datePreset ?? DatePreset.today,
-      ),
-      toServer,
-    );
+    await _saveSettings(settings.copyWith(metrics: metric), toServer);
     metrics.changed(true);
   }
 
@@ -132,17 +119,7 @@ class SettingsLogic {
 
   Future<void> saveEvents(List<OrderedItem> events, bool toServer) async {
     var settings = await _userSettings();
-    await _saveSettings(
-      UserSettings(
-        eventWidth: settings.eventWidth ?? 0,
-        events: events,
-        metricGroups: settings.metricGroups,
-        metrics: settings.metrics,
-        theme: settings.theme ?? InterfaceTheme.system,
-        datePreset: settings.datePreset ?? DatePreset.today,
-      ),
-      toServer,
-    );
+    await _saveSettings(settings.copyWith(events: events), toServer);
   }
 
   Future<void> setLastRun(String run) async {
@@ -157,19 +134,35 @@ class SettingsLogic {
     return (await storage).getString(Account.fitRun);
   }
 
-  Future<void> setColors(Map<String, Color> colors) async {
-    var hex = colors.map((key, value) => MapEntry(key, value.toARGB32()));
-    await (await storage).setString(Account.colors, json.encode(hex));
+  Future<void> setColors(Map<StateType, Map<String, Color>> colors) async {
+    var settings = await _userSettings();
+    List<ColorValue> flat = [];
+    for (var group in colors.entries) {
+      for (var entry in group.value.entries) {
+        flat.add(
+          ColorValue(
+            key: entry.key,
+            type: group.key,
+            value: entry.value.toARGB32(),
+          ),
+        );
+      }
+    }
+    await _saveSettings(settings.copyWith(colors: flat), true);
   }
 
-  Future<Map<String, Color>> getColors() async {
-    var colors = (await storage).getString(Account.colors);
+  Future<Map<StateType, Map<String, Color>>> getColors() async {
+    var colors = (await _userSettings()).colors;
     if (colors == null) {
       return {};
     }
-    var map = json.decode(colors) as Map<String, dynamic>;
 
-    return map.map((key, value) => MapEntry(key, Color(value as int)));
+    return colors.groupFoldBy(
+      (e) => e.type,
+      (previous, element) =>
+          (previous ?? {})
+            ..putIfAbsent(element.key, () => Color(element.value)),
+    );
   }
 
   Future<void> setHasHistory(bool run) async {
@@ -186,17 +179,7 @@ class SettingsLogic {
 
   Future<void> setDateRange(DatePreset run) async {
     var settings = await _userSettings();
-    await _saveSettings(
-      UserSettings(
-        eventWidth: settings.eventWidth ?? 0,
-        events: settings.events,
-        metricGroups: settings.metricGroups,
-        metrics: settings.metrics,
-        theme: settings.theme ?? InterfaceTheme.system,
-        datePreset: run,
-      ),
-      true,
-    );
+    await _saveSettings(settings.copyWith(datePreset: run), true);
   }
 
   Future<DatePreset> getDateRange() async {
@@ -295,17 +278,7 @@ class SettingsLogic {
 
   Future<void> saveMetricGroups(List<OrderedItem> metric, bool toServer) async {
     var settings = await _userSettings();
-    await _saveSettings(
-      UserSettings(
-        eventWidth: settings.eventWidth,
-        events: settings.events,
-        metricGroups: metric,
-        metrics: settings.metrics,
-        theme: settings.theme ?? InterfaceTheme.system,
-        datePreset: settings.datePreset ?? DatePreset.today,
-      ),
-      toServer,
-    );
+    await _saveSettings(settings.copyWith(metricGroups: metric), toServer);
     metrics.changed(true);
   }
 
