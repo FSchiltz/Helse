@@ -422,6 +422,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "9.1.1"
+  flutter_colorpicker:
+    dependency: "direct main"
+    description:
+      name: flutter_colorpicker
+      sha256: "969de5f6f9e2a570ac660fb7b501551451ea2a1ab9e2097e89475f60e07816ea"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -869,14 +877,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.2"
-  pretty_chopper_logger:
-    dependency: "direct main"
-    description:
-      name: pretty_chopper_logger
-      sha256: c886216212f0669d00d4b41829aef559a8b79aa48a9a85fe4561c5afdba2e43f
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.3.3"
   provider:
     dependency: "direct main"
     description:

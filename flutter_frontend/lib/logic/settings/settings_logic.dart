@@ -148,7 +148,11 @@ class SettingsLogic {
         );
       }
     }
-    await _saveSettings(settings.copyWith(colors: flat), true);
+
+    var copy = settings.copyWith(colors: flat);
+    await _saveSettings(copy, true);
+
+    Dependencies.theme.setColors(await getColors());
   }
 
   Future<Map<StateType, Map<String, Color>>> getColors() async {

@@ -3,9 +3,18 @@ import 'package:helse/helpers/translation.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
+import 'package:helse/ui/common/color_selector.dart';
+import 'package:helse/ui/common/common_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_outline_input_border.dart';
+
+class ColoredValue {
+  final String key;
+  Color color;
+
+  ColoredValue(this.key, {required this.color});
+}
 
 class GeneralSettings extends StatefulWidget {
   const GeneralSettings({super.key});
@@ -17,6 +26,7 @@ class GeneralSettings extends StatefulWidget {
 class _GeneralSettingsState extends State<GeneralSettings> {
   InterfaceTheme _theme = InterfaceTheme.system;
   DatePreset _range = DatePreset.today;
+  Map<StateType, List<ColoredValue>> _colors = {};
 
   Future<void> themeCallback(
     InterfaceTheme? value,
@@ -43,6 +53,15 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     _theme = await Dependencies.logics.settings.getTheme();
     _range = await Dependencies.logics.settings.getDateRange();
 
+// Todo simplify
+    await Dependencies.logics.settings.setColors(Dependencies.theme.colors);
+    _colors = (await Dependencies.logics.settings.getColors()).map(
+      (key, value) => MapEntry(
+        key,
+        value.entries.map((e) => ColoredValue(e.key, color: e.value)).toList(),
+      ),
+    );
+
     return 1;
   }
 
@@ -59,7 +78,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
+    var theme = Theme.of(context);
     return LoadingBuilder(
       _getData,
       builder: (context, data, reset) {
@@ -86,10 +105,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   decoration: InputDecoration(
                     labelText: 'Theme',
                     prefixIcon: const Icon(Icons.list_sharp),
-                    prefixIconColor: theme.primary,
+                    prefixIconColor: theme.colorScheme.primary,
                     filled: true,
-                    fillColor: theme.surface,
-                    border: SquareOutlineInputBorder(theme.primary),
+                    fillColor: theme.colorScheme.surface,
+                    border: SquareOutlineInputBorder(theme.colorScheme.primary),
                   ),
                 ),
               ),
@@ -108,11 +127,94 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                     decoration: InputDecoration(
                       labelText: 'Date range',
                       prefixIcon: const Icon(Icons.list_sharp),
-                      prefixIconColor: theme.primary,
+                      prefixIconColor: theme.colorScheme.primary,
                       filled: true,
-                      fillColor: theme.surface,
-                      border: SquareOutlineInputBorder(theme.primary),
+                      fillColor: theme.colorScheme.surface,
+                      border: SquareOutlineInputBorder(
+                        theme.colorScheme.primary,
+                      ),
                     ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 24),
+              Row(
+                children: [
+                  Text(
+                    "Colors",
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  SizedBox(width: 12),
+                  SizedBox(
+                    width: 120,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(40),
+                        shape: const ContinuousRectangleBorder(),
+                      ),
+                      onPressed: () async {
+                        await _submit(_colors, locale);
+                        reset();
+                      },
+                      child: Text(locale.save),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: _colors.entries.map((group) {
+                      return CommonCard(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              group.key.name,
+                              style: theme.textTheme.titleMedium,
+                            ),
+                            DataTable(
+                              dataRowMinHeight: 48,
+                              dataRowMaxHeight: 60,
+                              columns: [
+                                DataColumn(
+                                  label: Expanded(child: Text(locale.name)),
+                                ),
+                                DataColumn(
+                                  label: Expanded(child: Text("color")),
+                                ),
+                              ],
+                              rows: (group.value)
+                                  .map(
+                                    (item) => DataRow(
+                                      cells: [
+                                        DataCell(
+                                          Text(
+                                            item.key,
+                                            style: theme.textTheme.titleLarge,
+                                          ),
+                                        ),
+                                        DataCell(
+                                          ColorSelector(
+                                            color: item.color,
+                                            context: context,
+                                            callback: (v) => item.color = v,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
               ),
@@ -121,6 +223,23 @@ class _GeneralSettingsState extends State<GeneralSettings> {
         );
       },
     );
+  }
+
+  Future<void> _submit(
+    Map<StateType, List<ColoredValue>> colors,
+    AppLocalizations locale,
+  ) async {
+    try {
+      var mapped = colors.map(
+        (key, value) => MapEntry(key, {for (var e in value) e.key: e.color}),
+      );
+
+      await Dependencies.logics.settings.setColors(mapped);
+
+      Notify.show(locale.saved);
+    } catch (ex) {
+      Notify.showError(locale.error(ex.toString()));
+    }
   }
 
   List<DropdownMenuItem<InterfaceTheme>>? _getThemeValues() {
