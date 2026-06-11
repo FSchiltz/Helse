@@ -11,7 +11,7 @@ public static class EventHelpers
         // first find the number of steps
         var (bucketCount, secondPerBucket) = GetSteps(start, end);
 
-        if (events.Length <= bucketCount)
+        if (events.Length <= bucketCount && events.Length > 0)
         {
             List<Interval> durations = [];
             foreach (var e in events)

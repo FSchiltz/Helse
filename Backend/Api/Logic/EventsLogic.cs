@@ -36,7 +36,7 @@ public static class EventsLogic
             NotificationTime = x.NotificationTime,
             Source = (FileTypes)x.Source,
             SourceId = x.SourceId,
-            Tag = x.Tag,            
+            Tag = x.Tag,
         });
 
         return TypedResults.Ok(result);
