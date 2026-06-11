@@ -28,13 +28,22 @@ class EventInformation extends StatelessWidget {
     );
 
     var locale = Translation.of(context);
+    var theme = Theme.of(context).textTheme;
     return Wrap(
       runSpacing: 2,
       spacing: 12,
       children: [
-        Text('${locale.total} ${DateHelper.formatDuration(duration, locale)}'),
+        Text(
+          '${locale.total} ${DateHelper.formatDuration(duration, locale)}',
+          style: theme.bodySmall,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
         Text(
           '${locale.mean} ${DateHelper.formatDuration(averageDuration, locale)}',
+          style: theme.bodySmall,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );
