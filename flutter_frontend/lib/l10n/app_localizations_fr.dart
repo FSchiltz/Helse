@@ -269,7 +269,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get syncHistoryToggle => 'Synchroniser aussi les données historiques';
 
   @override
-  String get sessions => 'Sessions de connexion';
+  String get sessions => 'Connexions';
 
   @override
   String get cleanSessions => 'Supprimer toutes les sessions';

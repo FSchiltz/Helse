@@ -593,7 +593,7 @@ abstract class AppLocalizations {
   /// No description provided for @sessions.
   ///
   /// In en, this message translates to:
-  /// **'Connection sessions'**
+  /// **'Connections'**
   String get sessions;
 
   /// No description provided for @cleanSessions.

@@ -82,7 +82,7 @@
     "resetLastRun": "Réinitialiser la dernière execution",
     "syncBackgroundToggle": "Synchroniser en arrière plan",
     "syncHistoryToggle": "Synchroniser aussi les données historiques",
-    "sessions": "Sessions de connexion",
+    "sessions": "Connexions",
     "id": "Id",
     "code": "Code",
     "constants": "Constantes",
