@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/settings/health_settings.dart';
+import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/setting_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -75,6 +78,9 @@ class SettingsLogic {
   }
 
   Future<void> loadSettings() async {
+    // load the settings that are only client side first.
+    Dependencies.theme.setColors(await getColors());
+
     var serverSettings = await service.getPersonSettings();
     print("Settings loaded from server");
 
@@ -149,6 +155,21 @@ class SettingsLogic {
 
   Future<String?> getLastRun() async {
     return (await storage).getString(Account.fitRun);
+  }
+
+  Future<void> setColors(Map<String, Color> colors) async {
+    var hex = colors.map((key, value) => MapEntry(key, value.toARGB32()));
+    await (await storage).setString(Account.colors, json.encode(hex));
+  }
+
+  Future<Map<String, Color>> getColors() async {
+    var colors = (await storage).getString(Account.colors);
+    if (colors == null) {
+      return {};
+    }
+    var map = json.decode(colors) as Map<String, dynamic>;
+
+    return map.map((key, value) => MapEntry(key, Color(value as int)));
   }
 
   Future<void> setHasHistory(bool run) async {
@@ -293,6 +314,7 @@ class SettingsLogic {
   }
 
   Future<void> updateMetricGroups(List<MetricGroup> model) async {
+    await setColors(Dependencies.theme.colors);
     var metrics = await getMetricGroups();
     List<OrderedItem> newMetrics = [];
     for (var metric in model) {
