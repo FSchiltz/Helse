@@ -69,7 +69,7 @@ class SettingsLogic {
   }
 
   Future<void> _saveSettings(UserSettings settings, bool toServer) async {
-    if (toServer) {
+    if (toServer) {     
       await service.savePersonSettings(settings);
     }
 

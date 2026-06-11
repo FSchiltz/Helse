@@ -47,6 +47,19 @@ class SettingService extends ApiService {
 
   Future<void> savePersonSettings(UserSettings settings) async {
     var api = await getService();
+    // swagger generate the wrong type so we have to make sure there is no null there
+    if (settings.datePreset == null) {
+      settings = settings.copyWith(datePreset: DatePreset.today);
+    }
+
+    if (settings.theme == null) {
+      settings = settings.copyWith(theme: InterfaceTheme.system);
+    }
+
+    if (settings.eventWidth == null) {
+      settings = settings.copyWith(eventWidth: 0);
+    }
+
     await call(() => api.apiPersonSettingsPost(body: settings));
   }
 
@@ -55,8 +68,46 @@ class SettingService extends ApiService {
     return await call(api.apiPersonSettingsGet) ?? const UserSettings();
   }
 
-    Future<void> savePatientsSettings(PatientsSettings settings) async {
+  Future<void> savePatientsSettings(PatientsSettings settings) async {
     var api = await getService();
+
+    // swagger generate the wrong type so we have to make sure there is no null there
+    var common = settings.$default;
+    if (common != null) {
+      if (common.datePreset == null) {
+        common = common.copyWith(datePreset: DatePreset.today);
+      }
+
+      if (common.theme == null) {
+        common = common.copyWith(theme: InterfaceTheme.system);
+      }
+
+      if (common.eventWidth == null) {
+        common = common.copyWith(eventWidth: 0);
+      }
+      settings = settings.copyWith($default: common);
+    }
+
+    var patients = settings.patients;
+    if (patients != null && patients.isNotEmpty) {
+      List<PatientSettings> fixed = [];
+      for (var item in patients) {
+        if (item.datePreset == null) {
+          item = item.copyWith(datePreset: DatePreset.today);
+        }
+
+        if (item.theme == null) {
+          item = item.copyWith(theme: InterfaceTheme.system);
+        }
+
+        if (item.eventWidth == null) {
+          item = item.copyWith(eventWidth: 0);
+        }
+        fixed.add(item);
+      }
+      settings = settings.copyWith(patients: fixed);
+    }
+
     await call(() => api.apiPatientsSettingsPost(body: settings));
   }
 
