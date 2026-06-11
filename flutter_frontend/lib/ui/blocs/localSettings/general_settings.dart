@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/di/dependencies.dart';
@@ -11,9 +12,10 @@ import 'package:helse/ui/common/square_outline_input_border.dart';
 
 class ColoredValue {
   final String key;
+  final String name;
   Color color;
 
-  ColoredValue(this.key, {required this.color});
+  ColoredValue(this.key, this.name, {required this.color});
 }
 
 class GeneralSettings extends StatefulWidget {
@@ -59,10 +61,32 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       Dependencies.theme.colors,
       toServer: false,
     );
+
+    final metrics = await Dependencies.logics.settings.getMetrics();
+    final events = await Dependencies.logics.settings.getEvents();
+    final metricGroups = await Dependencies.logics.settings.getMetricGroups();
+
     _colors = (await Dependencies.logics.settings.getColors()).map(
       (key, value) => MapEntry(
         key,
-        value.entries.map((e) => ColoredValue(e.key, color: e.value)).toList(),
+        value.entries.map((e) {
+          String name = e.key;
+          switch (key) {
+            case StateType.metrics:
+              final id = int.parse(e.key);
+              name = metrics.firstWhereOrNull((m) => m.id == id)?.name ?? e.key;
+            case StateType.events:
+              final id = int.parse(e.key);
+              name = events.firstWhereOrNull((m) => m.id == id)?.name ?? e.key;
+            case StateType.metricsgroup:
+              final id = int.parse(e.key);
+              name =
+                  metricGroups.firstWhereOrNull((m) => m.id == id)?.name ??
+                  e.key;
+            default:
+          }
+          return ColoredValue(e.key, name, color: e.value);
+        }).toList(),
       ),
     );
 
@@ -173,6 +197,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                     runSpacing: 12,
                     children: _colors.entries.map((group) {
                       return CommonCard(
+                        padding: false,
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,15 +223,19 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                                       cells: [
                                         DataCell(
                                           Text(
-                                            item.key,
-                                            style: theme.textTheme.titleLarge,
+                                            item.name,
+                                            style: theme.textTheme.bodyMedium,
                                           ),
                                         ),
                                         DataCell(
-                                          ColorSelector(
-                                            color: item.color,
-                                            context: context,
-                                            callback: (v) => item.color = v,
+                                          SizedBox(
+                                            height: 40,
+                                            width: 40,
+                                            child: ColorSelector(
+                                              color: item.color,
+                                              context: context,
+                                              callback: (v) => item.color = v,
+                                            ),
                                           ),
                                         ),
                                       ],
