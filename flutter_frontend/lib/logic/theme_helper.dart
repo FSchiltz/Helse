@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 
 class ThemeHelper {
@@ -21,6 +22,10 @@ class ThemeHelper {
         1,
       );
       group[state] = color;
+
+      // trigger a saving of the new color
+      // TODO use a thread safe approach
+      Dependencies.logics.settings.setColors(colors, toServer: false);
 
       var brightness = MediaQuery.of(context).platformBrightness;
       if (brightness == Brightness.dark) return color;

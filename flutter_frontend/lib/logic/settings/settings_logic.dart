@@ -134,7 +134,10 @@ class SettingsLogic {
     return (await storage).getString(Account.fitRun);
   }
 
-  Future<void> setColors(Map<StateType, Map<String, Color>> colors) async {
+  Future<void> setColors(
+    Map<StateType, Map<String, Color>> colors, {
+    bool toServer = true,
+  }) async {
     var settings = await _userSettings();
     List<ColorValue> flat = [];
     for (var group in colors.entries) {
@@ -150,9 +153,9 @@ class SettingsLogic {
     }
 
     var copy = settings.copyWith(colors: flat);
-    await _saveSettings(copy, true);
+    await _saveSettings(copy, toServer);
 
-    Dependencies.theme.setColors(await getColors());
+    Dependencies.theme.setColors(colors);
   }
 
   Future<Map<StateType, Map<String, Color>>> getColors() async {
@@ -291,7 +294,6 @@ class SettingsLogic {
   }
 
   Future<void> updateMetricGroups(List<MetricGroup> model) async {
-    await setColors(Dependencies.theme.colors);
     var metrics = await getMetricGroups();
     List<OrderedItem> newMetrics = [];
     for (var metric in model) {

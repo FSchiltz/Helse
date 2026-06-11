@@ -53,8 +53,12 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     _theme = await Dependencies.logics.settings.getTheme();
     _range = await Dependencies.logics.settings.getDateRange();
 
-// Todo simplify
-    await Dependencies.logics.settings.setColors(Dependencies.theme.colors);
+    // TODO simplify
+    // saving the colors will override what is in memory so we first have to sync it
+    await Dependencies.logics.settings.setColors(
+      Dependencies.theme.colors,
+      toServer: false,
+    );
     _colors = (await Dependencies.logics.settings.getColors()).map(
       (key, value) => MapEntry(
         key,
