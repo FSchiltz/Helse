@@ -46,29 +46,31 @@ class _MetricsGridState extends State<MetricsGrid> {
       if (model == null) {
         filtered = [];
       } else {
+        if (metrictypes != null) {
+          await Dependencies.logics.settings.updateMetrics(metrictypes);
+          await Dependencies.logics.patientsSettings.updateMetrics(metrictypes);
+        }
+
+        await Dependencies.logics.patientsSettings.updateMetricGroups(model);
+        await Dependencies.logics.settings.updateMetricGroups(model);
+
         List<OrderedItem> settings;
         if (widget.person == null) {
           if (metrictypes != null) {
-            await Dependencies.logics.settings.updateMetrics(metrictypes);
             setState(() {
               typesCache = metrictypes;
             });
           }
 
-          await Dependencies.logics.settings.updateMetricGroups(model);
           settings = await Dependencies.logics.settings.getMetricGroups();
           // filter using the user settings
         } else {
           if (metrictypes != null) {
-            await Dependencies.logics.patientsSettings.updateMetrics(
-              metrictypes,
-            );
             setState(() {
               typesCache = metrictypes;
             });
           }
 
-          await Dependencies.logics.patientsSettings.updateMetricGroups(model);
           settings = await Dependencies.logics.patientsSettings.getMetricGroups(
             widget.person,
           );

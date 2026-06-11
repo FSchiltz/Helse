@@ -28,13 +28,36 @@ class EventInformation extends StatelessWidget {
     );
 
     var locale = Translation.of(context);
+    var theme = Theme.of(context).textTheme;
     return Wrap(
-      runSpacing: 2,
-      spacing: 12,
+      runSpacing: 1,
+      spacing: 8,
       children: [
-        Text('${locale.total} ${DateHelper.formatDuration(duration, locale)}'),
-        Text(
-          '${locale.mean} ${DateHelper.formatDuration(averageDuration, locale)}',
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.trending_up_sharp),
+            SizedBox(width: 4,),
+            Text(
+              DateHelper.formatDuration(duration, locale),
+              style: theme.bodyMedium,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.update),
+            SizedBox(width: 4,),
+            Text(
+              DateHelper.formatDuration(averageDuration, locale),
+              style: theme.bodyMedium,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
       ],
     );

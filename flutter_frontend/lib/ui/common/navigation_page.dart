@@ -64,7 +64,8 @@ class _NavigationPageState extends State<NavigationPage> {
             )
           : null,
 
-      bottomNavigationBar: (screenWidth < UIConstants.displaymedium && aspectRatio <= 1)
+      bottomNavigationBar:
+          (screenWidth < UIConstants.displaymedium && aspectRatio <= 1)
           ? BottomNavigationBar(
               backgroundColor: theme.surfaceContainerHigh,
               onTap: (index) {

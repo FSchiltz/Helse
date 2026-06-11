@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
-import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_detail_page.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
@@ -105,14 +104,11 @@ class _MetricWidgetState extends State<MetricWidget> {
                 if (data.isNotEmpty)
                   Expanded(
                     child: Align(
-                      alignment: AlignmentGeometry.topLeft,
-                      child: Text(
-                        _getTextInfo(data, widget.type, context),
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.start,
-                      ),
+                      alignment: AlignmentGeometry.topCenter,
+                      child: _getTextInfo(data, widget.type, context),
                     ),
                   ),
+
                 Flexible(
                   child: MetricCondensed(
                     data,
@@ -130,21 +126,27 @@ class _MetricWidgetState extends State<MetricWidget> {
     );
   }
 
-  String _getTextInfo(
+  Widget _getTextInfo(
     List<Metric> metrics,
     MetricType type,
     BuildContext context,
   ) {
-    var locale = Translation.of(context);
     String? value;
+    Icon? icon;
+    var color = Dependencies.theme.stateColor(
+      "${type.id}",
+      StateType.metrics,
+      context,
+    );
     switch (type.summaryType) {
       case MetricSummary.sum:
-        value =
-            '${locale.total} ${metrics.map((metric) => double.parse(metric.value)).sum}';
+        icon = Icon(Icons.trending_up_sharp, color: color);
+        value = '${metrics.map((metric) => double.parse(metric.value)).sum}';
         break;
       case MetricSummary.mean:
+        icon = Icon(Icons.update, color: color);
         value =
-            '${locale.mean} ${(metrics.map((metric) => double.parse(metric.value)).sum / metrics.length).round()}';
+            '${(metrics.map((metric) => double.parse(metric.value)).sum / metrics.length).round()}';
         break;
       case MetricSummary.latest:
       default:
@@ -156,6 +158,19 @@ class _MetricWidgetState extends State<MetricWidget> {
       value += ' ${type.unit.code}';
     }
 
-    return value;
+    var text = Text(
+      value,
+      style: Theme.of(context).textTheme.bodyMedium,
+      textAlign: TextAlign.start,
+    );
+
+    if (icon == null) {
+      return text;
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [icon, SizedBox(width: 4), text],
+    );
   }
 }

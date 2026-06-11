@@ -209,7 +209,7 @@
     "@syncBackgroundToggle": {},
     "syncHistoryToggle": "Sync also historical data",
     "@syncHistoryToggle": {},
-    "sessions": "Connection sessions",
+    "sessions": "Connections",
     "@sessions": {},
     "cleanSessions": "Remove all sessions",
     "@cleanSessions": {},
@@ -242,5 +242,7 @@
                 "type": "String"
             }
         }
-    }
+    },
+    "color": "Color",
+    "@color": {}
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/fit/status_bloc.dart';
-import 'package:helse/ui/blocs/localSettings/user_sessions.dart';
 import 'package:simple_icons/simple_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -95,7 +94,9 @@ class _HomeState extends State<Home> {
 
                   launchUrl(uri, mode: LaunchMode.externalApplication);
                 },
-                icon: Icon(SimpleIcons.github, color: theme.colorScheme.onPrimaryContainer,
+                icon: Icon(
+                  SimpleIcons.github,
+                  color: theme.colorScheme.onPrimaryContainer,
                 ),
               ),
               BlocProvider<StatusBloc>.value(
@@ -179,23 +180,16 @@ class _HomeState extends State<Home> {
                         title: Text(locale.settings),
                       ),
                     ),
-                    PopupMenuItem<int>(
-                      value: 2,
-                      child: ListTile(
-                        leading: Icon(Icons.network_locked_sharp),
-                        title: Text(locale.sessions),
-                      ),
-                    ),
                     if (types.contains(UserType.admin) == true)
                       PopupMenuItem<int>(
-                        value: 3,
+                        value: 2,
                         child: ListTile(
                           leading: Icon(Icons.admin_panel_settings_sharp),
                           title: Text(locale.administration),
                         ),
                       ),
                     PopupMenuItem<int>(
-                      value: 4,
+                      value: 3,
                       child: ListTile(
                         leading: Icon(Icons.logout_sharp),
                         title: Text(locale.logout),
@@ -226,14 +220,6 @@ class _HomeState extends State<Home> {
                       );
                       break;
                     case 2:
-                      showDialog<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return UserSessions();
-                        },
-                      );
-                      break;
-                    case 3:
                       Navigator.push(
                         context,
                         MaterialPageRoute<void>(
@@ -245,7 +231,7 @@ class _HomeState extends State<Home> {
                         }),
                       );
                       break;
-                    case 4:
+                    case 3:
                       Dependencies.logics.authentication.logOut();
                       break;
                   }

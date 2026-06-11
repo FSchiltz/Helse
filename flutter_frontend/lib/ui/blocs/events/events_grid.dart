@@ -32,12 +32,12 @@ class _EventsGridState extends State<EventsGrid> {
     try {
       var model = await Dependencies.services.event.eventsType(false);
       if (model != null) {
+        await Dependencies.logics.settings.updateEvents(model);
+        await Dependencies.logics.patientsSettings.updateEvents(model);
         List<OrderedItem> settings;
         if (widget.person == null) {
-          await Dependencies.logics.settings.updateEvents(model);
           settings = await Dependencies.logics.settings.getEvents();
         } else {
-          await Dependencies.logics.patientsSettings.updateEvents(model);
           settings = await Dependencies.logics.patientsSettings.getEvents(
             widget.person,
           );
@@ -64,7 +64,6 @@ class _EventsGridState extends State<EventsGrid> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
     return types == null
         ? const HelseLoader()
         : BlocListener<SettingsBloc<bool>, bool>(
@@ -80,26 +79,26 @@ class _EventsGridState extends State<EventsGrid> {
                 spacing: 24,
                 runSpacing: 16,
                 children:
-                    types
-                        ?.map(
-                          (type) => Container(
-                            decoration: BoxDecoration(
-                              border: Border(
-                                left: BorderSide(
-                                  color: theme.tertiary,
-                                  width: 1,
-                                ),
-                              ),
-                            ),
-                            child: EventWidget(
-                              type,
-                              widget.date,
-                              key: Key(type.id.toString()),
-                              person: widget.person,
-                            ),
+                    types?.map((type) {
+                      var color = Dependencies.theme.stateColor(
+                        "${type.id}",
+                        StateType.events,
+                        context,
+                      );
+                      return Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            left: BorderSide(color: color, width: 2),
                           ),
-                        )
-                        .toList() ??
+                        ),
+                        child: EventWidget(
+                          type,
+                          widget.date,
+                          key: Key(type.id.toString()),
+                          person: widget.person,
+                        ),
+                      );
+                    }).toList() ??
                     [],
               ),
             ),

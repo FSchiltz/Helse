@@ -2020,6 +2020,30 @@
   },
   "components": {
     "schemas": {
+      "ColorValue": {
+        "required": [
+          "key",
+          "type",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/StateType"
+          },
+          "value": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          }
+        }
+      },
       "Connection": {
         "required": [
           "user",
@@ -2425,7 +2449,8 @@
       "EventStats": {
         "required": [
           "summaries",
-          "durations"
+          "durations",
+          "events"
         ],
         "type": "object",
         "properties": {
@@ -2439,6 +2464,12 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Interval"
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Event"
             }
           }
         }
@@ -3102,6 +3133,12 @@
             "items": {
               "$ref": "#/components/schemas/OrderedItem"
             }
+          },
+          "colors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ColorValue"
+            }
           }
         }
       },
@@ -3400,6 +3437,15 @@
             ]
           }
         }
+      },
+      "StateType": {
+        "enum": [
+          "events",
+          "eventsValue",
+          "metrics",
+          "metricsGroup",
+          "metricsValue"
+        ]
       },
       "Status": {
         "required": [
@@ -3839,6 +3885,12 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/OrderedItem"
+            }
+          },
+          "colors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ColorValue"
             }
           }
         }

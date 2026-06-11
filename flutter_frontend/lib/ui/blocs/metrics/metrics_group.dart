@@ -91,10 +91,15 @@ class _MetricsGroupState extends State<MetricsGroup> {
   @override
   Widget build(BuildContext context) {
     var cached = types;
-    var theme = Theme.of(context).colorScheme;
+
+    var color = Dependencies.theme.stateColor(
+      "${widget.group.id}",
+      StateType.metricsgroup,
+      context,
+    );
     return Container(
       decoration: BoxDecoration(
-        border: Border(left: BorderSide(color: theme.tertiary, width: 1)),
+        border: Border(left: BorderSide(color: color, width: 2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

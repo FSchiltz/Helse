@@ -82,7 +82,7 @@
     "resetLastRun": "Réinitialiser la dernière execution",
     "syncBackgroundToggle": "Synchroniser en arrière plan",
     "syncHistoryToggle": "Synchroniser aussi les données historiques",
-    "sessions": "Sessions de connexion",
+    "sessions": "Connexions",
     "id": "Id",
     "code": "Code",
     "constants": "Constantes",
@@ -92,5 +92,6 @@
     "summary": "Résumé",
     "total": "Total",
     "mean": "Moyenne",
-    "eventInformationSummary": "Total de {total} en {length} sessions avec une moyenne de {mean}"
+    "eventInformationSummary": "Total de {total} en {length} sessions avec une moyenne de {mean}",
+    "color": "Couleur"
 }

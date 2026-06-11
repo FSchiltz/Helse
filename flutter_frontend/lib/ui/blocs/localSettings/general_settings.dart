@@ -1,11 +1,22 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
+import 'package:helse/ui/common/color_selector.dart';
+import 'package:helse/ui/common/common_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_outline_input_border.dart';
+
+class ColoredValue {
+  final String key;
+  final String name;
+  Color color;
+
+  ColoredValue(this.key, this.name, {required this.color});
+}
 
 class GeneralSettings extends StatefulWidget {
   const GeneralSettings({super.key});
@@ -17,6 +28,7 @@ class GeneralSettings extends StatefulWidget {
 class _GeneralSettingsState extends State<GeneralSettings> {
   InterfaceTheme _theme = InterfaceTheme.system;
   DatePreset _range = DatePreset.today;
+  Map<StateType, List<ColoredValue>> _colors = {};
 
   Future<void> themeCallback(
     InterfaceTheme? value,
@@ -43,6 +55,41 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     _theme = await Dependencies.logics.settings.getTheme();
     _range = await Dependencies.logics.settings.getDateRange();
 
+    // TODO simplify
+    // saving the colors will override what is in memory so we first have to sync it
+    await Dependencies.logics.settings.setColors(
+      Dependencies.theme.colors,
+      toServer: false,
+    );
+
+    final metrics = await Dependencies.logics.settings.getMetrics();
+    final events = await Dependencies.logics.settings.getEvents();
+    final metricGroups = await Dependencies.logics.settings.getMetricGroups();
+
+    _colors = (await Dependencies.logics.settings.getColors()).map(
+      (key, value) => MapEntry(
+        key,
+        value.entries.map((e) {
+          String name = e.key;
+          switch (key) {
+            case StateType.metrics:
+              final id = int.parse(e.key);
+              name = metrics.firstWhereOrNull((m) => m.id == id)?.name ?? e.key;
+            case StateType.events:
+              final id = int.parse(e.key);
+              name = events.firstWhereOrNull((m) => m.id == id)?.name ?? e.key;
+            case StateType.metricsgroup:
+              final id = int.parse(e.key);
+              name =
+                  metricGroups.firstWhereOrNull((m) => m.id == id)?.name ??
+                  e.key;
+            default:
+          }
+          return ColoredValue(e.key, name, color: e.value);
+        }).toList(),
+      ),
+    );
+
     return 1;
   }
 
@@ -59,7 +106,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
+    var theme = Theme.of(context);
     return LoadingBuilder(
       _getData,
       builder: (context, data, reset) {
@@ -86,16 +133,16 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   decoration: InputDecoration(
                     labelText: 'Theme',
                     prefixIcon: const Icon(Icons.list_sharp),
-                    prefixIconColor: theme.primary,
+                    prefixIconColor: theme.colorScheme.primary,
                     filled: true,
-                    fillColor: theme.surface,
-                    border: SquareOutlineInputBorder(theme.primary),
+                    fillColor: theme.colorScheme.surface,
+                    border: SquareOutlineInputBorder(theme.colorScheme.primary),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
               const Text(
-                "Default range for the date. This may be overidden by the last used range",
+                "Default range for the date when you open the application.",
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
@@ -108,11 +155,99 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                     decoration: InputDecoration(
                       labelText: 'Date range',
                       prefixIcon: const Icon(Icons.list_sharp),
-                      prefixIconColor: theme.primary,
+                      prefixIconColor: theme.colorScheme.primary,
                       filled: true,
-                      fillColor: theme.surface,
-                      border: SquareOutlineInputBorder(theme.primary),
+                      fillColor: theme.colorScheme.surface,
+                      border: SquareOutlineInputBorder(
+                        theme.colorScheme.primary,
+                      ),
                     ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 24),
+              Row(
+                children: [
+                  Text(
+                    "Colors",
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  SizedBox(width: 12),
+                  SizedBox(
+                    width: 120,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(40),
+                        shape: const ContinuousRectangleBorder(),
+                      ),
+                      onPressed: () async {
+                        await _submit(_colors, locale);
+                        reset();
+                      },
+                      child: Text(locale.save),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: _colors.entries.map((group) {
+                      return CommonCard(
+                        padding: false,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              group.key.name,
+                              style: theme.textTheme.titleMedium,
+                            ),
+                            DataTable(
+                              dataRowMinHeight: 48,
+                              dataRowMaxHeight: 60,
+                              columns: [
+                                DataColumn(
+                                  label: Expanded(child: Text(locale.name)),
+                                ),
+                                DataColumn(
+                                  label: Expanded(child: Text(locale.color)),
+                                ),
+                              ],
+                              rows: (group.value)
+                                  .map(
+                                    (item) => DataRow(
+                                      cells: [
+                                        DataCell(
+                                          Text(
+                                            item.name,
+                                            style: theme.textTheme.bodyMedium,
+                                          ),
+                                        ),
+                                        DataCell(
+                                          SizedBox(
+                                            height: 40,
+                                            width: 40,
+                                            child: ColorSelector(
+                                              color: item.color,
+                                              context: context,
+                                              callback: (v) => item.color = v,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
               ),
@@ -121,6 +256,23 @@ class _GeneralSettingsState extends State<GeneralSettings> {
         );
       },
     );
+  }
+
+  Future<void> _submit(
+    Map<StateType, List<ColoredValue>> colors,
+    AppLocalizations locale,
+  ) async {
+    try {
+      var mapped = colors.map(
+        (key, value) => MapEntry(key, {for (var e in value) e.key: e.color}),
+      );
+
+      await Dependencies.logics.settings.setColors(mapped);
+
+      Notify.show(locale.saved);
+    } catch (ex) {
+      Notify.showError(locale.error(ex.toString()));
+    }
   }
 
   List<DropdownMenuItem<InterfaceTheme>>? _getThemeValues() {

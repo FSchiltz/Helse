@@ -2,7 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/blocs/metrics/metric_group.dart';
+import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
 
 class WidgetGraph extends StatelessWidget {
   final List<Metric> metrics;
@@ -57,7 +57,7 @@ class WidgetGraph extends StatelessWidget {
     return spots;
   }
 
-  List<BarChartGroupData> _getBar(List<Metric> raw, BuildContext context) {
+  List<BarChartGroupData> _getBar(List<Metric> raw, Color color) {
     var spots = _getSpot(raw);
 
     // now we have the min and max Y and X value, we can build the spots
@@ -68,11 +68,7 @@ class WidgetGraph extends StatelessWidget {
         BarChartGroupData(
           x: item.x.toInt(),
           barRods: [
-            BarChartRodData(
-              toY: item.y,
-              color: Dependencies.theme.stateColor(type.id.toString(), context),
-              width: width ?? 2,
-            ),
+            BarChartRodData(toY: item.y, color: color, width: width ?? 2),
           ],
         ),
       );
@@ -90,6 +86,11 @@ class WidgetGraph extends StatelessWidget {
   }
 
   Widget _getGraph(BuildContext context) {
+    var color = Dependencies.theme.stateColor(
+      type.id.toString(),
+      StateType.metrics,
+      context,
+    );
     if (settings == GraphKind.bar) {
       return BarChart(
         BarChartData(
@@ -102,7 +103,7 @@ class WidgetGraph extends StatelessWidget {
           ),
           borderData: FlBorderData(show: false),
           gridData: const FlGridData(show: false),
-          barGroups: _getBar(metrics, context),
+          barGroups: _getBar(metrics, color),
         ),
       );
     } else {
@@ -122,7 +123,7 @@ class WidgetGraph extends StatelessWidget {
           lineBarsData: [
             LineChartBarData(
               barWidth: width ?? 3,
-              color: Dependencies.theme.stateColor(type.id.toString(), context),
+              color: color,
               spots: _getSpot(metrics),
               isCurved: true,
               curveSmoothness: 0.02,
@@ -130,14 +131,8 @@ class WidgetGraph extends StatelessWidget {
                 show: true,
                 getDotPainter: (spot, percent, barData, index) =>
                     FlDotCirclePainter(
-                      color: Dependencies.theme.stateColor(
-                        type.id.toString(),
-                        context,
-                      ),
-                      strokeColor: Dependencies.theme.stateColor(
-                        type.id.toString(),
-                        context,
-                      ),
+                      color: color,
+                      strokeColor: color,
                       radius: barData.spots.length > 1 ? 0 : 2,
                       strokeWidth: 0,
                     ),

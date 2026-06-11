@@ -14,12 +14,9 @@ class EventsSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return (events.isEmpty
-        ? Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: Text(
-              Translation.of(context).nodata,
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
+        ? Text(
+            Translation.of(context).nodata,
+            style: Theme.of(context).textTheme.labelLarge,
           )
         : EventTimeline(events, date));
   }
@@ -110,7 +107,11 @@ class EventTimeline extends StatelessWidget {
             message: entry.key,
             child: Container(
               decoration: BoxDecoration(
-                color: Dependencies.theme.stateColor(entry.key, context),
+                color: Dependencies.theme.stateColor(
+                  entry.key,
+                  StateType.eventsvalue,
+                  context,
+                ),
               ),
               width: 12 * widthCoeff,
               height: (coeff * count).ceilToDouble(),

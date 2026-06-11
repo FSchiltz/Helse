@@ -269,7 +269,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get syncHistoryToggle => 'Synchroniser aussi les données historiques';
 
   @override
-  String get sessions => 'Sessions de connexion';
+  String get sessions => 'Connexions';
 
   @override
   String get cleanSessions => 'Supprimer toutes les sessions';
@@ -302,4 +302,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String eventInformationSummary(String total, String length, String mean) {
     return 'Total de $total en $length sessions avec une moyenne de $mean';
   }
+
+  @override
+  String get color => 'Couleur';
 }

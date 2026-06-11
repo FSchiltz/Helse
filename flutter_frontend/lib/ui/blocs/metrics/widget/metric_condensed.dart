@@ -30,7 +30,7 @@ class MetricCondensed extends StatelessWidget {
             ),
           )
         : (type.type == MetricDataType.text
-              ? const Center()
+              ? Center(child: Text(metrics.length.toString()))
               : WidgetGraph(
                   metrics,
                   date,

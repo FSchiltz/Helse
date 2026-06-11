@@ -37,6 +37,7 @@ class _MetricSettingsState extends State<MetricSettings> {
       groups = await Dependencies.logics.settings.getMetricGroups();
     }
 
+
     var editGroups = groups.map((e) => OrderedEditItem.of(e)).toList();
     var editMetrics = metrics.map((e) => OrderedEditItem.of(e)).toList();
 

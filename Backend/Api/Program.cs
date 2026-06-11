@@ -10,6 +10,7 @@ using LinqToDB.AspNet.Logging;
 using LinqToDB.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,7 +45,6 @@ var keyConfig = config["Key"] ?? throw new InvalidOperationException("Jwt key mi
 SymmetricSecurityKey key = AuthLogic.GenerateKey(keyConfig);
 
 builder.Services.AddSingleton((_) => new TokenConfig(issuer, audience, key));
-
 
 builder.Services.AddSingleton<TokenService>()
     .AddTransient<IUserContext, UserContext>()
@@ -87,6 +87,11 @@ builder.Services.AddHostedService<ImporterService>()
 
 builder.Services.AddHttpClient();
 
+builder.Services.AddHttpLogging(o =>
+{
+    o.LoggingFields = HttpLoggingFields.Request;
+});
+
 var app = builder.Build();
 
 app.MapOpenApi("/openapi/{documentName}.json");
@@ -99,8 +104,9 @@ app.UseAuthorization();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-var api = app.MapGroup("/api");
-api.MapEnpoints();
+app.UseHttpLogging();
+
+app.MapGroup("/api").MapEnpoints();
 
 app.Run();
 

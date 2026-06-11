@@ -15,7 +15,8 @@ class PatientDashboard extends StatefulWidget {
   State<PatientDashboard> createState() => _PatientDashboardState();
 }
 
-class _PatientDashboardState extends State<PatientDashboard> {
+class _PatientDashboardState extends State<PatientDashboard>
+    with AutomaticKeepAliveClientMixin {
   DateTimeRange date = DateHelper.now();
 
   void _setDate(DateTimeRange value) {
@@ -30,7 +31,9 @@ class _PatientDashboardState extends State<PatientDashboard> {
     if (widget.person == null) {
       range = await Dependencies.logics.settings.getDateRange();
     } else {
-      range = await Dependencies.logics.patientsSettings.getPatientsDateRange(widget.person);
+      range = await Dependencies.logics.patientsSettings.getPatientsDateRange(
+        widget.person,
+      );
     }
 
     setState(() {
@@ -46,6 +49,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -63,4 +67,7 @@ class _PatientDashboardState extends State<PatientDashboard> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

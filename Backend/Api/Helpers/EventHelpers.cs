@@ -1,5 +1,6 @@
 using Api.Models.Common;
 using Api.Models.Events;
+using Api.Models.Imports;
 
 namespace Api.Helpers;
 
@@ -10,41 +11,61 @@ public static class EventHelpers
         // first find the number of steps
         var (bucketCount, secondPerBucket) = GetSteps(start, end);
 
-        // create the list of summary
-        var data = new EventSummary[bucketCount];
-        for (int i = 0; i < data.Length; i++)
+        if (events.Length <= bucketCount && events.Length > 0)
         {
-            data[i] = new EventSummary([]);
-        }
-
-        List<Interval> durations = [];
-
-        // add each summary in the data
-        foreach (var e in events)
-        {
-            AddToDuration(e.Start, e.Stop, durations);
-
-            // cut the steps into the different summary    
-            var steps = Cut(secondPerBucket, e, start, end);
-            if (steps.Count > bucketCount)
-                throw new Exception("Date mismatched");
-
-            // add to the existing summary
-            foreach (var step in steps)
+            List<Interval> durations = [];
+            foreach (var e in events)
             {
-                var summary = data[step.Item1];
-                if (!summary.Data.ContainsKey(e.Description ?? string.Empty))
+                AddToDuration(e.Start, e.Stop, durations);
+            }
+
+            return new([], [.. durations], [.. events.Select(x => new Models.Events.Event
+            {
+                Id = x.Id,
+                Type = x.Type,
+                Description = x.Description,
+                Stop = DateTime.SpecifyKind(x.Stop, DateTimeKind.Utc),
+                Start = DateTime.SpecifyKind(x.Start, DateTimeKind.Utc),
+            })]);
+        }
+        else
+        {
+            // create the list of summary
+            var data = new EventSummary[bucketCount];
+            for (int i = 0; i < data.Length; i++)
+            {
+                data[i] = new EventSummary([]);
+            }
+
+            List<Interval> durations = [];
+
+            // add each summary in the data
+            foreach (var e in events)
+            {
+                AddToDuration(e.Start, e.Stop, durations);
+
+                // cut the steps into the different summary    
+                var steps = Cut(secondPerBucket, e, start, end);
+                if (steps.Count > bucketCount)
+                    throw new Exception("Date mismatched");
+
+                // add to the existing summary
+                foreach (var step in steps)
                 {
-                    summary.Data[e.Description ?? string.Empty] = step.Item2;
-                }
-                else
-                {
-                    summary.Data[e.Description ?? string.Empty] += step.Item2;
+                    var summary = data[step.Item1];
+                    if (!summary.Data.ContainsKey(e.Description ?? string.Empty))
+                    {
+                        summary.Data[e.Description ?? string.Empty] = step.Item2;
+                    }
+                    else
+                    {
+                        summary.Data[e.Description ?? string.Empty] += step.Item2;
+                    }
                 }
             }
-        }
 
-        return new(data, [.. durations]);
+            return new(data, [.. durations], []);
+        }
     }
 
     private static void AddToDuration(DateTime start, DateTime stop, List<Interval> durations)
