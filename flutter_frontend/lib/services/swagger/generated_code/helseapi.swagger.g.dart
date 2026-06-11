@@ -211,12 +211,18 @@ EventStats _$EventStatsFromJson(Map<String, dynamic> json) => EventStats(
           ?.map((e) => Interval.fromJson(e as Map<String, dynamic>))
           .toList() ??
       [],
+  events:
+      (json['events'] as List<dynamic>?)
+          ?.map((e) => Event.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
 );
 
 Map<String, dynamic> _$EventStatsToJson(EventStats instance) =>
     <String, dynamic>{
       'summaries': instance.summaries.map((e) => e.toJson()).toList(),
       'durations': instance.durations.map((e) => e.toJson()).toList(),
+      'events': instance.events.map((e) => e.toJson()).toList(),
     };
 
 EventSummary _$EventSummaryFromJson(Map<String, dynamic> json) =>

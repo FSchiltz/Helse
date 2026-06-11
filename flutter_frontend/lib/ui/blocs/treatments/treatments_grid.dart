@@ -41,7 +41,7 @@ class _TreatmentsGridState extends State<TreatmentsGrid> {
       builder: (ctx, data, context) {
         return Padding(
           padding: const EdgeInsets.all(8.0),
-          child: EventsTimelineGraph(data, widget.date, (e) => {}),
+          child: EventsTimelineGraph(data, widget.date),
         );
       },
     );

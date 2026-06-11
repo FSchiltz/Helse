@@ -2755,7 +2755,11 @@ extension $EventCreationStatsExtension on EventCreationStats {
 
 @JsonSerializable(explicitToJson: true)
 class EventStats {
-  const EventStats({required this.summaries, required this.durations});
+  const EventStats({
+    required this.summaries,
+    required this.durations,
+    required this.events,
+  });
 
   factory EventStats.fromJson(Map<String, dynamic> json) =>
       _$EventStatsFromJson(json);
@@ -2767,6 +2771,8 @@ class EventStats {
   final List<EventSummary> summaries;
   @JsonKey(name: 'durations', defaultValue: <Interval>[])
   final List<Interval> durations;
+  @JsonKey(name: 'events', defaultValue: <Event>[])
+  final List<Event> events;
   static const fromJsonFactory = _$EventStatsFromJson;
 
   @override
@@ -2782,7 +2788,9 @@ class EventStats {
                 const DeepCollectionEquality().equals(
                   other.durations,
                   durations,
-                )));
+                )) &&
+            (identical(other.events, events) ||
+                const DeepCollectionEquality().equals(other.events, events)));
   }
 
   @override
@@ -2792,6 +2800,7 @@ class EventStats {
   int get hashCode =>
       const DeepCollectionEquality().hash(summaries) ^
       const DeepCollectionEquality().hash(durations) ^
+      const DeepCollectionEquality().hash(events) ^
       runtimeType.hashCode;
 }
 
@@ -2799,20 +2808,24 @@ extension $EventStatsExtension on EventStats {
   EventStats copyWith({
     List<EventSummary>? summaries,
     List<Interval>? durations,
+    List<Event>? events,
   }) {
     return EventStats(
       summaries: summaries ?? this.summaries,
       durations: durations ?? this.durations,
+      events: events ?? this.events,
     );
   }
 
   EventStats copyWithWrapped({
     Wrapped<List<EventSummary>>? summaries,
     Wrapped<List<Interval>>? durations,
+    Wrapped<List<Event>>? events,
   }) {
     return EventStats(
       summaries: (summaries != null ? summaries.value : this.summaries),
       durations: (durations != null ? durations.value : this.durations),
+      events: (events != null ? events.value : this.events),
     );
   }
 }

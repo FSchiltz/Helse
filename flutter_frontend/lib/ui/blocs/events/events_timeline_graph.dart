@@ -34,13 +34,16 @@ class TimelineItems {
 class EventsTimelineGraph extends StatefulWidget {
   final List<Event> events;
   final DateTimeRange date;
-  final void Function(Event event) selectionChanged;
+  final void Function(Event event)? onselect;
+
+  final double widthCoef;
 
   const EventsTimelineGraph(
     this.events,
-    this.date,
-    this.selectionChanged, {
+    this.date, {
     super.key,
+    this.onselect,
+    this.widthCoef = 2,
   });
 
   @override
@@ -49,11 +52,15 @@ class EventsTimelineGraph extends StatefulWidget {
 
 class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
   static const int skippedWidth = 32;
-  static const int widthCoef = 2;
-  final double boxWidth = 60.0 * widthCoef;
+  double boxWidth = 0;
 
   final ScrollController _scrollController = ScrollController();
   final List<EventLayout> _eventLayouts = [];
+  @override
+  void initState() {
+    super.initState();
+    boxWidth = 60.0 * widget.widthCoef;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -236,7 +243,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
 
     var fullDistance = _minutesBetween(widget.date.start, projectStartedAt);
 
-    return (fullDistance - widthToSkip).toDouble() * widthCoef;
+    return (fullDistance - widthToSkip).toDouble() * widget.widthCoef;
   }
 
   int _distanceInMinutes(DateTime start, DateTime end) {
@@ -257,7 +264,11 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
               alignment: Alignment.centerRight,
               child: Padding(
                 padding: const EdgeInsets.only(left: 8.0, right: 4),
-                child: Text(label, overflow: TextOverflow.ellipsis, maxLines: 1),
+                child: Text(
+                  label,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
               ),
             ),
           );
@@ -295,12 +306,13 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
           EventLayout(
             event: n,
             left: left,
-            right: left + (width * widthCoef),
+            right: left + (width * widget.widthCoef),
             centerY: rowTop + 14.5,
             color: color,
           ),
         );
 
+        var callback = widget.onselect;
         timeline.bars.add(
           Positioned(
             left: left,
@@ -308,17 +320,26 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
             child: Tooltip(
               message:
                   "${n.description ?? ""}: ${n.start.toLocal()} => ${n.stop.toLocal()}",
-              child: InkWell(
-                onTap: () => widget.selectionChanged(n),
-                child: Container(
-                  width: width.toDouble() * widthCoef,
-                  height: 25,
-                  decoration: BoxDecoration(
-                    color: color.withAlpha(150),
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                ),
-              ),
+              child: callback != null
+                  ? InkWell(
+                      onTap: () => callback(n),
+                      child: Container(
+                        width: width.toDouble() * widget.widthCoef,
+                        height: 25,
+                        decoration: BoxDecoration(
+                          color: color.withAlpha(150),
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      ),
+                    )
+                  : Container(
+                      width: width.toDouble() * widget.widthCoef,
+                      height: 25,
+                      decoration: BoxDecoration(
+                        color: color.withAlpha(150),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
             ),
           ),
         );
@@ -332,13 +353,17 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     final theme = Theme.of(context).colorScheme;
 
     return SizedBox(
-      width: skippedWidth.toDouble() * widthCoef,
+      width: skippedWidth.toDouble() * widget.widthCoef,
       child: Row(
         children: [
           Expanded(child: Divider(thickness: 1, color: theme.outlineVariant)),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Icon(Icons.fast_forward_sharp, size: 14, color: theme.primary),
+            child: Icon(
+              Icons.fast_forward_sharp,
+              size: 14,
+              color: theme.primary,
+            ),
           ),
           Expanded(child: Divider(thickness: 1, color: theme.outlineVariant)),
         ],

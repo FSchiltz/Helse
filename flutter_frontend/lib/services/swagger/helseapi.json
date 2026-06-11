@@ -2425,7 +2425,8 @@
       "EventStats": {
         "required": [
           "summaries",
-          "durations"
+          "durations",
+          "events"
         ],
         "type": "object",
         "properties": {
@@ -2439,6 +2440,12 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Interval"
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Event"
             }
           }
         }

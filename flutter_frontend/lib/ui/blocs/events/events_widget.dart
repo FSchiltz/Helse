@@ -3,6 +3,7 @@ import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/blocs/events/event_detail_page.dart';
 import 'package:helse/ui/blocs/events/event_information.dart';
 import 'package:helse/ui/blocs/events/events_summary.dart';
+import 'package:helse/ui/blocs/events/events_timeline_graph.dart';
 import 'package:helse/ui/common/common_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
@@ -58,6 +59,8 @@ class _EventWidgetState extends State<EventWidget> {
     return LoadingBuilder(
       _getData,
       builder: (ctx, data, reset) {
+        final summaries = data?.summaries ?? [];
+        final hasFullData = data != null && data.events.isNotEmpty;
         return Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,7 +108,13 @@ class _EventWidgetState extends State<EventWidget> {
                 child: Container(
                   height: 200,
                   padding: const EdgeInsets.all(12.0),
-                  child: EventsSummary(data?.summaries ?? [], widget.date),
+                  child: (hasFullData)
+                      ? EventsTimelineGraph(
+                          data.events,
+                          widget.date,
+                          widthCoef: 0.8,
+                        )
+                      : EventsSummary(summaries, widget.date),
                 ),
               ),
             ),

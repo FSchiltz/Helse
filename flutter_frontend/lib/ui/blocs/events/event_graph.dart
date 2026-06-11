@@ -99,7 +99,11 @@ class _EventsGraphState extends State<EventsGraph> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: (filteredEvents.length < 200)
-              ? EventsTimelineGraph(filteredEvents, subDate, _selectionChanged)
+              ? EventsTimelineGraph(
+                  filteredEvents,
+                  subDate,
+                  onselect: _selectionChanged,
+                )
               : SizedBox(
                   height: 300,
                   child: EventsSummary(
@@ -230,8 +234,10 @@ class _EventsGraphState extends State<EventsGraph> {
       final expandedStop = e.stop.add(delta);
       var duration = durations.firstWhereOrNull(
         (x) =>
-            (expandedStop.isAfter(x.start) || expandedStop.isAtSameMomentAs(x.start)) &&
-            (expandedStart.isBefore(x.stop) || expandedStart.isAtSameMomentAs(x.stop)),
+            (expandedStop.isAfter(x.start) ||
+                expandedStop.isAtSameMomentAs(x.start)) &&
+            (expandedStart.isBefore(x.stop) ||
+                expandedStart.isAtSameMomentAs(x.stop)),
       );
       if (duration == null) {
         durations.add(MutableInterval(start: e.start, stop: e.stop));

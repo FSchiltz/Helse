@@ -14,13 +14,10 @@ class EventsSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return (events.isEmpty
-        ? Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: Text(
-              Translation.of(context).nodata,
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
-          )
+        ? Text(
+          Translation.of(context).nodata,
+          style: Theme.of(context).textTheme.labelLarge,
+        )
         : EventTimeline(events, date));
   }
 }
