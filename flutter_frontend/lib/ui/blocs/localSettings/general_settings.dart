@@ -118,7 +118,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               ),
               const SizedBox(height: 20),
               const Text(
-                "Default range for the date. This may be overidden by the last used range",
+                "Default range for the date when you open the application.",
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),

@@ -184,9 +184,9 @@ class SettingsLogic {
     return (await storage).getBool(Account.fitHistory);
   }
 
-  Future<void> setDateRange(DatePreset run) async {
+  Future<void> setDateRange(DatePreset run, {bool toServer = true}) async {
     var settings = await _userSettings();
-    await _saveSettings(settings.copyWith(datePreset: run), true);
+    await _saveSettings(settings.copyWith(datePreset: run), toServer);
   }
 
   Future<DatePreset> getDateRange() async {

@@ -103,11 +103,7 @@ class DateRangePicker extends StatelessWidget {
 
     setDate(DateHelper.getRange(value));
 
-    if (value == DatePreset.today ||
-        value == DatePreset.week ||
-        value == DatePreset.month) {
-      Dependencies.logics.settings.setDateRange(value);
-    }
+    Dependencies.logics.settings.setDateRange(value, toServer: false);
   }
 
   bool _previousIsBefore() {
