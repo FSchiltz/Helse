@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_detail_page.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
@@ -133,7 +134,11 @@ class _MetricWidgetState extends State<MetricWidget> {
   ) {
     String? value;
     Icon? icon;
-    var color = Dependencies.theme.stateColor(type.id.toString(), context);
+    var color = Dependencies.theme.stateColor(
+      "${type.id}",
+      StateType.metric,
+      context,
+    );
     switch (type.summaryType) {
       case MetricSummary.sum:
         icon = Icon(Icons.trending_up_sharp, color: color);

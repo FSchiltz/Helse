@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/logic/theme_helper.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -15,9 +16,9 @@ class EventsSummary extends StatelessWidget {
   Widget build(BuildContext context) {
     return (events.isEmpty
         ? Text(
-          Translation.of(context).nodata,
-          style: Theme.of(context).textTheme.labelLarge,
-        )
+            Translation.of(context).nodata,
+            style: Theme.of(context).textTheme.labelLarge,
+          )
         : EventTimeline(events, date));
   }
 }
@@ -107,7 +108,11 @@ class EventTimeline extends StatelessWidget {
             message: entry.key,
             child: Container(
               decoration: BoxDecoration(
-                color: Dependencies.theme.stateColor(entry.key, context),
+                color: Dependencies.theme.stateColor(
+                  entry.key,
+                  StateType.eventValue,
+                  context,
+                ),
               ),
               width: 12 * widthCoeff,
               height: (coeff * count).ceilToDouble(),

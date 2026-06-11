@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/ui/blocs/metrics/metric_group_detail.dart';
 import 'package:helse/ui/blocs/metrics/metric_widgets_grid.dart';
 
@@ -91,10 +92,15 @@ class _MetricsGroupState extends State<MetricsGroup> {
   @override
   Widget build(BuildContext context) {
     var cached = types;
-    var theme = Theme.of(context).colorScheme;
+
+    var color = Dependencies.theme.stateColor(
+      "${widget.group.id}",
+      StateType.metricGroup,
+      context,
+    );
     return Container(
       decoration: BoxDecoration(
-        border: Border(left: BorderSide(color: theme.tertiary, width: 1)),
+        border: Border(left: BorderSide(color: color, width: 2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,16 +1,16 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
 import 'package:helse/ui/blocs/metrics/widget/widget_graph.dart';
 import 'package:helse/ui/common/navigator_chart.dart';
-import 'package:helse/ui/blocs/metrics/metric_group.dart';
+import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
 import 'package:helse/ui/common/date_range_picker.dart';
 
 import '../../../../helpers/date.dart';
@@ -131,18 +131,19 @@ class _MetricGraphState extends State<MetricGraph> {
   }
 
   Widget _grapichChart(BuildContext context) {
+    var color = Dependencies.theme.stateColor(
+      widget.type.id.toString(),
+      StateType.metric,
+      context,
+    );
+
     List<Mark<Shape>> marks;
     if (widget.settings == GraphKind.line) {
       marks = [
         PointMark(
           position: Varset('date') * Varset('value'),
           size: SizeEncode(value: 3),
-          color: ColorEncode(
-            value: Dependencies.theme.stateColor(
-              widget.type.id.toString(),
-              context,
-            ),
-          ),
+          color: ColorEncode(value: color),
           selected: {
             'touchMove': {1},
           },
@@ -151,12 +152,7 @@ class _MetricGraphState extends State<MetricGraph> {
         LineMark(
           position: Varset('date') * Varset('value'),
           size: SizeEncode(value: 2),
-          color: ColorEncode(
-            value: Dependencies.theme.stateColor(
-              widget.type.id.toString(),
-              context,
-            ),
-          ),
+          color: ColorEncode(value: color),
         ),
         /*
         LineMark(
@@ -176,12 +172,7 @@ class _MetricGraphState extends State<MetricGraph> {
       marks = [
         IntervalMark(
           size: SizeEncode(value: 5),
-          color: ColorEncode(
-            value: Dependencies.theme.stateColor(
-              widget.type.id.toString(),
-              context,
-            ),
-          ),
+          color: ColorEncode(value: color),
           selected: {
             'touchMove': {1},
           },

@@ -2,10 +2,19 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+enum StateType {
+  event,
+  eventValue,
+  metric,
+  metricGroup,
+  metricValue,
+}
+
 class ThemeHelper {
   final Map<String, Color> colors = {};
 
-  Color stateColor(String state, BuildContext context) {
+
+  Color stateColor(String state, StateType type, BuildContext context) {
     if (colors.containsKey(state)) {
       return colors[state]!;
     } else {

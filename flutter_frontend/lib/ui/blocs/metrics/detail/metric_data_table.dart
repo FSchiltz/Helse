@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_source.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_graph.dart';
-import 'package:helse/ui/blocs/metrics/metric_group.dart';
+import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
 
 class MetricDataTable extends StatelessWidget {
   const MetricDataTable({

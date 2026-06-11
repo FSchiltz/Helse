@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/ui/common/loader.dart';
 
 import '../../../di/dependencies.dart';
@@ -64,7 +65,6 @@ class _EventsGridState extends State<EventsGrid> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
     return types == null
         ? const HelseLoader()
         : BlocListener<SettingsBloc<bool>, bool>(
@@ -80,26 +80,26 @@ class _EventsGridState extends State<EventsGrid> {
                 spacing: 24,
                 runSpacing: 16,
                 children:
-                    types
-                        ?.map(
-                          (type) => Container(
-                            decoration: BoxDecoration(
-                              border: Border(
-                                left: BorderSide(
-                                  color: theme.tertiary,
-                                  width: 1,
-                                ),
-                              ),
-                            ),
-                            child: EventWidget(
-                              type,
-                              widget.date,
-                              key: Key(type.id.toString()),
-                              person: widget.person,
-                            ),
+                    types?.map((type) {
+                      var color = Dependencies.theme.stateColor(
+                        "${type.id}",
+                        StateType.event,
+                        context,
+                      );
+                      return Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            left: BorderSide(color: color, width: 2),
                           ),
-                        )
-                        .toList() ??
+                        ),
+                        child: EventWidget(
+                          type,
+                          widget.date,
+                          key: Key(type.id.toString()),
+                          person: widget.person,
+                        ),
+                      );
+                    }).toList() ??
                     [],
               ),
             ),
