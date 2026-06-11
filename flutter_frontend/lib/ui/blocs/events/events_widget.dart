@@ -68,6 +68,7 @@ class _EventWidgetState extends State<EventWidget> {
             Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 SizedBox(width: 6),
                 Text(
@@ -75,7 +76,10 @@ class _EventWidgetState extends State<EventWidget> {
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 SizedBox(width: 12),
-                Expanded(child: EventInformation(data: data?.durations ?? [])),
+                Expanded(child: Padding(
+                  padding: const EdgeInsets.only(bottom: 3.0),
+                  child: EventInformation(data: data?.durations ?? []),
+                )),
                 IconButton(
                   onPressed: () {
                     showDialog<void>(

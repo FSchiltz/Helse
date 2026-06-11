@@ -30,20 +30,34 @@ class EventInformation extends StatelessWidget {
     var locale = Translation.of(context);
     var theme = Theme.of(context).textTheme;
     return Wrap(
-      runSpacing: 2,
-      spacing: 12,
+      runSpacing: 1,
+      spacing: 8,
       children: [
-        Text(
-          '${locale.total} ${DateHelper.formatDuration(duration, locale)}',
-          style: theme.bodySmall,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.data_exploration_outlined),
+            SizedBox(width: 2,),
+            Text(
+              DateHelper.formatDuration(duration, locale),
+              style: theme.bodyMedium,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
-        Text(
-          '${locale.mean} ${DateHelper.formatDuration(averageDuration, locale)}',
-          style: theme.bodySmall,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.update),
+            SizedBox(width: 2,),
+            Text(
+              DateHelper.formatDuration(averageDuration, locale),
+              style: theme.bodyMedium,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
       ],
     );
