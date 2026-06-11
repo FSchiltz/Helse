@@ -92,5 +92,6 @@
     "summary": "Résumé",
     "total": "Total",
     "mean": "Moyenne",
-    "eventInformationSummary": "Total de {total} en {length} sessions avec une moyenne de {mean}"
+    "eventInformationSummary": "Total de {total} en {length} sessions avec une moyenne de {mean}",
+    "color": "Couleur"
 }

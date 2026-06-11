@@ -242,5 +242,7 @@
                 "type": "String"
             }
         }
-    }
+    },
+    "color": "Color",
+    "@color": {}
 }

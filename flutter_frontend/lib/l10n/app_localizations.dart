@@ -655,6 +655,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Total of {total} in {length} sessions with an average of {mean}'**
   String eventInformationSummary(String total, String length, String mean);
+
+  /// No description provided for @color.
+  ///
+  /// In en, this message translates to:
+  /// **'Color'**
+  String get color;
 }
 
 class _AppLocalizationsDelegate

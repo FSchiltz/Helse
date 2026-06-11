@@ -302,4 +302,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String eventInformationSummary(String total, String length, String mean) {
     return 'Total de $total en $length sessions avec une moyenne de $mean';
   }
+
+  @override
+  String get color => 'Couleur';
 }

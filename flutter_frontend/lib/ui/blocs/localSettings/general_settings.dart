@@ -214,7 +214,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                                   label: Expanded(child: Text(locale.name)),
                                 ),
                                 DataColumn(
-                                  label: Expanded(child: Text("color")),
+                                  label: Expanded(child: Text(locale.color)),
                                 ),
                               ],
                               rows: (group.value)
