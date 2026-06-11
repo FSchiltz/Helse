@@ -105,7 +105,7 @@ class _MetricWidgetState extends State<MetricWidget> {
                   Expanded(
                     child: Align(
                       alignment: AlignmentGeometry.topCenter,
-                      child: _getTextInfo(data, widget.type),
+                      child: _getTextInfo(data, widget.type, context),
                     ),
                   ),
 
@@ -126,16 +126,21 @@ class _MetricWidgetState extends State<MetricWidget> {
     );
   }
 
-  Widget _getTextInfo(List<Metric> metrics, MetricType type) {
+  Widget _getTextInfo(
+    List<Metric> metrics,
+    MetricType type,
+    BuildContext context,
+  ) {
     String? value;
     Icon? icon;
+    var color = Dependencies.theme.stateColor(type.id.toString(), context);
     switch (type.summaryType) {
       case MetricSummary.sum:
-        icon = Icon(Icons.data_exploration_outlined);
+        icon = Icon(Icons.trending_up_sharp, color: color);
         value = '${metrics.map((metric) => double.parse(metric.value)).sum}';
         break;
       case MetricSummary.mean:
-        icon = Icon(Icons.update);
+        icon = Icon(Icons.update, color: color);
         value =
             '${(metrics.map((metric) => double.parse(metric.value)).sum / metrics.length).round()}';
         break;
@@ -161,7 +166,7 @@ class _MetricWidgetState extends State<MetricWidget> {
 
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: [icon, SizedBox(width: 2), text],
+      children: [icon, SizedBox(width: 4), text],
     );
   }
 }

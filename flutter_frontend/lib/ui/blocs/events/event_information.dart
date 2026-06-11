@@ -36,8 +36,8 @@ class EventInformation extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.data_exploration_outlined),
-            SizedBox(width: 2,),
+            Icon(Icons.trending_up_sharp),
+            SizedBox(width: 4,),
             Text(
               DateHelper.formatDuration(duration, locale),
               style: theme.bodyMedium,
@@ -50,7 +50,7 @@ class EventInformation extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.update),
-            SizedBox(width: 2,),
+            SizedBox(width: 4,),
             Text(
               DateHelper.formatDuration(averageDuration, locale),
               style: theme.bodyMedium,
