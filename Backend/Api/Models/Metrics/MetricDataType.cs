@@ -4,4 +4,5 @@ public enum MetricDataType
 {
     Text,
     Number,
+    Bool,
 }

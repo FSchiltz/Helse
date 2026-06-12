@@ -12,7 +12,7 @@ namespace Api.Logic.Import;
 /// <param name="db"></param>
 /// <param name="user"></param>
 /// <param name="patient"></param>
-public abstract class Importer(IHealthContext db, long user, long patient)
+public abstract class Importer(IEventContext eventDb, IMetricContext metricDb , long user, long patient)
 {
     public abstract Task<ImportsResult> Import(IImportQueue queue, Guid id);
 
@@ -21,11 +21,11 @@ public abstract class Importer(IHealthContext db, long user, long patient)
         bool added = false;
 
         // check if the event exists
-        var fromDb = await db.ExistsEvent(patient, e.Type, (int)e.Source, e.SourceId);
+        var fromDb = await eventDb.ExistsEvent(patient, e.Type, (int)e.Source, e.SourceId);
 
         if (!fromDb)
         {
-            await db.Insert(e, patient, user);
+            await eventDb.Insert(e, patient, user);
             added = true;
         }
         else
@@ -41,11 +41,11 @@ public abstract class Importer(IHealthContext db, long user, long patient)
         bool added = false;
 
         // check if the metric exists
-        var fromDb = await db.ExistsMetric(patient, metric.Type, (int)metric.Source, metric.SourceId);
+        var fromDb = await metricDb.ExistsMetric(patient, metric.Type, (int)metric.Source, metric.SourceId);
 
         if (!fromDb)
         {
-            await db.Insert(metric, patient, user);
+            await metricDb.Insert(metric, patient, user);
             added = true;
         }
         else

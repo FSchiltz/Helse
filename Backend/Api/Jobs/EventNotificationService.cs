@@ -37,7 +37,7 @@ public class EventNotificationService(IServiceProvider serviceProvider, ILogger<
         var end = now.AddMinutes(1);
 
         using var scope = serviceProvider.CreateScope();
-        var health = scope.ServiceProvider.GetRequiredService<IHealthContext>();
+        var health = scope.ServiceProvider.GetRequiredService<IEventContext>();
         var settings = scope.ServiceProvider.GetRequiredService<ISettingsContext>();
 
         var smtpSettings = await settings.GetSettings<Smtp>(Smtp.Name);

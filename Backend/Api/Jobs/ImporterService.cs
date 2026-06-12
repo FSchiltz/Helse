@@ -19,13 +19,14 @@ public class ImporterService(IServiceProvider serviceProvider, IImportQueue queu
             {
 
                 using var scope = serviceProvider.CreateScope();
-                var db = scope.ServiceProvider.GetRequiredService<IHealthContext>();
+                var eventDb = scope.ServiceProvider.GetRequiredService<IEventContext>();
+                var metricDb = scope.ServiceProvider.GetRequiredService<IMetricContext>();
                 Importer importer = job.Type switch
                 {
-                    FileTypes.Clue => new ClueImporter(job.Input, db, job.UserId, job.Patient),
-                    FileTypes.RedmiWatch => new RedmiWatchImporter(job.Input, db, job.UserId, job.Patient),
-                    FileTypes.GoogleHealthConnect => new GoogleImporter(job.Input, db, job.UserId, job.Patient),
-                    FileTypes.BabyTracker => new BabyTrackerImporter(job.Input, db, job.UserId, job.Patient),
+                    FileTypes.Clue => new ClueImporter(job.Input, eventDb, metricDb, job.UserId, job.Patient),
+                    FileTypes.RedmiWatch => new RedmiWatchImporter(job.Input, eventDb, metricDb, job.UserId, job.Patient),
+                    FileTypes.GoogleHealthConnect => new GoogleImporter(job.Input, eventDb, metricDb, job.UserId, job.Patient),
+                    FileTypes.BabyTracker => new BabyTrackerImporter(job.Input, eventDb, metricDb, job.UserId, job.Patient),
                     _ => throw new NotSupportedException("Invalid file type"),
                 };
                 queue.Start(job.Id);

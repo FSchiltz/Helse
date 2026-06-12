@@ -15,7 +15,7 @@ public class TreatmentLogicTests
     public async Task GetTypeAsync_ReturnsEventTypes()
     {
         // Arrange
-        var db = Substitute.For<IHealthContext>();
+        var db = Substitute.For<IEventContext>();
         EventType[] types =
         [
             new() { Id = 1, Name = "Test", StandAlone = true }

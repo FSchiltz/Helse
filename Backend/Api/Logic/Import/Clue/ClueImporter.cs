@@ -6,7 +6,7 @@ using Api.Models.Metrics;
 
 namespace Api.Logic.Import.Clue;
 
-public class ClueImporter(Stream file, IHealthContext db, long user, long patient) : FileImporter(file, db, user, patient)
+public class ClueImporter(Stream file, IEventContext eventDb, IMetricContext metricDb, long user, long patient) : FileImporter(file, eventDb, metricDb, user, patient)
 {
     private readonly JsonSerializerOptions _options = new()
     {

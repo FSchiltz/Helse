@@ -12,7 +12,8 @@ namespace Api.Logic;
 /// </summary>
 public static class TreatmentLogic
 {
-    public static async Task<IResult> GetTypeAsync(IHealthContext db) => TypedResults.Ok(await db.GetEventTypes(false, true));
+    public static async Task<IResult> GetTypeAsync(IEventContext db)
+     => TypedResults.Ok(await db.GetEventTypes(false, true));
 
     public async static Task<IResult> PostAsync(CreateTreatment treatment, IUserContext db, HttpContext context)
     {

@@ -669,6 +669,37 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
+  Future<Response<List<Metric>>> _apiMetricsSearchPost({
+    int? personId,
+    required SearchMetric? body,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["MetricsLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/metrics/search');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<List<Metric>, Metric>($request);
+  }
+
+  @override
   Future<Response<dynamic>> _apiMetricsTypePost({
     required CreateMetricType? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(

@@ -5,7 +5,7 @@ using Api.Models.Imports;
 
 namespace Api.Logic.Import;
 
-public class ListImporter(ImportData file, IHealthContext db, long user, long patient) : Importer(db, user, patient)
+public class ListImporter(ImportData file, IEventContext eventDb, IMetricContext metricDb, long user, long patient) : Importer(eventDb, metricDb, user, patient)
 {
     public ImportData Data { get; } = file;
 

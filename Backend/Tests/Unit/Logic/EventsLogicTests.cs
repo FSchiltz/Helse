@@ -8,7 +8,7 @@ namespace Tests.Unit.Logic;
 
 public class EventsLogicTests : LogicTests
 {
-    private readonly IHealthContext _db = Substitute.For<IHealthContext>();
+    private readonly IEventContext _db = Substitute.For<IEventContext>();
 
     [Fact]
     public async Task EventType_NonAdmin()

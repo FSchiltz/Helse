@@ -112,8 +112,10 @@ class _MetricGraphState extends State<MetricGraph> {
               child: Center(
                 child: MetricDataTable(
                   locale: locale,
-                  metric: metric,
-                  widget: widget,
+                  metrics: metric?.metrics,
+                  person: widget.person,
+                  type: widget.type,
+                  reset: widget.reset,
                 ),
               ),
             ),

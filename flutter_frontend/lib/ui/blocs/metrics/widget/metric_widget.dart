@@ -131,7 +131,7 @@ class _MetricWidgetState extends State<MetricWidget> {
     MetricType type,
     BuildContext context,
   ) {
-    String? value;
+    String value = '';
     Icon? icon;
     var color = Dependencies.theme.stateColor(
       "${type.id}",
@@ -149,9 +149,9 @@ class _MetricWidgetState extends State<MetricWidget> {
             '${(metrics.map((metric) => double.parse(metric.value)).sum / metrics.length).round()}';
         break;
       case MetricSummary.latest:
+        break;
       default:
         value = metrics.last.value;
-        break;
     }
 
     if (type.unit.code.isNotEmpty) {

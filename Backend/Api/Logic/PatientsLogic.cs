@@ -62,7 +62,7 @@ public static class PatientsLogic
         return TypedResults.NoContent();
     }
 
-    public async static Task<IResult> GetAgendaAsync(DateTime start, DateTime end, IUserContext users, IHealthContext db, HttpContext context)
+    public async static Task<IResult> GetAgendaAsync(DateTime start, DateTime end, IUserContext users, IEventContext db, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)

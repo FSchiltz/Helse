@@ -50,6 +50,8 @@ builder.Services.AddSingleton<TokenService>()
     .AddTransient<IUserContext, UserContext>()
     .AddTransient<ISettingsContext, SettingsContext>()
     .AddTransient<IHealthContext, HealthContext>()
+    .AddTransient<IMetricContext, HealthContext>()
+    .AddTransient<IEventContext, HealthContext>()
     .AddTransient<IStatsContext, StatsContext>()
     .AddTransient<ICommonContext, CommonContext>();
 
