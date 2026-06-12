@@ -99,11 +99,13 @@ class _EventsGraphState extends State<EventsGraph> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: (filteredEvents.length < 200)
-              ? EventsTimelineGraph(
-                  filteredEvents,
-                  subDate,
-                  onselect: _selectionChanged,
-                )
+              ? SizedBox(height: 400,
+                child: EventsTimelineGraph(
+                    filteredEvents,
+                    subDate,
+                    onselect: _selectionChanged,
+                  ),
+              )
               : SizedBox(
                   height: 300,
                   child: EventsSummary(
