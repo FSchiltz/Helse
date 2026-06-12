@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/ui/blocs/metrics/detail/metric_search.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
 import '../../../../di/dependencies.dart';
@@ -57,6 +58,26 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
     return Scaffold(
       appBar: AppBar(
         actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              width: 32,
+              child: IconButton(
+                onPressed: () {
+                  showDialog<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return MetricSearch(
+                        widget.type,
+                        person: widget.person,
+                      );
+                    },
+                  );
+                },
+                icon: const Icon(Icons.search_sharp),
+              ),
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(

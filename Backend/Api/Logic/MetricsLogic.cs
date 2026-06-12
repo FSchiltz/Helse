@@ -318,12 +318,23 @@ public static class MetricsLogic
             return TypedResults.NotFound();
         }
 
-         if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.View))
+        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.View))
             return TypedResults.Forbid();
 
         var id = personId ?? user.PersonId;
 
         var results = await db.SearchMetricsAsync(id, search);
-        return TypedResults.Ok(results);
+        return TypedResults.Ok(results.Select(x => new Metric()
+        {
+            Value = x.Value,
+            Date = x.Date,
+            Id = x.Id,
+            Person = x.PersonId,
+            SourceId = x.SourceId,
+            Type = x.Type,
+            Source = (FileTypes)x.Source,
+            Tag = x.Tag,
+            Unit = x.UnitObject.ToUnit(),
+        }).ToArray());
     }
 }

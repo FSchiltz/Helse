@@ -661,6 +661,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Color'**
   String get color;
+
+  /// No description provided for @searchItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Search a {item}'**
+  String searchItem(String item);
 }
 
 class _AppLocalizationsDelegate

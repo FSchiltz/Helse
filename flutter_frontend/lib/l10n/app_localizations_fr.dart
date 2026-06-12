@@ -305,4 +305,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get color => 'Couleur';
+
+  @override
+  String searchItem(String item) {
+    return 'Search a $item';
+  }
 }

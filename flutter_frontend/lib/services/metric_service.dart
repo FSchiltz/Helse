@@ -29,6 +29,14 @@ class MetricService extends ApiService {
     await call(() => api.apiMetricsTypeIdDelete(id: metric));
   }
 
+  Future<List<Metric>> searchMetrics(int? person, SearchMetric search) async {
+    var api = await getService();
+    return await call(
+          () => api.apiMetricsSearchPost(body: search, personId: person),
+        ) ??
+        [];
+  }
+
   Future<List<Metric>> metrics(
     int? type,
     DateTime? start,

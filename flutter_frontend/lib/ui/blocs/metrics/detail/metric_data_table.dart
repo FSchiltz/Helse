@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:helse/l10n/app_localizations.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_source.dart';
-import 'package:helse/ui/blocs/metrics/detail/metric_graph.dart';
-import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
 
 class MetricDataTable extends StatelessWidget {
   const MetricDataTable({
     super.key,
     required this.locale,
-    required this.metric,
-    required this.widget,
+    required this.metrics,
+    this.person,
+    required this.type,
+    required this.reset,
   });
-
+  final void Function() reset;
+  final MetricType type;
+  final int? person;
   final AppLocalizations locale;
-  final MetricGrouped? metric;
-  final MetricGraph widget;
+  final List<Metric>? metrics;
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +33,11 @@ class MetricDataTable extends StatelessWidget {
         DataColumn(label: Expanded(child: Text(""))),
       ],
       source: MetricDataSource(
-        metric?.metrics ?? [],
+        metrics ?? [],
         context,
-        widget.person,
-        widget.type,
-        reset: widget.reset,
+        person,
+        type,
+        reset: reset,
       ),
     );
   }
