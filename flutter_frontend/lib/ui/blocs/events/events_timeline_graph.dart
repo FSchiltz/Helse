@@ -53,6 +53,7 @@ class EventsTimelineGraph extends StatefulWidget {
 class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
   static const int skippedWidth = 32;
   double boxWidth = 0;
+  final double headerHeight = 50;
 
   final ScrollController _scrollController = ScrollController();
   final List<EventLayout> _eventLayouts = [];
@@ -78,26 +79,37 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
               style: Theme.of(context).textTheme.labelLarge,
             ),
           )
-        : Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              buildRowLabels(labels),
-              Expanded(
-                child: Scrollbar(
-                  interactive: true,
-                  controller: _scrollController,
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    scrollDirection: Axis.horizontal,
-                    child: buildChart(widget.events, rowCount, context),
+        : LayoutBuilder(
+            builder: (context, constraints) {
+              var height = constraints.maxHeight - headerHeight;
+              var rowHeight = height / rowCount;
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  buildRowLabels(labels, rowHeight),
+                  Expanded(
+                    child: Scrollbar(
+                      interactive: true,
+                      controller: _scrollController,
+                      child: SingleChildScrollView(
+                        controller: _scrollController,
+                        scrollDirection: Axis.horizontal,
+                        child: buildChart(
+                          widget.events,
+                          rowCount,
+                          rowHeight,
+                          context,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ],
+                ],
+              );
+            },
           );
   }
 
-  TimelineItems _group(List<Event> events) {
+  TimelineItems _group(List<Event> events, double rowHeight) {
     final stopwatch = Stopwatch()..start();
     final timeline = TimelineItems();
     DateTime tempDate = widget.date.start;
@@ -146,26 +158,37 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
       timeline.skipped.add(DateTimeRange(start: startSkipping, end: tempDate));
     }
 
-    buildChartBars(events, timeline);
+    buildChartBars(events, timeline, rowHeight);
 
     debugPrint('grouped in ${stopwatch.elapsed} with $viewRange bucket');
     return timeline;
   }
 
-  Widget buildChart(List<Event> events, int rowCount, BuildContext context) {
-    final timeline = _group(events);
+  Widget buildChart(
+    List<Event> events,
+    int rowCount,
+    double rowHeight,
+    BuildContext context,
+  ) {
+    final timeline = _group(events, rowHeight);
 
     return Stack(
       fit: StackFit.loose,
       children: [
         Row(children: timeline.grid),
-        SizedBox(height: 25.0, child: Row(children: timeline.headerDay)),
+        SizedBox(
+          height: headerHeight / 2,
+          child: Row(children: timeline.headerDay),
+        ),
         Container(
-          margin: const EdgeInsets.only(top: 25.0),
-          child: SizedBox(height: 25.0, child: Row(children: timeline.header)),
+          margin: EdgeInsets.only(top: headerHeight / 2),
+          child: SizedBox(
+            height: headerHeight / 2,
+            child: Row(children: timeline.header),
+          ),
         ),
         Positioned(
-          top: 50,
+          top: headerHeight,
           left: 0,
           right: 0,
           bottom: 0,
@@ -217,7 +240,6 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
       ),
     ),
     width: boxWidth,
-    height: 200,
   );
 
   int _minutesBetween(DateTime from, DateTime to) =>
@@ -252,14 +274,14 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     return max(1, _minutesBetween(start, end));
   }
 
-  Widget buildRowLabels(List<String> labels) {
+  Widget buildRowLabels(List<String> labels, double height) {
     return Padding(
-      padding: const EdgeInsets.only(top: 6.0),
+      padding: EdgeInsets.only(top: headerHeight),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: labels.map((label) {
           return SizedBox(
-            height: 29.0,
+            height: height,
             child: Align(
               alignment: Alignment.centerRight,
               child: Padding(
@@ -277,7 +299,11 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     );
   }
 
-  void buildChartBars(List<Event> events, TimelineItems timeline) {
+  void buildChartBars(
+    List<Event> events,
+    TimelineItems timeline,
+    double rowHeight,
+  ) {
     _eventLayouts.clear();
 
     final Map<String?, List<Event>> orderedData = {};
@@ -289,7 +315,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     int rowIndex = 0;
 
     for (final group in orderedData.entries) {
-      final rowTop = rowIndex * 29.0;
+      final rowTop = rowIndex * rowHeight;
 
       for (final n in group.value) {
         final start = n.start.toLocal();
@@ -308,12 +334,20 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
             event: n,
             left: left,
             right: left + (width * widget.widthCoef),
-            centerY: rowTop + 14.5,
+            centerY: rowTop + (rowHeight / 2),
             color: color,
           ),
         );
 
         var callback = widget.onselect;
+        var body = Container(
+          width: width.toDouble() * widget.widthCoef,
+          height: rowHeight / 2,
+          decoration: BoxDecoration(
+            color: color.withAlpha(150),
+            borderRadius: BorderRadius.circular(3),
+          ),
+        );
         timeline.bars.add(
           Positioned(
             left: left,
@@ -322,25 +356,8 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
               message:
                   "${n.description ?? ""}: ${n.start.toLocal()} => ${n.stop.toLocal()}",
               child: callback != null
-                  ? InkWell(
-                      onTap: () => callback(n),
-                      child: Container(
-                        width: width.toDouble() * widget.widthCoef,
-                        height: 25,
-                        decoration: BoxDecoration(
-                          color: color.withAlpha(150),
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                      ),
-                    )
-                  : Container(
-                      width: width.toDouble() * widget.widthCoef,
-                      height: 25,
-                      decoration: BoxDecoration(
-                        color: color.withAlpha(150),
-                        borderRadius: BorderRadius.circular(3),
-                      ),
-                    ),
+                  ? InkWell(onTap: () => callback(n), child: body)
+                  : body,
             ),
           ),
         );
