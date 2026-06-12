@@ -63,4 +63,6 @@ public interface IEventContext : IContext
     Task<int> DeleteEventType(long id);
 
     Task<Event[]> GetEvents(long id, RightType view, DateTime start, DateTime end);
+
+    Task<bool> ExistsEvent(long person, int type, int source, string sourceId);
 }

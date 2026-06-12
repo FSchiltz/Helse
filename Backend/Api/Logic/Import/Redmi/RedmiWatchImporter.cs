@@ -11,7 +11,7 @@ using CsvHelper;
 
 namespace Api.Logic.Import.Redmi;
 
-public class RedmiWatchImporter(Stream file, IHealthContext db, long user, long patient) : FileImporter(file, db, user, patient)
+public class RedmiWatchImporter(Stream file, IEventContext eventDb,IMetricContext metricDb, long user, long patient) : FileImporter(file, eventDb, metricDb, user, patient)
 {
     private const string MaxSpo = "max_spo2";
     private const string MinSpo = "min_spo2";

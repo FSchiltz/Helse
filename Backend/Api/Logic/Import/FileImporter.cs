@@ -2,7 +2,7 @@ using Api.Data;
 
 namespace Api.Logic.Import;
 
-public abstract class FileImporter(Stream file, IHealthContext db, long user, long patient) : Importer(db, user, patient), IDisposable
+public abstract class FileImporter(Stream file, IEventContext eventDb,IMetricContext metricDb, long user, long patient) : Importer(eventDb, metricDb, user, patient), IDisposable
 {
     private bool disposedValue;
 

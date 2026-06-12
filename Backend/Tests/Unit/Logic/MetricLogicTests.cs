@@ -10,7 +10,7 @@ namespace Tests.Unit.Logic;
 
 public class MetricLogicTests : LogicTests
 {
-    private readonly IHealthContext _db = Substitute.For<IHealthContext>();
+    private readonly IMetricContext _db = Substitute.For<IMetricContext>();
 
     [Fact]
     public async Task MetricType_NonAdmin()

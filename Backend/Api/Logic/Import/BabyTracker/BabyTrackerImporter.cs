@@ -9,7 +9,7 @@ using CsvHelper;
 
 namespace Api.Logic.Import.BabyTracker;
 
-public class BabyTrackerImporter(Stream file, IHealthContext db, long user, long patient) : FileImporter(file, db, user, patient)
+public class BabyTrackerImporter(Stream file, IEventContext eventDb,IMetricContext metricDb, long user, long patient) : FileImporter(file, eventDb, metricDb, user, patient)
 {
     private readonly JsonSerializerOptions _options = new()
     {

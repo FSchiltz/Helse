@@ -54,7 +54,7 @@ public class AdminLogicTests : LogicTests
     public async Task GetMetricStatsAsync_ReturnsForbidden_WhenUserIsNotAdmin()
     {
         // Arrange
-        var health = Substitute.For<IHealthContext>();
+        var metrics = Substitute.For<IMetricContext>();
         var stats = Substitute.For<IStatsContext>();
         var users = SetupUser(UserType.User);
         var context = SetupContext();
@@ -63,7 +63,7 @@ public class AdminLogicTests : LogicTests
         var end = DateTime.UtcNow;
 
         // Act
-        var result = await AdminLogic.GetMetricStatsAsync(start, end, users, health, stats, context);
+        var result = await AdminLogic.GetMetricStatsAsync(start, end, users, metrics, stats, context);
 
         // Assert
         var forbidResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.ForbidHttpResult>(result);
@@ -76,7 +76,7 @@ public class AdminLogicTests : LogicTests
         // Arrange
         var users = SetupUser(UserType.Admin);
         var context = SetupContext();
-        var health = Substitute.For<IHealthContext>();
+        var health = Substitute.For<IMetricContext>();
         var stats = Substitute.For<IStatsContext>();
 
         var start = DateTime.UtcNow.AddMonths(-1);
@@ -117,7 +117,7 @@ public class AdminLogicTests : LogicTests
     public async Task GetEventStatsAsync_ReturnsForbidden_WhenUserIsNotAdmin()
     {
         // Arrange
-        var health = Substitute.For<IHealthContext>();
+        var health = Substitute.For<IEventContext>();
         var stats = Substitute.For<IStatsContext>();
         var users = SetupUser(UserType.User);
         var context = SetupContext();
@@ -139,7 +139,7 @@ public class AdminLogicTests : LogicTests
         // Arrange
         var users = SetupUser(UserType.Admin);
         var context = SetupContext();
-        var health = Substitute.For<IHealthContext>();
+        var health = Substitute.For<IEventContext>();
         var stats = Substitute.For<IStatsContext>();
 
         var start = DateTime.UtcNow.AddMonths(-1);

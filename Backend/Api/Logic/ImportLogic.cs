@@ -104,7 +104,7 @@ public static class ImportLogic
         return TypedResults.Created(default(string), new JobId(id));
     }
 
-    public static async Task<IResult> PostListAsync([FromBody] ImportData file, [FromQuery] long? patient, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> PostListAsync([FromBody] ImportData file, [FromQuery] long? patient, IUserContext users, IMetricContext metricDb, IEventContext eventDb, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -124,7 +124,7 @@ public static class ImportLogic
             person = user.Id;
         }
 
-        Importer importer = new ListImporter(file, db, user.Id, person);
+        Importer importer = new ListImporter(file, eventDb, metricDb, user.Id, person);
         var results = await importer.Import(new LocalQueue(), Guid.NewGuid());
 
         // TODO return a asyncenumerable to stream the progress

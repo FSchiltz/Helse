@@ -19,7 +19,7 @@ public static class AdminLogic
     }
 
 
-    public async static Task<IResult> GetMetricStatsAsync(DateTime start, DateTime end, IUserContext users, IHealthContext health, IStatsContext stats, HttpContext context)
+    public async static Task<IResult> GetMetricStatsAsync(DateTime start, DateTime end, IUserContext users, IMetricContext health, IStatsContext stats, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
@@ -37,7 +37,7 @@ public static class AdminLogic
         return TypedResults.Ok(new MetricCreationStats(events, countWithDescription));
     }
 
-    public async static Task<IResult> GetEventStatsAsync(DateTime start, DateTime end, IUserContext users, IHealthContext health, IStatsContext stats, HttpContext context)
+    public async static Task<IResult> GetEventStatsAsync(DateTime start, DateTime end, IUserContext users, IEventContext health, IStatsContext stats, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)

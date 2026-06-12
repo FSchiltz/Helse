@@ -24,9 +24,6 @@ public interface IMetricContext : IContext
 
     Task Update(Api.Models.Metrics.UpdateMetric metric);
 
-    Task<bool> ExistsEvent(long person, int type, int source, string sourceId);
-
-
     Task<bool> ExistsMetric(long person, long type, int source, string sourceId);
 
     /// <summary>
