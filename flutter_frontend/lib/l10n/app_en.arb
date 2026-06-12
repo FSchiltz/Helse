@@ -245,12 +245,16 @@
     },
     "color": "Color",
     "@color": {},
-    "searchItem" : "Search a {item}",
-    "@searchItem" : {
+    "searchItem": "Search a {item}",
+    "@searchItem": {
         "placeholders": {
             "item": {
                 "type": "String"
             }
         }
-    }
+    },
+    "min": "Minimum",
+    "@min": {},
+    "max": "Maximum",
+    "@max": {}
 }

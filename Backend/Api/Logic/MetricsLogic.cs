@@ -299,7 +299,7 @@ public static class MetricsLogic
                 return TypedResults.BadRequest("Search by value is only for text metrics");
             }
         }
-        else if (search.MaxValue is not null || search.MaxValue is not null)
+        else if (search.MaxValue is not null || search.MinValue is not null)
         {
             if (type.Type != (int)MetricDataType.Number)
             {

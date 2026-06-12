@@ -667,6 +667,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search a {item}'**
   String searchItem(String item);
+
+  /// No description provided for @min.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum'**
+  String get min;
+
+  /// No description provided for @max.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum'**
+  String get max;
 }
 
 class _AppLocalizationsDelegate

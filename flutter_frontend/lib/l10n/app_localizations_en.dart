@@ -310,4 +310,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String searchItem(String item) {
     return 'Search a $item';
   }
+
+  @override
+  String get min => 'Minimum';
+
+  @override
+  String get max => 'Maximum';
 }
