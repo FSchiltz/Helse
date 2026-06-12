@@ -696,6 +696,27 @@ Map<String, dynamic> _$RightToJson(Right instance) => <String, dynamic>{
   'type': rightTypeNullableToJson(instance.type),
 };
 
+SearchMetric _$SearchMetricFromJson(Map<String, dynamic> json) => SearchMetric(
+  type: (json['type'] as num).toInt(),
+  value: json['value'] as String?,
+  from: json['from'] == null ? null : DateTime.parse(json['from'] as String),
+  to: json['to'] == null ? null : DateTime.parse(json['to'] as String),
+  minValue: (json['minValue'] as num?)?.toInt(),
+  maxValue: (json['maxValue'] as num?)?.toInt(),
+  isTrue: json['isTrue'] as bool?,
+);
+
+Map<String, dynamic> _$SearchMetricToJson(SearchMetric instance) =>
+    <String, dynamic>{
+      'type': instance.type,
+      'value': instance.value,
+      'from': instance.from?.toIso8601String(),
+      'to': instance.to?.toIso8601String(),
+      'minValue': instance.minValue,
+      'maxValue': instance.maxValue,
+      'isTrue': instance.isTrue,
+    };
+
 Session _$SessionFromJson(Map<String, dynamic> json) => Session(
   sessionId: json['sessionId'] as String,
   ip: json['ip'] as String?,

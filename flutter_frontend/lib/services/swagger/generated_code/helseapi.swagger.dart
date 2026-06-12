@@ -728,6 +728,36 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
+  ///@param personId
+  Future<chopper.Response<List<Metric>>> apiMetricsSearchPost({
+    int? personId,
+    required SearchMetric? body,
+  }) {
+    generatedMapping.putIfAbsent(Metric, () => Metric.fromJsonFactory);
+
+    return _apiMetricsSearchPost(personId: personId, body: body);
+  }
+
+  ///
+  ///@param personId
+  @POST(path: '/api/metrics/search', optionalBody: true)
+  Future<chopper.Response<List<Metric>>> _apiMetricsSearchPost({
+    @Query('personId') int? personId,
+    @Body() required SearchMetric? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["MetricsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
   Future<chopper.Response> apiMetricsTypePost({
     required CreateMetricType? body,
   }) {
@@ -5250,6 +5280,123 @@ extension $RightExtension on Right {
       start: (start != null ? start.value : this.start),
       stop: (stop != null ? stop.value : this.stop),
       type: (type != null ? type.value : this.type),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class SearchMetric {
+  const SearchMetric({
+    required this.type,
+    this.value,
+    this.from,
+    this.to,
+    this.minValue,
+    this.maxValue,
+    this.isTrue,
+  });
+
+  factory SearchMetric.fromJson(Map<String, dynamic> json) =>
+      _$SearchMetricFromJson(json);
+
+  static const toJsonFactory = _$SearchMetricToJson;
+  Map<String, dynamic> toJson() => _$SearchMetricToJson(this);
+
+  @JsonKey(name: 'type')
+  final int type;
+  @JsonKey(name: 'value')
+  final String? value;
+  @JsonKey(name: 'from')
+  final DateTime? from;
+  @JsonKey(name: 'to')
+  final DateTime? to;
+  @JsonKey(name: 'minValue')
+  final int? minValue;
+  @JsonKey(name: 'maxValue')
+  final int? maxValue;
+  @JsonKey(name: 'isTrue')
+  final bool? isTrue;
+  static const fromJsonFactory = _$SearchMetricFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is SearchMetric &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.value, value) ||
+                const DeepCollectionEquality().equals(other.value, value)) &&
+            (identical(other.from, from) ||
+                const DeepCollectionEquality().equals(other.from, from)) &&
+            (identical(other.to, to) ||
+                const DeepCollectionEquality().equals(other.to, to)) &&
+            (identical(other.minValue, minValue) ||
+                const DeepCollectionEquality().equals(
+                  other.minValue,
+                  minValue,
+                )) &&
+            (identical(other.maxValue, maxValue) ||
+                const DeepCollectionEquality().equals(
+                  other.maxValue,
+                  maxValue,
+                )) &&
+            (identical(other.isTrue, isTrue) ||
+                const DeepCollectionEquality().equals(other.isTrue, isTrue)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(value) ^
+      const DeepCollectionEquality().hash(from) ^
+      const DeepCollectionEquality().hash(to) ^
+      const DeepCollectionEquality().hash(minValue) ^
+      const DeepCollectionEquality().hash(maxValue) ^
+      const DeepCollectionEquality().hash(isTrue) ^
+      runtimeType.hashCode;
+}
+
+extension $SearchMetricExtension on SearchMetric {
+  SearchMetric copyWith({
+    int? type,
+    String? value,
+    DateTime? from,
+    DateTime? to,
+    int? minValue,
+    int? maxValue,
+    bool? isTrue,
+  }) {
+    return SearchMetric(
+      type: type ?? this.type,
+      value: value ?? this.value,
+      from: from ?? this.from,
+      to: to ?? this.to,
+      minValue: minValue ?? this.minValue,
+      maxValue: maxValue ?? this.maxValue,
+      isTrue: isTrue ?? this.isTrue,
+    );
+  }
+
+  SearchMetric copyWithWrapped({
+    Wrapped<int>? type,
+    Wrapped<String?>? value,
+    Wrapped<DateTime?>? from,
+    Wrapped<DateTime?>? to,
+    Wrapped<int?>? minValue,
+    Wrapped<int?>? maxValue,
+    Wrapped<bool?>? isTrue,
+  }) {
+    return SearchMetric(
+      type: (type != null ? type.value : this.type),
+      value: (value != null ? value.value : this.value),
+      from: (from != null ? from.value : this.from),
+      to: (to != null ? to.value : this.to),
+      minValue: (minValue != null ? minValue.value : this.minValue),
+      maxValue: (maxValue != null ? maxValue.value : this.maxValue),
+      isTrue: (isTrue != null ? isTrue.value : this.isTrue),
     );
   }
 }
