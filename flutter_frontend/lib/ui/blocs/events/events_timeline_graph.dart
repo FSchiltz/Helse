@@ -82,11 +82,15 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
         : LayoutBuilder(
             builder: (context, constraints) {
               var height = constraints.maxHeight - headerHeight;
-              var rowHeight = height / rowCount;
+              var rowHeight = min(height / rowCount, 24.0);
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  buildRowLabels(labels, rowHeight),
+                  Padding(
+                    padding: EdgeInsets.only(top: headerHeight),
+                    child: buildRowLabels(labels, rowHeight),
+                  ),
                   Expanded(
                     child: Scrollbar(
                       interactive: true,
@@ -275,27 +279,21 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
   }
 
   Widget buildRowLabels(List<String> labels, double height) {
-    return Padding(
-      padding: EdgeInsets.only(top: headerHeight),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: labels.map((label) {
-          return SizedBox(
-            height: height,
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 4),
-                child: Text(
-                  label,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-              ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: labels.map((label) {
+        return SizedBox(
+          height: height,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 8.0, right: 4),
+              child: Text(label, overflow: TextOverflow.ellipsis, maxLines: 1),
             ),
-          );
-        }).toList(),
-      ),
+          ),
+        );
+      }).toList(),
     );
   }
 
@@ -342,7 +340,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
         var callback = widget.onselect;
         var body = Container(
           width: width.toDouble() * widget.widthCoef,
-          height: rowHeight / 2,
+          height: rowHeight - 8,
           decoration: BoxDecoration(
             color: color.withAlpha(150),
             borderRadius: BorderRadius.circular(3),
