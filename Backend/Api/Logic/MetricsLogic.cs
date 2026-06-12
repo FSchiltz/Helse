@@ -14,7 +14,7 @@ namespace Api.Logic;
 /// </summary>
 public static class MetricsLogic
 {
-    public async static Task<IResult> GetAsync(int type, DateTime start, DateTime end, long? personId, IUserContext users, IHealthContext db, HttpContext context)
+    public async static Task<IResult> GetAsync(int type, DateTime start, DateTime end, long? personId, IUserContext users, IMetricContext db, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -41,7 +41,7 @@ public static class MetricsLogic
         }));
     }
 
-    public async static Task<IResult> GetSummaryAsync(int tile, int type, DateTime start, DateTime end, long? personId, IUserContext users, IHealthContext db, HttpContext context)
+    public async static Task<IResult> GetSummaryAsync(int tile, int type, DateTime start, DateTime end, long? personId, IUserContext users, IMetricContext db, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -82,7 +82,7 @@ public static class MetricsLogic
         }));
     }
 
-    public static async Task<IResult> CreateAsync(CreateMetric metric, long? personId, IUserContext users, IHealthContext db, ICommonContext commonDb, HttpContext context)
+    public static async Task<IResult> CreateAsync(CreateMetric metric, long? personId, IUserContext users, IMetricContext db, ICommonContext commonDb, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -126,7 +126,7 @@ public static class MetricsLogic
         }
     }
 
-    public static async Task<IResult> UpdateAsync(UpdateMetric metric, IUserContext users, IHealthContext db, ICommonContext commonDb, HttpContext context)
+    public static async Task<IResult> UpdateAsync(UpdateMetric metric, IUserContext users, IMetricContext db, ICommonContext commonDb, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -151,7 +151,7 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public async static Task<IResult> DeleteAsync(long id, IUserContext users, IHealthContext db, HttpContext context)
+    public async static Task<IResult> DeleteAsync(long id, IUserContext users, IMetricContext db, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -173,7 +173,8 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> GetTypeAsync(bool? all, long? group, IHealthContext db) => TypedResults.Ok((await db.GetMetricTypes(all, group)).Select(x => new MetricType
+    public static async Task<IResult> GetTypeAsync(bool? all, long? group, IMetricContext db)
+    => TypedResults.Ok((await db.GetMetricTypes(all, group)).Select(x => new MetricType
     {
         Name = x.Name,
         Description = x.Description,
@@ -187,7 +188,7 @@ public static class MetricsLogic
         GroupId = x.GroupId
     }));
 
-    public static async Task<IResult> CreateTypeAsync(CreateMetricType metric, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> CreateTypeAsync(CreateMetricType metric, IUserContext users, IMetricContext db, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
@@ -203,7 +204,7 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> UpdateTypeAsync(UpdateMetricType metric, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> UpdateTypeAsync(UpdateMetricType metric, IUserContext users, IMetricContext db, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
@@ -219,7 +220,7 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public async static Task<IResult> DeleteTypeAsync(long id, IUserContext users, IHealthContext db, HttpContext context)
+    public async static Task<IResult> DeleteTypeAsync(long id, IUserContext users, IMetricContext db, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
@@ -233,7 +234,7 @@ public static class MetricsLogic
             return TypedResults.BadRequest();
     }
 
-    public static async Task<IResult> GetGroupsAsync(IHealthContext db) => TypedResults.Ok((await db.GetMetricGroups()).Select(metric => new MetricGroup
+    public static async Task<IResult> GetGroupsAsync(IMetricContext db) => TypedResults.Ok((await db.GetMetricGroups()).Select(metric => new MetricGroup
     {
         Name = metric.Name,
         Description = metric.Description,
@@ -242,7 +243,7 @@ public static class MetricsLogic
         Id = metric.Id,
     }));
 
-    public static async Task<IResult> CreateGroupAsync(MetricGroup metric, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> CreateGroupAsync(MetricGroup metric, IUserContext users, IMetricContext db, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
@@ -253,7 +254,7 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> UpdateGroupAsync(MetricGroup metric, IUserContext users, IHealthContext db, HttpContext context)
+    public static async Task<IResult> UpdateGroupAsync(MetricGroup metric, IUserContext users, IMetricContext db, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
@@ -264,7 +265,7 @@ public static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public async static Task<IResult> DeleteGroupAsync(long id, IUserContext users, IHealthContext db, HttpContext context)
+    public async static Task<IResult> DeleteGroupAsync(long id, IUserContext users, IMetricContext db, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
@@ -276,5 +277,53 @@ public static class MetricsLogic
             return TypedResults.NoContent();
         else
             return TypedResults.BadRequest();
+    }
+
+    internal static async Task<IResult> SearchAsync(SearchMetric search, long? personId, IUserContext users, IMetricContext db, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+        var type = await db.GetMetricType(search.Type);
+        if (type is null)
+        {
+            return TypedResults.BadRequest("Wrong metric type");
+        }
+
+        if (search.Value is not null)
+        {
+            // search by value
+            if (type.Type != (int)MetricDataType.Text)
+            {
+                return TypedResults.BadRequest("Search by value is only for text metrics");
+            }
+        }
+        else if (search.MaxValue is not null || search.MaxValue is not null)
+        {
+            if (type.Type != (int)MetricDataType.Number)
+            {
+                return TypedResults.BadRequest("Search over values is only for number metrics");
+            }
+        }
+        else if (search.IsTrue is not null)
+        {
+            if (type.Type != (int)MetricDataType.Bool)
+            {
+                return TypedResults.BadRequest("Search over bool is only for bool metrics");
+            }
+        }
+        else
+        {
+            return TypedResults.NotFound();
+        }
+
+         if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.View))
+            return TypedResults.Forbid();
+
+        var id = personId ?? user.PersonId;
+
+        var results = await db.SearchMetricsAsync(id, search);
+        return TypedResults.Ok(results);
     }
 }

@@ -116,11 +116,11 @@ public static class Endpoints
         /* Metrics endpoints*/
         var metrics = api.MapGroup("/metrics").RequireAuthorization();
         metrics.MapGet("/summary", MetricsLogic.GetSummaryAsync)
-        .Produces<List<Metric>>((int)HttpStatusCode.OK)
+        .Produces<Metric[]>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
         metrics.MapGet("/", MetricsLogic.GetAsync)
-        .Produces<List<Metric>>((int)HttpStatusCode.OK)
+        .Produces<Metric[]>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
         metrics.MapPost("/", MetricsLogic.CreateAsync)
@@ -133,6 +133,10 @@ public static class Endpoints
 
         metrics.MapDelete("/{id}", MetricsLogic.DeleteAsync)
         .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        metrics.MapPost("/search", MetricsLogic.SearchAsync)
+        .Produces<Metric[]>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
         var metricsType = metrics.MapGroup("/type").RequireAuthorization();

@@ -1,5 +1,4 @@
 using System.Data;
-using Api.Data.Models.Common;
 using Api.Data.Models.Health;
 using Api.Models.Persons;
 using LinqToDB;
@@ -8,7 +7,7 @@ using LinqToDB.Mapping;
 
 namespace Api.Data;
 
-public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
+public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext, IMetricContext, IEventContext
 {
     /// <summary>
     /// Chunked metric for the summary
@@ -380,4 +379,41 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext
     }
 
     public Task<MetricGroup[]> GetMetricGroups() => Db.GetTable<MetricGroup>().OrderBy(x => x.Id).ToArrayAsync();
+
+    public Task<Metric[]> SearchMetricsAsync(long person, Api.Models.Metrics.SearchMetric search)
+    {
+        var query = Db.GetTable<Metric>().Where(x => x.Type == search.Type && x.PersonId == person);
+
+        if (search.From is not null)
+        {
+            query = query.Where(x => x.Date >= search.From);
+        }
+
+        if (search.To is not null)
+        {
+            query = query.Where(x => x.Date <= search.To);
+        }
+
+        if (search.Value is not null)
+        {
+            query = query.Where(x => x.Value.StartsWith(search.Value));
+        }
+
+        if (search.IsTrue is not null)
+        {
+            query = query.Where(x => bool.Parse(x.Value) == search.IsTrue);
+        }
+
+        if (search.MinValue is not null)
+        {
+            query = query.Where(x => int.Parse(x.Value) >= search.MinValue);
+        }
+
+        if (search.MaxValue is not null)
+        {
+            query = query.Where(x => int.Parse(x.Value) <= search.MaxValue);
+        }
+
+        return query.ToArrayAsync();
+    }
 }

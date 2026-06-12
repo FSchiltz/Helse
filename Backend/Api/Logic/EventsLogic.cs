@@ -12,7 +12,7 @@ namespace Api.Logic;
 /// </summary>
 public static class EventsLogic
 {
-    public async static Task<IResult> GetAsync(int type, DateTime start, DateTime end, long? personId, IUserContext users, IHealthContext events, HttpContext context)
+    public async static Task<IResult> GetAsync(int type, DateTime start, DateTime end, long? personId, IUserContext users, IEventContext events, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -42,7 +42,7 @@ public static class EventsLogic
         return TypedResults.Ok(result);
     }
 
-    public async static Task<IResult> GetSummaryAsync(int type, DateTime start, DateTime end, long? personId, IUserContext users, IHealthContext events, HttpContext context)
+    public async static Task<IResult> GetSummaryAsync(int type, DateTime start, DateTime end, long? personId, IUserContext users, IEventContext events, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -58,7 +58,7 @@ public static class EventsLogic
         return TypedResults.Ok(data.Summarize(start, end));
     }
 
-    public static async Task<IResult> CreateAsync(CreateEvent e, long? personId, IUserContext users, IHealthContext events, HttpContext context)
+    public static async Task<IResult> CreateAsync(CreateEvent e, long? personId, IUserContext users, IEventContext events, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -72,7 +72,7 @@ public static class EventsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> UpdateAsync(UpdateEvent e, long? personId, IUserContext users, IHealthContext events, HttpContext context)
+    public static async Task<IResult> UpdateAsync(UpdateEvent e, long? personId, IUserContext users, IEventContext events, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -88,7 +88,7 @@ public static class EventsLogic
         return TypedResults.NoContent();
     }
 
-    public async static Task<IResult> DeleteAsync(long id, IUserContext users, IHealthContext events, HttpContext context)
+    public async static Task<IResult> DeleteAsync(long id, IUserContext users, IEventContext events, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -111,7 +111,8 @@ public static class EventsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> GetTypeAsync(bool? all, IHealthContext events) => TypedResults.Ok((await events.GetEventTypes(all)).Select(x => new EventType
+    public static async Task<IResult> GetTypeAsync(bool? all, IEventContext events)
+    => TypedResults.Ok((await events.GetEventTypes(all)).Select(x => new EventType
     {
         Name = x.Name,
         Description = x.Description,
@@ -121,7 +122,7 @@ public static class EventsLogic
         UserEditable = x.UserEditable,
     }));
 
-    public static async Task<IResult> CreateTypeAsync(EventType type, IUserContext users, IHealthContext events, HttpContext context)
+    public static async Task<IResult> CreateTypeAsync(EventType type, IUserContext users, IEventContext events, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
@@ -132,7 +133,7 @@ public static class EventsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> UpdateTypeAsync(EventType type, IUserContext users, IHealthContext events, HttpContext context)
+    public static async Task<IResult> UpdateTypeAsync(EventType type, IUserContext users, IEventContext events, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
@@ -143,7 +144,7 @@ public static class EventsLogic
         return TypedResults.NoContent();
     }
 
-    public async static Task<IResult> DeleteTypeAsync(long id, IUserContext users, IHealthContext events, HttpContext context)
+    public async static Task<IResult> DeleteTypeAsync(long id, IUserContext users, IEventContext events, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
