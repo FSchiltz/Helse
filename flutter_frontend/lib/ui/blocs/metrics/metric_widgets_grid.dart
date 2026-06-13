@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/pair.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
@@ -21,30 +23,38 @@ class MetricWidgetsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      runSpacing: 6,
-      spacing: 6,
-      children: cached
-          .map(
-            (type) => ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: extend ?? 200,
-                maxHeight: 200,
-              ),
-              child: CommonCard(
-                padding: false,
-                child: MetricWidget(
-                  type.a,
-                  type.b,
-                  date,
-                  key: Key(type.a.id.toString()),
-                  person: person,
-                  tile: tile,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final maxWidth = min(
+          (constraints.maxWidth - 9 - 24) / 2,
+          200,
+        ).toDouble();
+        return Wrap(
+          runSpacing: 6,
+          spacing: 6,
+          children: cached
+              .map(
+                (type) => ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: maxWidth,
+                    maxHeight: maxWidth,
+                  ),
+                  child: CommonCard(
+                    padding: false,
+                    child: MetricWidget(
+                      type.a,
+                      type.b,
+                      date,
+                      key: Key(type.a.id.toString()),
+                      person: person,
+                      tile: tile,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          )
-          .toList(),
+              )
+              .toList(),
+        );
+      },
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
+import 'package:helse/ui/common/loader.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 import 'package:helse/ui/common/square_text_field.dart';
 
@@ -21,6 +22,7 @@ class _MetricSearchState extends State<MetricSearch> {
   final TextEditingController _value = TextEditingController();
   final TextEditingController _min = TextEditingController();
   final TextEditingController _max = TextEditingController();
+  bool _working = false;
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +40,14 @@ class _MetricSearchState extends State<MetricSearch> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 ..._getFilter(theme, locale),
-                IconButton(onPressed: _search, icon: Icon(Icons.search_sharp)),
+                IconButton(
+                  onPressed: (_working) ? null : _search,
+                  icon: Icon(Icons.search_sharp),
+                ),
               ],
             ),
             SizedBox(height: 12),
+            if (_working) HelseLoader(),
             Expanded(
               child: SingleChildScrollView(
                 child: MetricDataTable(
@@ -60,21 +66,30 @@ class _MetricSearchState extends State<MetricSearch> {
   }
 
   Future<void> _search() async {
-    final max = _max.text.isEmpty ? null : int.parse(_max.text);
-    final min = _min.text.isEmpty ? null : int.parse(_min.text);
-    final text = (_value.text.isEmpty) ? null : _value.text;
-    var metrics = await Dependencies.services.metric.searchMetrics(
-      widget.person,
-      SearchMetric(
-        type: widget.type.id,
-        value: text,
-        maxValue: max,
-        minValue: min,
-      ),
-    );
     setState(() {
-      _metrics = metrics ?? [];
+      _working = true;
     });
+    try {
+      final max = _max.text.isEmpty ? null : int.parse(_max.text);
+      final min = _min.text.isEmpty ? null : int.parse(_min.text);
+      final text = (_value.text.isEmpty) ? null : _value.text;
+      var metrics = await Dependencies.services.metric.searchMetrics(
+        widget.person,
+        SearchMetric(
+          type: widget.type.id,
+          value: text,
+          maxValue: max,
+          minValue: min,
+        ),
+      );
+      setState(() {
+        _metrics = metrics ?? [];
+      });
+    } finally {
+      setState(() {
+        _working = false;
+      });
+    }
   }
 
   List<Widget> _getFilter(ColorScheme theme, AppLocalizations locale) {
