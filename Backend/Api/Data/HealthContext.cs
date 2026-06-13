@@ -396,7 +396,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext,
 
         if (search.Value is not null)
         {
-            query = query.Where(x => x.Value.StartsWith(search.Value));
+            query = query.Where(x => x.Value.ToLower().StartsWith(search.Value.ToLower()));
         }
 
         if (search.IsTrue is not null)
