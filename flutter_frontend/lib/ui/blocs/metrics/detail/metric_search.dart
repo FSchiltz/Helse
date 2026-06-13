@@ -40,7 +40,10 @@ class _MetricSearchState extends State<MetricSearch> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 ..._getFilter(theme, locale),
-                IconButton(onPressed: _search, icon: Icon(Icons.search_sharp)),
+                IconButton(
+                  onPressed: (_working) ? null : _search,
+                  icon: Icon(Icons.search_sharp),
+                ),
               ],
             ),
             SizedBox(height: 12),
