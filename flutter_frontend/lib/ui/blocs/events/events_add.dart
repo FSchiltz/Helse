@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/square_text_field.dart';
+import 'package:helse/ui/common/statefull_check.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../logic/event.dart';
@@ -29,6 +30,7 @@ class _EventAddState extends State<EventAdd> {
   DateTime? _notification;
   final TextEditingController _description = TextEditingController();
   final TextEditingController _tag = TextEditingController();
+  bool _notify = false;
 
   void _submit() async {
     var localContext = context;
@@ -46,7 +48,7 @@ class _EventAddState extends State<EventAdd> {
             type: widget.type.id,
             description: _description.text,
             id: widget.edit?.id,
-            notificationTime: _notification?.toUtc(),
+            notificationTime: _notify ? _notification?.toUtc() : null,
             source: widget.edit?.source,
             sourceId: widget.edit?.sourceId,
             tag: _tag.text,
@@ -61,7 +63,7 @@ class _EventAddState extends State<EventAdd> {
             stop: _stop.toUtc(),
             type: widget.type.id,
             description: _description.text,
-            notificationTime: _notification?.toUtc(),
+            notificationTime: _notify ? _notification?.toUtc() : null,
             source: FileTypes.none,
             sourceId: '',
             tag: _tag.text,
@@ -101,6 +103,8 @@ class _EventAddState extends State<EventAdd> {
       _stop = edit.stop;
       _description.text = edit.description ?? '';
       _tag.text = edit.tag ?? '';
+      _notify = edit.notificationTime != null;
+      _notification = edit.notificationTime;
     }
   }
 
@@ -160,13 +164,26 @@ class _EventAddState extends State<EventAdd> {
                   }),
                 ),
                 const SizedBox(height: 20),
-                DateInput(
-                  locale.notificationTime,
-                  _notification,
-                  (date) => setState(() {
-                    _notification = date;
-                  }),
+                Row(
+                  children: [
+                    const Text("Notify: "),
+                    StatefullCheck(
+                      _notify,
+                      (value) => setState(() {
+                        _notify = value;
+                      }),
+                    ),
+                  ],
                 ),
+                if (_notify) const SizedBox(height: 20),
+                if (_notify)
+                  DateInput(
+                    locale.notificationTime,
+                    _notification,
+                    (date) => setState(() {
+                      _notification = date;
+                    }),
+                  ),
               ],
             ),
           ),

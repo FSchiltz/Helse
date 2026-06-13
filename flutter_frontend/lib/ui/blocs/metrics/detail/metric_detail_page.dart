@@ -67,10 +67,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                   showDialog<void>(
                     context: context,
                     builder: (BuildContext context) {
-                      return MetricSearch(
-                        widget.type,
-                        person: widget.person,
-                      );
+                      return MetricSearch(widget.type, person: widget.person);
                     },
                   );
                 },
@@ -109,20 +106,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
         _getData,
         builder: (ctx, data, reset) {
           Future<List<CalendarGroup>> getEventsForDay(DateTime day) async {
-            return [
-              CalendarGroup(
-                name: '',
-                events: data
-                    .map(
-                      (x) => CalendarEvent(
-                        from: x.date,
-                        to: x.date,
-                        value: x.value,
-                      ),
-                    )
-                    .toList(),
-              ),
-            ];
+            return [CalendarGroup(name: '', events: _map(data, day))];
           }
 
           return data.isEmpty
@@ -134,7 +118,11 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                 )
               : (widget.type.type == MetricDataType.text ||
                         widget.settings == GraphKind.text
-                    ? CalendarView(getEventsForDay, widget.date)
+                    ? CalendarView(
+                        getEventsForDay,
+                        widget.date,
+                        getEvents: (day) => _map(data, day),
+                      )
                     : MetricGraph(
                         data,
                         widget.date,
@@ -146,5 +134,17 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
         },
       ),
     );
+  }
+
+  List<CalendarEvent> _map(List<Metric> data, DateTime day) {
+    return data
+        .where(
+          (e) =>
+              e.date.year == day.year &&
+              e.date.month == day.month &&
+              e.date.day == day.day,
+        )
+        .map((x) => CalendarEvent(from: x.date, to: x.date, value: x.value))
+        .toList();
   }
 }

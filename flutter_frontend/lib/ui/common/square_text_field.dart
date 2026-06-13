@@ -15,8 +15,10 @@ class SquareTextField extends StatelessWidget {
     this.onIconPressed,
     this.type,
     this.suffixIcon,
+    this.onTap,
   });
 
+  final void Function()? onTap;
   final IconButton? suffixIcon;
   final void Function()? onEditingComplete;
   final String label;
@@ -38,6 +40,7 @@ class SquareTextField extends StatelessWidget {
       onEditingComplete: onEditingComplete,
       keyboardType: type ?? TextInputType.text,
       obscureText: obscureText,
+      onTap: onTap,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon),

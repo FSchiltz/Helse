@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/date.dart';
+import 'package:helse/ui/common/square_text_field.dart';
 
 class DateInput extends StatefulWidget {
   final String label;
@@ -69,7 +70,12 @@ class _DateInputState extends State<DateInput> {
   }
 
   Future<DateTime?> _pickDate(BuildContext context) async {
-    final DateTime? selectedDate = await showDatePicker(context: context, initialDate: date, firstDate: DateTime(1000), lastDate: DateTime(3000));
+    final DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: date,
+      firstDate: DateTime(1000),
+      lastDate: DateTime(3000),
+    );
 
     if (selectedDate == null) return null;
 
@@ -91,41 +97,40 @@ class _DateInputState extends State<DateInput> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
 
-    return Column(
-      children: [
-        TextField(
-          controller: TextEditingController(text: DateHelper.formatDate(date, context: context)),
-          onTap: () {
-            _setDate(context);
-          },
-          decoration: InputDecoration(
-            labelText: widget.label,
-            prefixIcon: const Icon(Icons.edit_calendar_sharp),
-            prefixIconColor: theme.primary,
-            filled: true,
-            fillColor: theme.surface,
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: theme.primary),
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: 330),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: SquareTextField(
+              controller: TextEditingController(
+                text: DateHelper.formatDate(date, context: context),
+              ),
+              onTap: () {
+                _setDate(context);
+              },
+              icon: Icons.edit_calendar_sharp,
+              theme: theme,
+              label: widget.label,
+
             ),
           ),
-        ),
-        const SizedBox(height: 2),
-        TextField(
-          controller: TextEditingController(text: DateHelper.formatTime(date, context: context)),
-          onTap: () {
-            _setTime(context);
-          },
-          decoration: InputDecoration(
-            prefixIcon: const Icon(Icons.edit_calendar_sharp),
-            prefixIconColor: theme.primary,
-            filled: true,
-            fillColor: theme.surface,
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: theme.primary),
+          Flexible(
+            child: SquareTextField(
+              controller: TextEditingController(
+                text: DateHelper.formatTime(date, context: context),
+              ),
+              onTap: () {
+                _setTime(context);
+              },
+              icon: Icons.watch_later_sharp,
+              theme: theme,
+              label: '',
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

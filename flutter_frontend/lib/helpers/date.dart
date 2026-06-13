@@ -5,8 +5,8 @@ import 'package:intl/intl.dart';
 
 class DateHelper {
   static DateTimeRange now() {
-    var now = today();
-    return DateTimeRange(start: now, end: now.add(Duration(days: 1)));
+    var now = endOfToday();
+    return DateTimeRange(start: now.subtract(Duration(days: 1)), end: now);
   }
 
   static String format(
@@ -68,31 +68,38 @@ class DateHelper {
   }
 
   static DateTimeRange currentWeek({int count = 7}) {
-    var now = today();
+    var now = endOfToday();
 
     var end = now;
-    var start = end.add(Duration(days: -1 * count));
+    var start = end.subtract(Duration(days: count));
 
     return DateTimeRange(start: start, end: end);
   }
 
-  static DateTime today() {
+  static DateTime endOfToday() {
     var now = DateTime.now();
 
-    return DateTime(now.year, now.month, now.day, 0, 0, 0);
+    return DateTime(
+      now.year,
+      now.month,
+      now.day,
+      0,
+      0,
+      0,
+    ).add(Duration(days: 1));
   }
 
   static DateTimeRange currentMonths({int count = 1}) {
-    var now = today();
+    var now = endOfToday();
 
     var end = now;
-    var start = end.add(Duration(days: 30 * -1 * count));
+    var start = end.subtract(Duration(days: 30 * count));
 
     return DateTimeRange(start: start, end: end);
   }
 
   static DateTimeRange yearToDate() {
-    var now = today();
+    var now = endOfToday();
 
     var start = DateTime(now.year, 1, 1);
     var end = now.add(Duration(days: 1));
