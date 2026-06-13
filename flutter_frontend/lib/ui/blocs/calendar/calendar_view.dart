@@ -20,9 +20,10 @@ class CalendarGroup {
 class CalendarView extends StatefulWidget {
   final DateTimeRange date;
 
-  final Future<List<CalendarGroup>> Function(DateTime) getEventsForDay;
+  final Future<List<CalendarGroup>> Function(DateTime) loadEvents;
+  final List<CalendarEvent> Function(DateTime)? getEvents;
 
-  const CalendarView(this.getEventsForDay, this.date, {super.key});
+  const CalendarView(this.loadEvents, this.date, {super.key, this.getEvents});
 
   @override
   State<CalendarView> createState() => _CalendarViewState();
@@ -36,7 +37,7 @@ class _CalendarViewState extends State<CalendarView> {
 
   Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     if (!isSameDay(_selectedDay, selectedDay)) {
-      var events = await widget.getEventsForDay(selectedDay);
+      var events = await widget.loadEvents(selectedDay);
       setState(() {
         _focusedDay = focusedDay;
         _selectedDay = selectedDay;
@@ -68,9 +69,11 @@ class _CalendarViewState extends State<CalendarView> {
       children: [
         if (widget.date.duration.inHours > 24)
           TableCalendar<CalendarEvent>(
+           eventLoader: widget.getEvents,
             firstDay: widget.date.start,
             lastDay: widget.date.end,
             focusedDay: _focusedDay,
+            loadEventsForDisabledDays: false,            
             selectedDayPredicate: (day) {
               return isSameDay(_selectedDay, day);
             },
@@ -86,6 +89,7 @@ class _CalendarViewState extends State<CalendarView> {
               isTodayHighlighted: true,
               //selectedDecoration: BoxDecoration(color: Colors.red),
               outsideDaysVisible: false,
+
             ),
             rangeSelectionMode: RangeSelectionMode.enforced,
             onDaySelected: _onDaySelected,
