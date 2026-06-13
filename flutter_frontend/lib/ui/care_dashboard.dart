@@ -33,19 +33,19 @@ class CareDashBoard extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Agenda(data),
+                        child: Patients(data, reset),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Patients(data, reset),
+                        child: Agenda(data),
                       ),
                     ],
                   ),
                 ),
                 TabBar(
                   tabs: [
-                    Tab(icon: Icon(Icons.edit_calendar_sharp)),
                     Tab(icon: Icon(Icons.personal_injury_sharp)),
+                    Tab(icon: Icon(Icons.edit_calendar_sharp)),
                   ],
                 ),
               ],
