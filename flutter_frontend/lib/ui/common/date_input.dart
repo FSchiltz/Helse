@@ -124,7 +124,7 @@ class _DateInputState extends State<DateInput> {
               onTap: () {
                 _setTime(context);
               },
-              icon: Icons.edit_calendar_sharp,
+              icon: Icons.watch_later_sharp,
               theme: theme,
               label: '',
             ),

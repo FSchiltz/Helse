@@ -40,6 +40,7 @@ class SquareTextField extends StatelessWidget {
       onEditingComplete: onEditingComplete,
       keyboardType: type ?? TextInputType.text,
       obscureText: obscureText,
+      onTap: onTap,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon),
