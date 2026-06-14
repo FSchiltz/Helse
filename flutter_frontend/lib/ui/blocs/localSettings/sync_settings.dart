@@ -30,7 +30,7 @@ class _SyncSettingsState extends State<SyncSettings> {
   Future<int> _getData(bool refresh) async {
     var health = await Dependencies.logics.settings.getHealth();
     _healthEnabled = health.syncHealth;
-    _lastRun = await Dependencies.logics.settings.getLastRun();
+    _lastRun = Dependencies.logics.settings.getLastRun();
     _background = health.background;
     _history = health.history;
     return 1;
@@ -39,7 +39,7 @@ class _SyncSettingsState extends State<SyncSettings> {
   Future<void> _submitHealth() async {
     try {
       // save the user's settings
-      await Dependencies.logics.settings.saveHealth(
+      Dependencies.logics.settings.saveHealth(
         HealthSettings(_healthEnabled, _history, _background),
       );
 
@@ -60,8 +60,8 @@ class _SyncSettingsState extends State<SyncSettings> {
     }
   }
 
-  Future<void> _resetLastRun() async {
-    await Dependencies.logics.settings.removeLastRun();
+  void _resetLastRun() async {
+    Dependencies.logics.settings.removeLastRun();
     setState(() {
       _lastRun = null;
     });

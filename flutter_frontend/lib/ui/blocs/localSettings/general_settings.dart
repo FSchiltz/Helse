@@ -53,8 +53,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   Future<int> _getData(bool reset) async {
-    _theme = await Dependencies.logics.settings.getTheme();
-    _range = await Dependencies.logics.settings.getDateRange();
+    _theme = Dependencies.logics.settings.getTheme();
+    _range = Dependencies.logics.settings.getDateRange();
 
     // TODO simplify
     // saving the colors will override what is in memory so we first have to sync it
@@ -63,10 +63,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       toServer: false,
     );
 
-    final metrics = await Dependencies.logics.settings.getMetrics();
-    final events = await Dependencies.logics.settings.getEvents();
+    final metrics = Dependencies.logics.settings.getMetrics();
+    final events = Dependencies.logics.settings.getEvents();
 
-    _colors = (await Dependencies.logics.settings.getColors()).map(
+    _colors = (Dependencies.logics.settings.getColors()).map(
       (key, value) => MapEntry(
         key,
         value.entries.map((e) {

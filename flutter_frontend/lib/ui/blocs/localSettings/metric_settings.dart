@@ -25,11 +25,9 @@ class _MetricsSettingsState extends State<MetricsSettings> {
   ) async {
     MetricSettings metrics;
     if (widget.isPatient) {
-      metrics = await Dependencies.logics.patientsSettings.getMetrics(
-        widget.patient,
-      );
+      metrics = Dependencies.logics.patientsSettings.getMetrics(widget.patient);
     } else {
-      metrics = await Dependencies.logics.settings.getMetrics();
+      metrics = Dependencies.logics.settings.getMetrics();
     }
 
     var editGroups =
@@ -54,7 +52,7 @@ class _MetricsSettingsState extends State<MetricsSettings> {
       var groupsToSave = groups.map((e) => e.ordered()).toList();
       // save the user's settings
       if (widget.isPatient) {
-        final settings = await Dependencies.logics.patientsSettings.getMetrics(
+        final settings = Dependencies.logics.patientsSettings.getMetrics(
           widget.patient,
         );
         await Dependencies.logics.patientsSettings.saveMetrics(
@@ -68,7 +66,7 @@ class _MetricsSettingsState extends State<MetricsSettings> {
           widget.patient,
         );
       } else {
-        final settings = await Dependencies.logics.settings.getMetrics();
+        final settings = Dependencies.logics.settings.getMetrics();
         await Dependencies.logics.settings.saveMetrics(
           settings.copyWith(
             displaySettings: metricsToSave,

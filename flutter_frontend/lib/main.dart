@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/l10n/app_localizations.dart';
+import 'package:helse/logic/settings/base_settings_logic.dart';
 import 'package:helse/logic/settings/settings_logic.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:helse/worker.dart';
@@ -17,9 +18,10 @@ import 'ui/home.dart';
 import 'ui/login.dart';
 import 'ui/splash.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Dependencies.init();
+  await BaseSettingsLogic.setup();
 
   if (!kIsWeb && Platform.isAndroid) {
     Workmanager().initialize(callbackDispatcher);

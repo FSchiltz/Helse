@@ -115,7 +115,6 @@ class AuthenticationLogic {
   }
 
   Future<String?> getUrl() async {
-    await checkLogin();
     var url = await account.get(Account.url);
 
     // if not in storage, we can try to get it from the current url on the web

@@ -61,9 +61,9 @@ class _MetricsGroupState extends State<MetricsGroup> {
         MetricSettings settings;
 
         if (widget.person == null) {
-          settings = await Dependencies.logics.settings.getMetrics();
+          settings = Dependencies.logics.settings.getMetrics();
         } else {
-          settings = await Dependencies.logics.patientsSettings.getMetrics(
+          settings = Dependencies.logics.patientsSettings.getMetrics(
             widget.person,
           );
         }
@@ -72,7 +72,9 @@ class _MetricsGroupState extends State<MetricsGroup> {
         List<Pair<MetricType, OrderedItem>> filtered = [];
         for (var item in model.where((x) => x.showOnDashboard == true)) {
           OrderedItem setting =
-              settings.displaySettings.firstWhereOrNull((element) => element.id == item.id) ??
+              settings.displaySettings.firstWhereOrNull(
+                (element) => element.id == item.id,
+              ) ??
               Dependencies.logics.settings.getDefault(item);
 
           if (setting.showOnDashboard == true) {

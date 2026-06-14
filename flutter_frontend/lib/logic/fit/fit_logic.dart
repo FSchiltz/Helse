@@ -128,7 +128,7 @@ class FitLogic {
       }
     }
 
-    await Dependencies.logics.settings.setHasHistory(history);
+    Dependencies.logics.settings.setHasHistory(history);
   }
 
   Future<void> requestBackgroundPermission() async {
@@ -145,12 +145,12 @@ class FitLogic {
       }
     }
 
-    await Dependencies.logics.settings.setBackgroundAccess(background);
+    Dependencies.logics.settings.setBackgroundAccess(background);
   }
 
   Future<String> sync() async {
-    var run = await Dependencies.logics.settings.getLastRun();
-    var history = await Dependencies.logics.settings.getHasHistory() ?? false;
+    var run = Dependencies.logics.settings.getLastRun();
+    var history = Dependencies.logics.settings.getHasHistory() ?? false;
 
     var now = DateTime.now();
     // each sync we have to get the last 5 days because the apps can add metrics in the pasts

@@ -15,7 +15,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
     PatientSettings settings,
     bool toServer,
   ) async {
-    var full = await _patientsSettings();
+    var full = _patientsSettings();
     if (settings.patientId == null) {
       full = PatientsSettings($default: settings, patients: full.patients);
     } else {
@@ -32,7 +32,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
       await service.savePatientsSettings(full);
     }
 
-    await save(Account.patients, full.toJson());
+    save(Account.patients, full.toJson());
   }
 
   Future<void> saveMetrics(
@@ -40,7 +40,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
     bool toServer,
     int? person,
   ) async {
-    var settings = await _patientSettings(person);
+    var settings = _patientSettings(person);
     await _savePatientsSettings(
       settings.copyWith(metricSettings: metric, patientId: person),
       toServer,
@@ -52,15 +52,15 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
     bool toServer,
     int? person,
   ) async {
-    var settings = await _patientSettings(person);
+    var settings = _patientSettings(person);
     await _savePatientsSettings(
       settings.copyWith(eventSettings: events, patientId: person),
       toServer,
     );
   }
 
-  Future<PatientsSettings> _patientsSettings() async {
-    var encoded = await getString(Account.patients);
+  PatientsSettings _patientsSettings() {
+    var encoded = getString(Account.patients);
     if (encoded == null) {
       return PatientsSettings();
     }
@@ -70,8 +70,8 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
     );
   }
 
-  Future<PatientSettings> _patientSettings(int? person) async {
-    var object = await _patientsSettings();
+  PatientSettings _patientSettings(int? person) {
+    var object = _patientsSettings();
     if (person == null) {
       return object.$default ?? PatientSettings();
     }
@@ -82,26 +82,26 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
     return specificSettings ?? object.$default ?? PatientSettings();
   }
 
-  Future<MetricSettings> getMetrics(int? person) async {
-    return (await _patientSettings(person)).metricSettings ??
+  MetricSettings getMetrics(int? person) {
+    return (_patientSettings(person)).metricSettings ??
         MetricSettings(displaySettings: []);
   }
 
-  Future<EventSettings> getEvents(int? person) async {
-    return (await _patientSettings(person)).eventSettings ??
+  EventSettings getEvents(int? person) {
+    return (_patientSettings(person)).eventSettings ??
         EventSettings(displaySettings: [], displayValueSettings: []);
   }
 
   Future<void> setDateRange(DatePreset run, int person) async {
-    var settings = await _patientSettings(person);
+    var settings = _patientSettings(person);
     await _savePatientsSettings(
       settings.copyWith(datePreset: run, patientId: person),
       true,
     );
   }
 
-  Future<DatePreset> getPatientsDateRange(int? person) async {
-    var settings = await _patientSettings(person);
+  DatePreset getPatientsDateRange(int? person) {
+    var settings = _patientSettings(person);
     return settings.datePreset ?? DatePreset.today;
   }
 
@@ -133,7 +133,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
     List<MetricType> model,
     List<MetricGroup> groups,
   ) async {
-    var settings = await _patientsSettings();
+    var settings = _patientsSettings();
     // update the default
     await _updateMetrics(
       settings.$default?.metricSettings,
@@ -156,7 +156,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
   }
 
   Future<void> updateEvents(List<EventType> model) async {
-    var settings = await _patientsSettings();
+    var settings = _patientsSettings();
     // update the default
     await _updateEvents(settings.$default?.eventSettings, model, null);
 
@@ -286,7 +286,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
     print("Patients settings loaded from server");
 
     serverSettings = _upgradeSettings(serverSettings);
-    await save(Account.settings, serverSettings.toJson());
+    save(Account.settings, serverSettings.toJson());
     init = true;
   }
 

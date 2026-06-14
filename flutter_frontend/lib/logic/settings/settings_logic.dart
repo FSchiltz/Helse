@@ -30,7 +30,7 @@ class SettingsLogic extends BaseSettingsLogic {
   SettingsLogic(super.account, super.service);
 
   Future<HealthSettings> getHealth() async {
-    var encoded = await getString(Account.health);
+    var encoded = getString(Account.health);
     if (encoded == null) {
       return HealthSettings(false, false, false);
     }
@@ -38,16 +38,16 @@ class SettingsLogic extends BaseSettingsLogic {
     return HealthSettings.fromJson(json.decode(encoded));
   }
 
-  Future<void> saveHealth(HealthSettings localSettings) async {
-    await save(Account.health, localSettings.toJson());
+  void saveHealth(HealthSettings localSettings) async {
+    save(Account.health, localSettings.toJson());
   }
 
-  Future<InterfaceTheme> getTheme() async {
-    return (await _userSettings()).theme ?? InterfaceTheme.system;
+  InterfaceTheme getTheme() {
+    return (_userSettings()).theme ?? InterfaceTheme.system;
   }
 
   Future<void> saveTheme(InterfaceTheme theme) async {
-    var settings = await _userSettings();
+    var settings = _userSettings();
     await _saveSettings(settings.copyWith(theme: theme), true);
     themebloc.changed(theme);
   }
@@ -56,7 +56,8 @@ class SettingsLogic extends BaseSettingsLogic {
     if (toServer) {
       await service.savePersonSettings(settings);
     }
-    await save(Account.settings, settings.toJson());
+    save(Account.settings, settings.toJson());
+    print("settings saved");
   }
 
   Future<void> loadSettings() async {
@@ -65,16 +66,17 @@ class SettingsLogic extends BaseSettingsLogic {
 
     serverSettings = _upgradeSettings(serverSettings);
 
-    await save(Account.settings, serverSettings.toJson());
+    save(Account.settings, serverSettings.toJson());
     init = true;
-    Dependencies.theme.setColors(await getColors());
+    Dependencies.theme.setColors(getColors());
     metrics.changed(true);
     events.changed(true);
     themebloc.changed(serverSettings.theme ?? InterfaceTheme.system);
   }
 
-  Future<UserSettings> _userSettings() async {
-    var encoded = await getString(Account.settings);
+  UserSettings _userSettings() {
+    var encoded = getString(Account.settings);
+    print("settings loaded");
     if (encoded == null) {
       return UserSettings();
     }
@@ -84,8 +86,8 @@ class SettingsLogic extends BaseSettingsLogic {
     return object;
   }
 
-  Future<MetricSettings> getMetrics() async {
-    return (await _userSettings()).metricSettings ??
+  MetricSettings getMetrics() {
+    return (_userSettings()).metricSettings ??
         MetricSettings(
           displaySettings: [],
           groups: MetricGroupSettings(displaySettings: []),
@@ -93,30 +95,30 @@ class SettingsLogic extends BaseSettingsLogic {
   }
 
   Future<void> saveMetrics(MetricSettings metric, bool toServer) async {
-    var settings = await _userSettings();
+    var settings = _userSettings();
     await _saveSettings(settings.copyWith(metricSettings: metric), toServer);
     metrics.changed(true);
   }
 
-  Future<EventSettings> getEvents() async {
-    return (await _userSettings()).eventSettings ??
+  EventSettings getEvents() {
+    return (_userSettings()).eventSettings ??
         EventSettings(displaySettings: [], displayValueSettings: []);
   }
 
   Future<void> saveEvents(EventSettings events, bool toServer) async {
-    var settings = await _userSettings();
+    var settings = _userSettings();
     await _saveSettings(settings.copyWith(eventSettings: events), toServer);
   }
 
-  Future<void> setLastRun(String run) async {
-    await setString(Account.fitRun, run);
+  void setLastRun(String run) {
+    setString(Account.fitRun, run);
   }
 
-  Future<void> removeLastRun() async {
-    await remove(Account.fitRun);
+  void removeLastRun() {
+    remove(Account.fitRun);
   }
 
-  Future<String?> getLastRun() async {
+  String? getLastRun() {
     return getString(Account.fitRun);
   }
 
@@ -124,7 +126,7 @@ class SettingsLogic extends BaseSettingsLogic {
     Map<StateType, Map<String, Color>> colors, {
     bool toServer = true,
   }) async {
-    var settings = await _userSettings();
+    var settings = _userSettings();
     for (var group in colors.entries) {
       List<OrderedItem>? list;
       switch (group.key) {
@@ -193,8 +195,8 @@ class SettingsLogic extends BaseSettingsLogic {
     Dependencies.theme.setColors(colors);
   }
 
-  Future<Map<StateType, Map<String, Color>>> getColors() async {
-    var settings = await _userSettings();
+  Map<StateType, Map<String, Color>> getColors() {
+    var settings = _userSettings();
 
     Map<StateType, Map<String, Color>> map = {};
     map[StateType.events] = _map(settings.eventSettings?.displaySettings ?? []);
@@ -211,25 +213,25 @@ class SettingsLogic extends BaseSettingsLogic {
     return map;
   }
 
-  Future<void> setHasHistory(bool run) async {
-    await setBool(Account.fitHistory, run);
+  void setHasHistory(bool run) {
+    setBool(Account.fitHistory, run);
   }
 
-  Future<void> setBackgroundAccess(bool authorized) async {
-    await setBool(Account.fitBackground, authorized);
+  void setBackgroundAccess(bool authorized) {
+    setBool(Account.fitBackground, authorized);
   }
 
-  Future<bool?> getHasHistory() async {
-    return await getBool(Account.fitHistory);
+  bool? getHasHistory() {
+    return getBool(Account.fitHistory);
   }
 
   Future<void> setDateRange(DatePreset run, {bool toServer = true}) async {
-    var settings = await _userSettings();
+    var settings = _userSettings();
     await _saveSettings(settings.copyWith(datePreset: run), toServer);
   }
 
-  Future<DatePreset> getDateRange() async {
-    var settings = await _userSettings();
+  DatePreset getDateRange() {
+    var settings = _userSettings();
     return settings.datePreset ?? DatePreset.today;
   }
 
@@ -237,7 +239,7 @@ class SettingsLogic extends BaseSettingsLogic {
     List<MetricType> model,
     List<MetricGroup> groups,
   ) async {
-    var metrics = await getMetrics();
+    var metrics = getMetrics();
     for (var metric in model) {
       var existing = metrics.displaySettings.firstWhereOrNull(
         (element) => element.id == metric.id,
@@ -304,7 +306,7 @@ class SettingsLogic extends BaseSettingsLogic {
   }
 
   Future<void> updateEvents(List<EventType> model) async {
-    var events = await getEvents();
+    var events = getEvents();
     final settings = events.displaySettings;
     for (var event in model) {
       var existing = settings.firstWhereOrNull(

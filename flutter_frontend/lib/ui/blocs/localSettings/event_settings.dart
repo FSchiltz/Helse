@@ -21,11 +21,9 @@ class _EventsSettingsState extends State<EventsSettings> {
   Future<List<OrderedEditItem>> _getData(bool refresh) async {
     EventSettings items;
     if (widget.isPatient) {
-      items = await Dependencies.logics.patientsSettings.getEvents(
-        widget.patient,
-      );
+      items = Dependencies.logics.patientsSettings.getEvents(widget.patient);
     } else {
-      items = await Dependencies.logics.settings.getEvents();
+      items = Dependencies.logics.settings.getEvents();
     }
 
     return items.displaySettings
@@ -51,14 +49,16 @@ class _EventsSettingsState extends State<EventsSettings> {
       var toSave = events.map((e) => e.ordered()).toList();
       // save the user's settings
       if (widget.isPatient) {
-        var settings = await Dependencies.logics.patientsSettings.getEvents(widget.patient);
+        var settings = Dependencies.logics.patientsSettings.getEvents(
+          widget.patient,
+        );
         await Dependencies.logics.patientsSettings.saveEvents(
           settings.copyWith(displaySettings: toSave),
           true,
           widget.patient,
         );
       } else {
-        var settings = await Dependencies.logics.settings.getEvents();
+        var settings = Dependencies.logics.settings.getEvents();
         await Dependencies.logics.settings.saveEvents(
           settings.copyWith(displaySettings: toSave),
           true,

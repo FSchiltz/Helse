@@ -34,9 +34,9 @@ class _MetricGroupDetailState extends State<MetricGroupDetail> {
         MetricSettings settings;
 
         if (widget.person == null) {
-          settings = await Dependencies.logics.settings.getMetrics();
+          settings = Dependencies.logics.settings.getMetrics();
         } else {
-          settings = await Dependencies.logics.patientsSettings.getMetrics(
+          settings = Dependencies.logics.patientsSettings.getMetrics(
             widget.person,
           );
         }

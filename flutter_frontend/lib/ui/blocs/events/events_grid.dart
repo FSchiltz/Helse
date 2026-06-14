@@ -37,9 +37,9 @@ class _EventsGridState extends State<EventsGrid> {
         await Dependencies.logics.patientsSettings.updateEvents(model);
         EventSettings settings;
         if (widget.person == null) {
-          settings = await Dependencies.logics.settings.getEvents();
+          settings = Dependencies.logics.settings.getEvents();
         } else {
-          settings = await Dependencies.logics.patientsSettings.getEvents(
+          settings = Dependencies.logics.patientsSettings.getEvents(
             widget.person,
           );
         }

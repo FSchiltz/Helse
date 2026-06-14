@@ -55,7 +55,7 @@ class _MetricsGridState extends State<MetricsGrid> {
           });
 
           settings =
-              (await Dependencies.logics.settings.getMetrics()).groups ??
+              (Dependencies.logics.settings.getMetrics()).groups ??
               MetricGroupSettings(displaySettings: []);
           // filter using the user settings
         } else {
@@ -64,7 +64,7 @@ class _MetricsGridState extends State<MetricsGrid> {
           });
 
           settings =
-              (await Dependencies.logics.patientsSettings.getMetrics(
+              (Dependencies.logics.patientsSettings.getMetrics(
                 widget.person,
               )).groups ??
               MetricGroupSettings(displaySettings: []);
