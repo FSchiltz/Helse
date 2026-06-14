@@ -12,9 +12,13 @@ public class OrderedItem
 
     public required int Id { get; set; }
 
+    public string? Key { get; set; }
+
     public GraphKind Graph { get; set; }
 
     public GraphKind DetailGraph { get; set; }
 
     public int? Parent { get; set; }
+
+    public long Color { get; set; }
 }
