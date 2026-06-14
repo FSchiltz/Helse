@@ -1,29 +1,30 @@
-using Microsoft.Extensions.Logging.EventLog;
-
 namespace Api.Models.Settings;
 
 public class EventSettings
 {
-    public List<OrderedItem> DisplaySettings { get; set; } = [];
+    public required List<OrderedItem> DisplaySettings { get; set; } = [];
 
-    public List<OrderedItem> DisplayValueSettings { get; set; } = [];
+    public required List<OrderedItem> DisplayValueSettings { get; set; } = [];
 }
 
 public class MetricSettings
 {
-    public List<OrderedItem> DisplaySettings { get; set; } = [];
+    public required List<OrderedItem> DisplaySettings { get; set; } = [];
 
-    public MetricGroupSettings? Groups { get; set; }
+    public MetricGroupSettings Groups { get; set; } = new()
+    {
+        DisplaySettings = [],
+    };
 }
 
 public class MetricGroupSettings
 {
-    public List<OrderedItem> DisplaySettings { get; set; } = [];
+    public required List<OrderedItem> DisplaySettings { get; set; } = [];
 }
 
 public class UserSettings : IJsonSettings
 {
-    public int Version { get; set; }  = 1;
+    public int Version { get; set; } = 1;
 
     public static string Name => "User";
 
@@ -42,9 +43,16 @@ public class UserSettings : IJsonSettings
     [Obsolete]
     public List<OrderedItem> Events { get; set; } = [];
 
-    public EventSettings? EventSettings { get; set; }
+    public EventSettings EventSettings { get; set; } = new()
+    {
+        DisplaySettings = [],
+        DisplayValueSettings = [],
+    };
 
-    public MetricSettings? MetricSettings { get; set; }
+    public MetricSettings MetricSettings { get; set; } = new()
+    {
+        DisplaySettings = [],
+    };
 }
 
 public enum StateType

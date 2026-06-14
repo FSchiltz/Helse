@@ -2069,30 +2069,6 @@
   },
   "components": {
     "schemas": {
-      "ColorValue": {
-        "required": [
-          "key",
-          "type",
-          "value"
-        ],
-        "type": "object",
-        "properties": {
-          "key": {
-            "type": "string"
-          },
-          "type": {
-            "$ref": "#/components/schemas/StateType"
-          },
-          "value": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int64"
-          }
-        }
-      },
       "Connection": {
         "required": [
           "user",
@@ -2491,6 +2467,27 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CountRecord"
+            }
+          }
+        }
+      },
+      "EventSettings": {
+        "required": [
+          "displaySettings",
+          "displayValueSettings"
+        ],
+        "type": "object",
+        "properties": {
+          "displaySettings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderedItem"
+            }
+          },
+          "displayValueSettings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderedItem"
             }
           }
         }
@@ -2954,6 +2951,37 @@
           }
         }
       },
+      "MetricGroupSettings": {
+        "required": [
+          "displaySettings"
+        ],
+        "type": "object",
+        "properties": {
+          "displaySettings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderedItem"
+            }
+          }
+        }
+      },
+      "MetricSettings": {
+        "required": [
+          "displaySettings"
+        ],
+        "type": "object",
+        "properties": {
+          "displaySettings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderedItem"
+            }
+          },
+          "groups": {
+            "$ref": "#/components/schemas/MetricGroupSettings"
+          }
+        }
+      },
       "MetricSummary": {
         "enum": [
           "Latest",
@@ -3123,6 +3151,12 @@
             ],
             "format": "int32"
           },
+          "key": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "graph": {
             "$ref": "#/components/schemas/GraphKind"
           },
@@ -3137,6 +3171,14 @@
               "string"
             ],
             "format": "int32"
+          },
+          "color": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
           }
         }
       },
@@ -3151,6 +3193,14 @@
               "string"
             ],
             "format": "int64"
+          },
+          "version": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
           },
           "datePreset": {
             "$ref": "#/components/schemas/DatePreset"
@@ -3184,11 +3234,11 @@
               "$ref": "#/components/schemas/OrderedItem"
             }
           },
-          "colors": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ColorValue"
-            }
+          "eventSettings": {
+            "$ref": "#/components/schemas/EventSettings"
+          },
+          "metricSettings": {
+            "$ref": "#/components/schemas/MetricSettings"
           }
         }
       },
@@ -3547,15 +3597,6 @@
             ]
           }
         }
-      },
-      "StateType": {
-        "enum": [
-          "events",
-          "eventsValue",
-          "metrics",
-          "metricsGroup",
-          "metricsValue"
-        ]
       },
       "Status": {
         "required": [
@@ -3965,6 +4006,14 @@
       "UserSettings": {
         "type": "object",
         "properties": {
+          "version": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
           "datePreset": {
             "$ref": "#/components/schemas/DatePreset"
           },
@@ -3997,11 +4046,11 @@
               "$ref": "#/components/schemas/OrderedItem"
             }
           },
-          "colors": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ColorValue"
-            }
+          "eventSettings": {
+            "$ref": "#/components/schemas/EventSettings"
+          },
+          "metricSettings": {
+            "$ref": "#/components/schemas/MetricSettings"
           }
         }
       },

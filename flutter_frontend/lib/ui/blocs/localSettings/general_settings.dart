@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/l10n/app_localizations.dart';
+import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:helse/ui/common/color_selector.dart';
 import 'package:helse/ui/common/common_card.dart';
@@ -72,13 +73,13 @@ class _GeneralSettingsState extends State<GeneralSettings> {
         value.entries.map((e) {
           String name = e.key;
           switch (key) {
-            case StateType.metrics:
+            case StateType.metric:
               final id = int.parse(e.key);
               name = metrics.firstWhereOrNull((m) => m.id == id)?.name ?? e.key;
             case StateType.events:
               final id = int.parse(e.key);
               name = events.firstWhereOrNull((m) => m.id == id)?.name ?? e.key;
-            case StateType.metricsgroup:
+            case StateType.metricGroup:
               final id = int.parse(e.key);
               name =
                   metricGroups.firstWhereOrNull((m) => m.id == id)?.name ??

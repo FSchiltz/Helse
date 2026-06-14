@@ -1774,73 +1774,6 @@ abstract class Helseapi extends ChopperService {
 }
 
 @JsonSerializable(explicitToJson: true)
-class ColorValue {
-  const ColorValue({
-    required this.key,
-    required this.type,
-    required this.value,
-  });
-
-  factory ColorValue.fromJson(Map<String, dynamic> json) =>
-      _$ColorValueFromJson(json);
-
-  static const toJsonFactory = _$ColorValueToJson;
-  Map<String, dynamic> toJson() => _$ColorValueToJson(this);
-
-  @JsonKey(name: 'key')
-  final String key;
-  @JsonKey(name: 'type', toJson: stateTypeToJson, fromJson: stateTypeFromJson)
-  final enums.StateType type;
-  @JsonKey(name: 'value')
-  final int value;
-  static const fromJsonFactory = _$ColorValueFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is ColorValue &&
-            (identical(other.key, key) ||
-                const DeepCollectionEquality().equals(other.key, key)) &&
-            (identical(other.type, type) ||
-                const DeepCollectionEquality().equals(other.type, type)) &&
-            (identical(other.value, value) ||
-                const DeepCollectionEquality().equals(other.value, value)));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(key) ^
-      const DeepCollectionEquality().hash(type) ^
-      const DeepCollectionEquality().hash(value) ^
-      runtimeType.hashCode;
-}
-
-extension $ColorValueExtension on ColorValue {
-  ColorValue copyWith({String? key, enums.StateType? type, int? value}) {
-    return ColorValue(
-      key: key ?? this.key,
-      type: type ?? this.type,
-      value: value ?? this.value,
-    );
-  }
-
-  ColorValue copyWithWrapped({
-    Wrapped<String>? key,
-    Wrapped<enums.StateType>? type,
-    Wrapped<int>? value,
-  }) {
-    return ColorValue(
-      key: (key != null ? key.value : this.key),
-      type: (type != null ? type.value : this.type),
-      value: (value != null ? value.value : this.value),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
 class Connection {
   const Connection({
     required this.user,
@@ -2846,6 +2779,77 @@ extension $EventCreationStatsExtension on EventCreationStats {
     return EventCreationStats(
       events: (events != null ? events.value : this.events),
       eventCounts: (eventCounts != null ? eventCounts.value : this.eventCounts),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class EventSettings {
+  const EventSettings({
+    required this.displaySettings,
+    required this.displayValueSettings,
+  });
+
+  factory EventSettings.fromJson(Map<String, dynamic> json) =>
+      _$EventSettingsFromJson(json);
+
+  static const toJsonFactory = _$EventSettingsToJson;
+  Map<String, dynamic> toJson() => _$EventSettingsToJson(this);
+
+  @JsonKey(name: 'displaySettings', defaultValue: <OrderedItem>[])
+  final List<OrderedItem> displaySettings;
+  @JsonKey(name: 'displayValueSettings', defaultValue: <OrderedItem>[])
+  final List<OrderedItem> displayValueSettings;
+  static const fromJsonFactory = _$EventSettingsFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is EventSettings &&
+            (identical(other.displaySettings, displaySettings) ||
+                const DeepCollectionEquality().equals(
+                  other.displaySettings,
+                  displaySettings,
+                )) &&
+            (identical(other.displayValueSettings, displayValueSettings) ||
+                const DeepCollectionEquality().equals(
+                  other.displayValueSettings,
+                  displayValueSettings,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(displaySettings) ^
+      const DeepCollectionEquality().hash(displayValueSettings) ^
+      runtimeType.hashCode;
+}
+
+extension $EventSettingsExtension on EventSettings {
+  EventSettings copyWith({
+    List<OrderedItem>? displaySettings,
+    List<OrderedItem>? displayValueSettings,
+  }) {
+    return EventSettings(
+      displaySettings: displaySettings ?? this.displaySettings,
+      displayValueSettings: displayValueSettings ?? this.displayValueSettings,
+    );
+  }
+
+  EventSettings copyWithWrapped({
+    Wrapped<List<OrderedItem>>? displaySettings,
+    Wrapped<List<OrderedItem>>? displayValueSettings,
+  }) {
+    return EventSettings(
+      displaySettings: (displaySettings != null
+          ? displaySettings.value
+          : this.displaySettings),
+      displayValueSettings: (displayValueSettings != null
+          ? displayValueSettings.value
+          : this.displayValueSettings),
     );
   }
 }
@@ -3973,6 +3977,121 @@ extension $MetricGroupExtension on MetricGroup {
 }
 
 @JsonSerializable(explicitToJson: true)
+class MetricGroupSettings {
+  const MetricGroupSettings({required this.displaySettings});
+
+  factory MetricGroupSettings.fromJson(Map<String, dynamic> json) =>
+      _$MetricGroupSettingsFromJson(json);
+
+  static const toJsonFactory = _$MetricGroupSettingsToJson;
+  Map<String, dynamic> toJson() => _$MetricGroupSettingsToJson(this);
+
+  @JsonKey(name: 'displaySettings', defaultValue: <OrderedItem>[])
+  final List<OrderedItem> displaySettings;
+  static const fromJsonFactory = _$MetricGroupSettingsFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is MetricGroupSettings &&
+            (identical(other.displaySettings, displaySettings) ||
+                const DeepCollectionEquality().equals(
+                  other.displaySettings,
+                  displaySettings,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(displaySettings) ^
+      runtimeType.hashCode;
+}
+
+extension $MetricGroupSettingsExtension on MetricGroupSettings {
+  MetricGroupSettings copyWith({List<OrderedItem>? displaySettings}) {
+    return MetricGroupSettings(
+      displaySettings: displaySettings ?? this.displaySettings,
+    );
+  }
+
+  MetricGroupSettings copyWithWrapped({
+    Wrapped<List<OrderedItem>>? displaySettings,
+  }) {
+    return MetricGroupSettings(
+      displaySettings: (displaySettings != null
+          ? displaySettings.value
+          : this.displaySettings),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class MetricSettings {
+  const MetricSettings({required this.displaySettings, this.groups});
+
+  factory MetricSettings.fromJson(Map<String, dynamic> json) =>
+      _$MetricSettingsFromJson(json);
+
+  static const toJsonFactory = _$MetricSettingsToJson;
+  Map<String, dynamic> toJson() => _$MetricSettingsToJson(this);
+
+  @JsonKey(name: 'displaySettings', defaultValue: <OrderedItem>[])
+  final List<OrderedItem> displaySettings;
+  @JsonKey(name: 'groups')
+  final MetricGroupSettings? groups;
+  static const fromJsonFactory = _$MetricSettingsFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is MetricSettings &&
+            (identical(other.displaySettings, displaySettings) ||
+                const DeepCollectionEquality().equals(
+                  other.displaySettings,
+                  displaySettings,
+                )) &&
+            (identical(other.groups, groups) ||
+                const DeepCollectionEquality().equals(other.groups, groups)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(displaySettings) ^
+      const DeepCollectionEquality().hash(groups) ^
+      runtimeType.hashCode;
+}
+
+extension $MetricSettingsExtension on MetricSettings {
+  MetricSettings copyWith({
+    List<OrderedItem>? displaySettings,
+    MetricGroupSettings? groups,
+  }) {
+    return MetricSettings(
+      displaySettings: displaySettings ?? this.displaySettings,
+      groups: groups ?? this.groups,
+    );
+  }
+
+  MetricSettings copyWithWrapped({
+    Wrapped<List<OrderedItem>>? displaySettings,
+    Wrapped<MetricGroupSettings?>? groups,
+  }) {
+    return MetricSettings(
+      displaySettings: (displaySettings != null
+          ? displaySettings.value
+          : this.displaySettings),
+      groups: (groups != null ? groups.value : this.groups),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class MetricType {
   const MetricType({
     required this.id,
@@ -4438,9 +4557,11 @@ class OrderedItem {
     this.order,
     required this.name,
     required this.id,
+    this.key,
     this.graph,
     this.detailGraph,
     this.parent,
+    this.color,
   });
 
   factory OrderedItem.fromJson(Map<String, dynamic> json) =>
@@ -4459,6 +4580,8 @@ class OrderedItem {
   final String name;
   @JsonKey(name: 'id')
   final int id;
+  @JsonKey(name: 'key')
+  final String? key;
   @JsonKey(
     name: 'graph',
     toJson: graphKindNullableToJson,
@@ -4473,6 +4596,8 @@ class OrderedItem {
   final enums.GraphKind? detailGraph;
   @JsonKey(name: 'parent')
   final int? parent;
+  @JsonKey(name: 'color')
+  final int? color;
   static const fromJsonFactory = _$OrderedItemFromJson;
 
   @override
@@ -4495,6 +4620,8 @@ class OrderedItem {
                 const DeepCollectionEquality().equals(other.name, name)) &&
             (identical(other.id, id) ||
                 const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.key, key) ||
+                const DeepCollectionEquality().equals(other.key, key)) &&
             (identical(other.graph, graph) ||
                 const DeepCollectionEquality().equals(other.graph, graph)) &&
             (identical(other.detailGraph, detailGraph) ||
@@ -4503,7 +4630,9 @@ class OrderedItem {
                   detailGraph,
                 )) &&
             (identical(other.parent, parent) ||
-                const DeepCollectionEquality().equals(other.parent, parent)));
+                const DeepCollectionEquality().equals(other.parent, parent)) &&
+            (identical(other.color, color) ||
+                const DeepCollectionEquality().equals(other.color, color)));
   }
 
   @override
@@ -4516,9 +4645,11 @@ class OrderedItem {
       const DeepCollectionEquality().hash(order) ^
       const DeepCollectionEquality().hash(name) ^
       const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(key) ^
       const DeepCollectionEquality().hash(graph) ^
       const DeepCollectionEquality().hash(detailGraph) ^
       const DeepCollectionEquality().hash(parent) ^
+      const DeepCollectionEquality().hash(color) ^
       runtimeType.hashCode;
 }
 
@@ -4529,9 +4660,11 @@ extension $OrderedItemExtension on OrderedItem {
     int? order,
     String? name,
     int? id,
+    String? key,
     enums.GraphKind? graph,
     enums.GraphKind? detailGraph,
     int? parent,
+    int? color,
   }) {
     return OrderedItem(
       visible: visible ?? this.visible,
@@ -4539,9 +4672,11 @@ extension $OrderedItemExtension on OrderedItem {
       order: order ?? this.order,
       name: name ?? this.name,
       id: id ?? this.id,
+      key: key ?? this.key,
       graph: graph ?? this.graph,
       detailGraph: detailGraph ?? this.detailGraph,
       parent: parent ?? this.parent,
+      color: color ?? this.color,
     );
   }
 
@@ -4551,9 +4686,11 @@ extension $OrderedItemExtension on OrderedItem {
     Wrapped<int?>? order,
     Wrapped<String>? name,
     Wrapped<int>? id,
+    Wrapped<String?>? key,
     Wrapped<enums.GraphKind?>? graph,
     Wrapped<enums.GraphKind?>? detailGraph,
     Wrapped<int?>? parent,
+    Wrapped<int?>? color,
   }) {
     return OrderedItem(
       visible: (visible != null ? visible.value : this.visible),
@@ -4563,9 +4700,11 @@ extension $OrderedItemExtension on OrderedItem {
       order: (order != null ? order.value : this.order),
       name: (name != null ? name.value : this.name),
       id: (id != null ? id.value : this.id),
+      key: (key != null ? key.value : this.key),
       graph: (graph != null ? graph.value : this.graph),
       detailGraph: (detailGraph != null ? detailGraph.value : this.detailGraph),
       parent: (parent != null ? parent.value : this.parent),
+      color: (color != null ? color.value : this.color),
     );
   }
 }
@@ -4574,13 +4713,15 @@ extension $OrderedItemExtension on OrderedItem {
 class PatientSettings {
   const PatientSettings({
     this.patientId,
+    this.version,
     this.datePreset,
     this.theme,
     this.eventWidth,
     this.metrics,
     this.metricGroups,
     this.events,
-    this.colors,
+    this.eventSettings,
+    this.metricSettings,
   });
 
   factory PatientSettings.fromJson(Map<String, dynamic> json) =>
@@ -4591,6 +4732,8 @@ class PatientSettings {
 
   @JsonKey(name: 'patientId')
   final int? patientId;
+  @JsonKey(name: 'version')
+  final int? version;
   @JsonKey(
     name: 'datePreset',
     toJson: datePresetNullableToJson,
@@ -4611,8 +4754,10 @@ class PatientSettings {
   final List<OrderedItem>? metricGroups;
   @JsonKey(name: 'events', defaultValue: <OrderedItem>[])
   final List<OrderedItem>? events;
-  @JsonKey(name: 'colors', defaultValue: <ColorValue>[])
-  final List<ColorValue>? colors;
+  @JsonKey(name: 'eventSettings')
+  final EventSettings? eventSettings;
+  @JsonKey(name: 'metricSettings')
+  final MetricSettings? metricSettings;
   static const fromJsonFactory = _$PatientSettingsFromJson;
 
   @override
@@ -4623,6 +4768,11 @@ class PatientSettings {
                 const DeepCollectionEquality().equals(
                   other.patientId,
                   patientId,
+                )) &&
+            (identical(other.version, version) ||
+                const DeepCollectionEquality().equals(
+                  other.version,
+                  version,
                 )) &&
             (identical(other.datePreset, datePreset) ||
                 const DeepCollectionEquality().equals(
@@ -4648,8 +4798,16 @@ class PatientSettings {
                 )) &&
             (identical(other.events, events) ||
                 const DeepCollectionEquality().equals(other.events, events)) &&
-            (identical(other.colors, colors) ||
-                const DeepCollectionEquality().equals(other.colors, colors)));
+            (identical(other.eventSettings, eventSettings) ||
+                const DeepCollectionEquality().equals(
+                  other.eventSettings,
+                  eventSettings,
+                )) &&
+            (identical(other.metricSettings, metricSettings) ||
+                const DeepCollectionEquality().equals(
+                  other.metricSettings,
+                  metricSettings,
+                )));
   }
 
   @override
@@ -4658,51 +4816,60 @@ class PatientSettings {
   @override
   int get hashCode =>
       const DeepCollectionEquality().hash(patientId) ^
+      const DeepCollectionEquality().hash(version) ^
       const DeepCollectionEquality().hash(datePreset) ^
       const DeepCollectionEquality().hash(theme) ^
       const DeepCollectionEquality().hash(eventWidth) ^
       const DeepCollectionEquality().hash(metrics) ^
       const DeepCollectionEquality().hash(metricGroups) ^
       const DeepCollectionEquality().hash(events) ^
-      const DeepCollectionEquality().hash(colors) ^
+      const DeepCollectionEquality().hash(eventSettings) ^
+      const DeepCollectionEquality().hash(metricSettings) ^
       runtimeType.hashCode;
 }
 
 extension $PatientSettingsExtension on PatientSettings {
   PatientSettings copyWith({
     int? patientId,
+    int? version,
     enums.DatePreset? datePreset,
     enums.InterfaceTheme? theme,
     int? eventWidth,
     List<OrderedItem>? metrics,
     List<OrderedItem>? metricGroups,
     List<OrderedItem>? events,
-    List<ColorValue>? colors,
+    EventSettings? eventSettings,
+    MetricSettings? metricSettings,
   }) {
     return PatientSettings(
       patientId: patientId ?? this.patientId,
+      version: version ?? this.version,
       datePreset: datePreset ?? this.datePreset,
       theme: theme ?? this.theme,
       eventWidth: eventWidth ?? this.eventWidth,
       metrics: metrics ?? this.metrics,
       metricGroups: metricGroups ?? this.metricGroups,
       events: events ?? this.events,
-      colors: colors ?? this.colors,
+      eventSettings: eventSettings ?? this.eventSettings,
+      metricSettings: metricSettings ?? this.metricSettings,
     );
   }
 
   PatientSettings copyWithWrapped({
     Wrapped<int?>? patientId,
+    Wrapped<int?>? version,
     Wrapped<enums.DatePreset?>? datePreset,
     Wrapped<enums.InterfaceTheme?>? theme,
     Wrapped<int?>? eventWidth,
     Wrapped<List<OrderedItem>?>? metrics,
     Wrapped<List<OrderedItem>?>? metricGroups,
     Wrapped<List<OrderedItem>?>? events,
-    Wrapped<List<ColorValue>?>? colors,
+    Wrapped<EventSettings?>? eventSettings,
+    Wrapped<MetricSettings?>? metricSettings,
   }) {
     return PatientSettings(
       patientId: (patientId != null ? patientId.value : this.patientId),
+      version: (version != null ? version.value : this.version),
       datePreset: (datePreset != null ? datePreset.value : this.datePreset),
       theme: (theme != null ? theme.value : this.theme),
       eventWidth: (eventWidth != null ? eventWidth.value : this.eventWidth),
@@ -4711,7 +4878,12 @@ extension $PatientSettingsExtension on PatientSettings {
           ? metricGroups.value
           : this.metricGroups),
       events: (events != null ? events.value : this.events),
-      colors: (colors != null ? colors.value : this.colors),
+      eventSettings: (eventSettings != null
+          ? eventSettings.value
+          : this.eventSettings),
+      metricSettings: (metricSettings != null
+          ? metricSettings.value
+          : this.metricSettings),
     );
   }
 }
@@ -6619,13 +6791,15 @@ extension $UserIdExtension on UserId {
 @JsonSerializable(explicitToJson: true)
 class UserSettings {
   const UserSettings({
+    this.version,
     this.datePreset,
     this.theme,
     this.eventWidth,
     this.metrics,
     this.metricGroups,
     this.events,
-    this.colors,
+    this.eventSettings,
+    this.metricSettings,
   });
 
   factory UserSettings.fromJson(Map<String, dynamic> json) =>
@@ -6634,6 +6808,8 @@ class UserSettings {
   static const toJsonFactory = _$UserSettingsToJson;
   Map<String, dynamic> toJson() => _$UserSettingsToJson(this);
 
+  @JsonKey(name: 'version')
+  final int? version;
   @JsonKey(
     name: 'datePreset',
     toJson: datePresetNullableToJson,
@@ -6654,14 +6830,21 @@ class UserSettings {
   final List<OrderedItem>? metricGroups;
   @JsonKey(name: 'events', defaultValue: <OrderedItem>[])
   final List<OrderedItem>? events;
-  @JsonKey(name: 'colors', defaultValue: <ColorValue>[])
-  final List<ColorValue>? colors;
+  @JsonKey(name: 'eventSettings')
+  final EventSettings? eventSettings;
+  @JsonKey(name: 'metricSettings')
+  final MetricSettings? metricSettings;
   static const fromJsonFactory = _$UserSettingsFromJson;
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is UserSettings &&
+            (identical(other.version, version) ||
+                const DeepCollectionEquality().equals(
+                  other.version,
+                  version,
+                )) &&
             (identical(other.datePreset, datePreset) ||
                 const DeepCollectionEquality().equals(
                   other.datePreset,
@@ -6686,8 +6869,16 @@ class UserSettings {
                 )) &&
             (identical(other.events, events) ||
                 const DeepCollectionEquality().equals(other.events, events)) &&
-            (identical(other.colors, colors) ||
-                const DeepCollectionEquality().equals(other.colors, colors)));
+            (identical(other.eventSettings, eventSettings) ||
+                const DeepCollectionEquality().equals(
+                  other.eventSettings,
+                  eventSettings,
+                )) &&
+            (identical(other.metricSettings, metricSettings) ||
+                const DeepCollectionEquality().equals(
+                  other.metricSettings,
+                  metricSettings,
+                )));
   }
 
   @override
@@ -6695,47 +6886,56 @@ class UserSettings {
 
   @override
   int get hashCode =>
+      const DeepCollectionEquality().hash(version) ^
       const DeepCollectionEquality().hash(datePreset) ^
       const DeepCollectionEquality().hash(theme) ^
       const DeepCollectionEquality().hash(eventWidth) ^
       const DeepCollectionEquality().hash(metrics) ^
       const DeepCollectionEquality().hash(metricGroups) ^
       const DeepCollectionEquality().hash(events) ^
-      const DeepCollectionEquality().hash(colors) ^
+      const DeepCollectionEquality().hash(eventSettings) ^
+      const DeepCollectionEquality().hash(metricSettings) ^
       runtimeType.hashCode;
 }
 
 extension $UserSettingsExtension on UserSettings {
   UserSettings copyWith({
+    int? version,
     enums.DatePreset? datePreset,
     enums.InterfaceTheme? theme,
     int? eventWidth,
     List<OrderedItem>? metrics,
     List<OrderedItem>? metricGroups,
     List<OrderedItem>? events,
-    List<ColorValue>? colors,
+    EventSettings? eventSettings,
+    MetricSettings? metricSettings,
   }) {
     return UserSettings(
+      version: version ?? this.version,
       datePreset: datePreset ?? this.datePreset,
       theme: theme ?? this.theme,
       eventWidth: eventWidth ?? this.eventWidth,
       metrics: metrics ?? this.metrics,
       metricGroups: metricGroups ?? this.metricGroups,
       events: events ?? this.events,
-      colors: colors ?? this.colors,
+      eventSettings: eventSettings ?? this.eventSettings,
+      metricSettings: metricSettings ?? this.metricSettings,
     );
   }
 
   UserSettings copyWithWrapped({
+    Wrapped<int?>? version,
     Wrapped<enums.DatePreset?>? datePreset,
     Wrapped<enums.InterfaceTheme?>? theme,
     Wrapped<int?>? eventWidth,
     Wrapped<List<OrderedItem>?>? metrics,
     Wrapped<List<OrderedItem>?>? metricGroups,
     Wrapped<List<OrderedItem>?>? events,
-    Wrapped<List<ColorValue>?>? colors,
+    Wrapped<EventSettings?>? eventSettings,
+    Wrapped<MetricSettings?>? metricSettings,
   }) {
     return UserSettings(
+      version: (version != null ? version.value : this.version),
       datePreset: (datePreset != null ? datePreset.value : this.datePreset),
       theme: (theme != null ? theme.value : this.theme),
       eventWidth: (eventWidth != null ? eventWidth.value : this.eventWidth),
@@ -6744,7 +6944,12 @@ extension $UserSettingsExtension on UserSettings {
           ? metricGroups.value
           : this.metricGroups),
       events: (events != null ? events.value : this.events),
-      colors: (colors != null ? colors.value : this.colors),
+      eventSettings: (eventSettings != null
+          ? eventSettings.value
+          : this.eventSettings),
+      metricSettings: (metricSettings != null
+          ? metricSettings.value
+          : this.metricSettings),
     );
   }
 }
@@ -7320,68 +7525,6 @@ List<enums.RightType>? rightTypeNullableListFromJson(
   }
 
   return rightType.map((e) => rightTypeFromJson(e.toString())).toList();
-}
-
-String? stateTypeNullableToJson(enums.StateType? stateType) {
-  return stateType?.value;
-}
-
-String? stateTypeToJson(enums.StateType stateType) {
-  return stateType.value;
-}
-
-enums.StateType stateTypeFromJson(
-  Object? stateType, [
-  enums.StateType? defaultValue,
-]) {
-  return enums.StateType.values.firstWhereOrNull((e) => e.value == stateType) ??
-      defaultValue ??
-      enums.StateType.swaggerGeneratedUnknown;
-}
-
-enums.StateType? stateTypeNullableFromJson(
-  Object? stateType, [
-  enums.StateType? defaultValue,
-]) {
-  if (stateType == null) {
-    return null;
-  }
-  return enums.StateType.values.firstWhereOrNull((e) => e.value == stateType) ??
-      defaultValue;
-}
-
-String stateTypeExplodedListToJson(List<enums.StateType>? stateType) {
-  return stateType?.map((e) => e.value!).join(',') ?? '';
-}
-
-List<String> stateTypeListToJson(List<enums.StateType>? stateType) {
-  if (stateType == null) {
-    return [];
-  }
-
-  return stateType.map((e) => e.value!).toList();
-}
-
-List<enums.StateType> stateTypeListFromJson(
-  List? stateType, [
-  List<enums.StateType>? defaultValue,
-]) {
-  if (stateType == null) {
-    return defaultValue ?? [];
-  }
-
-  return stateType.map((e) => stateTypeFromJson(e.toString())).toList();
-}
-
-List<enums.StateType>? stateTypeNullableListFromJson(
-  List? stateType, [
-  List<enums.StateType>? defaultValue,
-]) {
-  if (stateType == null) {
-    return defaultValue;
-  }
-
-  return stateType.map((e) => stateTypeFromJson(e.toString())).toList();
 }
 
 String? unitTypeNullableToJson(enums.UnitType? unitType) {

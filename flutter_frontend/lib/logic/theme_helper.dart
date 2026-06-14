@@ -2,7 +2,16 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
-import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
+
+enum StateType { events, metric, eventValue, metricGroup }
+
+class ColorValue {
+  final String key;
+  final Color value;
+  final StateType type;
+
+  ColorValue({required this.key, required this.value, required this.type});
+}
 
 class ThemeHelper {
   final Map<StateType, Map<String, Color>> colors = {};

@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/logic/theme_helper.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -109,7 +110,7 @@ class EventTimeline extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Dependencies.theme.stateColor(
                   entry.key,
-                  StateType.eventsvalue,
+                  StateType.eventValue,
                   context,
                 ),
               ),

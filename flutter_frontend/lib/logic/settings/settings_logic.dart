@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/settings/health_settings.dart';
+import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/setting_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -69,7 +70,7 @@ class SettingsLogic {
   }
 
   Future<void> _saveSettings(UserSettings settings, bool toServer) async {
-    if (toServer) {     
+    if (toServer) {
       await service.savePersonSettings(settings);
     }
 
@@ -79,6 +80,8 @@ class SettingsLogic {
   Future<void> loadSettings() async {
     var serverSettings = await service.getPersonSettings();
     print("Settings loaded from server");
+
+    serverSettings = _upgradeSettings(serverSettings);
 
     (await storage).setString(
       Account.settings,
@@ -139,37 +142,90 @@ class SettingsLogic {
     bool toServer = true,
   }) async {
     var settings = await _userSettings();
-    List<ColorValue> flat = [];
     for (var group in colors.entries) {
-      for (var entry in group.value.entries) {
-        flat.add(
-          ColorValue(
-            key: entry.key,
-            type: group.key,
-            value: entry.value.toARGB32(),
-          ),
-        );
+      List<OrderedItem>? list;
+      switch (group.key) {
+        case StateType.events:
+          list = settings.eventSettings?.displaySettings;
+          if (list == null) {
+            list = [];
+            settings = settings.copyWith(
+              eventSettings: EventSettings(
+                displaySettings: list,
+                displayValueSettings: [],
+              ),
+            );
+          }
+        case StateType.metric:
+          list = settings.metricSettings?.displaySettings;
+          if (list == null) {
+            list = [];
+            settings = settings.copyWith(
+              metricSettings: MetricSettings(
+                displaySettings: list,
+                groups: MetricGroupSettings(displaySettings: []),
+              ),
+            );
+          }
+        case StateType.eventValue:
+          list = settings.eventSettings?.displayValueSettings;
+          if (list == null) {
+            list = [];
+            settings = settings.copyWith(
+              eventSettings: EventSettings(
+                displaySettings: [],
+                displayValueSettings: list,
+              ),
+            );
+          }
+        case StateType.metricGroup:
+          list = settings.metricSettings?.groups?.displaySettings;
+          if (list == null) {
+            list = [];
+            settings = settings.copyWith(
+              metricSettings: MetricSettings(
+                displaySettings: [],
+                groups: MetricGroupSettings(displaySettings: list),
+              ),
+            );
+          }
       }
+      final newList = <OrderedItem>[];
+      for (var entry in list) {
+        // update the correct map
+        var color = group.value.entries.firstWhereOrNull(
+          (e) => e.key == (entry.key ?? entry.id.toString()),
+        );
+        if (color != null) {
+          entry = entry.copyWith(color: color.value.toARGB32());
+        }
+        newList.add(entry);
+      }
+      list.clear();
+      list.addAll(newList);
     }
 
-    var copy = settings.copyWith(colors: flat);
-    await _saveSettings(copy, toServer);
+    await _saveSettings(settings, toServer);
 
     Dependencies.theme.setColors(colors);
   }
 
   Future<Map<StateType, Map<String, Color>>> getColors() async {
-    var colors = (await _userSettings()).colors;
-    if (colors == null) {
-      return {};
-    }
+    var settings = await _userSettings();
 
-    return colors.groupFoldBy(
-      (e) => e.type,
-      (previous, element) =>
-          (previous ?? {})
-            ..putIfAbsent(element.key, () => Color(element.value)),
+    Map<StateType, Map<String, Color>> map = {};
+    map[StateType.events] = _map(settings.eventSettings?.displaySettings ?? []);
+    map[StateType.eventValue] = _map(
+      settings.eventSettings?.displayValueSettings ?? [],
     );
+    map[StateType.metric] = _map(
+      settings.metricSettings?.displaySettings ?? [],
+    );
+    map[StateType.metricGroup] = _map(
+      settings.metricSettings?.groups?.displaySettings ?? [],
+    );
+
+    return map;
   }
 
   Future<void> setHasHistory(bool run) async {
@@ -330,5 +386,37 @@ class SettingsLogic {
     }
 
     await saveMetricGroups(newMetrics, false);
+  }
+
+  Map<String, Color> _map(List<OrderedItem> settings) {
+    final Map<String, Color> map = {};
+    for (var item in settings) {
+      final color = item.color;
+      if (color != null) {
+        map.putIfAbsent(item.key ?? item.id.toString(), () => Color(color));
+      }
+    }
+    return map;
+  }
+
+  UserSettings _upgradeSettings(UserSettings settings) {
+    final version = settings.version ?? 0;
+    if (version == 0) {
+      // upgrade to version 1
+      settings = settings.copyWith(
+        eventSettings: EventSettings(
+          displaySettings: settings.events ?? [],
+          displayValueSettings: [],
+        ),
+        metricSettings: MetricSettings(
+          displaySettings: settings.metrics ?? [],
+          groups: MetricGroupSettings(
+            displaySettings: settings.metricGroups ?? [],
+          ),
+        ),
+      );
+    }
+    
+    return settings;
   }
 }
