@@ -31,10 +31,12 @@ class AuthenticationLogic {
 
   /// Check if the user is logged in
   Future<bool> checkLogin() async {
-   await SettingsMigration(account).migrate();
+    await SettingsMigration(account).migrate();
     var token = (await account.getToken())?.refreshToken;
     if (token != null && token.isNotEmpty && !JwtDecoder.isExpired(token)) {
-      _controller.add(AuthenticationStatus.authenticated);await _load();
+      await _load();
+      _controller.add(AuthenticationStatus.authenticated);
+
       return true;
     }
 
@@ -222,10 +224,10 @@ class AuthenticationLogic {
     var isLogged = await checkLogin();
     return grant == null && !isLogged;
   }
-  
+
   Future<void> _load() async {
     // do here any loading that needs to occur when a user loads but before rendering
-      await Dependencies.logics.settings.loadSettings();
-      await Dependencies.logics.patientsSettings.loadSettings();
+    await Dependencies.logics.settings.loadSettings();
+    await Dependencies.logics.patientsSettings.loadSettings();
   }
 }
