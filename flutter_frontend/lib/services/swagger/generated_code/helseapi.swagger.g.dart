@@ -601,7 +601,6 @@ PatientSettings _$PatientSettingsFromJson(
   version: (json['version'] as num?)?.toInt(),
   datePreset: datePresetNullableFromJson(json['datePreset']),
   theme: interfaceThemeNullableFromJson(json['theme']),
-  eventWidth: (json['eventWidth'] as num?)?.toInt(),
   metrics:
       (json['metrics'] as List<dynamic>?)
           ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
@@ -631,7 +630,6 @@ Map<String, dynamic> _$PatientSettingsToJson(PatientSettings instance) =>
       'version': instance.version,
       'datePreset': datePresetNullableToJson(instance.datePreset),
       'theme': interfaceThemeNullableToJson(instance.theme),
-      'eventWidth': instance.eventWidth,
       'metrics': instance.metrics?.map((e) => e.toJson()).toList(),
       'metricGroups': instance.metricGroups?.map((e) => e.toJson()).toList(),
       'events': instance.events?.map((e) => e.toJson()).toList(),
@@ -641,6 +639,7 @@ Map<String, dynamic> _$PatientSettingsToJson(PatientSettings instance) =>
 
 PatientsSettings _$PatientsSettingsFromJson(Map<String, dynamic> json) =>
     PatientsSettings(
+      version: (json['version'] as num?)?.toInt(),
       $default: json['default'] == null
           ? null
           : PatientSettings.fromJson(json['default'] as Map<String, dynamic>),
@@ -653,6 +652,7 @@ PatientsSettings _$PatientsSettingsFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$PatientsSettingsToJson(PatientsSettings instance) =>
     <String, dynamic>{
+      'version': instance.version,
       'default': instance.$default?.toJson(),
       'patients': instance.patients?.map((e) => e.toJson()).toList(),
     };
@@ -997,7 +997,6 @@ UserSettings _$UserSettingsFromJson(Map<String, dynamic> json) => UserSettings(
   version: (json['version'] as num?)?.toInt(),
   datePreset: datePresetNullableFromJson(json['datePreset']),
   theme: interfaceThemeNullableFromJson(json['theme']),
-  eventWidth: (json['eventWidth'] as num?)?.toInt(),
   metrics:
       (json['metrics'] as List<dynamic>?)
           ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
@@ -1026,7 +1025,6 @@ Map<String, dynamic> _$UserSettingsToJson(UserSettings instance) =>
       'version': instance.version,
       'datePreset': datePresetNullableToJson(instance.datePreset),
       'theme': interfaceThemeNullableToJson(instance.theme),
-      'eventWidth': instance.eventWidth,
       'metrics': instance.metrics?.map((e) => e.toJson()).toList(),
       'metricGroups': instance.metricGroups?.map((e) => e.toJson()).toList(),
       'events': instance.events?.map((e) => e.toJson()).toList(),

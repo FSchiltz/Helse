@@ -34,8 +34,7 @@ class AuthenticationLogic {
    await SettingsMigration(account).migrate();
     var token = (await account.getToken())?.refreshToken;
     if (token != null && token.isNotEmpty && !JwtDecoder.isExpired(token)) {
-      _controller.add(AuthenticationStatus.authenticated);
-      await Dependencies.logics.settings.loadSettings();
+      _controller.add(AuthenticationStatus.authenticated);await _load();
       return true;
     }
 
@@ -59,7 +58,7 @@ class AuthenticationLogic {
       await account.remove(Account.grant);
 
       // todo add a bloc for the settings and load async
-      await Dependencies.logics.settings.loadSettings();
+      await _load();
       _controller.add(AuthenticationStatus.authenticated);
     } else {
       _controller.add(AuthenticationStatus.unauthenticated);
@@ -222,5 +221,11 @@ class AuthenticationLogic {
     var grant = await getGrant();
     var isLogged = await checkLogin();
     return grant == null && !isLogged;
+  }
+  
+  Future<void> _load() async {
+    // do here any loading that needs to occur when a user loads but before rendering
+      await Dependencies.logics.settings.loadSettings();
+      await Dependencies.logics.patientsSettings.loadSettings();
   }
 }

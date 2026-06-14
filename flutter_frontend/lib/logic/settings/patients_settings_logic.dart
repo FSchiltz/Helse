@@ -1,19 +1,15 @@
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
-import 'package:helse/services/setting_service.dart';
+import 'package:helse/logic/settings/base_settings_logic.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../services/account.dart';
 
-class PatientsSettingsLogic {
-  static final storage = SharedPreferences.getInstance();
-  final Account account;
-  final SettingService service;
+class PatientsSettingsLogic extends BaseSettingsLogic {
   bool init = false;
 
-  PatientsSettingsLogic(this.account, this.service);
+  PatientsSettingsLogic(super.account, super.service);
 
   Future<void> _savePatientsSettings(
     PatientSettings settings,
@@ -36,47 +32,35 @@ class PatientsSettingsLogic {
       await service.savePatientsSettings(full);
     }
 
-    (await storage).setString(Account.patients, json.encode(full.toJson()));
+    await save(Account.patients, full.toJson());
   }
 
   Future<void> saveMetrics(
-    List<OrderedItem> metric,
+    MetricSettings metric,
     bool toServer,
     int? person,
   ) async {
     var settings = await _patientSettings(person);
     await _savePatientsSettings(
-      settings.copyWith(metrics: metric, patientId: person),
-      toServer,
-    );
-  }
-
-  Future<void> saveMetricGroups(
-    List<OrderedItem> metric,
-    bool toServer,
-    int? person,
-  ) async {
-    var settings = await _patientSettings(person);
-    await _savePatientsSettings(
-      settings.copyWith(metricGroups: metric, patientId: person),
+      settings.copyWith(metricSettings: metric, patientId: person),
       toServer,
     );
   }
 
   Future<void> saveEvents(
-    List<OrderedItem> events,
+    EventSettings events,
     bool toServer,
     int? person,
   ) async {
     var settings = await _patientSettings(person);
     await _savePatientsSettings(
-      settings.copyWith(events: events, patientId: person),
+      settings.copyWith(eventSettings: events, patientId: person),
       toServer,
     );
   }
 
   Future<PatientsSettings> _patientsSettings() async {
-    var encoded = (await storage).getString(Account.patients);
+    var encoded = await getString(Account.patients);
     if (encoded == null) {
       return PatientsSettings();
     }
@@ -98,16 +82,14 @@ class PatientsSettingsLogic {
     return specificSettings ?? object.$default ?? PatientSettings();
   }
 
-  Future<List<OrderedItem>> getMetrics(int? person) async {
-    return (await _patientSettings(person)).metrics ?? [];
+  Future<MetricSettings> getMetrics(int? person) async {
+    return (await _patientSettings(person)).metricSettings ??
+        MetricSettings(displaySettings: []);
   }
 
-  Future<List<OrderedItem>> getEvents(int? person) async {
-    return (await _patientSettings(person)).events ?? [];
-  }
-
-  Future<List<OrderedItem>> getMetricGroups(int? person) async {
-    return (await _patientSettings(person)).metricGroups ?? [];
+  Future<EventSettings> getEvents(int? person) async {
+    return (await _patientSettings(person)).eventSettings ??
+        EventSettings(displaySettings: [], displayValueSettings: []);
   }
 
   Future<void> setDateRange(DatePreset run, int person) async {
@@ -147,15 +129,28 @@ class PatientsSettingsLogic {
     );
   }
 
-  Future<void> updateMetrics(List<MetricType> model) async {
+  Future<void> updateMetrics(
+    List<MetricType> model,
+    List<MetricGroup> groups,
+  ) async {
     var settings = await _patientsSettings();
     // update the default
-    await _updateMetrics(settings.$default?.metrics ?? [], model, null);
+    await _updateMetrics(
+      settings.$default?.metricSettings,
+      model,
+      groups,
+      null,
+    );
 
     var patients = settings.patients;
     if (patients != null) {
       for (var patient in patients) {
-        await _updateMetrics(patient.metrics ?? [], model, patient.patientId);
+        await _updateMetrics(
+          patient.metricSettings,
+          model,
+          groups,
+          patient.patientId,
+        );
       }
     }
   }
@@ -163,50 +158,31 @@ class PatientsSettingsLogic {
   Future<void> updateEvents(List<EventType> model) async {
     var settings = await _patientsSettings();
     // update the default
-    await _updateEvents(settings.$default?.events ?? [], model, null);
+    await _updateEvents(settings.$default?.eventSettings, model, null);
 
     var patients = settings.patients;
     if (patients != null) {
       for (var patient in patients) {
-        await _updateEvents(patient.events ?? [], model, patient.patientId);
-      }
-    }
-  }
-
-  Future<void> updateMetricGroups(List<MetricGroup> model) async {
-    var settings = await _patientsSettings();
-    // update the default
-    await _updateMetricGroups(
-      settings.$default?.metricGroups ?? [],
-      model,
-      null,
-    );
-
-    var patients = settings.patients;
-    if (patients != null) {
-      for (var patient in patients) {
-        await _updateMetricGroups(
-          patient.metricGroups ?? [],
-          model,
-          patient.patientId,
-        );
+        await _updateEvents(patient.eventSettings, model, patient.patientId);
       }
     }
   }
 
   Future<void> _updateMetrics(
-    List<OrderedItem> metrics,
+    MetricSettings? metrics,
     List<MetricType> model,
+    List<MetricGroup> groups,
     int? patient,
   ) async {
+    metrics ??= MetricSettings(displaySettings: []);
     for (var metric in model) {
-      var existing = metrics.firstWhereOrNull(
+      var existing = metrics.displaySettings.firstWhereOrNull(
         (element) => element.id == metric.id,
       );
       if (existing != null) {
-        metrics.removeWhere((x) => x.id == metric.id);
+        metrics.displaySettings.removeWhere((x) => x.id == metric.id);
         // already there, just update the name
-        metrics.add(
+        metrics.displaySettings.add(
           OrderedItem(
             name: metric.name,
             detailGraph: existing.detailGraph,
@@ -219,65 +195,22 @@ class PatientsSettingsLogic {
           ),
         );
       } else {
-        metrics.add(getDefault(metric));
+        metrics.displaySettings.add(getDefault(metric));
       }
     }
 
-    await saveMetrics(metrics, false, patient);
-  }
+    final groupSetting =
+        metrics.groups ?? MetricGroupSettings(displaySettings: []);
 
-  Future<void> _updateEvents(
-    List<OrderedItem> events,
-    List<EventType> model,
-    int? patient,
-  ) async {
-    List<OrderedItem> newEvents = [];
-    for (var event in model) {
-      var existing = events.firstWhereOrNull(
-        (element) => element.id == event.id,
-      );
-      if (existing != null) {
-        // already there, just update the name
-        newEvents.add(
-          OrderedItem(
-            name: event.name,
-            detailGraph: existing.detailGraph,
-            graph: existing.graph,
-            id: existing.id,
-            order: existing.order,
-            visible: existing.visible,
-            showOnDashboard: existing.showOnDashboard,
-          ),
-        );
-      } else {
-        newEvents.add(
-          OrderedItem(
-            id: event.id,
-            name: event.name,
-            graph: GraphKind.text,
-            detailGraph: GraphKind.text,
-            visible: event.visible,
-            showOnDashboard: true,
-          ),
-        );
-      }
-    }
-    await saveEvents(newEvents, false, patient);
-  }
+    metrics = metrics.copyWith(groups: groupSetting);
 
-  Future<void> _updateMetricGroups(
-    List<OrderedItem> metrics,
-    List<MetricGroup> model,
-    int? patient,
-  ) async {
-    List<OrderedItem> newMetrics = [];
-    for (var metric in model) {
-      var existing = metrics.firstWhereOrNull(
+    for (var metric in groups) {
+      var existing = groupSetting.displaySettings.firstWhereOrNull(
         (element) => element.id == metric.id,
       );
       if (existing != null) {
         // already there, just update the name
-        newMetrics.add(
+        groupSetting.displaySettings.add(
           OrderedItem(
             name: metric.name,
             id: existing.id,
@@ -290,7 +223,7 @@ class PatientsSettingsLogic {
         );
       } else {
         if (metric.id != null) {
-          newMetrics.add(
+          groupSetting.displaySettings.add(
             OrderedItem(
               id: metric.id!,
               name: metric.name,
@@ -304,6 +237,96 @@ class PatientsSettingsLogic {
       }
     }
 
-    await saveMetricGroups(newMetrics, false, patient);
+    await saveMetrics(metrics, false, patient);
+  }
+
+  Future<void> _updateEvents(
+    EventSettings? events,
+    List<EventType> model,
+    int? patient,
+  ) async {
+    events ??= EventSettings(displaySettings: [], displayValueSettings: []);
+    final settings = events.displaySettings;
+    for (var event in model) {
+      var existing = settings.firstWhereOrNull(
+        (element) => element.id == event.id,
+      );
+      if (existing != null) {
+        // already there, just update the name
+        events.displaySettings.add(
+          OrderedItem(
+            name: event.name,
+            detailGraph: existing.detailGraph,
+            graph: existing.graph,
+            id: existing.id,
+            order: existing.order,
+            visible: existing.visible,
+            showOnDashboard: existing.showOnDashboard,
+          ),
+        );
+      } else {
+        events.displaySettings.add(
+          OrderedItem(
+            id: event.id,
+            name: event.name,
+            graph: GraphKind.text,
+            detailGraph: GraphKind.text,
+            visible: event.visible,
+            showOnDashboard: true,
+          ),
+        );
+      }
+    }
+
+    await saveEvents(events, false, patient);
+  }
+
+  Future<void> loadSettings() async {
+    var serverSettings = await service.getPatientsSettings();
+    print("Patients settings loaded from server");
+
+    serverSettings = _upgradeSettings(serverSettings);
+    await save(Account.settings, serverSettings.toJson());
+    init = true;
+  }
+
+  PatientsSettings _upgradeSettings(PatientsSettings settings) {
+    final version = settings.version ?? 0;
+    if (version < 2) {
+      // upgrade to version 2
+      final base = settings.$default;
+      final patients = settings.patients;
+
+      settings = settings.copyWith(
+        version: 2,
+        $default: (base == null) ? null : _upgradeSetting(base, version),
+        patients: (patients == null)
+            ? null
+            : patients.map((e) => _upgradeSetting(e, version)).toList(),
+      );
+    }
+
+    return settings;
+  }
+
+  PatientSettings _upgradeSetting(PatientSettings settings, int version) {
+    if (version < 2) {
+      // upgrade to version 2
+      settings = settings.copyWith(
+        version: 2,
+        eventSettings: EventSettings(
+          displaySettings: settings.events ?? [],
+          displayValueSettings: [],
+        ),
+        metricSettings: MetricSettings(
+          displaySettings: settings.metrics ?? [],
+          groups: MetricGroupSettings(
+            displaySettings: settings.metricGroups ?? [],
+          ),
+        ),
+      );
+    }
+
+    return settings;
   }
 }

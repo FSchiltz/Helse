@@ -8,25 +8,27 @@ import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/statefull_check.dart';
 
-class EventSettings extends StatefulWidget {
+class EventsSettings extends StatefulWidget {
   final bool isPatient;
   final int? patient;
-  const EventSettings({super.key, this.isPatient = false, this.patient});
+  const EventsSettings({super.key, this.isPatient = false, this.patient});
 
   @override
-  State<EventSettings> createState() => _EventSettingsState();
+  State<EventsSettings> createState() => _EventsSettingsState();
 }
 
-class _EventSettingsState extends State<EventSettings> {
+class _EventsSettingsState extends State<EventsSettings> {
   Future<List<OrderedEditItem>> _getData(bool refresh) async {
-    List<OrderedItem> items;
+    EventSettings items;
     if (widget.isPatient) {
-      items = await Dependencies.logics.patientsSettings.getEvents(widget.patient);
+      items = await Dependencies.logics.patientsSettings.getEvents(
+        widget.patient,
+      );
     } else {
       items = await Dependencies.logics.settings.getEvents();
     }
 
-    return items
+    return items.displaySettings
         .map(
           (e) => OrderedEditItem(
             visible: e.visible ?? true,
@@ -49,9 +51,18 @@ class _EventSettingsState extends State<EventSettings> {
       var toSave = events.map((e) => e.ordered()).toList();
       // save the user's settings
       if (widget.isPatient) {
-        await Dependencies.logics.patientsSettings.saveEvents(toSave, true, widget.patient);
+        var settings = await Dependencies.logics.patientsSettings.getEvents(widget.patient);
+        await Dependencies.logics.patientsSettings.saveEvents(
+          settings.copyWith(displaySettings: toSave),
+          true,
+          widget.patient,
+        );
       } else {
-        await Dependencies.logics.settings.saveEvents(toSave, true);
+        var settings = await Dependencies.logics.settings.getEvents();
+        await Dependencies.logics.settings.saveEvents(
+          settings.copyWith(displaySettings: toSave),
+          true,
+        );
       }
 
       Notify.show(locale.saved);

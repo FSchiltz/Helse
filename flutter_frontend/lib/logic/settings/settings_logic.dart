@@ -4,11 +4,10 @@ import 'dart:ui';
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/logic/settings/base_settings_logic.dart';
 import 'package:helse/logic/settings/health_settings.dart';
 import 'package:helse/logic/theme_helper.dart';
-import 'package:helse/services/setting_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../services/account.dart';
 
@@ -20,21 +19,18 @@ class SettingsBloc<T> extends Cubit<T> {
   }
 }
 
-class SettingsLogic {
-  static final storage = SharedPreferences.getInstance();
-  final Account account;
+class SettingsLogic extends BaseSettingsLogic {
   final SettingsBloc<InterfaceTheme> themebloc = SettingsBloc(
     InterfaceTheme.system,
   );
   final SettingsBloc<bool> events = SettingsBloc(false);
   final SettingsBloc<bool> metrics = SettingsBloc(false);
-  final SettingService service;
   bool init = false;
 
-  SettingsLogic(this.account, this.service);
+  SettingsLogic(super.account, super.service);
 
   Future<HealthSettings> getHealth() async {
-    var encoded = (await storage).getString(Account.health);
+    var encoded = await getString(Account.health);
     if (encoded == null) {
       return HealthSettings(false, false, false);
     }
@@ -43,10 +39,7 @@ class SettingsLogic {
   }
 
   Future<void> saveHealth(HealthSettings localSettings) async {
-    await (await storage).setString(
-      Account.health,
-      json.encode(localSettings.toJson()),
-    );
+    await save(Account.health, localSettings.toJson());
   }
 
   Future<InterfaceTheme> getTheme() async {
@@ -55,17 +48,7 @@ class SettingsLogic {
 
   Future<void> saveTheme(InterfaceTheme theme) async {
     var settings = await _userSettings();
-    await _saveSettings(
-      UserSettings(
-        eventWidth: settings.eventWidth ?? 0,
-        events: settings.events,
-        metricGroups: settings.metricGroups,
-        metrics: settings.metrics,
-        theme: theme,
-        datePreset: settings.datePreset ?? DatePreset.today,
-      ),
-      true,
-    );
+    await _saveSettings(settings.copyWith(theme: theme), true);
     themebloc.changed(theme);
   }
 
@@ -73,8 +56,7 @@ class SettingsLogic {
     if (toServer) {
       await service.savePersonSettings(settings);
     }
-
-    (await storage).setString(Account.settings, json.encode(settings.toJson()));
+    await save(Account.settings, settings.toJson());
   }
 
   Future<void> loadSettings() async {
@@ -83,10 +65,7 @@ class SettingsLogic {
 
     serverSettings = _upgradeSettings(serverSettings);
 
-    (await storage).setString(
-      Account.settings,
-      json.encode(serverSettings.toJson()),
-    );
+    await save(Account.settings, serverSettings.toJson());
     init = true;
     Dependencies.theme.setColors(await getColors());
     metrics.changed(true);
@@ -95,46 +74,50 @@ class SettingsLogic {
   }
 
   Future<UserSettings> _userSettings() async {
-    var encoded = (await storage).getString(Account.settings);
+    var encoded = await getString(Account.settings);
     if (encoded == null) {
       return UserSettings();
     }
 
     var map = json.decode(encoded) as Map<String, Object?>;
     var object = UserSettings.fromJson(map);
-
     return object;
   }
 
-  Future<List<OrderedItem>> getMetrics() async {
-    return (await _userSettings()).metrics ?? [];
+  Future<MetricSettings> getMetrics() async {
+    return (await _userSettings()).metricSettings ??
+        MetricSettings(
+          displaySettings: [],
+          groups: MetricGroupSettings(displaySettings: []),
+        );
   }
 
-  Future<void> saveMetrics(List<OrderedItem> metric, bool toServer) async {
+  Future<void> saveMetrics(MetricSettings metric, bool toServer) async {
     var settings = await _userSettings();
-    await _saveSettings(settings.copyWith(metrics: metric), toServer);
+    await _saveSettings(settings.copyWith(metricSettings: metric), toServer);
     metrics.changed(true);
   }
 
-  Future<List<OrderedItem>> getEvents() async {
-    return (await _userSettings()).events ?? [];
+  Future<EventSettings> getEvents() async {
+    return (await _userSettings()).eventSettings ??
+        EventSettings(displaySettings: [], displayValueSettings: []);
   }
 
-  Future<void> saveEvents(List<OrderedItem> events, bool toServer) async {
+  Future<void> saveEvents(EventSettings events, bool toServer) async {
     var settings = await _userSettings();
-    await _saveSettings(settings.copyWith(events: events), toServer);
+    await _saveSettings(settings.copyWith(eventSettings: events), toServer);
   }
 
   Future<void> setLastRun(String run) async {
-    await (await storage).setString(Account.fitRun, run);
+    await setString(Account.fitRun, run);
   }
 
   Future<void> removeLastRun() async {
-    await (await storage).remove(Account.fitRun);
+    await remove(Account.fitRun);
   }
 
   Future<String?> getLastRun() async {
-    return (await storage).getString(Account.fitRun);
+    return getString(Account.fitRun);
   }
 
   Future<void> setColors(
@@ -229,15 +212,15 @@ class SettingsLogic {
   }
 
   Future<void> setHasHistory(bool run) async {
-    await (await storage).setBool(Account.fitHistory, run);
+    await setBool(Account.fitHistory, run);
   }
 
   Future<void> setBackgroundAccess(bool authorized) async {
-    await (await storage).setBool(Account.fitBackground, authorized);
+    await setBool(Account.fitBackground, authorized);
   }
 
   Future<bool?> getHasHistory() async {
-    return (await storage).getBool(Account.fitHistory);
+    return await getBool(Account.fitHistory);
   }
 
   Future<void> setDateRange(DatePreset run, {bool toServer = true}) async {
@@ -250,16 +233,19 @@ class SettingsLogic {
     return settings.datePreset ?? DatePreset.today;
   }
 
-  Future<void> updateMetrics(List<MetricType> model) async {
+  Future<void> updateMetrics(
+    List<MetricType> model,
+    List<MetricGroup> groups,
+  ) async {
     var metrics = await getMetrics();
     for (var metric in model) {
-      var existing = metrics.firstWhereOrNull(
+      var existing = metrics.displaySettings.firstWhereOrNull(
         (element) => element.id == metric.id,
       );
       if (existing != null) {
-        metrics.removeWhere((x) => x.id == metric.id);
+        metrics.displaySettings.removeWhere((x) => x.id == metric.id);
         // already there, just update the name
-        metrics.add(
+        metrics.displaySettings.add(
           OrderedItem(
             name: metric.name,
             detailGraph: existing.detailGraph,
@@ -272,7 +258,45 @@ class SettingsLogic {
           ),
         );
       } else {
-        metrics.add(getDefault(metric));
+        metrics.displaySettings.add(getDefault(metric));
+      }
+    }
+
+    final groupSetting =
+        metrics.groups ?? MetricGroupSettings(displaySettings: []);
+
+    metrics = metrics.copyWith(groups: groupSetting);
+
+    for (var metric in groups) {
+      var existing = groupSetting.displaySettings.firstWhereOrNull(
+        (element) => element.id == metric.id,
+      );
+      if (existing != null) {
+        // already there, just update the name
+        groupSetting.displaySettings.add(
+          OrderedItem(
+            name: metric.name,
+            id: existing.id,
+            detailGraph: existing.detailGraph,
+            graph: existing.graph,
+            order: existing.order,
+            visible: existing.visible,
+            showOnDashboard: existing.showOnDashboard,
+          ),
+        );
+      } else {
+        if (metric.id != null) {
+          groupSetting.displaySettings.add(
+            OrderedItem(
+              id: metric.id!,
+              name: metric.name,
+              graph: GraphKind.bar,
+              detailGraph: GraphKind.line,
+              visible: true,
+              showOnDashboard: metric.showOnDashboard ?? true,
+            ),
+          );
+        }
       }
     }
 
@@ -281,14 +305,14 @@ class SettingsLogic {
 
   Future<void> updateEvents(List<EventType> model) async {
     var events = await getEvents();
-    List<OrderedItem> newEvents = [];
+    final settings = events.displaySettings;
     for (var event in model) {
-      var existing = events.firstWhereOrNull(
+      var existing = settings.firstWhereOrNull(
         (element) => element.id == event.id,
       );
       if (existing != null) {
         // already there, just update the name
-        newEvents.add(
+        events.displaySettings.add(
           OrderedItem(
             name: event.name,
             detailGraph: existing.detailGraph,
@@ -300,7 +324,7 @@ class SettingsLogic {
           ),
         );
       } else {
-        newEvents.add(
+        events.displaySettings.add(
           OrderedItem(
             id: event.id,
             name: event.name,
@@ -312,7 +336,8 @@ class SettingsLogic {
         );
       }
     }
-    await saveEvents(newEvents, false);
+
+    await saveEvents(events, false);
   }
 
   OrderedItem getDefault(MetricType item) {
@@ -339,55 +364,6 @@ class SettingsLogic {
     );
   }
 
-  Future<void> saveMetricGroups(List<OrderedItem> metric, bool toServer) async {
-    var settings = await _userSettings();
-    await _saveSettings(settings.copyWith(metricGroups: metric), toServer);
-    metrics.changed(true);
-  }
-
-  Future<List<OrderedItem>> getMetricGroups() async {
-    return (await _userSettings()).metricGroups ?? [];
-  }
-
-  Future<void> updateMetricGroups(List<MetricGroup> model) async {
-    var metrics = await getMetricGroups();
-    List<OrderedItem> newMetrics = [];
-    for (var metric in model) {
-      var existing = metrics.firstWhereOrNull(
-        (element) => element.id == metric.id,
-      );
-      if (existing != null) {
-        // already there, just update the name
-        newMetrics.add(
-          OrderedItem(
-            name: metric.name,
-            id: existing.id,
-            detailGraph: existing.detailGraph,
-            graph: existing.graph,
-            order: existing.order,
-            visible: existing.visible,
-            showOnDashboard: existing.showOnDashboard,
-          ),
-        );
-      } else {
-        if (metric.id != null) {
-          newMetrics.add(
-            OrderedItem(
-              id: metric.id!,
-              name: metric.name,
-              graph: GraphKind.bar,
-              detailGraph: GraphKind.line,
-              visible: true,
-              showOnDashboard: metric.showOnDashboard ?? true,
-            ),
-          );
-        }
-      }
-    }
-
-    await saveMetricGroups(newMetrics, false);
-  }
-
   Map<String, Color> _map(List<OrderedItem> settings) {
     final Map<String, Color> map = {};
     for (var item in settings) {
@@ -401,9 +377,10 @@ class SettingsLogic {
 
   UserSettings _upgradeSettings(UserSettings settings) {
     final version = settings.version ?? 0;
-    if (version == 0) {
+    if (version < 2) {
       // upgrade to version 1
       settings = settings.copyWith(
+        version: 2,
         eventSettings: EventSettings(
           displaySettings: settings.events ?? [],
           displayValueSettings: [],
@@ -416,7 +393,7 @@ class SettingsLogic {
         ),
       );
     }
-    
+
     return settings;
   }
 }

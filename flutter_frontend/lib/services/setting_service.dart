@@ -56,10 +56,6 @@ class SettingService extends ApiService {
       settings = settings.copyWith(theme: InterfaceTheme.system);
     }
 
-    if (settings.eventWidth == null) {
-      settings = settings.copyWith(eventWidth: 0);
-    }
-
     await call(() => api.apiPersonSettingsPost(body: settings));
   }
 
@@ -82,9 +78,6 @@ class SettingService extends ApiService {
         common = common.copyWith(theme: InterfaceTheme.system);
       }
 
-      if (common.eventWidth == null) {
-        common = common.copyWith(eventWidth: 0);
-      }
       settings = settings.copyWith($default: common);
     }
 
@@ -100,9 +93,6 @@ class SettingService extends ApiService {
           item = item.copyWith(theme: InterfaceTheme.system);
         }
 
-        if (item.eventWidth == null) {
-          item = item.copyWith(eventWidth: 0);
-        }
         fixed.add(item);
       }
       settings = settings.copyWith(patients: fixed);

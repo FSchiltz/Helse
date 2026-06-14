@@ -4716,7 +4716,6 @@ class PatientSettings {
     this.version,
     this.datePreset,
     this.theme,
-    this.eventWidth,
     this.metrics,
     this.metricGroups,
     this.events,
@@ -4746,8 +4745,6 @@ class PatientSettings {
     fromJson: interfaceThemeNullableFromJson,
   )
   final enums.InterfaceTheme? theme;
-  @JsonKey(name: 'eventWidth')
-  final int? eventWidth;
   @JsonKey(name: 'metrics', defaultValue: <OrderedItem>[])
   final List<OrderedItem>? metrics;
   @JsonKey(name: 'metricGroups', defaultValue: <OrderedItem>[])
@@ -4781,11 +4778,6 @@ class PatientSettings {
                 )) &&
             (identical(other.theme, theme) ||
                 const DeepCollectionEquality().equals(other.theme, theme)) &&
-            (identical(other.eventWidth, eventWidth) ||
-                const DeepCollectionEquality().equals(
-                  other.eventWidth,
-                  eventWidth,
-                )) &&
             (identical(other.metrics, metrics) ||
                 const DeepCollectionEquality().equals(
                   other.metrics,
@@ -4819,7 +4811,6 @@ class PatientSettings {
       const DeepCollectionEquality().hash(version) ^
       const DeepCollectionEquality().hash(datePreset) ^
       const DeepCollectionEquality().hash(theme) ^
-      const DeepCollectionEquality().hash(eventWidth) ^
       const DeepCollectionEquality().hash(metrics) ^
       const DeepCollectionEquality().hash(metricGroups) ^
       const DeepCollectionEquality().hash(events) ^
@@ -4834,7 +4825,6 @@ extension $PatientSettingsExtension on PatientSettings {
     int? version,
     enums.DatePreset? datePreset,
     enums.InterfaceTheme? theme,
-    int? eventWidth,
     List<OrderedItem>? metrics,
     List<OrderedItem>? metricGroups,
     List<OrderedItem>? events,
@@ -4846,7 +4836,6 @@ extension $PatientSettingsExtension on PatientSettings {
       version: version ?? this.version,
       datePreset: datePreset ?? this.datePreset,
       theme: theme ?? this.theme,
-      eventWidth: eventWidth ?? this.eventWidth,
       metrics: metrics ?? this.metrics,
       metricGroups: metricGroups ?? this.metricGroups,
       events: events ?? this.events,
@@ -4860,7 +4849,6 @@ extension $PatientSettingsExtension on PatientSettings {
     Wrapped<int?>? version,
     Wrapped<enums.DatePreset?>? datePreset,
     Wrapped<enums.InterfaceTheme?>? theme,
-    Wrapped<int?>? eventWidth,
     Wrapped<List<OrderedItem>?>? metrics,
     Wrapped<List<OrderedItem>?>? metricGroups,
     Wrapped<List<OrderedItem>?>? events,
@@ -4872,7 +4860,6 @@ extension $PatientSettingsExtension on PatientSettings {
       version: (version != null ? version.value : this.version),
       datePreset: (datePreset != null ? datePreset.value : this.datePreset),
       theme: (theme != null ? theme.value : this.theme),
-      eventWidth: (eventWidth != null ? eventWidth.value : this.eventWidth),
       metrics: (metrics != null ? metrics.value : this.metrics),
       metricGroups: (metricGroups != null
           ? metricGroups.value
@@ -4890,7 +4877,7 @@ extension $PatientSettingsExtension on PatientSettings {
 
 @JsonSerializable(explicitToJson: true)
 class PatientsSettings {
-  const PatientsSettings({this.$default, this.patients});
+  const PatientsSettings({this.version, this.$default, this.patients});
 
   factory PatientsSettings.fromJson(Map<String, dynamic> json) =>
       _$PatientsSettingsFromJson(json);
@@ -4898,6 +4885,8 @@ class PatientsSettings {
   static const toJsonFactory = _$PatientsSettingsToJson;
   Map<String, dynamic> toJson() => _$PatientsSettingsToJson(this);
 
+  @JsonKey(name: 'version')
+  final int? version;
   @JsonKey(name: 'default')
   final PatientSettings? $default;
   @JsonKey(name: 'patients', defaultValue: <PatientSettings>[])
@@ -4908,6 +4897,11 @@ class PatientsSettings {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is PatientsSettings &&
+            (identical(other.version, version) ||
+                const DeepCollectionEquality().equals(
+                  other.version,
+                  version,
+                )) &&
             (identical(other.$default, $default) ||
                 const DeepCollectionEquality().equals(
                   other.$default,
@@ -4925,6 +4919,7 @@ class PatientsSettings {
 
   @override
   int get hashCode =>
+      const DeepCollectionEquality().hash(version) ^
       const DeepCollectionEquality().hash($default) ^
       const DeepCollectionEquality().hash(patients) ^
       runtimeType.hashCode;
@@ -4932,20 +4927,24 @@ class PatientsSettings {
 
 extension $PatientsSettingsExtension on PatientsSettings {
   PatientsSettings copyWith({
+    int? version,
     PatientSettings? $default,
     List<PatientSettings>? patients,
   }) {
     return PatientsSettings(
+      version: version ?? this.version,
       $default: $default ?? this.$default,
       patients: patients ?? this.patients,
     );
   }
 
   PatientsSettings copyWithWrapped({
+    Wrapped<int?>? version,
     Wrapped<PatientSettings?>? $default,
     Wrapped<List<PatientSettings>?>? patients,
   }) {
     return PatientsSettings(
+      version: (version != null ? version.value : this.version),
       $default: ($default != null ? $default.value : this.$default),
       patients: (patients != null ? patients.value : this.patients),
     );
@@ -6794,7 +6793,6 @@ class UserSettings {
     this.version,
     this.datePreset,
     this.theme,
-    this.eventWidth,
     this.metrics,
     this.metricGroups,
     this.events,
@@ -6822,8 +6820,6 @@ class UserSettings {
     fromJson: interfaceThemeNullableFromJson,
   )
   final enums.InterfaceTheme? theme;
-  @JsonKey(name: 'eventWidth')
-  final int? eventWidth;
   @JsonKey(name: 'metrics', defaultValue: <OrderedItem>[])
   final List<OrderedItem>? metrics;
   @JsonKey(name: 'metricGroups', defaultValue: <OrderedItem>[])
@@ -6852,11 +6848,6 @@ class UserSettings {
                 )) &&
             (identical(other.theme, theme) ||
                 const DeepCollectionEquality().equals(other.theme, theme)) &&
-            (identical(other.eventWidth, eventWidth) ||
-                const DeepCollectionEquality().equals(
-                  other.eventWidth,
-                  eventWidth,
-                )) &&
             (identical(other.metrics, metrics) ||
                 const DeepCollectionEquality().equals(
                   other.metrics,
@@ -6889,7 +6880,6 @@ class UserSettings {
       const DeepCollectionEquality().hash(version) ^
       const DeepCollectionEquality().hash(datePreset) ^
       const DeepCollectionEquality().hash(theme) ^
-      const DeepCollectionEquality().hash(eventWidth) ^
       const DeepCollectionEquality().hash(metrics) ^
       const DeepCollectionEquality().hash(metricGroups) ^
       const DeepCollectionEquality().hash(events) ^
@@ -6903,7 +6893,6 @@ extension $UserSettingsExtension on UserSettings {
     int? version,
     enums.DatePreset? datePreset,
     enums.InterfaceTheme? theme,
-    int? eventWidth,
     List<OrderedItem>? metrics,
     List<OrderedItem>? metricGroups,
     List<OrderedItem>? events,
@@ -6914,7 +6903,6 @@ extension $UserSettingsExtension on UserSettings {
       version: version ?? this.version,
       datePreset: datePreset ?? this.datePreset,
       theme: theme ?? this.theme,
-      eventWidth: eventWidth ?? this.eventWidth,
       metrics: metrics ?? this.metrics,
       metricGroups: metricGroups ?? this.metricGroups,
       events: events ?? this.events,
@@ -6927,7 +6915,6 @@ extension $UserSettingsExtension on UserSettings {
     Wrapped<int?>? version,
     Wrapped<enums.DatePreset?>? datePreset,
     Wrapped<enums.InterfaceTheme?>? theme,
-    Wrapped<int?>? eventWidth,
     Wrapped<List<OrderedItem>?>? metrics,
     Wrapped<List<OrderedItem>?>? metricGroups,
     Wrapped<List<OrderedItem>?>? events,
@@ -6938,7 +6925,6 @@ extension $UserSettingsExtension on UserSettings {
       version: (version != null ? version.value : this.version),
       datePreset: (datePreset != null ? datePreset.value : this.datePreset),
       theme: (theme != null ? theme.value : this.theme),
-      eventWidth: (eventWidth != null ? eventWidth.value : this.eventWidth),
       metrics: (metrics != null ? metrics.value : this.metrics),
       metricGroups: (metricGroups != null
           ? metricGroups.value

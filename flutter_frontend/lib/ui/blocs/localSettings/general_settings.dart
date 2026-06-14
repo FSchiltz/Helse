@@ -65,7 +65,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
     final metrics = await Dependencies.logics.settings.getMetrics();
     final events = await Dependencies.logics.settings.getEvents();
-    final metricGroups = await Dependencies.logics.settings.getMetricGroups();
 
     _colors = (await Dependencies.logics.settings.getColors()).map(
       (key, value) => MapEntry(
@@ -75,14 +74,24 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           switch (key) {
             case StateType.metric:
               final id = int.parse(e.key);
-              name = metrics.firstWhereOrNull((m) => m.id == id)?.name ?? e.key;
+              name =
+                  metrics.displaySettings
+                      .firstWhereOrNull((m) => m.id == id)
+                      ?.name ??
+                  e.key;
             case StateType.events:
               final id = int.parse(e.key);
-              name = events.firstWhereOrNull((m) => m.id == id)?.name ?? e.key;
+              name =
+                  events.displaySettings
+                      .firstWhereOrNull((m) => m.id == id)
+                      ?.name ??
+                  e.key;
             case StateType.metricGroup:
               final id = int.parse(e.key);
               name =
-                  metricGroups.firstWhereOrNull((m) => m.id == id)?.name ??
+                  metrics.groups?.displaySettings
+                      .firstWhereOrNull((m) => m.id == id)
+                      ?.name ??
                   e.key;
             default:
           }

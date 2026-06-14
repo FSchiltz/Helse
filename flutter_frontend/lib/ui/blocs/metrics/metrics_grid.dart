@@ -33,52 +33,46 @@ class _MetricsGridState extends State<MetricsGrid> {
 
   void _getData() async {
     try {
-      var metrictypes = await Dependencies.services.metric.metricsType(
-        false,
-        null,
-      );
+      final metrictypes =
+          (await Dependencies.services.metric.metricsType(false, null)) ?? [];
+
+      final model = await Dependencies.services.metric.metricsGroup();
 
       List<MetricGroup> filtered = [];
-
-      List<MetricGroup>? model = await Dependencies.services.metric
-          .metricsGroup();
-
       if (model == null) {
         filtered = [];
       } else {
-        if (metrictypes != null) {
-          await Dependencies.logics.settings.updateMetrics(metrictypes);
-          await Dependencies.logics.patientsSettings.updateMetrics(metrictypes);
-        }
+        await Dependencies.logics.settings.updateMetrics(metrictypes, model);
+        await Dependencies.logics.patientsSettings.updateMetrics(
+          metrictypes,
+          model,
+        );
 
-        await Dependencies.logics.patientsSettings.updateMetricGroups(model);
-        await Dependencies.logics.settings.updateMetricGroups(model);
-
-        List<OrderedItem> settings;
+        MetricGroupSettings settings;
         if (widget.person == null) {
-          if (metrictypes != null) {
-            setState(() {
-              typesCache = metrictypes;
-            });
-          }
+          setState(() {
+            typesCache = metrictypes;
+          });
 
-          settings = await Dependencies.logics.settings.getMetricGroups();
+          settings =
+              (await Dependencies.logics.settings.getMetrics()).groups ??
+              MetricGroupSettings(displaySettings: []);
           // filter using the user settings
         } else {
-          if (metrictypes != null) {
-            setState(() {
-              typesCache = metrictypes;
-            });
-          }
+          setState(() {
+            typesCache = metrictypes;
+          });
 
-          settings = await Dependencies.logics.patientsSettings.getMetricGroups(
-            widget.person,
-          );
+          settings =
+              (await Dependencies.logics.patientsSettings.getMetrics(
+                widget.person,
+              )).groups ??
+              MetricGroupSettings(displaySettings: []);
           // filter using the user settings
         }
 
         for (var item in model) {
-          OrderedItem? setting = settings.firstWhereOrNull(
+          OrderedItem? setting = settings.displaySettings.firstWhereOrNull(
             (element) => element.id == item.id,
           );
 

@@ -15,8 +15,8 @@ class PatientSettingsPage extends StatelessWidget {
     return NavigationPage(
       locale.patientsSettings,
       pages: [
-        MetricSettings(isPatient: true, patient: person),
-        EventSettings(isPatient: true, patient: person),
+        MetricsSettings(isPatient: true, patient: person),
+        EventsSettings(isPatient: true, patient: person),
       ],
       menu: [
         MenuDestination(

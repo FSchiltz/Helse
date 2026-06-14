@@ -3208,14 +3208,6 @@
           "theme": {
             "$ref": "#/components/schemas/InterfaceTheme"
           },
-          "eventWidth": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
           "metrics": {
             "type": "array",
             "items": {
@@ -3245,6 +3237,14 @@
       "PatientsSettings": {
         "type": "object",
         "properties": {
+          "version": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
           "default": {
             "$ref": "#/components/schemas/PatientSettings"
           },
@@ -4019,14 +4019,6 @@
           },
           "theme": {
             "$ref": "#/components/schemas/InterfaceTheme"
-          },
-          "eventWidth": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
           },
           "metrics": {
             "type": "array",

@@ -32,8 +32,6 @@ public class UserSettings : IJsonSettings
 
     public InterfaceTheme Theme { get; set; } = InterfaceTheme.System;
 
-    public int EventWidth { get; set; }
-
     [Obsolete]
     public List<OrderedItem> Metrics { get; set; } = [];
 

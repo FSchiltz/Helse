@@ -35,7 +35,7 @@ class _EventsGridState extends State<EventsGrid> {
       if (model != null) {
         await Dependencies.logics.settings.updateEvents(model);
         await Dependencies.logics.patientsSettings.updateEvents(model);
-        List<OrderedItem> settings;
+        EventSettings settings;
         if (widget.person == null) {
           settings = await Dependencies.logics.settings.getEvents();
         } else {
@@ -47,7 +47,7 @@ class _EventsGridState extends State<EventsGrid> {
         // filter using the user settings
         List<EventType> filtered = [];
         for (var item in model) {
-          OrderedItem? setting = settings.firstWhereOrNull(
+          OrderedItem? setting = settings.displaySettings.firstWhereOrNull(
             (element) => element.id == item.id,
           );
 
