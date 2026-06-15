@@ -115,18 +115,15 @@ public static class MetricsLogic
         if ((MetricDataType)type.Type == MetricDataType.Number && !double.TryParse(metric.Value, out var _))
             throw new InvalidDataException("The metric value is not a number");
 
-        if ((MetricDataType)type.Type == MetricDataType.MinMax)
+        if ((MetricDataType)type.Type == MetricDataType.NumberRange)
         {
             var split = metric.Value.Split(';');
-            if (split.Length != 2)
+            if (split.Length < 2)
             {
-                throw new InvalidDataException("The metric should have 2 value separated by a ';'");
+                throw new InvalidDataException("The metric should have at least 2 value separated by a ';'");
             }
 
-            var first = double.TryParse(split[0], out var _);
-            var second = double.TryParse(split[2], out var _);
-
-            if (!first || !second)
+            if (split.Any(x => !double.TryParse(x, out var _)))
             {
                 throw new InvalidDataException("The value of the metric should be numbers");
             }

@@ -9,7 +9,7 @@ public enum MetricDataType
     /// </summary>
     Bool = 2,
     /// <summary>
-    /// A min and max value (2 numbers separated by a ';')
+    /// A min and max value (Numbers separated by a ';')
     /// </summary>
-    MinMax = 3
+    NumberRange = 3,
 }
