@@ -20,5 +20,5 @@ public class OrderedItem
 
     public long? Parent { get; set; }
 
-    public long Color { get; set; }
+    public long? Color { get; set; }
 }

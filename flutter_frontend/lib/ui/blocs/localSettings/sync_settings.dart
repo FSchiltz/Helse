@@ -39,7 +39,7 @@ class _SyncSettingsState extends State<SyncSettings> {
   Future<void> _submitHealth() async {
     try {
       // save the user's settings
-      Dependencies.logics.settings.saveHealth(
+      await Dependencies.logics.settings.saveHealth(
         HealthSettings(_healthEnabled, _history, _background),
       );
 

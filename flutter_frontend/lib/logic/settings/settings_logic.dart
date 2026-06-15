@@ -44,8 +44,8 @@ class SettingsLogic extends BaseSettingsLogic {
     return HealthSettings.fromJson(json.decode(encoded));
   }
 
-  void saveHealth(HealthSettings localSettings) async {
-    save(health, localSettings.toJson());
+  Future<void> saveHealth(HealthSettings localSettings) async {
+    await save(health, localSettings.toJson());
   }
 
   InterfaceTheme getTheme() {
@@ -62,14 +62,14 @@ class SettingsLogic extends BaseSettingsLogic {
     if (toServer) {
       await service.savePersonSettings(settings);
     }
-    save(settingsName, settings.toJson());
+    await save(settingsName, settings.toJson());
     print("settings saved");
   }
 
   Future<void> loadSettings() async {
     var serverSettings = await service.getPersonSettings();
     print("Settings loaded from server");
-    save(settingsName, serverSettings.toJson());
+    await save(settingsName, serverSettings.toJson());
     init = true;
     Dependencies.theme.setColors(getColors());
     metrics.changed(true);
@@ -237,30 +237,6 @@ class SettingsLogic extends BaseSettingsLogic {
   DatePreset getDateRange() {
     var settings = _userSettings();
     return settings.datePreset ?? DatePreset.today;
-  }
-
-  OrderedItem getDefault(MetricType item) {
-    if (item.type == MetricDataType.number) {
-      return OrderedItem(
-        id: item.id,
-        name: item.name,
-        graph: GraphKind.bar,
-        detailGraph: GraphKind.line,
-        visible: item.visible,
-        showOnDashboard: true,
-        parent: item.groupId,
-      );
-    }
-
-    return OrderedItem(
-      id: item.id,
-      name: item.name,
-      graph: GraphKind.text,
-      detailGraph: GraphKind.text,
-      visible: item.visible,
-      showOnDashboard: true,
-      parent: item.groupId,
-    );
   }
 
   Map<String, Color> _map(List<OrderedItem> settings) {

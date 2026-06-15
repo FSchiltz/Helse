@@ -151,7 +151,7 @@ class _LoginState extends State<LoginPage> {
                                               shape:
                                                   const ContinuousRectangleBorder(),
                                             ),
-                                            onPressed: () => _submit(locale),
+                                            onPressed: _submit,
                                             child: Text(
                                               _initStatus?.init == true
                                                   ? locale.login
@@ -217,14 +217,14 @@ class _LoginState extends State<LoginPage> {
         Future<void>.delayed(Durations.extralong3),
       );
 
-      operation.value.then((value) async => await _urlChanged(url, locale));
+      operation.value.then((value) async => await _urlChanged(url));
       setState(() {
         _operation = operation;
       });
     }
   }
 
-  Future<void> _urlChanged(String url, AppLocalizations locale) async {
+  Future<void> _urlChanged(String url) async {
     var uri = Uri.tryParse(url);
     if (uri == null || !uri.isAbsolute) {
       return;
@@ -252,11 +252,11 @@ class _LoginState extends State<LoginPage> {
           // Start the oauth login procedure
           var autologin = isInit.oauths.firstWhereOrNull((x) => x.autoLogin);
           if (autologin != null) {
-            await _submitOauth(autologin, locale);
+            await _submitOauth(autologin);
           }
         } else if (isInit.externalAuth == true) {
           // directly start the login procedure
-          await _submit(locale, oAuth: 'Header');
+          await _submit(oAuth: 'Header');
         }
       }
 
@@ -289,16 +289,12 @@ class _LoginState extends State<LoginPage> {
         setState(() {
           _url = url;
         });
-        var locale = Translation.of(context);
-        await _urlChanged(url, locale);
+        await _urlChanged(url);
       }
     }
   }
 
-  Future<void> _submitOauth(
-    OauthConnection oauth,
-    AppLocalizations locale,
-  ) async {
+  Future<void> _submitOauth(OauthConnection oauth) async {
     var init = _initStatus;
     var url = _url;
     if (init != null && url != null) {
@@ -312,7 +308,7 @@ class _LoginState extends State<LoginPage> {
           oauth,
         );
         if (grant != null) {
-          await _submit(locale, oAuth: grant);
+          await _submit(oAuth: grant);
         }
       } catch (ex) {
         Notify.showError('Failed to start the oauth process:$ex');
@@ -332,7 +328,7 @@ class _LoginState extends State<LoginPage> {
     }
   }
 
-  Future<void> _submit(AppLocalizations locale, {String? oAuth}) async {
+  Future<void> _submit({String? oAuth}) async {
     debugPrint('Login started');
     setState(() {
       _status = SubmissionStatus.inProgress;
@@ -373,10 +369,14 @@ class _LoginState extends State<LoginPage> {
         surname: _controllerSurname.text,
       );
 
-      if (created) {
-        Notify.show(locale.welcomenew);
-      } else {
-        Notify.show(locale.welcome);
+      if (context.mounted) {
+        var locale = Translation.of(context);
+
+        if (created) {
+          Notify.show(locale.welcomenew);
+        } else {
+          Notify.show(locale.welcome);
+        }
       }
       debugPrint('Login successful');
       setState(() {
@@ -412,7 +412,7 @@ class _LoginState extends State<LoginPage> {
               minimumSize: const Size.fromHeight(50),
               shape: const ContinuousRectangleBorder(),
             ),
-            onPressed: () => _submitOauth(o, locale),
+            onPressed: () => _submitOauth(o),
             child: Text(locale.loginwith(o.name), style: theme.titleLarge),
           ),
         )

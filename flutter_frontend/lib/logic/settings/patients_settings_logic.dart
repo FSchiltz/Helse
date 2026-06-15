@@ -16,7 +16,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
   ) async {
     var full = _patientsSettings();
     if (settings.patientId == null) {
-      full = PatientsSettings($default: settings, patients: full.patients);
+      full = full.copyWith($default: settings, patients: full.patients);
     } else {
       var patients =
           full.patients
@@ -24,14 +24,14 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
               .toList() ??
           [];
       patients.add(settings);
-      full = PatientsSettings($default: full.$default, patients: patients);
+      full = full.copyWith($default: full.$default, patients: patients);
     }
 
     if (toServer) {
       await service.savePatientsSettings(full);
     }
 
-    save(patientsName, full.toJson());
+    await save(patientsName, full.toJson());
   }
 
   Future<void> saveMetrics(
@@ -104,35 +104,11 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
     return settings.datePreset ?? DatePreset.today;
   }
 
-  OrderedItem getDefault(MetricType item) {
-    if (item.type == MetricDataType.number) {
-      return OrderedItem(
-        id: item.id,
-        name: item.name,
-        graph: GraphKind.bar,
-        detailGraph: GraphKind.line,
-        visible: item.visible,
-        showOnDashboard: true,
-        parent: item.groupId,
-      );
-    }
-
-    return OrderedItem(
-      id: item.id,
-      name: item.name,
-      graph: GraphKind.text,
-      detailGraph: GraphKind.text,
-      visible: item.visible,
-      showOnDashboard: true,
-      parent: item.groupId,
-    );
-  }
-
   Future<void> loadSettings() async {
     var serverSettings = await service.getPatientsSettings();
     print("Patients settings loaded from server");
 
-    save(patientsName, serverSettings.toJson());
+    await save(patientsName, serverSettings.toJson());
     init = true;
   }
 }
