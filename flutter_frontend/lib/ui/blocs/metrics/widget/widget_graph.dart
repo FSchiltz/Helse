@@ -14,6 +14,10 @@ class Range<T> {
   Range({required this.start, required this.stop});
 }
 
+class GraphRange {
+  final List<Range<FlSpot>> spots = [];
+}
+
 class WidgetGraph extends StatelessWidget {
   final List<Metric> metrics;
   final DateTimeRange range;
@@ -32,84 +36,121 @@ class WidgetGraph extends StatelessWidget {
     this.width,
   });
 
-  List<Range<FlSpot>> _getSpot(List<Metric> raw) {
+  List<Range<FlSpot>> _getSpot(List<Metric> raw, MetricType type) {
+    int graphCount;
+    switch (type.type) {
+      case MetricDataType.numberrange:
+        graphCount = type.valueCount ?? 0;
+      default:
+        graphCount = 1;
+    }
+
     final bucketLength = range.duration.inMilliseconds / tile;
 
     final Duration delta = Duration(
       milliseconds: (bucketLength * (tile * 0.05)).toInt(),
     );
 
-    final groups = List<MetricGrouped>.generate(tile, (index) {
-      final start = range.start.add(
-        Duration(milliseconds: (index * bucketLength).toInt()),
-      );
-      var date = start.add(Duration(milliseconds: (bucketLength / 2).toInt()));
-      return MetricGrouped(date, 0, []);
-    });
+    final groups = List<List<MetricGrouped>>.generate(
+      graphCount,
+      (i) => List<MetricGrouped>.generate(tile, (index) {
+        final start = range.start.add(
+          Duration(milliseconds: (index * bucketLength).toInt()),
+        );
+        var date = start.add(
+          Duration(milliseconds: (bucketLength / 2).toInt()),
+        );
+        return MetricGrouped(date, 0, []);
+      }),
+    );
 
     for (var metric in raw) {
-      final value = double.parse(metric.value);
+      final List<double> values;
+
+      switch (type.type) {
+        case MetricDataType.number:
+          values = [double.parse(metric.value)];
+        case MetricDataType.bool:
+          values = [bool.parse(metric.value) ? 1 : 0];
+        case MetricDataType.numberrange:
+          values = metric.value.split(';').map((e) => double.parse(e)).toList();
+        default:
+          throw StateError('Unsupported');
+      }
+
       // find the bucket
       final duration = metric.date.difference(range.start);
       final index = (duration.inMilliseconds / bucketLength).toInt();
-      final bucket = groups[index];
-      // if it does not exists create it
-      bucket.value = (bucket.value + value) / 2;
+
+      for (int i = 0; i < graphCount; i++) {
+        var value = values[i];
+        final bucket = groups[i][index];
+        bucket.value = (bucket.value + value) / 2;
+      }
     }
 
-    List<Range<FlSpot>> spots = [];
-    for (final item in groups) {
-      var y = item.value;
-      var x = item.date.millisecondsSinceEpoch.toDouble();
+    final spots = List<GraphRange>.generate(graphCount, (i) => GraphRange());
+    for (int i = 0; i < graphCount; i++) {
+      for (final item in groups[i]) {
+        var y = item.value;
+        var x = item.date.millisecondsSinceEpoch.toDouble();
 
-      if (settings == GraphKind.bar) {
-        // graph bar are simpler, no need to split them so we put everything in the same range
-        if (spots.isEmpty) {
-          spots.add(Range<FlSpot>(start: item.date, stop: item.date));
-        }
-
-        spots[0].value.add(FlSpot(x, y));
-      } else {
-        if (y == 0) {
-          // don't show 0 values in the graph
-          continue;
-        }
-
-        // for line chart we split so that missing data are not extrapolated by the graph
-        var existing = spots.firstWhereOrNull(
-          (e) =>
-              (e.start.isBefore(item.date) ||
-                  e.start.isAtSameMomentAs(item.date)) &&
-              (e.stop.isAfter(item.date) || e.stop.isAtSameMomentAs(item.date)),
-        );
-
-        var start = item.date.subtract(delta);
-        var end = item.date.add(delta);
-
-        if (existing != null) {
-          // if the group touch another adds it to it and increase the range
-          existing.value.add(FlSpot(x, y));
-          if (existing.start.isAfter(start)) {
-            existing.start = start;
+        if (settings == GraphKind.bar) {
+          // graph bar are simpler, no need to split them so we put everything in the same range
+          if (spots.isEmpty) {
+            spots[i].spots.add(
+              Range<FlSpot>(start: item.date, stop: item.date),
+            );
           }
 
-          if (existing.stop.isBefore(end)) {
-            existing.stop = end;
-          }
+          spots[i].spots[0].value.add(FlSpot(x, y));
         } else {
-          // otherwise create a new range
-          final range = Range<FlSpot>(start: start, stop: end);
-          range.value.add(FlSpot(x, y));
-          spots.add(range);
+          if (y == 0) {
+            // don't show 0 values in the graph
+            continue;
+          }
+
+          // for line chart we split so that missing data are not extrapolated by the graph
+          var existing = spots[i].spots.firstWhereOrNull(
+            (e) =>
+                (e.start.isBefore(item.date) ||
+                    e.start.isAtSameMomentAs(item.date)) &&
+                (e.stop.isAfter(item.date) ||
+                    e.stop.isAtSameMomentAs(item.date)),
+          );
+
+          var start = item.date.subtract(delta);
+          var end = item.date.add(delta);
+
+          if (existing != null) {
+            // if the group touch another adds it to it and increase the range
+            existing.value.add(FlSpot(x, y));
+            if (existing.start.isAfter(start)) {
+              existing.start = start;
+            }
+
+            if (existing.stop.isBefore(end)) {
+              existing.stop = end;
+            }
+          } else {
+            // otherwise create a new range
+            final range = Range<FlSpot>(start: start, stop: end);
+            range.value.add(FlSpot(x, y));
+            spots[i].spots.add(range);
+          }
         }
       }
     }
 
-    return spots;
+    return spots.expand((e) => e.spots).toList();
   }
 
-  List<BarChartGroupData> _getBar(List<Metric> raw, Color color) {
-    var spots = _getSpot(raw);
+  List<BarChartGroupData> _getBar(
+    List<Metric> raw,
+    Color color,
+    MetricType type,
+  ) {
+    var spots = _getSpot(raw, type);
 
     // now we have the min and max Y and X value, we can build the spots
     List<BarChartGroupData> bar = [];
@@ -156,7 +197,7 @@ class WidgetGraph extends StatelessWidget {
           ),
           borderData: FlBorderData(show: false),
           gridData: const FlGridData(show: false),
-          barGroups: _getBar(metrics, color),
+          barGroups: _getBar(metrics, color, type),
         ),
       );
     } else {
@@ -173,7 +214,7 @@ class WidgetGraph extends StatelessWidget {
           ),
           borderData: FlBorderData(show: false),
           gridData: const FlGridData(show: false),
-          lineBarsData: _getSpot(metrics)
+          lineBarsData: _getSpot(metrics, type)
               .map(
                 (m) => LineChartBarData(
                   barWidth: width ?? 3,
