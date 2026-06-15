@@ -58,4 +58,8 @@ class MetricHelper {
 
     return groups.values.toList();
   }
+
+  String joinValue(Iterable<String> map) {
+    return map.join(';');
+  }
 }
