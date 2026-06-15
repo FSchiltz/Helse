@@ -10,7 +10,7 @@ public class OrderedItem
 
     public required string Name { get; set; }
 
-    public required int Id { get; set; }
+    public required long Id { get; set; }
 
     public string? Key { get; set; }
 
@@ -18,7 +18,7 @@ public class OrderedItem
 
     public GraphKind DetailGraph { get; set; }
 
-    public int? Parent { get; set; }
+    public long? Parent { get; set; }
 
     public long Color { get; set; }
 }
