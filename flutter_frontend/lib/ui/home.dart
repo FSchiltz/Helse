@@ -55,9 +55,9 @@ class _HomeState extends State<Home> {
         : DeviceType.desktop;
   }
 
-  void _getUser() async {
+  void _getUser() {
     try {
-      var model = await Dependencies.logics.authentication.getUser();
+      var model = Dependencies.logics.authentication.getUser();
       setState(() {
         user = model;
       });

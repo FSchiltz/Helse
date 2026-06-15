@@ -40,7 +40,7 @@ class OauthService extends ApiService {
     init(auth: oauth.url, clientId: oauth.clientId);
     await account.set(Account.url, url);
 
-    var grant = await account.get(Account.grant);
+    var grant = account.get(Account.grant);
     if (grant == null) {
       var state = getRandomString(24);
       var redirect = redirectUrl.toString();

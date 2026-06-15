@@ -4,8 +4,6 @@ import 'package:collection/collection.dart';
 import 'package:helse/logic/settings/base_settings_logic.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
-import '../../services/account.dart';
-
 class PatientsSettingsLogic extends BaseSettingsLogic {
   static const patientsName = 'patients';
   bool init = false;

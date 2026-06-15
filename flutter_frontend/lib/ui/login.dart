@@ -280,7 +280,7 @@ class _LoginState extends State<LoginPage> {
   /// Prefill the url from storage or other
   Future<void> _initUrl() async {
     // We first try to get it from storage
-    var url = await Dependencies.logics.authentication.getUrl();
+    var url = Dependencies.logics.authentication.getUrl();
 
     if (url != null && url.isNotEmpty) {
       textController.text = url;

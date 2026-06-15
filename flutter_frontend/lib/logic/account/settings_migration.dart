@@ -14,13 +14,13 @@ class SettingsMigration {
 
   Future<void> _migrateAuthToJon() async {
     // migrate the tokens to the json format
-    var token = await account.get(Account.refresh);
+    var token = account.get(Account.refresh);
     if (token == null) return;
 
     bool isJson = token.startsWith("{");
     if (!isJson) {
       var accessName = "access";
-      var access = await account.get(accessName);
+      var access = account.get(accessName);
       List<UserType> roles = [];
       if (access != null) {
         Map<String, dynamic> decodedToken = JwtDecoder.decode(token);

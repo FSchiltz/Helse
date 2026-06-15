@@ -20,10 +20,10 @@ class SettingsBloc<T> extends Cubit<T> {
 class SettingsLogic extends BaseSettingsLogic {
   static const settingsName = 'settings';
 
-  static const fitRun = "fitLastRun";
   static const fitHistory = "fitHistory";
   static const fitBackground = "fitBackground";
   static const fitStatus = 'fitStatus';
+  static const fitRun = "fitLastRun";
   static const health = 'health';
 
   final SettingsBloc<InterfaceTheme> themebloc = SettingsBloc(
@@ -272,5 +272,17 @@ class SettingsLogic extends BaseSettingsLogic {
       }
     }
     return map;
+  }
+
+  void setFitRun(String value) {
+    setString(fitRun, value);
+  }
+
+  void setFitStatus(String text) {
+    account.set(fitStatus, text);
+  }
+
+  String? getFirStatus() {
+    return getString(fitStatus);
   }
 }
