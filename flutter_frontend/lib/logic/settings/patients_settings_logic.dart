@@ -72,13 +72,13 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
   PatientSettings _patientSettings(int? person) {
     var object = _patientsSettings();
     if (person == null) {
-      return object.$default ?? PatientSettings();
+      return object.$default ?? PatientSettings(version: settingsVersion);
     }
     var specificSettings = object.patients?.firstWhereOrNull(
       (e) => e.patientId == person,
     );
 
-    return specificSettings ?? object.$default ?? PatientSettings();
+    return specificSettings ?? object.$default ?? PatientSettings(version: settingsVersion);
   }
 
   MetricSettings getMetrics(int? person) {

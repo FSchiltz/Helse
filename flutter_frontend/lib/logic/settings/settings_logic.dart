@@ -81,7 +81,7 @@ class SettingsLogic extends BaseSettingsLogic {
     var encoded = getString(settingsName);
     print("settings loaded");
     if (encoded == null) {
-      return UserSettings();
+      return UserSettings(version: settingsVersion);
     }
 
     var map = json.decode(encoded) as Map<String, Object?>;

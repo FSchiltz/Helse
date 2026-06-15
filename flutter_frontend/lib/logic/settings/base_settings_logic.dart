@@ -5,6 +5,7 @@ import 'package:helse/services/setting_service.dart';
 class BaseSettingsLogic {
   final Account account;
   final SettingService service;
+  final int settingsVersion = 2;
 
   BaseSettingsLogic(this.account, this.service);
 

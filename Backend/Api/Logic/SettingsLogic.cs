@@ -2,10 +2,8 @@ using System.Text.Json;
 using Api.Data;
 using Api.Data.Models.Health;
 using Api.Helpers;
-using Api.Models.Events;
 using Api.Models.Settings;
 using Api.Models.Settings.Admin;
-using DbUp.Builder;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Api.Logic;
