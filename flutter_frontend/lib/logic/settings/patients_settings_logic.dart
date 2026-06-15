@@ -78,7 +78,9 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
       (e) => e.patientId == person,
     );
 
-    return specificSettings ?? object.$default ?? PatientSettings(version: settingsVersion);
+    return specificSettings ??
+        object.$default ??
+        PatientSettings(version: settingsVersion);
   }
 
   MetricSettings getMetrics(int? person) {
@@ -110,5 +112,9 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
 
     await save(patientsName, serverSettings.toJson());
     init = true;
+  }
+
+  PatientsSettings getSettings() {
+    return _patientsSettings();
   }
 }

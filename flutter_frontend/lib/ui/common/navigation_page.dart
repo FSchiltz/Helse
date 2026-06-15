@@ -6,12 +6,14 @@ class NavigationPage extends StatefulWidget {
   final String title;
   final List<Widget> pages;
   final List<MenuDestination> menu;
+  final Widget? header;
 
   const NavigationPage(
     this.title, {
     super.key,
     required this.pages,
     required this.menu,
+    this.header,
   });
 
   @override
@@ -90,16 +92,33 @@ class _NavigationPageState extends State<NavigationPage> {
                   .toList(),
             )
           : null,
-      body: SafeArea(
-        child: (screenWidth >= UIConstants.displaymedium)
-            ? _menuBar(
-                widget.menu,
-                widget.pages[_selectedIndex],
-                theme.surfaceContainerHigh,
-              )
-            : widget.pages[_selectedIndex],
-      ),
+      body: _getBody(screenWidth, theme),
     );
+  }
+
+  SafeArea _getBody(double screenWidth, ColorScheme theme) {
+    if (widget.header != null) {
+      return SafeArea(
+        child: Column(
+          children: [
+            Flexible(child: widget.header!),
+            Expanded(child: _tabs(screenWidth, theme)),
+          ],
+        ),
+      );
+    }
+
+    return SafeArea(child: _tabs(screenWidth, theme));
+  }
+
+  Widget _tabs(double screenWidth, ColorScheme theme) {
+    return (screenWidth >= UIConstants.displaymedium)
+        ? _menuBar(
+            widget.menu,
+            widget.pages[_selectedIndex],
+            theme.surfaceContainerHigh,
+          )
+        : widget.pages[_selectedIndex];
   }
 
   Widget _menuBar(List<MenuDestination> menu, Widget content, Color color) {
