@@ -1,6 +1,15 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
+
+class RangeList<T> {
+  final List<MetricGrouped> values;
+  final double min;
+  final double max;
+
+  RangeList({required this.values, required this.min, required this.max});
+}
 
 class MetricHelper {
   static String getMetricText(Metric metric) {
@@ -22,17 +31,27 @@ class MetricHelper {
     return split.map((e) => double.parse(e)).toList();
   }
 
-  static List<MetricGrouped> group(
+  static RangeList<MetricGrouped> group(
     List<Metric> metrics,
     DateTimeRange range,
     double bucketLength,
     MetricType type,
   ) {
+    final stopwatch = Stopwatch()..start();
+    debugPrint(
+      'grouping with bucket lenght: $bucketLength for $range',
+    );
     int graphCount = type.valueCount ?? 1;
     Map<int, MetricGrouped> groups = {};
 
+    double max = 0;
     for (var metric in metrics) {
       final values = getValue(metric.value, type.type);
+
+      final maxValue = values.max;
+      if (maxValue > max) {
+        max = maxValue;
+      }
 
       // find the bucket
       final duration = metric.date.difference(range.start);
@@ -56,7 +75,10 @@ class MetricHelper {
       }
     }
 
-    return groups.values.toList();
+    debugPrint(
+      '_group() executed in ${stopwatch.elapsed}',
+    );
+    return RangeList(values: groups.values.toList(), min: 0, max: max);
   }
 
   String joinValue(Iterable<String> map) {

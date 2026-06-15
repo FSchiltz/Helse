@@ -54,7 +54,7 @@ class WidgetGraph extends StatelessWidget {
     final groups = MetricHelper.group(raw, range, bucketLength, type);
     final spots = List<GraphRange>.generate(graphCount, (i) => GraphRange());
 
-    for (final item in groups) {
+    for (final item in groups.values) {
       var x = item.date.millisecondsSinceEpoch.toDouble();
 
       for (int i = 0; i < graphCount; i++) {

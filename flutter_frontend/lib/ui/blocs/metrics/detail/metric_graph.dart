@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -41,8 +42,16 @@ class MetricGraph extends StatefulWidget {
 
 class _MetricGraphState extends State<MetricGraph> {
   MetricGrouped? _metric;
-  List<MetricGrouped> filteredMetrics = [];
-  List<MetricGrouped> groupedMetrics = [];
+  RangeList<MetricGrouped> filteredMetrics = RangeList(
+    values: [],
+    min: 0,
+    max: 0,
+  );
+  RangeList<MetricGrouped> groupedMetrics = RangeList(
+    values: [],
+    min: 0,
+    max: 0,
+  );
   int _graphCount = 0;
 
   final StreamController<Map<String, Set<int>>?> _selection =
@@ -66,7 +75,7 @@ class _MetricGraphState extends State<MetricGraph> {
     subDate = widget.date;
     _selection.stream.listen(_onData);
 
-    _graphCount = widget.type.valueCount ?? 1;
+    _graphCount = max(widget.type.valueCount ?? 1, 1);
     var initGroup = _group(widget.metrics, _graphCount);
     filteredMetrics = initGroup;
     groupedMetrics = initGroup;
@@ -195,17 +204,22 @@ class _MetricGraphState extends State<MetricGraph> {
     };
 
     for (int i = 0; i < graphCount; i++) {
+      final index = i;
       variables['value$i'] = Variable(
-        accessor: (MetricGrouped datumn) => datumn.value[i],
-        scale: LinearScale(min: 0),
+        accessor: (MetricGrouped datumn) {
+          return datumn.value[index];
+        },
+        scale: LinearScale(min: filteredMetrics.min, max: filteredMetrics.max),
       );
     }
 
-    debugPrint('created graph for $subDate and ${filteredMetrics.length}');
-    return filteredMetrics.isEmpty
+    debugPrint(
+      'created graph for $subDate and ${filteredMetrics.values.length}',
+    );
+    return filteredMetrics.values.isEmpty
         ? Text('No data')
         : Chart(
-            data: filteredMetrics,
+            data: filteredMetrics.values,
             variables: variables,
             marks: marks,
             selections: {
@@ -233,44 +247,35 @@ class _MetricGraphState extends State<MetricGraph> {
     var click = event?.entries.firstWhereOrNull((x) => x.key == 'click');
     if (click == null) return;
 
-    var metric = filteredMetrics[click.value.first];
+    var metric = filteredMetrics.values[click.value.first];
     _selectionChanged(metric);
   }
 
-  List<MetricGrouped> _group(List<Metric> metrics, int graphCount) {
-    final stopwatch = Stopwatch()..start();
+  RangeList<MetricGrouped> _group(List<Metric> metrics, int graphCount) {
     final max = 500;
+
+    double maxValue = 0;
+
     if (metrics.length <= max) {
+      final List<MetricGrouped> list = [];
+
+      for (var metric in metrics) {
+        final values = MetricHelper.getValue(metric.value, widget.type.type);
+        final max = values.max;
+        if (max > maxValue) {
+          maxValue = max;
+        }
+
+        list.add(MetricGrouped(metric.date, values, [metric]));
+      }
       // no need to group
-      return metrics
-          .map(
-            (e) => MetricGrouped(
-              e.date,
-              MetricHelper.getValue(e.value, widget.type.type),
-              [e],
-            ),
-          )
-          .toList();
+      return RangeList(values: list, min: 0, max: maxValue);
     }
 
     // First create the buckets
     final bucketLength = subDate.duration.inMilliseconds / max;
 
-    debugPrint(
-      'grouping with buckets: $max and bucket lenght: $bucketLength for $subDate',
-    );
-
-    final grouped = MetricHelper.group(
-      metrics,
-      subDate,
-      bucketLength,
-      widget.type,
-    );
-
-    debugPrint(
-      '_group() executed in ${stopwatch.elapsed} with ${grouped.length} bucket',
-    );
-    return grouped;
+    return MetricHelper.group(metrics, subDate, bucketLength, widget.type);
   }
 
   List<Metric> _filter(List<Metric> metrics, DateTimeRange<DateTime> value) {
