@@ -210,6 +210,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext,
             Visible = metric.Visible,
             GroupId = metric.GroupId,
             ShowOnDashboard = metric.ShowOnDashboard,
+            ValueCount = metric.ValueCount,
         });
     }
 
@@ -259,6 +260,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext,
             .Set(x => x.Visible, metric.Visible)
             .Set(x => x.ShowOnDashboard, metric.ShowOnDashboard)
             .Set(x => x.GroupId, metric.GroupId)
+            .Set(x => x.ValueCount, metric.ValueCount)
             .UpdateAsync();
     }
 

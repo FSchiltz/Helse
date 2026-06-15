@@ -118,9 +118,9 @@ public static class MetricsLogic
         if ((MetricDataType)type.Type == MetricDataType.NumberRange)
         {
             var split = metric.Value.Split(';');
-            if (split.Length < 2)
+            if (split.Length < type.ValueCount)
             {
-                throw new InvalidDataException("The metric should have at least 2 value separated by a ';'");
+                throw new InvalidDataException($"The metric should have at least {type.ValueCount} value separated by a ';'");
             }
 
             if (split.Any(x => !double.TryParse(x, out var _)))
@@ -199,7 +199,8 @@ public static class MetricsLogic
         Visible = x.Visible,
         UserEditable = x.UserEditable,
         ShowOnDashboard = x.ShowOnDashboard,
-        GroupId = x.GroupId
+        GroupId = x.GroupId,
+        ValueCount = x.ValueCount,
     }));
 
     public static async Task<IResult> CreateTypeAsync(CreateMetricType metric, IUserContext users, IMetricContext db, HttpContext context)
