@@ -9,8 +9,6 @@ import 'package:helse/logic/settings/health_settings.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
-import '../../services/account.dart';
-
 class SettingsBloc<T> extends Cubit<T> {
   SettingsBloc(super.initialState);
 
@@ -20,6 +18,14 @@ class SettingsBloc<T> extends Cubit<T> {
 }
 
 class SettingsLogic extends BaseSettingsLogic {
+  static const settingsName = 'settings';
+
+  static const fitRun = "fitLastRun";
+  static const fitHistory = "fitHistory";
+  static const fitBackground = "fitBackground";
+  static const fitStatus = 'fitStatus';
+  static const health = 'health';
+
   final SettingsBloc<InterfaceTheme> themebloc = SettingsBloc(
     InterfaceTheme.system,
   );
@@ -30,7 +36,7 @@ class SettingsLogic extends BaseSettingsLogic {
   SettingsLogic(super.account, super.service);
 
   Future<HealthSettings> getHealth() async {
-    var encoded = getString(Account.health);
+    var encoded = getString(health);
     if (encoded == null) {
       return HealthSettings(false, false, false);
     }
@@ -39,7 +45,7 @@ class SettingsLogic extends BaseSettingsLogic {
   }
 
   void saveHealth(HealthSettings localSettings) async {
-    save(Account.health, localSettings.toJson());
+    save(health, localSettings.toJson());
   }
 
   InterfaceTheme getTheme() {
@@ -56,14 +62,14 @@ class SettingsLogic extends BaseSettingsLogic {
     if (toServer) {
       await service.savePersonSettings(settings);
     }
-    save(Account.settings, settings.toJson());
+    save(settingsName, settings.toJson());
     print("settings saved");
   }
 
   Future<void> loadSettings() async {
     var serverSettings = await service.getPersonSettings();
     print("Settings loaded from server");
-    save(Account.settings, serverSettings.toJson());
+    save(settingsName, serverSettings.toJson());
     init = true;
     Dependencies.theme.setColors(getColors());
     metrics.changed(true);
@@ -72,7 +78,7 @@ class SettingsLogic extends BaseSettingsLogic {
   }
 
   UserSettings _userSettings() {
-    var encoded = getString(Account.settings);
+    var encoded = getString(settingsName);
     print("settings loaded");
     if (encoded == null) {
       return UserSettings();
@@ -84,7 +90,8 @@ class SettingsLogic extends BaseSettingsLogic {
   }
 
   MetricSettings getMetrics() {
-    return (_userSettings()).metricSettings ??
+    var settings = _userSettings().metricSettings;
+    return settings ??
         MetricSettings(
           displaySettings: [],
           groups: MetricGroupSettings(displaySettings: []),
@@ -108,15 +115,15 @@ class SettingsLogic extends BaseSettingsLogic {
   }
 
   void setLastRun(String run) {
-    setString(Account.fitRun, run);
+    setString(fitRun, run);
   }
 
   void removeLastRun() {
-    remove(Account.fitRun);
+    remove(fitRun);
   }
 
   String? getLastRun() {
-    return getString(Account.fitRun);
+    return getString(fitRun);
   }
 
   Future<void> setColors(
@@ -211,15 +218,15 @@ class SettingsLogic extends BaseSettingsLogic {
   }
 
   void setHasHistory(bool run) {
-    setBool(Account.fitHistory, run);
+    setBool(fitHistory, run);
   }
 
   void setBackgroundAccess(bool authorized) {
-    setBool(Account.fitBackground, authorized);
+    setBool(fitBackground, authorized);
   }
 
   bool? getHasHistory() {
-    return getBool(Account.fitHistory);
+    return getBool(fitHistory);
   }
 
   Future<void> setDateRange(DatePreset run, {bool toServer = true}) async {
@@ -266,6 +273,4 @@ class SettingsLogic extends BaseSettingsLogic {
     }
     return map;
   }
-
-  
 }

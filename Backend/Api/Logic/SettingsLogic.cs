@@ -244,20 +244,7 @@ public static class SettingsLogic
             var existing = data.FirstOrDefault((element) => element.Id == e.Id);
             if (existing != null)
             {
-                data.Remove(existing);
-                // already there, just update the name
-                data.Add(
-                  new OrderedItem()
-                  {
-                      Name = e.Name,
-                      DetailGraph = existing.DetailGraph,
-                      Graph = existing.Graph,
-                      Id = existing.Id,
-                      Order = existing.Order,
-                      Visible = existing.Visible,
-                      ShowOnDashboard = existing.ShowOnDashboard,
-                  }
-                );
+                existing.Name = existing.Name;
             }
             else
             {
@@ -282,20 +269,7 @@ public static class SettingsLogic
             var existing = data.FirstOrDefault((element) => element.Id == e.Id);
             if (existing != null)
             {
-                data.Remove(existing);
-                // already there, just update the name
-                data.Add(
-                  new OrderedItem()
-                  {
-                      Name = e.Name,
-                      DetailGraph = existing.DetailGraph,
-                      Graph = existing.Graph,
-                      Id = existing.Id,
-                      Order = existing.Order,
-                      Visible = existing.Visible,
-                      ShowOnDashboard = existing.ShowOnDashboard,
-                  }
-                );
+                existing.Name = existing.Name;
             }
             else
             {
@@ -371,21 +345,7 @@ public static class SettingsLogic
             var existing = data.FirstOrDefault((element) => element.Id == metric.Id);
             if (existing != null)
             {
-                data.Remove(existing);
-                // already there, just update the name
-                data.Add(
-                  new OrderedItem()
-                  {
-                      Name = metric.Name,
-                      DetailGraph = existing.DetailGraph,
-                      Graph = existing.Graph,
-                      Id = existing.Id,
-                      Order = existing.Order,
-                      Visible = existing.Visible,
-                      ShowOnDashboard = existing.ShowOnDashboard,
-                      Parent = metric.GroupId,
-                  }
-                );
+                existing.Name = existing.Name;
             }
             else
             {

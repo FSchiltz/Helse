@@ -7,6 +7,7 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import '../../services/account.dart';
 
 class PatientsSettingsLogic extends BaseSettingsLogic {
+  static const patientsName = 'patients';
   bool init = false;
 
   PatientsSettingsLogic(super.account, super.service);
@@ -32,7 +33,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
       await service.savePatientsSettings(full);
     }
 
-    save(Account.patients, full.toJson());
+    save(patientsName, full.toJson());
   }
 
   Future<void> saveMetrics(
@@ -60,7 +61,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
   }
 
   PatientsSettings _patientsSettings() {
-    var encoded = getString(Account.patients);
+    var encoded = getString(patientsName);
     if (encoded == null) {
       return PatientsSettings();
     }
@@ -133,7 +134,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
     var serverSettings = await service.getPatientsSettings();
     print("Patients settings loaded from server");
 
-    save(Account.settings, serverSettings.toJson());
+    save(patientsName, serverSettings.toJson());
     init = true;
   }
 }

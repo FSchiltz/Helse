@@ -12,13 +12,6 @@ class Account {
   static const redirect = "redirect";
   static const clientid = "clientid";
   static const refresh = "refresh";
-  static const fitRun = "fitLastRun";
-  static const fitHistory = "fitHistory";
-  static const fitBackground = "fitBackground";
-  static const fitStatus = 'fitStatus';
-  static const health = 'health';
-  static const settings = 'settings';
-  static const patients = 'patients';
 
   Future<String?> get(String name) async {
     var store = await storage;
@@ -36,16 +29,9 @@ class Account {
 
   Future<void> clean() async {
     var s = await storage;
-    await s.remove(grant);
-    await s.remove(redirect);
-    await s.remove(clientid);
-    await s.remove(refresh);
-    await s.remove(fitRun);
-    await s.remove(fitHistory);
-    await s.remove(fitStatus);
-    await s.remove(patients);
-    await s.remove(health);
-    await s.remove(settings);
+    var oldUrl = s.getString(url);
+    await s.clear();
+    if (oldUrl != null) s.setString(url, oldUrl);
   }
 
   Future<ConnectionResponse?> getToken() async {
