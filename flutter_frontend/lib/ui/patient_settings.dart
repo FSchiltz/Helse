@@ -20,10 +20,16 @@ class PatientSettingsPage extends StatelessWidget {
     var settings = Dependencies.logics.patientsSettings.getSettings();
     return NavigationPage(
       header: (person == null)
-          ? Text(
-              "Default settings for the patients. Patients ${settings.patients?.map((e) => patients?.firstWhereOrNull((x) => x.id == e.patientId)?.name).join(',')} are overrided",
-              style: theme.headlineMedium,
-            )
+          ? Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Align(
+              alignment: AlignmentGeometry.topLeft,
+              child: Text(
+                  "Default settings for the patients. Patients ${settings.patients?.map((e) => patients?.firstWhereOrNull((x) => x.id == e.patientId)?.name).join(',')} are overrided",
+                  style: theme.headlineSmall,
+                ),
+            ),
+          )
           : null,
       locale.patientsSettings,
       pages: [

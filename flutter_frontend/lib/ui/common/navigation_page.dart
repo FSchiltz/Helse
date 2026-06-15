@@ -92,23 +92,8 @@ class _NavigationPageState extends State<NavigationPage> {
                   .toList(),
             )
           : null,
-      body: _getBody(screenWidth, theme),
+      body: SafeArea(child: _tabs(screenWidth, theme)),
     );
-  }
-
-  SafeArea _getBody(double screenWidth, ColorScheme theme) {
-    if (widget.header != null) {
-      return SafeArea(
-        child: Column(
-          children: [
-            Flexible(child: widget.header!),
-            Expanded(child: _tabs(screenWidth, theme)),
-          ],
-        ),
-      );
-    }
-
-    return SafeArea(child: _tabs(screenWidth, theme));
   }
 
   Widget _tabs(double screenWidth, ColorScheme theme) {
@@ -118,11 +103,12 @@ class _NavigationPageState extends State<NavigationPage> {
             widget.pages[_selectedIndex],
             theme.surfaceContainerHigh,
           )
-        : widget.pages[_selectedIndex];
+        : _body(widget.pages[_selectedIndex]);
   }
 
   Widget _menuBar(List<MenuDestination> menu, Widget content, Color color) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         NavigationRail(
           backgroundColor: color,
@@ -144,8 +130,23 @@ class _NavigationPageState extends State<NavigationPage> {
               )
               .toList(),
         ),
-        Expanded(child: content),
+        _body(content),
       ],
     );
+  }
+
+  Widget _body(Widget content) {
+    if (widget.header != null) {
+      return Expanded(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            widget.header!,
+            Expanded(child: content),
+          ],
+        ),
+      );
+    }
+    return Expanded(child: content);
   }
 }
