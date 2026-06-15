@@ -138,11 +138,14 @@ class _MetricWidgetState extends State<MetricWidget> {
       "${type.id}",
       StateType.metric,
       context,
+      true,
     );
+
     switch (type.summaryType) {
       case MetricSummary.sum:
         icon = Icon(Icons.trending_up_sharp, color: color);
-        value = '${metrics.map((metric) => double.parse(metric.value)).sum.round()}';
+        value =
+            '${metrics.map((metric) => double.parse(metric.value)).sum.round()}';
         break;
       case MetricSummary.mean:
         icon = Icon(Icons.update, color: color);

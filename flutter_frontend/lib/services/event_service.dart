@@ -25,19 +25,45 @@ class EventService extends ApiService {
     await call(() => api.apiEventsTypeIdDelete(id: event));
   }
 
-  Future<List<Event>?> events(int? type, DateTime? start, DateTime? end, {int? person}) async {
+  Future<List<Event>?> events(
+    int? type,
+    DateTime? start,
+    DateTime? end, {
+    int? person,
+  }) async {
     var api = await getService();
-    return await call(() => api.apiEventsGet(type: type, start: start?.toUtc(), end: end?.toUtc(), personId: person));
+    return await call(
+      () => api.apiEventsGet(
+        type: type,
+        start: start?.toUtc(),
+        end: end?.toUtc(),
+        personId: person,
+      ),
+    );
   }
 
-  Future<EventStats?> eventsSummary(int? type, DateTime? start, DateTime? end, {int? person}) async {
+  Future<EventStats?> eventsSummary(
+    int? type,
+    DateTime? start,
+    DateTime? end, {
+    int? person,
+  }) async {
     var api = await getService();
-    return await call(() => api.apiEventsSummaryGet(type: type, start: start?.toUtc(), end: end?.toUtc(), personId: person));
+    return await call(
+      () => api.apiEventsSummaryGet(
+        type: type,
+        start: start?.toUtc(),
+        end: end?.toUtc(),
+        personId: person,
+      ),
+    );
   }
 
   Future<List<Event>?> agenda(DateTime? start, DateTime? end) async {
     var api = await getService();
-    return await call(() => api.apiPatientsAgendaGet(start: start?.toUtc(), end: end?.toUtc()));
+    return await call(
+      () => api.apiPatientsAgendaGet(start: start?.toUtc(), end: end?.toUtc()),
+    );
   }
 
   Future<void> addEvent(CreateEvent event, {int? person}) async {

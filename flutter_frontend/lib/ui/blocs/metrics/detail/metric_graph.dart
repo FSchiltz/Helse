@@ -137,7 +137,10 @@ class _MetricGraphState extends State<MetricGraph> {
       widget.type.id.toString(),
       StateType.metric,
       context,
+      true,
     );
+
+    Dependencies.theme.save();
 
     List<Mark<Shape>> marks;
     if (widget.settings == GraphKind.line) {

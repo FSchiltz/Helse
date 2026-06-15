@@ -112,6 +112,7 @@ class EventTimeline extends StatelessWidget {
                   entry.key,
                   StateType.eventValue,
                   context,
+                  false,
                 ),
               ),
               width: 12 * widthCoeff,
@@ -121,6 +122,8 @@ class EventTimeline extends StatelessWidget {
         );
       }
     }
+
+    Dependencies.theme.save();
 
     if (widgets.isEmpty) {
       widgets.add(SizedBox(width: 12 * widthCoeff));

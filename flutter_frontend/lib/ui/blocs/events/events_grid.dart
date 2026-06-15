@@ -63,6 +63,29 @@ class _EventsGridState extends State<EventsGrid> {
 
   @override
   Widget build(BuildContext context) {
+    var childs =
+        types?.map((type) {
+          var color = Dependencies.theme.stateColor(
+            "${type.id}",
+            StateType.events,
+            context,
+            false,
+          );
+          return Container(
+            decoration: BoxDecoration(
+              border: Border(left: BorderSide(color: color, width: 2)),
+            ),
+            child: EventWidget(
+              type,
+              widget.date,
+              key: Key(type.id.toString()),
+              person: widget.person,
+            ),
+          );
+        }).toList() ??
+        [];
+        
+    Dependencies.theme.save();
     return types == null
         ? const HelseLoader()
         : BlocListener<SettingsBloc<bool>, bool>(
@@ -77,28 +100,7 @@ class _EventsGridState extends State<EventsGrid> {
                 alignment: WrapAlignment.start,
                 spacing: 24,
                 runSpacing: 16,
-                children:
-                    types?.map((type) {
-                      var color = Dependencies.theme.stateColor(
-                        "${type.id}",
-                        StateType.events,
-                        context,
-                      );
-                      return Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            left: BorderSide(color: color, width: 2),
-                          ),
-                        ),
-                        child: EventWidget(
-                          type,
-                          widget.date,
-                          key: Key(type.id.toString()),
-                          person: widget.person,
-                        ),
-                      );
-                    }).toList() ??
-                    [],
+                children: childs,
               ),
             ),
           );

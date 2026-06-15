@@ -140,9 +140,8 @@ class SettingsLogic extends BaseSettingsLogic {
           if (list == null) {
             list = [];
             settings = settings.copyWith(
-              eventSettings: EventSettings(
+              eventSettings: settings.eventSettings?.copyWith(
                 displaySettings: list,
-                displayValueSettings: [],
               ),
             );
           }
@@ -151,9 +150,8 @@ class SettingsLogic extends BaseSettingsLogic {
           if (list == null) {
             list = [];
             settings = settings.copyWith(
-              metricSettings: MetricSettings(
+              metricSettings: settings.metricSettings?.copyWith(
                 displaySettings: list,
-                groups: MetricGroupSettings(displaySettings: []),
               ),
             );
           }
@@ -162,8 +160,7 @@ class SettingsLogic extends BaseSettingsLogic {
           if (list == null) {
             list = [];
             settings = settings.copyWith(
-              eventSettings: EventSettings(
-                displaySettings: [],
+              eventSettings: settings.eventSettings?.copyWith(
                 displayValueSettings: list,
               ),
             );
@@ -173,13 +170,28 @@ class SettingsLogic extends BaseSettingsLogic {
           if (list == null) {
             list = [];
             settings = settings.copyWith(
-              metricSettings: MetricSettings(
-                displaySettings: [],
-                groups: MetricGroupSettings(displaySettings: list),
+              metricSettings: settings.metricSettings?.copyWith(
+                groups: settings.metricSettings?.groups?.copyWith(
+                  displaySettings: list,
+                ),
               ),
             );
           }
       }
+
+      for (var entry in group.value.entries) {
+        if (!list.any((e) => e.key == entry.key)) {
+          list.add(
+            OrderedItem(
+              key: entry.key,
+              color: entry.value.toARGB32(),
+              id: 0,
+              name: entry.key,
+            ),
+          );
+        }
+      }
+
       final newList = <OrderedItem>[];
       for (var entry in list) {
         // update the correct map

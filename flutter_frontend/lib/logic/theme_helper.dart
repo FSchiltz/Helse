@@ -37,7 +37,12 @@ class ThemeHelper {
     );
   }
 
-  Color stateColor(String state, StateType type, BuildContext context) {
+  Color stateColor(
+    String state,
+    StateType type,
+    BuildContext context,
+    bool save,
+  ) {
     var group = colors[type];
     group ??= colors[type] = {};
 
@@ -46,9 +51,8 @@ class ThemeHelper {
       color = group[state]!;
     } else {
       group[state] = color = randomColor();
-      // trigger a saving of the new color
-      // TODO use a thread safe approach
-      Dependencies.logics.settings.setColors(colors, toServer: false);
+
+      if (save) Dependencies.theme.save();
     }
 
     if (isDark(context)) return color;
@@ -64,5 +68,11 @@ class ThemeHelper {
 
   void setColors(Map<StateType, Map<String, Color>> map) {
     colors.addEntries(map.entries);
+  }
+
+  Future<void> save() async {
+    // trigger a saving of the new color
+    // TODO use a thread safe approach
+    await Dependencies.logics.settings.setColors(colors, toServer: false);
   }
 }

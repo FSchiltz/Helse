@@ -141,7 +141,9 @@ class WidgetGraph extends StatelessWidget {
       type.id.toString(),
       StateType.metric,
       context,
+      true,
     );
+
     if (settings == GraphKind.bar) {
       return BarChart(
         BarChartData(
