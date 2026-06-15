@@ -2307,6 +2307,7 @@ class CreateMetricType {
     this.visible,
     this.showOnDashboard,
     required this.groupId,
+    this.valueCount,
   });
 
   factory CreateMetricType.fromJson(Map<String, dynamic> json) =>
@@ -2341,6 +2342,8 @@ class CreateMetricType {
   final bool? showOnDashboard;
   @JsonKey(name: 'groupId')
   final int groupId;
+  @JsonKey(name: 'valueCount')
+  final int? valueCount;
   static const fromJsonFactory = _$CreateMetricTypeFromJson;
 
   @override
@@ -2379,7 +2382,15 @@ class CreateMetricType {
                   showOnDashboard,
                 )) &&
             (identical(other.groupId, groupId) ||
-                const DeepCollectionEquality().equals(other.groupId, groupId)));
+                const DeepCollectionEquality().equals(
+                  other.groupId,
+                  groupId,
+                )) &&
+            (identical(other.valueCount, valueCount) ||
+                const DeepCollectionEquality().equals(
+                  other.valueCount,
+                  valueCount,
+                )));
   }
 
   @override
@@ -2396,6 +2407,7 @@ class CreateMetricType {
       const DeepCollectionEquality().hash(visible) ^
       const DeepCollectionEquality().hash(showOnDashboard) ^
       const DeepCollectionEquality().hash(groupId) ^
+      const DeepCollectionEquality().hash(valueCount) ^
       runtimeType.hashCode;
 }
 
@@ -2410,6 +2422,7 @@ extension $CreateMetricTypeExtension on CreateMetricType {
     bool? visible,
     bool? showOnDashboard,
     int? groupId,
+    int? valueCount,
   }) {
     return CreateMetricType(
       unit: unit ?? this.unit,
@@ -2421,6 +2434,7 @@ extension $CreateMetricTypeExtension on CreateMetricType {
       visible: visible ?? this.visible,
       showOnDashboard: showOnDashboard ?? this.showOnDashboard,
       groupId: groupId ?? this.groupId,
+      valueCount: valueCount ?? this.valueCount,
     );
   }
 
@@ -2434,6 +2448,7 @@ extension $CreateMetricTypeExtension on CreateMetricType {
     Wrapped<bool?>? visible,
     Wrapped<bool?>? showOnDashboard,
     Wrapped<int>? groupId,
+    Wrapped<int?>? valueCount,
   }) {
     return CreateMetricType(
       unit: (unit != null ? unit.value : this.unit),
@@ -2449,6 +2464,7 @@ extension $CreateMetricTypeExtension on CreateMetricType {
           ? showOnDashboard.value
           : this.showOnDashboard),
       groupId: (groupId != null ? groupId.value : this.groupId),
+      valueCount: (valueCount != null ? valueCount.value : this.valueCount),
     );
   }
 }
@@ -4104,6 +4120,7 @@ class MetricType {
     this.visible,
     this.showOnDashboard,
     required this.groupId,
+    this.valueCount,
   });
 
   factory MetricType.fromJson(Map<String, dynamic> json) =>
@@ -4140,6 +4157,8 @@ class MetricType {
   final bool? showOnDashboard;
   @JsonKey(name: 'groupId')
   final int groupId;
+  @JsonKey(name: 'valueCount')
+  final int? valueCount;
   static const fromJsonFactory = _$MetricTypeFromJson;
 
   @override
@@ -4180,7 +4199,15 @@ class MetricType {
                   showOnDashboard,
                 )) &&
             (identical(other.groupId, groupId) ||
-                const DeepCollectionEquality().equals(other.groupId, groupId)));
+                const DeepCollectionEquality().equals(
+                  other.groupId,
+                  groupId,
+                )) &&
+            (identical(other.valueCount, valueCount) ||
+                const DeepCollectionEquality().equals(
+                  other.valueCount,
+                  valueCount,
+                )));
   }
 
   @override
@@ -4198,6 +4225,7 @@ class MetricType {
       const DeepCollectionEquality().hash(visible) ^
       const DeepCollectionEquality().hash(showOnDashboard) ^
       const DeepCollectionEquality().hash(groupId) ^
+      const DeepCollectionEquality().hash(valueCount) ^
       runtimeType.hashCode;
 }
 
@@ -4213,6 +4241,7 @@ extension $MetricTypeExtension on MetricType {
     bool? visible,
     bool? showOnDashboard,
     int? groupId,
+    int? valueCount,
   }) {
     return MetricType(
       id: id ?? this.id,
@@ -4225,6 +4254,7 @@ extension $MetricTypeExtension on MetricType {
       visible: visible ?? this.visible,
       showOnDashboard: showOnDashboard ?? this.showOnDashboard,
       groupId: groupId ?? this.groupId,
+      valueCount: valueCount ?? this.valueCount,
     );
   }
 
@@ -4239,6 +4269,7 @@ extension $MetricTypeExtension on MetricType {
     Wrapped<bool?>? visible,
     Wrapped<bool?>? showOnDashboard,
     Wrapped<int>? groupId,
+    Wrapped<int?>? valueCount,
   }) {
     return MetricType(
       id: (id != null ? id.value : this.id),
@@ -4255,6 +4286,7 @@ extension $MetricTypeExtension on MetricType {
           ? showOnDashboard.value
           : this.showOnDashboard),
       groupId: (groupId != null ? groupId.value : this.groupId),
+      valueCount: (valueCount != null ? valueCount.value : this.valueCount),
     );
   }
 }
@@ -6281,6 +6313,7 @@ class UpdateMetricType {
     this.visible,
     this.showOnDashboard,
     required this.groupId,
+    this.valueCount,
   });
 
   factory UpdateMetricType.fromJson(Map<String, dynamic> json) =>
@@ -6317,6 +6350,8 @@ class UpdateMetricType {
   final bool? showOnDashboard;
   @JsonKey(name: 'groupId')
   final int groupId;
+  @JsonKey(name: 'valueCount')
+  final int? valueCount;
   static const fromJsonFactory = _$UpdateMetricTypeFromJson;
 
   @override
@@ -6357,7 +6392,15 @@ class UpdateMetricType {
                   showOnDashboard,
                 )) &&
             (identical(other.groupId, groupId) ||
-                const DeepCollectionEquality().equals(other.groupId, groupId)));
+                const DeepCollectionEquality().equals(
+                  other.groupId,
+                  groupId,
+                )) &&
+            (identical(other.valueCount, valueCount) ||
+                const DeepCollectionEquality().equals(
+                  other.valueCount,
+                  valueCount,
+                )));
   }
 
   @override
@@ -6375,6 +6418,7 @@ class UpdateMetricType {
       const DeepCollectionEquality().hash(visible) ^
       const DeepCollectionEquality().hash(showOnDashboard) ^
       const DeepCollectionEquality().hash(groupId) ^
+      const DeepCollectionEquality().hash(valueCount) ^
       runtimeType.hashCode;
 }
 
@@ -6390,6 +6434,7 @@ extension $UpdateMetricTypeExtension on UpdateMetricType {
     bool? visible,
     bool? showOnDashboard,
     int? groupId,
+    int? valueCount,
   }) {
     return UpdateMetricType(
       id: id ?? this.id,
@@ -6402,6 +6447,7 @@ extension $UpdateMetricTypeExtension on UpdateMetricType {
       visible: visible ?? this.visible,
       showOnDashboard: showOnDashboard ?? this.showOnDashboard,
       groupId: groupId ?? this.groupId,
+      valueCount: valueCount ?? this.valueCount,
     );
   }
 
@@ -6416,6 +6462,7 @@ extension $UpdateMetricTypeExtension on UpdateMetricType {
     Wrapped<bool?>? visible,
     Wrapped<bool?>? showOnDashboard,
     Wrapped<int>? groupId,
+    Wrapped<int?>? valueCount,
   }) {
     return UpdateMetricType(
       id: (id != null ? id.value : this.id),
@@ -6432,6 +6479,7 @@ extension $UpdateMetricTypeExtension on UpdateMetricType {
           ? showOnDashboard.value
           : this.showOnDashboard),
       groupId: (groupId != null ? groupId.value : this.groupId),
+      valueCount: (valueCount != null ? valueCount.value : this.valueCount),
     );
   }
 }

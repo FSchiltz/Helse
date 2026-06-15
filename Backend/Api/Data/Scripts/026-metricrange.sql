@@ -11,7 +11,8 @@ INSERT INTO
         type,
         summaryType,
         usereditable,
-        GroupId
+        GroupId,
+        ValueCount
     )
 VALUES
-    (19, null, 'Blood pressure',  3, 0, false, 2);
+    (19, null, 'Blood pressure', 3, 0, false, 2, 2);

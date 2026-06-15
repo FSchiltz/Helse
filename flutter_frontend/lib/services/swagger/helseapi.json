@@ -2310,6 +2310,15 @@
               "string"
             ],
             "format": "int64"
+          },
+          "valueCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int64"
           }
         }
       },
@@ -2919,7 +2928,8 @@
         "enum": [
           "Text",
           "Number",
-          "Bool"
+          "Bool",
+          "NumberRange"
         ]
       },
       "MetricGroup": {
@@ -3037,6 +3047,15 @@
           "groupId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "valueCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
               "integer",
               "string"
             ],
@@ -3852,6 +3871,15 @@
           "groupId": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "valueCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
               "integer",
               "string"
             ],
