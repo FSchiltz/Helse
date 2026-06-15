@@ -70,6 +70,7 @@ class SettingsLogic extends BaseSettingsLogic {
     var serverSettings = await service.getPersonSettings();
     print("Settings loaded from server");
     await save(settingsName, serverSettings.toJson());
+
     init = true;
     Dependencies.theme.setColors(getColors());
     metrics.changed(true);
@@ -243,9 +244,13 @@ class SettingsLogic extends BaseSettingsLogic {
     final Map<String, Color> map = {};
     for (var item in settings) {
       final color = item.color;
-      if (color != null) {
-        map.putIfAbsent(item.key ?? item.id.toString(), () => Color(color));
-      }
+      map.putIfAbsent(item.key ?? item.id.toString(), () {
+        if (color == null) {
+          return ThemeHelper.randomColor();
+        } else {
+          return Color(color);
+        }
+      });
     }
     return map;
   }
