@@ -2,9 +2,9 @@ import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/metric_helper.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
 
 class Range<T> {
   final List<T> value = [];
@@ -51,53 +51,18 @@ class WidgetGraph extends StatelessWidget {
       milliseconds: (bucketLength * (tile * 0.05)).toInt(),
     );
 
-    final groups = List<List<MetricGrouped>>.generate(
-      graphCount,
-      (i) => List<MetricGrouped>.generate(tile, (index) {
-        final start = range.start.add(
-          Duration(milliseconds: (index * bucketLength).toInt()),
-        );
-        var date = start.add(
-          Duration(milliseconds: (bucketLength / 2).toInt()),
-        );
-        return MetricGrouped(date, 0, []);
-      }),
-    );
+    final groups = MetricHelper.group(raw, range, bucketLength, type);
+    final spots = List<GraphRange>.generate(graphCount, (i) => GraphRange());
 
-    for (var metric in raw) {
-      final List<double> values;
-
-      switch (type.type) {
-        case MetricDataType.number:
-          values = [double.parse(metric.value)];
-        case MetricDataType.bool:
-          values = [bool.parse(metric.value) ? 1 : 0];
-        case MetricDataType.numberrange:
-          values = metric.value.split(';').map((e) => double.parse(e)).toList();
-        default:
-          throw StateError('Unsupported');
-      }
-
-      // find the bucket
-      final duration = metric.date.difference(range.start);
-      final index = (duration.inMilliseconds / bucketLength).toInt();
+    for (final item in groups) {
+      var x = item.date.millisecondsSinceEpoch.toDouble();
 
       for (int i = 0; i < graphCount; i++) {
-        var value = values[i];
-        final bucket = groups[i][index];
-        bucket.value = (bucket.value + value) / 2;
-      }
-    }
-
-    final spots = List<GraphRange>.generate(graphCount, (i) => GraphRange());
-    for (int i = 0; i < graphCount; i++) {
-      for (final item in groups[i]) {
-        var y = item.value;
-        var x = item.date.millisecondsSinceEpoch.toDouble();
+        var y = item.value[i];
 
         if (settings == GraphKind.bar) {
           // graph bar are simpler, no need to split them so we put everything in the same range
-          if (spots.isEmpty) {
+          if (spots[i].spots.isEmpty) {
             spots[i].spots.add(
               Range<FlSpot>(start: item.date, stop: item.date),
             );
@@ -105,11 +70,6 @@ class WidgetGraph extends StatelessWidget {
 
           spots[i].spots[0].value.add(FlSpot(x, y));
         } else {
-          if (y == 0) {
-            // don't show 0 values in the graph
-            continue;
-          }
-
           // for line chart we split so that missing data are not extrapolated by the graph
           var existing = spots[i].spots.firstWhereOrNull(
             (e) =>
