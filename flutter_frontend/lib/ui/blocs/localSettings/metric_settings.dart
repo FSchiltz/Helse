@@ -10,36 +10,34 @@ import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/statefull_check.dart';
 import 'package:helse/ui/common/type_input.dart';
 
-class MetricSettings extends StatefulWidget {
+class MetricsSettings extends StatefulWidget {
   final bool isPatient;
   final int? patient;
-  const MetricSettings({super.key, this.isPatient = false, this.patient});
+  const MetricsSettings({super.key, this.isPatient = false, this.patient});
 
   @override
-  State<MetricSettings> createState() => _MetricSettingsState();
+  State<MetricsSettings> createState() => _MetricsSettingsState();
 }
 
-class _MetricSettingsState extends State<MetricSettings> {
+class _MetricsSettingsState extends State<MetricsSettings> {
   Future<(List<OrderedEditItem>, List<OrderedEditItem>)> _getData(
     bool refresh,
   ) async {
-    List<OrderedItem> metrics;
-    List<OrderedItem> groups;
+    MetricSettings metrics;
     if (widget.isPatient) {
-      metrics = await Dependencies.logics.patientsSettings.getMetrics(
-        widget.patient,
-      );
-      groups = await Dependencies.logics.patientsSettings.getMetricGroups(
-        widget.patient,
-      );
+      metrics = Dependencies.logics.patientsSettings.getMetrics(widget.patient);
     } else {
-      metrics = await Dependencies.logics.settings.getMetrics();
-      groups = await Dependencies.logics.settings.getMetricGroups();
+      metrics = Dependencies.logics.settings.getMetrics();
     }
 
-
-    var editGroups = groups.map((e) => OrderedEditItem.of(e)).toList();
-    var editMetrics = metrics.map((e) => OrderedEditItem.of(e)).toList();
+    var editGroups =
+        metrics.groups?.displaySettings
+            .map((e) => OrderedEditItem.of(e))
+            .toList() ??
+        [];
+    var editMetrics = metrics.displaySettings
+        .map((e) => OrderedEditItem.of(e))
+        .toList();
 
     return (editGroups, editMetrics);
   }
@@ -54,20 +52,30 @@ class _MetricSettingsState extends State<MetricSettings> {
       var groupsToSave = groups.map((e) => e.ordered()).toList();
       // save the user's settings
       if (widget.isPatient) {
-        await Dependencies.logics.patientsSettings.saveMetrics(
-          metricsToSave,
-          true,
+        final settings = Dependencies.logics.patientsSettings.getMetrics(
           widget.patient,
         );
-
-        await Dependencies.logics.patientsSettings.saveMetricGroups(
-          groupsToSave,
+        await Dependencies.logics.patientsSettings.saveMetrics(
+          settings.copyWith(
+            displaySettings: metricsToSave,
+            groups:
+                (settings.groups ?? MetricGroupSettings(displaySettings: []))
+                    .copyWith(displaySettings: groupsToSave),
+          ),
           true,
           widget.patient,
         );
       } else {
-        await Dependencies.logics.settings.saveMetrics(metricsToSave, true);
-        await Dependencies.logics.settings.saveMetricGroups(groupsToSave, true);
+        final settings = Dependencies.logics.settings.getMetrics();
+        await Dependencies.logics.settings.saveMetrics(
+          settings.copyWith(
+            displaySettings: metricsToSave,
+            groups:
+                (settings.groups ?? MetricGroupSettings(displaySettings: []))
+                    .copyWith(displaySettings: groupsToSave),
+          ),
+          true,
+        );
       }
 
       Notify.show(locale.saved);

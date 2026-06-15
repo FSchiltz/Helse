@@ -6,19 +6,6 @@ part of 'helseapi.swagger.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ColorValue _$ColorValueFromJson(Map<String, dynamic> json) => ColorValue(
-  key: json['key'] as String,
-  type: stateTypeFromJson(json['type']),
-  value: (json['value'] as num).toInt(),
-);
-
-Map<String, dynamic> _$ColorValueToJson(ColorValue instance) =>
-    <String, dynamic>{
-      'key': instance.key,
-      'type': stateTypeToJson(instance.type),
-      'value': instance.value,
-    };
-
 Connection _$ConnectionFromJson(Map<String, dynamic> json) => Connection(
   user: json['user'] as String,
   password: json['password'] as String,
@@ -212,6 +199,29 @@ Map<String, dynamic> _$EventCreationStatsToJson(EventCreationStats instance) =>
       'events': instance.events.map((e) => e.toJson()).toList(),
       'eventCounts': instance.eventCounts.map((e) => e.toJson()).toList(),
     };
+
+EventSettings _$EventSettingsFromJson(Map<String, dynamic> json) =>
+    EventSettings(
+      displaySettings:
+          (json['displaySettings'] as List<dynamic>?)
+              ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      displayValueSettings:
+          (json['displayValueSettings'] as List<dynamic>?)
+              ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$EventSettingsToJson(
+  EventSettings instance,
+) => <String, dynamic>{
+  'displaySettings': instance.displaySettings.map((e) => e.toJson()).toList(),
+  'displayValueSettings': instance.displayValueSettings
+      .map((e) => e.toJson())
+      .toList(),
+};
 
 EventStats _$EventStatsFromJson(Map<String, dynamic> json) => EventStats(
   summaries:
@@ -440,6 +450,42 @@ Map<String, dynamic> _$MetricGroupToJson(MetricGroup instance) =>
       'id': instance.id,
     };
 
+MetricGroupSettings _$MetricGroupSettingsFromJson(Map<String, dynamic> json) =>
+    MetricGroupSettings(
+      displaySettings:
+          (json['displaySettings'] as List<dynamic>?)
+              ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$MetricGroupSettingsToJson(
+  MetricGroupSettings instance,
+) => <String, dynamic>{
+  'displaySettings': instance.displaySettings.map((e) => e.toJson()).toList(),
+};
+
+MetricSettings _$MetricSettingsFromJson(Map<String, dynamic> json) =>
+    MetricSettings(
+      displaySettings:
+          (json['displaySettings'] as List<dynamic>?)
+              ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      groups: json['groups'] == null
+          ? null
+          : MetricGroupSettings.fromJson(
+              json['groups'] as Map<String, dynamic>,
+            ),
+    );
+
+Map<String, dynamic> _$MetricSettingsToJson(
+  MetricSettings instance,
+) => <String, dynamic>{
+  'displaySettings': instance.displaySettings.map((e) => e.toJson()).toList(),
+  'groups': instance.groups?.toJson(),
+};
+
 MetricType _$MetricTypeFromJson(Map<String, dynamic> json) => MetricType(
   id: (json['id'] as num).toInt(),
   unit: Unit.fromJson(json['unit'] as Map<String, dynamic>),
@@ -527,9 +573,11 @@ OrderedItem _$OrderedItemFromJson(Map<String, dynamic> json) => OrderedItem(
   order: (json['order'] as num?)?.toInt(),
   name: json['name'] as String,
   id: (json['id'] as num).toInt(),
+  key: json['key'] as String?,
   graph: graphKindNullableFromJson(json['graph']),
   detailGraph: graphKindNullableFromJson(json['detailGraph']),
   parent: (json['parent'] as num?)?.toInt(),
+  color: (json['color'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$OrderedItemToJson(OrderedItem instance) =>
@@ -539,53 +587,59 @@ Map<String, dynamic> _$OrderedItemToJson(OrderedItem instance) =>
       'order': instance.order,
       'name': instance.name,
       'id': instance.id,
+      'key': instance.key,
       'graph': graphKindNullableToJson(instance.graph),
       'detailGraph': graphKindNullableToJson(instance.detailGraph),
       'parent': instance.parent,
+      'color': instance.color,
     };
 
-PatientSettings _$PatientSettingsFromJson(Map<String, dynamic> json) =>
-    PatientSettings(
-      patientId: (json['patientId'] as num?)?.toInt(),
-      datePreset: datePresetNullableFromJson(json['datePreset']),
-      theme: interfaceThemeNullableFromJson(json['theme']),
-      eventWidth: (json['eventWidth'] as num?)?.toInt(),
-      metrics:
-          (json['metrics'] as List<dynamic>?)
-              ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
-      metricGroups:
-          (json['metricGroups'] as List<dynamic>?)
-              ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
-      events:
-          (json['events'] as List<dynamic>?)
-              ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
-      colors:
-          (json['colors'] as List<dynamic>?)
-              ?.map((e) => ColorValue.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
-    );
+PatientSettings _$PatientSettingsFromJson(
+  Map<String, dynamic> json,
+) => PatientSettings(
+  patientId: (json['patientId'] as num?)?.toInt(),
+  version: (json['version'] as num?)?.toInt(),
+  datePreset: datePresetNullableFromJson(json['datePreset']),
+  theme: interfaceThemeNullableFromJson(json['theme']),
+  metrics:
+      (json['metrics'] as List<dynamic>?)
+          ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
+  metricGroups:
+      (json['metricGroups'] as List<dynamic>?)
+          ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
+  events:
+      (json['events'] as List<dynamic>?)
+          ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
+  eventSettings: json['eventSettings'] == null
+      ? null
+      : EventSettings.fromJson(json['eventSettings'] as Map<String, dynamic>),
+  metricSettings: json['metricSettings'] == null
+      ? null
+      : MetricSettings.fromJson(json['metricSettings'] as Map<String, dynamic>),
+);
 
 Map<String, dynamic> _$PatientSettingsToJson(PatientSettings instance) =>
     <String, dynamic>{
       'patientId': instance.patientId,
+      'version': instance.version,
       'datePreset': datePresetNullableToJson(instance.datePreset),
       'theme': interfaceThemeNullableToJson(instance.theme),
-      'eventWidth': instance.eventWidth,
       'metrics': instance.metrics?.map((e) => e.toJson()).toList(),
       'metricGroups': instance.metricGroups?.map((e) => e.toJson()).toList(),
       'events': instance.events?.map((e) => e.toJson()).toList(),
-      'colors': instance.colors?.map((e) => e.toJson()).toList(),
+      'eventSettings': instance.eventSettings?.toJson(),
+      'metricSettings': instance.metricSettings?.toJson(),
     };
 
 PatientsSettings _$PatientsSettingsFromJson(Map<String, dynamic> json) =>
     PatientsSettings(
+      version: (json['version'] as num?)?.toInt(),
       $default: json['default'] == null
           ? null
           : PatientSettings.fromJson(json['default'] as Map<String, dynamic>),
@@ -598,6 +652,7 @@ PatientsSettings _$PatientsSettingsFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$PatientsSettingsToJson(PatientsSettings instance) =>
     <String, dynamic>{
+      'version': instance.version,
       'default': instance.$default?.toJson(),
       'patients': instance.patients?.map((e) => e.toJson()).toList(),
     };
@@ -939,9 +994,9 @@ Map<String, dynamic> _$UserIdToJson(UserId instance) => <String, dynamic>{
 };
 
 UserSettings _$UserSettingsFromJson(Map<String, dynamic> json) => UserSettings(
+  version: (json['version'] as num?)?.toInt(),
   datePreset: datePresetNullableFromJson(json['datePreset']),
   theme: interfaceThemeNullableFromJson(json['theme']),
-  eventWidth: (json['eventWidth'] as num?)?.toInt(),
   metrics:
       (json['metrics'] as List<dynamic>?)
           ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
@@ -957,22 +1012,24 @@ UserSettings _$UserSettingsFromJson(Map<String, dynamic> json) => UserSettings(
           ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
           .toList() ??
       [],
-  colors:
-      (json['colors'] as List<dynamic>?)
-          ?.map((e) => ColorValue.fromJson(e as Map<String, dynamic>))
-          .toList() ??
-      [],
+  eventSettings: json['eventSettings'] == null
+      ? null
+      : EventSettings.fromJson(json['eventSettings'] as Map<String, dynamic>),
+  metricSettings: json['metricSettings'] == null
+      ? null
+      : MetricSettings.fromJson(json['metricSettings'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$UserSettingsToJson(UserSettings instance) =>
     <String, dynamic>{
+      'version': instance.version,
       'datePreset': datePresetNullableToJson(instance.datePreset),
       'theme': interfaceThemeNullableToJson(instance.theme),
-      'eventWidth': instance.eventWidth,
       'metrics': instance.metrics?.map((e) => e.toJson()).toList(),
       'metricGroups': instance.metricGroups?.map((e) => e.toJson()).toList(),
       'events': instance.events?.map((e) => e.toJson()).toList(),
-      'colors': instance.colors?.map((e) => e.toJson()).toList(),
+      'eventSettings': instance.eventSettings?.toJson(),
+      'metricSettings': instance.metricSettings?.toJson(),
     };
 
 ApiImportTypePost$RequestBody _$ApiImportTypePost$RequestBodyFromJson(

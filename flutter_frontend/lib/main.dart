@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/logic/settings/settings_logic.dart';
+import 'package:helse/services/account.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:helse/worker.dart';
 import 'package:toastification/toastification.dart';
@@ -17,9 +18,10 @@ import 'ui/home.dart';
 import 'ui/login.dart';
 import 'ui/splash.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Dependencies.init();
+  await Account.setup();
 
   if (!kIsWeb && Platform.isAndroid) {
     Workmanager().initialize(callbackDispatcher);
@@ -123,7 +125,8 @@ class AppState extends State<App> {
                 child: child,
               );
             },
-            onGenerateRoute: (RouteSettings routeSettings) => SplashPage.route(),
+            onGenerateRoute: (RouteSettings routeSettings) =>
+                SplashPage.route(),
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
           ),

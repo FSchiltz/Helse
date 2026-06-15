@@ -54,11 +54,11 @@ abstract class ApiService {
   }
 
   Future<Helseapi> getService({Uri? override, bool sendRefresh = false}) async {
-    var url = override ?? Uri.parse(await account.get(Account.url) ?? '');
+    var url = override ?? Uri.parse(account.get(Account.url) ?? '');
 
     // first we try to get a new refresh token if needed
     String? token;
-    var settings = await account.getToken();
+    var settings = account.getToken();
 
     if (sendRefresh) {
       token = settings?.refreshToken;

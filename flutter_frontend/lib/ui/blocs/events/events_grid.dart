@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/ui/common/loader.dart';
 
 import '../../../di/dependencies.dart';
@@ -32,13 +33,11 @@ class _EventsGridState extends State<EventsGrid> {
     try {
       var model = await Dependencies.services.event.eventsType(false);
       if (model != null) {
-        await Dependencies.logics.settings.updateEvents(model);
-        await Dependencies.logics.patientsSettings.updateEvents(model);
-        List<OrderedItem> settings;
+        EventSettings settings;
         if (widget.person == null) {
-          settings = await Dependencies.logics.settings.getEvents();
+          settings = Dependencies.logics.settings.getEvents();
         } else {
-          settings = await Dependencies.logics.patientsSettings.getEvents(
+          settings = Dependencies.logics.patientsSettings.getEvents(
             widget.person,
           );
         }
@@ -46,7 +45,7 @@ class _EventsGridState extends State<EventsGrid> {
         // filter using the user settings
         List<EventType> filtered = [];
         for (var item in model) {
-          OrderedItem? setting = settings.firstWhereOrNull(
+          OrderedItem? setting = settings.displaySettings.firstWhereOrNull(
             (element) => element.id == item.id,
           );
 
@@ -64,6 +63,29 @@ class _EventsGridState extends State<EventsGrid> {
 
   @override
   Widget build(BuildContext context) {
+    var childs =
+        types?.map((type) {
+          var color = Dependencies.theme.stateColor(
+            "${type.id}",
+            StateType.events,
+            context,
+            false,
+          );
+          return Container(
+            decoration: BoxDecoration(
+              border: Border(left: BorderSide(color: color, width: 2)),
+            ),
+            child: EventWidget(
+              type,
+              widget.date,
+              key: Key(type.id.toString()),
+              person: widget.person,
+            ),
+          );
+        }).toList() ??
+        [];
+        
+    Dependencies.theme.save();
     return types == null
         ? const HelseLoader()
         : BlocListener<SettingsBloc<bool>, bool>(
@@ -78,28 +100,7 @@ class _EventsGridState extends State<EventsGrid> {
                 alignment: WrapAlignment.start,
                 spacing: 24,
                 runSpacing: 16,
-                children:
-                    types?.map((type) {
-                      var color = Dependencies.theme.stateColor(
-                        "${type.id}",
-                        StateType.events,
-                        context,
-                      );
-                      return Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            left: BorderSide(color: color, width: 2),
-                          ),
-                        ),
-                        child: EventWidget(
-                          type,
-                          widget.date,
-                          key: Key(type.id.toString()),
-                          person: widget.person,
-                        ),
-                      );
-                    }).toList() ??
-                    [],
+                children: childs,
               ),
             ),
           );

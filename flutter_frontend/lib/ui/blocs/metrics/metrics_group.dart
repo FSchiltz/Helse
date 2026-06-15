@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/ui/blocs/metrics/metric_group_detail.dart';
 import 'package:helse/ui/blocs/metrics/metric_widgets_grid.dart';
 
@@ -15,14 +16,12 @@ class MetricsGroup extends StatefulWidget {
   final int? person;
   final MetricGroup group;
   final DateTimeRange date;
-  final List<MetricType>? typesCache;
 
   const MetricsGroup({
     super.key,
     required this.date,
     required this.group,
     this.person,
-    this.typesCache,
   });
 
   @override
@@ -31,14 +30,9 @@ class MetricsGroup extends StatefulWidget {
 
 class _MetricsGroupState extends State<MetricsGroup> {
   List<Pair<MetricType, OrderedItem>>? types;
-
-  List<MetricType>? _cache;
   @override
   void initState() {
     super.initState();
-
-    _cache = widget.typesCache;
-
     _getData();
   }
 
@@ -46,23 +40,18 @@ class _MetricsGroupState extends State<MetricsGroup> {
     try {
       List<MetricType>? model;
 
-      if (_cache != null) {
-        model = widget.typesCache;
-        _cache = null;
-      } else {
-        model = await Dependencies.services.metric.metricsType(
-          false,
-          widget.group.id,
-        );
-      }
+      model = await Dependencies.services.metric.metricsType(
+        false,
+        widget.group.id,
+      );
 
       if (model != null) {
-        List<OrderedItem> settings;
+        MetricSettings settings;
 
         if (widget.person == null) {
-          settings = await Dependencies.logics.settings.getMetrics();
+          settings = Dependencies.logics.settings.getMetrics();
         } else {
-          settings = await Dependencies.logics.patientsSettings.getMetrics(
+          settings = Dependencies.logics.patientsSettings.getMetrics(
             widget.person,
           );
         }
@@ -71,7 +60,9 @@ class _MetricsGroupState extends State<MetricsGroup> {
         List<Pair<MetricType, OrderedItem>> filtered = [];
         for (var item in model.where((x) => x.showOnDashboard == true)) {
           OrderedItem setting =
-              settings.firstWhereOrNull((element) => element.id == item.id) ??
+              settings.displaySettings.firstWhereOrNull(
+                (element) => element.id == item.id,
+              ) ??
               Dependencies.logics.settings.getDefault(item);
 
           if (setting.showOnDashboard == true) {
@@ -94,9 +85,12 @@ class _MetricsGroupState extends State<MetricsGroup> {
 
     var color = Dependencies.theme.stateColor(
       "${widget.group.id}",
-      StateType.metricsgroup,
+      StateType.metricGroup,
       context,
+      true,
     );
+
+    Dependencies.theme.save();
     return Container(
       decoration: BoxDecoration(
         border: Border(left: BorderSide(color: color, width: 2)),

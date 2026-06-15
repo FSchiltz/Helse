@@ -31,11 +31,12 @@ class AuthenticationLogic {
 
   /// Check if the user is logged in
   Future<bool> checkLogin() async {
-   await SettingsMigration(account).migrate();
-    var token = (await account.getToken())?.refreshToken;
+    await SettingsMigration(account).migrate();
+    var token = account.getToken()?.refreshToken;
     if (token != null && token.isNotEmpty && !JwtDecoder.isExpired(token)) {
+      await _load();
       _controller.add(AuthenticationStatus.authenticated);
-      await Dependencies.logics.settings.loadSettings();
+
       return true;
     }
 
@@ -59,15 +60,15 @@ class AuthenticationLogic {
       await account.remove(Account.grant);
 
       // todo add a bloc for the settings and load async
-      await Dependencies.logics.settings.loadSettings();
+      await _load();
       _controller.add(AuthenticationStatus.authenticated);
     } else {
       _controller.add(AuthenticationStatus.unauthenticated);
     }
   }
 
-  Future<Person> getUser() async {
-    var response = await account.getToken();
+  Person getUser() {
+    var response = account.getToken();
 
     return Person(types: response?.roles ?? [], id: 0);
   }
@@ -101,21 +102,20 @@ class AuthenticationLogic {
 
   void dispose() => _controller.close();
 
-  Future<String?> getGrant() {
+  String? getGrant() {
     return account.get(Account.grant);
   }
 
-  Future<String?> getRedirect() {
+  String? getRedirect() {
     return account.get(Account.redirect);
   }
 
-  Future<String?> getClientId() {
+  String? getClientId() {
     return account.get(Account.clientid);
   }
 
-  Future<String?> getUrl() async {
-    await checkLogin();
-    var url = await account.get(Account.url);
+  String? getUrl() {
+    var url = account.get(Account.url);
 
     // if not in storage, we can try to get it from the current url on the web
     if (url == null && kIsWeb) {
@@ -152,8 +152,8 @@ class AuthenticationLogic {
       String? redirect;
 
       if (oauth) {
-        issuer = await getClientId();
-        redirect = await getRedirect();
+        issuer = getClientId();
+        redirect = getRedirect();
       }
       debugPrint('Auth with: $issuer - $redirect');
 
@@ -203,7 +203,7 @@ class AuthenticationLogic {
             print("Auth code found");
           }
 
-          var url = await account.get(Account.url);
+          var url = account.get(Account.url);
 
           set(AuthenticationStatus.unauthenticated);
           await startLogin(
@@ -219,8 +219,14 @@ class AuthenticationLogic {
   }
 
   Future<bool> checkIfNeedsLogging() async {
-    var grant = await getGrant();
+    var grant = getGrant();
     var isLogged = await checkLogin();
     return grant == null && !isLogged;
+  }
+
+  Future<void> _load() async {
+    // do here any loading that needs to occur when a user loads but before rendering
+    await Dependencies.logics.settings.loadSettings();
+    await Dependencies.logics.patientsSettings.loadSettings();
   }
 }

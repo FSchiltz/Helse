@@ -128,7 +128,7 @@ class FitLogic {
       }
     }
 
-    await Dependencies.logics.settings.setHasHistory(history);
+    Dependencies.logics.settings.setHasHistory(history);
   }
 
   Future<void> requestBackgroundPermission() async {
@@ -145,12 +145,12 @@ class FitLogic {
       }
     }
 
-    await Dependencies.logics.settings.setBackgroundAccess(background);
+    Dependencies.logics.settings.setBackgroundAccess(background);
   }
 
   Future<String> sync() async {
-    var run = await Dependencies.logics.settings.getLastRun();
-    var history = await Dependencies.logics.settings.getHasHistory() ?? false;
+    var run = Dependencies.logics.settings.getLastRun();
+    var history = Dependencies.logics.settings.getHasHistory() ?? false;
 
     var now = DateTime.now();
     // each sync we have to get the last 5 days because the apps can add metrics in the pasts
@@ -190,7 +190,7 @@ class FitLogic {
       result = await Dependencies.services.import.importData(converted);
     }
 
-    await account.set(Account.fitRun, now.toString());
+    Dependencies.logics.settings.setFitRun(now.toString());
     var metrics = result?.metrics.imported ?? 0;
     var events = result?.events.imported ?? 0;
 
@@ -198,7 +198,7 @@ class FitLogic {
         "Sync sucessful with $metrics metrics and $events events since $start";
     if (firstRun || metrics > 0 || events > 0) {
       firstRun = false;
-      await account.set(Account.fitStatus, text);
+      Dependencies.logics.settings.setFitStatus(text);
     }
 
     _executions.add(
@@ -406,12 +406,12 @@ class FitLogic {
   }
 
   Future<String?> checkRun() async {
-    var lastrun = await account.get(Account.fitRun);
+    var lastrun =  Dependencies.logics.settings.getLastRun();
     if (lastrun != null) {
       var date = DateTime.parse(lastrun);
 
       if (_executions.isEmpty || date.isAfter(_executions.last.date)) {
-        var status = await account.get(Account.fitStatus);
+        var status = Dependencies.logics.settings.getFirStatus();
         _executions.add(
           Execution(date, SubmissionStatus.success, status: status),
         );

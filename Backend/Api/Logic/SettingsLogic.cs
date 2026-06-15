@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Api.Data;
+using Api.Data.Models.Health;
 using Api.Helpers;
 using Api.Models.Settings;
 using Api.Models.Settings.Admin;
@@ -12,10 +13,12 @@ namespace Api.Logic;
 /// </summary>
 public static class SettingsLogic
 {
-    public static async Task<IResult> GetUserSettings(IUserContext users, ISettingsContext settings, HttpContext context)
+    public static async Task<IResult> GetUserSettings(IUserContext users, ISettingsContext settings, IMetricContext metrics, IEventContext events, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
-        return error ?? TypedResults.Ok(await settings.GetSettings<UserSettings>(UserSettings.Name, user.Id));
+        var data = await settings.GetSettings<UserSettings>(UserSettings.Name, user.Id);
+        await Upgrade(data, events, metrics);
+        return error ?? TypedResults.Ok(data);
     }
 
     /// <summary>
@@ -33,11 +36,15 @@ public static class SettingsLogic
         return error ?? await db.Save(settings, user.Id, log);
     }
 
-    public static async Task<IResult> GetPatientsSettings(IUserContext users, ISettingsContext settings, HttpContext context)
+    public static async Task<IResult> GetPatientsSettings(IUserContext users, ISettingsContext settings, IMetricContext metrics, IEventContext events, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
-        return error ?? TypedResults.Ok(await settings.GetSettings<PatientsSettings>(PatientsSettings.Name, user.Id));
+        var data = await settings.GetSettings<PatientsSettings>(PatientsSettings.Name, user.Id);
+        await Upgrade(data, metrics, events);
+        return error ?? TypedResults.Ok(data);
     }
+
+
 
     /// <summary>
     /// Update the patients settings
@@ -175,5 +182,173 @@ public static class SettingsLogic
 
         log.LogInformation("Settings saved");
         return TypedResults.Created();
+    }
+
+    private static async Task Upgrade(PatientsSettings data, IMetricContext metrics, IEventContext events)
+    {
+        if (data.Version < 2)
+        {
+            data.Version = 2;
+            UpgradeV2(data.Default);
+            foreach (var patient in data.Patients)
+            {
+                UpgradeV2(patient);
+            }
+        }
+
+
+        // update the metrics 
+        var metricTypes = await metrics.GetMetricTypes(false, null);
+        UpdateMetrics(data.Default.MetricSettings.DisplaySettings, metricTypes);
+
+        // update the events
+        var eventTypes = await events.GetEventTypes(false);
+        UpdateEvents(data.Default.EventSettings.DisplaySettings, eventTypes);
+
+        var metricGroups = await metrics.GetMetricGroups();
+        UpdateMetricGroups(data.Default.MetricSettings.Groups.DisplaySettings, metricGroups);
+
+        foreach (var patient in data.Patients)
+        {
+            UpdateMetrics(patient.MetricSettings.DisplaySettings, metricTypes);
+            UpdateEvents(patient.EventSettings.DisplaySettings, eventTypes);
+            UpdateMetricGroups(patient.MetricSettings.Groups.DisplaySettings, metricGroups);
+        }
+    }
+
+    private static async Task Upgrade(UserSettings data, IEventContext events, IMetricContext metrics)
+    {
+        if (data.Version < 2)
+        {
+            UpgradeV2(data);
+        }
+
+        // update the metrics 
+        var metricTypes = await metrics.GetMetricTypes(false, null);
+        UpdateMetrics(data.MetricSettings.DisplaySettings, metricTypes);
+
+        var metricGroups = await metrics.GetMetricGroups();
+        UpdateMetricGroups(data.MetricSettings.Groups.DisplaySettings, metricGroups);
+
+        // update the events
+        var eventTypes = await events.GetEventTypes(false);
+        UpdateEvents(data.EventSettings.DisplaySettings, eventTypes);
+    }
+
+    private static void UpdateMetricGroups(List<OrderedItem> data, MetricGroup[] metricGroups)
+    {
+        foreach (var e in metricGroups)
+        {
+            var existing = data.FirstOrDefault((element) => element.Id == e.Id);
+            if (existing != null)
+            {
+                existing.Name = existing.Name;
+            }
+            else
+            {
+                data.Add(
+                    new OrderedItem()
+                    {
+                        Id = e.Id,
+                        Name = e.Name,
+                        Graph = GraphKind.Text,
+                        DetailGraph = GraphKind.Text,
+                        Visible = e.ShowTitle,
+                        ShowOnDashboard = true,
+                    });
+            }
+        }
+    }
+
+    private static void UpdateEvents(List<OrderedItem> data, Data.Models.Health.EventType[] eventTypes)
+    {
+        foreach (var e in eventTypes)
+        {
+            var existing = data.FirstOrDefault((element) => element.Id == e.Id);
+            if (existing != null)
+            {
+                existing.Name = existing.Name;
+            }
+            else
+            {
+                data.Add(
+                    new OrderedItem()
+                    {
+                        Id = e.Id,
+                        Name = e.Name,
+                        Graph = GraphKind.Text,
+                        DetailGraph = GraphKind.Text,
+                        Visible = e.Visible,
+                        ShowOnDashboard = true,
+                    });
+            }
+        }
+    }
+
+    private static void UpgradeV2(UserSettings data)
+    {
+        // version 2 upgrade
+        data.Version = 2;
+        data.EventSettings = new EventSettings()
+        {
+            DisplaySettings = data.Events,
+            DisplayValueSettings = [],
+        };
+        data.MetricSettings = new MetricSettings()
+        {
+            DisplaySettings = data.Metrics,
+            Groups = new MetricGroupSettings()
+            {
+                DisplaySettings = data.MetricGroups,
+            },
+        };
+
+        data.Events = [];
+        data.MetricGroups = [];
+        data.Metrics = [];
+    }
+
+    private static OrderedItem GetDefault(MetricType item)
+    {
+        if (item.Type == (long)Models.Metrics.MetricDataType.Number)
+        {
+            return new OrderedItem()
+            {
+                Id = item.Id,
+                Name = item.Name,
+                Graph = GraphKind.Bar,
+                DetailGraph = GraphKind.Line,
+                Visible = item.Visible,
+                ShowOnDashboard = true,
+                Parent = item.GroupId,
+            };
+        }
+
+        return new OrderedItem()
+        {
+            Id = item.Id,
+            Name = item.Name,
+            Graph = GraphKind.Text,
+            DetailGraph = GraphKind.Text,
+            Visible = item.Visible,
+            ShowOnDashboard = true,
+            Parent = item.GroupId,
+        };
+    }
+
+    private static void UpdateMetrics(List<OrderedItem> data, MetricType[] metricTypes)
+    {
+        foreach (var metric in metricTypes)
+        {
+            var existing = data.FirstOrDefault((element) => element.Id == metric.Id);
+            if (existing != null)
+            {
+                existing.Name = existing.Name;
+            }
+            else
+            {
+                data.Add(GetDefault(metric));
+            }
+        }
     }
 }

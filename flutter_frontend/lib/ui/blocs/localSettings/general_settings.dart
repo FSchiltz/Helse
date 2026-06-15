@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/l10n/app_localizations.dart';
+import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:helse/ui/common/color_selector.dart';
 import 'package:helse/ui/common/common_card.dart';
@@ -52,8 +53,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   Future<int> _getData(bool reset) async {
-    _theme = await Dependencies.logics.settings.getTheme();
-    _range = await Dependencies.logics.settings.getDateRange();
+    _theme = Dependencies.logics.settings.getTheme();
+    _range = Dependencies.logics.settings.getDateRange();
 
     // TODO simplify
     // saving the colors will override what is in memory so we first have to sync it
@@ -62,26 +63,35 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       toServer: false,
     );
 
-    final metrics = await Dependencies.logics.settings.getMetrics();
-    final events = await Dependencies.logics.settings.getEvents();
-    final metricGroups = await Dependencies.logics.settings.getMetricGroups();
+    final metrics = Dependencies.logics.settings.getMetrics();
+    final events = Dependencies.logics.settings.getEvents();
 
-    _colors = (await Dependencies.logics.settings.getColors()).map(
+    _colors = (Dependencies.logics.settings.getColors()).map(
       (key, value) => MapEntry(
         key,
         value.entries.map((e) {
           String name = e.key;
           switch (key) {
-            case StateType.metrics:
-              final id = int.parse(e.key);
-              name = metrics.firstWhereOrNull((m) => m.id == id)?.name ?? e.key;
-            case StateType.events:
-              final id = int.parse(e.key);
-              name = events.firstWhereOrNull((m) => m.id == id)?.name ?? e.key;
-            case StateType.metricsgroup:
+            case StateType.metric:
               final id = int.parse(e.key);
               name =
-                  metricGroups.firstWhereOrNull((m) => m.id == id)?.name ??
+                  metrics.displaySettings
+                      .firstWhereOrNull((m) => m.id == id)
+                      ?.name ??
+                  e.key;
+            case StateType.events:
+              final id = int.parse(e.key);
+              name =
+                  events.displaySettings
+                      .firstWhereOrNull((m) => m.id == id)
+                      ?.name ??
+                  e.key;
+            case StateType.metricGroup:
+              final id = int.parse(e.key);
+              name =
+                  metrics.groups?.displaySettings
+                      .firstWhereOrNull((m) => m.id == id)
+                      ?.name ??
                   e.key;
             default:
           }

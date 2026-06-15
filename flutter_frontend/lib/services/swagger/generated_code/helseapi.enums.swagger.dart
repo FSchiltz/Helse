@@ -146,26 +146,6 @@ enum RightType {
   const RightType(this.value);
 }
 
-enum StateType {
-  @JsonValue(null)
-  swaggerGeneratedUnknown(null),
-
-  @JsonValue('events')
-  events('events'),
-  @JsonValue('eventsValue')
-  eventsvalue('eventsValue'),
-  @JsonValue('metrics')
-  metrics('metrics'),
-  @JsonValue('metricsGroup')
-  metricsgroup('metricsGroup'),
-  @JsonValue('metricsValue')
-  metricsvalue('metricsValue');
-
-  final String? value;
-
-  const StateType(this.value);
-}
-
 enum UnitType {
   @JsonValue(null)
   swaggerGeneratedUnknown(null),

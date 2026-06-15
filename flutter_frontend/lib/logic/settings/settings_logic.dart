@@ -4,12 +4,10 @@ import 'dart:ui';
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/logic/settings/base_settings_logic.dart';
 import 'package:helse/logic/settings/health_settings.dart';
-import 'package:helse/services/setting_service.dart';
+import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../services/account.dart';
 
 class SettingsBloc<T> extends Cubit<T> {
   SettingsBloc(super.initialState);
@@ -19,21 +17,26 @@ class SettingsBloc<T> extends Cubit<T> {
   }
 }
 
-class SettingsLogic {
-  static final storage = SharedPreferences.getInstance();
-  final Account account;
+class SettingsLogic extends BaseSettingsLogic {
+  static const settingsName = 'settings';
+
+  static const fitHistory = "fitHistory";
+  static const fitBackground = "fitBackground";
+  static const fitStatus = 'fitStatus';
+  static const fitRun = "fitLastRun";
+  static const health = 'health';
+
   final SettingsBloc<InterfaceTheme> themebloc = SettingsBloc(
     InterfaceTheme.system,
   );
   final SettingsBloc<bool> events = SettingsBloc(false);
   final SettingsBloc<bool> metrics = SettingsBloc(false);
-  final SettingService service;
   bool init = false;
 
-  SettingsLogic(this.account, this.service);
+  SettingsLogic(super.account, super.service);
 
   Future<HealthSettings> getHealth() async {
-    var encoded = (await storage).getString(Account.health);
+    var encoded = getString(health);
     if (encoded == null) {
       return HealthSettings(false, false, false);
     }
@@ -42,293 +45,239 @@ class SettingsLogic {
   }
 
   Future<void> saveHealth(HealthSettings localSettings) async {
-    await (await storage).setString(
-      Account.health,
-      json.encode(localSettings.toJson()),
-    );
+    await save(health, localSettings.toJson());
   }
 
-  Future<InterfaceTheme> getTheme() async {
-    return (await _userSettings()).theme ?? InterfaceTheme.system;
+  InterfaceTheme getTheme() {
+    return (_userSettings()).theme ?? InterfaceTheme.system;
   }
 
   Future<void> saveTheme(InterfaceTheme theme) async {
-    var settings = await _userSettings();
-    await _saveSettings(
-      UserSettings(
-        eventWidth: settings.eventWidth ?? 0,
-        events: settings.events,
-        metricGroups: settings.metricGroups,
-        metrics: settings.metrics,
-        theme: theme,
-        datePreset: settings.datePreset ?? DatePreset.today,
-      ),
-      true,
-    );
+    var settings = _userSettings();
+    await _saveSettings(settings.copyWith(theme: theme), true);
     themebloc.changed(theme);
   }
 
   Future<void> _saveSettings(UserSettings settings, bool toServer) async {
-    if (toServer) {     
+    if (toServer) {
       await service.savePersonSettings(settings);
     }
-
-    (await storage).setString(Account.settings, json.encode(settings.toJson()));
+    await save(settingsName, settings.toJson());
+    print("settings saved");
   }
 
   Future<void> loadSettings() async {
     var serverSettings = await service.getPersonSettings();
     print("Settings loaded from server");
+    await save(settingsName, serverSettings.toJson());
 
-    (await storage).setString(
-      Account.settings,
-      json.encode(serverSettings.toJson()),
-    );
     init = true;
-    Dependencies.theme.setColors(await getColors());
+    Dependencies.theme.setColors(getColors());
     metrics.changed(true);
     events.changed(true);
     themebloc.changed(serverSettings.theme ?? InterfaceTheme.system);
   }
 
-  Future<UserSettings> _userSettings() async {
-    var encoded = (await storage).getString(Account.settings);
+  UserSettings _userSettings() {
+    var encoded = getString(settingsName);
+    print("settings loaded");
     if (encoded == null) {
-      return UserSettings();
+      return UserSettings(version: settingsVersion);
     }
 
     var map = json.decode(encoded) as Map<String, Object?>;
     var object = UserSettings.fromJson(map);
-
     return object;
   }
 
-  Future<List<OrderedItem>> getMetrics() async {
-    return (await _userSettings()).metrics ?? [];
+  MetricSettings getMetrics() {
+    var settings = _userSettings().metricSettings;
+    return settings ??
+        MetricSettings(
+          displaySettings: [],
+          groups: MetricGroupSettings(displaySettings: []),
+        );
   }
 
-  Future<void> saveMetrics(List<OrderedItem> metric, bool toServer) async {
-    var settings = await _userSettings();
-    await _saveSettings(settings.copyWith(metrics: metric), toServer);
+  Future<void> saveMetrics(MetricSettings metric, bool toServer) async {
+    var settings = _userSettings();
+    await _saveSettings(settings.copyWith(metricSettings: metric), toServer);
     metrics.changed(true);
   }
 
-  Future<List<OrderedItem>> getEvents() async {
-    return (await _userSettings()).events ?? [];
+  EventSettings getEvents() {
+    return (_userSettings()).eventSettings ??
+        EventSettings(displaySettings: [], displayValueSettings: []);
   }
 
-  Future<void> saveEvents(List<OrderedItem> events, bool toServer) async {
-    var settings = await _userSettings();
-    await _saveSettings(settings.copyWith(events: events), toServer);
+  Future<void> saveEvents(EventSettings events, bool toServer) async {
+    var settings = _userSettings();
+    await _saveSettings(settings.copyWith(eventSettings: events), toServer);
   }
 
-  Future<void> setLastRun(String run) async {
-    await (await storage).setString(Account.fitRun, run);
+  void setLastRun(String run) {
+    setString(fitRun, run);
   }
 
-  Future<void> removeLastRun() async {
-    await (await storage).remove(Account.fitRun);
+  void removeLastRun() {
+    remove(fitRun);
   }
 
-  Future<String?> getLastRun() async {
-    return (await storage).getString(Account.fitRun);
+  String? getLastRun() {
+    return getString(fitRun);
   }
 
   Future<void> setColors(
     Map<StateType, Map<String, Color>> colors, {
     bool toServer = true,
   }) async {
-    var settings = await _userSettings();
-    List<ColorValue> flat = [];
+    var settings = _userSettings();
     for (var group in colors.entries) {
+      List<OrderedItem>? list;
+      switch (group.key) {
+        case StateType.events:
+          list = settings.eventSettings?.displaySettings;
+          if (list == null) {
+            list = [];
+            settings = settings.copyWith(
+              eventSettings: settings.eventSettings?.copyWith(
+                displaySettings: list,
+              ),
+            );
+          }
+        case StateType.metric:
+          list = settings.metricSettings?.displaySettings;
+          if (list == null) {
+            list = [];
+            settings = settings.copyWith(
+              metricSettings: settings.metricSettings?.copyWith(
+                displaySettings: list,
+              ),
+            );
+          }
+        case StateType.eventValue:
+          list = settings.eventSettings?.displayValueSettings;
+          if (list == null) {
+            list = [];
+            settings = settings.copyWith(
+              eventSettings: settings.eventSettings?.copyWith(
+                displayValueSettings: list,
+              ),
+            );
+          }
+        case StateType.metricGroup:
+          list = settings.metricSettings?.groups?.displaySettings;
+          if (list == null) {
+            list = [];
+            settings = settings.copyWith(
+              metricSettings: settings.metricSettings?.copyWith(
+                groups: settings.metricSettings?.groups?.copyWith(
+                  displaySettings: list,
+                ),
+              ),
+            );
+          }
+      }
+
       for (var entry in group.value.entries) {
-        flat.add(
-          ColorValue(
-            key: entry.key,
-            type: group.key,
-            value: entry.value.toARGB32(),
-          ),
-        );
-      }
-    }
-
-    var copy = settings.copyWith(colors: flat);
-    await _saveSettings(copy, toServer);
-
-    Dependencies.theme.setColors(colors);
-  }
-
-  Future<Map<StateType, Map<String, Color>>> getColors() async {
-    var colors = (await _userSettings()).colors;
-    if (colors == null) {
-      return {};
-    }
-
-    return colors.groupFoldBy(
-      (e) => e.type,
-      (previous, element) =>
-          (previous ?? {})
-            ..putIfAbsent(element.key, () => Color(element.value)),
-    );
-  }
-
-  Future<void> setHasHistory(bool run) async {
-    await (await storage).setBool(Account.fitHistory, run);
-  }
-
-  Future<void> setBackgroundAccess(bool authorized) async {
-    await (await storage).setBool(Account.fitBackground, authorized);
-  }
-
-  Future<bool?> getHasHistory() async {
-    return (await storage).getBool(Account.fitHistory);
-  }
-
-  Future<void> setDateRange(DatePreset run, {bool toServer = true}) async {
-    var settings = await _userSettings();
-    await _saveSettings(settings.copyWith(datePreset: run), toServer);
-  }
-
-  Future<DatePreset> getDateRange() async {
-    var settings = await _userSettings();
-    return settings.datePreset ?? DatePreset.today;
-  }
-
-  Future<void> updateMetrics(List<MetricType> model) async {
-    var metrics = await getMetrics();
-    for (var metric in model) {
-      var existing = metrics.firstWhereOrNull(
-        (element) => element.id == metric.id,
-      );
-      if (existing != null) {
-        metrics.removeWhere((x) => x.id == metric.id);
-        // already there, just update the name
-        metrics.add(
-          OrderedItem(
-            name: metric.name,
-            detailGraph: existing.detailGraph,
-            graph: existing.graph,
-            id: existing.id,
-            order: existing.order,
-            visible: existing.visible,
-            showOnDashboard: existing.showOnDashboard,
-            parent: metric.groupId,
-          ),
-        );
-      } else {
-        metrics.add(getDefault(metric));
-      }
-    }
-
-    await saveMetrics(metrics, false);
-  }
-
-  Future<void> updateEvents(List<EventType> model) async {
-    var events = await getEvents();
-    List<OrderedItem> newEvents = [];
-    for (var event in model) {
-      var existing = events.firstWhereOrNull(
-        (element) => element.id == event.id,
-      );
-      if (existing != null) {
-        // already there, just update the name
-        newEvents.add(
-          OrderedItem(
-            name: event.name,
-            detailGraph: existing.detailGraph,
-            graph: existing.graph,
-            id: existing.id,
-            order: existing.order,
-            visible: existing.visible,
-            showOnDashboard: existing.showOnDashboard,
-          ),
-        );
-      } else {
-        newEvents.add(
-          OrderedItem(
-            id: event.id,
-            name: event.name,
-            graph: GraphKind.text,
-            detailGraph: GraphKind.text,
-            visible: event.visible,
-            showOnDashboard: true,
-          ),
-        );
-      }
-    }
-    await saveEvents(newEvents, false);
-  }
-
-  OrderedItem getDefault(MetricType item) {
-    if (item.type == MetricDataType.number) {
-      return OrderedItem(
-        id: item.id,
-        name: item.name,
-        graph: GraphKind.bar,
-        detailGraph: GraphKind.line,
-        visible: item.visible,
-        showOnDashboard: true,
-        parent: item.groupId,
-      );
-    }
-
-    return OrderedItem(
-      id: item.id,
-      name: item.name,
-      graph: GraphKind.text,
-      detailGraph: GraphKind.text,
-      visible: item.visible,
-      showOnDashboard: true,
-      parent: item.groupId,
-    );
-  }
-
-  Future<void> saveMetricGroups(List<OrderedItem> metric, bool toServer) async {
-    var settings = await _userSettings();
-    await _saveSettings(settings.copyWith(metricGroups: metric), toServer);
-    metrics.changed(true);
-  }
-
-  Future<List<OrderedItem>> getMetricGroups() async {
-    return (await _userSettings()).metricGroups ?? [];
-  }
-
-  Future<void> updateMetricGroups(List<MetricGroup> model) async {
-    var metrics = await getMetricGroups();
-    List<OrderedItem> newMetrics = [];
-    for (var metric in model) {
-      var existing = metrics.firstWhereOrNull(
-        (element) => element.id == metric.id,
-      );
-      if (existing != null) {
-        // already there, just update the name
-        newMetrics.add(
-          OrderedItem(
-            name: metric.name,
-            id: existing.id,
-            detailGraph: existing.detailGraph,
-            graph: existing.graph,
-            order: existing.order,
-            visible: existing.visible,
-            showOnDashboard: existing.showOnDashboard,
-          ),
-        );
-      } else {
-        if (metric.id != null) {
-          newMetrics.add(
+        if (!list.any((e) => e.key == entry.key)) {
+          list.add(
             OrderedItem(
-              id: metric.id!,
-              name: metric.name,
-              graph: GraphKind.bar,
-              detailGraph: GraphKind.line,
-              visible: true,
-              showOnDashboard: metric.showOnDashboard ?? true,
+              key: entry.key,
+              color: entry.value.toARGB32(),
+              id: 0,
+              name: entry.key,
+              detailGraph: GraphKind.text,
+              graph: GraphKind.text,
             ),
           );
         }
       }
+
+      final newList = <OrderedItem>[];
+      for (var entry in list) {
+        // update the correct map
+        var color = group.value.entries.firstWhereOrNull(
+          (e) => e.key == (entry.key ?? entry.id.toString()),
+        );
+        if (color != null) {
+          entry = entry.copyWith(color: color.value.toARGB32());
+        }
+        newList.add(entry);
+      }
+      list.clear();
+      list.addAll(newList);
     }
 
-    await saveMetricGroups(newMetrics, false);
+    await _saveSettings(settings, toServer);
+
+    Dependencies.theme.setColors(colors);
+  }
+
+  Map<StateType, Map<String, Color>> getColors() {
+    var settings = _userSettings();
+
+    Map<StateType, Map<String, Color>> map = {};
+    map[StateType.events] = _map(settings.eventSettings?.displaySettings ?? []);
+    map[StateType.eventValue] = _map(
+      settings.eventSettings?.displayValueSettings ?? [],
+    );
+    map[StateType.metric] = _map(
+      settings.metricSettings?.displaySettings ?? [],
+    );
+    map[StateType.metricGroup] = _map(
+      settings.metricSettings?.groups?.displaySettings ?? [],
+    );
+
+    return map;
+  }
+
+  void setHasHistory(bool run) {
+    setBool(fitHistory, run);
+  }
+
+  void setBackgroundAccess(bool authorized) {
+    setBool(fitBackground, authorized);
+  }
+
+  bool? getHasHistory() {
+    return getBool(fitHistory);
+  }
+
+  Future<void> setDateRange(DatePreset run, {bool toServer = true}) async {
+    var settings = _userSettings();
+    await _saveSettings(settings.copyWith(datePreset: run), toServer);
+  }
+
+  DatePreset getDateRange() {
+    var settings = _userSettings();
+    return settings.datePreset ?? DatePreset.today;
+  }
+
+  Map<String, Color> _map(List<OrderedItem> settings) {
+    final Map<String, Color> map = {};
+    for (var item in settings) {
+      final color = item.color;
+      map.putIfAbsent(item.key ?? item.id.toString(), () {
+        if (color == null) {
+          return ThemeHelper.randomColor();
+        } else {
+          return Color(color);
+        }
+      });
+    }
+    return map;
+  }
+
+  void setFitRun(String value) {
+    setString(fitRun, value);
+  }
+
+  void setFitStatus(String text) {
+    account.set(fitStatus, text);
+  }
+
+  String? getFirStatus() {
+    return getString(fitStatus);
   }
 }

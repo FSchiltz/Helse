@@ -5,51 +5,54 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Token storage abstraction
 class Account {
-  final storage = SharedPreferences.getInstance();
+  static Future<SharedPreferencesWithCache> get _instance async =>
+      _storage ??= await SharedPreferencesWithCache.create(
+        cacheOptions: SharedPreferencesWithCacheOptions(),
+      );
+
+  static SharedPreferencesWithCache? _storage;
+  static SharedPreferencesWithCache get storage {
+    if (_storage == null) {
+      throw Error();
+    }
+
+    return _storage!;
+  }
+
+  // call this method from iniState() function of mainApp().
+  static Future<void> setup() async {
+    _storage = await _instance;
+  }
 
   static const url = "urlPath";
   static const grant = "grant";
   static const redirect = "redirect";
   static const clientid = "clientid";
   static const refresh = "refresh";
-  static const fitRun = "fitLastRun";
-  static const fitHistory = "fitHistory";
-  static const fitBackground = "fitBackground";
-  static const fitStatus = 'fitStatus';
-  static const health = 'health';
-  static const settings = 'settings';
-  static const patients = 'patients';
 
-  Future<String?> get(String name) async {
-    var store = await storage;
+  String? get(String name) {
+    var store = storage;
     var url = store.getString(name);
     return url;
   }
 
   Future<void> set(String name, String value) async {
-    await (await storage).setString(name, value);
+    await (storage).setString(name, value);
   }
 
   Future<void> remove(String name) async {
-    await (await storage).remove(name);
+    await (storage).remove(name);
   }
 
   Future<void> clean() async {
-    var s = await storage;
-    await s.remove(grant);
-    await s.remove(redirect);
-    await s.remove(clientid);
-    await s.remove(refresh);
-    await s.remove(fitRun);
-    await s.remove(fitHistory);
-    await s.remove(fitStatus);
-    await s.remove(patients);
-    await s.remove(health);
-    await s.remove(settings);
+    var s = storage;
+    var oldUrl = s.getString(url);
+    await s.clear();
+    if (oldUrl != null) s.setString(url, oldUrl);
   }
 
-  Future<ConnectionResponse?> getToken() async {
-    var token = await get(Account.refresh);
+  ConnectionResponse? getToken() {
+    var token = get(Account.refresh);
     if (token == null) return null;
     return ConnectionResponse.fromJson(
       json.decode(token) as Map<String, Object?>,

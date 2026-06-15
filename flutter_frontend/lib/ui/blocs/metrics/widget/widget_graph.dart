@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
 
@@ -138,9 +139,11 @@ class WidgetGraph extends StatelessWidget {
   Widget _getGraph(BuildContext context) {
     var color = Dependencies.theme.stateColor(
       type.id.toString(),
-      StateType.metrics,
+      StateType.metric,
       context,
+      true,
     );
+
     if (settings == GraphKind.bar) {
       return BarChart(
         BarChartData(

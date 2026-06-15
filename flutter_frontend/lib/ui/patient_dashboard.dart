@@ -29,9 +29,9 @@ class _PatientDashboardState extends State<PatientDashboard>
     DatePreset range;
 
     if (widget.person == null) {
-      range = await Dependencies.logics.settings.getDateRange();
+      range = Dependencies.logics.settings.getDateRange();
     } else {
-      range = await Dependencies.logics.patientsSettings.getPatientsDateRange(
+      range = Dependencies.logics.patientsSettings.getPatientsDateRange(
         widget.person,
       );
     }

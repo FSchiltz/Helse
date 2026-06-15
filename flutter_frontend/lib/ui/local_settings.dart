@@ -19,8 +19,8 @@ class LocalSettingsPage extends StatelessWidget {
       pages: [
         GeneralSettings(),
         SyncSettings(),
-        MetricSettings(),
-        EventSettings(),
+        MetricsSettings(),
+        EventsSettings(),
         UserSessions(),
       ],
       menu: [
