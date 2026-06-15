@@ -186,7 +186,7 @@ class _MetricGraphState extends State<MetricGraph> {
       ];
     }
 
-    debugPrint('creted graph for $subDate and ${filteredMetrics.length}');
+    debugPrint('created graph for $subDate and ${filteredMetrics.length}');
     return filteredMetrics.isEmpty
         ? Text('No data')
         : Chart(

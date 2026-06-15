@@ -60,6 +60,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
       _groupId = edit.groupId;
       _type = edit.type ?? MetricDataType.text;
       _metricSummary = edit.summaryType;
+      controllerValueCount.text = (edit.valueCount ?? 0).toString();
     }
     _loadGroup();
     _loadUnit();

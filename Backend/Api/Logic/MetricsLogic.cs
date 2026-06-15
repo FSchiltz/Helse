@@ -209,14 +209,24 @@ public static class MetricsLogic
         if (admin is not null)
             return admin;
 
-        if (metric.Type == MetricDataType.Text && metric.SummaryType != MetricSummary.Latest)
-        {
-            throw new InvalidDataException("Text can only be summarized with latest");
-        }
+        Validate(metric);
 
         await db.Insert(metric);
 
         return TypedResults.NoContent();
+    }
+
+    private static void Validate(CreateMetricType metric)
+    {
+        if (metric.Type != MetricDataType.Number && metric.SummaryType != MetricSummary.Latest)
+        {
+            throw new InvalidDataException("Only number can be have different summary than text");
+        }
+
+        if (metric.Type == MetricDataType.NumberRange && metric.ValueCount < 2)
+        {
+            throw new InvalidDataException("Number range needs at least 2 values");
+        }
     }
 
     public static async Task<IResult> UpdateTypeAsync(UpdateMetricType metric, IUserContext users, IMetricContext db, HttpContext context)
@@ -225,10 +235,8 @@ public static class MetricsLogic
         if (admin is not null)
             return admin;
 
-        if (metric.Type == MetricDataType.Text && metric.SummaryType != MetricSummary.Latest)
-        {
-            throw new InvalidDataException("Text can only be summarized with latest");
-        }
+
+        Validate(metric);
 
         await db.Update(metric);
 
