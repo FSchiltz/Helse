@@ -23,8 +23,6 @@ class MetricsGrid extends StatefulWidget {
 class _MetricsGridState extends State<MetricsGrid> {
   List<MetricGroup>? groups;
 
-  List<MetricType>? typesCache;
-
   @override
   void initState() {
     super.initState();
@@ -33,36 +31,19 @@ class _MetricsGridState extends State<MetricsGrid> {
 
   void _getData() async {
     try {
-      final metrictypes =
-          (await Dependencies.services.metric.metricsType(false, null)) ?? [];
-
       final model = await Dependencies.services.metric.metricsGroup();
 
       List<MetricGroup> filtered = [];
       if (model == null) {
         filtered = [];
       } else {
-        await Dependencies.logics.settings.updateMetrics(metrictypes, model);
-        await Dependencies.logics.patientsSettings.updateMetrics(
-          metrictypes,
-          model,
-        );
-
         MetricGroupSettings settings;
         if (widget.person == null) {
-          setState(() {
-            typesCache = metrictypes;
-          });
-
           settings =
               (Dependencies.logics.settings.getMetrics()).groups ??
               MetricGroupSettings(displaySettings: []);
           // filter using the user settings
         } else {
-          setState(() {
-            typesCache = metrictypes;
-          });
-
           settings =
               (Dependencies.logics.patientsSettings.getMetrics(
                 widget.person,
@@ -98,11 +79,11 @@ class _MetricsGridState extends State<MetricsGrid> {
               _getData();
             },
             bloc: Dependencies.logics.settings.metrics,
-            child: _getGrid(cached, typesCache),
+            child: _getGrid(cached),
           );
   }
 
-  Widget _getGrid(List<MetricGroup> cached, [List<MetricType>? typesCache]) {
+  Widget _getGrid(List<MetricGroup> cached) {
     if (cached.isEmpty) {
       return Text(Translation.of(context).nodata);
     } else {
@@ -120,9 +101,6 @@ class _MetricsGridState extends State<MetricsGrid> {
                   key: Key(type.id?.toString() ?? ""),
                   person: widget.person,
                   group: type,
-                  typesCache: typesCache
-                      ?.where((e) => e.groupId == type.id)
-                      .toList(),
                 ),
               )
               .toList(),

@@ -16,14 +16,12 @@ class MetricsGroup extends StatefulWidget {
   final int? person;
   final MetricGroup group;
   final DateTimeRange date;
-  final List<MetricType>? typesCache;
 
   const MetricsGroup({
     super.key,
     required this.date,
     required this.group,
     this.person,
-    this.typesCache,
   });
 
   @override
@@ -32,14 +30,9 @@ class MetricsGroup extends StatefulWidget {
 
 class _MetricsGroupState extends State<MetricsGroup> {
   List<Pair<MetricType, OrderedItem>>? types;
-
-  List<MetricType>? _cache;
   @override
   void initState() {
     super.initState();
-
-    _cache = widget.typesCache;
-
     _getData();
   }
 
@@ -47,15 +40,10 @@ class _MetricsGroupState extends State<MetricsGroup> {
     try {
       List<MetricType>? model;
 
-      if (_cache != null) {
-        model = widget.typesCache;
-        _cache = null;
-      } else {
-        model = await Dependencies.services.metric.metricsType(
-          false,
-          widget.group.id,
-        );
-      }
+      model = await Dependencies.services.metric.metricsType(
+        false,
+        widget.group.id,
+      );
 
       if (model != null) {
         MetricSettings settings;

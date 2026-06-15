@@ -63,9 +63,6 @@ class SettingsLogic extends BaseSettingsLogic {
   Future<void> loadSettings() async {
     var serverSettings = await service.getPersonSettings();
     print("Settings loaded from server");
-
-    serverSettings = _upgradeSettings(serverSettings);
-
     save(Account.settings, serverSettings.toJson());
     init = true;
     Dependencies.theme.setColors(getColors());
@@ -235,113 +232,6 @@ class SettingsLogic extends BaseSettingsLogic {
     return settings.datePreset ?? DatePreset.today;
   }
 
-  Future<void> updateMetrics(
-    List<MetricType> model,
-    List<MetricGroup> groups,
-  ) async {
-    var metrics = getMetrics();
-    for (var metric in model) {
-      var existing = metrics.displaySettings.firstWhereOrNull(
-        (element) => element.id == metric.id,
-      );
-      if (existing != null) {
-        metrics.displaySettings.removeWhere((x) => x.id == metric.id);
-        // already there, just update the name
-        metrics.displaySettings.add(
-          OrderedItem(
-            name: metric.name,
-            detailGraph: existing.detailGraph,
-            graph: existing.graph,
-            id: existing.id,
-            order: existing.order,
-            visible: existing.visible,
-            showOnDashboard: existing.showOnDashboard,
-            parent: metric.groupId,
-          ),
-        );
-      } else {
-        metrics.displaySettings.add(getDefault(metric));
-      }
-    }
-
-    final groupSetting =
-        metrics.groups ?? MetricGroupSettings(displaySettings: []);
-
-    metrics = metrics.copyWith(groups: groupSetting);
-
-    for (var metric in groups) {
-      var existing = groupSetting.displaySettings.firstWhereOrNull(
-        (element) => element.id == metric.id,
-      );
-      if (existing != null) {
-        // already there, just update the name
-        groupSetting.displaySettings.add(
-          OrderedItem(
-            name: metric.name,
-            id: existing.id,
-            detailGraph: existing.detailGraph,
-            graph: existing.graph,
-            order: existing.order,
-            visible: existing.visible,
-            showOnDashboard: existing.showOnDashboard,
-          ),
-        );
-      } else {
-        if (metric.id != null) {
-          groupSetting.displaySettings.add(
-            OrderedItem(
-              id: metric.id!,
-              name: metric.name,
-              graph: GraphKind.bar,
-              detailGraph: GraphKind.line,
-              visible: true,
-              showOnDashboard: metric.showOnDashboard ?? true,
-            ),
-          );
-        }
-      }
-    }
-
-    await saveMetrics(metrics, false);
-  }
-
-  Future<void> updateEvents(List<EventType> model) async {
-    var events = getEvents();
-    final settings = events.displaySettings;
-    for (var event in model) {
-      var existing = settings.firstWhereOrNull(
-        (element) => element.id == event.id,
-      );
-      if (existing != null) {
-        // already there, just update the name
-        events.displaySettings.add(
-          OrderedItem(
-            name: event.name,
-            detailGraph: existing.detailGraph,
-            graph: existing.graph,
-            id: existing.id,
-            order: existing.order,
-            visible: existing.visible,
-            showOnDashboard: existing.showOnDashboard,
-          ),
-        );
-      } else {
-        events.displaySettings.add(
-          OrderedItem(
-            id: event.id,
-            name: event.name,
-            graph: GraphKind.text,
-            detailGraph: GraphKind.text,
-            visible: event.visible,
-            showOnDashboard: true,
-          ),
-        );
-      }
-    }
-
-    await saveEvents(events, false);
-  }
-
   OrderedItem getDefault(MetricType item) {
     if (item.type == MetricDataType.number) {
       return OrderedItem(
@@ -377,25 +267,5 @@ class SettingsLogic extends BaseSettingsLogic {
     return map;
   }
 
-  UserSettings _upgradeSettings(UserSettings settings) {
-    final version = settings.version ?? 0;
-    if (version < 2) {
-      // upgrade to version 1
-      settings = settings.copyWith(
-        version: 2,
-        eventSettings: EventSettings(
-          displaySettings: settings.events ?? [],
-          displayValueSettings: [],
-        ),
-        metricSettings: MetricSettings(
-          displaySettings: settings.metrics ?? [],
-          groups: MetricGroupSettings(
-            displaySettings: settings.metricGroups ?? [],
-          ),
-        ),
-      );
-    }
-
-    return settings;
-  }
+  
 }
