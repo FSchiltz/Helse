@@ -187,10 +187,8 @@ class SettingsLogic extends BaseSettingsLogic {
               color: entry.value.toARGB32(),
               id: 0,
               name: entry.key,
-              visible: true,
               detailGraph: GraphKind.text,
               graph: GraphKind.text,
-              showOnDashboard: true,
             ),
           );
         }

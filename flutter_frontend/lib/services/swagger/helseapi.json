@@ -3126,10 +3126,16 @@
         "type": "object",
         "properties": {
           "visible": {
-            "type": "boolean"
+            "type": [
+              "null",
+              "boolean"
+            ]
           },
           "showOnDashboard": {
-            "type": "boolean"
+            "type": [
+              "null",
+              "boolean"
+            ]
           },
           "order": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
