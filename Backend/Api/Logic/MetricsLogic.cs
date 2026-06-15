@@ -112,8 +112,25 @@ public static class MetricsLogic
         if (type == null)
             throw new InvalidDataException("Type not found");
 
-        if ((MetricDataType)type.Type == MetricDataType.Number && !int.TryParse(metric.Value, out var _))
+        if ((MetricDataType)type.Type == MetricDataType.Number && !double.TryParse(metric.Value, out var _))
             throw new InvalidDataException("The metric value is not a number");
+
+        if ((MetricDataType)type.Type == MetricDataType.MinMax)
+        {
+            var split = metric.Value.Split(';');
+            if (split.Length != 2)
+            {
+                throw new InvalidDataException("The metric should have 2 value separated by a ';'");
+            }
+
+            var first = double.TryParse(split[0], out var _);
+            var second = double.TryParse(split[2], out var _);
+
+            if (!first || !second)
+            {
+                throw new InvalidDataException("The value of the metric should be numbers");
+            }
+        }
 
         if (metric.Unit is not null)
         {
