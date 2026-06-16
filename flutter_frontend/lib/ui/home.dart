@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/helpers/translation.dart';
@@ -86,6 +87,20 @@ class _HomeState extends State<Home> {
             elevation: 1,
             centerTitle: true,
             actions: [
+              
+              if(kIsWeb)  IconButton(
+                onPressed: () {
+                  final uri = Uri.parse(
+                    'https://github.com/FSchiltz/Helse/releases/latest',
+                  );
+
+                  launchUrl(uri, mode: LaunchMode.externalApplication);
+                },
+                icon: Icon(
+                  Icons.phone,
+                  color: theme.colorScheme.onPrimaryContainer,
+                ),
+              ),
               IconButton(
                 onPressed: () {
                   final uri = Uri.parse(
