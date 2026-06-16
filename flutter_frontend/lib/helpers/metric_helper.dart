@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:helse/di/dependencies.dart';
+import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
 
@@ -84,5 +86,67 @@ class MetricHelper {
 
   String joinValue(Iterable<String> map) {
     return map.join(';');
+  }
+
+  static (String value, Icon? icon) getWidgetValue(
+    List<Metric> metrics,
+    MetricType type,
+    BuildContext context,
+  ) {
+    var color = Dependencies.theme.stateColor(
+      "${type.id}",
+      StateType.metric,
+      context,
+    );
+
+    Icon? icon;
+    String value = '';
+    switch (type.summaryType) {
+      case MetricSummary.sum:
+        icon = Icon(Icons.trending_up_sharp, color: color);
+        value =
+            '${metrics.map((metric) => double.parse(metric.value)).sum.round()}';
+        break;
+      case MetricSummary.mean:
+        icon = Icon(Icons.update, color: color);
+        value =
+            '${(metrics.map((metric) => double.parse(metric.value)).sum / metrics.length).round()}';
+        break;
+      case MetricSummary.latest:
+        value = metrics.last.value;
+
+        break;
+      default:
+        value = metrics.last.value;
+    }
+
+    if (type.unit.code.isNotEmpty && value.isNotEmpty) {
+      value += ' ${type.unit.code}';
+    }
+
+    return (value, icon);
+  }
+
+  static Widget getTextInfo(
+    List<Metric> metrics,
+    MetricType type,
+    BuildContext context,
+  ) {
+    final (value, icon) = getWidgetValue(metrics, type, context);
+
+    var text = Text(
+      value,
+      style: Theme.of(context).textTheme.bodyMedium,
+      textAlign: TextAlign.start,
+    );
+
+    if (icon == null) {
+      return text;
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [icon, SizedBox(width: 4), text],
+    );
   }
 }

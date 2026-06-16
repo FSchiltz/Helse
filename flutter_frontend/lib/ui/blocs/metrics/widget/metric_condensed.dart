@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/metric_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/metrics/widget/widget_graph.dart';
 
@@ -29,8 +30,8 @@ class MetricCondensed extends StatelessWidget {
               style: Theme.of(context).textTheme.labelLarge,
             ),
           )
-        : (type.type == MetricDataType.text
-              ? Center(child: Text(metrics.last.value))
+        : (type.type == MetricDataType.text || settings.graph == GraphKind.text
+              ? Center(child: MetricHelper.getTextInfo(metrics, type, context))
               : WidgetGraph(
                   metrics,
                   date,

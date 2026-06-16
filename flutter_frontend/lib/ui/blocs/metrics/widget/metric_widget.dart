@@ -1,7 +1,6 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
-import 'package:helse/logic/theme_helper.dart';
+import 'package:helse/helpers/metric_helper.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_detail_page.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
@@ -102,11 +101,15 @@ class _MetricWidgetState extends State<MetricWidget> {
                     ],
                   ),
                 ),
-                if (data.isNotEmpty)
+                if (data.isNotEmpty && widget.settings.graph != GraphKind.text)
                   Expanded(
                     child: Align(
                       alignment: AlignmentGeometry.topCenter,
-                      child: _getTextInfo(data, widget.type, context),
+                      child: MetricHelper.getTextInfo(
+                        data,
+                        widget.type,
+                        context,
+                      ),
                     ),
                   ),
 
@@ -124,56 +127,6 @@ class _MetricWidgetState extends State<MetricWidget> {
           ),
         );
       },
-    );
-  }
-
-  Widget _getTextInfo(
-    List<Metric> metrics,
-    MetricType type,
-    BuildContext context,
-  ) {
-    String value = '';
-    Icon? icon;
-    var color = Dependencies.theme.stateColor(
-      "${type.id}",
-      StateType.metric,
-      context,
-    );
-
-    switch (type.summaryType) {
-      case MetricSummary.sum:
-        icon = Icon(Icons.trending_up_sharp, color: color);
-        value =
-            '${metrics.map((metric) => double.parse(metric.value)).sum.round()}';
-        break;
-      case MetricSummary.mean:
-        icon = Icon(Icons.update, color: color);
-        value =
-            '${(metrics.map((metric) => double.parse(metric.value)).sum / metrics.length).round()}';
-        break;
-      case MetricSummary.latest:
-        break;
-      default:
-        value = metrics.last.value;
-    }
-
-    if (type.unit.code.isNotEmpty) {
-      value += ' ${type.unit.code}';
-    }
-
-    var text = Text(
-      value,
-      style: Theme.of(context).textTheme.bodyMedium,
-      textAlign: TextAlign.start,
-    );
-
-    if (icon == null) {
-      return text;
-    }
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [icon, SizedBox(width: 4), text],
     );
   }
 }
