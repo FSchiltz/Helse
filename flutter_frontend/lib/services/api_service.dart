@@ -74,7 +74,7 @@ abstract class ApiService {
       token = settings?.refreshToken;
     } else {
       token = settings?.accessToken;
-      if (token == null || token.isNotEmpty || _isExpired(token)) {
+      if (token == null || token.isEmpty || _isExpired(token)) {
         token = await _refreshToken(settings, url);
       }
     }
