@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/foundation.dart';
 import 'package:helse/logic/account/settings_migration.dart';
@@ -155,7 +156,7 @@ class AuthenticationLogic {
         issuer = getClientId();
         redirect = getRedirect();
       }
-      debugPrint('Auth with: $issuer - $redirect');
+      log('Auth with: $issuer - $redirect');
 
       await logIn(
         url: url,
@@ -200,7 +201,7 @@ class AuthenticationLogic {
         if (code != null) {
           if (kIsWeb) {
             UrlHelper.removeParam();
-            print("Auth code found");
+            log("Auth code found");
           }
 
           var url = account.get(Account.url);

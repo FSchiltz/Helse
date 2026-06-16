@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:async/async.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -329,7 +331,7 @@ class _LoginState extends State<LoginPage> {
   }
 
   Future<void> _submit({String? oAuth}) async {
-    debugPrint('Login started');
+    log('Login started');
     setState(() {
       _status = SubmissionStatus.inProgress;
     });
@@ -379,12 +381,12 @@ class _LoginState extends State<LoginPage> {
           Notify.show(locale.welcome);
         }
       }
-      debugPrint('Login successful');
+      log('Login successful');
       setState(() {
         _status = SubmissionStatus.success;
       });
     } catch (ex) {
-      debugPrint('error of login: $ex');
+      log('error of login: $ex');
       Notify.showError("Login failed:n$ex");
 
       // clear any info about the login

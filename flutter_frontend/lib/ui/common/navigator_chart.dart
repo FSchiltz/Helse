@@ -1,3 +1,5 @@
+import 'dart:developer' as logger;
+
 import 'package:flutter/material.dart';
 
 class NavigatorChart extends StatefulWidget {
@@ -107,7 +109,7 @@ class _NavigatorChartState extends State<NavigatorChart> {
         final left = width * _navigatorStart;
         final right = width * _navigatorEnd;
 
-        debugPrint('created navigator for ${widget.date}');
+        logger.log('created navigator for ${widget.date}');
         return Column(
           children: [
             SizedBox(

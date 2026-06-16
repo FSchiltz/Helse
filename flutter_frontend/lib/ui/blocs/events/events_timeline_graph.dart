@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
+import 'dart:developer' as logger;
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/ui/blocs/events/sleep_transition_painter.dart';
 
@@ -164,8 +165,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     }
 
     buildChartBars(events, timeline, rowHeight);
-
-    debugPrint('grouped in ${stopwatch.elapsed} with $viewRange bucket');
+    logger.log('grouped in ${stopwatch.elapsed} with $viewRange bucket');
     return timeline;
   }
 

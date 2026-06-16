@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'dart:developer' as logger;
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:helse/helpers/date.dart';
@@ -99,13 +99,14 @@ class _EventsGraphState extends State<EventsGraph> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: (filteredEvents.length < 200)
-              ? SizedBox(height: 400,
-                child: EventsTimelineGraph(
+              ? SizedBox(
+                  height: 400,
+                  child: EventsTimelineGraph(
                     filteredEvents,
                     subDate,
                     onselect: _selectionChanged,
                   ),
-              )
+                )
               : SizedBox(
                   height: 300,
                   child: EventsSummary(
@@ -194,8 +195,9 @@ class _EventsGraphState extends State<EventsGraph> {
     // First create the buckets
     final bucketLength = range.duration.inMilliseconds / buckets;
 
-    debugPrint(
+    logger.log(
       'grouping with buckets: $buckets and bucket lenght: $bucketLength for $subDate',
+      name: "Events",
     );
 
     final groups = List<EventSummary>.generate(
@@ -224,7 +226,7 @@ class _EventsGraphState extends State<EventsGraph> {
       }
     }
 
-    debugPrint('_group() executed in ${stopwatch.elapsed}');
+    logger.log('_group() executed in ${stopwatch.elapsed}', name: "Events");
     return groups.toList();
   }
 

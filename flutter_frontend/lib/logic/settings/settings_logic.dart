@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
@@ -58,17 +59,21 @@ class SettingsLogic extends BaseSettingsLogic {
     themebloc.changed(theme);
   }
 
-  Future<void> _saveSettings(UserSettings settings, bool toServer, Symbol caller) async {
+  Future<void> _saveSettings(
+    UserSettings settings,
+    bool toServer,
+    Symbol caller,
+  ) async {
     if (toServer) {
       await service.savePersonSettings(settings);
     }
     await save(settingsName, settings.toJson());
-    print("settings saved by $caller");
+    log("settings saved by $caller");
   }
 
   Future<void> loadSettings() async {
     var serverSettings = await service.getPersonSettings();
-    print("Settings loaded from server");
+    log("Settings loaded from server", name: "Settings");
     await save(settingsName, serverSettings.toJson());
 
     init = true;
@@ -80,7 +85,7 @@ class SettingsLogic extends BaseSettingsLogic {
 
   UserSettings _userSettings() {
     var encoded = getString(settingsName);
-    print("settings loaded");
+    log("settings loaded", name: "Settings");
     if (encoded == null) {
       return UserSettings(version: settingsVersion);
     }
@@ -101,7 +106,11 @@ class SettingsLogic extends BaseSettingsLogic {
 
   Future<void> saveMetrics(MetricSettings metric, bool toServer) async {
     var settings = _userSettings();
-    await _saveSettings(settings.copyWith(metricSettings: metric), toServer, #saveMetrics);
+    await _saveSettings(
+      settings.copyWith(metricSettings: metric),
+      toServer,
+      #saveMetrics,
+    );
     metrics.changed(true);
   }
 
@@ -112,7 +121,11 @@ class SettingsLogic extends BaseSettingsLogic {
 
   Future<void> saveEvents(EventSettings events, bool toServer) async {
     var settings = _userSettings();
-    await _saveSettings(settings.copyWith(eventSettings: events), toServer, #saveEvents);
+    await _saveSettings(
+      settings.copyWith(eventSettings: events),
+      toServer,
+      #saveEvents,
+    );
   }
 
   void setLastRun(String run) {
@@ -246,7 +259,11 @@ class SettingsLogic extends BaseSettingsLogic {
 
   Future<void> setDateRange(DatePreset run, {bool toServer = true}) async {
     var settings = _userSettings();
-    await _saveSettings(settings.copyWith(datePreset: run), toServer, #setDateRange);
+    await _saveSettings(
+      settings.copyWith(datePreset: run),
+      toServer,
+      #setDateRange,
+    );
   }
 
   DatePreset getDateRange() {

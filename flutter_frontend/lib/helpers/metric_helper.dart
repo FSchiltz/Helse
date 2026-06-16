@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
@@ -38,8 +40,9 @@ class MetricHelper {
     MetricType type,
   ) {
     final stopwatch = Stopwatch()..start();
-    debugPrint(
+    log(
       'grouping with bucket lenght: $bucketLength for $range',
+      name: "Metrics",
     );
     int graphCount = type.valueCount ?? 1;
     Map<int, MetricGrouped> groups = {};
@@ -75,9 +78,7 @@ class MetricHelper {
       }
     }
 
-    debugPrint(
-      '_group() executed in ${stopwatch.elapsed}',
-    );
+    log('_group() executed in ${stopwatch.elapsed}', name: "Metrics");
     return RangeList(values: groups.values.toList(), min: 0, max: max);
   }
 
