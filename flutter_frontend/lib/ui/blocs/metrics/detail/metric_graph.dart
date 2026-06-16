@@ -146,20 +146,19 @@ class _MetricGraphState extends State<MetricGraph> {
   }
 
   Widget _grapichChart(BuildContext context, int graphCount) {
-    var color = Dependencies.theme.stateColor(
-      widget.type.id.toString(),
-      StateType.metric,
-      context,
-      true,
-    );
-
     Dependencies.theme.save();
 
     List<Mark<Shape>> marks;
-    if (widget.settings == GraphKind.line) {
-      marks = [];
+    marks = [];
 
-      for (var i = 0; i < graphCount; i++) {
+    for (var i = 0; i < graphCount; i++) {
+      var color = Dependencies.theme.stateColor(
+        '${widget.type.id};$i',
+        StateType.metric,
+        context,
+        true,
+      );
+      if (widget.settings == GraphKind.line) {
         marks.add(
           LineMark(
             position: Varset('date') * Varset('value$i'),
@@ -178,18 +177,19 @@ class _MetricGraphState extends State<MetricGraph> {
             selectionStream: _selection,
           ),
         );
+      } else {
+        marks = [
+          IntervalMark(
+            position: Varset('date') * Varset('value$i'),
+            size: SizeEncode(value: 5),
+            color: ColorEncode(value: color),
+            selected: {
+              'touchMove': {1},
+            },
+            selectionStream: _selection,
+          ),
+        ];
       }
-    } else {
-      marks = [
-        IntervalMark(
-          size: SizeEncode(value: 5),
-          color: ColorEncode(value: color),
-          selected: {
-            'touchMove': {1},
-          },
-          selectionStream: _selection,
-        ),
-      ];
     }
 
     final Map<String, Variable<MetricGrouped, dynamic>> variables = {

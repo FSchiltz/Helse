@@ -71,29 +71,33 @@ class _GeneralSettingsState extends State<GeneralSettings> {
         key,
         value.entries.map((e) {
           String name = e.key;
+
+          final split = e.key.split(';');
+          final id = int.tryParse(split[0]);
+
           switch (key) {
             case StateType.metric:
-              final id = int.parse(e.key);
               name =
                   metrics.displaySettings
                       .firstWhereOrNull((m) => m.id == id)
                       ?.name ??
                   e.key;
             case StateType.events:
-              final id = int.parse(e.key);
               name =
                   events.displaySettings
                       .firstWhereOrNull((m) => m.id == id)
                       ?.name ??
                   e.key;
             case StateType.metricGroup:
-              final id = int.parse(e.key);
               name =
                   metrics.groups?.displaySettings
                       .firstWhereOrNull((m) => m.id == id)
                       ?.name ??
                   e.key;
             default:
+          }
+          if (split.length > 1) {
+            name = '$name-${split[1]}';
           }
           return ColoredValue(e.key, name, color: e.value);
         }).toList(),

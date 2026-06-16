@@ -112,7 +112,7 @@ public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext,
     /// <inheritdoc/>
     public Task<Metric?> GetMetric(long id)
     {
-        IQueryable<Metric> query = Db.GetTable<Metric>().LoadWith(x => x.Unit);
+        IQueryable<Metric> query = Db.GetTable<Metric>().LoadWith(x => x.UnitObject);
         return query.FirstOrDefaultAsync(x => x.Id == id);
     }
 

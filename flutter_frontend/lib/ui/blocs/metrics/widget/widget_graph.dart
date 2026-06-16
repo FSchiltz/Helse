@@ -11,7 +11,9 @@ class Range<T> {
   DateTime start;
   DateTime stop;
 
-  Range({required this.start, required this.stop});
+  final int index;
+
+  Range({required this.start, required this.stop, required this.index});
 }
 
 class GraphRange {
@@ -64,7 +66,7 @@ class WidgetGraph extends StatelessWidget {
           // graph bar are simpler, no need to split them so we put everything in the same range
           if (spots[i].spots.isEmpty) {
             spots[i].spots.add(
-              Range<FlSpot>(start: item.date, stop: item.date),
+              Range<FlSpot>(start: item.date, stop: item.date, index: i),
             );
           }
 
@@ -94,7 +96,7 @@ class WidgetGraph extends StatelessWidget {
             }
           } else {
             // otherwise create a new range
-            final range = Range<FlSpot>(start: start, stop: end);
+            final range = Range<FlSpot>(start: start, stop: end, index: i);
             range.value.add(FlSpot(x, y));
             spots[i].spots.add(range);
           }
@@ -138,14 +140,13 @@ class WidgetGraph extends StatelessWidget {
   }
 
   Widget _getGraph(BuildContext context) {
-    var color = Dependencies.theme.stateColor(
-      type.id.toString(),
-      StateType.metric,
-      context,
-      true,
-    );
-
     if (settings == GraphKind.bar) {
+      var color = Dependencies.theme.stateColor(
+        type.id.toString(),
+        StateType.metric,
+        context,
+        true,
+      );
       return BarChart(
         BarChartData(
           barTouchData: BarTouchData(enabled: false),
@@ -161,6 +162,32 @@ class WidgetGraph extends StatelessWidget {
         ),
       );
     } else {
+      final spots = _getSpot(metrics, type).map((metric) {
+        var color = Dependencies.theme.stateColor(
+          '${type.id};${metric.index}',
+          StateType.metric,
+          context,
+          true,
+        );
+        return LineChartBarData(
+          barWidth: width ?? 3,
+          color: color,
+          spots: metric.value,
+          isCurved: true,
+          curveSmoothness: 0.02,
+          dotData: FlDotData(
+            show: true,
+            getDotPainter: (spot, percent, barData, index) =>
+                FlDotCirclePainter(
+                  color: color,
+                  strokeColor: color,
+                  radius: barData.spots.length > 1 ? 0 : 1,
+                  strokeWidth: 0,
+                ),
+          ),
+        );
+      });
+
       return LineChart(
         LineChartData(
           minX: range.start.millisecondsSinceEpoch.toDouble(),
@@ -174,27 +201,7 @@ class WidgetGraph extends StatelessWidget {
           ),
           borderData: FlBorderData(show: false),
           gridData: const FlGridData(show: false),
-          lineBarsData: _getSpot(metrics, type)
-              .map(
-                (m) => LineChartBarData(
-                  barWidth: width ?? 3,
-                  color: color,
-                  spots: m.value,
-                  isCurved: true,
-                  curveSmoothness: 0.02,
-                  dotData: FlDotData(
-                    show: true,
-                    getDotPainter: (spot, percent, barData, index) =>
-                        FlDotCirclePainter(
-                          color: color,
-                          strokeColor: color,
-                          radius: barData.spots.length > 1 ? 0 : 1,
-                          strokeWidth: 0,
-                        ),
-                  ),
-                ),
-              )
-              .toList(),
+          lineBarsData: spots.toList(),
         ),
       );
     }
