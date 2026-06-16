@@ -51,7 +51,7 @@ jobs:
       run: echo ${{ secrets.KEY_FILE }} | base64 --decode > flutter_frontend/android/app/key.jks
     
     - name: Build release app bundle
-      run: flutter build apk --${{inputs.mode}} --split-per-abi --info
+      run: flutter build apk --${{inputs.mode}} --split-per-abi
       working-directory: 'flutter_frontend'   
 
     - name: Finding binaries files
