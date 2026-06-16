@@ -49,7 +49,7 @@ class ThemeHelper {
       color = group[state]!;
     } else {
       group[state] = color = randomColor();
-      save();
+      _save();
     }
 
     if (isDark(context)) return color;
@@ -64,10 +64,11 @@ class ThemeHelper {
   }
 
   void loadColors(Map<StateType, Map<String, Color>> map) {
+    colors.clear();
     colors.addEntries(map.entries);
   }
 
-  Future<void> save() async {
+  Future<void> _save() async {
     final timer = _saveTimer;
     if (timer != null) {
       timer.cancel();

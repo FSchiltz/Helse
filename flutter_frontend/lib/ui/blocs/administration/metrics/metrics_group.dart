@@ -57,7 +57,6 @@ class MetricGroupView extends StatelessWidget {
                     DataColumn(label: Expanded(child: Text(locale.id))),
                     DataColumn(label: Expanded(child: Text(locale.name))),
                     DataColumn(label: Expanded(child: Text(locale.description))),
-                    DataColumn(label: Expanded(child: Text("Show title"))),
                     DataColumn(label: Expanded(child: Text(locale.visible))),
                     DataColumn(label: Expanded(child: Text(""))),
                   ],
@@ -70,13 +69,7 @@ class MetricGroupView extends StatelessWidget {
                             DataCell(Text(type.description)),
                             DataCell(
                               Checkbox(
-                                value: type.showTitle ?? false,
-                                onChanged: null,
-                              ),
-                            ),
-                            DataCell(
-                              Checkbox(
-                                value: type.showOnDashboard ?? false,
+                                value: type.showOnDashboard?? false,
                                 onChanged: null,
                               ),
                             ),

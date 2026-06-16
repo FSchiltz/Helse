@@ -50,7 +50,7 @@ class WidgetGraph extends StatelessWidget {
     final bucketLength = range.duration.inMilliseconds / tile;
 
     final Duration delta = Duration(
-      milliseconds: (bucketLength * (tile * 0.05)).toInt(),
+      milliseconds: (bucketLength * tile * 0.20).toInt(),
     );
 
     final groups = MetricHelper.group(raw, range, bucketLength, type);
