@@ -2,16 +2,22 @@ import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/metric_helper.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
 
 class Range<T> {
   final List<T> value = [];
   DateTime start;
   DateTime stop;
 
-  Range({required this.start, required this.stop});
+  final int index;
+
+  Range({required this.start, required this.stop, required this.index});
+}
+
+class GraphRange {
+  final List<Range<FlSpot>> spots = [];
 }
 
 class WidgetGraph extends StatelessWidget {
@@ -32,84 +38,81 @@ class WidgetGraph extends StatelessWidget {
     this.width,
   });
 
-  List<Range<FlSpot>> _getSpot(List<Metric> raw) {
+  List<Range<FlSpot>> _getSpot(List<Metric> raw, MetricType type) {
+    int graphCount;
+    switch (type.type) {
+      case MetricDataType.numberrange:
+        graphCount = type.valueCount ?? 0;
+      default:
+        graphCount = 1;
+    }
+
     final bucketLength = range.duration.inMilliseconds / tile;
 
     final Duration delta = Duration(
       milliseconds: (bucketLength * (tile * 0.05)).toInt(),
     );
 
-    final groups = List<MetricGrouped>.generate(tile, (index) {
-      final start = range.start.add(
-        Duration(milliseconds: (index * bucketLength).toInt()),
-      );
-      var date = start.add(Duration(milliseconds: (bucketLength / 2).toInt()));
-      return MetricGrouped(date, 0, []);
-    });
+    final groups = MetricHelper.group(raw, range, bucketLength, type);
+    final spots = List<GraphRange>.generate(graphCount, (i) => GraphRange());
 
-    for (var metric in raw) {
-      final value = double.parse(metric.value);
-      // find the bucket
-      final duration = metric.date.difference(range.start);
-      final index = (duration.inMilliseconds / bucketLength).toInt();
-      final bucket = groups[index];
-      // if it does not exists create it
-      bucket.value = (bucket.value + value) / 2;
-    }
-
-    List<Range<FlSpot>> spots = [];
-    for (final item in groups) {
-      var y = item.value;
+    for (final item in groups.values) {
       var x = item.date.millisecondsSinceEpoch.toDouble();
 
-      if (settings == GraphKind.bar) {
-        // graph bar are simpler, no need to split them so we put everything in the same range
-        if (spots.isEmpty) {
-          spots.add(Range<FlSpot>(start: item.date, stop: item.date));
-        }
+      for (int i = 0; i < graphCount; i++) {
+        var y = item.value[i];
 
-        spots[0].value.add(FlSpot(x, y));
-      } else {
-        if (y == 0) {
-          // don't show 0 values in the graph
-          continue;
-        }
-
-        // for line chart we split so that missing data are not extrapolated by the graph
-        var existing = spots.firstWhereOrNull(
-          (e) =>
-              (e.start.isBefore(item.date) ||
-                  e.start.isAtSameMomentAs(item.date)) &&
-              (e.stop.isAfter(item.date) || e.stop.isAtSameMomentAs(item.date)),
-        );
-
-        var start = item.date.subtract(delta);
-        var end = item.date.add(delta);
-
-        if (existing != null) {
-          // if the group touch another adds it to it and increase the range
-          existing.value.add(FlSpot(x, y));
-          if (existing.start.isAfter(start)) {
-            existing.start = start;
+        if (settings == GraphKind.bar) {
+          // graph bar are simpler, no need to split them so we put everything in the same range
+          if (spots[i].spots.isEmpty) {
+            spots[i].spots.add(
+              Range<FlSpot>(start: item.date, stop: item.date, index: i),
+            );
           }
 
-          if (existing.stop.isBefore(end)) {
-            existing.stop = end;
-          }
+          spots[i].spots[0].value.add(FlSpot(x, y));
         } else {
-          // otherwise create a new range
-          final range = Range<FlSpot>(start: start, stop: end);
-          range.value.add(FlSpot(x, y));
-          spots.add(range);
+          // for line chart we split so that missing data are not extrapolated by the graph
+          var existing = spots[i].spots.firstWhereOrNull(
+            (e) =>
+                (e.start.isBefore(item.date) ||
+                    e.start.isAtSameMomentAs(item.date)) &&
+                (e.stop.isAfter(item.date) ||
+                    e.stop.isAtSameMomentAs(item.date)),
+          );
+
+          var start = item.date.subtract(delta);
+          var end = item.date.add(delta);
+
+          if (existing != null) {
+            // if the group touch another adds it to it and increase the range
+            existing.value.add(FlSpot(x, y));
+            if (existing.start.isAfter(start)) {
+              existing.start = start;
+            }
+
+            if (existing.stop.isBefore(end)) {
+              existing.stop = end;
+            }
+          } else {
+            // otherwise create a new range
+            final range = Range<FlSpot>(start: start, stop: end, index: i);
+            range.value.add(FlSpot(x, y));
+            spots[i].spots.add(range);
+          }
         }
       }
     }
 
-    return spots;
+    return spots.expand((e) => e.spots).toList();
   }
 
-  List<BarChartGroupData> _getBar(List<Metric> raw, Color color) {
-    var spots = _getSpot(raw);
+  List<BarChartGroupData> _getBar(
+    List<Metric> raw,
+    Color color,
+    MetricType type,
+  ) {
+    var spots = _getSpot(raw, type);
 
     // now we have the min and max Y and X value, we can build the spots
     List<BarChartGroupData> bar = [];
@@ -137,14 +140,13 @@ class WidgetGraph extends StatelessWidget {
   }
 
   Widget _getGraph(BuildContext context) {
-    var color = Dependencies.theme.stateColor(
-      type.id.toString(),
-      StateType.metric,
-      context,
-      true,
-    );
-
     if (settings == GraphKind.bar) {
+      var color = Dependencies.theme.stateColor(
+        type.id.toString(),
+        StateType.metric,
+        context,
+        true,
+      );
       return BarChart(
         BarChartData(
           barTouchData: BarTouchData(enabled: false),
@@ -156,10 +158,36 @@ class WidgetGraph extends StatelessWidget {
           ),
           borderData: FlBorderData(show: false),
           gridData: const FlGridData(show: false),
-          barGroups: _getBar(metrics, color),
+          barGroups: _getBar(metrics, color, type),
         ),
       );
     } else {
+      final spots = _getSpot(metrics, type).map((metric) {
+        var color = Dependencies.theme.stateColor(
+          '${type.id};${metric.index}',
+          StateType.metric,
+          context,
+          true,
+        );
+        return LineChartBarData(
+          barWidth: width ?? 3,
+          color: color,
+          spots: metric.value,
+          isCurved: true,
+          curveSmoothness: 0.02,
+          dotData: FlDotData(
+            show: true,
+            getDotPainter: (spot, percent, barData, index) =>
+                FlDotCirclePainter(
+                  color: color,
+                  strokeColor: color,
+                  radius: barData.spots.length > 1 ? 0 : 1,
+                  strokeWidth: 0,
+                ),
+          ),
+        );
+      });
+
       return LineChart(
         LineChartData(
           minX: range.start.millisecondsSinceEpoch.toDouble(),
@@ -173,27 +201,7 @@ class WidgetGraph extends StatelessWidget {
           ),
           borderData: FlBorderData(show: false),
           gridData: const FlGridData(show: false),
-          lineBarsData: _getSpot(metrics)
-              .map(
-                (m) => LineChartBarData(
-                  barWidth: width ?? 3,
-                  color: color,
-                  spots: m.value,
-                  isCurved: true,
-                  curveSmoothness: 0.02,
-                  dotData: FlDotData(
-                    show: true,
-                    getDotPainter: (spot, percent, barData, index) =>
-                        FlDotCirclePainter(
-                          color: color,
-                          strokeColor: color,
-                          radius: barData.spots.length > 1 ? 0 : 1,
-                          strokeWidth: 0,
-                        ),
-                  ),
-                ),
-              )
-              .toList(),
+          lineBarsData: spots.toList(),
         ),
       );
     }

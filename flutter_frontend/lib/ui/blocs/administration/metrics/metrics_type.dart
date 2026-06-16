@@ -54,10 +54,12 @@ class MetricTypeView extends StatelessWidget {
               child: SingleChildScrollView(
                 child: FittedBox(
                   child: DataTable(
-                    columns:  [
+                    columns: [
                       DataColumn(label: Expanded(child: Text(locale.id))),
                       DataColumn(label: Expanded(child: Text(locale.name))),
-                      DataColumn(label: Expanded(child: Text(locale.description))),
+                      DataColumn(
+                        label: Expanded(child: Text(locale.description)),
+                      ),
                       DataColumn(label: Expanded(child: Text("Unit"))),
                       DataColumn(label: Expanded(child: Text(locale.type))),
                       DataColumn(label: Expanded(child: Text("Summary"))),
@@ -76,7 +78,7 @@ class MetricTypeView extends StatelessWidget {
                               DataCell(Text(type.name)),
                               DataCell(Text(type.description ?? "")),
                               DataCell(Text(type.unit.code)),
-                              DataCell(Text(type.type?.name ?? "")),
+                              DataCell(Text(_getTypeText(type))),
                               DataCell(Text(type.summaryType?.name ?? "")),
                               DataCell(
                                 Checkbox(value: type.visible, onChanged: null),
@@ -138,5 +140,13 @@ class MetricTypeView extends StatelessWidget {
     } catch (ex) {
       Notify.showError('Error deleting metric ${type.name}');
     }
+  }
+
+  String _getTypeText(MetricType type) {
+    var text = type.type?.name ?? "";
+    if (type.type == MetricDataType.numberrange) {
+      text = "$text - ${type.valueCount}";
+    }
+    return text;
   }
 }

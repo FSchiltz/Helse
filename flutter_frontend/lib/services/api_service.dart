@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:chopper/chopper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -11,7 +12,16 @@ abstract class ApiService {
   ApiService(this.account);
 
   Future<T?> call<T>(Future<Response<T>> Function() call) async {
+    final stopwatch = Stopwatch()..start();
     var response = await call();
+    if (stopwatch.elapsedMilliseconds > 300) {
+      log(
+        'Service call executed in ${stopwatch.elapsed}',
+        level: stopwatch.elapsedMilliseconds > 1000 ? 2000 : 0,
+        name: 'ServiceCall',
+      );
+    }
+
     T? result;
 
     if (!response.isSuccessful) {
@@ -79,7 +89,9 @@ abstract class ApiService {
   bool _isExpired(String token) {
     try {
       return JwtDecoder.isExpired(token);
-    } catch (error) {}
+    } catch (error) {
+      // if any error occurs, the token is considered expired
+    }
     return true;
   }
 }

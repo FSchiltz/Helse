@@ -36,4 +36,6 @@ public class MetricTypeBase
     public bool ShowOnDashboard { get; set; }
 
     public required long GroupId { get; set; }
+
+    public long? ValueCount { get; set; }
 }

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/square_dialog.dart';
+import 'package:helse/ui/common/square_text_field.dart';
+import 'package:helse/ui/common/statefull_check.dart';
+import 'package:helse/ui/common/type_input.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/notification.dart';
-import 'metric_form.dart';
 
 class MetricTypeAdd extends StatefulWidget {
   final void Function()? callback;
@@ -19,8 +22,12 @@ class MetricTypeAdd extends StatefulWidget {
 class _MetricTypeAddState extends State<MetricTypeAdd> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
-  final TextEditingController controllerName = TextEditingController();
-  final TextEditingController controllerDescription = TextEditingController();
+  final focusNodeName = FocusNode();
+  final focusNodeDescription = FocusNode();
+  final focusNodeUnit = FocusNode();
+  final controllerName = TextEditingController();
+  final controllerDescription = TextEditingController();
+  final controllerValueCount = TextEditingController();
   MetricSummary? _metricSummary;
   MetricDataType? _type;
   bool _visible = true;
@@ -30,6 +37,14 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
 
   List<MetricGroup> _groups = [];
   List<Unit> _units = [];
+
+  String? validateName(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Please enter a name.";
+    }
+
+    return null;
+  }
 
   @override
   void initState() {
@@ -45,6 +60,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
       _groupId = edit.groupId;
       _type = edit.type ?? MetricDataType.text;
       _metricSummary = edit.summaryType;
+      controllerValueCount.text = (edit.valueCount ?? 0).toString();
     }
     _loadGroup();
     _loadUnit();
@@ -68,42 +84,112 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
         key: _formKey,
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
-          child: Column(
+          child: Column(children: [buildForm(context)]),
+        ),
+      ),
+    );
+  }
+
+  Widget buildForm(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
+    var locale = Translation.of(context);
+    return Column(
+      children: [
+        SquareTextField(
+          theme: theme,
+          icon: Icons.person_sharp,
+          controller: controllerName,
+          focusNode: focusNodeName,
+          label: locale.name,
+          validator: validateName,
+          onEditingComplete: () => focusNodeDescription.requestFocus(),
+        ),
+        const SizedBox(height: 10),
+        SquareTextField(
+          icon: Icons.person_sharp,
+          theme: theme,
+          controller: controllerDescription,
+          focusNode: focusNodeDescription,
+          label: locale.description,
+          onEditingComplete: () => focusNodeUnit.requestFocus(),
+        ),
+        const SizedBox(height: 10),
+        EnumInput(
+          value: _unit,
+          _units
+              .map((x) => DropDownItem(x.id, x.description ?? x.code))
+              .toList(),
+          (value) => setState(() {
+            _unit = value ?? 0;
+          }),
+          label: locale.unit,
+        ),
+        const SizedBox(height: 10),
+        EnumInput(
+          value: _type,
+          MetricDataType.values.map((x) => DropDownItem(x, x.name)).toList(),
+          (value) => setState(() {
+            _type = value;
+          }),
+          label: 'Type',
+        ),
+        if (_type == MetricDataType.numberrange) SizedBox(height: 10),
+        if (_type == MetricDataType.numberrange)
+          SquareTextField(
+            icon: Icons.numbers_sharp,
+            theme: theme,
+            controller: controllerValueCount,
+            label: locale.value,
+          ),
+        SizedBox(height: 10),
+        EnumInput(
+          value: _groupId,
+          _groups.map((x) => DropDownItem(x.id, x.name)).toList(),
+          (value) => setState(() {
+            _groupId = value ?? 0;
+          }),
+          label: locale.group,
+        ),
+        const SizedBox(height: 10),
+        EnumInput(
+          value: _metricSummary,
+          MetricSummary.values.map((x) => DropDownItem(x, x.name)).toList(),
+          (value) => setState(() {
+            _metricSummary = value;
+          }),
+          label: locale.summary,
+        ),
+        const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
             children: [
-              MetricTypeAddForm(
-                controllerDescription: controllerDescription,
-                controllerName: controllerName,
-                type: _type,
-                summary: _metricSummary,
-                summaryCallback: (MetricSummary? value) => setState(() {
-                  _metricSummary = value;
-                }),
-                typeCallback: (MetricDataType? value) => setState(() {
-                  _type = value;
-                }),
-                visible: _visible,
-                visibleCallback: (bool value) => setState(() {
+              Text(locale.visible),
+              StatefullCheck(
+                _visible,
+                (value) => setState(() {
                   _visible = value;
                 }),
-                group: _groupId,
-                groupCallback: (int value) => setState(() {
-                  _groupId = value;
-                }),
-                groups: _groups,
-                showDashboard: _showDashboard,
-                showCallback: (bool value) => setState(() {
-                  _showDashboard = value;
-                }),
-                unit: _unit,
-                unitCallback: (int value) => setState(() {
-                  _unit = value;
-                }),
-                units: _units,
               ),
             ],
           ),
         ),
-      ),
+        const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              const Text("Show on dashboard: "),
+              StatefullCheck(
+                _showDashboard,
+                (value) => setState(() {
+                  _showDashboard = value;
+                }),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -125,6 +211,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
             showOnDashboard: _showDashboard,
             groupId: _groupId,
             userEditable: true,
+            valueCount: int.parse(controllerValueCount.text),
           );
           await Dependencies.services.metric.addMetricsType(metric);
         } else {
@@ -140,6 +227,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
             showOnDashboard: _showDashboard,
             groupId: _groupId,
             userEditable: true,
+            valueCount: int.parse(controllerValueCount.text),
           );
           await Dependencies.services.metric.updateMetricsType(metric);
         }

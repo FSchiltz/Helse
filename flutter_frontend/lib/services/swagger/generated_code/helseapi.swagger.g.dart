@@ -111,6 +111,7 @@ CreateMetricType _$CreateMetricTypeFromJson(Map<String, dynamic> json) =>
       visible: json['visible'] as bool?,
       showOnDashboard: json['showOnDashboard'] as bool?,
       groupId: (json['groupId'] as num).toInt(),
+      valueCount: (json['valueCount'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$CreateMetricTypeToJson(CreateMetricType instance) =>
@@ -124,6 +125,7 @@ Map<String, dynamic> _$CreateMetricTypeToJson(CreateMetricType instance) =>
       'visible': instance.visible,
       'showOnDashboard': instance.showOnDashboard,
       'groupId': instance.groupId,
+      'valueCount': instance.valueCount,
     };
 
 CreateTreatment _$CreateTreatmentFromJson(Map<String, dynamic> json) =>
@@ -497,6 +499,7 @@ MetricType _$MetricTypeFromJson(Map<String, dynamic> json) => MetricType(
   visible: json['visible'] as bool?,
   showOnDashboard: json['showOnDashboard'] as bool?,
   groupId: (json['groupId'] as num).toInt(),
+  valueCount: (json['valueCount'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$MetricTypeToJson(MetricType instance) =>
@@ -511,6 +514,7 @@ Map<String, dynamic> _$MetricTypeToJson(MetricType instance) =>
       'visible': instance.visible,
       'showOnDashboard': instance.showOnDashboard,
       'groupId': instance.groupId,
+      'valueCount': instance.valueCount,
     };
 
 Oauth _$OauthFromJson(Map<String, dynamic> json) => Oauth(
@@ -906,6 +910,7 @@ UpdateMetricType _$UpdateMetricTypeFromJson(Map<String, dynamic> json) =>
       visible: json['visible'] as bool?,
       showOnDashboard: json['showOnDashboard'] as bool?,
       groupId: (json['groupId'] as num).toInt(),
+      valueCount: (json['valueCount'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$UpdateMetricTypeToJson(UpdateMetricType instance) =>
@@ -920,6 +925,7 @@ Map<String, dynamic> _$UpdateMetricTypeToJson(UpdateMetricType instance) =>
       'visible': instance.visible,
       'showOnDashboard': instance.showOnDashboard,
       'groupId': instance.groupId,
+      'valueCount': instance.valueCount,
     };
 
 UpdatePatient _$UpdatePatientFromJson(Map<String, dynamic> json) =>

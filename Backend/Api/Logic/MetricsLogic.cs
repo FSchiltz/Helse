@@ -112,8 +112,22 @@ public static class MetricsLogic
         if (type == null)
             throw new InvalidDataException("Type not found");
 
-        if ((MetricDataType)type.Type == MetricDataType.Number && !int.TryParse(metric.Value, out var _))
+        if ((MetricDataType)type.Type == MetricDataType.Number && !double.TryParse(metric.Value, out var _))
             throw new InvalidDataException("The metric value is not a number");
+
+        if ((MetricDataType)type.Type == MetricDataType.NumberRange)
+        {
+            var split = metric.Value.Split(';');
+            if (split.Length < type.ValueCount)
+            {
+                throw new InvalidDataException($"The metric should have at least {type.ValueCount} value separated by a ';'");
+            }
+
+            if (split.Any(x => !double.TryParse(x, out var _)))
+            {
+                throw new InvalidDataException("The value of the metric should be numbers");
+            }
+        }
 
         if (metric.Unit is not null)
         {
@@ -185,7 +199,8 @@ public static class MetricsLogic
         Visible = x.Visible,
         UserEditable = x.UserEditable,
         ShowOnDashboard = x.ShowOnDashboard,
-        GroupId = x.GroupId
+        GroupId = x.GroupId,
+        ValueCount = x.ValueCount,
     }));
 
     public static async Task<IResult> CreateTypeAsync(CreateMetricType metric, IUserContext users, IMetricContext db, HttpContext context)
@@ -194,14 +209,24 @@ public static class MetricsLogic
         if (admin is not null)
             return admin;
 
-        if (metric.Type == MetricDataType.Text && metric.SummaryType != MetricSummary.Latest)
-        {
-            throw new InvalidDataException("Text can only be summarized with latest");
-        }
+        Validate(metric);
 
         await db.Insert(metric);
 
         return TypedResults.NoContent();
+    }
+
+    private static void Validate(CreateMetricType metric)
+    {
+        if (metric.Type != MetricDataType.Number && metric.SummaryType != MetricSummary.Latest)
+        {
+            throw new InvalidDataException("Only number can be have different summary than text");
+        }
+
+        if (metric.Type == MetricDataType.NumberRange && metric.ValueCount < 2)
+        {
+            throw new InvalidDataException("Number range needs at least 2 values");
+        }
     }
 
     public static async Task<IResult> UpdateTypeAsync(UpdateMetricType metric, IUserContext users, IMetricContext db, HttpContext context)
@@ -210,10 +235,8 @@ public static class MetricsLogic
         if (admin is not null)
             return admin;
 
-        if (metric.Type == MetricDataType.Text && metric.SummaryType != MetricSummary.Latest)
-        {
-            throw new InvalidDataException("Text can only be summarized with latest");
-        }
+
+        Validate(metric);
 
         await db.Update(metric);
 

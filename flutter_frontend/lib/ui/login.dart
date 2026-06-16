@@ -369,8 +369,9 @@ class _LoginState extends State<LoginPage> {
         surname: _controllerSurname.text,
       );
 
-      if (context.mounted) {
-        var locale = Translation.of(context);
+      final localContext = context;
+      if (localContext.mounted) {
+        var locale = Translation.of(localContext);
 
         if (created) {
           Notify.show(locale.welcomenew);

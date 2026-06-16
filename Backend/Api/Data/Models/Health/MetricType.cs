@@ -38,4 +38,7 @@ public class MetricType
 
     [Column]
     public bool ShowOnDashboard { get; set; }
+
+    [Column]
+    public long? ValueCount { get; set; }
 }

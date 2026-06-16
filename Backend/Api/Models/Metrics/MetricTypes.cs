@@ -20,4 +20,5 @@ public enum MetricTypes
     Spotting = 16,
     HeadDiameter = 17,
     Diaper = 18,
+    BloodPressure = 19,
 }

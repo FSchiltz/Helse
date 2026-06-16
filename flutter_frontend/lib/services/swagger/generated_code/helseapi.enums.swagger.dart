@@ -109,7 +109,9 @@ enum MetricDataType {
   @JsonValue('Number')
   number('Number'),
   @JsonValue('Bool')
-  bool('Bool');
+  bool('Bool'),
+  @JsonValue('NumberRange')
+  numberrange('NumberRange');
 
   final String? value;
 

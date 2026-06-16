@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/metric_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 
@@ -33,7 +36,7 @@ class _MetricAddState extends State<MetricAdd> {
   SubmissionStatus _status = SubmissionStatus.initial;
 
   DateTime _date = DateTime.now();
-  final TextEditingController _value = TextEditingController();
+  List<TextEditingController> _values = [];
   final TextEditingController _tag = TextEditingController();
 
   @override
@@ -43,8 +46,17 @@ class _MetricAddState extends State<MetricAdd> {
     var edit = widget.edit;
     if (edit != null) {
       _date = edit.date.toLocal();
-      _value.text = edit.value;
+      final values = MetricHelper.getValue(edit.value, widget.type.type);
+
+      _values = values
+          .map((e) => TextEditingController(text: e.toString()))
+          .toList();
       _tag.text = edit.tag ?? '';
+    } else {
+      _values = List<TextEditingController>.generate(
+        max(widget.type.valueCount ?? 1, 1),
+        (e) => TextEditingController(),
+      );
     }
   }
 
@@ -78,13 +90,17 @@ class _MetricAddState extends State<MetricAdd> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  SquareTextField(
-                    theme: theme,
-                    icon: Icons.add_sharp,
-                    label: locale.value,
-                    controller: _value,
+                  ..._values.expand(
+                    (e) => [
+                      SquareTextField(
+                        theme: theme,
+                        icon: Icons.add_sharp,
+                        label: locale.value,
+                        controller: e,
+                      ),
+                      const SizedBox(height: 20),
+                    ],
                   ),
-                  const SizedBox(height: 20),
                   SquareTextField(
                     theme: theme,
                     icon: Icons.design_services_outlined,
@@ -122,7 +138,7 @@ class _MetricAddState extends State<MetricAdd> {
             date: _date.toUtc(),
             type: widget.type.id,
             tag: _tag.text,
-            value: _value.text,
+            value: MetricHelper().joinValue(_values.map((e) => e.text)),
             source: FileTypes.none,
             sourceId: "",
           );
@@ -132,7 +148,7 @@ class _MetricAddState extends State<MetricAdd> {
             date: _date.toUtc(),
             type: widget.type.id,
             tag: _tag.text,
-            value: _value.text,
+            value: MetricHelper().joinValue(_values.map((e) => e.text)),
             source: FileTypes.none,
             sourceId: "",
           );
