@@ -3,6 +3,8 @@ using Api.Data.Models.Admin;
 using Api.Models.Settings.Admin;
 using LinqToDB;
 using LinqToDB.Data;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 
 namespace Tests.Unit.Data;
 
@@ -10,6 +12,9 @@ namespace Tests.Unit.Data;
 public class SettingsContextTests(DatabaseFixture fixture) : IAsyncLifetime
 {
     private DataConnection _db = null!;
+
+    private readonly SlowQueryLogInterceptor _interceptor = new(
+        Substitute.For<ILogger<SlowQueryLogInterceptor>>());
 
     public async ValueTask InitializeAsync()
     {
@@ -28,7 +33,7 @@ public class SettingsContextTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task GetSettings_ReturnsDefault_WhenNotFound()
     {
         // Arrange
-        var context = new SettingsContext(_db);
+        var context = new SettingsContext(_db, _interceptor);
 
         // Act
         var result = await context.GetSettings<Oauth>("non-existent");
@@ -59,7 +64,7 @@ public class SettingsContextTests(DatabaseFixture fixture) : IAsyncLifetime
         var json = System.Text.Json.JsonSerializer.Serialize(settings);
         await _db.GetTable<Settings>().InsertAsync(() => new Settings { Name = "oauth", Blob = json }, token: TestContext.Current.CancellationToken);
 
-        var context = new SettingsContext(_db);
+        var context = new SettingsContext(_db, _interceptor);
 
         // Act
         var result = await context.GetSettings<Oauth>("oauth");
@@ -77,7 +82,7 @@ public class SettingsContextTests(DatabaseFixture fixture) : IAsyncLifetime
         // Arrange
         var proxy = new Proxy { ProxyAuth = true, Header = "X-Auth" };
         var json = System.Text.Json.JsonSerializer.Serialize(proxy);
-        var context = new SettingsContext(_db);
+        var context = new SettingsContext(_db, _interceptor);
 
         // Act
         await context.Upsert("proxy", json);
@@ -98,7 +103,7 @@ public class SettingsContextTests(DatabaseFixture fixture) : IAsyncLifetime
 
         var newSettings = new Proxy { ProxyAuth = true, Header = "X-Auth-New" };
         var newJson = System.Text.Json.JsonSerializer.Serialize(newSettings);
-        var context = new SettingsContext(_db);
+        var context = new SettingsContext(_db, _interceptor);
 
         // Act
         await context.Upsert("proxy", newJson);

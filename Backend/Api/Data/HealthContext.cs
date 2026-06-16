@@ -7,7 +7,7 @@ using LinqToDB.Mapping;
 
 namespace Api.Data;
 
-public class HealthContext(DataConnection db) : BaseContext(db), IHealthContext, IMetricContext, IEventContext
+public class HealthContext(DataConnection db, SlowQueryLogInterceptor interceptor) : BaseContext(db, interceptor), IHealthContext, IMetricContext, IEventContext
 {
     /// <summary>
     /// Chunked metric for the summary

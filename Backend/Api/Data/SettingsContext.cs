@@ -22,7 +22,7 @@ public interface ISettingsContext : IContext
 /// <summary>
 /// Class for calling the database for the settings
 /// </summary>
-public class SettingsContext(DataConnection db) : BaseContext(db), ISettingsContext
+public class SettingsContext(DataConnection db, SlowQueryLogInterceptor interceptor) : BaseContext(db, interceptor), ISettingsContext
 {
     public Task Delete(string name) => Db.GetTable<Data.Models.Admin.Settings>().DeleteAsync(x => x.Name == name);
 
