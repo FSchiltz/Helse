@@ -199,6 +199,9 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
       if (_formKey.currentState?.validate() ?? false) {
         String text;
 
+        final int? valueCount = (controllerValueCount.text.isNotEmpty)
+            ? int.parse(controllerValueCount.text)
+            : null;
         if (widget.edit == null) {
           text = "Added";
           var metric = CreateMetricType(
@@ -211,7 +214,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
             showOnDashboard: _showDashboard,
             groupId: _groupId,
             userEditable: true,
-            valueCount: int.parse(controllerValueCount.text),
+            valueCount: valueCount,
           );
           await Dependencies.services.metric.addMetricsType(metric);
         } else {
@@ -227,7 +230,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
             showOnDashboard: _showDashboard,
             groupId: _groupId,
             userEditable: true,
-            valueCount: int.parse(controllerValueCount.text),
+            valueCount: valueCount,
           );
           await Dependencies.services.metric.updateMetricsType(metric);
         }

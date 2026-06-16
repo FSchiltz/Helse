@@ -69,7 +69,6 @@ class _EventsGridState extends State<EventsGrid> {
             "${type.id}",
             StateType.events,
             context,
-            false,
           );
           return Container(
             decoration: BoxDecoration(
@@ -84,8 +83,7 @@ class _EventsGridState extends State<EventsGrid> {
           );
         }).toList() ??
         [];
-        
-    Dependencies.theme.save();
+
     return types == null
         ? const HelseLoader()
         : BlocListener<SettingsBloc<bool>, bool>(

@@ -146,8 +146,6 @@ class _MetricGraphState extends State<MetricGraph> {
   }
 
   Widget _grapichChart(BuildContext context, int graphCount) {
-    Dependencies.theme.save();
-
     List<Mark<Shape>> marks;
     marks = [];
 
@@ -156,7 +154,6 @@ class _MetricGraphState extends State<MetricGraph> {
         '${widget.type.id};$i',
         StateType.metric,
         context,
-        true,
       );
       if (widget.settings == GraphKind.line) {
         marks.add(

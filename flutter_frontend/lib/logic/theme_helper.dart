@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -16,6 +17,8 @@ class ColorValue {
 
 class ThemeHelper {
   final Map<StateType, Map<String, Color>> colors = {};
+
+  Timer? _saveTimer;
 
   bool isDark(BuildContext context) {
     final InterfaceTheme theme = Dependencies.logics.settings.themebloc.state;
@@ -37,12 +40,7 @@ class ThemeHelper {
     );
   }
 
-  Color stateColor(
-    String state,
-    StateType type,
-    BuildContext context,
-    bool save,
-  ) {
+  Color stateColor(String state, StateType type, BuildContext context) {
     var group = colors[type];
     group ??= colors[type] = {};
 
@@ -51,8 +49,7 @@ class ThemeHelper {
       color = group[state]!;
     } else {
       group[state] = color = randomColor();
-
-      if (save) Dependencies.theme.save();
+      save();
     }
 
     if (isDark(context)) return color;
@@ -66,13 +63,19 @@ class ThemeHelper {
     );
   }
 
-  void setColors(Map<StateType, Map<String, Color>> map) {
+  void loadColors(Map<StateType, Map<String, Color>> map) {
     colors.addEntries(map.entries);
   }
 
   Future<void> save() async {
-    // trigger a saving of the new color
-    // TODO use a thread safe approach
-    await Dependencies.logics.settings.setColors(colors, toServer: false);
+    final timer = _saveTimer;
+    if (timer != null) {
+      timer.cancel();
+    }
+
+    _saveTimer = Timer(
+      Duration(milliseconds: 100),
+      () => Dependencies.logics.settings.setColors(colors, toServer: false),
+    );
   }
 }

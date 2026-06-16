@@ -87,10 +87,8 @@ class _MetricsGroupState extends State<MetricsGroup> {
       "${widget.group.id}",
       StateType.metricGroup,
       context,
-      true,
     );
 
-    Dependencies.theme.save();
     return Container(
       decoration: BoxDecoration(
         border: Border(left: BorderSide(color: color, width: 2)),

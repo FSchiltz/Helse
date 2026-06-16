@@ -325,7 +325,6 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
           n.description ?? '',
           StateType.eventValue,
           context,
-          false,
         );
         final left = _distanceToLeftBorder(start, timeline.skipped);
 
@@ -365,8 +364,6 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
 
       rowIndex++;
     }
-
-    Dependencies.theme.save();
   }
 
   Widget _skipWidget(BuildContext context) {
