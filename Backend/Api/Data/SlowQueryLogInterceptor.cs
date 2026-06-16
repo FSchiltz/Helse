@@ -14,7 +14,7 @@ public class SlowQueryLogInterceptor(ILogger<SlowQueryLogInterceptor> logger) : 
     {
         stopwatch?.Stop();
         var time = stopwatch?.ElapsedMilliseconds ?? 0;
-        if (time > 500)
+        if (time > 300)
         {
             logger.LogWarning("Slow query ran in {time}ms: {query}", time, command.CommandText);
         }
