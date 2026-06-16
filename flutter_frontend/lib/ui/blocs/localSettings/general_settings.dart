@@ -56,13 +56,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     _theme = Dependencies.logics.settings.getTheme();
     _range = Dependencies.logics.settings.getDateRange();
 
-    // TODO simplify
-    // saving the colors will override what is in memory so we first have to sync it
-    await Dependencies.logics.settings.setColors(
-      Dependencies.theme.colors,
-      toServer: false,
-    );
-
     final metrics = Dependencies.logics.settings.getMetrics();
     final events = Dependencies.logics.settings.getEvents();
 
@@ -282,6 +275,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       );
 
       await Dependencies.logics.settings.setColors(mapped);
+      Dependencies.theme.loadColors(mapped);
 
       Notify.show(locale.saved);
     } catch (ex) {

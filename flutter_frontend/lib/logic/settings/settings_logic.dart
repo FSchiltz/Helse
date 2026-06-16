@@ -74,7 +74,7 @@ class SettingsLogic extends BaseSettingsLogic {
   Future<void> loadSettings() async {
     var serverSettings = await service.getPersonSettings();
     log("Settings loaded from server", name: "Settings");
-    await save(settingsName, serverSettings.toJson());
+    await _saveSettings(serverSettings, false, #loadSettings);
 
     init = true;
     Dependencies.theme.loadColors(getColors());
@@ -223,8 +223,6 @@ class SettingsLogic extends BaseSettingsLogic {
     }
 
     await _saveSettings(settings, toServer, #setColors);
-
-    Dependencies.theme.loadColors(colors);
   }
 
   Map<StateType, Map<String, Color>> getColors() {

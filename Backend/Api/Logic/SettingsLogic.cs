@@ -253,7 +253,7 @@ public static class SettingsLogic
                         Name = e.Name,
                         Graph = GraphKind.Text,
                         DetailGraph = GraphKind.Text,
-                        Visible = e.ShowTitle,
+                        Visible = e.ShowOnDashboard,
                         ShowOnDashboard = true,
                     });
             }
