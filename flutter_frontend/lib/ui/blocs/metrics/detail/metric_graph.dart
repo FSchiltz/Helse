@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:math';
-
+import 'dart:developer' as logger;
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
@@ -60,7 +60,7 @@ class _MetricGraphState extends State<MetricGraph> {
   DateTimeRange subDate = DateHelper.now();
 
   void _setDate(DateTimeRange value) {
-    debugPrint('set date with $value');
+    logger.log('set date with $value', name: "Metrics");
     var filter = _filter(widget.metrics, value);
     var grouped = _group(filter, _graphCount);
     setState(() {
@@ -146,8 +146,6 @@ class _MetricGraphState extends State<MetricGraph> {
   }
 
   Widget _grapichChart(BuildContext context, int graphCount) {
-    Dependencies.theme.save();
-
     List<Mark<Shape>> marks;
     marks = [];
 
@@ -156,7 +154,6 @@ class _MetricGraphState extends State<MetricGraph> {
         '${widget.type.id};$i',
         StateType.metric,
         context,
-        true,
       );
       if (widget.settings == GraphKind.line) {
         marks.add(
@@ -213,8 +210,9 @@ class _MetricGraphState extends State<MetricGraph> {
       );
     }
 
-    debugPrint(
+    logger.log(
       'created graph for $subDate and ${filteredMetrics.values.length}',
+      name: "Metrics",
     );
     return filteredMetrics.values.isEmpty
         ? Text('No data')
@@ -280,12 +278,13 @@ class _MetricGraphState extends State<MetricGraph> {
 
   List<Metric> _filter(List<Metric> metrics, DateTimeRange<DateTime> value) {
     final stopwatch = Stopwatch()..start();
-    debugPrint('Filter for $value');
+    logger.log('Filter for $value');
     var metrics = widget.metrics
         .where((x) => x.date.isAfter(value.start) && x.date.isBefore(value.end))
         .toList();
-    debugPrint(
+    logger.log(
       '_filter() executed in ${stopwatch.elapsed} with ${metrics.length} items',
+      name: "Metrics",
     );
     return metrics;
   }

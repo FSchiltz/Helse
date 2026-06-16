@@ -145,7 +145,6 @@ class WidgetGraph extends StatelessWidget {
         type.id.toString(),
         StateType.metric,
         context,
-        true,
       );
       return BarChart(
         BarChartData(
@@ -167,7 +166,6 @@ class WidgetGraph extends StatelessWidget {
           '${type.id};${metric.index}',
           StateType.metric,
           context,
-          true,
         );
         return LineChartBarData(
           barWidth: width ?? 3,

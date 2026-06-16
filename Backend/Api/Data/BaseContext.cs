@@ -2,8 +2,16 @@ using LinqToDB.Data;
 
 namespace Api.Data;
 
-public abstract class BaseContext(DataConnection db) : IContext
+public abstract class BaseContext : IContext
 {
+    private readonly DataConnection db;
+
+    public BaseContext(DataConnection db, SlowQueryLogInterceptor interceptor)
+    {
+        this.db = db;
+        db.AddInterceptor(interceptor);
+    }
+
     protected DataConnection Db => db;
 
     /// <summary>

@@ -138,7 +138,6 @@ class _MetricWidgetState extends State<MetricWidget> {
       "${type.id}",
       StateType.metric,
       context,
-      true,
     );
 
     switch (type.summaryType) {

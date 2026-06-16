@@ -33,6 +33,7 @@ builder.Services.AddLinqToDBContext<DataConnection>((provider, options) =>
                            {
                                IdentifierQuoteMode = LinqToDB.DataProvider.PostgreSQL.PostgreSQLIdentifierQuoteMode.None
                            })
+
                            //default logging will log everything using the ILoggerFactory configured in the provider
                            .UseDefaultLogging(provider);
             });
@@ -45,6 +46,8 @@ var keyConfig = config["Key"] ?? throw new InvalidOperationException("Jwt key mi
 SymmetricSecurityKey key = AuthLogic.GenerateKey(keyConfig);
 
 builder.Services.AddSingleton((_) => new TokenConfig(issuer, audience, key));
+
+builder.Services.AddTransient<SlowQueryLogInterceptor>();
 
 builder.Services.AddSingleton<TokenService>()
     .AddTransient<IUserContext, UserContext>()

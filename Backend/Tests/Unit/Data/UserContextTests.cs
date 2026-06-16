@@ -2,6 +2,8 @@ using Api.Data;
 using Api.Data.Models.Persons;
 using LinqToDB;
 using LinqToDB.Data;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 
 namespace Tests.Unit.Data;
 
@@ -9,6 +11,9 @@ namespace Tests.Unit.Data;
 public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
 {
     private DataConnection _db = null!;
+
+    private readonly SlowQueryLogInterceptor _interceptor = new(
+        Substitute.For<ILogger<SlowQueryLogInterceptor>>());
 
     public async ValueTask InitializeAsync()
     {
@@ -27,7 +32,7 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task Count_ReturnsZero_WhenNoUsers()
     {
         // Arrange
-        var context = new UserContext(_db);
+        var context = new UserContext(_db, _interceptor);
 
         // Act
         var count = await context.Count();
@@ -57,7 +62,7 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
             Created = DateTime.Now,
         }, token: TestContext.Current.CancellationToken);
 
-        var context = new UserContext(_db);
+        var context = new UserContext(_db, _interceptor);
 
         // Act
         var count = await context.Count();
@@ -70,7 +75,7 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task Get_ReturnsNull_WhenUserNotFound()
     {
         // Arrange
-        var context = new UserContext(_db);
+        var context = new UserContext(_db, _interceptor);
 
         // Act
         var result = await context.Get("nonexistent");
@@ -101,7 +106,7 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
             Created = DateTime.Now,
         }, token: TestContext.Current.CancellationToken);
 
-        var context = new UserContext(_db);
+        var context = new UserContext(_db, _interceptor);
 
         // Act
         var result = await context.Get("john_user");
@@ -140,7 +145,7 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
             Created = DateTime.Now,
         }, token: TestContext.Current.CancellationToken);
 
-        var context = new UserContext(_db);
+        var context = new UserContext(_db, _interceptor);
         var now = DateTime.UtcNow;
 
         // Act
@@ -190,7 +195,7 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
             Created = DateTime.Now,
         }, token: TestContext.Current.CancellationToken);
 
-        var context = new UserContext(_db);
+        var context = new UserContext(_db, _interceptor);
 
         // Act
         var result = await context.HasRightAsync(userId, person2Id, Api.Models.Persons.RightType.View, now);

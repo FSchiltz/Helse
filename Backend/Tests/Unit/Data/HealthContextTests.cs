@@ -3,6 +3,8 @@ using Api.Data.Models.Health;
 using Api.Data.Models.Persons;
 using LinqToDB;
 using LinqToDB.Data;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 
 namespace Tests.Unit.Data;
 
@@ -10,6 +12,9 @@ namespace Tests.Unit.Data;
 public class HealthContextTests(DatabaseFixture fixture) : IAsyncLifetime
 {
     private DataConnection _db = null!;
+
+    private readonly SlowQueryLogInterceptor _interceptor = new(
+        Substitute.For<ILogger<SlowQueryLogInterceptor>>());
 
     public async ValueTask InitializeAsync()
     {
@@ -28,7 +33,7 @@ public class HealthContextTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task GetEventTypes_ReturnsEmpty_WhenNoneExist()
     {
         // Arrange
-        var context = new HealthContext(_db);
+        var context = new HealthContext(_db, _interceptor);
 
         // Act
         var result = await context.GetEventTypes(false);
@@ -60,7 +65,7 @@ public class HealthContextTests(DatabaseFixture fixture) : IAsyncLifetime
             Visible = true,
         }, token: TestContext.Current.CancellationToken);
 
-        var context = new HealthContext(_db);
+        var context = new HealthContext(_db, _interceptor);
 
         // Act
         var result = await context.GetEventTypes(false);
@@ -74,7 +79,7 @@ public class HealthContextTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task GetMetricTypes_ReturnsEmpty_WhenNoneExist()
     {
         // Arrange
-        var context = new HealthContext(_db);
+        var context = new HealthContext(_db, _interceptor);
 
         // Act
         var result = await context.GetMetricTypes(false, null);
@@ -108,7 +113,7 @@ public class HealthContextTests(DatabaseFixture fixture) : IAsyncLifetime
             GroupId = groupid,
         }, token: TestContext.Current.CancellationToken);
 
-        var context = new HealthContext(_db);
+        var context = new HealthContext(_db, _interceptor);
 
         // Act
         var result = await context.GetMetricTypes(false, null);
@@ -123,7 +128,7 @@ public class HealthContextTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task GetMetricType_ReturnsNull_WhenNotFound()
     {
         // Arrange
-        var context = new HealthContext(_db);
+        var context = new HealthContext(_db, _interceptor);
 
         // Act
         var result = await context.GetMetricType(999);
@@ -156,7 +161,7 @@ public class HealthContextTests(DatabaseFixture fixture) : IAsyncLifetime
             GroupId = groupid,
         }, token: TestContext.Current.CancellationToken);
 
-        var context = new HealthContext(_db);
+        var context = new HealthContext(_db, _interceptor);
 
         // Act
         var result = await context.GetMetricType(id);
@@ -170,7 +175,7 @@ public class HealthContextTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task GetEvent_ReturnsNull_WhenNotFound()
     {
         // Arrange
-        var context = new HealthContext(_db);
+        var context = new HealthContext(_db, _interceptor);
 
         // Act
         var result = await context.GetEvent(999);
@@ -212,7 +217,7 @@ public class HealthContextTests(DatabaseFixture fixture) : IAsyncLifetime
             Source = 0,
         }, token: TestContext.Current.CancellationToken);
 
-        var context = new HealthContext(_db);
+        var context = new HealthContext(_db, _interceptor);
 
         // Act
         var result = await context.GetEvent(id);

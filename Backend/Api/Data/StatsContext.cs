@@ -8,7 +8,7 @@ using LinqToDB.Data;
 namespace Api.Data;
 
 /// <inheritdoc/>
-public class StatsContext(DataConnection db) : BaseContext(db), IStatsContext
+public class StatsContext(DataConnection db, SlowQueryLogInterceptor interceptor) : BaseContext(db, interceptor), IStatsContext
 {
     public Task<CountByDate[]> GetEventStats(DateTime start, DateTime end)
     {

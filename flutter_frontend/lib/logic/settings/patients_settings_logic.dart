@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:collection/collection.dart';
 import 'package:helse/logic/settings/base_settings_logic.dart';
@@ -108,7 +109,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
 
   Future<void> loadSettings() async {
     var serverSettings = await service.getPatientsSettings();
-    print("Patients settings loaded from server");
+    log("Patients settings loaded from server", name: "Settings");
 
     await save(patientsName, serverSettings.toJson());
     init = true;

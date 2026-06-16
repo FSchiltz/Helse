@@ -9,7 +9,7 @@ namespace Api.Data;
 
 public record PersonFromDb(User User, Models.Persons.Person Person);
 
-public class UserContext(DataConnection db) : BaseContext(db), IUserContext
+public class UserContext(DataConnection db, SlowQueryLogInterceptor interceptor) : BaseContext(db, interceptor), IUserContext
 {
     /// <summary>
     /// Check that a user has the given right over someone
