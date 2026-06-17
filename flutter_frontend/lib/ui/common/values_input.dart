@@ -8,13 +8,21 @@ class DropdownItem<T> {
   const DropdownItem(this.value, this.description);
 }
 
-class EnumInput<T> extends StatelessWidget {
+class ValuesInput<T> extends StatelessWidget {
   final List<DropdownItem<T>> types;
   final void Function(T?) callback;
   final String? label;
   final T? value;
+  final IconData? icon;
 
-  const EnumInput(this.types, this.callback, {super.key, this.label, this.value});
+  const ValuesInput(
+    this.types,
+    this.callback, {
+    super.key,
+    this.label,
+    this.value,
+    this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,17 +31,23 @@ class EnumInput<T> extends StatelessWidget {
     return DropdownButtonFormField(
       onChanged: callback,
       initialValue: value,
-      items: types.map((type) => DropdownMenuItem(value: type.value, child: Text(type.description))).toList(),
+      items: types
+          .map(
+            (type) => DropdownMenuItem(
+              value: type.value,
+              child: Text(type.description),
+            ),
+          )
+          .toList(),
       decoration: InputDecoration(
         labelText: label ?? 'Type',
-        prefixIcon: const Icon(Icons.list_sharp),
+        prefixIcon: Icon(icon ?? Icons.list_sharp),
         prefixIconColor: theme.primary,
-        isDense:  true,
+        isDense: true,
         filled: true,
         fillColor: theme.surface,
         border: SquareOutlineInputBorder(theme.primary),
         contentPadding: null,
-        
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/loading_builder.dart';
+import 'package:helse/ui/common/values_input.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../logic/event.dart';
@@ -69,7 +70,7 @@ class _TreatementState extends State<TreatmentAdd> {
     var theme = Theme.of(context).colorScheme;
     var locale = Translation.of(context);
     return SquareDialog(
-      title:  Text(locale.addItem(locale.treatment)),
+      title: Text(locale.addItem(locale.treatment)),
       actions: [
         SizedBox(
           child: _status == SubmissionStatus.inProgress
@@ -146,24 +147,10 @@ class _TypeInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
-    return DropdownButtonFormField(
-      onChanged: callback,
-      items: types
-          .map(
-            (type) => DropdownMenuItem(value: type.id, child: Text(type.name)),
-          )
-          .toList(),
-      decoration: InputDecoration(
-        labelText: 'Type',
-        prefixIcon: const Icon(Icons.list_sharp),
-        prefixIconColor: theme.primary,
-        filled: true,
-        fillColor: theme.surface,
-        border: OutlineInputBorder(
-          borderSide: BorderSide(color: theme.primary),
-        ),
-      ),
+    return ValuesInput(
+      types.map((type) => DropdownItem(type.id, type.name)).toList(),
+      callback,
+      label: 'Type',
     );
   }
 }

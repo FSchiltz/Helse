@@ -9,7 +9,7 @@ import 'package:helse/ui/common/color_selector.dart';
 import 'package:helse/ui/common/common_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
-import 'package:helse/ui/common/type_input.dart';
+import 'package:helse/ui/common/values_input.dart';
 
 class ColoredValue {
   final String key;
@@ -135,14 +135,14 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 children: [
                   SizedBox(
                     width: 200,
-                    child: EnumInput(_getThemeValues(), (value) async {
+                    child: ValuesInput(_getThemeValues(), (value) async {
                       await themeCallback(value, locale);
                       reset();
                     }, value: _theme),
                   ),
                   SizedBox(
                     width: 200,
-                    child: EnumInput(
+                    child: ValuesInput(
                       _getRangeValues(context),
                       (v) async => await rangeCallback(v, locale),
                       value: _range,

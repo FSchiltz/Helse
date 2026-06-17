@@ -4,7 +4,7 @@ import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 import 'package:helse/ui/common/square_text_field.dart';
 import 'package:helse/ui/common/statefull_check.dart';
-import 'package:helse/ui/common/type_input.dart';
+import 'package:helse/ui/common/values_input.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/notification.dart';
@@ -114,7 +114,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
           onEditingComplete: () => focusNodeUnit.requestFocus(),
         ),
         const SizedBox(height: 10),
-        EnumInput(
+        ValuesInput(
           value: _unit,
           _units
               .map((x) => DropdownItem(x.id, x.description ?? x.code))
@@ -125,7 +125,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
           label: locale.unit,
         ),
         const SizedBox(height: 10),
-        EnumInput(
+        ValuesInput(
           value: _type,
           MetricDataType.values.map((x) => DropdownItem(x, x.name)).toList(),
           (value) => setState(() {
@@ -142,7 +142,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
             label: locale.value,
           ),
         SizedBox(height: 10),
-        EnumInput(
+        ValuesInput(
           value: _groupId,
           _groups.map((x) => DropdownItem(x.id, x.name)).toList(),
           (value) => setState(() {
@@ -151,7 +151,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
           label: locale.group,
         ),
         const SizedBox(height: 10),
-        EnumInput(
+        ValuesInput(
           value: _metricSummary,
           MetricSummary.values.map((x) => DropdownItem(x, x.name)).toList(),
           (value) => setState(() {

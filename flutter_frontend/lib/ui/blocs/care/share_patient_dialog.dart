@@ -9,7 +9,7 @@ import '../../common/loader.dart';
 import '../../common/notification.dart';
 import '../../common/square_dialog.dart';
 import '../../common/statefull_check.dart';
-import '../../common/type_input.dart';
+import '../../common/values_input.dart';
 
 class SharePatientDialog extends StatefulWidget {
   final Person patient;
@@ -68,7 +68,7 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
     selects.addAll(caregivers.map((x) => DropdownItem(x.id, x.userName ?? '')));
 
     return [
-      EnumInput(
+      ValuesInput(
         label: 'Caregiver',
         selects,
         (value) => setState(() {

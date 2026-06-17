@@ -8,7 +8,7 @@ import 'package:helse/ui/blocs/localSettings/ordered_edit_item.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/statefull_check.dart';
-import 'package:helse/ui/common/type_input.dart';
+import 'package:helse/ui/common/values_input.dart';
 
 class MetricsSettings extends StatefulWidget {
   final bool isPatient;
@@ -192,7 +192,7 @@ class _MetricsSettingsState extends State<MetricsSettings> {
                                       SizedBox(
                                         width: 160,
                                         height: 50,
-                                        child: EnumInput(
+                                        child: ValuesInput(
                                           value: item.graph,
                                           GraphKind.values
                                               .where((e) => e.index > 0)
@@ -210,7 +210,7 @@ class _MetricsSettingsState extends State<MetricsSettings> {
                                       SizedBox(
                                         width: 160,
                                         height: 50,
-                                        child: EnumInput(
+                                        child: ValuesInput(
                                           value: item.detailGraph,
                                           GraphKind.values
                                               .where((e) => e.index > 0)
