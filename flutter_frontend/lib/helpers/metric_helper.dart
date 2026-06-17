@@ -88,55 +88,67 @@ class MetricHelper {
     return map.join(';');
   }
 
-  static (String value, Icon? icon) getWidgetValue(
+  static Widget getTextInfo(
     List<Metric> metrics,
     MetricType type,
     BuildContext context,
   ) {
+    var theme = Theme.of(context).textTheme;
     var color = Dependencies.theme.stateColor(
       "${type.id}",
       StateType.metric,
       context,
     );
 
-    Icon? icon;
-    String value = '';
+    List<Widget> widgets = [];
     switch (type.summaryType) {
       case MetricSummary.sum:
-        icon = Icon(Icons.trending_up_sharp, color: color);
-        value =
-            '${metrics.map((metric) => double.parse(metric.value)).sum.round()}';
+        widgets.add(
+          _getWidget(
+            '${metrics.map((metric) => double.parse(metric.value)).sum.round()}',
+            type,
+            theme,
+            icon: Icon(Icons.trending_up_sharp, color: color),
+          ),
+        );
+
         break;
       case MetricSummary.mean:
-        icon = Icon(Icons.update, color: color);
-        value =
-            '${(metrics.map((metric) => double.parse(metric.value)).sum / metrics.length).round()}';
+        if (metrics.length < 2) {
+          widgets.add(_getWidget(metrics.first.value, type, theme));
+        } else {
+          double mean = 0;
+          for (var metric in metrics) {
+            mean += double.parse(metric.value);
+          }
+
+          widgets.add(
+            _getWidget(
+              (mean / metrics.length).toStringAsFixed(2),
+              type,
+              theme,
+              icon: Icon(Icons.update, color: color),
+            ),
+          );
+        }
         break;
       case MetricSummary.latest:
-        value = metrics.last.value;
-
-        break;
       default:
-        value = metrics.last.value;
+        widgets.add(_getWidget(metrics.last.value, type, theme));
     }
 
-    if (type.unit.code.isNotEmpty && value.isNotEmpty) {
-      value += ' ${type.unit.code}';
-    }
-
-    return (value, icon);
+    return Wrap(spacing: 2, runSpacing: 2, children: widgets);
   }
 
-  static Widget getTextInfo(
-    List<Metric> metrics,
+  static Widget _getWidget(
+    String value,
     MetricType type,
-    BuildContext context,
-  ) {
-    final (value, icon) = getWidgetValue(metrics, type, context);
-
+    TextTheme theme, {
+    Icon? icon,
+  }) {
     var text = Text(
-      value,
-      style: Theme.of(context).textTheme.bodyMedium,
+      _getValue(value, type),
+      style: theme.bodyMedium,
       textAlign: TextAlign.start,
     );
 
@@ -146,7 +158,40 @@ class MetricHelper {
 
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: [icon, SizedBox(width: 4), text],
+      children: [icon, SizedBox(width: 2), text],
     );
+  }
+
+  static String _getValue(String value, MetricType type) {
+    switch (type.type) {
+      case MetricDataType.text:
+        return _withUnit(value, type.unit.code);
+      case MetricDataType.number:
+        var asDouble = double.parse(value);
+
+        return _withUnit(
+          (asDouble % 1 == 0)
+              ? asDouble.toString()
+              : asDouble.toStringAsFixed(2),
+          type.unit.code,
+        );
+      case MetricDataType.bool:
+        return value;
+      case MetricDataType.numberrange:
+        return value
+            .split(';')
+            .map((e) => _withUnit(e, type.unit.code))
+            .join(' - ');
+      default:
+        return value;
+    }
+  }
+
+  static String _withUnit(String value, String code) {
+    if (code.isNotEmpty && value.isNotEmpty) {
+      return '$value $code';
+    }
+
+    return value;
   }
 }
