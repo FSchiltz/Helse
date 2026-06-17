@@ -9,6 +9,7 @@ import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../logic/event.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -136,7 +137,7 @@ class _PatientAddState extends State<PatientAdd> {
                   locale.addPatients,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: UIConstants.formPad),
                 Center(
                   child: Column(
                     children: [
@@ -181,7 +182,7 @@ class _PatientAddState extends State<PatientAdd> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: UIConstants.formPad),
                     ],
                   ),
                 ),

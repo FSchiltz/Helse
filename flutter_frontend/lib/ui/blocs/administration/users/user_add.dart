@@ -5,6 +5,7 @@ import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/blocs/administration/users/userright_input.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/notification.dart';
@@ -52,15 +53,11 @@ class _SignupState extends State<UserAdd> {
     return SquareDialog(
       title: const Text("Add a new user"),
       actions: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SquareButton(locale.create, () => submit(locale)),
-        ),
+        SquareButton(locale.create, () => submit(locale)),
       ],
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Column(
             children: [
               UserRightInput(
@@ -70,7 +67,7 @@ class _SignupState extends State<UserAdd> {
                   _type = value;
                 }),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: UIConstants.formPad),
               UserForm(
                 _type,
                 controllerConFirmPassword: (widget.edit != null)

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/inputs/password_input.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.enums.swagger.dart';
 import '../../../common/inputs/square_text_field.dart';
@@ -50,20 +51,20 @@ class _UserFormState extends State<UserForm> {
           icon: Icons.person_sharp,
           validator: validateUser,
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: UIConstants.formPad),
         SquareTextField(
           controller: widget.controllerSurname,
           label: locale.surname,
           icon: Icons.person_sharp,
         ),
-        if (widget.controllerIdentifier != null) const SizedBox(height: 10),
+        if (widget.controllerIdentifier != null) const SizedBox(height: UIConstants.formPad),
         if (widget.controllerIdentifier != null)
           SquareTextField(
             controller: widget.controllerIdentifier,
             label: locale.identifier,
             icon: Icons.person_sharp,
           ),
-        if (widget.controllerEmail != null) const SizedBox(height: 10),
+        if (widget.controllerEmail != null) const SizedBox(height: UIConstants.formPad),
         if (widget.controllerEmail != null)
           SquareTextField(
             controller: widget.controllerEmail,
@@ -73,14 +74,14 @@ class _UserFormState extends State<UserForm> {
             validator: validateEmail,
             onEditingComplete: () => _focusNodePassword.requestFocus(),
           ),
-        if (widget.controllerUsername != null) const SizedBox(height: 10),
+        if (widget.controllerUsername != null) const SizedBox(height: UIConstants.formPad),
         if (widget.controllerUsername != null)
           UserNameInput(
             controller: widget.controllerUsername,
             nextFocus: _focusNodePassword,
             validate: validateUser,
           ),
-        if (widget.controllerPassword != null) const SizedBox(height: 10),
+        if (widget.controllerPassword != null) const SizedBox(height: UIConstants.formPad),
         if (widget.controllerPassword != null)
           PasswordInput(
             controller: widget.controllerPassword,
@@ -88,7 +89,7 @@ class _UserFormState extends State<UserForm> {
             validate: validatePassword,
             focus: _focusNodePassword,
           ),
-        if (widget.controllerPassword != null) const SizedBox(height: 10),
+        if (widget.controllerPassword != null) const SizedBox(height: UIConstants.formPad),
         if (widget.controllerPassword != null)
           PasswordInput(
             text: Translation.of(context).confirmpassword,
