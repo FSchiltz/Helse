@@ -1,8 +1,11 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/logic/settings/health_settings.dart';
 import 'package:helse/ui/common/inputs/custom_switch.dart';
+import 'package:helse/ui/common/inputs/statefull_check.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
@@ -21,6 +24,7 @@ class _SyncSettingsState extends State<SyncSettings> {
   bool _healthEnabled = false;
   bool _background = false;
   bool _history = false;
+  Map<String, HealthRecordSettings> _records = {};
 
   @override
   void initState() {
@@ -35,6 +39,11 @@ class _SyncSettingsState extends State<SyncSettings> {
     _lastRun = Dependencies.logics.settings.getLastRun();
     _background = health.background;
     _history = health.history;
+
+    _records = Dependencies.logics.fit.types.groupFoldBy(
+      (e) => e.name,
+      (v, e) => HealthRecordSettings(health.records[e.name]?.sync ?? false),
+    );
     return 1;
   }
 
@@ -42,7 +51,7 @@ class _SyncSettingsState extends State<SyncSettings> {
     try {
       // save the user's settings
       await Dependencies.logics.settings.saveHealth(
-        HealthSettings(_healthEnabled, _history, _background),
+        HealthSettings(_healthEnabled, _history, _background, _records),
       );
 
       Notify.show("Saved Successfully");
@@ -89,52 +98,86 @@ class _SyncSettingsState extends State<SyncSettings> {
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: UIConstants.formPad),
-              HelseSwitch(locale.enable, _healthEnabled, (
-                bool? value,
-              ) async {
+              HelseSwitch(locale.enable, _healthEnabled, (bool? value) async {
                 setState(() {
                   _healthEnabled = value == true;
                 });
-              
+
                 await _submitHealth();
                 reset();
               }),
-              const SizedBox(height: UIConstants.formPad),
-              HelseSwitch(locale.syncHistoryToggle, _history, (
-                bool? value,
-              ) async {
-                setState(() {
-                  _history = value == true;
-                });
-              
-                await _submitHealth();
-                reset();
-              }),
-              const SizedBox(height: UIConstants.formPad),
-              HelseSwitch(locale.syncBackgroundToggle, _background, (
-                bool? value,
-              ) async {
-                setState(() {
-                  _background = value == true;
-                });
-              
-                await _submitHealth();
-                reset();
-              }),
-              const SizedBox(height: UIConstants.formPad),
-              Text(
-                locale.lastRun(_lastRun ?? ''),
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: UIConstants.formPad),
-              SizedBox(
-                width: 160,
-                child: SquareButton(locale.resetLastRun, _resetLastRun),
-              ),
+              ..._getForm(locale, reset),
             ],
           ),
         );
       },
     );
+  }
+
+  List<Widget> _getForm(AppLocalizations locale, void Function() reset) {
+    if (!_healthEnabled) return [];
+    return [
+      const SizedBox(height: UIConstants.formPad),
+      HelseSwitch(locale.syncHistoryToggle, _history, (bool? value) async {
+        setState(() {
+          _history = value == true;
+        });
+
+        await _submitHealth();
+        reset();
+      }),
+      const SizedBox(height: UIConstants.formPad),
+      HelseSwitch(locale.syncBackgroundToggle, _background, (
+        bool? value,
+      ) async {
+        setState(() {
+          _background = value == true;
+        });
+
+        await _submitHealth();
+        reset();
+      }),
+      const SizedBox(height: UIConstants.formPad),
+      Text(
+        locale.lastRun(_lastRun ?? ''),
+        style: Theme.of(context).textTheme.bodyMedium,
+      ),
+      const SizedBox(height: UIConstants.formPad),
+      ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: 320),
+        child: SquareButton(locale.resetLastRun, _resetLastRun),
+      ),
+      const SizedBox(height: UIConstants.headerPad),
+      SizedBox(
+        width: 200,
+        child: SquareButton(locale.save, () async {
+          await _submitHealth();
+          reset();
+        }),
+      ),
+      const SizedBox(height: UIConstants.formPad),
+      Flexible(
+        child: SingleChildScrollView(
+          child: DataTable(
+            columns: [
+              DataColumn(label: Expanded(child: Text(locale.name))),
+              DataColumn(label: Expanded(child: Text(locale.enable))),
+            ],
+            rows: _records.entries
+                .map(
+                  (e) => DataRow(
+                    cells: [
+                      DataCell(Text(e.key)),
+                      DataCell(
+                        StatefullCheck(e.value.sync, (v) => e.value.sync = v),
+                      ),
+                    ],
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+      ),
+    ];
   }
 }

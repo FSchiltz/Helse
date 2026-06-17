@@ -36,13 +36,13 @@ class SettingsLogic extends BaseSettingsLogic {
 
   SettingsLogic(super.account, super.service);
 
-  Future<HealthSettings> getHealth() async {
+  HealthSettings getHealth() {
     var encoded = getString(health);
     if (encoded == null) {
-      return HealthSettings(false, false, false);
+      return HealthSettings(false, false, false, {});
     }
 
-    return HealthSettings.fromJson(json.decode(encoded));
+    return HealthSettings.fromJson(jsonDecode(encoded) as Map<String, dynamic>);
   }
 
   Future<void> saveHealth(HealthSettings localSettings) async {

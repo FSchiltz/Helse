@@ -51,11 +51,8 @@ enum EventTypes {
 
 class FitLogic {
   final List<Execution> _executions = [];
-  Account account;
-  FitLogic(this.account);
 
-  // get the data
-  final List<HealthDataType> _types = [
+  final List<HealthDataType> types = [
     HealthDataType.HEART_RATE,
     HealthDataType.BLOOD_OXYGEN,
     HealthDataType.WEIGHT,
@@ -77,7 +74,7 @@ class FitLogic {
     HealthDataType.BASAL_ENERGY_BURNED,
   ];
 
-  final List<HealthDataType> _other = [
+  final List<HealthDataType> unsupported = [
     HealthDataType.RESTING_HEART_RATE,
     HealthDataType.WALKING_HEART_RATE,
     HealthDataType.SLEEP_WRIST_TEMPERATURE,
@@ -92,10 +89,14 @@ class FitLogic {
     HealthDataType.DISTANCE_DELTA,
   ];
 
+  Account account;
+  FitLogic(this.account);
+
+  // get the data
   Future<void> requestPermissions() async {
     var health = Health();
     await health.configure();
-    var existingTypes = _types
+    var existingTypes = types
         .where((e) => health.isDataTypeAvailable(e))
         .toList();
 
@@ -151,6 +152,7 @@ class FitLogic {
   Future<String> sync() async {
     var run = Dependencies.logics.settings.getLastRun();
     var history = Dependencies.logics.settings.getHasHistory() ?? false;
+    var settings = Dependencies.logics.settings.getHealth();
 
     var now = DateTime.now();
     // each sync we have to get the last 5 days because the apps can add metrics in the pasts
@@ -169,8 +171,12 @@ class FitLogic {
 
     var health = Health();
     await health.configure();
-    var existingTypes = _types
-        .where((e) => health.isDataTypeAvailable(e))
+    var existingTypes = types
+        .where(
+          (e) =>
+              settings.records[e.name]?.sync == true &&
+              health.isDataTypeAvailable(e),
+        )
         .toList();
 
     List<HealthDataPoint> healthData = await health.getHealthDataFromTypes(
@@ -406,7 +412,7 @@ class FitLogic {
   }
 
   Future<String?> checkRun() async {
-    var lastrun =  Dependencies.logics.settings.getLastRun();
+    var lastrun = Dependencies.logics.settings.getLastRun();
     if (lastrun != null) {
       var date = DateTime.parse(lastrun);
 
