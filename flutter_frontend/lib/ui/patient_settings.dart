@@ -6,7 +6,7 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/localSettings/metric_settings.dart';
 import 'package:helse/ui/blocs/localSettings/event_settings.dart';
 import 'package:helse/ui/common/menu_destination.dart';
-import 'package:helse/ui/common/navigation_page.dart';
+import 'package:helse/ui/common/layout/navigation_page.dart';
 
 class PatientSettingsPage extends StatelessWidget {
   final int? person;

@@ -39,7 +39,6 @@ class _PasswordInputState extends State<PasswordInput> {
             : const Icon(Icons.visibility_off_sharp));
 
     return SquareTextField(
-      theme: Theme.of(context).colorScheme,
       controller: widget.controller,
       obscureText: _obscurePassword,
       focusNode: widget.focus,

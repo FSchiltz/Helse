@@ -6,7 +6,7 @@ import 'package:helse/ui/blocs/administration/general_settings.dart';
 import 'package:helse/ui/blocs/administration/metric_settings.dart';
 import 'package:helse/ui/blocs/administration/user_settings.dart';
 import 'package:helse/ui/common/menu_destination.dart';
-import 'package:helse/ui/common/navigation_page.dart';
+import 'package:helse/ui/common/layout/navigation_page.dart';
 
 class AdministrationPage extends StatelessWidget {
   const AdministrationPage({super.key});

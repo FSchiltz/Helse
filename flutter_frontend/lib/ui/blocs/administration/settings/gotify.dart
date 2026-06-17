@@ -3,11 +3,11 @@ import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/common/custom_switch.dart';
+import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
-import '../../../common/square_text_field.dart';
+import '../../../common/inputs/square_text_field.dart';
 
 class GotifyView extends StatelessWidget {
   const GotifyView({super.key});
@@ -115,7 +115,6 @@ class _SmtpFormViewState extends State<GotifyFormView> {
           controller: _controllerUrl,
           label: 'host',
           icon: Icons.mail_sharp,
-          theme: theme,
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'host is required';
@@ -131,7 +130,6 @@ class _SmtpFormViewState extends State<GotifyFormView> {
           controller: _controllerToken,
           label: 'Token',
           icon: Icons.password_sharp,
-          theme: theme,
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Token is required';

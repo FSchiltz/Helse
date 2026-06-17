@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/date.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/common/common_card.dart';
+import 'package:helse/ui/common/layout/common_card.dart';
 
 class AdminDashBoard extends StatefulWidget {
   const AdminDashBoard({super.key});

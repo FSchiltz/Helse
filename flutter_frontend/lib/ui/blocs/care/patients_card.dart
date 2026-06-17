@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/care/patient_menu.dart';
 import 'package:helse/ui/blocs/care/patients_dashboard.dart';
-import 'package:helse/ui/common/common_card.dart';
+import 'package:helse/ui/common/layout/common_card.dart';
 
 class PatientsCard extends StatelessWidget {
   final Person person;

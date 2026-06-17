@@ -8,8 +8,8 @@ import 'package:helse/ui/blocs/localSettings/ordered_edit_item.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
-import 'package:helse/ui/common/statefull_check.dart';
-import 'package:helse/ui/common/values_input.dart';
+import 'package:helse/ui/common/inputs/statefull_check.dart';
+import 'package:helse/ui/common/inputs/values_input.dart';
 
 class MetricsSettings extends StatefulWidget {
   final bool isPatient;

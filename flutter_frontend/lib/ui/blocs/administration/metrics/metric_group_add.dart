@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/square_button.dart';
-import 'package:helse/ui/common/square_dialog.dart';
-import 'package:helse/ui/common/square_text_field.dart';
-import 'package:helse/ui/common/statefull_check.dart';
+import 'package:helse/ui/common/layout/square_dialog.dart';
+import 'package:helse/ui/common/inputs/square_text_field.dart';
+import 'package:helse/ui/common/inputs/statefull_check.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/notification.dart';
@@ -45,7 +45,6 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
     var locale = Translation.of(context);
     return SquareDialog(
       title: const Text("Add a new metric type"),
@@ -61,7 +60,6 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
               Column(
                 children: [
                   SquareTextField(
-                    theme: theme,
                     icon: Icons.person_sharp,
                     controller: controllerName,
                     focusNode: focusNodeName,
@@ -73,7 +71,6 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
                   const SizedBox(height: 10),
                   SquareTextField(
                     icon: Icons.person_sharp,
-                    theme: theme,
                     controller: controllerDescription,
                     focusNode: focusNodeDescription,
                     label: locale.description,

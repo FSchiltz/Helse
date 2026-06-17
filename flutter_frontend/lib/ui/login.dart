@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
-import 'package:helse/ui/common/password_input.dart';
+import 'package:helse/ui/common/inputs/password_input.dart';
 import 'package:helse/ui/common/square_button.dart';
 import '../logic/event.dart';
 import '../services/swagger/generated_code/helseapi.swagger.dart';

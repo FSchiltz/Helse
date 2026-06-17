@@ -4,7 +4,7 @@ import 'package:helse/ui/blocs/events/event_detail_page.dart';
 import 'package:helse/ui/blocs/events/event_information.dart';
 import 'package:helse/ui/blocs/events/events_summary.dart';
 import 'package:helse/ui/blocs/events/events_timeline_graph.dart';
-import 'package:helse/ui/common/common_card.dart';
+import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';

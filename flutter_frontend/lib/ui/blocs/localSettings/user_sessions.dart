@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/common/common_card.dart';
+import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/square_button.dart';
 

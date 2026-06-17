@@ -5,7 +5,7 @@ import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/administration/users/userright_input.dart';
 import 'package:helse/ui/common/square_button.dart';
-import 'package:helse/ui/common/square_dialog.dart';
+import 'package:helse/ui/common/layout/square_dialog.dart';
 
 import '../../../common/notification.dart';
 

@@ -328,4 +328,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get update => 'Update';
+
+  @override
+  String get identifier => 'Identifier';
 }

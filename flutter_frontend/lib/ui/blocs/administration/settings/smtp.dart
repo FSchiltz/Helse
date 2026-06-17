@@ -3,11 +3,11 @@ import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/common/custom_switch.dart';
+import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
-import '../../../common/square_text_field.dart';
+import '../../../common/inputs/square_text_field.dart';
 
 class SmtpView extends StatelessWidget {
   const SmtpView({super.key});
@@ -117,7 +117,6 @@ class _SmtpFormViewState extends State<SmtpFormView> {
           controller: _controllerHost,
           label: 'SMTP host',
           icon: Icons.mail_sharp,
-          theme: theme,
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'SMTP host is required';
@@ -135,7 +134,6 @@ class _SmtpFormViewState extends State<SmtpFormView> {
               controller: _controllerPort,
               label: 'SMTP port',
               icon: Icons.numbers,
-              theme: theme,
               type: TextInputType.number,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -155,7 +153,6 @@ class _SmtpFormViewState extends State<SmtpFormView> {
               controller: _controllerFromEmail,
               label: 'From email',
               icon: Icons.alternate_email_sharp,
-              theme: theme,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'From email is required';
@@ -173,7 +170,6 @@ class _SmtpFormViewState extends State<SmtpFormView> {
           controller: _controllerUserName,
           label: locale.username,
           icon: Icons.person_sharp,
-          theme: theme,
         ),
       ),
       const SizedBox(height: 10),
@@ -183,7 +179,6 @@ class _SmtpFormViewState extends State<SmtpFormView> {
           controller: _controllerPassword,
           label: locale.password,
           icon: Icons.password_sharp,
-          theme: theme,
           obscureText: true,
         ),
       ),

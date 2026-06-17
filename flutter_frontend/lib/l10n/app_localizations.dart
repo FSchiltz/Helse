@@ -703,6 +703,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Update'**
   String get update;
+
+  /// No description provided for @identifier.
+  ///
+  /// In en, this message translates to:
+  /// **'Identifier'**
+  String get identifier;
 }
 
 class _AppLocalizationsDelegate

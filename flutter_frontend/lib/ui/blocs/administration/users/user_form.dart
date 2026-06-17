@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/ui/common/password_input.dart';
+import 'package:helse/ui/common/inputs/password_input.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.enums.swagger.dart';
-import '../../../common/square_text_field.dart';
+import '../../../common/inputs/square_text_field.dart';
 
 class UserForm extends StatefulWidget {
   final List<UserType> types;
@@ -41,40 +41,35 @@ class _UserFormState extends State<UserForm> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
-
+    var locale = Translation.of(context);
     return Column(
       children: [
         SquareTextField(
           controller: widget.controllerName,
-          label: "Name",
+          label: locale.name,
           icon: Icons.person_sharp,
           validator: validateUser,
-          theme: theme,
         ),
         const SizedBox(height: 10),
         SquareTextField(
           controller: widget.controllerSurname,
-          label: "Surname",
+          label: locale.surname,
           icon: Icons.person_sharp,
-          theme: theme,
         ),
         if (widget.controllerIdentifier != null) const SizedBox(height: 10),
         if (widget.controllerIdentifier != null)
           SquareTextField(
             controller: widget.controllerIdentifier,
-            label: "Identifier",
+            label: locale.identifier,
             icon: Icons.person_sharp,
-            theme: theme,
           ),
         if (widget.controllerEmail != null) const SizedBox(height: 10),
         if (widget.controllerEmail != null)
           SquareTextField(
             controller: widget.controllerEmail,
             focusNode: _focusNodeEmail,
-            label: "Email",
+            label: locale.email,
             icon: Icons.email_sharp,
-            theme: theme,
             validator: validateEmail,
             onEditingComplete: () => _focusNodePassword.requestFocus(),
           ),
@@ -175,22 +170,13 @@ class UserNameInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
-    return TextFormField(
+    var locale = Translation.of(context);
+    return SquareTextField(
+      label: locale.username,
+      icon: Icons.person_sharp,
       controller: controller,
-      keyboardType: TextInputType.name,
+      type: TextInputType.name,
       focusNode: focus,
-      decoration: InputDecoration(
-        labelText: "Username",
-        prefixIcon: const Icon(Icons.person_sharp),
-        prefixIconColor: theme.primary,
-        filled: true,
-        fillColor: theme.surface,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(0),
-          borderSide: BorderSide(color: theme.primary),
-        ),
-      ),
       validator: validate,
       onEditingComplete: () => nextFocus?.requestFocus(),
     );

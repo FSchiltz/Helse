@@ -22,7 +22,6 @@ class _MenuState extends State<HamburgerMenu> {
   final MenuController _controller = MenuController();
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
     return MenuAnchor(
       controller: _controller,
       childFocusNode: _buttonFocusNode,

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/pair.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/widget/metric_widget.dart';
-import 'package:helse/ui/common/common_card.dart';
+import 'package:helse/ui/common/layout/common_card.dart';
 
 class MetricWidgetsGrid extends StatelessWidget {
   const MetricWidgetsGrid({

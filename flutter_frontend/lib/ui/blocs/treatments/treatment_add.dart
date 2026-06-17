@@ -3,16 +3,16 @@ import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/square_button.dart';
-import 'package:helse/ui/common/values_input.dart';
+import 'package:helse/ui/common/inputs/values_input.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../logic/event.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../../common/date_input.dart';
+import '../../common/inputs/date_input.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
-import '../../common/square_dialog.dart';
-import '../../common/square_text_field.dart';
+import '../../common/layout/square_dialog.dart';
+import '../../common/inputs/square_text_field.dart';
 
 class TreatmentAdd extends StatefulWidget {
   final int? person;
@@ -68,7 +68,6 @@ class _TreatementState extends State<TreatmentAdd> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
     var locale = Translation.of(context);
     return SquareDialog(
       title: Text(locale.addItem(locale.treatment)),
@@ -103,7 +102,6 @@ class _TreatementState extends State<TreatmentAdd> {
                 ),
                 const SizedBox(height: 10),
                 SquareTextField(
-                  theme: theme,
                   icon: Icons.description_sharp,
                   label: "Description",
                   controller: _description,

@@ -7,8 +7,8 @@ import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../../../common/custom_switch.dart';
-import '../../../common/square_text_field.dart';
+import '../../../common/inputs/custom_switch.dart';
+import '../../../common/inputs/square_text_field.dart';
 
 class OauthView extends StatelessWidget {
   const OauthView({super.key});
@@ -141,18 +141,15 @@ class _OauthFormViewState extends State<OauthFormView> {
         controller: _controllerId,
         label: "Client id",
         icon: Icons.person_sharp,
-        theme: theme,
       ),
       const SizedBox(height: 10),
       SquareTextField(
-        theme: theme,
         controller: _controllerName,
         label: "Name",
         icon: Icons.connect_without_contact,
       ),
       const SizedBox(height: 10),
       SquareTextField(
-        theme: theme,
         controller: _controllerSecret,
         label: "Client secret",
         icon: Icons.password_sharp,
@@ -162,21 +159,18 @@ class _OauthFormViewState extends State<OauthFormView> {
         controller: _controllerAuth,
         label: "Auth url",
         icon: Icons.connect_without_contact_sharp,
-        theme: theme,
       ),
       const SizedBox(height: 10),
       SquareTextField(
         controller: _controllerToken,
         label: "Token url",
         icon: Icons.token_sharp,
-        theme: theme,
       ),
       const SizedBox(height: 10),
       SquareTextField(
         controller: _controllerClaims,
         label: "Claims url",
         icon: Icons.token_sharp,
-        theme: theme,
       ),
       const SizedBox(height: 5),
       Row(

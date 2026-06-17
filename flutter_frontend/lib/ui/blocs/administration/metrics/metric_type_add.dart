@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/square_button.dart';
-import 'package:helse/ui/common/square_dialog.dart';
-import 'package:helse/ui/common/square_text_field.dart';
-import 'package:helse/ui/common/statefull_check.dart';
-import 'package:helse/ui/common/values_input.dart';
+import 'package:helse/ui/common/layout/square_dialog.dart';
+import 'package:helse/ui/common/inputs/square_text_field.dart';
+import 'package:helse/ui/common/inputs/statefull_check.dart';
+import 'package:helse/ui/common/inputs/values_input.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/notification.dart';
@@ -85,12 +85,10 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
   }
 
   Widget buildForm(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
     var locale = Translation.of(context);
     return Column(
       children: [
         SquareTextField(
-          theme: theme,
           icon: Icons.person_sharp,
           controller: controllerName,
           focusNode: focusNodeName,
@@ -101,7 +99,6 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
         const SizedBox(height: 10),
         SquareTextField(
           icon: Icons.person_sharp,
-          theme: theme,
           controller: controllerDescription,
           focusNode: focusNodeDescription,
           label: locale.description,
@@ -131,7 +128,6 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
         if (_type == MetricDataType.numberrange)
           SquareTextField(
             icon: Icons.numbers_sharp,
-            theme: theme,
             controller: controllerValueCount,
             label: locale.value,
           ),

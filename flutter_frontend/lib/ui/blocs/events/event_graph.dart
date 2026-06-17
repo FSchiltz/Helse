@@ -11,8 +11,8 @@ import 'package:helse/ui/blocs/events/event_information.dart';
 import 'package:helse/ui/blocs/events/events_add.dart';
 import 'package:helse/ui/blocs/events/events_summary.dart';
 import 'package:helse/ui/blocs/events/events_timeline_graph.dart';
-import 'package:helse/ui/common/common_card.dart';
-import 'package:helse/ui/common/date_range_picker.dart';
+import 'package:helse/ui/common/layout/common_card.dart';
+import 'package:helse/ui/common/inputs/date_range_picker.dart';
 import 'package:helse/ui/common/navigator_chart.dart';
 
 class EventsGraph extends StatefulWidget {

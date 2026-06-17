@@ -114,6 +114,9 @@ class _NavigationPageState extends State<NavigationPage> {
       children: [
         NavigationRail(
           backgroundColor: color,
+          scrollable: true,
+          useIndicator: true,
+
           selectedIndex: _selectedIndex,
           onDestinationSelected: (index) {
             setState(() {

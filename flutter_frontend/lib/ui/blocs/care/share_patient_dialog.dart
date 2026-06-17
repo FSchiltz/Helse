@@ -9,9 +9,9 @@ import '../../../di/dependencies.dart';
 import '../../../logic/event.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
-import '../../common/square_dialog.dart';
-import '../../common/statefull_check.dart';
-import '../../common/values_input.dart';
+import '../../common/layout/square_dialog.dart';
+import '../../common/inputs/statefull_check.dart';
+import '../../common/inputs/values_input.dart';
 
 class SharePatientDialog extends StatefulWidget {
   final Person patient;

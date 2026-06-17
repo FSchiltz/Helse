@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
-import 'package:helse/ui/common/custom_switch.dart';
+import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../../../common/square_text_field.dart';
+import '../../../common/inputs/square_text_field.dart';
 
 class ProxyView extends StatelessWidget {
   const ProxyView({super.key});
@@ -140,7 +140,6 @@ class _ProxyFormViewState extends State<ProxyFormView> {
           controller: _controllerHeader,
           label: "Header name",
           icon: Icons.text_fields_sharp,
-          theme: theme,
         ),
       ),
     ];

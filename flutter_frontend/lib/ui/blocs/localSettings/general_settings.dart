@@ -5,12 +5,12 @@ import 'package:helse/di/dependencies.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
-import 'package:helse/ui/common/color_selector.dart';
-import 'package:helse/ui/common/common_card.dart';
+import 'package:helse/ui/common/inputs/color_selector.dart';
+import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
-import 'package:helse/ui/common/values_input.dart';
+import 'package:helse/ui/common/inputs/values_input.dart';
 
 class ColoredValue {
   final String key;

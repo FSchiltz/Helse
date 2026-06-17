@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/square_button.dart';
-import 'package:helse/ui/common/square_text_field.dart';
-import 'package:helse/ui/common/statefull_check.dart';
+import 'package:helse/ui/common/inputs/square_text_field.dart';
+import 'package:helse/ui/common/inputs/statefull_check.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../logic/event.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../../common/date_input.dart';
+import '../../common/inputs/date_input.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
-import '../../common/square_dialog.dart';
+import '../../common/layout/square_dialog.dart';
 
 class EventAdd extends StatefulWidget {
   final void Function() callback;
@@ -111,7 +111,6 @@ class _EventAddState extends State<EventAdd> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
     var locale = Translation.of(context);
     return SquareDialog(
       title: Text(locale.addItem(widget.type.name)),
@@ -129,14 +128,12 @@ class _EventAddState extends State<EventAdd> {
             child: Column(
               children: [
                 SquareTextField(
-                  theme: theme,
                   icon: Icons.description_sharp,
                   label: locale.description,
                   controller: _description,
                 ),
                 const SizedBox(height: 20),
                 SquareTextField(
-                  theme: theme,
                   icon: Icons.tag_sharp,
                   label: locale.tag,
                   controller: _tag,

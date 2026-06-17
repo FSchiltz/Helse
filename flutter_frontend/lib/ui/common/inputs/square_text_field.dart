@@ -5,7 +5,6 @@ class SquareTextField extends StatelessWidget {
   const SquareTextField({
     super.key,
     this.focusNode,
-    required this.theme,
     required this.label,
     this.onEditingComplete,
     required this.icon,
@@ -23,7 +22,6 @@ class SquareTextField extends StatelessWidget {
   final void Function()? onEditingComplete;
   final String label;
   final FocusNode? focusNode;
-  final ColorScheme theme;
   final IconData icon;
   final TextEditingController? controller;
   final String? Function(String? value)? validator;
@@ -33,6 +31,7 @@ class SquareTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
     return TextFormField(
       validator: validator,
       controller: controller,

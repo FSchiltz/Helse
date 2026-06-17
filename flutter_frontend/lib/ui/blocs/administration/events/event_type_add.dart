@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/common/square_button.dart';
-import 'package:helse/ui/common/square_dialog.dart';
+import 'package:helse/ui/common/layout/square_dialog.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/notification.dart';

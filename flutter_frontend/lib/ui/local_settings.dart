@@ -6,7 +6,7 @@ import 'package:helse/ui/blocs/localSettings/general_settings.dart';
 import 'package:helse/ui/blocs/localSettings/sync_settings.dart';
 import 'package:helse/ui/blocs/localSettings/user_sessions.dart';
 import 'package:helse/ui/common/menu_destination.dart';
-import 'package:helse/ui/common/navigation_page.dart';
+import 'package:helse/ui/common/layout/navigation_page.dart';
 
 class LocalSettingsPage extends StatelessWidget {
   const LocalSettingsPage({super.key});

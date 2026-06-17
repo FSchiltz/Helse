@@ -264,5 +264,7 @@
     "interface": "Interface",
     "@interface": {},
     "update": "Update",
-    "@update": {}
+    "@update": {},
+    "identifier": "Identifier",
+    "@identifier": {}
 }

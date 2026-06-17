@@ -9,10 +9,10 @@ import 'package:helse/ui/common/square_button.dart';
 import '../../../di/dependencies.dart';
 import '../../../logic/event.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../../common/date_input.dart';
+import '../../common/inputs/date_input.dart';
 import '../../common/notification.dart';
-import '../../common/square_dialog.dart';
-import '../../common/square_text_field.dart';
+import '../../common/layout/square_dialog.dart';
+import '../../common/inputs/square_text_field.dart';
 import '../../common/loader.dart';
 
 class MetricAdd extends StatefulWidget {
@@ -63,7 +63,6 @@ class _MetricAddState extends State<MetricAdd> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
     var locale = Translation.of(context);
     return SquareDialog(
       title: Text(locale.addItem(widget.type.name)),
@@ -86,7 +85,6 @@ class _MetricAddState extends State<MetricAdd> {
                   ..._values.expand(
                     (e) => [
                       SquareTextField(
-                        theme: theme,
                         icon: Icons.add_sharp,
                         label: locale.value,
                         controller: e,
@@ -95,7 +93,6 @@ class _MetricAddState extends State<MetricAdd> {
                     ],
                   ),
                   SquareTextField(
-                    theme: theme,
                     icon: Icons.design_services_outlined,
                     label: locale.tag,
                     controller: _tag,

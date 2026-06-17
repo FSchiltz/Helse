@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/settings/health_settings.dart';
-import 'package:helse/ui/common/custom_switch.dart';
+import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
