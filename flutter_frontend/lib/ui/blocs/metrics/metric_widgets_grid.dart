@@ -14,7 +14,10 @@ class MetricWidgetsGrid extends StatelessWidget {
     this.person,
     this.extend,
     required this.tile,
+    this.fullWidth = false,
   });
+
+  final bool fullWidth;
   final DateTimeRange<DateTime> date;
   final int? person;
   final List<Pair<MetricType, OrderedItem>> cached;
@@ -25,10 +28,13 @@ class MetricWidgetsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final maxWidth = min(
+        final maxHeight = min(
           (constraints.maxWidth - 9 - 24) / 2,
           200,
         ).toDouble();
+        final maxWidth = fullWidth
+            ? (constraints.maxWidth)
+            : maxHeight;
         return Wrap(
           runSpacing: 6,
           spacing: 6,
@@ -37,7 +43,7 @@ class MetricWidgetsGrid extends StatelessWidget {
                 (type) => ConstrainedBox(
                   constraints: BoxConstraints(
                     maxWidth: maxWidth,
-                    maxHeight: maxWidth,
+                    maxHeight: maxHeight,
                   ),
                   child: CommonCard(
                     padding: false,
