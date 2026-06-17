@@ -199,20 +199,20 @@ public static class SettingsLogic
 
         // update the metrics 
         var metricTypes = await metrics.GetMetricTypes(false, null);
-        UpdateMetrics(data.Default.MetricSettings.DisplaySettings, metricTypes);
+        data.Default.MetricSettings.DisplaySettings = UpdateMetrics(data.Default.MetricSettings.DisplaySettings, metricTypes);
 
         // update the events
         var eventTypes = await events.GetEventTypes(false);
-        UpdateEvents(data.Default.EventSettings.DisplaySettings, eventTypes);
+        data.Default.EventSettings.DisplaySettings = UpdateEvents(data.Default.EventSettings.DisplaySettings, eventTypes);
 
         var metricGroups = await metrics.GetMetricGroups();
-        UpdateMetricGroups(data.Default.MetricSettings.Groups.DisplaySettings, metricGroups);
+        data.Default.MetricSettings.Groups.DisplaySettings = UpdateMetricGroups(data.Default.MetricSettings.Groups.DisplaySettings, metricGroups);
 
         foreach (var patient in data.Patients)
         {
-            UpdateMetrics(patient.MetricSettings.DisplaySettings, metricTypes);
-            UpdateEvents(patient.EventSettings.DisplaySettings, eventTypes);
-            UpdateMetricGroups(patient.MetricSettings.Groups.DisplaySettings, metricGroups);
+            patient.MetricSettings.DisplaySettings = UpdateMetrics(patient.MetricSettings.DisplaySettings, metricTypes);
+            patient.EventSettings.DisplaySettings = UpdateEvents(patient.EventSettings.DisplaySettings, eventTypes);
+            patient.MetricSettings.Groups.DisplaySettings = UpdateMetricGroups(patient.MetricSettings.Groups.DisplaySettings, metricGroups);
         }
     }
 
@@ -225,28 +225,30 @@ public static class SettingsLogic
 
         // update the metrics 
         var metricTypes = await metrics.GetMetricTypes(false, null);
-        UpdateMetrics(data.MetricSettings.DisplaySettings, metricTypes);
+        data.MetricSettings.DisplaySettings = UpdateMetrics(data.MetricSettings.DisplaySettings, metricTypes);
 
         var metricGroups = await metrics.GetMetricGroups();
-        UpdateMetricGroups(data.MetricSettings.Groups.DisplaySettings, metricGroups);
+        data.MetricSettings.Groups.DisplaySettings = UpdateMetricGroups(data.MetricSettings.Groups.DisplaySettings, metricGroups);
 
         // update the events
         var eventTypes = await events.GetEventTypes(false);
-        UpdateEvents(data.EventSettings.DisplaySettings, eventTypes);
+        data.EventSettings.DisplaySettings = UpdateEvents(data.EventSettings.DisplaySettings, eventTypes);
     }
 
-    private static void UpdateMetricGroups(List<OrderedItem> data, MetricGroup[] metricGroups)
+    private static List<OrderedItem> UpdateMetricGroups(List<OrderedItem> data, MetricGroup[] metricGroups)
     {
+        List<OrderedItem> newList = [];
         foreach (var e in metricGroups)
         {
             var existing = data.FirstOrDefault((element) => element.Id == e.Id);
             if (existing != null)
             {
                 existing.Name = existing.Name;
+                newList.Add(existing);
             }
             else
             {
-                data.Add(
+                newList.Add(
                     new OrderedItem()
                     {
                         Id = e.Id,
@@ -258,20 +260,24 @@ public static class SettingsLogic
                     });
             }
         }
+
+        return newList;
     }
 
-    private static void UpdateEvents(List<OrderedItem> data, Data.Models.Health.EventType[] eventTypes)
+    private static List<OrderedItem> UpdateEvents(List<OrderedItem> data, Data.Models.Health.EventType[] eventTypes)
     {
+        List<OrderedItem> newList = [];
         foreach (var e in eventTypes)
         {
             var existing = data.FirstOrDefault((element) => element.Id == e.Id);
             if (existing != null)
             {
                 existing.Name = existing.Name;
+                newList.Add(existing);
             }
             else
             {
-                data.Add(
+                newList.Add(
                     new OrderedItem()
                     {
                         Id = e.Id,
@@ -283,6 +289,7 @@ public static class SettingsLogic
                     });
             }
         }
+        return newList;
     }
 
     private static void UpgradeV2(UserSettings data)
@@ -336,19 +343,23 @@ public static class SettingsLogic
         };
     }
 
-    private static void UpdateMetrics(List<OrderedItem> data, MetricType[] metricTypes)
+    private static List<OrderedItem> UpdateMetrics(List<OrderedItem> data, MetricType[] metricTypes)
     {
+        List<OrderedItem> newList = [];
         foreach (var metric in metricTypes)
         {
             var existing = data.FirstOrDefault((element) => element.Id == metric.Id);
             if (existing != null)
             {
                 existing.Name = existing.Name;
+                newList.Add(existing);
             }
             else
             {
-                data.Add(GetDefault(metric));
+                newList.Add(GetDefault(metric));
             }
         }
+        
+        return newList;
     }
 }
