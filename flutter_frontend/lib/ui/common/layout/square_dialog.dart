@@ -19,7 +19,7 @@ class SquareDialog extends StatelessWidget {
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(0.0)),
-        side: BorderSide(color: theme.onSurface, width: 1),
+        side: BorderSide(color: theme.outlineVariant, width: 1),
       ),
       scrollable: true,
       content: content,
