@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/administration/events/event_settings.dart';
 import 'package:helse/ui/blocs/administration/events/event_type.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class EventSettings extends StatelessWidget {
   const EventSettings({super.key});
@@ -17,9 +18,9 @@ class EventSettings extends StatelessWidget {
             Translation.of(context).eventSettings,
             style: Theme.of(context).textTheme.displaySmall,
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: UIConstants.headerPad),
           const EventSettingsView(),
-          const SizedBox(height: 20),
+          const SizedBox(height: UIConstants.headerPad),
           const EventTypeView(),
         ],
       ),

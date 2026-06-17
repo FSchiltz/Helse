@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/ui/common/square_dialog.dart';
-import 'package:helse/ui/common/square_text_field.dart';
-import 'package:helse/ui/common/statefull_check.dart';
+import 'package:helse/l10n/app_localizations.dart';
+import 'package:helse/ui/common/inputs/custom_switch.dart';
+import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/layout/square_dialog.dart';
+import 'package:helse/ui/common/inputs/square_text_field.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/notification.dart';
@@ -44,30 +47,23 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
     var locale = Translation.of(context);
     return SquareDialog(
       title: const Text("Add a new metric type"),
       actions: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size.fromHeight(50),
-            shape: const ContinuousRectangleBorder(),
-          ),
-          onPressed: submit,
-          child: Text(widget.edit == null ? locale.create : locale.edit),
+        SquareButton(
+          widget.edit == null ? locale.create : locale.edit,
+          () => submit(locale),
         ),
       ],
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
             children: [
               Column(
                 children: [
                   SquareTextField(
-                    theme: theme,
                     icon: Icons.person_sharp,
                     controller: controllerName,
                     focusNode: focusNodeName,
@@ -76,44 +72,30 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
                     onEditingComplete: () =>
                         focusNodeDescription.requestFocus(),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: UIConstants.formPad),
                   SquareTextField(
                     icon: Icons.person_sharp,
-                    theme: theme,
                     controller: controllerDescription,
                     focusNode: focusNodeDescription,
                     label: locale.description,
                   ),
 
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        const Text("Show title"),
-                        StatefullCheck(
-                          _visible,
-                          (bool value) => setState(() {
-                            _visible = value;
-                          }),
-                        ),
-                      ],
-                    ),
+                  const SizedBox(height: UIConstants.formPad),
+                  HelseSwitch(
+                    "Show title",
+                    _visible,
+                    (bool value) => setState(() {
+                      _visible = value;
+                    }),
                   ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Text(locale.visible),
-                        StatefullCheck(
-                          _showDashboard,
-                          (bool value) => setState(() {
-                            _showDashboard = value;
-                          }),
-                        ),
-                      ],
-                    ),
+
+                  const SizedBox(height: UIConstants.formPad),
+                  HelseSwitch(
+                    locale.visible,
+                    _showDashboard,
+                    (bool value) => setState(() {
+                      _showDashboard = value;
+                    }),
                   ),
                 ],
               ),
@@ -132,7 +114,7 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
     return null;
   }
 
-  void submit() async {
+  void submit(AppLocalizations locale) async {
     var localContext = context;
     try {
       if (_formKey.currentState?.validate() ?? false) {
@@ -143,13 +125,10 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
           showTitle: _visible,
           showOnDashboard: _showDashboard,
         );
-        String text;
 
         if (widget.edit == null) {
-          text = "Added";
           await Dependencies.services.metric.addMetricsGroup(metric);
         } else {
-          text = "Updated";
           await Dependencies.services.metric.updateMetricsGroup(metric);
         }
 
@@ -159,10 +138,10 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
         if (localContext.mounted) {
           Navigator.of(localContext).pop();
         }
-        Notify.show("$text Successfully");
+        Notify.show(locale.saved);
       }
     } catch (ex) {
-      Notify.showError("Error: $ex");
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 

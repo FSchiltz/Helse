@@ -3,6 +3,7 @@ import 'package:helse/helpers/date.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/event.dart';
 import 'package:helse/logic/fit/task_bloc.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class TaskStatusDialog extends StatelessWidget {
   final List<Execution> tasks;
@@ -82,7 +83,7 @@ class TaskStatusDialog extends StatelessWidget {
                                         Expanded(child: Text(task.state.name)),
                                       ],
                                     ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: UIConstants.formPad),
                                 ],
                               ),
                             );

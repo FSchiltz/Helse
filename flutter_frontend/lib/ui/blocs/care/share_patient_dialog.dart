@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
+import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../logic/event.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
-import '../../common/square_dialog.dart';
-import '../../common/statefull_check.dart';
-import '../../common/type_input.dart';
+import '../../common/layout/square_dialog.dart';
+import '../../common/inputs/values_input.dart';
 
 class SharePatientDialog extends StatefulWidget {
   final Person patient;
@@ -38,7 +41,9 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
   Widget build(BuildContext context) {
     var locale = Translation.of(context);
     return SquareDialog(
-      title: Text("${locale.share} ${widget.patient.name} ${widget.patient.surname}"),
+      title: Text(
+        "${locale.share} ${widget.patient.name} ${widget.patient.surname}",
+      ),
       content: LoadingBuilder(
         _getCaregiver,
         builder: (context, data, reset) {
@@ -47,13 +52,9 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
               ..._shareForm(data, widget.patient),
               _status == SubmissionStatus.inProgress
                   ? const HelseLoader()
-                  : ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(50),
-                        shape: const ContinuousRectangleBorder(),
-                      ),
-                      onPressed: (caregiver > 0) ? _submit : null,
-                      child: Text(locale.share),
+                  : SquareButton(
+                      locale.share,
+                      (caregiver > 0) ? () => _submit(locale) : null,
                     ),
             ],
           );
@@ -63,12 +64,12 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
   }
 
   List<Widget> _shareForm(List<Person> caregivers, Person patient) {
-    var selects = [DropDownItem(0, "Select")];
+    var selects = [DropdownItem(0, "Select")];
 
-    selects.addAll(caregivers.map((x) => DropDownItem(x.id, x.userName ?? '')));
+    selects.addAll(caregivers.map((x) => DropdownItem(x.id, x.userName ?? '')));
 
     return [
-      EnumInput(
+      ValuesInput(
         label: 'Caregiver',
         selects,
         (value) => setState(() {
@@ -76,22 +77,18 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
         }),
         value: caregiver,
       ),
-      const SizedBox(height: 10),
-      Row(
-        children: [
-          const Text("With edit right: "),
-          StatefullCheck(
-            edit,
-            (value) => setState(() {
-              edit = value;
-            }),
-          ),
-        ],
+      const SizedBox(height: UIConstants.formPad),
+      HelseSwitch(
+        "With edit right: ",
+        edit,
+        (value) => setState(() {
+          edit = value;
+        }),
       ),
     ];
   }
 
-  void _submit() async {
+  void _submit(AppLocalizations locale) async {
     var localContext = context;
     try {
       setState(() {
@@ -112,7 +109,7 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
           Navigator.of(localContext).pop();
         }
 
-        Notify.show("Added succesfully");
+        Notify.show(locale.saved);
 
         setState(() {
           _status = SubmissionStatus.success;
@@ -123,7 +120,7 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
         });
       }
     } catch (ex) {
-      Notify.showError("$ex");
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 }

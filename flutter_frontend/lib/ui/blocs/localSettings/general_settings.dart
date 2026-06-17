@@ -5,11 +5,13 @@ import 'package:helse/di/dependencies.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
-import 'package:helse/ui/common/color_selector.dart';
-import 'package:helse/ui/common/common_card.dart';
+import 'package:helse/ui/common/inputs/color_selector.dart';
+import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
-import 'package:helse/ui/common/square_outline_input_border.dart';
+import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/inputs/values_input.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class ColoredValue {
   final String key;
@@ -100,14 +102,14 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     return 1;
   }
 
-  Future<void> rangeCallback(DatePreset? value) async {
+  Future<void> rangeCallback(DatePreset? value, AppLocalizations locale) async {
     if (value == null) return;
     try {
       _range = value;
       await Dependencies.logics.settings.setDateRange(value);
-      Notify.show("Saved Successfully");
+      Notify.show(locale.saved);
     } catch (ex) {
-      Notify.showError("Error: $ex");
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 
@@ -119,89 +121,60 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       builder: (context, data, reset) {
         var locale = Translation.of(context);
         return Padding(
-          padding: const EdgeInsets.all(32.0),
+          padding: const EdgeInsets.all(12.0),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Interface',
+                locale.interface,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
-              SizedBox(height: 32),
-              SizedBox(
-                width: 200,
-                child: DropdownButtonFormField(
-                  initialValue: _theme,
-                  onChanged: (value) async {
-                    await themeCallback(value, locale);
-                    reset();
-                  },
-                  items: _getThemeValues(),
-                  decoration: InputDecoration(
-                    labelText: 'Theme',
-                    prefixIcon: const Icon(Icons.list_sharp),
-                    prefixIconColor: theme.colorScheme.primary,
-                    filled: true,
-                    fillColor: theme.colorScheme.surface,
-                    border: SquareOutlineInputBorder(theme.colorScheme.primary),
+              SizedBox(height: UIConstants.formPad),
+              Wrap(
+                spacing: UIConstants.formPad,
+                runSpacing: UIConstants.formPad,
+                children: [
+                  SizedBox(
+                    width: 200,
+                    child: ValuesInput(_getThemeValues(), (value) async {
+                      await themeCallback(value, locale);
+                      reset();
+                    }, value: _theme),
                   ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                "Default range for the date when you open the application.",
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: SizedBox(
-                  width: 200,
-                  child: DropdownButtonFormField(
-                    initialValue: _range,
-                    onChanged: rangeCallback,
-                    items: _getRangeValues(context),
-                    decoration: InputDecoration(
-                      labelText: 'Date range',
-                      prefixIcon: const Icon(Icons.list_sharp),
-                      prefixIconColor: theme.colorScheme.primary,
-                      filled: true,
-                      fillColor: theme.colorScheme.surface,
-                      border: SquareOutlineInputBorder(
-                        theme.colorScheme.primary,
-                      ),
+                  SizedBox(
+                    width: 200,
+                    child: ValuesInput(
+                      _getRangeValues(context),
+                      (v) async => await rangeCallback(v, locale),
+                      value: _range,
                     ),
                   ),
-                ),
+                ],
               ),
-              SizedBox(height: 24),
+              SizedBox(height: UIConstants.formPad),
               Row(
                 children: [
                   Text(
-                    "Colors",
+                    locale.color,
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   SizedBox(width: 12),
                   SizedBox(
                     width: 120,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(40),
-                        shape: const ContinuousRectangleBorder(),
-                      ),
-                      onPressed: () async {
-                        await _submit(_colors, locale);
-                        reset();
-                      },
-                      child: Text(locale.save),
-                    ),
+                    child: SquareButton(locale.save, () async {
+                      await _submit(_colors, locale);
+                      reset();
+                    }),
                   ),
                 ],
               ),
-              SizedBox(height: 12),
+              SizedBox(height: UIConstants.formPad),
               Expanded(
                 child: SingleChildScrollView(
                   child: Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
+                    spacing: UIConstants.formPad,
+                    runSpacing: UIConstants.formPad,
                     children: _colors.entries.map((group) {
                       return CommonCard(
                         padding: false,
@@ -209,9 +182,15 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              group.key.name,
-                              style: theme.textTheme.titleMedium,
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 12.0,
+                                top: 12,
+                              ),
+                              child: Text(
+                                group.key.name,
+                                style: theme.textTheme.titleMedium,
+                              ),
                             ),
                             DataTable(
                               dataRowMinHeight: 48,
@@ -250,7 +229,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                                   )
                                   .toList(),
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: UIConstants.formPad),
                           ],
                         ),
                       );
@@ -283,22 +262,17 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     }
   }
 
-  List<DropdownMenuItem<InterfaceTheme>>? _getThemeValues() {
+  List<DropdownItem<InterfaceTheme>> _getThemeValues() {
     return InterfaceTheme.values
         .where((e) => e.index > 0)
-        .map((type) => DropdownMenuItem(value: type, child: Text(type.name)))
+        .map((type) => DropdownItem(type, type.name))
         .toList();
   }
 
-  List<DropdownMenuItem<DatePreset>>? _getRangeValues(BuildContext context) {
+  List<DropdownItem<DatePreset>> _getRangeValues(BuildContext context) {
     return DatePreset.values
         .where((e) => e.index > 0)
-        .map(
-          (type) => DropdownMenuItem(
-            value: type,
-            child: Text(Translation.get(type, context)),
-          ),
-        )
+        .map((type) => DropdownItem(type, Translation.get(type, context)))
         .toList();
   }
 }

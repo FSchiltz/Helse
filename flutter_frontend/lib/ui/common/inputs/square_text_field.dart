@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/common/square_outline_input_border.dart';
 
 class SquareTextField extends StatelessWidget {
   const SquareTextField({
     super.key,
     this.focusNode,
-    required this.theme,
     required this.label,
     this.onEditingComplete,
     required this.icon,
@@ -23,7 +21,6 @@ class SquareTextField extends StatelessWidget {
   final void Function()? onEditingComplete;
   final String label;
   final FocusNode? focusNode;
-  final ColorScheme theme;
   final IconData icon;
   final TextEditingController? controller;
   final String? Function(String? value)? validator;
@@ -33,6 +30,7 @@ class SquareTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
     return TextFormField(
       validator: validator,
       controller: controller,
@@ -43,12 +41,24 @@ class SquareTextField extends StatelessWidget {
       onTap: onTap,
       decoration: InputDecoration(
         labelText: label,
+        alignLabelWithHint: false,
+        maintainLabelSize: true,
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        floatingLabelAlignment: FloatingLabelAlignment.start,
+        fillColor: theme.surfaceContainerLow,
         prefixIcon: Icon(icon),
         prefixIconColor: theme.primary,
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: theme.surface,
-        border: SquareOutlineInputBorder(theme.primary),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: theme.outlineVariant),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: theme.outline),
+        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.zero),
       ),
     );
   }

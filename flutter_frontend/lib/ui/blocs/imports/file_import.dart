@@ -1,11 +1,16 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
-import 'package:helse/ui/common/square_dialog.dart';
+import 'package:helse/helpers/translation.dart';
+import 'package:helse/l10n/app_localizations.dart';
+import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/layout/square_dialog.dart';
+import 'package:helse/ui/common/inputs/values_input.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../logic/event.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../../common/file_input.dart';
+import '../../common/inputs/file_input.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
 
@@ -40,19 +45,13 @@ class _FileImportState extends State<FileImport> {
 
   @override
   Widget build(BuildContext context) {
+    var locale = Translation.of(context);
     return SquareDialog(
       title: const Text("Import"),
       actions: [
         status == SubmissionStatus.inProgress
             ? const HelseLoader()
-            : ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                  shape: const ContinuousRectangleBorder(),
-                ),
-                onPressed: submit,
-                child: const Text('Submit'),
-              ),
+            : SquareButton(locale.submit, () => submit(locale)),
       ],
       content: SingleChildScrollView(
         padding: const EdgeInsets.all(30.0),
@@ -62,24 +61,16 @@ class _FileImportState extends State<FileImport> {
               "Import external metric",
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-            DropdownButtonFormField(
-              onChanged: (value) => setState(() {
+            ValuesInput(
+              types
+                  .map((type) => DropdownItem(type.type, type.name ?? ""))
+                  .toList(),
+              (value) => setState(() {
                 selected = value;
               }),
-              items: types
-                  .map(
-                    (type) => DropdownMenuItem(
-                      value: type.type,
-                      child: Text(type.name ?? ""),
-                    ),
-                  )
-                  .toList(),
-              decoration: const InputDecoration(
-                labelText: 'Type',
-                prefixIcon: Icon(Icons.list_sharp),
-              ),
+              label: 'Type',
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: UIConstants.formPad),
             FileInput(
               (value) {
                 setState(() {
@@ -99,7 +90,7 @@ class _FileImportState extends State<FileImport> {
     );
   }
 
-  void submit() async {
+  void submit(AppLocalizations locale) async {
     var localContext = context;
     if (selected != null) {
       setState(() {
@@ -109,7 +100,11 @@ class _FileImportState extends State<FileImport> {
       try {
         var content = await file?.readAsBytes();
         if (content == null) return;
-        await Dependencies.logics.import.import(content, selected!, widget.patient);
+        await Dependencies.logics.import.import(
+          content,
+          selected!,
+          widget.patient,
+        );
 
         setState(() {
           status = SubmissionStatus.success;
@@ -121,7 +116,7 @@ class _FileImportState extends State<FileImport> {
 
         Notify.show("Imported");
       } catch (ex) {
-        Notify.showError("$ex");
+        Notify.showError(locale.error(ex.toString()));
 
         setState(() {
           status = SubmissionStatus.failure;

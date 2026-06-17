@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/blocs/administration/users/userright_input.dart';
-import 'package:helse/ui/common/square_dialog.dart';
+import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/layout/square_dialog.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/notification.dart';
@@ -50,19 +53,11 @@ class _SignupState extends State<UserAdd> {
     return SquareDialog(
       title: const Text("Add a new user"),
       actions: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size.fromHeight(50),
-            shape: const ContinuousRectangleBorder(),
-          ),
-          onPressed: submit,
-          child: Text(locale.create),
-        ),
+        SquareButton(locale.create, () => submit(locale)),
       ],
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
             children: [
               UserRightInput(
@@ -72,7 +67,7 @@ class _SignupState extends State<UserAdd> {
                   _type = value;
                 }),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: UIConstants.formPad),
               UserForm(
                 _type,
                 controllerConFirmPassword: (widget.edit != null)
@@ -93,7 +88,7 @@ class _SignupState extends State<UserAdd> {
     );
   }
 
-  void submit() async {
+  void submit(AppLocalizations locale) async {
     var localContext = context;
     try {
       if (_formKey.currentState?.validate() ?? false) {
@@ -136,10 +131,10 @@ class _SignupState extends State<UserAdd> {
         if (localContext.mounted) {
           Navigator.of(localContext).pop();
         }
-        Notify.show("Added Successfully");
+        Notify.show(locale.saved);
       }
     } catch (ex) {
-      Notify.showError("Error: $ex");
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 

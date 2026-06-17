@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/common/common_card.dart';
+import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
+import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class UserSessions extends StatelessWidget {
   const UserSessions({super.key});
@@ -44,23 +46,16 @@ class UserSessions extends StatelessWidget {
                         Spacer(),
                         SizedBox(
                           width: 200,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size.fromHeight(40),
-                              shape: const ContinuousRectangleBorder(),
-                            ),
-                            onPressed: () async {
-                              await Dependencies.services.user.logout(true);
-                              await Dependencies.logics.authentication
-                                  .logOutLocal();
-                            },
-                            child: Text(locale.cleanSessions),
-                          ),
+                          child: SquareButton(locale.cleanSessions, () async {
+                            await Dependencies.services.user.logout(true);
+                            await Dependencies.logics.authentication
+                                .logOutLocal();
+                          }),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 12),
+                  SizedBox(height: UIConstants.formPad),
                   Expanded(
                     child: SingleChildScrollView(
                       child: ListView.builder(

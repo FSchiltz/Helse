@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
+import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/common/custom_switch.dart';
+import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
-import '../../../common/square_text_field.dart';
+import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/ui_constants.dart';
+import '../../../common/inputs/square_text_field.dart';
 
 class GotifyView extends StatelessWidget {
   const GotifyView({super.key});
@@ -51,6 +55,7 @@ class _SmtpFormViewState extends State<GotifyFormView> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
+    var locale = Translation.of(context);
 
     return Form(
       key: _formKey,
@@ -58,39 +63,24 @@ class _SmtpFormViewState extends State<GotifyFormView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Gotify', style: Theme.of(context).textTheme.headlineMedium),
-          const SizedBox(height: 32),
-          Row(
-            children: [
-              const Text('Enable'),
-              CustomSwitch(
-                value: _enabled,
-                onChanged: (bool? value) {
-                  setState(() {
-                    _enabled = value!;
-                  });
-                },
-              ),
-            ],
-          ),
+          const SizedBox(height: UIConstants.headerPad),
+          HelseSwitch(locale.enable, _enabled, (bool? value) {
+            setState(() {
+              _enabled = value!;
+            });
+          }),
           if (_enabled) ..._fields(theme),
-          const SizedBox(height: 20),
+          const SizedBox(height: UIConstants.formPad),
           SizedBox(
             width: 200,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(50),
-                shape: const ContinuousRectangleBorder(),
-              ),
-              onPressed: submit,
-              child: const Text('Save'),
-            ),
+            child: SquareButton(locale.save, () => submit(locale)),
           ),
         ],
       ),
     );
   }
 
-  void submit() async {
+  void submit(AppLocalizations locale) async {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         final smtp = Gotify(
@@ -101,24 +91,23 @@ class _SmtpFormViewState extends State<GotifyFormView> {
 
         await Dependencies.services.settings.updateGotify(smtp);
 
-        Notify.show('Saved Successfully');
+        Notify.show(locale.saved);
         widget.callback();
       }
     } catch (ex) {
-      Notify.showError('$ex');
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 
   List<Widget> _fields(ColorScheme theme) {
     return [
-      const SizedBox(height: 10),
+      const SizedBox(height: UIConstants.formPad),
       SizedBox(
         width: 400,
         child: SquareTextField(
           controller: _controllerUrl,
           label: 'host',
           icon: Icons.mail_sharp,
-          theme: theme,
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'host is required';
@@ -127,14 +116,13 @@ class _SmtpFormViewState extends State<GotifyFormView> {
           },
         ),
       ),
-      const SizedBox(height: 10),
+      const SizedBox(height: UIConstants.formPad),
       SizedBox(
         width: 400,
         child: SquareTextField(
           controller: _controllerToken,
           label: 'Token',
           icon: Icons.password_sharp,
-          theme: theme,
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Token is required';

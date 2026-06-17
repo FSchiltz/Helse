@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
+import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/common/custom_switch.dart';
+import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
-import '../../../common/square_text_field.dart';
+import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/ui_constants.dart';
+import '../../../common/inputs/square_text_field.dart';
 
 class SmtpView extends StatelessWidget {
   const SmtpView({super.key});
@@ -59,69 +63,44 @@ class _SmtpFormViewState extends State<SmtpFormView> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
-
+    var locale = Translation.of(context);
     return Form(
       key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('SMTP', style: Theme.of(context).textTheme.headlineMedium),
-          const SizedBox(height: 32),
-          Row(
-            children: [
-              const Text('Enable'),
-              CustomSwitch(
-                value: _enabled,
-                onChanged: (bool? value) {
-                  setState(() {
-                    _enabled = value!;
-                  });
-                },
-              ),
-            ],
-          ),
-          if (_enabled) ..._fields(theme),
-          const SizedBox(height: 20),
+          const SizedBox(height: UIConstants.headerPad),
+          HelseSwitch(locale.enable, _enabled, (bool? value) {
+            setState(() {
+              _enabled = value!;
+            });
+          }),
+          if (_enabled) ..._fields(theme, locale),
+          const SizedBox(height: UIConstants.formPad),
           SizedBox(
             width: 200,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(50),
-                shape: const ContinuousRectangleBorder(),
-              ),
-              onPressed: submit,
-              child: const Text('Save'),
-            ),
+            child: SquareButton(locale.save, () => submit(locale)),
           ),
         ],
       ),
     );
   }
 
-  List<Widget> _fields(ColorScheme theme) {
+  List<Widget> _fields(ColorScheme theme, AppLocalizations locale) {
     return [
-      const SizedBox(height: 5),
-      Row(
-        children: [
-          const Text('Enable SSL'),
-          CustomSwitch(
-            value: _enableSsl,
-            onChanged: (bool? value) {
-              setState(() {
-                _enableSsl = value!;
-              });
-            },
-          ),
-        ],
-      ),
-      const SizedBox(height: 10),
+      HelseSwitch('Enable SSL', _enableSsl, (bool? value) {
+        setState(() {
+          _enableSsl = value!;
+        });
+      }),
+      const SizedBox(height: UIConstants.formPad),
       SizedBox(
         width: 400,
         child: SquareTextField(
           controller: _controllerHost,
           label: 'SMTP host',
           icon: Icons.mail_sharp,
-          theme: theme,
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'SMTP host is required';
@@ -130,7 +109,7 @@ class _SmtpFormViewState extends State<SmtpFormView> {
           },
         ),
       ),
-      const SizedBox(height: 10),
+      const SizedBox(height: UIConstants.formPad),
       Row(
         children: [
           SizedBox(
@@ -139,7 +118,6 @@ class _SmtpFormViewState extends State<SmtpFormView> {
               controller: _controllerPort,
               label: 'SMTP port',
               icon: Icons.numbers,
-              theme: theme,
               type: TextInputType.number,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -159,7 +137,6 @@ class _SmtpFormViewState extends State<SmtpFormView> {
               controller: _controllerFromEmail,
               label: 'From email',
               icon: Icons.alternate_email_sharp,
-              theme: theme,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'From email is required';
@@ -170,31 +147,29 @@ class _SmtpFormViewState extends State<SmtpFormView> {
           ),
         ],
       ),
-      const SizedBox(height: 10),
+      const SizedBox(height: UIConstants.formPad),
       SizedBox(
         width: 400,
         child: SquareTextField(
           controller: _controllerUserName,
-          label: 'Username',
+          label: locale.username,
           icon: Icons.person_sharp,
-          theme: theme,
         ),
       ),
-      const SizedBox(height: 10),
+      const SizedBox(height: UIConstants.formPad),
       SizedBox(
         width: 400,
         child: SquareTextField(
           controller: _controllerPassword,
-          label: 'Password',
+          label: locale.password,
           icon: Icons.password_sharp,
-          theme: theme,
           obscureText: true,
         ),
       ),
     ];
   }
 
-  void submit() async {
+  void submit(AppLocalizations locale) async {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         final smtp = Smtp(
@@ -213,11 +188,11 @@ class _SmtpFormViewState extends State<SmtpFormView> {
 
         await Dependencies.services.settings.updateSmtp(smtp);
 
-        Notify.show('Saved Successfully');
+        Notify.show(locale.saved);
         widget.callback();
       }
     } catch (ex) {
-      Notify.showError('$ex');
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 }

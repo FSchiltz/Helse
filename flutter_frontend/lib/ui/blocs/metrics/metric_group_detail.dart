@@ -89,12 +89,16 @@ class _MetricGroupDetailState extends State<MetricGroupDetail> {
                     _getData();
                   },
                   bloc: Dependencies.logics.settings.metrics,
-                  child: MetricWidgetsGrid(
-                    cached: cached,
-                    person: widget.person,
-                    date: widget.date,
-                    extend: constraints.maxWidth,
-                    tile: 200,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: MetricWidgetsGrid(
+                      cached: cached,
+                      person: widget.person,
+                      date: widget.date,
+                      extend: constraints.maxWidth,
+                      fullWidth: true,
+                      tile: 200,
+                    ),
                   ),
                 ),
               ),

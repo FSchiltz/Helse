@@ -4,9 +4,11 @@ import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/localSettings/ordered_edit_item.dart';
+import 'package:helse/ui/common/inputs/statefull_check.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
-import 'package:helse/ui/common/statefull_check.dart';
+import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class EventsSettings extends StatefulWidget {
   final bool isPatient;
@@ -92,21 +94,14 @@ class _EventsSettingsState extends State<EventsSettings> {
                   SizedBox(width: 32),
                   SizedBox(
                     width: 120,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(40),
-                        shape: const ContinuousRectangleBorder(),
-                      ),
-                      onPressed: () async {
-                        await _submitEvent(data, locale);
-                        reset();
-                      },
-                      child: Text(locale.save),
-                    ),
+                    child: SquareButton(locale.save, () async {
+                      await _submitEvent(data, locale);
+                      reset();
+                    }),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: UIConstants.headerPad),
               Expanded(
                 child: SingleChildScrollView(
                   child: FittedBox(

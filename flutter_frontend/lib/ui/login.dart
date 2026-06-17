@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
-import 'package:helse/ui/common/password_input.dart';
+import 'package:helse/ui/common/inputs/password_input.dart';
+import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 import '../logic/event.dart';
 import '../services/swagger/generated_code/helseapi.swagger.dart';
 import 'blocs/administration/users/user_form.dart';
@@ -66,12 +68,12 @@ class _LoginState extends State<LoginPage> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      const SizedBox(height: 12),
+                      const SizedBox(height: UIConstants.formPad),
                       Text(
                         locale.welcome,
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: UIConstants.headerPad),
                       TextField(
                         controller: textController,
                         keyboardType: TextInputType.url,
@@ -92,7 +94,7 @@ class _LoginState extends State<LoginPage> {
                               : null,
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: UIConstants.headerPad),
                       (_loaded == SubmissionStatus.inProgress)
                           ? const HelseLoader()
                           : (_loaded == SubmissionStatus.success)
@@ -105,7 +107,7 @@ class _LoginState extends State<LoginPage> {
                                             controller: _controllerUsername,
                                             validate: validateUserName,
                                           ),
-                                          const SizedBox(height: 10),
+                                          const SizedBox(height: UIConstants.formPad),
                                           PasswordInput(
                                             controller: _controllerPassword,
                                           ),
@@ -125,7 +127,7 @@ class _LoginState extends State<LoginPage> {
                                               context,
                                             ).textTheme.bodyLarge,
                                           ),
-                                          const SizedBox(height: 20),
+                                          const SizedBox(height: UIConstants.headerPad),
                                           UserForm(
                                             [UserType.admin],
                                             controllerUsername:
@@ -141,29 +143,18 @@ class _LoginState extends State<LoginPage> {
                                           ),
                                         ],
                                       ),
-                                const SizedBox(height: 60),
+                                const SizedBox(height: UIConstants.headerPad),
                                 _status == SubmissionStatus.inProgress
                                     ? const HelseLoader()
                                     : Column(
                                         children: [
-                                          ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              minimumSize:
-                                                  const Size.fromHeight(50),
-                                              shape:
-                                                  const ContinuousRectangleBorder(),
-                                            ),
-                                            onPressed: _submit,
-                                            child: Text(
-                                              _initStatus?.init == true
-                                                  ? locale.login
-                                                  : locale.create,
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.titleLarge,
-                                            ),
+                                          SquareButton(
+                                            _initStatus?.init == true
+                                                ? locale.login
+                                                : locale.create,
+                                            _submit,
                                           ),
-                                          const SizedBox(height: 20),
+                                          const SizedBox(height: UIConstants.headerPad),
                                           ..._providers(
                                             _initStatus?.oauths,
                                             Theme.of(context).textTheme,
@@ -410,14 +401,7 @@ class _LoginState extends State<LoginPage> {
 
     return oauths
         .map(
-          (o) => ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size.fromHeight(50),
-              shape: const ContinuousRectangleBorder(),
-            ),
-            onPressed: () => _submitOauth(o),
-            child: Text(locale.loginwith(o.name), style: theme.titleLarge),
-          ),
+          (o) => SquareButton(locale.loginwith(o.name), () => _submitOauth(o)),
         )
         .toList();
   }

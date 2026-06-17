@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:file_selector/file_selector.dart';
+import 'package:helse/ui/common/square_button.dart';
 
 class FileInput extends StatelessWidget {
   final void Function(XFile value) callback;
@@ -17,14 +18,6 @@ class FileInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      onPressed: _pickFile,
-      icon: Icon(icone),
-      label: Text(label),
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size.fromHeight(50),
-        shape: const ContinuousRectangleBorder(),
-      ),
-    );
+    return SquareButton(label, _pickFile, icon: icone);
   }
 }

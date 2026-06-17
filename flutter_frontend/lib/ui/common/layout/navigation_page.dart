@@ -44,6 +44,8 @@ class _NavigationPageState extends State<NavigationPage> {
       drawer: (screenWidth < UIConstants.displaymedium && aspectRatio > 1)
           ? Drawer(
               child: NavigationRail(
+                extended: true,
+                elevation: 1,
                 backgroundColor: theme.surfaceContainerHigh,
                 selectedIndex: _selectedIndex,
                 onDestinationSelected: (index) {
@@ -51,7 +53,7 @@ class _NavigationPageState extends State<NavigationPage> {
                     _selectedIndex = index;
                   });
                 },
-                labelType: NavigationRailLabelType.all,
+                labelType: NavigationRailLabelType.none,
                 destinations: widget.menu
                     .map(
                       (e) => NavigationRailDestination(
@@ -112,6 +114,9 @@ class _NavigationPageState extends State<NavigationPage> {
       children: [
         NavigationRail(
           backgroundColor: color,
+          scrollable: true,
+          useIndicator: true,
+
           selectedIndex: _selectedIndex,
           onDestinationSelected: (index) {
             setState(() {
@@ -130,23 +135,21 @@ class _NavigationPageState extends State<NavigationPage> {
               )
               .toList(),
         ),
-        _body(content),
+        Expanded(child: _body(content)),
       ],
     );
   }
 
   Widget _body(Widget content) {
     if (widget.header != null) {
-      return Expanded(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            widget.header!,
-            Expanded(child: content),
-          ],
-        ),
+      return Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          widget.header!,
+          Expanded(child: content),
+        ],
       );
     }
-    return Expanded(child: content);
+    return content;
   }
 }

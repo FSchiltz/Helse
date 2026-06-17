@@ -24,14 +24,6 @@ class _SettingsViewState extends State<MetricSettingsView> {
         key: _formKey,
         child: Column(
           children: [
-            /* ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(50),
-                shape: const ContinuousRectangleBorder(),
-              ),
-              onPressed: submit,
-              child: const Text("Save"),
-            ),*/
           ],
         ),
       ),

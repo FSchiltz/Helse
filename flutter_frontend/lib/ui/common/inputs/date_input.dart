@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/date.dart';
-import 'package:helse/ui/common/square_text_field.dart';
+import 'package:helse/ui/common/inputs/square_text_field.dart';
 
 class DateInput extends StatefulWidget {
   final String label;
@@ -95,7 +95,6 @@ class _DateInputState extends State<DateInput> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
 
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: 330),
@@ -111,7 +110,6 @@ class _DateInputState extends State<DateInput> {
                 _setDate(context);
               },
               icon: Icons.edit_calendar_sharp,
-              theme: theme,
               label: widget.label,
 
             ),
@@ -125,7 +123,6 @@ class _DateInputState extends State<DateInput> {
                 _setTime(context);
               },
               icon: Icons.watch_later_sharp,
-              theme: theme,
               label: '',
             ),
           ),

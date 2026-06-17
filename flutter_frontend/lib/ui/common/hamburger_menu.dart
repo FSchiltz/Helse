@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/common/square_button.dart';
 
 class MenuButton {
   final String label;
@@ -21,7 +22,6 @@ class _MenuState extends State<HamburgerMenu> {
   final MenuController _controller = MenuController();
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
     return MenuAnchor(
       controller: _controller,
       childFocusNode: _buttonFocusNode,
@@ -40,11 +40,7 @@ class _MenuState extends State<HamburgerMenu> {
           .map(
             (e) => Container(
               margin: EdgeInsets.all(8),
-              child: ElevatedButton.icon(
-                label: Text(e.label),
-                onPressed: e.callback,
-                icon: Icon(e.icon, color: theme.primary),
-              ),
+              child: SquareButton(e.label, e.callback, icon: e.icon),
             ),
           )
           .toList(),

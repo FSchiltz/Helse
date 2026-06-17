@@ -256,5 +256,15 @@
     "min": "Minimum",
     "@min": {},
     "max": "Maximum",
-    "@max": {}
+    "@max": {},
+    "defaultdate": "Default Date range",
+    "@defaultdate": {},
+    "theme": "Theme",
+    "@theme": {},
+    "interface": "Interface",
+    "@interface": {},
+    "update": "Update",
+    "@update": {},
+    "identifier": "Identifier",
+    "@identifier": {}
 }

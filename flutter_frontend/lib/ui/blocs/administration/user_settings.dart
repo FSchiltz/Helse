@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/administration/users/users.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class UserSettings extends StatelessWidget {
   const UserSettings({super.key});
@@ -17,7 +18,7 @@ class UserSettings extends StatelessWidget {
             Translation.of(context).userSettings,
             style: Theme.of(context).textTheme.displaySmall,
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: UIConstants.formPad),
           const UsersView(),
         ],
       ),

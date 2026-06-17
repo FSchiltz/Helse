@@ -4,14 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/metric_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
+import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../logic/event.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../../common/date_input.dart';
+import '../../common/inputs/date_input.dart';
 import '../../common/notification.dart';
-import '../../common/square_dialog.dart';
-import '../../common/square_text_field.dart';
+import '../../common/layout/square_dialog.dart';
+import '../../common/inputs/square_text_field.dart';
 import '../../common/loader.dart';
 
 class MetricAdd extends StatefulWidget {
@@ -62,61 +64,44 @@ class _MetricAddState extends State<MetricAdd> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
     var locale = Translation.of(context);
     return SquareDialog(
       title: Text(locale.addItem(widget.type.name)),
       actions: [
-        Container(
-          constraints: const BoxConstraints(maxWidth: 200),
-          child: _status == SubmissionStatus.inProgress
-              ? const HelseLoader()
-              : ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(50),
-                    shape: const ContinuousRectangleBorder(),
-                  ),
-                  key: const Key('loginForm_continue_raisedButton'),
-                  onPressed: () => _submit(locale),
-                  child: Text(locale.submit),
-                ),
-        ),
+        _status == SubmissionStatus.inProgress
+            ? const HelseLoader()
+            : SquareButton(locale.submit, () => _submit(locale)),
       ],
       content: Container(
         constraints: const BoxConstraints(maxWidth: 500),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Form(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  ..._values.expand(
-                    (e) => [
-                      SquareTextField(
-                        theme: theme,
-                        icon: Icons.add_sharp,
-                        label: locale.value,
-                        controller: e,
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
-                  SquareTextField(
-                    theme: theme,
-                    icon: Icons.design_services_outlined,
-                    label: locale.tag,
-                    controller: _tag,
-                  ),
-                  const SizedBox(height: 20),
-                  DateInput(
-                    locale.date,
-                    _date,
-                    (value) => setState(() {
-                      _date = value ?? DateTime.now();
-                    }),
-                  ),
-                ],
-              ),
+        child: Form(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                ..._values.expand(
+                  (e) => [
+                    SquareTextField(
+                      icon: Icons.add_sharp,
+                      label: locale.value,
+                      controller: e,
+                    ),
+                    const SizedBox(height: UIConstants.formPad),
+                  ],
+                ),
+                SquareTextField(
+                  icon: Icons.design_services_outlined,
+                  label: locale.tag,
+                  controller: _tag,
+                ),
+                const SizedBox(height: UIConstants.formPad),
+                DateInput(
+                  locale.date,
+                  _date,
+                  (value) => setState(() {
+                    _date = value ?? DateTime.now();
+                  }),
+                ),
+              ],
             ),
           ),
         ),

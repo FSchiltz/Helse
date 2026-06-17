@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/pair.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/widget/metric_widget.dart';
-import 'package:helse/ui/common/common_card.dart';
+import 'package:helse/ui/common/layout/common_card.dart';
 
 class MetricWidgetsGrid extends StatelessWidget {
   const MetricWidgetsGrid({
@@ -14,7 +14,10 @@ class MetricWidgetsGrid extends StatelessWidget {
     this.person,
     this.extend,
     required this.tile,
+    this.fullWidth = false,
   });
+
+  final bool fullWidth;
   final DateTimeRange<DateTime> date;
   final int? person;
   final List<Pair<MetricType, OrderedItem>> cached;
@@ -25,10 +28,13 @@ class MetricWidgetsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final maxWidth = min(
+        final maxHeight = min(
           (constraints.maxWidth - 9 - 24) / 2,
           200,
         ).toDouble();
+        final maxWidth = fullWidth
+            ? (constraints.maxWidth)
+            : maxHeight;
         return Wrap(
           runSpacing: 6,
           spacing: 6,
@@ -37,7 +43,7 @@ class MetricWidgetsGrid extends StatelessWidget {
                 (type) => ConstrainedBox(
                   constraints: BoxConstraints(
                     maxWidth: maxWidth,
-                    maxHeight: maxWidth,
+                    maxHeight: maxHeight,
                   ),
                   child: CommonCard(
                     padding: false,

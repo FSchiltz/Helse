@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/ui/common/square_text_field.dart';
-import 'package:helse/ui/common/statefull_check.dart';
+import 'package:helse/l10n/app_localizations.dart';
+import 'package:helse/ui/common/inputs/custom_switch.dart';
+import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/inputs/square_text_field.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../logic/event.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../../common/date_input.dart';
+import '../../common/inputs/date_input.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
-import '../../common/square_dialog.dart';
+import '../../common/layout/square_dialog.dart';
 
 class EventAdd extends StatefulWidget {
   final void Function() callback;
@@ -32,9 +35,8 @@ class _EventAddState extends State<EventAdd> {
   final TextEditingController _tag = TextEditingController();
   bool _notify = false;
 
-  void _submit() async {
+  void _submit(AppLocalizations locale) async {
     var localContext = context;
-    var locale = Translation.of(context);
     try {
       setState(() {
         _status = SubmissionStatus.inProgress;
@@ -110,82 +112,64 @@ class _EventAddState extends State<EventAdd> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
     var locale = Translation.of(context);
     return SquareDialog(
       title: Text(locale.addItem(widget.type.name)),
       actions: [
-        SizedBox(
-          child: _status == SubmissionStatus.inProgress
-              ? const HelseLoader()
-              : ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(50),
-                    shape: const ContinuousRectangleBorder(),
-                  ),
-                  onPressed: _submit,
-                  child: Text(locale.submit),
-                ),
-        ),
+        _status == SubmissionStatus.inProgress
+            ? const HelseLoader()
+            : SquareButton(locale.submit, () => _submit(locale)),
       ],
-      content: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Form(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SquareTextField(
-                  theme: theme,
-                  icon: Icons.description_sharp,
-                  label: locale.description,
-                  controller: _description,
-                ),
-                const SizedBox(height: 20),
-                SquareTextField(
-                  theme: theme,
-                  icon: Icons.tag_sharp,
-                  label: locale.tag,
-                  controller: _tag,
-                ),
-                const SizedBox(height: 20),
+      content: Form(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SquareTextField(
+                icon: Icons.description_sharp,
+                label: locale.description,
+                controller: _description,
+              ),
+              const SizedBox(height: UIConstants.formPad),
+              SquareTextField(
+                icon: Icons.tag_sharp,
+                label: locale.tag,
+                controller: _tag,
+              ),
+              const SizedBox(height: UIConstants.formPad),
+              DateInput(
+                locale.start,
+                _start,
+                (date) => setState(() {
+                  _start = date ?? DateTime.now();
+                }),
+              ),
+              const SizedBox(height: UIConstants.formPad),
+              DateInput(
+                locale.end,
+                _stop,
+                (date) => setState(() {
+                  _stop = date ?? DateTime.now();
+                }),
+              ),
+              const SizedBox(height: UIConstants.formPad),
+              HelseSwitch(
+                "Notify: ",
+                _notify,
+                (value) => setState(() {
+                  _notify = value;
+                }),
+              ),
+
+              if (_notify) const SizedBox(height: UIConstants.formPad),
+              if (_notify)
                 DateInput(
-                  locale.start,
-                  _start,
+                  locale.notificationTime,
+                  _notification,
                   (date) => setState(() {
-                    _start = date ?? DateTime.now();
+                    _notification = date;
                   }),
                 ),
-                const SizedBox(height: 20),
-                DateInput(
-                  locale.end,
-                  _stop,
-                  (date) => setState(() {
-                    _stop = date ?? DateTime.now();
-                  }),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    const Text("Notify: "),
-                    StatefullCheck(
-                      _notify,
-                      (value) => setState(() {
-                        _notify = value;
-                      }),
-                    ),
-                  ],
-                ),
-                if (_notify) const SizedBox(height: 20),
-                if (_notify)
-                  DateInput(
-                    locale.notificationTime,
-                    _notification,
-                    (date) => setState(() {
-                      _notification = date;
-                    }),
-                  ),
-              ],
-            ),
+            ],
           ),
         ),
       ),

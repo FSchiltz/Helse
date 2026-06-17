@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/ui/common/square_dialog.dart';
-import 'package:helse/ui/common/square_text_field.dart';
-import 'package:helse/ui/common/statefull_check.dart';
-import 'package:helse/ui/common/type_input.dart';
+import 'package:helse/l10n/app_localizations.dart';
+import 'package:helse/ui/common/inputs/custom_switch.dart';
+import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/layout/square_dialog.dart';
+import 'package:helse/ui/common/inputs/square_text_field.dart';
+import 'package:helse/ui/common/inputs/values_input.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/notification.dart';
@@ -68,22 +71,22 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
 
   @override
   Widget build(BuildContext context) {
+    var locale = Translation.of(context);
     return SquareDialog(
       title: const Text("Add a new metric type"),
       actions: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size.fromHeight(50),
-            shape: const ContinuousRectangleBorder(),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SquareButton(
+            widget.edit == null ? locale.create : locale.update,
+            () => submit(locale),
           ),
-          onPressed: submit,
-          child: Text(widget.edit == null ? "Create" : "Update"),
         ),
       ],
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Column(children: [buildForm(context)]),
         ),
       ),
@@ -91,12 +94,10 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
   }
 
   Widget buildForm(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
     var locale = Translation.of(context);
     return Column(
       children: [
         SquareTextField(
-          theme: theme,
           icon: Icons.person_sharp,
           controller: controllerName,
           focusNode: focusNodeName,
@@ -104,30 +105,29 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
           validator: validateName,
           onEditingComplete: () => focusNodeDescription.requestFocus(),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: UIConstants.formPad),
         SquareTextField(
           icon: Icons.person_sharp,
-          theme: theme,
           controller: controllerDescription,
           focusNode: focusNodeDescription,
           label: locale.description,
           onEditingComplete: () => focusNodeUnit.requestFocus(),
         ),
-        const SizedBox(height: 10),
-        EnumInput(
+        const SizedBox(height: UIConstants.formPad),
+        ValuesInput(
           value: _unit,
           _units
-              .map((x) => DropDownItem(x.id, x.description ?? x.code))
+              .map((x) => DropdownItem(x.id, x.description ?? x.code))
               .toList(),
           (value) => setState(() {
             _unit = value ?? 0;
           }),
           label: locale.unit,
         ),
-        const SizedBox(height: 10),
-        EnumInput(
+        const SizedBox(height: UIConstants.formPad),
+        ValuesInput(
           value: _type,
-          MetricDataType.values.map((x) => DropDownItem(x, x.name)).toList(),
+          MetricDataType.values.map((x) => DropdownItem(x, x.name)).toList(),
           (value) => setState(() {
             _type = value;
           }),
@@ -137,73 +137,55 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
         if (_type == MetricDataType.numberrange)
           SquareTextField(
             icon: Icons.numbers_sharp,
-            theme: theme,
             controller: controllerValueCount,
             label: locale.value,
           ),
-        SizedBox(height: 10),
-        EnumInput(
+        SizedBox(height: UIConstants.formPad),
+        ValuesInput(
           value: _groupId,
-          _groups.map((x) => DropDownItem(x.id, x.name)).toList(),
+          _groups.map((x) => DropdownItem(x.id, x.name)).toList(),
           (value) => setState(() {
             _groupId = value ?? 0;
           }),
           label: locale.group,
         ),
-        const SizedBox(height: 10),
-        EnumInput(
+        const SizedBox(height: UIConstants.formPad),
+        ValuesInput(
           value: _metricSummary,
-          MetricSummary.values.map((x) => DropDownItem(x, x.name)).toList(),
+          MetricSummary.values.map((x) => DropdownItem(x, x.name)).toList(),
           (value) => setState(() {
             _metricSummary = value;
           }),
           label: locale.summary,
         ),
-        const SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              Text(locale.visible),
-              StatefullCheck(
-                _visible,
-                (value) => setState(() {
-                  _visible = value;
-                }),
-              ),
-            ],
-          ),
+        const SizedBox(height: UIConstants.formPad),
+        HelseSwitch(
+          locale.visible,
+          _visible,
+          (value) => setState(() {
+            _visible = value;
+          }),
         ),
-        const SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              const Text("Show on dashboard: "),
-              StatefullCheck(
-                _showDashboard,
-                (value) => setState(() {
-                  _showDashboard = value;
-                }),
-              ),
-            ],
-          ),
+        const SizedBox(height: UIConstants.formPad),
+        HelseSwitch(
+          "Show on dashboard: ",
+          _showDashboard,
+          (value) => setState(() {
+            _showDashboard = value;
+          }),
         ),
       ],
     );
   }
 
-  void submit() async {
+  void submit(AppLocalizations locale) async {
     var localContext = context;
     try {
       if (_formKey.currentState?.validate() ?? false) {
-        String text;
-
         final int? valueCount = (controllerValueCount.text.isNotEmpty)
             ? int.parse(controllerValueCount.text)
             : null;
         if (widget.edit == null) {
-          text = "Added";
           var metric = CreateMetricType(
             description: controllerDescription.text,
             name: controllerName.text,
@@ -218,7 +200,6 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
           );
           await Dependencies.services.metric.addMetricsType(metric);
         } else {
-          text = "Updated";
           var metric = UpdateMetricType(
             description: controllerDescription.text,
             name: controllerName.text,
@@ -241,10 +222,10 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
         if (localContext.mounted) {
           Navigator.of(localContext).pop();
         }
-        Notify.show("$text Successfully");
+        Notify.show(locale.saved);
       }
     } catch (ex) {
-      Notify.showError("Error: $ex");
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 

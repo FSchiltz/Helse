@@ -5,8 +5,9 @@ import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
 import 'package:helse/ui/common/loader.dart';
-import 'package:helse/ui/common/square_dialog.dart';
-import 'package:helse/ui/common/square_text_field.dart';
+import 'package:helse/ui/common/layout/square_dialog.dart';
+import 'package:helse/ui/common/inputs/square_text_field.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class MetricSearch extends StatefulWidget {
   final MetricType type;
@@ -46,7 +47,7 @@ class _MetricSearchState extends State<MetricSearch> {
                 ),
               ],
             ),
-            SizedBox(height: 12),
+            SizedBox(height: UIConstants.formPad),
             if (_working) HelseLoader(),
             Expanded(
               child: SingleChildScrollView(
@@ -97,7 +98,6 @@ class _MetricSearchState extends State<MetricSearch> {
       return [
         Expanded(
           child: SquareTextField(
-            theme: theme,
             icon: Icons.add_sharp,
             label: locale.value,
             controller: _value,
@@ -110,7 +110,6 @@ class _MetricSearchState extends State<MetricSearch> {
       return [
         Flexible(
           child: SquareTextField(
-            theme: theme,
             icon: Icons.arrow_downward_sharp,
             label: locale.min,
             controller: _min,
@@ -119,7 +118,6 @@ class _MetricSearchState extends State<MetricSearch> {
         ),
         Flexible(
           child: SquareTextField(
-            theme: theme,
             icon: Icons.arrow_upward_sharp,
             label: locale.max,
             controller: _max,

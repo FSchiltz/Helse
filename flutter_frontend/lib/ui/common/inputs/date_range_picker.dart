@@ -3,7 +3,7 @@ import 'package:helse/helpers/date.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
-import 'package:helse/ui/common/date_range_input.dart';
+import 'package:helse/ui/common/inputs/date_range_input.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 class DateRangePicker extends StatelessWidget {
