@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
+import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/localSettings/ordered_edit_item.dart';
 import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/inputs/statefull_check.dart';
+import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
@@ -117,107 +119,156 @@ class _MetricsSettingsState extends State<MetricsSettings> {
               Expanded(
                 child: ListView(
                   shrinkWrap: true,
-                  children: groups.expand<Widget>((group) {
-                    return [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                        child: HelseSwitch(group.name, group.visible, (value) {
-                          group.visible = value;
-                        }),
+                  children: groups.map((group) {
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: UIConstants.formPad,
                       ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: DataTable(
-                          dataRowMinHeight: 48,
-                          dataRowMaxHeight: 60,
-                          columns: [
-                            DataColumn(
-                              label: Expanded(child: Text(locale.name)),
-                            ),
-                            DataColumn(
-                              label: Expanded(child: Text(locale.visible)),
-                            ),
-                            DataColumn(
-                              label: Expanded(
-                                child: Text(locale.showOnDashboard),
+                      child: CommonCard(
+                        padding: false,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  left: BorderSide(
+                                    color: Dependencies.theme.stateColor(
+                                      group.id.toString(),
+                                      StateType.metricGroup,
+                                      context,
+                                    ),
+                                    width: 8,
+                                  ),
+                                ),
                               ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: UIConstants.formPad,
+                                vertical: UIConstants.formPad,
+                              ),
+                              child: HelseSwitch(group.name, group.visible, (
+                                value,
+                              ) {
+                                group.visible = value;
+                              }),
                             ),
-                            DataColumn(
-                              label: Expanded(child: Text(locale.widgetType)),
-                            ),
-                            DataColumn(
-                              label: Expanded(child: Text(locale.detailType)),
-                            ),
-                          ],
-                          rows: (grouped[group.id] ?? [])
-                              .map(
-                                (item) => DataRow(
-                                  cells: [
-                                    DataCell(
-                                      Text(
-                                        item.name,
-                                        style: theme.textTheme.titleLarge,
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  left: BorderSide(
+                                    color: Dependencies.theme.stateColor(
+                                      group.id.toString(),
+                                      StateType.metricGroup,
+                                      context,
+                                    ),
+                                    width: 8,
+                                  ),
+                                ),
+                              ),
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: DataTable(
+                                  columns: [
+                                    DataColumn(
+                                      label: Expanded(child: Text(locale.name)),
+                                    ),
+                                    DataColumn(
+                                      label: Expanded(
+                                        child: Text(locale.visible),
                                       ),
                                     ),
-                                    DataCell(
-                                      StatefullCheck(
-                                        item.visible,
-                                        (value) => item.visible = value,
+                                    DataColumn(
+                                      label: Expanded(
+                                        child: Text(locale.showOnDashboard),
                                       ),
                                     ),
-                                    DataCell(
-                                      StatefullCheck(
-                                        item.showOnDashboard,
-                                        (value) => item.showOnDashboard = value,
+                                    DataColumn(
+                                      label: Expanded(
+                                        child: Text(locale.widgetType),
                                       ),
                                     ),
-                                    DataCell(
-                                      SizedBox(
-                                        width: 160,
-                                        height: 50,
-                                        child: ValuesInput(
-                                          value: item.graph,
-                                          GraphKind.values
-                                              .where((e) => e.index > 0)
-                                              .map(
-                                                (x) => DropdownItem(x, x.name),
-                                              )
-                                              .toList(),
-                                          (value) =>
-                                              item.graph = value ?? item.graph,
-                                          label: locale.type,
-                                        ),
-                                      ),
-                                    ),
-                                    DataCell(
-                                      SizedBox(
-                                        width: 160,
-                                        height: 50,
-                                        child: ValuesInput(
-                                          value: item.detailGraph,
-                                          GraphKind.values
-                                              .where((e) => e.index > 0)
-                                              .map(
-                                                (x) => DropdownItem(x, x.name),
-                                              )
-                                              .toList(),
-                                          (value) => item.detailGraph =
-                                              value ?? item.detailGraph,
-                                          label: locale.type,
-                                        ),
+                                    DataColumn(
+                                      label: Expanded(
+                                        child: Text(locale.detailType),
                                       ),
                                     ),
                                   ],
+                                  rows: (grouped[group.id] ?? [])
+                                      .map(
+                                        (item) => DataRow(
+                                          cells: [
+                                            DataCell(
+                                              Text(
+                                                item.name,
+                                                style:
+                                                    theme.textTheme.titleLarge,
+                                              ),
+                                            ),
+                                            DataCell(
+                                              StatefullCheck(
+                                                item.visible,
+                                                (value) => item.visible = value,
+                                              ),
+                                            ),
+                                            DataCell(
+                                              StatefullCheck(
+                                                item.showOnDashboard,
+                                                (value) =>
+                                                    item.showOnDashboard =
+                                                        value,
+                                              ),
+                                            ),
+                                            DataCell(
+                                              SizedBox(
+                                                width: 160,
+                                                child: ValuesInput(
+                                                  value: item.graph,
+                                                  GraphKind.values
+                                                      .where((e) => e.index > 0)
+                                                      .map(
+                                                        (x) => DropdownItem(
+                                                          x,
+                                                          x.name,
+                                                        ),
+                                                      )
+                                                      .toList(),
+                                                  (value) => item.graph =
+                                                      value ?? item.graph,
+                                                  label: locale.type,
+                                                ),
+                                              ),
+                                            ),
+                                            DataCell(
+                                              SizedBox(
+                                                width: 160,
+                                                child: ValuesInput(
+                                                  value: item.detailGraph,
+                                                  GraphKind.values
+                                                      .where((e) => e.index > 0)
+                                                      .map(
+                                                        (x) => DropdownItem(
+                                                          x,
+                                                          x.name,
+                                                        ),
+                                                      )
+                                                      .toList(),
+                                                  (value) => item.detailGraph =
+                                                      value ?? item.detailGraph,
+                                                  label: locale.type,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                      .toList(),
                                 ),
-                              )
-                              .toList(),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: UIConstants.formPad),
-                    ];
+                    );
                   }).toList(),
                 ),
               ),
