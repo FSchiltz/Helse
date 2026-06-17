@@ -121,6 +121,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
         return Padding(
           padding: const EdgeInsets.all(32.0),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(

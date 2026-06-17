@@ -130,23 +130,21 @@ class _NavigationPageState extends State<NavigationPage> {
               )
               .toList(),
         ),
-        _body(content),
+        Expanded(child: _body(content)),
       ],
     );
   }
 
   Widget _body(Widget content) {
     if (widget.header != null) {
-      return Expanded(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            widget.header!,
-            Expanded(child: content),
-          ],
-        ),
+      return Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          widget.header!,
+          Expanded(child: content),
+        ],
       );
     }
-    return Expanded(child: content);
+    return content;
   }
 }
