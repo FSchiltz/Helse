@@ -359,7 +359,7 @@ public static class SettingsLogic
                 newList.Add(GetDefault(metric));
             }
         }
-        
+
         return newList;
     }
 }
