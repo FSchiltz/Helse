@@ -67,46 +67,40 @@ class _MetricAddState extends State<MetricAdd> {
     return SquareDialog(
       title: Text(locale.addItem(widget.type.name)),
       actions: [
-        Container(
-          constraints: const BoxConstraints(maxWidth: 200),
-          child: _status == SubmissionStatus.inProgress
-              ? const HelseLoader()
-              : SquareButton(locale.submit, () => _submit(locale)),
-        ),
+        _status == SubmissionStatus.inProgress
+            ? const HelseLoader()
+            : SquareButton(locale.submit, () => _submit(locale)),
       ],
       content: Container(
         constraints: const BoxConstraints(maxWidth: 500),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Form(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  ..._values.expand(
-                    (e) => [
-                      SquareTextField(
-                        icon: Icons.add_sharp,
-                        label: locale.value,
-                        controller: e,
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
-                  SquareTextField(
-                    icon: Icons.design_services_outlined,
-                    label: locale.tag,
-                    controller: _tag,
-                  ),
-                  const SizedBox(height: 20),
-                  DateInput(
-                    locale.date,
-                    _date,
-                    (value) => setState(() {
-                      _date = value ?? DateTime.now();
-                    }),
-                  ),
-                ],
-              ),
+        child: Form(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                ..._values.expand(
+                  (e) => [
+                    SquareTextField(
+                      icon: Icons.add_sharp,
+                      label: locale.value,
+                      controller: e,
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+                SquareTextField(
+                  icon: Icons.design_services_outlined,
+                  label: locale.tag,
+                  controller: _tag,
+                ),
+                const SizedBox(height: 20),
+                DateInput(
+                  locale.date,
+                  _date,
+                  (value) => setState(() {
+                    _date = value ?? DateTime.now();
+                  }),
+                ),
+              ],
             ),
           ),
         ),

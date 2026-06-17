@@ -51,11 +51,16 @@ class _SignupState extends State<UserAdd> {
     var locale = Translation.of(context);
     return SquareDialog(
       title: const Text("Add a new user"),
-      actions: [SquareButton(locale.create, () => submit(locale))],
+      actions: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SquareButton(locale.create, () => submit(locale)),
+        ),
+      ],
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Column(
             children: [
               UserRightInput(

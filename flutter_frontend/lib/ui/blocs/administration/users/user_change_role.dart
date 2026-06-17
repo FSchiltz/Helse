@@ -42,7 +42,6 @@ class _ChangeRoleState extends State<ChangeRole> {
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
             children: [
               UserRightInput(

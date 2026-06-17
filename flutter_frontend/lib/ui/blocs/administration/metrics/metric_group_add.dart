@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
@@ -49,12 +50,14 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
     return SquareDialog(
       title: const Text("Add a new metric type"),
       actions: [
-        SquareButton(widget.edit == null ? locale.create : locale.edit, submit),
+        SquareButton(
+          widget.edit == null ? locale.create : locale.edit,
+          () => submit(locale),
+        ),
       ],
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
             children: [
               Column(
@@ -123,7 +126,7 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
     return null;
   }
 
-  void submit() async {
+  void submit(AppLocalizations locale) async {
     var localContext = context;
     try {
       if (_formKey.currentState?.validate() ?? false) {
@@ -134,13 +137,10 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
           showTitle: _visible,
           showOnDashboard: _showDashboard,
         );
-        String text;
 
         if (widget.edit == null) {
-          text = "Added";
           await Dependencies.services.metric.addMetricsGroup(metric);
         } else {
-          text = "Updated";
           await Dependencies.services.metric.updateMetricsGroup(metric);
         }
 
@@ -150,10 +150,10 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
         if (localContext.mounted) {
           Navigator.of(localContext).pop();
         }
-        Notify.show("$text Successfully");
+        Notify.show(locale.saved);
       }
     } catch (ex) {
-      Notify.showError("Error: $ex");
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 

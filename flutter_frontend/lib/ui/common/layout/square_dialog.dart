@@ -14,9 +14,13 @@ class SquareDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
     return AlertDialog(
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(0.0))),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(0.0)),
+        side: BorderSide(color: theme.onSurface, width: 1),
+      ),
       scrollable: true,
       content: content,
       title: title,

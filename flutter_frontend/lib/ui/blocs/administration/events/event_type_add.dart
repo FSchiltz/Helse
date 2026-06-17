@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
+import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 
@@ -37,15 +39,18 @@ class _EventTypeAddState extends State<EventTypeAdd> {
 
   @override
   Widget build(BuildContext context) {
+    var locale = Translation.of(context);
     return SquareDialog(
       title: const Text("Add a new Event type"),
       actions: [
-        SquareButton(widget.edit == null ? "Create" : "Update", submit),
+        SquareButton(
+          widget.edit == null ? locale.create : locale.update,
+          () => submit(locale),
+        ),
       ],
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
             children: [
               EventAddForm(
@@ -63,7 +68,7 @@ class _EventTypeAddState extends State<EventTypeAdd> {
     );
   }
 
-  void submit() async {
+  void submit(AppLocalizations locale) async {
     var localContext = context;
     try {
       if (_formKey.currentState?.validate() ?? false) {
@@ -75,13 +80,10 @@ class _EventTypeAddState extends State<EventTypeAdd> {
           visible: _visible,
           userEditable: true,
         );
-        String text;
 
         if (widget.edit == null) {
-          text = "Added";
           await Dependencies.services.event.addEventsType(event);
         } else {
-          text = "Updated";
           await Dependencies.services.event.updateEventsType(event);
         }
 
@@ -92,10 +94,10 @@ class _EventTypeAddState extends State<EventTypeAdd> {
           Navigator.of(localContext).pop();
         }
 
-        Notify.show("$text Successfully");
+        Notify.show(locale.saved);
       }
     } catch (ex) {
-      Notify.showError("Error: $ex");
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 

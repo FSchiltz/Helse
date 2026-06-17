@@ -46,6 +46,7 @@ class SquareTextField extends StatelessWidget {
         prefixIconColor: theme.primary,
         suffixIcon: suffixIcon,
         filled: true,
+        isDense: true,
         fillColor: theme.surface,
         border: SquareOutlineInputBorder(theme.primary),
       ),

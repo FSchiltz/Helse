@@ -128,73 +128,70 @@ class _PatientAddState extends State<PatientAdd> {
       ],
       content: Container(
         constraints: const BoxConstraints(maxWidth: 500),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Form(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Text(
-                    locale.addPatients,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 10),
-                  Center(
-                    child: Column(
-                      children: [
-                        GestureDetector(
-                          onTap: _selectPicture,
-                          child: Stack(
-                            children: [
-                              Container(
-                                width: 80,
-                                height: 80,
-                                color: Theme.of(context).colorScheme.surface,
-                                child: _pictureData != null
-                                    ? Image.memory(
-                                        _pictureData!,
-                                        fit: BoxFit.cover,
-                                      )
-                                    : Icon(
-                                        Icons.image_sharp,
-                                        size: 40,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurface,
-                                      ),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: CircleAvatar(
-                                  radius: 12,
-                                  backgroundColor: Theme.of(
+        child: Form(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Text(
+                  locale.addPatients,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 10),
+                Center(
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: _selectPicture,
+                        child: Stack(
+                          children: [
+                            Container(
+                              width: 80,
+                              height: 80,
+                              color: Theme.of(context).colorScheme.surface,
+                              child: _pictureData != null
+                                  ? Image.memory(
+                                      _pictureData!,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Icon(
+                                      Icons.image_sharp,
+                                      size: 40,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
+                                    ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: CircleAvatar(
+                                radius: 12,
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.primary,
+                                child: Icon(
+                                  Icons.add_sharp,
+                                  size: 18,
+                                  color: Theme.of(
                                     context,
-                                  ).colorScheme.primary,
-                                  child: Icon(
-                                    Icons.add_sharp,
-                                    size: 18,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onPrimary,
-                                  ),
+                                  ).colorScheme.onPrimary,
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
                   ),
-                  UserForm(
-                    [],
-                    controllerName: _controllerName,
-                    controllerSurname: _controllerSurname,
-                    controllerIdentifier: _controllerNiss,
-                  ),
-                ],
-              ),
+                ),
+                UserForm(
+                  [],
+                  controllerName: _controllerName,
+                  controllerSurname: _controllerSurname,
+                  controllerIdentifier: _controllerNiss,
+                ),
+              ],
             ),
           ),
         ),

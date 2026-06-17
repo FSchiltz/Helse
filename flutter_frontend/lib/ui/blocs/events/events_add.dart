@@ -115,68 +115,63 @@ class _EventAddState extends State<EventAdd> {
     return SquareDialog(
       title: Text(locale.addItem(widget.type.name)),
       actions: [
-        SizedBox(
-          child: _status == SubmissionStatus.inProgress
-              ? const HelseLoader()
-              : SquareButton(locale.submit, () => _submit(locale)),
-        ),
+        _status == SubmissionStatus.inProgress
+            ? const HelseLoader()
+            : SquareButton(locale.submit, () => _submit(locale)),
       ],
-      content: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Form(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SquareTextField(
-                  icon: Icons.description_sharp,
-                  label: locale.description,
-                  controller: _description,
-                ),
-                const SizedBox(height: 20),
-                SquareTextField(
-                  icon: Icons.tag_sharp,
-                  label: locale.tag,
-                  controller: _tag,
-                ),
-                const SizedBox(height: 20),
-                DateInput(
-                  locale.start,
-                  _start,
-                  (date) => setState(() {
-                    _start = date ?? DateTime.now();
-                  }),
-                ),
-                const SizedBox(height: 20),
-                DateInput(
-                  locale.end,
-                  _stop,
-                  (date) => setState(() {
-                    _stop = date ?? DateTime.now();
-                  }),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    const Text("Notify: "),
-                    StatefullCheck(
-                      _notify,
-                      (value) => setState(() {
-                        _notify = value;
-                      }),
-                    ),
-                  ],
-                ),
-                if (_notify) const SizedBox(height: 20),
-                if (_notify)
-                  DateInput(
-                    locale.notificationTime,
-                    _notification,
-                    (date) => setState(() {
-                      _notification = date;
+      content: Form(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SquareTextField(
+                icon: Icons.description_sharp,
+                label: locale.description,
+                controller: _description,
+              ),
+              const SizedBox(height: 20),
+              SquareTextField(
+                icon: Icons.tag_sharp,
+                label: locale.tag,
+                controller: _tag,
+              ),
+              const SizedBox(height: 20),
+              DateInput(
+                locale.start,
+                _start,
+                (date) => setState(() {
+                  _start = date ?? DateTime.now();
+                }),
+              ),
+              const SizedBox(height: 20),
+              DateInput(
+                locale.end,
+                _stop,
+                (date) => setState(() {
+                  _stop = date ?? DateTime.now();
+                }),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  const Text("Notify: "),
+                  StatefullCheck(
+                    _notify,
+                    (value) => setState(() {
+                      _notify = value;
                     }),
                   ),
-              ],
-            ),
+                ],
+              ),
+              if (_notify) const SizedBox(height: 20),
+              if (_notify)
+                DateInput(
+                  locale.notificationTime,
+                  _notification,
+                  (date) => setState(() {
+                    _notification = date;
+                  }),
+                ),
+            ],
           ),
         ),
       ),
