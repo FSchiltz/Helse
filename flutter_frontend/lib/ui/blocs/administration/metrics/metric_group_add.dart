@@ -6,6 +6,7 @@ import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
 import 'package:helse/ui/common/inputs/statefull_check.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/notification.dart';
@@ -71,7 +72,7 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
                     onEditingComplete: () =>
                         focusNodeDescription.requestFocus(),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: UIConstants.formPad),
                   SquareTextField(
                     icon: Icons.person_sharp,
                     controller: controllerDescription,
@@ -79,35 +80,29 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
                     label: locale.description,
                   ),
 
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        const Text("Show title"),
-                        StatefullCheck(
-                          _visible,
-                          (bool value) => setState(() {
-                            _visible = value;
-                          }),
-                        ),
-                      ],
-                    ),
+                  const SizedBox(height: UIConstants.formPad),
+                  Row(
+                    children: [
+                      const Text("Show title"),
+                      StatefullCheck(
+                        _visible,
+                        (bool value) => setState(() {
+                          _visible = value;
+                        }),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Text(locale.visible),
-                        StatefullCheck(
-                          _showDashboard,
-                          (bool value) => setState(() {
-                            _showDashboard = value;
-                          }),
-                        ),
-                      ],
-                    ),
+                  const SizedBox(height: UIConstants.formPad),
+                  Row(
+                    children: [
+                      Text(locale.visible),
+                      StatefullCheck(
+                        _showDashboard,
+                        (bool value) => setState(() {
+                          _showDashboard = value;
+                        }),
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../common/inputs/square_text_field.dart';
 import '../../../common/inputs/statefull_check.dart';
@@ -34,21 +35,19 @@ class EventAddForm extends StatelessWidget {
           validator: validateName,
           onEditingComplete: () => focusNodeDescription.requestFocus(),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: UIConstants.formPad),
         SquareTextField(
           controller: controllerDescription,
           focusNode: focusNodeDescription,
           label: locale.description,
           icon: Icons.person_sharp,
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              const Text("Visible: "),
-              StatefullCheck(visible, visibleCallback),
-            ],
-          ),
+        const SizedBox(height: UIConstants.formPad),
+        Row(
+          children: [
+            const Text("Visible: "),
+            StatefullCheck(visible, visibleCallback),
+          ],
         ),
       ],
     );

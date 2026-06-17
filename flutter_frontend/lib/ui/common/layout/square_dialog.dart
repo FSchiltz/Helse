@@ -25,6 +25,7 @@ class SquareDialog extends StatelessWidget {
       content: content,
       title: title,
       actions: actions,
+      backgroundColor: theme.surfaceContainerLow,
     );
   }
 }

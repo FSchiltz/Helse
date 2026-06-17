@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/common/square_outline_input_border.dart';
 
 class SquareTextField extends StatelessWidget {
   const SquareTextField({
@@ -42,13 +41,24 @@ class SquareTextField extends StatelessWidget {
       onTap: onTap,
       decoration: InputDecoration(
         labelText: label,
+        alignLabelWithHint: false,
+        maintainLabelSize: true,
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        floatingLabelAlignment: FloatingLabelAlignment.start,
+        fillColor: theme.surfaceContainerLow,
         prefixIcon: Icon(icon),
         prefixIconColor: theme.primary,
         suffixIcon: suffixIcon,
         filled: true,
-        isDense: true,
-        fillColor: theme.surface,
-        border: SquareOutlineInputBorder(theme.primary),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: theme.outlineVariant),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: theme.outline),
+        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.zero),
       ),
     );
   }

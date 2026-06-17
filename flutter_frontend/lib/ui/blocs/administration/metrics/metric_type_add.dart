@@ -7,6 +7,7 @@ import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
 import 'package:helse/ui/common/inputs/statefull_check.dart';
 import 'package:helse/ui/common/inputs/values_input.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/notification.dart';
@@ -104,7 +105,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
           validator: validateName,
           onEditingComplete: () => focusNodeDescription.requestFocus(),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: UIConstants.formPad),
         SquareTextField(
           icon: Icons.person_sharp,
           controller: controllerDescription,
@@ -112,7 +113,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
           label: locale.description,
           onEditingComplete: () => focusNodeUnit.requestFocus(),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: UIConstants.formPad),
         ValuesInput(
           value: _unit,
           _units
@@ -123,7 +124,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
           }),
           label: locale.unit,
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: UIConstants.formPad),
         ValuesInput(
           value: _type,
           MetricDataType.values.map((x) => DropdownItem(x, x.name)).toList(),
@@ -139,7 +140,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
             controller: controllerValueCount,
             label: locale.value,
           ),
-        SizedBox(height: 10),
+        SizedBox(height: UIConstants.formPad),
         ValuesInput(
           value: _groupId,
           _groups.map((x) => DropdownItem(x.id, x.name)).toList(),
@@ -148,7 +149,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
           }),
           label: locale.group,
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: UIConstants.formPad),
         ValuesInput(
           value: _metricSummary,
           MetricSummary.values.map((x) => DropdownItem(x, x.name)).toList(),
@@ -157,35 +158,29 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
           }),
           label: locale.summary,
         ),
-        const SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              Text(locale.visible),
-              StatefullCheck(
-                _visible,
-                (value) => setState(() {
-                  _visible = value;
-                }),
-              ),
-            ],
-          ),
+        const SizedBox(height: UIConstants.formPad),
+        Row(
+          children: [
+            Text(locale.visible),
+            StatefullCheck(
+              _visible,
+              (value) => setState(() {
+                _visible = value;
+              }),
+            ),
+          ],
         ),
-        const SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              const Text("Show on dashboard: "),
-              StatefullCheck(
-                _showDashboard,
-                (value) => setState(() {
-                  _showDashboard = value;
-                }),
-              ),
-            ],
-          ),
+        const SizedBox(height: UIConstants.formPad),
+        Row(
+          children: [
+            const Text("Show on dashboard: "),
+            StatefullCheck(
+              _showDashboard,
+              (value) => setState(() {
+                _showDashboard = value;
+              }),
+            ),
+          ],
         ),
       ],
     );

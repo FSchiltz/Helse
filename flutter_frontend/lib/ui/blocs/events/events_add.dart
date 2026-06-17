@@ -4,6 +4,7 @@ import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
 import 'package:helse/ui/common/inputs/statefull_check.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../logic/event.dart';
@@ -128,13 +129,13 @@ class _EventAddState extends State<EventAdd> {
                 label: locale.description,
                 controller: _description,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: UIConstants.formPad),
               SquareTextField(
                 icon: Icons.tag_sharp,
                 label: locale.tag,
                 controller: _tag,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: UIConstants.formPad),
               DateInput(
                 locale.start,
                 _start,
@@ -142,7 +143,7 @@ class _EventAddState extends State<EventAdd> {
                   _start = date ?? DateTime.now();
                 }),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: UIConstants.formPad),
               DateInput(
                 locale.end,
                 _stop,
@@ -150,7 +151,7 @@ class _EventAddState extends State<EventAdd> {
                   _stop = date ?? DateTime.now();
                 }),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: UIConstants.formPad),
               Row(
                 children: [
                   const Text("Notify: "),
@@ -162,7 +163,7 @@ class _EventAddState extends State<EventAdd> {
                   ),
                 ],
               ),
-              if (_notify) const SizedBox(height: 20),
+              if (_notify) const SizedBox(height: UIConstants.formPad),
               if (_notify)
                 DateInput(
                   locale.notificationTime,

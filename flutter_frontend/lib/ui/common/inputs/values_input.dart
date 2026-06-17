@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:helse/ui/common/square_outline_input_border.dart';
 
 class DropdownItem<T> {
   final T value;
@@ -45,9 +44,18 @@ class ValuesInput<T> extends StatelessWidget {
         prefixIconColor: theme.primary,
         isDense: true,
         filled: true,
-        fillColor: theme.surface,
-        border: SquareOutlineInputBorder(theme.primary),
+        fillColor: theme.surfaceContainerHigh,
         contentPadding: null,
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: theme.outlineVariant),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: theme.outline),
+        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.zero),
       ),
     );
   }

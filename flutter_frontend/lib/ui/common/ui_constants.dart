@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 class UIConstants {
-  static int displaySmall = 400;
-  static int displaymedium = 800;
-  static int displayLarge = 1080;
+  static const int displaySmall = 400;
+  static const int displaymedium = 800;
+  static const int displayLarge = 1080;
+
+  static const double formPad = 14;
 }
 
 class UIHelpers {

@@ -5,6 +5,7 @@ import 'package:helse/helpers/metric_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../logic/event.dart';
@@ -84,7 +85,7 @@ class _MetricAddState extends State<MetricAdd> {
                       label: locale.value,
                       controller: e,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: UIConstants.formPad),
                   ],
                 ),
                 SquareTextField(
@@ -92,7 +93,7 @@ class _MetricAddState extends State<MetricAdd> {
                   label: locale.tag,
                   controller: _tag,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: UIConstants.formPad),
                 DateInput(
                   locale.date,
                   _date,
