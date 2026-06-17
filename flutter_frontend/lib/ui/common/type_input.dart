@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:helse/ui/common/square_outline_input_border.dart';
 
-class DropDownItem<T> {
+class DropdownItem<T> {
   final T value;
   final String description;
 
-  const DropDownItem(this.value, this.description);
+  const DropdownItem(this.value, this.description);
 }
 
 class EnumInput<T> extends StatelessWidget {
-  final List<DropDownItem<T>> types;
+  final List<DropdownItem<T>> types;
   final void Function(T?) callback;
   final String? label;
   final T? value;

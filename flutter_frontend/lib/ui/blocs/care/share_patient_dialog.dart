@@ -63,9 +63,9 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
   }
 
   List<Widget> _shareForm(List<Person> caregivers, Person patient) {
-    var selects = [DropDownItem(0, "Select")];
+    var selects = [DropdownItem(0, "Select")];
 
-    selects.addAll(caregivers.map((x) => DropDownItem(x.id, x.userName ?? '')));
+    selects.addAll(caregivers.map((x) => DropdownItem(x.id, x.userName ?? '')));
 
     return [
       EnumInput(

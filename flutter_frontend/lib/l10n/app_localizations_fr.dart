@@ -316,4 +316,13 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get max => 'Maximum';
+
+  @override
+  String get defaultdate => 'Default Date range';
+
+  @override
+  String get theme => 'Theme';
+
+  @override
+  String get interface => 'Interface';
 }

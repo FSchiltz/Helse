@@ -117,7 +117,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
         EnumInput(
           value: _unit,
           _units
-              .map((x) => DropDownItem(x.id, x.description ?? x.code))
+              .map((x) => DropdownItem(x.id, x.description ?? x.code))
               .toList(),
           (value) => setState(() {
             _unit = value ?? 0;
@@ -127,7 +127,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
         const SizedBox(height: 10),
         EnumInput(
           value: _type,
-          MetricDataType.values.map((x) => DropDownItem(x, x.name)).toList(),
+          MetricDataType.values.map((x) => DropdownItem(x, x.name)).toList(),
           (value) => setState(() {
             _type = value;
           }),
@@ -144,7 +144,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
         SizedBox(height: 10),
         EnumInput(
           value: _groupId,
-          _groups.map((x) => DropDownItem(x.id, x.name)).toList(),
+          _groups.map((x) => DropdownItem(x.id, x.name)).toList(),
           (value) => setState(() {
             _groupId = value ?? 0;
           }),
@@ -153,7 +153,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
         const SizedBox(height: 10),
         EnumInput(
           value: _metricSummary,
-          MetricSummary.values.map((x) => DropDownItem(x, x.name)).toList(),
+          MetricSummary.values.map((x) => DropdownItem(x, x.name)).toList(),
           (value) => setState(() {
             _metricSummary = value;
           }),

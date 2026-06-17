@@ -44,6 +44,8 @@ class _NavigationPageState extends State<NavigationPage> {
       drawer: (screenWidth < UIConstants.displaymedium && aspectRatio > 1)
           ? Drawer(
               child: NavigationRail(
+                extended: true,
+                elevation: 1,
                 backgroundColor: theme.surfaceContainerHigh,
                 selectedIndex: _selectedIndex,
                 onDestinationSelected: (index) {
@@ -51,7 +53,7 @@ class _NavigationPageState extends State<NavigationPage> {
                     _selectedIndex = index;
                   });
                 },
-                labelType: NavigationRailLabelType.all,
+                labelType: NavigationRailLabelType.none,
                 destinations: widget.menu
                     .map(
                       (e) => NavigationRailDestination(

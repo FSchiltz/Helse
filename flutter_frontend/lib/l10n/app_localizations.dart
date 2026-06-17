@@ -679,6 +679,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Maximum'**
   String get max;
+
+  /// No description provided for @defaultdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Date range'**
+  String get defaultdate;
+
+  /// No description provided for @theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get theme;
+
+  /// No description provided for @interface.
+  ///
+  /// In en, this message translates to:
+  /// **'Interface'**
+  String get interface;
 }
 
 class _AppLocalizationsDelegate

@@ -197,7 +197,7 @@ class _MetricsSettingsState extends State<MetricsSettings> {
                                           GraphKind.values
                                               .where((e) => e.index > 0)
                                               .map(
-                                                (x) => DropDownItem(x, x.name),
+                                                (x) => DropdownItem(x, x.name),
                                               )
                                               .toList(),
                                           (value) =>
@@ -215,7 +215,7 @@ class _MetricsSettingsState extends State<MetricsSettings> {
                                           GraphKind.values
                                               .where((e) => e.index > 0)
                                               .map(
-                                                (x) => DropDownItem(x, x.name),
+                                                (x) => DropdownItem(x, x.name),
                                               )
                                               .toList(),
                                           (value) => item.detailGraph =
