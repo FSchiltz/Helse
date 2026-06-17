@@ -10,9 +10,15 @@ class SquareButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        minimumSize: const Size.fromHeight(50),
-        shape: const ContinuousRectangleBorder(),
+        minimumSize: const Size.fromHeight(45),
+        shape: ContinuousRectangleBorder(
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.secondary,
+            width: 2,
+          ),
+        ),
       ),
+
       onPressed: onPressed,
       child: icon == null
           ? Text(label, style: Theme.of(context).textTheme.titleMedium)

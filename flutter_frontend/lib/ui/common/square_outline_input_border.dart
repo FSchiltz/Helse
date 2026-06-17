@@ -7,3 +7,4 @@ class SquareOutlineInputBorder extends OutlineInputBorder {
           borderSide: BorderSide(color: color),
         );
 }
+
