@@ -6,6 +6,7 @@ import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/inputs/values_input.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../logic/event.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -69,7 +70,7 @@ class _FileImportState extends State<FileImport> {
               }),
               label: 'Type',
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: UIConstants.formPad),
             FileInput(
               (value) {
                 setState(() {

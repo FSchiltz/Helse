@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../common/inputs/square_text_field.dart';
-import '../../../common/inputs/statefull_check.dart';
 
 class EventAddForm extends StatelessWidget {
   final TextEditingController controllerDescription;
@@ -43,12 +43,7 @@ class EventAddForm extends StatelessWidget {
           icon: Icons.person_sharp,
         ),
         const SizedBox(height: UIConstants.formPad),
-        Row(
-          children: [
-            const Text("Visible: "),
-            StatefullCheck(visible, visibleCallback),
-          ],
-        ),
+        HelseSwitch("Visible: ", visible, visibleCallback),
       ],
     );
   }

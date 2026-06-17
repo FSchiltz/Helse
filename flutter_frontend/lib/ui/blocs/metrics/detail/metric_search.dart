@@ -7,6 +7,7 @@ import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
 import 'package:helse/ui/common/loader.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class MetricSearch extends StatefulWidget {
   final MetricType type;
@@ -46,7 +47,7 @@ class _MetricSearchState extends State<MetricSearch> {
                 ),
               ],
             ),
-            SizedBox(height: 12),
+            SizedBox(height: UIConstants.formPad),
             if (_working) HelseLoader(),
             Expanded(
               child: SingleChildScrollView(

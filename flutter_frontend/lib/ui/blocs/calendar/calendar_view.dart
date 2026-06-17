@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/date.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarEvent {
@@ -94,7 +95,7 @@ class _CalendarViewState extends State<CalendarView> {
             rangeSelectionMode: RangeSelectionMode.enforced,
             onDaySelected: _onDaySelected,
           ),
-        SizedBox(height: 12),
+        SizedBox(height: UIConstants.formPad),
         Padding(
           padding: const EdgeInsets.all(12.0),
           child: Text(

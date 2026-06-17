@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
+import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
-import 'package:helse/ui/common/inputs/statefull_check.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../di/dependencies.dart';
@@ -152,17 +152,14 @@ class _EventAddState extends State<EventAdd> {
                 }),
               ),
               const SizedBox(height: UIConstants.formPad),
-              Row(
-                children: [
-                  const Text("Notify: "),
-                  StatefullCheck(
-                    _notify,
-                    (value) => setState(() {
-                      _notify = value;
-                    }),
-                  ),
-                ],
+              HelseSwitch(
+                "Notify: ",
+                _notify,
+                (value) => setState(() {
+                  _notify = value;
+                }),
               ),
+
               if (_notify) const SizedBox(height: UIConstants.formPad),
               if (_notify)
                 DateInput(

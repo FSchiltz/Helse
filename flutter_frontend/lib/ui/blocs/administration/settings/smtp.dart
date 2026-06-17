@@ -7,6 +7,7 @@ import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 import '../../../common/inputs/square_text_field.dart';
 
 class SmtpView extends StatelessWidget {
@@ -69,22 +70,14 @@ class _SmtpFormViewState extends State<SmtpFormView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('SMTP', style: Theme.of(context).textTheme.headlineMedium),
-          const SizedBox(height: 32),
-          Row(
-            children: [
-              Text(locale.enable),
-              CustomSwitch(
-                value: _enabled,
-                onChanged: (bool? value) {
-                  setState(() {
-                    _enabled = value!;
-                  });
-                },
-              ),
-            ],
-          ),
+          const SizedBox(height: UIConstants.headerPad),
+          HelseSwitch(locale.enable, _enabled, (bool? value) {
+            setState(() {
+              _enabled = value!;
+            });
+          }),
           if (_enabled) ..._fields(theme, locale),
-          const SizedBox(height: 20),
+          const SizedBox(height: UIConstants.formPad),
           SizedBox(
             width: 200,
             child: SquareButton(locale.save, () => submit(locale)),
@@ -96,21 +89,12 @@ class _SmtpFormViewState extends State<SmtpFormView> {
 
   List<Widget> _fields(ColorScheme theme, AppLocalizations locale) {
     return [
-      const SizedBox(height: 5),
-      Row(
-        children: [
-          const Text('Enable SSL'),
-          CustomSwitch(
-            value: _enableSsl,
-            onChanged: (bool? value) {
-              setState(() {
-                _enableSsl = value!;
-              });
-            },
-          ),
-        ],
-      ),
-      const SizedBox(height: 10),
+      HelseSwitch('Enable SSL', _enableSsl, (bool? value) {
+        setState(() {
+          _enableSsl = value!;
+        });
+      }),
+      const SizedBox(height: UIConstants.formPad),
       SizedBox(
         width: 400,
         child: SquareTextField(
@@ -125,7 +109,7 @@ class _SmtpFormViewState extends State<SmtpFormView> {
           },
         ),
       ),
-      const SizedBox(height: 10),
+      const SizedBox(height: UIConstants.formPad),
       Row(
         children: [
           SizedBox(
@@ -163,7 +147,7 @@ class _SmtpFormViewState extends State<SmtpFormView> {
           ),
         ],
       ),
-      const SizedBox(height: 10),
+      const SizedBox(height: UIConstants.formPad),
       SizedBox(
         width: 400,
         child: SquareTextField(
@@ -172,7 +156,7 @@ class _SmtpFormViewState extends State<SmtpFormView> {
           icon: Icons.person_sharp,
         ),
       ),
-      const SizedBox(height: 10),
+      const SizedBox(height: UIConstants.formPad),
       SizedBox(
         width: 400,
         child: SquareTextField(

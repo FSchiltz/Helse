@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../logic/event.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
 import '../../common/layout/square_dialog.dart';
-import '../../common/inputs/statefull_check.dart';
 import '../../common/inputs/values_input.dart';
 
 class SharePatientDialog extends StatefulWidget {
@@ -76,17 +77,13 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
         }),
         value: caregiver,
       ),
-      const SizedBox(height: 10),
-      Row(
-        children: [
-          const Text("With edit right: "),
-          StatefullCheck(
-            edit,
-            (value) => setState(() {
-              edit = value;
-            }),
-          ),
-        ],
+      const SizedBox(height: UIConstants.formPad),
+      HelseSwitch(
+        "With edit right: ",
+        edit,
+        (value) => setState(() {
+          edit = value;
+        }),
       ),
     ];
   }

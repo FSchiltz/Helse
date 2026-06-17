@@ -5,6 +5,7 @@ import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/inputs/custom_switch.dart';
@@ -77,22 +78,15 @@ class _OauthFormViewState extends State<OauthFormView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("Oauth", style: Theme.of(context).textTheme.headlineMedium),
-          const SizedBox(height: 32),
-          Row(
-            children: [
-              Text(locale.enable),
-              CustomSwitch(
-                value: _enabled,
-                onChanged: (bool? value) {
-                  setState(() {
-                    _enabled = value!;
-                  });
-                },
-              ),
-            ],
-          ),
+          const SizedBox(height: UIConstants.headerPad),
+          HelseSwitch(locale.enable, _enabled, (bool? value) {
+            setState(() {
+              _enabled = value!;
+            });
+          }),
+
           if (_enabled) ..._fields(theme),
-          const SizedBox(height: 20),
+          const SizedBox(height: UIConstants.formPad),
           SizedBox(
             width: 200,
             child: SquareButton(locale.save, () => submit(locale)),
@@ -136,70 +130,53 @@ class _OauthFormViewState extends State<OauthFormView> {
 
   List<Widget> _fields(ColorScheme theme) {
     return [
-      const SizedBox(height: 5),
       SquareTextField(
         controller: _controllerId,
         label: "Client id",
         icon: Icons.person_sharp,
       ),
-      const SizedBox(height: 10),
+      const SizedBox(height: UIConstants.formPad),
       SquareTextField(
         controller: _controllerName,
         label: "Name",
         icon: Icons.connect_without_contact,
       ),
-      const SizedBox(height: 10),
+      const SizedBox(height: UIConstants.formPad),
       SquareTextField(
         controller: _controllerSecret,
         label: "Client secret",
         icon: Icons.password_sharp,
       ),
-      const SizedBox(height: 10),
+      const SizedBox(height: UIConstants.formPad),
       SquareTextField(
         controller: _controllerAuth,
         label: "Auth url",
         icon: Icons.connect_without_contact_sharp,
       ),
-      const SizedBox(height: 10),
+      const SizedBox(height: UIConstants.formPad),
       SquareTextField(
         controller: _controllerToken,
         label: "Token url",
         icon: Icons.token_sharp,
       ),
-      const SizedBox(height: 10),
+      const SizedBox(height: UIConstants.formPad),
       SquareTextField(
         controller: _controllerClaims,
         label: "Claims url",
         icon: Icons.token_sharp,
       ),
-      const SizedBox(height: 5),
-      Row(
-        children: [
-          const Text("Auto register"),
-          CustomSwitch(
-            value: _autoregister,
-            onChanged: (bool? value) {
-              setState(() {
-                _autoregister = value!;
-              });
-            },
-          ),
-        ],
-      ),
-      const SizedBox(height: 5),
-      Row(
-        children: [
-          const Text("Auto login"),
-          CustomSwitch(
-            value: _autoLogin,
-            onChanged: (bool? value) {
-              setState(() {
-                _autoLogin = value!;
-              });
-            },
-          ),
-        ],
-      ),
+      const SizedBox(height: UIConstants.formPad),
+      HelseSwitch("Auto register", _autoregister, (bool? value) {
+        setState(() {
+          _autoregister = value!;
+        });
+      }),
+      const SizedBox(height: UIConstants.formPad),
+      HelseSwitch("Auto login", _autoLogin, (bool? value) {
+        setState(() {
+          _autoLogin = value!;
+        });
+      }),
     ];
   }
 }

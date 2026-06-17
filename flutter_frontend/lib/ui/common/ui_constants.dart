@@ -6,6 +6,7 @@ class UIConstants {
   static const int displayLarge = 1080;
 
   static const double formPad = 14;
+  static const double headerPad = 24;
 }
 
 class UIHelpers {

@@ -14,6 +14,7 @@ import 'package:helse/ui/blocs/events/events_timeline_graph.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/inputs/date_range_picker.dart';
 import 'package:helse/ui/common/navigator_chart.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class EventsGraph extends StatefulWidget {
   final DateTimeRange range;
@@ -93,9 +94,9 @@ class _EventsGraphState extends State<EventsGraph> {
             ),
           ),
         ),
-        SizedBox(height: 12),
+        SizedBox(height: UIConstants.formPad),
         EventInformation(data: _getDurations(filteredEvents)),
-        SizedBox(height: 12),
+        SizedBox(height: UIConstants.formPad),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: (filteredEvents.length < 200)

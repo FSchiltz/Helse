@@ -5,11 +5,13 @@ import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/localSettings/ordered_edit_item.dart';
+import 'package:helse/ui/common/inputs/custom_switch.dart';
+import 'package:helse/ui/common/inputs/statefull_check.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
-import 'package:helse/ui/common/inputs/statefull_check.dart';
 import 'package:helse/ui/common/inputs/values_input.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class MetricsSettings extends StatefulWidget {
   final bool isPatient;
@@ -111,7 +113,7 @@ class _MetricsSettingsState extends State<MetricsSettings> {
                   }),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: UIConstants.formPad),
               Expanded(
                 child: ListView(
                   shrinkWrap: true,
@@ -122,19 +124,9 @@ class _MetricsSettingsState extends State<MetricsSettings> {
                           horizontal: 16,
                           vertical: 12,
                         ),
-                        child: Row(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                group.name,
-                                style: theme.textTheme.titleLarge,
-                              ),
-                            ),
-                            StatefullCheck(group.visible, (value) {
-                              group.visible = value;
-                            }),
-                          ],
-                        ),
+                        child: HelseSwitch(group.name, group.visible, (value) {
+                          group.visible = value;
+                        }),
                       ),
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
@@ -224,7 +216,7 @@ class _MetricsSettingsState extends State<MetricsSettings> {
                               .toList(),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: UIConstants.formPad),
                     ];
                   }).toList(),
                 ),

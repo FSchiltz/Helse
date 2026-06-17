@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
+import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
-import 'package:helse/ui/common/inputs/statefull_check.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -81,28 +81,21 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
                   ),
 
                   const SizedBox(height: UIConstants.formPad),
-                  Row(
-                    children: [
-                      const Text("Show title"),
-                      StatefullCheck(
-                        _visible,
-                        (bool value) => setState(() {
-                          _visible = value;
-                        }),
-                      ),
-                    ],
+                  HelseSwitch(
+                    "Show title",
+                    _visible,
+                    (bool value) => setState(() {
+                      _visible = value;
+                    }),
                   ),
+
                   const SizedBox(height: UIConstants.formPad),
-                  Row(
-                    children: [
-                      Text(locale.visible),
-                      StatefullCheck(
-                        _showDashboard,
-                        (bool value) => setState(() {
-                          _showDashboard = value;
-                        }),
-                      ),
-                    ],
+                  HelseSwitch(
+                    locale.visible,
+                    _showDashboard,
+                    (bool value) => setState(() {
+                      _showDashboard = value;
+                    }),
                   ),
                 ],
               ),

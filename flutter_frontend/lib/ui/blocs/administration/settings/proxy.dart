@@ -6,6 +6,7 @@ import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/inputs/square_text_field.dart';
@@ -71,22 +72,15 @@ class _ProxyFormViewState extends State<ProxyFormView> {
             "Only enable if you are behind a trusted proxy",
             style: Theme.of(context).textTheme.bodyLarge,
           ),
-          const SizedBox(height: 32),
-          Row(
-            children: [
-              Text(locale.enable),
-              CustomSwitch(
-                value: _proxyAuth,
-                onChanged: (bool? value) {
-                  setState(() {
-                    _proxyAuth = value!;
-                  });
-                },
-              ),
-            ],
-          ),
+          const SizedBox(height: UIConstants.headerPad),
+          HelseSwitch(locale.enable, _proxyAuth, (bool? value) {
+            setState(() {
+              _proxyAuth = value!;
+            });
+          }),
+
           if (_proxyAuth) ..._fields(theme),
-          const SizedBox(height: 20),
+          const SizedBox(height: UIConstants.formPad),
           SizedBox(
             width: 200,
             child: SquareButton(locale.save, () => submit(locale)),
@@ -119,21 +113,13 @@ class _ProxyFormViewState extends State<ProxyFormView> {
 
   List<Widget> _fields(ColorScheme theme) {
     return [
-      const SizedBox(height: 10),
-      Row(
-        children: [
-          const Text("Auto register"),
-          CustomSwitch(
-            value: _proxyAutoRegister,
-            onChanged: (bool? value) {
-              setState(() {
-                _proxyAutoRegister = value!;
-              });
-            },
-          ),
-        ],
-      ),
-      const SizedBox(height: 20),
+      const SizedBox(height: UIConstants.formPad),
+      HelseSwitch("Auto register", _proxyAutoRegister, (bool? value) {
+        setState(() {
+          _proxyAutoRegister = value!;
+        });
+      }),
+      const SizedBox(height: UIConstants.formPad),
       SizedBox(
         width: 400,
         child: SquareTextField(

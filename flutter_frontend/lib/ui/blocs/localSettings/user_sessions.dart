@@ -5,6 +5,7 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class UserSessions extends StatelessWidget {
   const UserSessions({super.key});
@@ -54,7 +55,7 @@ class UserSessions extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 12),
+                  SizedBox(height: UIConstants.formPad),
                   Expanded(
                     child: SingleChildScrollView(
                       child: ListView.builder(

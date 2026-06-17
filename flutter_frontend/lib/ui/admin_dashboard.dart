@@ -4,6 +4,7 @@ import 'package:helse/helpers/date.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class AdminDashBoard extends StatefulWidget {
   const AdminDashBoard({super.key});
@@ -73,7 +74,7 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
             'User Statistics',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: UIConstants.formPad),
           Wrap(
             spacing: 16,
             runSpacing: 16,
@@ -87,12 +88,12 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
               ),
             ],
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: UIConstants.headerPad),
           const Text(
             'Metrics',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: UIConstants.formPad),
           Wrap(
             spacing: 16,
             runSpacing: 16,
@@ -101,12 +102,12 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
               countTypeGraph(_metricTypeCounts),
             ],
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: UIConstants.headerPad),
           const Text(
             'Events',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: UIConstants.formPad),
           Wrap(
             spacing: 16,
             runSpacing: 16,
@@ -115,12 +116,12 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
               countTypeGraph(_eventTypeCounts),
             ],
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: UIConstants.headerPad),
           const Text(
             'Jobs',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: UIConstants.formPad),
           ListView.builder(
             itemCount: _jobs.length,
             shrinkWrap: true,
@@ -193,7 +194,7 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
               'Count by Type (last 7 days)',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: UIConstants.formPad),
             SizedBox(
               height: 200,
               child: ListView.builder(
@@ -253,7 +254,7 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
               'Record added',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: UIConstants.formPad),
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: SizedBox(

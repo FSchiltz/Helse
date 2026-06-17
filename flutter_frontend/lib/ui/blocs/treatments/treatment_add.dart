@@ -4,6 +4,7 @@ import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/inputs/values_input.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../logic/event.dart';
@@ -88,7 +89,7 @@ class _TreatementState extends State<TreatmentAdd> {
                   "Manually add a new event",
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: UIConstants.formPad),
                 LoadingBuilder(
                   _getTypes,
                   builder: (ctx, data, reset) {
@@ -100,13 +101,13 @@ class _TreatementState extends State<TreatmentAdd> {
                     );
                   },
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: UIConstants.formPad),
                 SquareTextField(
                   icon: Icons.description_sharp,
                   label: "Description",
                   controller: _description,
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: UIConstants.formPad),
                 DateInput(
                   "start",
                   _start,
@@ -114,7 +115,7 @@ class _TreatementState extends State<TreatmentAdd> {
                     _start = date ?? DateTime.now();
                   }),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: UIConstants.formPad),
                 DateInput(
                   "end",
                   _stop,

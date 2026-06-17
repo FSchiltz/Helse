@@ -3,6 +3,7 @@ import 'package:helse/helpers/date.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:helse/ui/common/inputs/date_range_picker.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import 'blocs/events/events_grid.dart';
 import 'blocs/metrics/metrics_grid.dart';
@@ -60,7 +61,7 @@ class _PatientDashboardState extends State<PatientDashboard>
               child: DateRangePicker(_setDate, date),
             ),
             MetricsGrid(date: date, person: widget.person),
-            const SizedBox(height: 24),
+            const SizedBox(height: UIConstants.headerPad),
             EventsGrid(date: date, person: widget.person),
           ],
         ),

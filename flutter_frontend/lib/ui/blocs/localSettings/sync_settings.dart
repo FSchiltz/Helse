@@ -6,6 +6,7 @@ import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class SyncSettings extends StatefulWidget {
   const SyncSettings({super.key});
@@ -87,78 +88,49 @@ class _SyncSettingsState extends State<SyncSettings> {
                 locale.syncFit,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 50,
-                child: Row(
-                  children: [
-                    Text(locale.enable),
-                    CustomSwitch(
-                      value: _healthEnabled,
-                      onChanged: (bool? value) async {
-                        setState(() {
-                          _healthEnabled = value == true;
-                        });
-
-                        await _submitHealth();
-                        reset();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 50,
-                child: Row(
-                  children: [
-                    Text(locale.syncHistoryToggle),
-                    CustomSwitch(
-                      value: _history,
-                      onChanged: (bool? value) async {
-                        setState(() {
-                          _history = value == true;
-                        });
-
-                        await _submitHealth();
-                        reset();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 50,
-                child: Row(
-                  children: [
-                    Text(locale.syncBackgroundToggle),
-                    CustomSwitch(
-                      value: _background,
-                      onChanged: (bool? value) async {
-                        setState(() {
-                          _background = value == true;
-                        });
-
-                        await _submitHealth();
-                        reset();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
+              const SizedBox(height: UIConstants.formPad),
+              HelseSwitch(locale.enable, _healthEnabled, (
+                bool? value,
+              ) async {
+                setState(() {
+                  _healthEnabled = value == true;
+                });
+              
+                await _submitHealth();
+                reset();
+              }),
+              const SizedBox(height: UIConstants.formPad),
+              HelseSwitch(locale.syncHistoryToggle, _history, (
+                bool? value,
+              ) async {
+                setState(() {
+                  _history = value == true;
+                });
+              
+                await _submitHealth();
+                reset();
+              }),
+              const SizedBox(height: UIConstants.formPad),
+              HelseSwitch(locale.syncBackgroundToggle, _background, (
+                bool? value,
+              ) async {
+                setState(() {
+                  _background = value == true;
+                });
+              
+                await _submitHealth();
+                reset();
+              }),
+              const SizedBox(height: UIConstants.formPad),
               Text(
                 locale.lastRun(_lastRun ?? ''),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: UIConstants.formPad),
               SizedBox(
                 width: 160,
                 child: SquareButton(locale.resetLastRun, _resetLastRun),
               ),
-
-              const SizedBox(height: 40),
             ],
           ),
         );

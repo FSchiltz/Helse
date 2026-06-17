@@ -11,6 +11,7 @@ import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/inputs/values_input.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class ColoredValue {
   final String key;
@@ -129,10 +130,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 locale.interface,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
-              SizedBox(height: 24),
+              SizedBox(height: UIConstants.formPad),
               Wrap(
-                spacing: 12,
-                runSpacing: 12,
+                spacing: UIConstants.formPad,
+                runSpacing: UIConstants.formPad,
                 children: [
                   SizedBox(
                     width: 200,
@@ -151,7 +152,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   ),
                 ],
               ),
-              SizedBox(height: 24),
+              SizedBox(height: UIConstants.formPad),
               Row(
                 children: [
                   Text(
@@ -168,12 +169,12 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   ),
                 ],
               ),
-              SizedBox(height: 12),
+              SizedBox(height: UIConstants.formPad),
               Expanded(
                 child: SingleChildScrollView(
                   child: Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
+                    spacing: UIConstants.formPad,
+                    runSpacing: UIConstants.formPad,
                     children: _colors.entries.map((group) {
                       return CommonCard(
                         padding: false,
@@ -228,7 +229,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                                   )
                                   .toList(),
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: UIConstants.formPad),
                           ],
                         ),
                       );

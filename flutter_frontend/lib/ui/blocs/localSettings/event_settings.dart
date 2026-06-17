@@ -4,10 +4,11 @@ import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/localSettings/ordered_edit_item.dart';
+import 'package:helse/ui/common/inputs/statefull_check.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
-import 'package:helse/ui/common/inputs/statefull_check.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class EventsSettings extends StatefulWidget {
   final bool isPatient;
@@ -100,7 +101,7 @@ class _EventsSettingsState extends State<EventsSettings> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: UIConstants.headerPad),
               Expanded(
                 child: SingleChildScrollView(
                   child: FittedBox(
