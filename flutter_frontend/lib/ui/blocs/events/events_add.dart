@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/l10n/app_localizations.dart';
+import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/square_text_field.dart';
 import 'package:helse/ui/common/statefull_check.dart';
 
@@ -32,9 +34,8 @@ class _EventAddState extends State<EventAdd> {
   final TextEditingController _tag = TextEditingController();
   bool _notify = false;
 
-  void _submit() async {
+  void _submit(AppLocalizations locale) async {
     var localContext = context;
-    var locale = Translation.of(context);
     try {
       setState(() {
         _status = SubmissionStatus.inProgress;
@@ -118,14 +119,7 @@ class _EventAddState extends State<EventAdd> {
         SizedBox(
           child: _status == SubmissionStatus.inProgress
               ? const HelseLoader()
-              : ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(50),
-                    shape: const ContinuousRectangleBorder(),
-                  ),
-                  onPressed: _submit,
-                  child: Text(locale.submit),
-                ),
+              : SquareButton(locale.submit, () => _submit(locale)),
         ),
       ],
       content: Padding(

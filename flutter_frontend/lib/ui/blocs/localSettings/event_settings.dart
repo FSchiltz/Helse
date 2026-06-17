@@ -6,6 +6,7 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/localSettings/ordered_edit_item.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
+import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/statefull_check.dart';
 
 class EventsSettings extends StatefulWidget {
@@ -92,17 +93,10 @@ class _EventsSettingsState extends State<EventsSettings> {
                   SizedBox(width: 32),
                   SizedBox(
                     width: 120,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(40),
-                        shape: const ContinuousRectangleBorder(),
-                      ),
-                      onPressed: () async {
-                        await _submitEvent(data, locale);
-                        reset();
-                      },
-                      child: Text(locale.save),
-                    ),
+                    child: SquareButton(locale.save, () async {
+                      await _submitEvent(data, locale);
+                      reset();
+                    }),
                   ),
                 ],
               ),

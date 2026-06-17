@@ -9,6 +9,7 @@ import 'package:helse/ui/common/color_selector.dart';
 import 'package:helse/ui/common/common_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
+import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/values_input.dart';
 
 class ColoredValue {
@@ -160,17 +161,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   SizedBox(width: 12),
                   SizedBox(
                     width: 120,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(40),
-                        shape: const ContinuousRectangleBorder(),
-                      ),
-                      onPressed: () async {
-                        await _submit(_colors, locale);
-                        reset();
-                      },
-                      child: Text(locale.save),
-                    ),
+                    child: SquareButton(locale.save, () async {
+                      await _submit(_colors, locale);
+                      reset();
+                    }),
                   ),
                 ],
               ),

@@ -7,6 +7,7 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/localSettings/ordered_edit_item.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
+import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/statefull_check.dart';
 import 'package:helse/ui/common/values_input.dart';
 
@@ -104,17 +105,10 @@ class _MetricsSettingsState extends State<MetricsSettings> {
                 alignment: Alignment.centerLeft,
                 child: SizedBox(
                   width: 120,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(40),
-                      shape: const ContinuousRectangleBorder(),
-                    ),
-                    onPressed: () async {
-                      await _submit(metrics, groups, locale);
-                      reset();
-                    },
-                    child: Text(locale.save),
-                  ),
+                  child: SquareButton(locale.save, () async {
+                    await _submit(metrics, groups, locale);
+                    reset();
+                  }),
                 ),
               ),
               const SizedBox(height: 16),

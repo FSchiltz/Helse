@@ -5,6 +5,7 @@ import 'package:helse/logic/settings/health_settings.dart';
 import 'package:helse/ui/common/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
+import 'package:helse/ui/common/square_button.dart';
 
 class SyncSettings extends StatefulWidget {
   const SyncSettings({super.key});
@@ -154,15 +155,9 @@ class _SyncSettingsState extends State<SyncSettings> {
               const SizedBox(height: 10),
               SizedBox(
                 width: 160,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(40),
-                    shape: const ContinuousRectangleBorder(),
-                  ),
-                  onPressed: _resetLastRun,
-                  child: Text(locale.resetLastRun),
-                ),
+                child: SquareButton(locale.resetLastRun, _resetLastRun),
               ),
+
               const SizedBox(height: 40),
             ],
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 import 'package:helse/ui/common/square_text_field.dart';
 import 'package:helse/ui/common/statefull_check.dart';
@@ -71,14 +72,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
     return SquareDialog(
       title: const Text("Add a new metric type"),
       actions: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size.fromHeight(50),
-            shape: const ContinuousRectangleBorder(),
-          ),
-          onPressed: submit,
-          child: Text(widget.edit == null ? "Create" : "Update"),
-        ),
+        SquareButton(widget.edit == null ? "Create" : "Update", submit),
       ],
       content: Form(
         key: _formKey,

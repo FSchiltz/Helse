@@ -262,5 +262,7 @@
     "theme": "Theme",
     "@theme": {},
     "interface": "Interface",
-    "@interface": {}
+    "@interface": {},
+    "update": "Update",
+    "@update": {}
 }

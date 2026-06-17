@@ -7,6 +7,7 @@ import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/password_input.dart';
+import 'package:helse/ui/common/square_button.dart';
 import '../logic/event.dart';
 import '../services/swagger/generated_code/helseapi.swagger.dart';
 import 'blocs/administration/users/user_form.dart';
@@ -146,22 +147,11 @@ class _LoginState extends State<LoginPage> {
                                     ? const HelseLoader()
                                     : Column(
                                         children: [
-                                          ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              minimumSize:
-                                                  const Size.fromHeight(50),
-                                              shape:
-                                                  const ContinuousRectangleBorder(),
-                                            ),
-                                            onPressed: _submit,
-                                            child: Text(
-                                              _initStatus?.init == true
-                                                  ? locale.login
-                                                  : locale.create,
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.titleLarge,
-                                            ),
+                                          SquareButton(
+                                            _initStatus?.init == true
+                                                ? locale.login
+                                                : locale.create,
+                                            _submit,
                                           ),
                                           const SizedBox(height: 20),
                                           ..._providers(
@@ -410,14 +400,7 @@ class _LoginState extends State<LoginPage> {
 
     return oauths
         .map(
-          (o) => ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size.fromHeight(50),
-              shape: const ContinuousRectangleBorder(),
-            ),
-            onPressed: () => _submitOauth(o),
-            child: Text(locale.loginwith(o.name), style: theme.titleLarge),
-          ),
+          (o) => SquareButton(locale.loginwith(o.name), () => _submitOauth(o)),
         )
         .toList();
   }

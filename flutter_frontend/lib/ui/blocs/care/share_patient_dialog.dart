@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/loading_builder.dart';
+import 'package:helse/ui/common/square_button.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../logic/event.dart';
@@ -38,7 +40,9 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
   Widget build(BuildContext context) {
     var locale = Translation.of(context);
     return SquareDialog(
-      title: Text("${locale.share} ${widget.patient.name} ${widget.patient.surname}"),
+      title: Text(
+        "${locale.share} ${widget.patient.name} ${widget.patient.surname}",
+      ),
       content: LoadingBuilder(
         _getCaregiver,
         builder: (context, data, reset) {
@@ -47,13 +51,9 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
               ..._shareForm(data, widget.patient),
               _status == SubmissionStatus.inProgress
                   ? const HelseLoader()
-                  : ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(50),
-                        shape: const ContinuousRectangleBorder(),
-                      ),
-                      onPressed: (caregiver > 0) ? _submit : null,
-                      child: Text(locale.share),
+                  : SquareButton(
+                      locale.share,
+                      (caregiver > 0) ? () => _submit(locale) : null,
                     ),
             ],
           );
@@ -91,7 +91,7 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
     ];
   }
 
-  void _submit() async {
+  void _submit(AppLocalizations locale) async {
     var localContext = context;
     try {
       setState(() {
@@ -112,7 +112,7 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
           Navigator.of(localContext).pop();
         }
 
-        Notify.show("Added succesfully");
+        Notify.show(locale.saved);
 
         setState(() {
           _status = SubmissionStatus.success;
@@ -123,7 +123,7 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
         });
       }
     } catch (ex) {
-      Notify.showError("$ex");
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 }

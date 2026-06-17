@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
+import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
+import 'package:helse/ui/common/square_button.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../../common/custom_switch.dart';
@@ -67,7 +70,7 @@ class _OauthFormViewState extends State<OauthFormView> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
-
+    var locale = Translation.of(context);
     return Form(
       key: _formKey,
       child: Column(
@@ -77,7 +80,7 @@ class _OauthFormViewState extends State<OauthFormView> {
           const SizedBox(height: 32),
           Row(
             children: [
-              const Text("Enabled"),
+              Text(locale.enable),
               CustomSwitch(
                 value: _enabled,
                 onChanged: (bool? value) {
@@ -92,21 +95,14 @@ class _OauthFormViewState extends State<OauthFormView> {
           const SizedBox(height: 20),
           SizedBox(
             width: 200,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(50),
-                shape: const ContinuousRectangleBorder(),
-              ),
-              onPressed: submit,
-              child: const Text("Save"),
-            ),
+            child: SquareButton(locale.save, () => submit(locale)),
           ),
         ],
       ),
     );
   }
 
-  void submit() async {
+  void submit(AppLocalizations locale) async {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         List<OauthProvider> providers = [];
@@ -129,12 +125,12 @@ class _OauthFormViewState extends State<OauthFormView> {
           Oauth(enabled: _enabled, providers: providers),
         );
 
-        Notify.show("Saved Successfully");
+        Notify.show(locale.saved);
 
         widget.callback();
       }
     } catch (ex) {
-      Notify.showError("$ex");
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 

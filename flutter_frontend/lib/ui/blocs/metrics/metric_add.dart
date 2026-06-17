@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/metric_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
+import 'package:helse/ui/common/square_button.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../logic/event.dart';
@@ -71,15 +72,7 @@ class _MetricAddState extends State<MetricAdd> {
           constraints: const BoxConstraints(maxWidth: 200),
           child: _status == SubmissionStatus.inProgress
               ? const HelseLoader()
-              : ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(50),
-                    shape: const ContinuousRectangleBorder(),
-                  ),
-                  key: const Key('loginForm_continue_raisedButton'),
-                  onPressed: () => _submit(locale),
-                  child: Text(locale.submit),
-                ),
+              : SquareButton(locale.submit, () => _submit(locale)),
         ),
       ],
       content: Container(

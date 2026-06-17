@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
+import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
+import 'package:helse/ui/common/square_button.dart';
 import '../../../common/square_text_field.dart';
 
 class SmtpView extends StatelessWidget {
@@ -59,7 +62,7 @@ class _SmtpFormViewState extends State<SmtpFormView> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
-
+    var locale = Translation.of(context);
     return Form(
       key: _formKey,
       child: Column(
@@ -69,7 +72,7 @@ class _SmtpFormViewState extends State<SmtpFormView> {
           const SizedBox(height: 32),
           Row(
             children: [
-              const Text('Enable'),
+              Text(locale.enable),
               CustomSwitch(
                 value: _enabled,
                 onChanged: (bool? value) {
@@ -80,25 +83,18 @@ class _SmtpFormViewState extends State<SmtpFormView> {
               ),
             ],
           ),
-          if (_enabled) ..._fields(theme),
+          if (_enabled) ..._fields(theme, locale),
           const SizedBox(height: 20),
           SizedBox(
             width: 200,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(50),
-                shape: const ContinuousRectangleBorder(),
-              ),
-              onPressed: submit,
-              child: const Text('Save'),
-            ),
+            child: SquareButton(locale.save, () => submit(locale)),
           ),
         ],
       ),
     );
   }
 
-  List<Widget> _fields(ColorScheme theme) {
+  List<Widget> _fields(ColorScheme theme, AppLocalizations locale) {
     return [
       const SizedBox(height: 5),
       Row(
@@ -175,7 +171,7 @@ class _SmtpFormViewState extends State<SmtpFormView> {
         width: 400,
         child: SquareTextField(
           controller: _controllerUserName,
-          label: 'Username',
+          label: locale.username,
           icon: Icons.person_sharp,
           theme: theme,
         ),
@@ -185,7 +181,7 @@ class _SmtpFormViewState extends State<SmtpFormView> {
         width: 400,
         child: SquareTextField(
           controller: _controllerPassword,
-          label: 'Password',
+          label: locale.password,
           icon: Icons.password_sharp,
           theme: theme,
           obscureText: true,
@@ -194,7 +190,7 @@ class _SmtpFormViewState extends State<SmtpFormView> {
     ];
   }
 
-  void submit() async {
+  void submit(AppLocalizations locale) async {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         final smtp = Smtp(
@@ -213,11 +209,11 @@ class _SmtpFormViewState extends State<SmtpFormView> {
 
         await Dependencies.services.settings.updateSmtp(smtp);
 
-        Notify.show('Saved Successfully');
+        Notify.show(locale.saved);
         widget.callback();
       }
     } catch (ex) {
-      Notify.showError('$ex');
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 }

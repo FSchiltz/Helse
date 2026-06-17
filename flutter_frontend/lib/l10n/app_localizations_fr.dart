@@ -325,4 +325,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get interface => 'Interface';
+
+  @override
+  String get update => 'Update';
 }

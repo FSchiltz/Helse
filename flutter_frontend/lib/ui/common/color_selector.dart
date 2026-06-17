@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:helse/helpers/translation.dart';
+import 'package:helse/ui/common/square_button.dart';
 
 class ColorSelector extends StatefulWidget {
   const ColorSelector({
@@ -28,6 +30,7 @@ class _ColorSelectorState extends State<ColorSelector> {
 
   @override
   Widget build(BuildContext context) {
+    var locale = Translation.of(context);
     return InkWell(
       child: Container(color: _color),
       onTap: () {
@@ -66,10 +69,7 @@ class _ColorSelectorState extends State<ColorSelector> {
               // ),
             ),
             actions: <Widget>[
-              ElevatedButton(
-                child: const Text('Ok'),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
+              SquareButton(locale.ok, () => Navigator.of(context).pop()),
             ],
           ),
         );

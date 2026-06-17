@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/blocs/administration/users/userright_input.dart';
+import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -49,16 +51,7 @@ class _SignupState extends State<UserAdd> {
     var locale = Translation.of(context);
     return SquareDialog(
       title: const Text("Add a new user"),
-      actions: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size.fromHeight(50),
-            shape: const ContinuousRectangleBorder(),
-          ),
-          onPressed: submit,
-          child: Text(locale.create),
-        ),
-      ],
+      actions: [SquareButton(locale.create, () => submit(locale))],
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -93,7 +86,7 @@ class _SignupState extends State<UserAdd> {
     );
   }
 
-  void submit() async {
+  void submit(AppLocalizations locale) async {
     var localContext = context;
     try {
       if (_formKey.currentState?.validate() ?? false) {
@@ -136,10 +129,10 @@ class _SignupState extends State<UserAdd> {
         if (localContext.mounted) {
           Navigator.of(localContext).pop();
         }
-        Notify.show("Added Successfully");
+        Notify.show(locale.saved);
       }
     } catch (ex) {
-      Notify.showError("Error: $ex");
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 

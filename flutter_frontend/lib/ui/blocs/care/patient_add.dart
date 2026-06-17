@@ -5,7 +5,9 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/notification.dart';
+import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/square_dialog.dart';
 
 import '../../../logic/event.dart';
@@ -60,7 +62,7 @@ class _PatientAddState extends State<PatientAdd> {
     }
   }
 
-  void _submit() async {
+  void _submit(AppLocalizations locale) async {
     var localContext = context;
     try {
       setState(() {
@@ -98,7 +100,7 @@ class _PatientAddState extends State<PatientAdd> {
         widget.callback.call();
         if (localContext.mounted) {
           Navigator.of(localContext).pop();
-          Notify.show(Translation.of(localContext).added);
+          Notify.show(locale.added);
         }
 
         setState(() {
@@ -110,7 +112,7 @@ class _PatientAddState extends State<PatientAdd> {
         });
       }
     } catch (ex) {
-      Notify.showError("$ex");
+      Notify.showError(locale.error(ex.toString()));
     }
   }
 
@@ -122,15 +124,7 @@ class _PatientAddState extends State<PatientAdd> {
       actions: [
         _status == SubmissionStatus.inProgress
             ? const HelseLoader()
-            : ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                  shape: const ContinuousRectangleBorder(),
-                ),
-                key: const Key('loginForm_continue_raisedButton'),
-                onPressed: _submit,
-                child: Text(locale.submit),
-              ),
+            : SquareButton(locale.submit, () => _submit(locale)),
       ],
       content: Container(
         constraints: const BoxConstraints(maxWidth: 500),

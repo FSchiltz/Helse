@@ -23,16 +23,7 @@ class _SettingsViewState extends State<EventSettingsView> {
       builder: (context, data, reset) {
         return Form(
           key: _formKey,
-          child: const Column(
-            children: [
-              /*ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(50),
-                        shape: const ContinuousRectangleBorder(),
-                      ),
-                      onPressed: submit,
-                      child: const Text("Save"),
-                    ),*/
+          child: const Column(children: [
             ],
           ),
         );

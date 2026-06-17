@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/loading_builder.dart';
+import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/values_input.dart';
 
 import '../../../di/dependencies.dart';
@@ -75,14 +76,7 @@ class _TreatementState extends State<TreatmentAdd> {
         SizedBox(
           child: _status == SubmissionStatus.inProgress
               ? const HelseLoader()
-              : ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(50),
-                    shape: const ContinuousRectangleBorder(),
-                  ),
-                  onPressed: () => _submit(locale),
-                  child: Text(locale.submit),
-                ),
+              : SquareButton(locale.submit, () => _submit(locale)),
         ),
       ],
       content: Padding(
