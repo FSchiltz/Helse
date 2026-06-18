@@ -95,7 +95,7 @@ class MetricHelper {
   ) {
     var theme = Theme.of(context).textTheme;
     var color = Dependencies.theme.stateColor(
-      "${type.id}",
+      getStateKey(type, 0),
       StateType.metric,
       context,
     );
@@ -193,5 +193,13 @@ class MetricHelper {
     }
 
     return value;
+  }
+
+  static String getStateKey(MetricType type, int i) {
+    if ((type.valueCount ?? 0) > 0) {
+      return '${type.id};$i';
+    }
+
+    return type.id.toString();
   }
 }

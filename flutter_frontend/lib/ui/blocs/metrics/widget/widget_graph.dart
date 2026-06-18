@@ -142,7 +142,7 @@ class WidgetGraph extends StatelessWidget {
   Widget _getGraph(BuildContext context) {
     if (settings == GraphKind.bar) {
       var color = Dependencies.theme.stateColor(
-        type.id.toString(),
+        MetricHelper.getStateKey(type, 0),
         StateType.metric,
         context,
       );
@@ -163,7 +163,7 @@ class WidgetGraph extends StatelessWidget {
     } else {
       final spots = _getSpot(metrics, type).map((metric) {
         var color = Dependencies.theme.stateColor(
-          '${type.id};${metric.index}',
+          MetricHelper.getStateKey(type, metric.index),
           StateType.metric,
           context,
         );
