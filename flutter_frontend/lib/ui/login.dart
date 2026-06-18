@@ -184,6 +184,7 @@ class _LoginState extends State<LoginPage> {
 
     setState(() {
       _url = url;
+      _urlError = null;
       _status = SubmissionStatus.waiting;
     });
 
