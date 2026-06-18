@@ -31,6 +31,10 @@ class WorkHelper {
           jobName,
           jobName,
           frequency: Duration(minutes: 15),
+          constraints: Constraints(
+            networkType: NetworkType.unmetered,
+            requiresBatteryNotLow: true,          
+          ),
         );
       }
     }
