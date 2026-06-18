@@ -560,6 +560,12 @@ abstract class AppLocalizations {
   /// **'Enable'**
   String get enable;
 
+  /// No description provided for @lastStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Last status: {status}'**
+  String lastStatus(String status);
+
   /// No description provided for @lastRun.
   ///
   /// In en, this message translates to:

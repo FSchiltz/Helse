@@ -252,6 +252,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enable => 'Enable';
 
   @override
+  String lastStatus(String status) {
+    return 'Last status: $status';
+  }
+
+  @override
   String lastRun(String date) {
     return 'Last run: $date';
   }

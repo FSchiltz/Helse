@@ -20,17 +20,9 @@ import 'ui/splash.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Dependencies.init();
-  await Account.setup();
+  await Dependencies.init();
+  WorkHelper.init();
 
-  if (!kIsWeb && Platform.isAndroid) {
-    Workmanager().initialize(callbackDispatcher);
-    Workmanager().registerPeriodicTask(
-      "data_sync",
-      "data_sync",
-      frequency: Duration(minutes: 15),
-    );
-  }
   runApp(const App());
 }
 

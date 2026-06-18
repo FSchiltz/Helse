@@ -1,3 +1,7 @@
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -5,9 +9,8 @@ import 'package:workmanager/workmanager.dart';
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     switch (task) {
-      case "data_sync":
-        await syncDataWithServer();
-        break;
+      case WorkHelper.jobName:
+        return await WorkHelper.syncDataWithServer();
       default:
         // Handle unknown task types
         break;
@@ -17,12 +20,39 @@ void callbackDispatcher() {
   });
 }
 
-Future<void> syncDataWithServer() async {
-  Dependencies.init();
-  if (await Dependencies.logics.fit.isEnabled()) {
-    var settings = Dependencies.logics.settings.getHealth();
-    if (settings.background) {
-      await Dependencies.logics.fit.sync();
+class WorkHelper {
+  static const String jobName = "data_sync";
+  static Future<void> init() async {
+    if (!kIsWeb && Platform.isAndroid) {
+      Workmanager().initialize(callbackDispatcher);
+      var already = await Workmanager().isScheduledByUniqueName(jobName);
+      if (!already) {
+        Workmanager().registerPeriodicTask(
+          jobName,
+          jobName,
+          frequency: Duration(minutes: 15),
+        );
+      }
     }
+  }
+
+  static Future<bool> syncDataWithServer() async {
+    try {
+      log("Background sync started");
+      await Dependencies.init();
+      if (await Dependencies.logics.fit.isEnabled()) {
+        var settings = Dependencies.logics.settings.getHealth();
+        if (settings.background) {
+          log("Background sync enabled");
+          await Dependencies.logics.fit.sync();
+        }
+      }
+    } catch (ex) {
+      log("Background sync failed with $ex");
+      Dependencies.logics.settings.setFitStatus("Error: $ex");
+      return false;
+    }
+
+    return true;
   }
 }
