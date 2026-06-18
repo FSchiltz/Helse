@@ -252,6 +252,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get enable => 'Activer';
 
   @override
+  String lastStatus(String status) {
+    return 'Last status: $status';
+  }
+
+  @override
   String lastRun(String date) {
     return 'Dernière execution';
   }

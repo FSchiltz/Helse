@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -165,6 +166,7 @@ class FitLogic {
         : now.add(Duration(days: -5));
 
     var firstRun = run == null;
+    log("Syncing from $start");
 
     // don't sync if in the future
     if (start.compareTo(now) >= 0) return "";
@@ -188,6 +190,10 @@ class FitLogic {
     // convert to import data
     ImportData converted = _convert(healthData);
 
+    log(
+      "Sending ${converted.metrics?.length} metrics and ${converted.events?.length} events since $start",
+    );
+    
     // import to the server
     // TODO add a loop here if too much events
     ImportsResult? result;
@@ -202,6 +208,7 @@ class FitLogic {
 
     var text =
         "Sync sucessful with $metrics metrics and $events events since $start";
+    log(text);
     if (firstRun || metrics > 0 || events > 0) {
       firstRun = false;
       Dependencies.logics.settings.setFitStatus(text);
@@ -417,7 +424,7 @@ class FitLogic {
       var date = DateTime.parse(lastrun);
 
       if (_executions.isEmpty || date.isAfter(_executions.last.date)) {
-        var status = Dependencies.logics.settings.getFirStatus();
+        var status = Dependencies.logics.settings.getLastStatus();
         _executions.add(
           Execution(date, SubmissionStatus.success, status: status),
         );

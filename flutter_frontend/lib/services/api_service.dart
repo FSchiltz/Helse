@@ -28,7 +28,7 @@ abstract class ApiService {
       switch (response.statusCode) {
         case 401:
           // no auth, we remove the token and return null;
-          Dependencies.logics.authentication.logOut();
+          Dependencies.logics.authentication.logOut(false);
           result = null;
           break;
         default:

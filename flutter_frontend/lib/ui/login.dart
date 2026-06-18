@@ -1,12 +1,13 @@
+import 'dart:async';
 import 'dart:developer';
 
-import 'package:async/async.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/inputs/password_input.dart';
+import 'package:helse/ui/common/inputs/square_text_field.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 import '../logic/event.dart';
@@ -38,11 +39,12 @@ class _LoginState extends State<LoginPage> {
   final TextEditingController _controllerConFirmPassword =
       TextEditingController();
 
-  SubmissionStatus _status = SubmissionStatus.initial;
-  SubmissionStatus _loaded = SubmissionStatus.initial;
+  SubmissionStatus _status = SubmissionStatus.waiting;
   Status? _initStatus;
   String? _url;
-  CancelableOperation<void>? _operation;
+  String? _urlError;
+  String? _loginError;
+  Timer? _operation;
 
   @override
   initState() {
@@ -52,7 +54,6 @@ class _LoginState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
     var locale = Translation.of(context);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
@@ -74,31 +75,19 @@ class _LoginState extends State<LoginPage> {
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
                       const SizedBox(height: UIConstants.headerPad),
-                      TextField(
+                      SquareTextField(
+                        label: locale.serverurl,
                         controller: textController,
-                        keyboardType: TextInputType.url,
+                        icon: Icons.home_sharp,
+                        type: TextInputType.url,
                         onChanged: (v) => _urlTextChanged(v, locale),
                         key: const Key('loginForm_urlInput_textField'),
-                        decoration: InputDecoration(
-                          labelText: locale.serverurl,
-                          prefixIcon: const Icon(Icons.home_sharp),
-                          prefixIconColor: theme.primary,
-                          filled: true,
-                          fillColor: theme.surface,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(0),
-                            borderSide: BorderSide(color: theme.primary),
-                          ),
-                          errorText: _status == SubmissionStatus.failure
-                              ? locale.invalid(locale.url)
-                              : null,
-                        ),
+                        errorText: _urlError,
                       ),
                       const SizedBox(height: UIConstants.headerPad),
-                      (_loaded == SubmissionStatus.inProgress)
+                      (_status == SubmissionStatus.waiting)
                           ? const HelseLoader()
-                          : (_loaded == SubmissionStatus.success)
-                          ? Column(
+                          : Column(
                               children: [
                                 (_initStatus?.init == true)
                                     ? Column(
@@ -107,9 +96,12 @@ class _LoginState extends State<LoginPage> {
                                             controller: _controllerUsername,
                                             validate: validateUserName,
                                           ),
-                                          const SizedBox(height: UIConstants.formPad),
+                                          const SizedBox(
+                                            height: UIConstants.formPad,
+                                          ),
                                           PasswordInput(
                                             controller: _controllerPassword,
+                                            error: _loginError,
                                           ),
                                         ],
                                       )
@@ -127,7 +119,9 @@ class _LoginState extends State<LoginPage> {
                                               context,
                                             ).textTheme.bodyLarge,
                                           ),
-                                          const SizedBox(height: UIConstants.headerPad),
+                                          const SizedBox(
+                                            height: UIConstants.headerPad,
+                                          ),
                                           UserForm(
                                             [UserType.admin],
                                             controllerUsername:
@@ -154,7 +148,9 @@ class _LoginState extends State<LoginPage> {
                                                 : locale.create,
                                             _submit,
                                           ),
-                                          const SizedBox(height: UIConstants.headerPad),
+                                          const SizedBox(
+                                            height: UIConstants.headerPad,
+                                          ),
                                           ..._providers(
                                             _initStatus?.oauths,
                                             Theme.of(context).textTheme,
@@ -163,8 +159,7 @@ class _LoginState extends State<LoginPage> {
                                         ],
                                       ),
                               ],
-                            )
-                          : Container(),
+                            ),
                     ],
                   ),
                 ),
@@ -185,35 +180,24 @@ class _LoginState extends State<LoginPage> {
   }
 
   void _urlTextChanged(String url, AppLocalizations locale) async {
-    if (_loaded == SubmissionStatus.waiting && _operation != null) {
-      // cancel the existing call
-      _operation?.cancel();
-
-      setState(() {
-        _operation = null;
-      });
-    }
+    // cancel the existing call
+    _operation?.cancel();
+    _operation = null;
 
     setState(() {
       _url = url;
-      _loaded = SubmissionStatus.waiting;
+      _urlError = null;
+      _loginError = null;
+      _status = SubmissionStatus.waiting;
     });
 
-    if (url.isEmpty) {
-      setState(() {
-        _loaded = SubmissionStatus.initial;
-      });
-    } else {
+    if (url.isNotEmpty) {
       // Launch the urlchanged handler with a delay
       // To only call when the user has finished typing and allows giving feedback
-      var operation = CancelableOperation.fromFuture(
-        Future<void>.delayed(Durations.extralong3),
+      _operation = Timer(
+        Duration(seconds: 1),
+        () async => await _urlChanged(url),
       );
-
-      operation.value.then((value) async => await _urlChanged(url));
-      setState(() {
-        _operation = operation;
-      });
     }
   }
 
@@ -222,10 +206,6 @@ class _LoginState extends State<LoginPage> {
     if (uri == null || !uri.isAbsolute) {
       return;
     }
-
-    setState(() {
-      _loaded = SubmissionStatus.inProgress;
-    });
 
     try {
       var isInit = await Dependencies.services.helper.isInit(uri);
@@ -255,17 +235,18 @@ class _LoginState extends State<LoginPage> {
 
       if (mounted) {
         setState(() {
-          _loaded = ((isInit?.init == null)
-              ? SubmissionStatus.failure
-              : SubmissionStatus.success);
+          _status = ((isInit?.init == null)
+              ? SubmissionStatus.waiting
+              : SubmissionStatus.initial);
         });
       }
     } catch (ex) {
       if (mounted) {
+        final locale = Translation.of(context);
         setState(() {
-          _loaded = SubmissionStatus.failure;
+          _status = SubmissionStatus.waiting;
+          _urlError = locale.invalid(locale.url);
         });
-        Notify.showError("Invalid Url");
       }
     }
   }
@@ -280,6 +261,9 @@ class _LoginState extends State<LoginPage> {
 
       if (mounted) {
         setState(() {
+          _status = SubmissionStatus.waiting;
+          _loginError = null;
+          _urlError = null;
           _url = url;
         });
         await _urlChanged(url);
@@ -303,22 +287,17 @@ class _LoginState extends State<LoginPage> {
         if (grant != null) {
           await _submit(oAuth: grant);
         }
+
+        return;
       } catch (ex) {
         Notify.showError('Failed to start the oauth process:$ex');
-        Dependencies.logics.authentication.logOut();
-
-        // we start the login process again
-        setState(() {
-          _status = SubmissionStatus.initial;
-        });
       }
-    } else {
-      Notify.showError('Server not ready');
-      Dependencies.logics.authentication.logOut();
-      setState(() {
-        _status = SubmissionStatus.initial;
-      });
     }
+
+    Dependencies.logics.authentication.logOut(false);
+    setState(() {
+      _status = SubmissionStatus.initial;
+    });
   }
 
   Future<void> _submit({String? oAuth}) async {
@@ -334,7 +313,6 @@ class _LoginState extends State<LoginPage> {
     var init = _initStatus?.init;
     var url = _url;
     if (init == null || url == null) {
-      Notify.showError('Server not yet init');
       setState(() {
         _status = SubmissionStatus.initial;
       });
@@ -374,17 +352,17 @@ class _LoginState extends State<LoginPage> {
       }
       log('Login successful');
       setState(() {
+        _loginError = null;
         _status = SubmissionStatus.success;
       });
     } catch (ex) {
       log('error of login: $ex');
-      Notify.showError("Login failed:n$ex");
-
       // clear any info about the login
-      await Dependencies.logics.authentication.logOut();
+      await Dependencies.logics.authentication.logOut(false);
 
       // we start the login process again
       setState(() {
+        _loginError = "Login failed";
         _status = SubmissionStatus.initial;
       });
     }

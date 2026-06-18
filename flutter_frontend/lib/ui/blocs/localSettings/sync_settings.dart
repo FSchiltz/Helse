@@ -24,6 +24,7 @@ class _SyncSettingsState extends State<SyncSettings> {
   bool _healthEnabled = false;
   bool _background = false;
   bool _history = false;
+  String? _status;
   Map<String, HealthRecordSettings> _records = {};
 
   @override
@@ -34,11 +35,12 @@ class _SyncSettingsState extends State<SyncSettings> {
   }
 
   Future<int> _getData(bool refresh) async {
-    var health = await Dependencies.logics.settings.getHealth();
+    var health = Dependencies.logics.settings.getHealth();
     _healthEnabled = health.syncHealth;
     _lastRun = Dependencies.logics.settings.getLastRun();
     _background = health.background;
     _history = health.history;
+    _status = Dependencies.logics.settings.getLastStatus();
 
     _records = Dependencies.logics.fit.types.groupFoldBy(
       (e) => e.name,
@@ -75,6 +77,7 @@ class _SyncSettingsState extends State<SyncSettings> {
     Dependencies.logics.settings.removeLastRun();
     setState(() {
       _lastRun = null;
+      _status = null;
     });
   }
 
@@ -140,6 +143,11 @@ class _SyncSettingsState extends State<SyncSettings> {
       const SizedBox(height: UIConstants.formPad),
       Text(
         locale.lastRun(_lastRun ?? ''),
+        style: Theme.of(context).textTheme.bodyMedium,
+      ),
+      const SizedBox(height: UIConstants.formPad),
+      Text(
+        locale.lastStatus(_status ?? ''),
         style: Theme.of(context).textTheme.bodyMedium,
       ),
       const SizedBox(height: UIConstants.formPad),

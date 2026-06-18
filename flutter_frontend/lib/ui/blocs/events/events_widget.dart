@@ -38,18 +38,10 @@ class _EventWidgetState extends State<EventWidget> {
   }
 
   Future<EventStats?> _getData(bool refresh) async {
-    var date = widget.date;
-    var start = DateTime(date.start.year, date.start.month, date.start.day);
-    var end = DateTime(
-      date.end.year,
-      date.end.month,
-      date.end.day,
-    ).add(const Duration(days: 1));
-
     return await Dependencies.services.event.eventsSummary(
       widget.type.id,
-      start,
-      end,
+      widget.date.start,
+      widget.date.end,
       person: widget.person,
     );
   }
@@ -76,10 +68,15 @@ class _EventWidgetState extends State<EventWidget> {
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 SizedBox(width: 12),
-                Expanded(child: Padding(
-                  padding: const EdgeInsets.only(bottom: 3.0),
-                  child: EventInformation(data: data?.durations ?? []),
-                )),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 3.0),
+                    child: EventInformation(
+                      data: data?.durations ?? [],
+                      type: widget.type,
+                    ),
+                  ),
+                ),
                 IconButton(
                   onPressed: () {
                     showDialog<void>(

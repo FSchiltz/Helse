@@ -31,7 +31,7 @@ class TaskBloc extends Cubit<SubmissionStatus> {
     emit(SubmissionStatus.initial);
   }
 
-  Future<void> start() async {
+  void start() {
     execute();
     timer = Timer.periodic(duration, (timer) async => await execute());
   }

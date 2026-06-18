@@ -193,6 +193,14 @@
     "@users": {},
     "enable": "Enable",
     "@enable": {},
+    "lastStatus": "Last status: {status}",
+    "@lastStatus": {
+        "placeholders": {
+            "status": {
+                "type": "String"
+            }
+        }
+    },
     "lastRun": "Last run: {date}",
     "@lastRun": {
         "placeholders": {

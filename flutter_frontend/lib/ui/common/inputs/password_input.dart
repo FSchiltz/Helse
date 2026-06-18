@@ -9,6 +9,7 @@ class PasswordInput extends StatefulWidget {
   final FocusNode? nextFocus;
   final FocusNode? focus;
   final String? text;
+  final String? error;
 
   const PasswordInput({
     super.key,
@@ -17,6 +18,7 @@ class PasswordInput extends StatefulWidget {
     this.validate,
     this.focus,
     this.text,
+    this.error,
   });
 
   @override
@@ -27,16 +29,17 @@ class _PasswordInputState extends State<PasswordInput> {
   bool _obscurePassword = true;
 
   void togglePasswordVisibility() => setState(() {
-        _obscurePassword = !_obscurePassword;
-      });
+    _obscurePassword = !_obscurePassword;
+  });
 
   @override
   Widget build(BuildContext context) {
     var iconButton = IconButton(
-        onPressed: togglePasswordVisibility,
-        icon: _obscurePassword
-            ? const Icon(Icons.visibility_sharp)
-            : const Icon(Icons.visibility_off_sharp));
+      onPressed: togglePasswordVisibility,
+      icon: _obscurePassword
+          ? const Icon(Icons.visibility_sharp)
+          : const Icon(Icons.visibility_off_sharp),
+    );
 
     return SquareTextField(
       controller: widget.controller,
@@ -48,6 +51,7 @@ class _PasswordInputState extends State<PasswordInput> {
       type: TextInputType.visiblePassword,
       validator: widget.validate,
       onEditingComplete: () => widget.nextFocus?.requestFocus(),
+      errorText: widget.error,
     );
   }
 }

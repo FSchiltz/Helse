@@ -95,7 +95,10 @@ class _EventsGraphState extends State<EventsGraph> {
           ),
         ),
         SizedBox(height: UIConstants.formPad),
-        EventInformation(data: _getDurations(filteredEvents)),
+        EventInformation(
+          data: _getDurations(filteredEvents),
+          type: widget.type,
+        ),
         SizedBox(height: UIConstants.formPad),
         Padding(
           padding: const EdgeInsets.all(8.0),

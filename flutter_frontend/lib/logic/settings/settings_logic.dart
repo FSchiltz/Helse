@@ -134,10 +134,15 @@ class SettingsLogic extends BaseSettingsLogic {
 
   void removeLastRun() {
     remove(fitRun);
+    remove(fitStatus);
   }
 
   String? getLastRun() {
     return getString(fitRun);
+  }
+
+  String? getLastStatus() {
+    return getString(fitStatus);
   }
 
   Future<void> setColors(
@@ -290,9 +295,5 @@ class SettingsLogic extends BaseSettingsLogic {
 
   void setFitStatus(String text) {
     account.set(fitStatus, text);
-  }
-
-  String? getFirStatus() {
-    return getString(fitStatus);
   }
 }

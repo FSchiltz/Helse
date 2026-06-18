@@ -37,8 +37,10 @@ class Dependencies {
 
   static ThemeHelper theme = ThemeHelper();
 
-  static void init() {
+  static Future<void> init() async {
     var account = Account();
+
+    await Account.setup();
     _services = Services(account);
     _logics = Logics(account, services);
     _blocs = Blocs(logics);

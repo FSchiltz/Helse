@@ -151,7 +151,7 @@ class _MetricGraphState extends State<MetricGraph> {
 
     for (var i = 0; i < graphCount; i++) {
       var color = Dependencies.theme.stateColor(
-        '${widget.type.id};$i',
+        MetricHelper.getStateKey(widget.type, i),
         StateType.metric,
         context,
       );

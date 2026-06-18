@@ -1,9 +1,13 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/fit/status_bloc.dart';
 import 'package:simple_icons/simple_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:workmanager/workmanager.dart';
 
 import '../di/dependencies.dart';
 import '../logic/event.dart';
@@ -67,7 +71,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _startFitJob(TaskBloc fit) async {
-    var settings = await Dependencies.logics.settings.getHealth();
+    var settings = Dependencies.logics.settings.getHealth();
     if (settings.syncHealth) {
       fit.start();
     }
@@ -232,7 +236,7 @@ class _HomeState extends State<Home> {
                       );
                       break;
                     case 3:
-                      Dependencies.logics.authentication.logOut();
+                      Dependencies.logics.authentication.logOut(false);
                       break;
                   }
                 },
