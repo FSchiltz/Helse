@@ -14,6 +14,8 @@ class SquareTextField extends StatelessWidget {
     this.type,
     this.suffixIcon,
     this.onTap,
+    this.onChanged,
+    this.errorText,
   });
 
   final void Function()? onTap;
@@ -27,6 +29,8 @@ class SquareTextField extends StatelessWidget {
   final bool obscureText;
   final void Function()? onIconPressed;
   final TextInputType? type;
+  final void Function(String value)? onChanged;
+  final String? errorText;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +43,7 @@ class SquareTextField extends StatelessWidget {
       keyboardType: type ?? TextInputType.text,
       obscureText: obscureText,
       onTap: onTap,
+      onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
         alignLabelWithHint: false,
@@ -50,6 +55,7 @@ class SquareTextField extends StatelessWidget {
         prefixIconColor: theme.primary,
         suffixIcon: suffixIcon,
         filled: true,
+        errorText: errorText,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.zero,
           borderSide: BorderSide(color: theme.outlineVariant),
