@@ -67,7 +67,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _startFitJob(TaskBloc fit) async {
-    var settings = await Dependencies.logics.settings.getHealth();
+    var settings = Dependencies.logics.settings.getHealth();
     if (settings.syncHealth) {
       fit.start();
     }

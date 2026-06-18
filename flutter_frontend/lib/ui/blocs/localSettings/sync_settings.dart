@@ -34,7 +34,7 @@ class _SyncSettingsState extends State<SyncSettings> {
   }
 
   Future<int> _getData(bool refresh) async {
-    var health = await Dependencies.logics.settings.getHealth();
+    var health = Dependencies.logics.settings.getHealth();
     _healthEnabled = health.syncHealth;
     _lastRun = Dependencies.logics.settings.getLastRun();
     _background = health.background;

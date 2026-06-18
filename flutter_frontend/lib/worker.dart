@@ -20,7 +20,7 @@ void callbackDispatcher() {
 Future<void> syncDataWithServer() async {
   Dependencies.init();
   if (await Dependencies.logics.fit.isEnabled()) {
-    var settings = await Dependencies.logics.settings.getHealth();
+    var settings = Dependencies.logics.settings.getHealth();
     if (settings.background) {
       await Dependencies.logics.fit.sync();
     }
