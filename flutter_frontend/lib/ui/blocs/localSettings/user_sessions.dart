@@ -47,9 +47,9 @@ class UserSessions extends StatelessWidget {
                         SizedBox(
                           width: 200,
                           child: SquareButton(locale.cleanSessions, () async {
-                            await Dependencies.services.user.logout(true);
-                            await Dependencies.logics.authentication
-                                .logOutLocal();
+                            await Dependencies.logics.authentication.logOut(
+                              true,
+                            );
                           }),
                         ),
                       ],

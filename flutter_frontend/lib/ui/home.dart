@@ -232,7 +232,7 @@ class _HomeState extends State<Home> {
                       );
                       break;
                     case 3:
-                      Dependencies.logics.authentication.logOut();
+                      Dependencies.logics.authentication.logOut(false);
                       break;
                   }
                 },

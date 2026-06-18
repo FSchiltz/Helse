@@ -43,6 +43,7 @@ class _LoginState extends State<LoginPage> {
   Status? _initStatus;
   String? _url;
   String? _urlError;
+  String? _loginError;
   Timer? _operation;
 
   @override
@@ -100,6 +101,7 @@ class _LoginState extends State<LoginPage> {
                                           ),
                                           PasswordInput(
                                             controller: _controllerPassword,
+                                            error: _loginError,
                                           ),
                                         ],
                                       )
@@ -185,6 +187,7 @@ class _LoginState extends State<LoginPage> {
     setState(() {
       _url = url;
       _urlError = null;
+      _loginError = null;
       _status = SubmissionStatus.waiting;
     });
 
@@ -203,10 +206,6 @@ class _LoginState extends State<LoginPage> {
     if (uri == null || !uri.isAbsolute) {
       return;
     }
-
-    setState(() {
-      _status = SubmissionStatus.waiting;
-    });
 
     try {
       var isInit = await Dependencies.services.helper.isInit(uri);
@@ -262,6 +261,9 @@ class _LoginState extends State<LoginPage> {
 
       if (mounted) {
         setState(() {
+          _status = SubmissionStatus.waiting;
+          _loginError = null;
+          _urlError = null;
           _url = url;
         });
         await _urlChanged(url);
@@ -290,11 +292,9 @@ class _LoginState extends State<LoginPage> {
       } catch (ex) {
         Notify.showError('Failed to start the oauth process:$ex');
       }
-    } else {
-      Notify.showError('Server not ready');
     }
 
-    Dependencies.logics.authentication.logOut();
+    Dependencies.logics.authentication.logOut(false);
     setState(() {
       _status = SubmissionStatus.initial;
     });
@@ -313,7 +313,6 @@ class _LoginState extends State<LoginPage> {
     var init = _initStatus?.init;
     var url = _url;
     if (init == null || url == null) {
-      Notify.showError('Server not yet init');
       setState(() {
         _status = SubmissionStatus.initial;
       });
@@ -353,17 +352,17 @@ class _LoginState extends State<LoginPage> {
       }
       log('Login successful');
       setState(() {
+        _loginError = null;
         _status = SubmissionStatus.success;
       });
     } catch (ex) {
       log('error of login: $ex');
-      Notify.showError("Login failed: $ex");
-
       // clear any info about the login
-      await Dependencies.logics.authentication.logOut();
+      await Dependencies.logics.authentication.logOut(false);
 
       // we start the login process again
       setState(() {
+        _loginError = "Login failed";
         _status = SubmissionStatus.initial;
       });
     }
