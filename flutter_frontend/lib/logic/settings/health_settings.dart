@@ -12,18 +12,19 @@ class HealthSettings {
 
   // stupid boilerplate code because dart can't decode json
   factory HealthSettings.fromJson(Map<String, dynamic> json) {
-    final recordsJson = json[_records] as Map<String, dynamic>;
+    final recordsJson = json[_records] as Map<String, dynamic>?;
 
     return HealthSettings(
       json[_syncHealth] as bool? ?? false,
       json[_history] as bool? ?? false,
       json[_background] as bool? ?? false,
-      recordsJson.map(
-        (key, value) => MapEntry(
-          key,
-          HealthRecordSettings.fromJson(value as Map<String, dynamic>),
-        ),
-      ),
+      recordsJson?.map(
+            (key, value) => MapEntry(
+              key,
+              HealthRecordSettings.fromJson(value as Map<String, dynamic>),
+            ),
+          ) ??
+          {},
     );
   }
 
