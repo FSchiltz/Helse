@@ -76,10 +76,15 @@ class _EventWidgetState extends State<EventWidget> {
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 SizedBox(width: 12),
-                Expanded(child: Padding(
-                  padding: const EdgeInsets.only(bottom: 3.0),
-                  child: EventInformation(data: data?.durations ?? []),
-                )),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 3.0),
+                    child: EventInformation(
+                      data: data?.durations ?? [],
+                      type: widget.type,
+                    ),
+                  ),
+                ),
                 IconButton(
                   onPressed: () {
                     showDialog<void>(
