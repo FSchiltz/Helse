@@ -141,134 +141,135 @@ class _EventsGraphState extends State<EventsGraph> {
         ),
         SizedBox(height: UIConstants.formPad),
         Expanded(
-          child: Wrap(
-            children: [
-              CommonCard(
-                child: Column(
-                  children: [
-                    EventInformation(
-                      data: _getSessions(filteredEvents),
-                      type: widget.type,
-                    ),
-                    const SizedBox(height: UIConstants.formPad),
-                    Wrap(
-                      runAlignment: WrapAlignment.start,
-                      alignment: WrapAlignment.start,
-                      crossAxisAlignment: WrapCrossAlignment.start,
-                      spacing: UIConstants.formPad,
-                      runSpacing: UIConstants.formPad,
-                      children: [
-                        SizedBox(
-                          height: 4 * radius,
-                          width: 4 * radius,
-                          child: PieChart(
-                            PieChartData(
-                              sections: sections,
-                              centerSpaceRadius: radius,
-                              sectionsSpace: 0,
+          child: SingleChildScrollView(
+            child: Wrap(
+              children: [
+                CommonCard(
+                  child: Column(
+                    children: [
+                      EventInformation(
+                        data: _getSessions(filteredEvents),
+                        type: widget.type,
+                      ),
+                      const SizedBox(height: UIConstants.formPad),
+                      Wrap(
+                        runAlignment: WrapAlignment.start,
+                        alignment: WrapAlignment.start,
+                        crossAxisAlignment: WrapCrossAlignment.start,
+                        spacing: UIConstants.formPad,
+                        runSpacing: UIConstants.formPad,
+                        children: [
+                          SizedBox(
+                            height: 4 * radius,
+                            width: 4 * radius,
+                            child: PieChart(
+                              PieChartData(
+                                sections: sections,
+                                centerSpaceRadius: radius,
+                                sectionsSpace: 0,
+                              ),
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: sections.map((entry) {
+                              final item = entry.value;
+
+                              final percentage = item / stats.total * 100;
+                              final duration = Duration(seconds: item.toInt());
+                              return Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    width: 12,
+                                    height: 12,
+                                    color: entry.color,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '${entry.title} ${DateHelper.formatDuration(duration, locale)} (${percentage.toStringAsFixed(2)}%)',
+                                  ),
+                                ],
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                CommonCard(
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Text('Selected: '),
+                      if (event != null) Text('(${event.id})'),
+                      if (event != null) Text(' ${event.description} '),
+                      if (event != null)
+                        Text(
+                          locale.range(
+                            DateHelper.format(
+                              event.start.toLocal(),
+                              context: context,
+                            ),
+                            DateHelper.format(
+                              event.stop.toLocal(),
+                              context: context,
                             ),
                           ),
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: sections.map((entry) {
-                            final item = entry.value;
-
-                            final percentage = item / stats.total * 100;
-                            final duration = Duration(seconds: item.toInt());
-                            return Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  width: 12,
-                                  height: 12,
-                                  color: entry.color,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  '${entry.title} ${DateHelper.formatDuration(duration, locale)} (${percentage.toStringAsFixed(2)}%)',
-                                ),
-                              ],
-                            );
-                          }).toList(),
+                      if (event != null && event.tag != null)
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(event.tag.toString()),
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              CommonCard(
-                child: Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Text('Selected: '),
-                    if (event != null) Text('(${event.id})'),
-                    if (event != null) Text(' ${event.description} '),
-                    if (event != null)
-                      Text(
-                        locale.range(
-                          DateHelper.format(
-                            event.start.toLocal(),
-                            context: context,
-                          ),
-                          DateHelper.format(
-                            event.stop.toLocal(),
-                            context: context,
-                          ),
-                        ),
-                      ),
-                    if (event != null && event.tag != null)
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(event.tag.toString()),
-                      ),
-                    if (event != null)
-                      SizedBox(
-                        width: 40,
-                        child: IconButton(
-                          onPressed: () {
-                            showDialog<void>(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return EventAdd(
-                                  widget.reset,
-                                  widget.type,
-                                  person: widget.person,
-                                  edit: event,
-                                );
-                              },
-                            );
-                          },
-                          icon: const Icon(Icons.edit_sharp),
-                        ),
-                      ),
-                    if (id != null)
-                      SizedBox(
-                        width: 40,
-                        child: IconButton(
-                          onPressed: () {
-                            showDialog<void>(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return DeleteEvent(() async {
-                                  await Dependencies.services.event.deleteEvent(
-                                    id,
+                      if (event != null)
+                        SizedBox(
+                          width: 40,
+                          child: IconButton(
+                            onPressed: () {
+                              showDialog<void>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return EventAdd(
+                                    widget.reset,
+                                    widget.type,
+                                    person: widget.person,
+                                    edit: event,
                                   );
-                                  widget.reset();
-                                  setState(() {
-                                    _event = null;
-                                  });
-                                }, person: widget.person);
-                              },
-                            );
-                          },
-                          icon: const Icon(Icons.delete_sharp),
+                                },
+                              );
+                            },
+                            icon: const Icon(Icons.edit_sharp),
+                          ),
                         ),
-                      ),
-                  ],
+                      if (id != null)
+                        SizedBox(
+                          width: 40,
+                          child: IconButton(
+                            onPressed: () {
+                              showDialog<void>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return DeleteEvent(() async {
+                                    await Dependencies.services.event
+                                        .deleteEvent(id);
+                                    widget.reset();
+                                    setState(() {
+                                      _event = null;
+                                    });
+                                  }, person: widget.person);
+                                },
+                              );
+                            },
+                            icon: const Icon(Icons.delete_sharp),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],
@@ -318,7 +319,7 @@ class _EventsGraphState extends State<EventsGraph> {
 
       // fill the label count
       final existing = counts[event.description ?? ''];
-      final seconds = event.stop.difference(event.start).inSeconds;
+      final seconds = max(1, event.stop.difference(event.start).inSeconds);
       total = total + seconds;
       if (existing != null) {
         counts[event.description ?? ''] = seconds;
@@ -333,7 +334,7 @@ class _EventsGraphState extends State<EventsGraph> {
 
   List<Interval> _getSessions(List<Event> events) {
     List<MutableInterval> durations = [];
-    final delta = Duration(seconds: 10);
+    final delta = Duration(seconds: 30);
     for (var e in events) {
       final expandedStart = e.start.subtract(delta);
       final expandedStop = e.stop.add(delta);
