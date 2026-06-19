@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
-import 'package:helse/helpers/event_helper.dart';
 import 'package:helse/ui/blocs/events/event_detail_page.dart';
 import 'package:helse/ui/blocs/events/event_information.dart';
 import 'package:helse/ui/blocs/events/events_summary.dart';

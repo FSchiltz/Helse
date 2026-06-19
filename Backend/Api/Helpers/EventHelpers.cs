@@ -96,9 +96,9 @@ internal static class EventHelpers
         }
     }
 
-    private static List<(int, int)> Cut(double secondPerBucket, Data.Models.Health.Event e, DateTime start, DateTime end)
+    private static List<(int, double)> Cut(double secondPerBucket, Data.Models.Health.Event e, DateTime start, DateTime end)
     {
-        var steps = new List<(int, int)>();
+        var steps = new List<(int, double)>();
         var startDate = start;
         int tick = 0;
 
@@ -112,7 +112,7 @@ internal static class EventHelpers
                 // end and start of the common range between the tick and the event
                 var eventEnd = Min(end, endDate);
                 var eventStart = Max(start, startDate);
-                var count = (int)((eventEnd - eventStart).TotalSeconds / secondPerBucket);
+                var count = (eventEnd - eventStart).TotalSeconds / secondPerBucket;
 
                 steps.Add((tick, count));
             }
@@ -141,7 +141,7 @@ internal static class EventHelpers
     /// <returns></returns>
     private static (int BucketCount, double SecondPerBucket) GetSteps(DateTime start, DateTime end)
     {
-        const int maxBucket = 3;
+        const int maxBucket = 365;
         var duration = end - start;
         if (duration.TotalSeconds <= maxBucket)
         {
