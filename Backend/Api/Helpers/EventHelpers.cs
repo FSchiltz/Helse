@@ -124,7 +124,7 @@ internal static class EventHelpers
             startDate = endDate;
             tick++;
         }
-        while (startDate < end);
+        while (startDate.AddMilliseconds(100) < end); // add 100ms to fix some precision error that can occurs on long range
 
         return steps;
     }
@@ -141,7 +141,7 @@ internal static class EventHelpers
     /// <returns></returns>
     private static (int BucketCount, double SecondPerBucket) GetSteps(DateTime start, DateTime end)
     {
-        const int maxBucket = 200;
+        const int maxBucket = 3;
         var duration = end - start;
         if (duration.TotalSeconds <= maxBucket)
         {
