@@ -27,7 +27,7 @@ internal class ClueImporter(Stream file, IEventContext eventDb, IMetricContext m
         long adds = 0;
         foreach (var node in json)
         {
-            if (node.Date is null || node.Value?.Any() != true)
+            if (node.Date is null || node.Value is null || node.Value.Count > 0)
             {
                 i++;
                 skips++;

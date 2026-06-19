@@ -39,7 +39,7 @@ internal class BabyTrackerImporter(Stream file, IEventContext eventDb,IMetricCon
             {
                 CreateEvent? createEvent = null;
                 CreateMetric? createMetric = null;
-                switch (item.Type.ToUpper())
+                switch (item.Type.ToUpperInvariant())
                 {
                     case "HEALTH":
                         createMetric = ImportHealth(item);
@@ -167,7 +167,7 @@ internal class BabyTrackerImporter(Stream file, IEventContext eventDb,IMetricCon
 
     private static CreateEvent ImportPump(Record item)
     {
-        string description = item.Subtype.ToUpper() switch
+        string description = item.Subtype.ToUpperInvariant() switch
         {
             "PUMP_LEFT" => "Pump Left",
             "PUMP_RIGHT" => "Pump Right",
@@ -191,7 +191,7 @@ internal class BabyTrackerImporter(Stream file, IEventContext eventDb,IMetricCon
 
     private static string GetUnit(string unit)
     {
-        return unit.ToUpper() switch
+        return unit.ToUpperInvariant() switch
         {
             "NONE" => string.Empty,
             "MILLIMETERS" => "mm",
@@ -204,7 +204,7 @@ internal class BabyTrackerImporter(Stream file, IEventContext eventDb,IMetricCon
 
     private static CreateMetric ImportHealth(Record item)
     {
-        switch (item.Subtype.ToUpper())
+        switch (item.Subtype.ToUpperInvariant())
         {
             case "HEALTH_VACCINATIONS":
                 return new CreateMetric()

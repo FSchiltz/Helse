@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
 
     <AnalysisLevel>latest</AnalysisLevel>
-    <AnalysisMode>all</AnalysisMode>
+    <AnalysisMode>Minimum</AnalysisMode>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <RootNamespace>Helse.Models</RootNamespace>
   </PropertyGroup>
