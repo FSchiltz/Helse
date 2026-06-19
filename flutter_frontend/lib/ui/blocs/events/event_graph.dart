@@ -87,6 +87,7 @@ class _EventsGraphState extends State<EventsGraph> {
     var id = _event?.id;
     var locale = Translation.of(context);
     final stats = _group(filteredEvents, subDate);
+    final sessions = _getSessions(filteredEvents);
 
     final radius = 40.0;
     final sections = stats.counts.entries.map((entry) {
@@ -147,10 +148,7 @@ class _EventsGraphState extends State<EventsGraph> {
                 CommonCard(
                   child: Column(
                     children: [
-                      EventInformation(
-                        data: _getSessions(filteredEvents),
-                        type: widget.type,
-                      ),
+                      EventInformation(data: sessions, type: widget.type),
                       const SizedBox(height: UIConstants.formPad),
                       Wrap(
                         runAlignment: WrapAlignment.start,
@@ -196,6 +194,12 @@ class _EventsGraphState extends State<EventsGraph> {
                         ],
                       ),
                     ],
+                  ),
+                ),
+                CommonCard(
+                  child: Padding(
+                    padding: const EdgeInsets.all(UIConstants.formPad),
+                    child: _getRangeGraph(sessions),
                   ),
                 ),
                 CommonCard(
@@ -362,6 +366,117 @@ class _EventsGraphState extends State<EventsGraph> {
     return durations
         .map((e) => Interval(start: e.start, stop: e.stop))
         .toList();
+  }
+
+  Widget _getRangeGraph(List<Interval> sessions) {
+    final minDate = sessions
+        .map((e) => e.start)
+        .reduce((a, b) => a.isBefore(b) ? a : b);
+
+    return SizedBox(
+      height: 200 - (2 * UIConstants.formPad),
+      width: (sessions.length * 8) + 100,
+      child: BarChart(
+        BarChartData(
+          alignment: BarChartAlignment.spaceAround,
+
+          barTouchData: BarTouchData(
+            enabled: true,
+            touchTooltipData: BarTouchTooltipData(
+              tooltipPadding: const EdgeInsets.all(12),
+              getTooltipItem:
+                  (
+                    BarChartGroupData group,
+                    int groupIndex,
+                    BarChartRodData rod,
+                    int rodIndex,
+                  ) {
+                    final event = sessions[groupIndex];
+
+                    final duration = event.stop.difference(event.start);
+                    return BarTooltipItem(
+                      'Start: ${DateHelper.formatTime(event.start, context: context)}\n'
+                      'End: ${DateHelper.formatTime(event.stop, context: context)}\n'
+                      '${DateHelper.formatDuration(duration, Translation.of(context))}',
+                      const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  },
+            ),
+          ),
+
+          gridData: const FlGridData(show: true),
+          borderData: FlBorderData(show: false),
+          minY: 0,
+          maxY: 24 * 60,
+          titlesData: FlTitlesData(
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false,
+                reservedSize: 80,
+                getTitlesWidget: (value, meta) {
+                  final date = DateTime(
+                    0,
+                  ).add(Duration(minutes: value.toInt()));
+
+                  return Text(
+                    DateHelper.formatTime(date, context: context),
+                    style: const TextStyle(fontSize: 12),
+                  );
+                },
+              ),
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false,
+                getTitlesWidget: (value, meta) {
+                  final date = minDate.add(Duration(minutes: value.toInt()));
+
+                  return Text(
+                    '${date.day}/${date.month}',
+                    style: const TextStyle(fontSize: 10),
+                  );
+                },
+              ),
+            ),
+            rightTitles: const AxisTitles(),
+            topTitles: const AxisTitles(),
+          ),
+          barGroups: _map(sessions),
+        ),
+      ),
+    );
+  }
+
+  List<BarChartGroupData>? _map(List<Interval> sessions) {
+    final List<BarChartGroupData> bars = [];
+    for (int i = 0; i < sessions.length; i++) {
+      final session = sessions[i];
+      final start = Duration(
+        hours: session.start.hour,
+        minutes: session.start.minute,
+      );
+      final stop = Duration(
+        hours: session.stop.hour,
+        minutes: session.stop.minute,
+      );
+      bars.add(
+        BarChartGroupData(
+          x: i,
+          barRods: [
+            BarChartRodData(
+              fromY: start.inMinutes.toDouble(),
+              toY: stop.inMinutes.toDouble(),
+              width: 4,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ],
+        ),
+      );
+    }
+    return bars;
   }
 }
 
