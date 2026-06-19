@@ -40,7 +40,9 @@ class EventTimeline extends StatelessWidget {
 
     int tick = 0;
     int max = userData.map((x) => x.data.values.map((y) => y as int).sum).max;
-    var coeff = height / max;
+
+    // remove 5% of the height to fix some overflow on the graph
+    var coeff = (height / max) * 0.95;
 
     for (var d in events) {
       chartBars.add(
