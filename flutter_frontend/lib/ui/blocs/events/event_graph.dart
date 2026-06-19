@@ -197,20 +197,14 @@ class _EventsGraphState extends State<EventsGraph> {
                     ],
                   ),
                 ),
-                CommonCard(
-                  child: Padding(
-                    padding: const EdgeInsets.all(UIConstants.formPad),
-                    child: _getRangeGraph(sessions),
-                  ),
-                ),
-                CommonCard(
-                  child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Text('Selected: '),
-                      if (event != null) Text('(${event.id})'),
-                      if (event != null) Text(' ${event.description} '),
-                      if (event != null)
+                if (event != null)
+                  CommonCard(
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Text('Selected: '),
+                        Text('(${event.id})'),
+                        Text(' ${event.description} '),
                         Text(
                           locale.range(
                             DateHelper.format(
@@ -223,12 +217,11 @@ class _EventsGraphState extends State<EventsGraph> {
                             ),
                           ),
                         ),
-                      if (event != null && event.tag != null)
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(event.tag.toString()),
-                        ),
-                      if (event != null)
+                        if (event.tag != null)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(event.tag.toString()),
+                          ),
                         SizedBox(
                           width: 40,
                           child: IconButton(
@@ -248,29 +241,35 @@ class _EventsGraphState extends State<EventsGraph> {
                             icon: const Icon(Icons.edit_sharp),
                           ),
                         ),
-                      if (id != null)
-                        SizedBox(
-                          width: 40,
-                          child: IconButton(
-                            onPressed: () {
-                              showDialog<void>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return DeleteEvent(() async {
-                                    await Dependencies.services.event
-                                        .deleteEvent(id);
-                                    widget.reset();
-                                    setState(() {
-                                      _event = null;
-                                    });
-                                  }, person: widget.person);
-                                },
-                              );
-                            },
-                            icon: const Icon(Icons.delete_sharp),
+                        if (id != null)
+                          SizedBox(
+                            width: 40,
+                            child: IconButton(
+                              onPressed: () {
+                                showDialog<void>(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return DeleteEvent(() async {
+                                      await Dependencies.services.event
+                                          .deleteEvent(id);
+                                      widget.reset();
+                                      setState(() {
+                                        _event = null;
+                                      });
+                                    }, person: widget.person);
+                                  },
+                                );
+                              },
+                              icon: const Icon(Icons.delete_sharp),
+                            ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
+                  ),
+                CommonCard(
+                  child: Padding(
+                    padding: const EdgeInsets.all(UIConstants.formPad),
+                    child: _getRangeGraph(sessions),
                   ),
                 ),
               ],
