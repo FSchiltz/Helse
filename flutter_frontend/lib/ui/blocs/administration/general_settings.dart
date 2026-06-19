@@ -6,9 +6,7 @@ import 'package:helse/ui/blocs/administration/settings/proxy.dart';
 import 'package:helse/ui/blocs/administration/settings/smtp.dart';
 
 class GeneralSettings extends StatelessWidget {
-  const GeneralSettings({
-    super.key,
-  });
+  const GeneralSettings({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -39,19 +37,31 @@ class GeneralSettings extends StatelessWidget {
             child: TabBarView(
               children: [
                 SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30.0,
+                    vertical: 10.0,
+                  ),
                   child: const ProxyView(),
                 ),
                 SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30.0,
+                    vertical: 10.0,
+                  ),
                   child: const OauthView(),
                 ),
                 SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30.0,
+                    vertical: 10.0,
+                  ),
                   child: const SmtpView(),
                 ),
                 SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30.0,
+                    vertical: 10.0,
+                  ),
                   child: const GotifyView(),
                 ),
               ],

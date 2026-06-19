@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:helse/helpers/pair.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/settings/settings_logic.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
@@ -21,7 +20,7 @@ class MetricGroupDetail extends StatefulWidget {
 }
 
 class _MetricGroupDetailState extends State<MetricGroupDetail> {
-  List<Pair<MetricType, OrderedItem>>? types;
+  List<(MetricType, OrderedItem)>? types;
 
   void _getData() async {
     try {
@@ -30,7 +29,7 @@ class _MetricGroupDetailState extends State<MetricGroupDetail> {
         widget.group.id,
       );
       if (model != null) {
-        List<Pair<MetricType, OrderedItem>> filtered = [];
+        List<(MetricType, OrderedItem)> filtered = [];
         MetricSettings settings;
 
         if (widget.person == null) {
@@ -49,7 +48,7 @@ class _MetricGroupDetailState extends State<MetricGroupDetail> {
               Dependencies.logics.settings.getDefault(item);
 
           if (setting.visible == true) {
-            filtered.add(Pair(item, setting));
+            filtered.add((item, setting));
           }
         }
 

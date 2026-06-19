@@ -95,7 +95,6 @@ class _DateInputState extends State<DateInput> {
 
   @override
   Widget build(BuildContext context) {
-
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: 330),
       child: Row(
@@ -111,7 +110,6 @@ class _DateInputState extends State<DateInput> {
               },
               icon: Icons.edit_calendar_sharp,
               label: widget.label,
-
             ),
           ),
           Flexible(

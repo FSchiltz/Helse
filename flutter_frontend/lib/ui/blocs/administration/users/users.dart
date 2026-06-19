@@ -96,9 +96,8 @@ class _UsersViewState extends State<UsersView> {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return DeleteUser(() async {
-                                            await Dependencies.services.user.deletePerson(
-                                              user.id,
-                                            );
+                                            await Dependencies.services.user
+                                                .deletePerson(user.id);
                                             reset();
                                           }, person: user);
                                         },

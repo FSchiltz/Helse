@@ -40,7 +40,10 @@ class UserRightInput extends StatelessWidget {
             }
           },
           child: Container(
-            margin: EdgeInsets.symmetric(horizontal: isSelected ? 4 : 5, vertical: 4),
+            margin: EdgeInsets.symmetric(
+              horizontal: isSelected ? 4 : 5,
+              vertical: 4,
+            ),
             padding: EdgeInsets.symmetric(vertical: 5, horizontal: 12),
             decoration: BoxDecoration(
               color: theme.onPrimary,

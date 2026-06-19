@@ -5,7 +5,6 @@ import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/ui/blocs/metrics/metric_group_detail.dart';
 import 'package:helse/ui/blocs/metrics/metric_widgets_grid.dart';
 
-import '../../../helpers/pair.dart';
 import '../../../di/dependencies.dart';
 import '../../../logic/settings/settings_logic.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -29,7 +28,7 @@ class MetricsGroup extends StatefulWidget {
 }
 
 class _MetricsGroupState extends State<MetricsGroup> {
-  List<Pair<MetricType, OrderedItem>>? types;
+  List<(MetricType, OrderedItem)>? types;
   @override
   void initState() {
     super.initState();
@@ -55,9 +54,9 @@ class _MetricsGroupState extends State<MetricsGroup> {
             widget.person,
           );
         }
+        
         // filter using the user settings
-
-        List<Pair<MetricType, OrderedItem>> filtered = [];
+        List<(MetricType, OrderedItem)> filtered = [];
         for (var item in model.where((x) => x.showOnDashboard == true)) {
           OrderedItem setting =
               settings.displaySettings.firstWhereOrNull(
@@ -66,7 +65,7 @@ class _MetricsGroupState extends State<MetricsGroup> {
               Dependencies.logics.settings.getDefault(item);
 
           if (setting.showOnDashboard == true) {
-            filtered.add(Pair(item, setting));
+            filtered.add((item, setting));
           }
         }
 

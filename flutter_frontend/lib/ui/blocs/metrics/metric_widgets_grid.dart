@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/date_helper.dart';
-import 'package:helse/helpers/pair.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/widget/metric_widget.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
@@ -21,7 +20,7 @@ class MetricWidgetsGrid extends StatelessWidget {
   final bool fullWidth;
   final DateTimeRange<DateTime> date;
   final int? person;
-  final List<Pair<MetricType, OrderedItem>> cached;
+  final List<(MetricType, OrderedItem)> cached;
   final double? extend;
   final int tile;
 
@@ -47,10 +46,10 @@ class MetricWidgetsGrid extends StatelessWidget {
                   child: CommonCard(
                     padding: false,
                     child: MetricWidget(
-                      type.a,
-                      type.b,
-                      DateHelper.offset(date, type.a.timeDifference),
-                      key: Key(type.a.id.toString()),
+                      type.$1,
+                      type.$2,
+                      DateHelper.offset(date, type.$1.timeDifference),
+                      key: Key(type.$1.id.toString()),
                       person: person,
                       tile: tile,
                     ),
