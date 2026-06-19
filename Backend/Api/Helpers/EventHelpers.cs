@@ -13,7 +13,7 @@ internal static class EventHelpers
         if (events.Length <= bucketCount && events.Length > 0)
         {
             List<Interval> durations = [];
-            foreach (var e in events)
+            foreach (var e in events.OrderBy(x => x.Start))
             {
                 AddToDuration(e.Start, e.Stop, durations);
             }
@@ -39,7 +39,7 @@ internal static class EventHelpers
             List<Interval> durations = [];
 
             // add each summary in the data
-            foreach (var e in events)
+            foreach (var e in events.OrderBy(x => x.Start))
             {
                 AddToDuration(e.Start, e.Stop, durations);
 
@@ -70,7 +70,8 @@ internal static class EventHelpers
 
     private static void AddToDuration(DateTime start, DateTime stop, List<Interval> durations)
     {
-        var duration = durations.FirstOrDefault(x => stop.AddSeconds(10) >= x.Start && start.AddSeconds(-10) <= x.Stop);
+        const int delta = 30;
+        var duration = durations.FirstOrDefault(x => stop.AddSeconds(delta) >= x.Start && start.AddSeconds(-delta) <= x.Stop);
         if (duration is null)
         {
             durations.Add(new()
