@@ -123,7 +123,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
     DateTime startSkipping = widget.date.start;
 
     var viewRange = _minutesBetween(widget.date.start, widget.date.end) / 60;
-    for (int i = 0; i <= viewRange; i++) {
+    for (int i = 0; i < viewRange; i++) {
       var currentDate = tempDate;
       tempDate = tempDate.add(const Duration(hours: 1));
 
@@ -274,8 +274,12 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
   }
 
   int _distanceInMinutes(DateTime start, DateTime end) {
-    if (start.compareTo(widget.date.start) < 0) start = widget.date.start;
-    if (end.compareTo(widget.date.end) > 0) end = widget.date.end;
+    if (start.isBefore(widget.date.start.toLocal())) {
+      start = widget.date.start.toLocal();
+    }
+    if (end.isAfter(widget.date.end.toLocal())) {
+      end = widget.date.end.toLocal();
+    }
     return max(1, _minutesBetween(start, end));
   }
 
