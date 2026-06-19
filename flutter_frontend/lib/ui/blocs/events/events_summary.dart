@@ -39,8 +39,10 @@ class EventTimeline extends StatelessWidget {
     List<Widget> chartBars = [];
 
     int tick = 0;
-    int max = userData.map((x) => x.data.values.map((y) => y as int).sum).max;
-    
+    double max = userData
+        .map((x) => x.data.values.map((y) => y as double).sum)
+        .max;
+
     var coeff = (height / max) * 0.95;
 
     for (var d in events) {
@@ -100,8 +102,8 @@ class EventTimeline extends StatelessWidget {
     List<Widget> widgets = [];
 
     for (var entry in p.entries) {
-      var count = entry.value as int?;
-      if (count != null && count > 0) {
+      var count = entry.value as double;
+      if (count > 0) {
         widgets.add(
           Tooltip(
             message: entry.key,

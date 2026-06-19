@@ -5,6 +5,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/event_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
@@ -87,7 +88,7 @@ class _EventsGraphState extends State<EventsGraph> {
     var id = _event?.id;
     var locale = Translation.of(context);
     final stats = _group(filteredEvents, subDate);
-    final sessions = _getSessions(filteredEvents);
+    final sessions = EventHelper.getSessions(filteredEvents);
 
     final radius = 40.0;
     final sections = stats.counts.entries.map((entry) {
@@ -196,20 +197,14 @@ class _EventsGraphState extends State<EventsGraph> {
                     ],
                   ),
                 ),
-                CommonCard(
-                  child: Padding(
-                    padding: const EdgeInsets.all(UIConstants.formPad),
-                    child: _getRangeGraph(sessions),
-                  ),
-                ),
-                CommonCard(
-                  child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Text('Selected: '),
-                      if (event != null) Text('(${event.id})'),
-                      if (event != null) Text(' ${event.description} '),
-                      if (event != null)
+                if (event != null)
+                  CommonCard(
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Text('Selected: '),
+                        Text('(${event.id})'),
+                        Text(' ${event.description} '),
                         Text(
                           locale.range(
                             DateHelper.format(
@@ -222,12 +217,11 @@ class _EventsGraphState extends State<EventsGraph> {
                             ),
                           ),
                         ),
-                      if (event != null && event.tag != null)
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(event.tag.toString()),
-                        ),
-                      if (event != null)
+                        if (event.tag != null)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(event.tag.toString()),
+                          ),
                         SizedBox(
                           width: 40,
                           child: IconButton(
@@ -247,29 +241,35 @@ class _EventsGraphState extends State<EventsGraph> {
                             icon: const Icon(Icons.edit_sharp),
                           ),
                         ),
-                      if (id != null)
-                        SizedBox(
-                          width: 40,
-                          child: IconButton(
-                            onPressed: () {
-                              showDialog<void>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return DeleteEvent(() async {
-                                    await Dependencies.services.event
-                                        .deleteEvent(id);
-                                    widget.reset();
-                                    setState(() {
-                                      _event = null;
-                                    });
-                                  }, person: widget.person);
-                                },
-                              );
-                            },
-                            icon: const Icon(Icons.delete_sharp),
+                        if (id != null)
+                          SizedBox(
+                            width: 40,
+                            child: IconButton(
+                              onPressed: () {
+                                showDialog<void>(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return DeleteEvent(() async {
+                                      await Dependencies.services.event
+                                          .deleteEvent(id);
+                                      widget.reset();
+                                      setState(() {
+                                        _event = null;
+                                      });
+                                    }, person: widget.person);
+                                  },
+                                );
+                              },
+                              icon: const Icon(Icons.delete_sharp),
+                            ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
+                  ),
+                CommonCard(
+                  child: Padding(
+                    padding: const EdgeInsets.all(UIConstants.formPad),
+                    child: _getRangeGraph(sessions),
                   ),
                 ),
               ],
@@ -323,49 +323,16 @@ class _EventsGraphState extends State<EventsGraph> {
 
       // fill the label count
       final existing = counts[event.description ?? ''];
-      final seconds = max(1, event.stop.difference(event.start).inSeconds);
+      var seconds = max(1, event.stop.difference(event.start).inSeconds);
       total = total + seconds;
       if (existing != null) {
-        counts[event.description ?? ''] = seconds;
-      } else {
-        counts[event.description ?? ''] = seconds;
+        seconds = existing + seconds;
       }
+      counts[event.description ?? ''] = seconds;
     }
 
     logger.log('_group() executed in ${stopwatch.elapsed}', name: "Events");
     return _GroupStats(groups.toList(), counts, total);
-  }
-
-  List<Interval> _getSessions(List<Event> events) {
-    List<MutableInterval> durations = [];
-    final delta = Duration(seconds: 30);
-    for (var e in events) {
-      final expandedStart = e.start.subtract(delta);
-      final expandedStop = e.stop.add(delta);
-      var duration = durations.firstWhereOrNull(
-        (x) =>
-            (expandedStop.isAfter(x.start) ||
-                expandedStop.isAtSameMomentAs(x.start)) &&
-            (expandedStart.isBefore(x.stop) ||
-                expandedStart.isAtSameMomentAs(x.stop)),
-      );
-      if (duration == null) {
-        durations.add(MutableInterval(start: e.start, stop: e.stop));
-      } else {
-        if (e.start.isBefore(duration.start)) {
-          // the event is before, we add to the start
-          duration.start = e.start;
-        }
-
-        if (e.stop.isAfter(duration.stop)) {
-          // the event is after
-          duration.stop = e.stop;
-        }
-      }
-    }
-    return durations
-        .map((e) => Interval(start: e.start, stop: e.stop))
-        .toList();
   }
 
   Widget _getRangeGraph(List<Interval> sessions) {

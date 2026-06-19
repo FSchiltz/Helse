@@ -138,6 +138,8 @@ enum RightType {
   @JsonValue(null)
   swaggerGeneratedUnknown(null),
 
+  @JsonValue('None')
+  none('None'),
   @JsonValue('View')
   view('View'),
   @JsonValue('Edit')

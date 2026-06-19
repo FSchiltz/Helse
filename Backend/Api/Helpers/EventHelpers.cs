@@ -13,7 +13,7 @@ internal static class EventHelpers
         if (events.Length <= bucketCount && events.Length > 0)
         {
             List<Interval> durations = [];
-            foreach (var e in events)
+            foreach (var e in events.OrderBy(x => x.Start))
             {
                 AddToDuration(e.Start, e.Stop, durations);
             }
@@ -39,7 +39,7 @@ internal static class EventHelpers
             List<Interval> durations = [];
 
             // add each summary in the data
-            foreach (var e in events)
+            foreach (var e in events.OrderBy(x => x.Start))
             {
                 AddToDuration(e.Start, e.Stop, durations);
 
@@ -70,7 +70,8 @@ internal static class EventHelpers
 
     private static void AddToDuration(DateTime start, DateTime stop, List<Interval> durations)
     {
-        var duration = durations.FirstOrDefault(x => stop.AddSeconds(10) >= x.Start && start.AddSeconds(-10) <= x.Stop);
+        const int delta = 30;
+        var duration = durations.FirstOrDefault(x => stop.AddSeconds(delta) >= x.Start && start.AddSeconds(-delta) <= x.Stop);
         if (duration is null)
         {
             durations.Add(new()
@@ -95,9 +96,9 @@ internal static class EventHelpers
         }
     }
 
-    private static List<(int, int)> Cut(double secondPerBucket, Data.Models.Health.Event e, DateTime start, DateTime end)
+    private static List<(int, double)> Cut(double secondPerBucket, Data.Models.Health.Event e, DateTime start, DateTime end)
     {
-        var steps = new List<(int, int)>();
+        var steps = new List<(int, double)>();
         var startDate = start;
         int tick = 0;
 
@@ -111,7 +112,7 @@ internal static class EventHelpers
                 // end and start of the common range between the tick and the event
                 var eventEnd = Min(end, endDate);
                 var eventStart = Max(start, startDate);
-                var count = (int)((eventEnd - eventStart).TotalSeconds / secondPerBucket);
+                var count = (eventEnd - eventStart).TotalSeconds / secondPerBucket;
 
                 steps.Add((tick, count));
             }
@@ -123,7 +124,7 @@ internal static class EventHelpers
             startDate = endDate;
             tick++;
         }
-        while (startDate < end);
+        while (startDate.AddMilliseconds(100) < end); // add 100ms to fix some precision error that can occurs on long range
 
         return steps;
     }
@@ -140,7 +141,7 @@ internal static class EventHelpers
     /// <returns></returns>
     private static (int BucketCount, double SecondPerBucket) GetSteps(DateTime start, DateTime end)
     {
-        const int maxBucket = 200;
+        const int maxBucket = 365;
         var duration = end - start;
         if (duration.TotalSeconds <= maxBucket)
         {

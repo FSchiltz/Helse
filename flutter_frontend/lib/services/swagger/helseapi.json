@@ -2545,12 +2545,12 @@
           "data": {
             "type": "object",
             "additionalProperties": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
               "type": [
-                "integer",
+                "number",
                 "string"
               ],
-              "format": "int32"
+              "format": "double"
             }
           }
         }
@@ -2665,13 +2665,19 @@
         "type": "object",
         "properties": {
           "metrics": {
-            "type": "array",
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "$ref": "#/components/schemas/CreateMetric"
             }
           },
           "events": {
-            "type": "array",
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "$ref": "#/components/schemas/CreateEvent"
             }
@@ -3507,6 +3513,7 @@
       },
       "RightType": {
         "enum": [
+          "None",
           "View",
           "Edit"
         ]
