@@ -17,7 +17,7 @@ internal static class OauthHelper
         PropertyNameCaseInsensitive = true
     };
 
-    private record Token(string Issuer, string User, string IdToken, string AccessToken);
+    private sealed record Token(string Issuer, string User, string IdToken, string AccessToken);
 
     private class UserInfo
     {
