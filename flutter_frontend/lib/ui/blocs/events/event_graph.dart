@@ -323,13 +323,12 @@ class _EventsGraphState extends State<EventsGraph> {
 
       // fill the label count
       final existing = counts[event.description ?? ''];
-      final seconds = max(1, event.stop.difference(event.start).inSeconds);
+      var seconds = max(1, event.stop.difference(event.start).inSeconds);
       total = total + seconds;
       if (existing != null) {
-        counts[event.description ?? ''] = seconds;
-      } else {
-        counts[event.description ?? ''] = seconds;
+        seconds = existing + seconds;
       }
+      counts[event.description ?? ''] = seconds;
     }
 
     logger.log('_group() executed in ${stopwatch.elapsed}', name: "Events");
