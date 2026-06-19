@@ -2,16 +2,16 @@ using System.Reflection;
 using DbUp;
 using Microsoft.Extensions.Options;
 
-namespace Api.Data;
+namespace Helse.Api.Data;
 
-public class MigrationSettings
+internal class MigrationSettings
 {
     public static string Name => "ConnectionStrings";
 
     public required string Default { get; set; }
 }
 
-public class MigrationHelper(IOptions<MigrationSettings> settings, ILogger<MigrationHelper> logger) : IHostedService
+internal class MigrationHelper(IOptions<MigrationSettings> settings, ILogger<MigrationHelper> logger) : IHostedService
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -30,7 +30,7 @@ public class MigrationHelper(IOptions<MigrationSettings> settings, ILogger<Migra
         }
         else
         {
-            throw new Exception("Migration error" + result.Error);
+            throw new InvalidOperationException("Migration error" + result.Error);
         }
     }
 

@@ -1,22 +1,20 @@
-using static Api.Jobs.ImporterService;
-
-namespace Api.Jobs;
+namespace Helse.Api.Jobs;
 
 /// <summary>
 /// Local queue when you don't need to stream the progress
 /// </summary>
-public sealed class LocalQueue : IImportQueue
+internal sealed class LocalQueue : IImportQueue
 {
     public void Cancel(Guid id)
     {
     }
 
-    public ValueTask<Job> DequeueAsync(CancellationToken token)
+    public ValueTask<ImporterService.Job> DequeueAsync(CancellationToken token)
     {
         throw new NotImplementedException();
     }
 
-    public void Enqueue(Job value, string description)
+    public void Enqueue(ImporterService.Job value, string description)
     {
     }
 

@@ -1,11 +1,5 @@
-using Api.Data;
-using Api.Logic;
-using Api.Models.Persons;
-using Microsoft.AspNetCore.Http;
+using Helse.Api.Logic;
 using NSubstitute;
-using System.Security.Claims;
-using Api.Helpers;
-using Api.Data.Models.Persons;
 
 namespace Tests.Unit.Logic;
 
@@ -15,13 +9,13 @@ public class PersonLogicTests : LogicTests
     public async Task GetAsync_ReturnsUsers_WhenAdmin()
     {
         // Arrange        
-        var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);
+        var users = SetupUser(Helse.Api.Data.Models.Persons.UserType.Admin);
         var context = SetupContext();
 
         users.GetUsers().Returns(
         [
-            new(new Api.Data.Models.Persons.User { Id = 1, Identifier = "test", Password = "pass",
-            Created = DateTime.Now, }, new Api.Data.Models.Persons.Person { Id = 1, Name = "Test",
+            new(new Helse.Api.Data.Models.Persons.User { Id = 1, Identifier = "test", Password = "pass",
+            Created = DateTime.Now, }, new Helse.Api.Data.Models.Persons.Person { Id = 1, Name = "Test",
             Created = DateTime.Now, })
         ]);
         users.GetRights(Arg.Any<DateTime>()).Returns([]);
@@ -30,7 +24,7 @@ public class PersonLogicTests : LogicTests
         var result = await PersonLogic.GetAsync(users, context);
 
         // Assert
-        var okResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<IEnumerable<Api.Models.Persons.Person>>>(result);
+        var okResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<IEnumerable<Helse.Models.Persons.Person>>>(result);
         Assert.NotNull(okResult.Value);
     }
 
@@ -38,7 +32,7 @@ public class PersonLogicTests : LogicTests
     public async Task GetAsync_ReturnsForbid_WhenNotAdmin()
     {
         // Arrange
-        var users = SetupUser(Api.Data.Models.Persons.UserType.User);
+        var users = SetupUser(Helse.Api.Data.Models.Persons.UserType.User);
         var context = SetupContext();
 
         // Act

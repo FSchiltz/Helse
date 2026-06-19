@@ -1,6 +1,6 @@
 using Api.Logic.Import;
 
-namespace Api.Jobs;
+namespace Helse.Api.Jobs;
 
 public record JobResultInfo(Guid Id, JobResult Result);
 

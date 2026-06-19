@@ -4,7 +4,7 @@ using System.Diagnostics;
 using LinqToDB.Common;
 using LinqToDB.Interceptors;
 
-namespace Api.Data;
+namespace Helse.Api.Data;
 
 public class SlowQueryLogInterceptor(ILogger<SlowQueryLogInterceptor> logger) : ICommandInterceptor
 {

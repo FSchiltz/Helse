@@ -1,4 +1,4 @@
-namespace Api.Jobs;
+namespace Helse.Api.Jobs;
 
 public interface IJobQueue<T>
 {

@@ -1,15 +1,15 @@
 using System.IO.Compression;
 using System.Text.Json;
-using Api.Data;
-using Api.Jobs;
-using Api.Models.Events;
-using Api.Models.Imports;
-using Api.Models.Metrics;
-using CsvHelper;
+using Api.Logic.Import.BabyTracker;
+using Helse.Api.Data;
+using Helse.Api.Jobs;
+using Helse.Models.Events;
+using Helse.Models.Imports;
+using Helse.Models.Metrics;
 
-namespace Api.Logic.Import.BabyTracker;
+namespace Helse.Api.Logic.Import.BabyTracker;
 
-public class BabyTrackerImporter(Stream file, IEventContext eventDb,IMetricContext metricDb, long user, long patient) : FileImporter(file, eventDb, metricDb, user, patient)
+internal class BabyTrackerImporter(Stream file, IEventContext eventDb,IMetricContext metricDb, long user, long patient) : FileImporter(file, eventDb, metricDb, user, patient)
 {
     private readonly JsonSerializerOptions _options = new()
     {

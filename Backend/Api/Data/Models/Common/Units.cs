@@ -1,6 +1,6 @@
 using LinqToDB.Mapping;
 
-namespace Api.Data.Models.Common;
+namespace Helse.Api.Data.Models.Common;
 
 [Table(Schema = "common")]
 public class Units

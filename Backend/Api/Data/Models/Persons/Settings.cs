@@ -1,7 +1,7 @@
 using LinqToDB;
 using LinqToDB.Mapping;
 
-namespace Api.Data.Models.Persons;
+namespace Helse.Api.Data.Models.Persons;
 
 [Table(Schema = "person")]
 public class Settings

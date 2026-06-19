@@ -1,11 +1,11 @@
-using Api.Data;
-using Api.Helpers;
-using Api.Models.Admin;
-using Api.Models.Common;
+using Helse.Api.Data;
+using Helse.Api.Helpers;
+using Helse.Models.Admin;
+using Helse.Models.Common;
 
-namespace Api.Logic;
+namespace Helse.Api.Logic;
 
-public static class AdminLogic
+internal static class AdminLogic
 {
     public async static Task<IResult> GetUserStatsAsync(IUserContext users, IStatsContext stats, HttpContext context)
     {

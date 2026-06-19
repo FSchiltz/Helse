@@ -1,10 +1,10 @@
 using System.Net;
 using System.Net.Mail;
-using Api.Data;
-using Api.Data.Models.Health;
-using Api.Models.Settings.Admin;
+using Helse.Api.Data;
+using Helse.Api.Data.Models.Health;
+using Helse.Models.Settings.Admin;
 
-namespace Api.Jobs;
+namespace Helse.Api.Jobs;
 
 public class EventNotificationService(IServiceProvider serviceProvider, ILogger<EventNotificationService> logger) : BackgroundService
 {

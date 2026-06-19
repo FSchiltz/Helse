@@ -1,4 +1,4 @@
-using Api.Helpers.Auth;
+using Helse.Api.Helpers.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
@@ -71,7 +71,7 @@ public class TokenServiceTests
         var service = new TokenService(config);
 
         var hash = TokenService.Hash("pass");
-        var tokenInfo = new Api.Data.Models.Persons.User()
+        var tokenInfo = new Helse.Api.Data.Models.Persons.User()
         {
             Identifier = "id",
             Password = "pppp",
@@ -95,7 +95,7 @@ public class TokenServiceTests
         var config = new TokenConfig("issuer", "audience", key);
         var service = new TokenService(config);
 
-        var tokenInfo = new Api.Data.Models.Persons.User()
+        var tokenInfo = new Helse.Api.Data.Models.Persons.User()
         {
             Identifier = "id",
             Password = "pppp",
@@ -119,7 +119,7 @@ public class TokenServiceTests
         var config = new TokenConfig("issuer", "audience", key);
         var service = new TokenService(config);
 
-        var tokenInfo = new Api.Data.Models.Persons.User()
+        var tokenInfo = new Helse.Api.Data.Models.Persons.User()
         {
             Identifier = "id",
             Password = "pppp",
@@ -143,7 +143,7 @@ public class TokenServiceTests
         var config = new TokenConfig("issuer", "audience", key);
         var service = new TokenService(config);
 
-        var tokenInfo = new Api.Data.Models.Persons.User()
+        var tokenInfo = new Helse.Api.Data.Models.Persons.User()
         {
             Identifier = "id",
             Password = "pppp",

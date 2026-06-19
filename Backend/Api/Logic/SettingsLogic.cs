@@ -1,17 +1,17 @@
 using System.Text.Json;
-using Api.Data;
-using Api.Data.Models.Health;
-using Api.Helpers;
-using Api.Models.Settings;
-using Api.Models.Settings.Admin;
+using Helse.Api.Data;
+using Helse.Api.Data.Models.Health;
+using Helse.Api.Helpers;
+using Helse.Models.Settings;
+using Helse.Models.Settings.Admin;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace Api.Logic;
+namespace Helse.Api.Logic;
 
 /// <summary>
 /// Management of the server settings
 /// </summary>
-public static class SettingsLogic
+internal static class SettingsLogic
 {
     public static async Task<IResult> GetUserSettings(IUserContext users, ISettingsContext settings, IMetricContext metrics, IEventContext events, HttpContext context)
     {

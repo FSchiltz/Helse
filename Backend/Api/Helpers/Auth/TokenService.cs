@@ -1,10 +1,10 @@
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
-using Api.Data.Models.Persons;
+using Helse.Api.Data.Models.Persons;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace Api.Helpers.Auth;
+namespace Helse.Api.Helpers.Auth;
 
 public record TokenConfig(string Issuer, string Audience, SymmetricSecurityKey Key);
 

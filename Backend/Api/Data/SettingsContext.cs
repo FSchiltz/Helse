@@ -2,27 +2,12 @@ using System.Text.Json;
 using LinqToDB;
 using LinqToDB.Data;
 
-namespace Api.Data;
-
-public interface ISettingsContext : IContext
-{
-    Task Delete(string name);
-
-    Task<T> GetSettings<T>(string name) where T : new();
-
-    Task Upsert(string name, string data);
-
-    Task Delete(string name, long user);
-
-    Task<T> GetSettings<T>(string name, long user) where T : new();
-
-    Task Upsert(string name, long user, string data);
-}
+namespace Helse.Api.Data;
 
 /// <summary>
 /// Class for calling the database for the settings
 /// </summary>
-public class SettingsContext(DataConnection db, SlowQueryLogInterceptor interceptor) : BaseContext(db, interceptor), ISettingsContext
+internal class SettingsContext(DataConnection db, SlowQueryLogInterceptor interceptor) : BaseContext(db, interceptor), ISettingsContext
 {
     public Task Delete(string name) => Db.GetTable<Data.Models.Admin.Settings>().DeleteAsync(x => x.Name == name);
 

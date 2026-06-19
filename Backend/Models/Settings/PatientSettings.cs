@@ -1,0 +1,6 @@
+namespace Helse.Models.Settings;
+
+public class PatientSettings : UserSettings
+{
+    public long? PatientId { get; set; }
+}

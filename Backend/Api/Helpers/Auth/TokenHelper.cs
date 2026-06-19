@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace Api.Helpers.Auth;
+namespace Helse.Api.Helpers.Auth;
 
 public static class TokenHelper
 {

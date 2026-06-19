@@ -1,5 +1,5 @@
-using Api.Data;
-using Api.Data.Models.Persons;
+using Helse.Api.Data;
+using Helse.Api.Data.Models.Persons;
 using LinqToDB;
 using LinqToDB.Data;
 using Microsoft.Extensions.Logging;
@@ -149,7 +149,7 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
         var now = DateTime.UtcNow;
 
         // Act
-        var result = await context.HasRightAsync(userId, person2Id, Api.Models.Persons.RightType.View, now);
+        var result = await context.HasRightAsync(userId, person2Id, Helse.Models.Persons.RightType.View, now);
 
         // Assert
         Assert.Null(result);
@@ -189,7 +189,7 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
         {
             UserId = userId,
             PersonId = person2Id,
-            Type = (int)Api.Models.Persons.RightType.View,
+            Type = (int)Helse.Models.Persons.RightType.View,
             Start = now.AddHours(-1),
             Stop = now.AddHours(1),
             Created = DateTime.Now,
@@ -198,10 +198,10 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
         var context = new UserContext(_db, _interceptor);
 
         // Act
-        var result = await context.HasRightAsync(userId, person2Id, Api.Models.Persons.RightType.View, now);
+        var result = await context.HasRightAsync(userId, person2Id, Helse.Models.Persons.RightType.View, now);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(Api.Models.Persons.RightType.View, result.Type);
+        Assert.Equal(Helse.Models.Persons.RightType.View, result.Type);
     }
 }

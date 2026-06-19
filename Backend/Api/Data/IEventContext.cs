@@ -1,9 +1,9 @@
-using Api.Data.Models.Health;
-using Api.Models.Persons;
+using Helse.Api.Data.Models.Health;
+using Helse.Models.Persons;
 
-namespace Api.Data;
+namespace Helse.Api.Data;
 
-public interface IEventContext : IContext
+internal interface IEventContext : IContext
 {
     /// <summary>
     /// Insert a new event into the database
@@ -11,7 +11,7 @@ public interface IEventContext : IContext
     /// <param name="e">The event</param>
     /// <param name="person">The person to which add the event to</param>
     /// <param name="user">The user making the addition</param>
-    Task Insert(Api.Models.Events.CreateEvent e, long person, long user);
+    Task Insert(Helse.Models.Events.CreateEvent e, long person, long user);
 
     /// <summary>
     /// Get a single event by id
@@ -52,13 +52,13 @@ public interface IEventContext : IContext
     /// Update an event
     /// </summary>
     /// <param name="e">The event to update</param>
-    Task Update(Api.Models.Events.UpdateEvent e);
+    Task Update(Helse.Models.Events.UpdateEvent e);
 
     Task<EventType[]> GetEventTypes(bool? all, bool standalone = false);
 
-    Task Insert(Api.Models.Events.EventType metric);
+    Task Insert(Helse.Models.Events.EventType metric);
 
-    Task Update(Api.Models.Events.EventType type);
+    Task Update(Helse.Models.Events.EventType type);
 
     Task<int> DeleteEventType(long id);
 

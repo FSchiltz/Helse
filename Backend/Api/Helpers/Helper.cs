@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Api.Helpers;
+namespace Helse.Api.Helpers;
 
 public static class Helper
 {

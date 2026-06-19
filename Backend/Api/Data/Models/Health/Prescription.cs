@@ -1,8 +1,8 @@
-using Api.Data.Models.File;
-using Api.Data.Models.Persons;
+using Helse.Api.Data.Models.File;
+using Helse.Api.Data.Models.Persons;
 using LinqToDB.Mapping;
 
-namespace Api.Data.Models.Health;
+namespace Helse.Api.Data.Models.Health;
 
 [Table(Schema = "health")]
 public class Prescription

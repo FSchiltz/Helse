@@ -1,5 +1,5 @@
-using Api.Helpers;
-using Api.Models.Events;
+using Helse.Api.Helpers;
+using Helse.Models.Events;
 
 namespace Tests.Unit.Helpers;
 
@@ -12,7 +12,7 @@ public class EventHelpersTests
         var start = new DateTime(2024, 1, 1, 0, 0, 0);
         var end = new DateTime(2024, 1, 3, 0, 0, 0);
 
-        Api.Data.Models.Health.Event[] events =
+        Helse.Api.Data.Models.Health.Event[] events =
         [
             new() { Id = 1, Description = "Event 1", Start = new DateTime(2024, 1, 1, 10, 0, 0), Stop = new DateTime(2024, 1, 1, 12, 0, 0),
             SourceId = string.Empty, },
@@ -37,7 +37,7 @@ public class EventHelpersTests
         var start = new DateTime(2024, 1, 1);
         var end = new DateTime(2024, 1, 4);
 
-        Api.Data.Models.Health.Event[] events =
+        Helse.Api.Data.Models.Health.Event[] events =
         [
             new() { Id = 1, Description = "Event 1", Start = start.AddHours(10), Stop = start.AddHours(12),
             SourceId = string.Empty, }
@@ -58,7 +58,7 @@ public class EventHelpersTests
         var start = new DateTime(2024, 1, 1);
         var end = new DateTime(2024, 1, 2);
 
-        Api.Data.Models.Health.Event[] events =
+        Helse.Api.Data.Models.Health.Event[] events =
         [
             new() { Id = 1, Description = "Type A", Start = start.AddHours(8), Stop = start.AddHours(10),
             SourceId = string.Empty, },
@@ -85,7 +85,7 @@ public class EventHelpersTests
         var start = new DateTime(2024, 1, 1);
         var end = new DateTime(2024, 1, 2);
 
-        Api.Data.Models.Health.Event[] events =
+        Helse.Api.Data.Models.Health.Event[] events =
        [
            new() { Id = 1, Description = null, Start = start.AddHours(8), Stop = start.AddHours(10),
             SourceId = string.Empty, },
@@ -108,7 +108,7 @@ public class EventHelpersTests
         var start = new DateTime(2024, 1, 1);
         var end = new DateTime(2024, 1, 2);
 
-         Api.Data.Models.Health.Event[]  events = [];
+         Helse.Api.Data.Models.Health.Event[]  events = [];
 
         // Act
         var result = events.Summarize(start, end);
@@ -154,7 +154,7 @@ public class EventHelpersTests
         var start = new DateTime(2024, 1, 1, 0, 0, 0);
         var end = new DateTime(2024, 1, 1, 1, 0, 0);
 
-         Api.Data.Models.Health.Event[]  events = 
+         Helse.Api.Data.Models.Health.Event[]  events = 
         [
             new() { Id = 1, Description = "Event Crossing Boundary", Start = start.AddHours(1), Stop = end.AddHours(-1),
             SourceId = string.Empty, },

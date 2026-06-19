@@ -1,11 +1,11 @@
-using Api.Data;
-using Api.Logic;
-using Api.Models.Treatments;
+using Helse.Api.Data;
+using Helse.Models.Treatments;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using System.Security.Claims;
-using Api.Data.Models.Health;
-using Api.Models.Persons;
+using Helse.Api.Data.Models.Health;
+using Helse.Models.Persons;
+using Helse.Api.Logic;
 
 namespace Tests.Unit.Logic;
 
@@ -37,7 +37,7 @@ public class TreatmentLogicTests
     {
         // Arrange
         var db = Substitute.For<IUserContext>();
-        var user = new Api.Data.Models.Persons.User
+        var user = new Helse.Api.Data.Models.Persons.User
         {
             Id = 1,
             PersonId = 1,
@@ -47,7 +47,7 @@ public class TreatmentLogicTests
         };
         db.Get(Arg.Any<string>()).Returns(user);
         db.BeginTransactionAsync().Returns(Substitute.For<ITransaction>());
-        db.HasRightAsync(1, 1, RightType.Edit, Arg.Any<DateTime>()).Returns(new Api.Models.Persons.Right());
+        db.HasRightAsync(1, 1, RightType.Edit, Arg.Any<DateTime>()).Returns(new Helse.Models.Persons.Right());
         db.InsertTreatment(1, TreatmentType.Care).Returns(1L);
         var treatment = new CreateTreatment { PersonId = 1, Events = [] };
         var context = new DefaultHttpContext

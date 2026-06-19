@@ -1,8 +1,7 @@
-using Api.Models.Common;
-using Api.Models.Events;
-using Api.Models.Imports;
+using Helse.Models.Common;
+using Helse.Models.Events;
 
-namespace Api.Helpers;
+namespace Helse.Api.Helpers;
 
 public static class EventHelpers
 {

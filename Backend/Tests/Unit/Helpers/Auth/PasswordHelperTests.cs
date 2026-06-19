@@ -1,8 +1,7 @@
-using Api.Data;
-using Api.Data.Models.Persons;
-using Api.Helpers;
-using Api.Helpers.Auth;
-using Api.Models;
+using Helse.Api.Data;
+using Helse.Api.Data.Models.Persons;
+using Helse.Api.Helpers.Auth;
+using Helse.Models;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 

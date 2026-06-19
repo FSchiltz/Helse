@@ -1,7 +1,7 @@
-using Api.Data.Models.Common;
+using Helse.Api.Data.Models.Common;
 using LinqToDB.Mapping;
 
-namespace Api.Data.Models.Health;
+namespace Helse.Api.Data.Models.Health;
 
 [Table(Schema = "health")]
 public class MetricType

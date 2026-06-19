@@ -1,7 +1,6 @@
-using Api.Data;
-using Api.Helpers;
-using Api.Helpers.Auth;
-using Api.Models.Persons;
+using Helse.Api.Data;
+using Helse.Api.Helpers;
+using Helse.Models.Persons;
 using NSubstitute;
 
 namespace Tests.Unit.Helpers;

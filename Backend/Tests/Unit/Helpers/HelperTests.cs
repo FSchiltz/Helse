@@ -1,5 +1,5 @@
 using System.ComponentModel;
-using Api.Helpers;
+using Helse.Api.Helpers;
 
 namespace Tests.Unit.Helpers;
 

@@ -1,7 +1,7 @@
-using Api.Data;
-using Api.Data.Models.Persons;
-using Api.Logic;
-using Api.Models.Settings.Admin;
+using Helse.Api.Data;
+using Helse.Api.Data.Models.Persons;
+using Helse.Api.Logic;
+using Helse.Models.Settings.Admin;
 using NSubstitute;
 
 namespace Tests.Unit.Logic;

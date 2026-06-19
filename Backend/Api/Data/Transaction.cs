@@ -1,6 +1,6 @@
 using LinqToDB.Data;
 
-namespace Api.Data;
+namespace Helse.Api.Data;
 
 public class Transaction(DataConnectionTransaction transaction) : ITransaction
 {

@@ -1,10 +1,10 @@
-using Api.Data;
-using Api.Helpers.Auth;
-using Api.Models.Persons;
+using Helse.Api.Data;
+using Helse.Api.Helpers.Auth;
+using Helse.Models.Persons;
 
-namespace Api.Helpers;
+namespace Helse.Api.Helpers;
 
-public static class UserHelper
+internal static class UserHelper
 {
     public static async Task<UserId> CreateUserAsync(this IUserContext users, PersonCreation newUser, long userId)
     {

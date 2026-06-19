@@ -1,21 +1,20 @@
 using System.Threading.Channels;
 using Api.Logic.Import;
-using static Api.Jobs.ImporterService;
 
-namespace Api.Jobs;
+namespace Helse.Api.Jobs;
 
-public sealed class ImportQueue : IImportQueue
+internal sealed class ImportQueue : IImportQueue
 {
-    private readonly Channel<Job> _queue = Channel.CreateUnbounded<Job>();
+    private readonly Channel<ImporterService.Job> _queue = Channel.CreateUnbounded<ImporterService.Job>();
 
     private readonly Dictionary<Guid, JobResult> _results = [];
 
-    public ValueTask<Job> DequeueAsync(CancellationToken token)
+    public ValueTask<ImporterService.Job> DequeueAsync(CancellationToken token)
     {
         return _queue.Reader.ReadAsync(token);
     }
 
-    public void Enqueue(Job value, string description)
+    public void Enqueue(ImporterService.Job value, string description)
     {
         _queue.Writer.TryWrite(value);
         _results.Add(value.Id, new JobResult()

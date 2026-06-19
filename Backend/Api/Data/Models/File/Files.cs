@@ -1,6 +1,6 @@
 using LinqToDB.Mapping;
 
-namespace Api.Data.Models.File;
+namespace Helse.Api.Data.Models.File;
 
 [Table(Schema = "file")]
 public class Files

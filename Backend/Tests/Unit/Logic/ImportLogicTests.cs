@@ -1,4 +1,4 @@
-using Api.Logic;
+using Helse.Api.Logic;
 
 namespace Tests.Unit.Logic;
 
@@ -11,7 +11,7 @@ public class ImportLogicTests : LogicTests
         var result = ImportLogic.GetImportTypes();
 
         // Assert
-        var okResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<IEnumerable<Api.Logic.FileType>>>(result);
+        var okResult = Assert.IsType<Microsoft.AspNetCore.Http.HttpResults.Ok<IEnumerable<FileType>>>(result);
         Assert.NotNull(okResult.Value);
         Assert.NotEmpty(okResult.Value);
     }

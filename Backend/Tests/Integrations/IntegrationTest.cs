@@ -1,4 +1,3 @@
-using Api.Data;
 using LinqToDB;
 using LinqToDB.Data;
 using Microsoft.AspNetCore.Mvc.Testing;

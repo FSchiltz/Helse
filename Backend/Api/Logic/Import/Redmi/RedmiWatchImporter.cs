@@ -2,16 +2,17 @@ using System.Buffers;
 using System.Globalization;
 using System.Text;
 using System.Text.Json;
-using Api.Data;
-using Api.Jobs;
-using Api.Models.Events;
-using Api.Models.Imports;
-using Api.Models.Metrics;
+using Helse.Api.Data;
 using CsvHelper;
+using Helse.Models.Events;
+using Helse.Models.Imports;
+using Helse.Models.Metrics;
+using Api.Logic.Import.Redmi;
+using Helse.Api.Jobs;
 
-namespace Api.Logic.Import.Redmi;
+namespace Helse.Api.Logic.Import.Redmi;
 
-public class RedmiWatchImporter(Stream file, IEventContext eventDb,IMetricContext metricDb, long user, long patient) : FileImporter(file, eventDb, metricDb, user, patient)
+internal class RedmiWatchImporter(Stream file, IEventContext eventDb,IMetricContext metricDb, long user, long patient) : FileImporter(file, eventDb, metricDb, user, patient)
 {
     private const string MaxSpo = "max_spo2";
     private const string MinSpo = "min_spo2";

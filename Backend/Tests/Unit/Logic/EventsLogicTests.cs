@@ -1,8 +1,8 @@
-using Api.Data;
-using Api.Data.Models.Persons;
-using Api.Logic;
+using Helse.Api.Data.Models.Persons;
+using Helse.Api.Data;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;
+using Helse.Api.Logic;
 
 namespace Tests.Unit.Logic;
 
@@ -13,7 +13,7 @@ public class EventsLogicTests : LogicTests
     [Fact]
     public async Task EventType_NonAdmin()
     {
-        var type = new Api.Models.Events.EventType()
+        var type = new Helse.Models.Events.EventType()
         {
             Name = "",
             Description = "",
@@ -31,7 +31,7 @@ public class EventsLogicTests : LogicTests
     [Fact]
     public async Task EventType()
     {
-        var type = new Api.Models.Events.EventType()
+        var type = new Helse.Models.Events.EventType()
         {
             Name = "",
             Description = "",

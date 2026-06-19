@@ -1,8 +1,8 @@
-namespace Api.Data;
+namespace Helse.Api.Data;
 
 /// <summary>
 /// Base interface for the database contexts.
 /// </summary>
-public interface IContext {
+internal interface IContext {
     Task<ITransaction> BeginTransactionAsync();
 }

@@ -1,15 +1,16 @@
-using Api.Data;
-using Api.Helpers;
-using Api.Helpers.Auth;
-using Api.Models.Persons;
+using Helse.Api.Data;
+using Helse.Api.Helpers;
+using Helse.Api.Helpers.Auth;
+using Helse.Api.Mappers;
+using Helse.Models.Persons;
 using LinqToDB;
 
-namespace Api.Logic;
+namespace Helse.Api.Logic;
 
 /// <summary>
 /// Management of the users and rights
 /// </summary>
-public static class PersonLogic
+internal static class PersonLogic
 {
     /// <summary>
     /// Get the list of users/person with their rights
@@ -190,7 +191,7 @@ public static class PersonLogic
         if (!userHasRole)
             return TypedResults.Unauthorized();
 
-        log.LogInformation("User creation of {user}", newUser.UserName);
+        log.LogInformation("User creation of {User}", newUser.UserName);
 
         var result = await db.CreateUserAsync(newUser, userId);
 

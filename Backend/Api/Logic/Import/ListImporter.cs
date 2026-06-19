@@ -1,11 +1,10 @@
-using Api.Data;
-using Api.Data.Models;
-using Api.Jobs;
-using Api.Models.Imports;
+using Helse.Api.Data;
+using Helse.Api.Jobs;
+using Helse.Models.Imports;
 
-namespace Api.Logic.Import;
+namespace Helse.Api.Logic.Import;
 
-public class ListImporter(ImportData file, IEventContext eventDb, IMetricContext metricDb, long user, long patient) : Importer(eventDb, metricDb, user, patient)
+internal class ListImporter(ImportData file, IEventContext eventDb, IMetricContext metricDb, long user, long patient) : Importer(eventDb, metricDb, user, patient)
 {
     public ImportData Data { get; } = file;
 

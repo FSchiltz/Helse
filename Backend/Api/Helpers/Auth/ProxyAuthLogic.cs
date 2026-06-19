@@ -1,11 +1,11 @@
 using System.Security.Cryptography;
-using Api.Data;
-using Api.Models.Persons;
-using Api.Models.Settings.Admin;
+using Helse.Api.Data;
+using Helse.Models.Persons;
+using Helse.Models.Settings.Admin;
 
-namespace Api.Helpers.Auth;
+namespace Helse.Api.Helpers.Auth;
 
-public static class ProxyAuthHelper
+internal static class ProxyAuthHelper
 {
     public static async Task<(bool, Data.Models.Persons.User?)> ConnectHeader(IUserContext db, HttpContext context, Proxy settings, ILogger log)
     {

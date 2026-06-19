@@ -1,6 +1,6 @@
-using Api.Logic;
-using Api.Models;
-using Api.Models.Persons;
+using Helse.Api.Logic;
+using Helse.Models;
+using Helse.Models.Persons;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
 using System.Net.Http.Json;
