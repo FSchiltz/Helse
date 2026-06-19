@@ -177,6 +177,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
           }),
         ),
         const SizedBox(height: UIConstants.formPad),
+        Text(locale.timeShiftExplanation),
         SquareTextField(
           label: "Time difference",
           icon: Icons.timeline,

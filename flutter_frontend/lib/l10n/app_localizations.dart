@@ -715,6 +715,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Identifier'**
   String get identifier;
+
+  /// No description provided for @timeShiftExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a duration for which to shift the range in the format HH:mm:SS /n (Example to get the sleep events starting from the day before use 06:00:00)'**
+  String get timeShiftExplanation;
 }
 
 class _AppLocalizationsDelegate

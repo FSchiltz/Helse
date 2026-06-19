@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/pair.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/widget/metric_widget.dart';
@@ -32,9 +33,7 @@ class MetricWidgetsGrid extends StatelessWidget {
           (constraints.maxWidth - 9 - 24) / 2,
           200,
         ).toDouble();
-        final maxWidth = fullWidth
-            ? (constraints.maxWidth)
-            : maxHeight;
+        final maxWidth = fullWidth ? (constraints.maxWidth) : maxHeight;
         return Wrap(
           runSpacing: 6,
           spacing: 6,
@@ -50,7 +49,7 @@ class MetricWidgetsGrid extends StatelessWidget {
                     child: MetricWidget(
                       type.a,
                       type.b,
-                      date,
+                      DateHelper.offset(date, type.a.timeDifference),
                       key: Key(type.a.id.toString()),
                       person: person,
                       tile: tile,

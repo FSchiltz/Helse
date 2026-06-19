@@ -274,5 +274,9 @@
     "update": "Update",
     "@update": {},
     "identifier": "Identifier",
-    "@identifier": {}
+    "@identifier": {},
+    "timeShiftExplanation": "Enter a duration for which to shift the range in the format HH:mm:SS /n (Example to get the sleep events starting from the day before use 06:00:00)",
+    "@timeShiftExplanation": {
+
+    }
 }

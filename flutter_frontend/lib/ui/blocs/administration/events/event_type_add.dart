@@ -78,6 +78,7 @@ class _EventTypeAddState extends State<EventTypeAdd> {
                 }),
               ),
               const SizedBox(height: UIConstants.formPad),
+              Text(locale.timeShiftExplanation),
               SquareTextField(
                 label: "Time difference",
                 icon: Icons.timeline,
