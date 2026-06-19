@@ -45,12 +45,13 @@ internal static class EventHelpers
 
                 // cut the steps into the different summary    
                 var steps = Cut(secondPerBucket, e, start, end);
-                if (steps.Count > bucketCount)
-                    throw new InvalidDataException("Date mismatched");
 
                 // add to the existing summary
                 foreach (var step in steps)
                 {
+                    if (step.Item1 > bucketCount)
+                        throw new InvalidDataException("Date mismatched");
+
                     var summary = data[step.Item1];
                     if (!summary.Data.ContainsKey(e.Description ?? string.Empty))
                     {
