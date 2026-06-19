@@ -100,92 +100,99 @@ class _EventsGraphState extends State<EventsGraph> {
           type: widget.type,
         ),
         SizedBox(height: UIConstants.formPad),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: (filteredEvents.length < 200)
-              ? SizedBox(
-                  height: 400,
-                  child: EventsTimelineGraph(
-                    filteredEvents,
-                    subDate,
-                    onselect: _selectionChanged,
-                  ),
+        Flexible(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: (filteredEvents.length < 200)
+                ? EventsTimelineGraph(
+                  filteredEvents,
+                  subDate,
+                  onselect: _selectionChanged,
                 )
-              : SizedBox(
-                  height: 300,
-                  child: EventsSummary(
-                    _group(filteredEvents, subDate),
-                    subDate,
-                  ),
+                : EventsSummary(
+                  _group(filteredEvents, subDate),
+                  subDate,
                 ),
+          ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CommonCard(
-            child: Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Text('Selected: '),
-                if (event != null) Text('(${event.id})'),
-                if (event != null) Text(' ${event.description} '),
-                if (event != null)
-                  Text(
-                    locale.range(
-                      DateHelper.format(
-                        event.start.toLocal(),
-                        context: context,
+        Expanded(
+          child: Wrap(
+            spacing: UIConstants.formPad,
+            runSpacing: UIConstants.formPad,
+            children: [
+              Text("wrap"),
+              CommonCard(
+                child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text('Selected: '),
+                    if (event != null) Text('(${event.id})'),
+                    if (event != null) Text(' ${event.description} '),
+                    if (event != null)
+                      Text(
+                        locale.range(
+                          DateHelper.format(
+                            event.start.toLocal(),
+                            context: context,
+                          ),
+                          DateHelper.format(
+                            event.stop.toLocal(),
+                            context: context,
+                          ),
+                        ),
                       ),
-                      DateHelper.format(event.stop.toLocal(), context: context),
-                    ),
-                  ),
-                if (event != null && event.tag != null)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(event.tag.toString()),
-                  ),
-                if (event != null)
-                  SizedBox(
-                    width: 40,
-                    child: IconButton(
-                      onPressed: () {
-                        showDialog<void>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return EventAdd(
-                              widget.reset,
-                              widget.type,
-                              person: widget.person,
-                              edit: event,
+                    if (event != null && event.tag != null)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(event.tag.toString()),
+                      ),
+                    if (event != null)
+                      SizedBox(
+                        width: 40,
+                        child: IconButton(
+                          onPressed: () {
+                            showDialog<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return EventAdd(
+                                  widget.reset,
+                                  widget.type,
+                                  person: widget.person,
+                                  edit: event,
+                                );
+                              },
                             );
                           },
-                        );
-                      },
-                      icon: const Icon(Icons.edit_sharp),
-                    ),
-                  ),
-                if (id != null)
-                  SizedBox(
-                    width: 40,
-                    child: IconButton(
-                      onPressed: () {
-                        showDialog<void>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return DeleteEvent(() async {
-                              await Dependencies.services.event.deleteEvent(id);
-                              widget.reset();
-                              setState(() {
-                                _event = null;
-                              });
-                            }, person: widget.person);
+                          icon: const Icon(Icons.edit_sharp),
+                        ),
+                      ),
+                    if (id != null)
+                      SizedBox(
+                        width: 40,
+                        child: IconButton(
+                          onPressed: () {
+                            showDialog<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return DeleteEvent(() async {
+                                  await Dependencies.services.event.deleteEvent(
+                                    id,
+                                  );
+                                  widget.reset();
+                                  setState(() {
+                                    _event = null;
+                                  });
+                                }, person: widget.person);
+                              },
+                            );
                           },
-                        );
-                      },
-                      icon: const Icon(Icons.delete_sharp),
-                    ),
-                  ),
-              ],
-            ),
+                          icon: const Icon(Icons.delete_sharp),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ],
