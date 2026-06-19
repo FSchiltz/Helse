@@ -35,7 +35,7 @@ public static class ProxyAuthHelper
         {
             if (settings.AutoRegister)
             {
-                log.LogInformation("User created for {header}", context.Request.Headers);
+                log.LogInformation("User created for {Header}", context.Request.Headers);
                 // If auto register and not found, we create it
                 await db.CreateUserAsync(new PersonCreation
                 {

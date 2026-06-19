@@ -1,16 +1,11 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/logic/settings/settings_logic.dart';
-import 'package:helse/services/account.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:helse/worker.dart';
 import 'package:toastification/toastification.dart';
-import 'package:workmanager/workmanager.dart';
 
 import 'logic/account/authentication_logic.dart';
 import 'logic/account/authentication_bloc.dart';

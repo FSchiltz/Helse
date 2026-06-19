@@ -41,4 +41,7 @@ public class MetricType
 
     [Column]
     public long? ValueCount { get; set; }
+
+    [Column]
+    public TimeSpan? TimeDifference { get; set; }
 }

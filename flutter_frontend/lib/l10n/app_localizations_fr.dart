@@ -336,4 +336,8 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get identifier => 'Identifier';
+
+  @override
+  String get timeShiftExplanation =>
+      'Enter a duration for which to shift the range in the format HH:mm:SS /n (Example to get the sleep events starting from the day before use 06:00:00)';
 }

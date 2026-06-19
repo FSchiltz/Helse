@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/ui/common/loader.dart';
 
@@ -76,7 +77,7 @@ class _EventsGridState extends State<EventsGrid> {
             ),
             child: EventWidget(
               type,
-              widget.date,
+              DateHelper.offset(widget.date, type.timeDifference),
               key: Key(type.id.toString()),
               person: widget.person,
             ),

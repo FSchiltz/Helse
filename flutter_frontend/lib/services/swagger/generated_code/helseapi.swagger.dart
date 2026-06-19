@@ -2308,6 +2308,7 @@ class CreateMetricType {
     this.showOnDashboard,
     required this.groupId,
     this.valueCount,
+    this.timeDifference,
   });
 
   factory CreateMetricType.fromJson(Map<String, dynamic> json) =>
@@ -2344,6 +2345,8 @@ class CreateMetricType {
   final int groupId;
   @JsonKey(name: 'valueCount')
   final int? valueCount;
+  @JsonKey(name: 'timeDifference')
+  final String? timeDifference;
   static const fromJsonFactory = _$CreateMetricTypeFromJson;
 
   @override
@@ -2390,6 +2393,11 @@ class CreateMetricType {
                 const DeepCollectionEquality().equals(
                   other.valueCount,
                   valueCount,
+                )) &&
+            (identical(other.timeDifference, timeDifference) ||
+                const DeepCollectionEquality().equals(
+                  other.timeDifference,
+                  timeDifference,
                 )));
   }
 
@@ -2408,6 +2416,7 @@ class CreateMetricType {
       const DeepCollectionEquality().hash(showOnDashboard) ^
       const DeepCollectionEquality().hash(groupId) ^
       const DeepCollectionEquality().hash(valueCount) ^
+      const DeepCollectionEquality().hash(timeDifference) ^
       runtimeType.hashCode;
 }
 
@@ -2423,6 +2432,7 @@ extension $CreateMetricTypeExtension on CreateMetricType {
     bool? showOnDashboard,
     int? groupId,
     int? valueCount,
+    String? timeDifference,
   }) {
     return CreateMetricType(
       unit: unit ?? this.unit,
@@ -2435,6 +2445,7 @@ extension $CreateMetricTypeExtension on CreateMetricType {
       showOnDashboard: showOnDashboard ?? this.showOnDashboard,
       groupId: groupId ?? this.groupId,
       valueCount: valueCount ?? this.valueCount,
+      timeDifference: timeDifference ?? this.timeDifference,
     );
   }
 
@@ -2449,6 +2460,7 @@ extension $CreateMetricTypeExtension on CreateMetricType {
     Wrapped<bool?>? showOnDashboard,
     Wrapped<int>? groupId,
     Wrapped<int?>? valueCount,
+    Wrapped<String?>? timeDifference,
   }) {
     return CreateMetricType(
       unit: (unit != null ? unit.value : this.unit),
@@ -2465,6 +2477,9 @@ extension $CreateMetricTypeExtension on CreateMetricType {
           : this.showOnDashboard),
       groupId: (groupId != null ? groupId.value : this.groupId),
       valueCount: (valueCount != null ? valueCount.value : this.valueCount),
+      timeDifference: (timeDifference != null
+          ? timeDifference.value
+          : this.timeDifference),
     );
   }
 }
@@ -2996,6 +3011,7 @@ class EventType {
     this.visible,
     required this.id,
     required this.userEditable,
+    this.timeDifference,
   });
 
   factory EventType.fromJson(Map<String, dynamic> json) =>
@@ -3016,6 +3032,8 @@ class EventType {
   final int id;
   @JsonKey(name: 'userEditable')
   final bool userEditable;
+  @JsonKey(name: 'timeDifference')
+  final String? timeDifference;
   static const fromJsonFactory = _$EventTypeFromJson;
 
   @override
@@ -3045,6 +3063,11 @@ class EventType {
                 const DeepCollectionEquality().equals(
                   other.userEditable,
                   userEditable,
+                )) &&
+            (identical(other.timeDifference, timeDifference) ||
+                const DeepCollectionEquality().equals(
+                  other.timeDifference,
+                  timeDifference,
                 )));
   }
 
@@ -3059,6 +3082,7 @@ class EventType {
       const DeepCollectionEquality().hash(visible) ^
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(userEditable) ^
+      const DeepCollectionEquality().hash(timeDifference) ^
       runtimeType.hashCode;
 }
 
@@ -3070,6 +3094,7 @@ extension $EventTypeExtension on EventType {
     bool? visible,
     int? id,
     bool? userEditable,
+    String? timeDifference,
   }) {
     return EventType(
       name: name ?? this.name,
@@ -3078,6 +3103,7 @@ extension $EventTypeExtension on EventType {
       visible: visible ?? this.visible,
       id: id ?? this.id,
       userEditable: userEditable ?? this.userEditable,
+      timeDifference: timeDifference ?? this.timeDifference,
     );
   }
 
@@ -3088,6 +3114,7 @@ extension $EventTypeExtension on EventType {
     Wrapped<bool?>? visible,
     Wrapped<int>? id,
     Wrapped<bool>? userEditable,
+    Wrapped<String?>? timeDifference,
   }) {
     return EventType(
       name: (name != null ? name.value : this.name),
@@ -3098,6 +3125,9 @@ extension $EventTypeExtension on EventType {
       userEditable: (userEditable != null
           ? userEditable.value
           : this.userEditable),
+      timeDifference: (timeDifference != null
+          ? timeDifference.value
+          : this.timeDifference),
     );
   }
 }
@@ -4121,6 +4151,7 @@ class MetricType {
     this.showOnDashboard,
     required this.groupId,
     this.valueCount,
+    this.timeDifference,
   });
 
   factory MetricType.fromJson(Map<String, dynamic> json) =>
@@ -4159,6 +4190,8 @@ class MetricType {
   final int groupId;
   @JsonKey(name: 'valueCount')
   final int? valueCount;
+  @JsonKey(name: 'timeDifference')
+  final String? timeDifference;
   static const fromJsonFactory = _$MetricTypeFromJson;
 
   @override
@@ -4207,6 +4240,11 @@ class MetricType {
                 const DeepCollectionEquality().equals(
                   other.valueCount,
                   valueCount,
+                )) &&
+            (identical(other.timeDifference, timeDifference) ||
+                const DeepCollectionEquality().equals(
+                  other.timeDifference,
+                  timeDifference,
                 )));
   }
 
@@ -4226,6 +4264,7 @@ class MetricType {
       const DeepCollectionEquality().hash(showOnDashboard) ^
       const DeepCollectionEquality().hash(groupId) ^
       const DeepCollectionEquality().hash(valueCount) ^
+      const DeepCollectionEquality().hash(timeDifference) ^
       runtimeType.hashCode;
 }
 
@@ -4242,6 +4281,7 @@ extension $MetricTypeExtension on MetricType {
     bool? showOnDashboard,
     int? groupId,
     int? valueCount,
+    String? timeDifference,
   }) {
     return MetricType(
       id: id ?? this.id,
@@ -4255,6 +4295,7 @@ extension $MetricTypeExtension on MetricType {
       showOnDashboard: showOnDashboard ?? this.showOnDashboard,
       groupId: groupId ?? this.groupId,
       valueCount: valueCount ?? this.valueCount,
+      timeDifference: timeDifference ?? this.timeDifference,
     );
   }
 
@@ -4270,6 +4311,7 @@ extension $MetricTypeExtension on MetricType {
     Wrapped<bool?>? showOnDashboard,
     Wrapped<int>? groupId,
     Wrapped<int?>? valueCount,
+    Wrapped<String?>? timeDifference,
   }) {
     return MetricType(
       id: (id != null ? id.value : this.id),
@@ -4287,6 +4329,9 @@ extension $MetricTypeExtension on MetricType {
           : this.showOnDashboard),
       groupId: (groupId != null ? groupId.value : this.groupId),
       valueCount: (valueCount != null ? valueCount.value : this.valueCount),
+      timeDifference: (timeDifference != null
+          ? timeDifference.value
+          : this.timeDifference),
     );
   }
 }
@@ -6314,6 +6359,7 @@ class UpdateMetricType {
     this.showOnDashboard,
     required this.groupId,
     this.valueCount,
+    this.timeDifference,
   });
 
   factory UpdateMetricType.fromJson(Map<String, dynamic> json) =>
@@ -6352,6 +6398,8 @@ class UpdateMetricType {
   final int groupId;
   @JsonKey(name: 'valueCount')
   final int? valueCount;
+  @JsonKey(name: 'timeDifference')
+  final String? timeDifference;
   static const fromJsonFactory = _$UpdateMetricTypeFromJson;
 
   @override
@@ -6400,6 +6448,11 @@ class UpdateMetricType {
                 const DeepCollectionEquality().equals(
                   other.valueCount,
                   valueCount,
+                )) &&
+            (identical(other.timeDifference, timeDifference) ||
+                const DeepCollectionEquality().equals(
+                  other.timeDifference,
+                  timeDifference,
                 )));
   }
 
@@ -6419,6 +6472,7 @@ class UpdateMetricType {
       const DeepCollectionEquality().hash(showOnDashboard) ^
       const DeepCollectionEquality().hash(groupId) ^
       const DeepCollectionEquality().hash(valueCount) ^
+      const DeepCollectionEquality().hash(timeDifference) ^
       runtimeType.hashCode;
 }
 
@@ -6435,6 +6489,7 @@ extension $UpdateMetricTypeExtension on UpdateMetricType {
     bool? showOnDashboard,
     int? groupId,
     int? valueCount,
+    String? timeDifference,
   }) {
     return UpdateMetricType(
       id: id ?? this.id,
@@ -6448,6 +6503,7 @@ extension $UpdateMetricTypeExtension on UpdateMetricType {
       showOnDashboard: showOnDashboard ?? this.showOnDashboard,
       groupId: groupId ?? this.groupId,
       valueCount: valueCount ?? this.valueCount,
+      timeDifference: timeDifference ?? this.timeDifference,
     );
   }
 
@@ -6463,6 +6519,7 @@ extension $UpdateMetricTypeExtension on UpdateMetricType {
     Wrapped<bool?>? showOnDashboard,
     Wrapped<int>? groupId,
     Wrapped<int?>? valueCount,
+    Wrapped<String?>? timeDifference,
   }) {
     return UpdateMetricType(
       id: (id != null ? id.value : this.id),
@@ -6480,6 +6537,9 @@ extension $UpdateMetricTypeExtension on UpdateMetricType {
           : this.showOnDashboard),
       groupId: (groupId != null ? groupId.value : this.groupId),
       valueCount: (valueCount != null ? valueCount.value : this.valueCount),
+      timeDifference: (timeDifference != null
+          ? timeDifference.value
+          : this.timeDifference),
     );
   }
 }

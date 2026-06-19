@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/helpers/date.dart';
+import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 import 'package:table_calendar/table_calendar.dart';
 

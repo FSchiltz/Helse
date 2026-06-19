@@ -112,6 +112,7 @@ CreateMetricType _$CreateMetricTypeFromJson(Map<String, dynamic> json) =>
       showOnDashboard: json['showOnDashboard'] as bool?,
       groupId: (json['groupId'] as num).toInt(),
       valueCount: (json['valueCount'] as num?)?.toInt(),
+      timeDifference: json['timeDifference'] as String?,
     );
 
 Map<String, dynamic> _$CreateMetricTypeToJson(CreateMetricType instance) =>
@@ -126,6 +127,7 @@ Map<String, dynamic> _$CreateMetricTypeToJson(CreateMetricType instance) =>
       'showOnDashboard': instance.showOnDashboard,
       'groupId': instance.groupId,
       'valueCount': instance.valueCount,
+      'timeDifference': instance.timeDifference,
     };
 
 CreateTreatment _$CreateTreatmentFromJson(Map<String, dynamic> json) =>
@@ -263,6 +265,7 @@ EventType _$EventTypeFromJson(Map<String, dynamic> json) => EventType(
   visible: json['visible'] as bool?,
   id: (json['id'] as num).toInt(),
   userEditable: json['userEditable'] as bool,
+  timeDifference: json['timeDifference'] as String?,
 );
 
 Map<String, dynamic> _$EventTypeToJson(EventType instance) => <String, dynamic>{
@@ -272,6 +275,7 @@ Map<String, dynamic> _$EventTypeToJson(EventType instance) => <String, dynamic>{
   'visible': instance.visible,
   'id': instance.id,
   'userEditable': instance.userEditable,
+  'timeDifference': instance.timeDifference,
 };
 
 FileType _$FileTypeFromJson(Map<String, dynamic> json) => FileType(
@@ -500,6 +504,7 @@ MetricType _$MetricTypeFromJson(Map<String, dynamic> json) => MetricType(
   showOnDashboard: json['showOnDashboard'] as bool?,
   groupId: (json['groupId'] as num).toInt(),
   valueCount: (json['valueCount'] as num?)?.toInt(),
+  timeDifference: json['timeDifference'] as String?,
 );
 
 Map<String, dynamic> _$MetricTypeToJson(MetricType instance) =>
@@ -515,6 +520,7 @@ Map<String, dynamic> _$MetricTypeToJson(MetricType instance) =>
       'showOnDashboard': instance.showOnDashboard,
       'groupId': instance.groupId,
       'valueCount': instance.valueCount,
+      'timeDifference': instance.timeDifference,
     };
 
 Oauth _$OauthFromJson(Map<String, dynamic> json) => Oauth(
@@ -911,6 +917,7 @@ UpdateMetricType _$UpdateMetricTypeFromJson(Map<String, dynamic> json) =>
       showOnDashboard: json['showOnDashboard'] as bool?,
       groupId: (json['groupId'] as num).toInt(),
       valueCount: (json['valueCount'] as num?)?.toInt(),
+      timeDifference: json['timeDifference'] as String?,
     );
 
 Map<String, dynamic> _$UpdateMetricTypeToJson(UpdateMetricType instance) =>
@@ -926,6 +933,7 @@ Map<String, dynamic> _$UpdateMetricTypeToJson(UpdateMetricType instance) =>
       'showOnDashboard': instance.showOnDashboard,
       'groupId': instance.groupId,
       'valueCount': instance.valueCount,
+      'timeDifference': instance.timeDifference,
     };
 
 UpdatePatient _$UpdatePatientFromJson(Map<String, dynamic> json) =>

@@ -23,4 +23,7 @@ public class EventType
 
     [Column]
     public bool Visible { get; set; }
+
+    [Column]
+    public TimeSpan? TimeDifference { get; set; }
 }

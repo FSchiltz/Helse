@@ -3,6 +3,7 @@ using Api.Helpers;
 using Api.Models.Events;
 using Api.Models.Imports;
 using Api.Models.Persons;
+using CsvHelper;
 using LinqToDB;
 
 namespace Api.Logic;
@@ -67,9 +68,19 @@ public static class EventsLogic
         if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.Edit))
             return TypedResults.Forbid();
 
+        Validate(e);
+
         await events.Insert(e, personId ?? user.PersonId, user.Id);
 
         return TypedResults.NoContent();
+    }
+
+    private static void Validate(BaseEvent e)
+    {
+        if(e.Stop < e.Start)
+        {
+            throw new InvalidDataException("The end date must be before the start");
+        }
     }
 
     public static async Task<IResult> UpdateAsync(UpdateEvent e, long? personId, IUserContext users, IEventContext events, HttpContext context)
@@ -83,6 +94,7 @@ public static class EventsLogic
         if (existing.PersonId != user.PersonId && !await users.ValidateCaregiverAsync(user, existing.PersonId, RightType.Edit))
             return TypedResults.Forbid();
 
+        Validate(e);
         await events.Update(e);
 
         return TypedResults.NoContent();
@@ -120,6 +132,7 @@ public static class EventsLogic
         StandAlone = x.StandAlone,
         Visible = x.Visible,
         UserEditable = x.UserEditable,
+        TimeDifference = x.TimeDifference,
     }));
 
     public static async Task<IResult> CreateTypeAsync(EventType type, IUserContext users, IEventContext events, HttpContext context)

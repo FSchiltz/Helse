@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/helpers/date.dart';
+import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';

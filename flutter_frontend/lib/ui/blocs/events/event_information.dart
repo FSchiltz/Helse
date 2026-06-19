@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart' hide Interval;
 import 'package:helse/di/dependencies.dart';
-import 'package:helse/helpers/date.dart';
+import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
@@ -19,6 +19,10 @@ class EventInformation extends StatelessWidget {
 
     var duration = Duration();
     for (var interval in data) {
+      if (interval.stop.isBefore(interval.start)) {
+        continue;
+      }
+      
       var range = DateTimeRange(
         start: interval.start,
         end: interval.stop,

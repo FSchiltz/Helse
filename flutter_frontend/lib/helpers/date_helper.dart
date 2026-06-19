@@ -153,4 +153,38 @@ class DateHelper {
 
     return date1;
   }
+
+  static DateTimeRange<DateTime> offset(
+    DateTimeRange<DateTime> date,
+    String? timeDifference,
+  ) {
+    if (timeDifference == null) {
+      return date;
+    }
+
+    final duration = parseDuration(timeDifference);
+    return DateTimeRange(
+      start: date.start.subtract(duration),
+      end: date.end.subtract(duration),
+    );
+  }
+
+  static Duration parseDuration(String s) {
+    int hours = 0;
+    int minutes = 0;
+    int seconds = 0;
+    List<String> parts = s.split(':');
+    if (parts.length > 2) {
+      hours = int.parse(parts[parts.length - 3]);
+    }
+    if (parts.length > 1) {
+      minutes = int.parse(parts[parts.length - 2]);
+    }
+
+    if (parts.isNotEmpty) {
+      seconds = int.parse(parts[parts.length - 1]);
+    }
+
+    return Duration(hours: hours, minutes: minutes, seconds: seconds);
+  }
 }

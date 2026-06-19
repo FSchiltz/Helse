@@ -6,7 +6,7 @@ public abstract class BaseContext : IContext
 {
     private readonly DataConnection db;
 
-    public BaseContext(DataConnection db, SlowQueryLogInterceptor interceptor)
+    protected BaseContext(DataConnection db, SlowQueryLogInterceptor interceptor)
     {
         this.db = db;
         db.AddInterceptor(interceptor);

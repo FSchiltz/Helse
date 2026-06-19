@@ -201,6 +201,7 @@ public static class MetricsLogic
         ShowOnDashboard = x.ShowOnDashboard,
         GroupId = x.GroupId,
         ValueCount = x.ValueCount,
+        TimeDifference = x.TimeDifference,
     }));
 
     public static async Task<IResult> CreateTypeAsync(CreateMetricType metric, IUserContext users, IMetricContext db, HttpContext context)
