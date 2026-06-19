@@ -1,10 +1,12 @@
 import 'dart:math';
 import 'dart:developer' as logger;
 import 'package:collection/collection.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/events/delete_event.dart';
 import 'package:helse/ui/blocs/events/event_information.dart';
@@ -15,6 +17,14 @@ import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/inputs/date_range_picker.dart';
 import 'package:helse/ui/common/navigator_chart.dart';
 import 'package:helse/ui/common/ui_constants.dart';
+
+class _GroupStats {
+  final List<EventSummary> groups;
+  final Map<String, int> counts;
+  final int total;
+
+  const _GroupStats(this.groups, this.counts, this.total);
+}
 
 class EventsGraph extends StatefulWidget {
   final DateTimeRange range;
@@ -67,7 +77,8 @@ class _EventsGraphState extends State<EventsGraph> {
     super.initState();
     subDate = widget.range;
     filteredEvents = widget.events;
-    _groups = _group(widget.events, widget.range);
+    var stats = _group(widget.events, widget.range);
+    _groups = stats.groups;
   }
 
   @override
@@ -75,9 +86,30 @@ class _EventsGraphState extends State<EventsGraph> {
     var event = _event;
     var id = _event?.id;
     var locale = Translation.of(context);
+    final stats = _group(filteredEvents, subDate);
+
+    final radius = 40.0;
+    final sections = stats.counts.entries.map((entry) {
+      return PieChartSectionData(
+        color: Dependencies.theme.stateColor(
+          entry.key,
+          StateType.eventValue,
+          context,
+        ),
+        value: entry.value.toDouble(),
+        title: entry.key,
+        radius: radius,
+        showTitle: false,
+        titleStyle: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
+      );
+    }).toList();
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -95,11 +127,6 @@ class _EventsGraphState extends State<EventsGraph> {
           ),
         ),
         SizedBox(height: UIConstants.formPad),
-        EventInformation(
-          data: _getDurations(filteredEvents),
-          type: widget.type,
-        ),
-        SizedBox(height: UIConstants.formPad),
         Flexible(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -109,15 +136,67 @@ class _EventsGraphState extends State<EventsGraph> {
                     subDate,
                     onselect: _selectionChanged,
                   )
-                : EventsSummary(_group(filteredEvents, subDate), subDate),
+                : EventsSummary(stats.groups, subDate),
           ),
         ),
+        SizedBox(height: UIConstants.formPad),
         Expanded(
           child: Wrap(
-            spacing: UIConstants.formPad,
-            runSpacing: UIConstants.formPad,
             children: [
-              Text("wrap"),
+              CommonCard(
+                child: Column(
+                  children: [
+                    EventInformation(
+                      data: _getSessions(filteredEvents),
+                      type: widget.type,
+                    ),
+                    const SizedBox(height: UIConstants.formPad),
+                    Wrap(
+                      runAlignment: WrapAlignment.start,
+                      alignment: WrapAlignment.start,
+                      crossAxisAlignment: WrapCrossAlignment.start,
+                      spacing: UIConstants.formPad,
+                      runSpacing: UIConstants.formPad,
+                      children: [
+                        SizedBox(
+                          height: 4 * radius,
+                          width: 4 * radius,
+                          child: PieChart(
+                            PieChartData(
+                              sections: sections,
+                              centerSpaceRadius: radius,
+                              sectionsSpace: 0,
+                            ),
+                          ),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: sections.map((entry) {
+                            final item = entry.value;
+
+                            final percentage = item / stats.total * 100;
+                            final duration = Duration(seconds: item.toInt());
+                            return Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 12,
+                                  height: 12,
+                                  color: entry.color,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '${entry.title} ${DateHelper.formatDuration(duration, locale)} (${percentage.toStringAsFixed(2)}%)',
+                                ),
+                              ],
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
               CommonCard(
                 child: Wrap(
                   crossAxisAlignment: WrapCrossAlignment.center,
@@ -196,7 +275,7 @@ class _EventsGraphState extends State<EventsGraph> {
     );
   }
 
-  List<EventSummary> _group(List<Event> events, DateTimeRange range) {
+  _GroupStats _group(List<Event> events, DateTimeRange range) {
     final stopwatch = Stopwatch()..start();
 
     // we take between 120 and 1000 buckets
@@ -215,6 +294,8 @@ class _EventsGraphState extends State<EventsGraph> {
       (_) => EventSummary(data: {}),
     );
 
+    final Map<String, int> counts = {};
+    int total = 0;
     for (var event in events) {
       // find the bucket
       // events can start and end outside of the asked range so we need to clamp them
@@ -234,13 +315,23 @@ class _EventsGraphState extends State<EventsGraph> {
           bucket.data[event.description ?? ''] = (dataRow as int) + 1;
         }
       }
+
+      // fill the label count
+      final existing = counts[event.description ?? ''];
+      final seconds = event.stop.difference(event.start).inSeconds;
+      total = total + seconds;
+      if (existing != null) {
+        counts[event.description ?? ''] = seconds;
+      } else {
+        counts[event.description ?? ''] = seconds;
+      }
     }
 
     logger.log('_group() executed in ${stopwatch.elapsed}', name: "Events");
-    return groups.toList();
+    return _GroupStats(groups.toList(), counts, total);
   }
 
-  List<Interval> _getDurations(List<Event> events) {
+  List<Interval> _getSessions(List<Event> events) {
     List<MutableInterval> durations = [];
     final delta = Duration(seconds: 10);
     for (var e in events) {

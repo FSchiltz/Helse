@@ -22,7 +22,7 @@ class EventInformation extends StatelessWidget {
       if (interval.stop.isBefore(interval.start)) {
         continue;
       }
-      
+
       var range = DateTimeRange(
         start: interval.start,
         end: interval.stop,
@@ -65,6 +65,19 @@ class EventInformation extends StatelessWidget {
             SizedBox(width: 4),
             Text(
               DateHelper.formatDuration(averageDuration, locale),
+              style: theme.bodyMedium,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.numbers, color: color),
+            SizedBox(width: 2),
+            Text(
+              data.length.toString(),
               style: theme.bodyMedium,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
