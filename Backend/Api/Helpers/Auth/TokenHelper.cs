@@ -2,7 +2,7 @@ using System.Security.Claims;
 
 namespace Helse.Api.Helpers.Auth;
 
-public static class TokenHelper
+internal static class TokenHelper
 {
     public const string Access = "access";
     public const string Refresh = "refresh";

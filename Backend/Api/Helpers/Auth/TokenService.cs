@@ -6,11 +6,11 @@ using System.Security.Claims;
 
 namespace Helse.Api.Helpers.Auth;
 
-public record TokenConfig(string Issuer, string Audience, SymmetricSecurityKey Key);
+internal record TokenConfig(string Issuer, string Audience, SymmetricSecurityKey Key);
 
-public record TokenInfo(long Id, string Role);
+internal record TokenInfo(long Id, string Role);
 
-public class TokenService(TokenConfig config)
+internal class TokenService(TokenConfig config)
 {
     public static string Hash(string password)
     {

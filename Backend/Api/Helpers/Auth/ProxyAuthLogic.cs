@@ -14,17 +14,17 @@ internal static class ProxyAuthHelper
             return (false, null);
         }
 
-        log.LogInformation("Connexion by proxy tentative using {header} in {headers}", settings.Header, context.Request.Headers);
+        log.LogInformation("Connexion by proxy tentative using {Header} in {Headers}", settings.Header, context.Request.Headers);
         context.Request.Headers.TryGetValue(settings.Header, out var headers);
         var header = headers.FirstOrDefault();
 
         if (header is not null)
         {
-            log.LogInformation("Connexion by proxy auth header {header} and user {user}", settings.Header, header);
+            log.LogInformation("Connexion by proxy auth header {Header} and user {User}", settings.Header, header);
         }
         else
         {
-            log.LogWarning("Connexion by proxy auth header {header} rejected", settings.Header);
+            log.LogWarning("Connexion by proxy auth header {Header} rejected", settings.Header);
             return (false, null);
         }
 

@@ -1,5 +1,5 @@
 using System.Threading.Channels;
-using Api.Logic.Import;
+using Helse.Api.Logic.Import;
 
 namespace Helse.Api.Jobs;
 

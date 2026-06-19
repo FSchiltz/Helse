@@ -3,7 +3,7 @@ using LinqToDB.Mapping;
 namespace Helse.Api.Data.Models.Persons;
 
 [Table(Schema = "person")]
-public class Right
+internal class Right
 {
     [PrimaryKey, Identity]
     public long Id { get; set; }

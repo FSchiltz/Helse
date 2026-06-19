@@ -1,5 +1,6 @@
 using Helse.Api.Data;
 using Helse.Api.Logic;
+using Helse.Models.Admin;
 using Helse.Models.Settings.Admin;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;

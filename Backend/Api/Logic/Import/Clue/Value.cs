@@ -1,6 +1,6 @@
-namespace Api.Logic.Import.Clue;
+namespace Helse.Api.Logic.Import.Clue;
 
-public class Value
+internal class Value
 {
     public string? Option { get; set; }
 }

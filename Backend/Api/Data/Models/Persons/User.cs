@@ -3,7 +3,7 @@ using LinqToDB.Mapping;
 namespace Helse.Api.Data.Models.Persons;
 
 [Table(Schema = "person")]
-public class User
+internal class User
 {
     public static User Empty => new()
     {

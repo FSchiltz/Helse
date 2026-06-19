@@ -4,7 +4,7 @@ using LinqToDB.Mapping;
 namespace Helse.Api.Data.Models.Admin;
 
 [Table(Schema = "admin")]
-public class Settings
+internal class Settings
 {
     [PrimaryKey]
     public required string Name { get; set; }

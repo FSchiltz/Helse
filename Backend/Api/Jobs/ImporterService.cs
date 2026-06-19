@@ -21,7 +21,7 @@ internal class ImporterService(IServiceProvider serviceProvider, IImportQueue qu
                 using var scope = serviceProvider.CreateScope();
                 var eventDb = scope.ServiceProvider.GetRequiredService<IEventContext>();
                 var metricDb = scope.ServiceProvider.GetRequiredService<IMetricContext>();
-                Importer importer = job.Type switch
+                using FileImporter importer = job.Type switch
                 {
                     FileTypes.Clue => new ClueImporter(job.Input, eventDb, metricDb, job.UserId, job.Patient),
                     FileTypes.RedmiWatch => new RedmiWatchImporter(job.Input, eventDb, metricDb, job.UserId, job.Patient),

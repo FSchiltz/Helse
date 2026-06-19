@@ -1,6 +1,6 @@
-namespace Api.Logic.Import.BabyTracker;
+namespace Helse.Api.Logic.Import.BabyTracker;
 
-public class Record
+internal class Record
 {
     public double Amount { get; set; }
     public required string Category { get; set; }

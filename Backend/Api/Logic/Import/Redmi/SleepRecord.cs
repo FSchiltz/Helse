@@ -1,6 +1,6 @@
-namespace Api.Logic.Import.Redmi;
+namespace Helse.Api.Logic.Import.Redmi;
 
-public class SleepRecord
+internal class SleepRecord
 {
     public int Avg_hr { get; set; }
     public int Bpmedtime { get; set; }

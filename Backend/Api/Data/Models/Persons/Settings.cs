@@ -4,7 +4,7 @@ using LinqToDB.Mapping;
 namespace Helse.Api.Data.Models.Persons;
 
 [Table(Schema = "person")]
-public class Settings
+internal class Settings
 {
     [Column, NotNull]
     public required long Id { get; set; }

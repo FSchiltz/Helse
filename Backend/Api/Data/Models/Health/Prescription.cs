@@ -5,7 +5,7 @@ using LinqToDB.Mapping;
 namespace Helse.Api.Data.Models.Health;
 
 [Table(Schema = "health")]
-public class Prescription
+internal class Prescription
 {
     [PrimaryKey]
     public long Id { get; set; }

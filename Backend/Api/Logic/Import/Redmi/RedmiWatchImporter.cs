@@ -39,7 +39,7 @@ internal class RedmiWatchImporter(Stream file, IEventContext eventDb,IMetricCont
         Converters = { new ForgivingStringConverter() }
     };
 
-    public sealed class ForgivingStringConverter : System.Text.Json.Serialization.JsonConverter<string>
+    internal sealed class ForgivingStringConverter : System.Text.Json.Serialization.JsonConverter<string>
     {
         public override string? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -71,7 +71,7 @@ internal class RedmiWatchImporter(Stream file, IEventContext eventDb,IMetricCont
         long eventAdds = 0;
         long eventSkips = 0;
         // for each record, find the type
-        foreach (var record in csv.GetRecords<RedmiRecord>())
+        await foreach (var record in csv.GetRecordsAsync<RedmiRecord>())
         {
             CreateEvent[] createEvent = [];
             CreateMetric[] createMetric = [];
@@ -93,7 +93,7 @@ internal class RedmiWatchImporter(Stream file, IEventContext eventDb,IMetricCont
                         Stop = DateTimeOffset.FromUnixTimeSeconds(item.End_time).DateTime,
                         Type = (int)EventTypes.Sleep,
                         Description = item.State.ToString(),
-                        SourceId = item.GetKey(),
+                        SourceId = item.GetKey,
                         Source = FileTypes.RedmiWatch,
                     })];
 

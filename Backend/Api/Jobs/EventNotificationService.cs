@@ -6,7 +6,7 @@ using Helse.Models.Settings.Admin;
 
 namespace Helse.Api.Jobs;
 
-public class EventNotificationService(IServiceProvider serviceProvider, ILogger<EventNotificationService> logger) : BackgroundService
+internal class EventNotificationService(IServiceProvider serviceProvider, ILogger<EventNotificationService> logger) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

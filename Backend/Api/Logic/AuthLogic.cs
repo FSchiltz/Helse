@@ -3,15 +3,12 @@ using Helse.Api.Data;
 using Helse.Api.Data.Models.Persons;
 using Helse.Api.Helpers.Auth;
 using Helse.Models;
+using Helse.Models.Admin;
 using Helse.Models.Persons;
 using Helse.Models.Settings.Admin;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Helse.Api.Logic;
-
-public record OauthConnection(string Name, string Url, string ClientId, bool AutoLogin);
-
-public record Status(bool Init, bool ExternalAuth, string? Error, OauthConnection[] Oauths);
 
 /// <summary>
 /// Logic over user authentication and right
@@ -147,7 +144,7 @@ internal static class AuthLogic
 
                     var roles = GetRoles(fromDb.Type);
 
-                    log.LogInformation("Refreshed access for user {user}", user);
+                    log.LogInformation("Refreshed access for user {User}", user);
 
                     return TypedResults.Ok(new ConnectionResponse(accessToken, null, roles));
                 }
@@ -181,7 +178,7 @@ internal static class AuthLogic
 
         if (!logged && oauth.Enabled && user.Issuer is not null)
         {
-            log.LogInformation("Logging from oauth using {client}", user.Issuer);
+            log.LogInformation("Logging from oauth using {Client}", user.Issuer);
             (logged, fromDb) = await OauthHelper.ConnectOauth(users, oauth, user, log);
         }
 

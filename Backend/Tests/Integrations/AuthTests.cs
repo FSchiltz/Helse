@@ -1,5 +1,6 @@
 using Helse.Api.Logic;
 using Helse.Models;
+using Helse.Models.Admin;
 using Helse.Models.Persons;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;

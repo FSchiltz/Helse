@@ -32,13 +32,13 @@ public class UserSettings : IJsonSettings
 
     public InterfaceTheme Theme { get; set; } = InterfaceTheme.System;
 
-    [Obsolete]
+    [Obsolete("Not used anymore")]
     public List<OrderedItem> Metrics { get; set; } = [];
 
-    [Obsolete]
+    [Obsolete("Not used anymore")]
     public List<OrderedItem> MetricGroups { get; set; } = [];
 
-    [Obsolete]
+    [Obsolete("Not used anymore")]
     public List<OrderedItem> Events { get; set; } = [];
 
     public EventSettings EventSettings { get; set; } = new()

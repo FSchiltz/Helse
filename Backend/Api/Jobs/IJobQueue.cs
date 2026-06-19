@@ -1,6 +1,6 @@
 namespace Helse.Api.Jobs;
 
-public interface IJobQueue<T>
+internal interface IJobQueue<T>
 {
     void Enqueue(T value, string description);
 

@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Api.Logic.Import.Clue;
 using Helse.Api.Data;
 using Helse.Api.Jobs;
 using Helse.Models.Imports;

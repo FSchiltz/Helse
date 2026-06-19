@@ -3,7 +3,7 @@ using LinqToDB.Mapping;
 namespace Helse.Api.Data.Models.Persons;
 
 [Table(Schema = "person")]
-public class OauthUser
+internal class OauthUser
 {
     [Column, NotNull]
     public long UserId { get; set; }

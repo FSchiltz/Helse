@@ -2,6 +2,7 @@ namespace Helse.Models.Metrics;
 
 public enum MetricTypes
 {
+    None = 0,
     Heart = 1,
     Oxygen = 2,
     Wheight = 3,

@@ -1,6 +1,5 @@
 using System.IO.Compression;
 using System.Text.Json;
-using Api.Logic.Import.BabyTracker;
 using Helse.Api.Data;
 using Helse.Api.Jobs;
 using Helse.Models.Events;

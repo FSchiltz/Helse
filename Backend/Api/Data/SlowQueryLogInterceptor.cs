@@ -6,7 +6,7 @@ using LinqToDB.Interceptors;
 
 namespace Helse.Api.Data;
 
-public class SlowQueryLogInterceptor(ILogger<SlowQueryLogInterceptor> logger) : ICommandInterceptor
+internal class SlowQueryLogInterceptor(ILogger<SlowQueryLogInterceptor> logger) : ICommandInterceptor
 {
     private Stopwatch? stopwatch;
 
@@ -16,7 +16,7 @@ public class SlowQueryLogInterceptor(ILogger<SlowQueryLogInterceptor> logger) : 
         var time = stopwatch?.ElapsedMilliseconds ?? 0;
         if (time > 300)
         {
-            logger.LogWarning("Slow query ran in {time}ms: {query}", time, command.CommandText);
+            logger.LogWarning("Slow query ran in {Time}ms: {Query}", time, command.CommandText);
         }
     }
 

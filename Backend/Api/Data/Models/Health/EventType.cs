@@ -3,7 +3,7 @@ using LinqToDB.Mapping;
 namespace Helse.Api.Data.Models.Health;
 
 [Table(Schema = "health")]
-public class EventType
+internal class EventType
 {
     [PrimaryKey, Identity]
     public long Id { get; set; }
