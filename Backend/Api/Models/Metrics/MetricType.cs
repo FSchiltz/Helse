@@ -38,4 +38,6 @@ public class MetricTypeBase
     public required long GroupId { get; set; }
 
     public long? ValueCount { get; set; }
+
+    public TimeSpan? TimeDifference { get; set; }
 }

@@ -211,6 +211,7 @@ public class HealthContext(DataConnection db, SlowQueryLogInterceptor intercepto
             GroupId = metric.GroupId,
             ShowOnDashboard = metric.ShowOnDashboard,
             ValueCount = metric.ValueCount,
+            TimeDifference = metric.TimeDifference,
         });
     }
 
@@ -261,6 +262,7 @@ public class HealthContext(DataConnection db, SlowQueryLogInterceptor intercepto
             .Set(x => x.ShowOnDashboard, metric.ShowOnDashboard)
             .Set(x => x.GroupId, metric.GroupId)
             .Set(x => x.ValueCount, metric.ValueCount)
+            .Set(x => x.TimeDifference, metric.TimeDifference)
             .UpdateAsync();
     }
 
