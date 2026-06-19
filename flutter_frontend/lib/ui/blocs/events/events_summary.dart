@@ -40,14 +40,13 @@ class EventTimeline extends StatelessWidget {
 
     int tick = 0;
     int max = userData.map((x) => x.data.values.map((y) => y as int).sum).max;
-    var coeff =
-        (height / max) *
-        0.95; // remove 5% of the height to fix some overflow on the graph
+    
+    var coeff = (height / max) * 0.95;
 
     for (var d in events) {
       chartBars.add(
         Padding(
-          padding: EdgeInsets.all(1.0 * width),
+          padding: EdgeInsets.only(left: 1 * width, right: 1 * width),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: _map(

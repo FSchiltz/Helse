@@ -25,18 +25,10 @@ class EventDetailPage extends StatefulWidget {
 
 class _EventDetailPageState extends State<EventDetailPage> {
   Future<List<Event>> _getData(bool refresh) async {
-    var date = widget.date;
-    var start = DateTime(date.start.year, date.start.month, date.start.day);
-    var end = DateTime(
-      date.end.year,
-      date.end.month,
-      date.end.day,
-    ).add(const Duration(days: 1));
-
     return await Dependencies.services.event.events(
           widget.type.id,
-          start,
-          end,
+          widget.date.start,
+          widget.date.end,
           person: widget.person,
         ) ??
         [];
