@@ -373,86 +373,102 @@ class _EventsGraphState extends State<EventsGraph> {
         .map((e) => e.start)
         .reduce((a, b) => a.isBefore(b) ? a : b);
 
-    return SizedBox(
-      height: 200 - (2 * UIConstants.formPad),
-      width: (sessions.length * 8) + 100,
-      child: BarChart(
-        BarChartData(
-          alignment: BarChartAlignment.spaceAround,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double itemWidth = min(4, constraints.maxWidth / sessions.length);
+        final color = Dependencies.theme.stateColor(
+          widget.type.id.toString(),
+          StateType.events,
+          context,
+        );
 
-          barTouchData: BarTouchData(
-            enabled: true,
-            touchTooltipData: BarTouchTooltipData(
-              fitInsideHorizontally: true,
-              fitInsideVertically: true,
-              tooltipPadding: const EdgeInsets.all(UIConstants.formPad),
-              getTooltipItem:
-                  (
-                    BarChartGroupData group,
-                    int groupIndex,
-                    BarChartRodData rod,
-                    int rodIndex,
-                  ) {
-                    final event = sessions[groupIndex];
+        return SizedBox(
+          height: 200 - (2 * UIConstants.formPad),
+          width: (itemWidth + 2) * sessions.length,
+          child: BarChart(
+            BarChartData(
+              alignment: BarChartAlignment.spaceAround,
+              barTouchData: BarTouchData(
+                enabled: true,
+                touchTooltipData: BarTouchTooltipData(
+                  fitInsideHorizontally: true,
+                  fitInsideVertically: true,
+                  tooltipPadding: const EdgeInsets.all(UIConstants.formPad),
+                  getTooltipItem:
+                      (
+                        BarChartGroupData group,
+                        int groupIndex,
+                        BarChartRodData rod,
+                        int rodIndex,
+                      ) {
+                        final event = sessions[groupIndex];
 
-                    final duration = event.stop.difference(event.start);
-                    return BarTooltipItem(
-                      'Start: ${DateHelper.formatTime(event.start, context: context)}\n'
-                      'End: ${DateHelper.formatTime(event.stop, context: context)}\n'
-                      '${DateHelper.formatDuration(duration, Translation.of(context))}',
-                      const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    );
-                  },
+                        final duration = event.stop.difference(event.start);
+                        return BarTooltipItem(
+                          'Start: ${DateHelper.formatTime(event.start, context: context)}\n'
+                          'End: ${DateHelper.formatTime(event.stop, context: context)}\n'
+                          '${DateHelper.formatDuration(duration, Translation.of(context))}',
+                          const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      },
+                ),
+              ),
+
+              gridData: const FlGridData(show: true),
+              borderData: FlBorderData(show: false),
+              minY: 0,
+              maxY: 24 * 60,
+              titlesData: FlTitlesData(
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: false,
+                    reservedSize: 80,
+                    getTitlesWidget: (value, meta) {
+                      final date = DateTime(
+                        0,
+                      ).add(Duration(minutes: value.toInt()));
+
+                      return Text(
+                        DateHelper.formatTime(date, context: context),
+                        style: const TextStyle(fontSize: 12),
+                      );
+                    },
+                  ),
+                ),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: false,
+                    getTitlesWidget: (value, meta) {
+                      final date = minDate.add(
+                        Duration(minutes: value.toInt()),
+                      );
+
+                      return Text(
+                        '${date.day}/${date.month}',
+                        style: const TextStyle(fontSize: 10),
+                      );
+                    },
+                  ),
+                ),
+                rightTitles: const AxisTitles(),
+                topTitles: const AxisTitles(),
+              ),
+              barGroups: _map(sessions, itemWidth, color),
             ),
           ),
-
-          gridData: const FlGridData(show: true),
-          borderData: FlBorderData(show: false),
-          minY: 0,
-          maxY: 24 * 60,
-          titlesData: FlTitlesData(
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: false,
-                reservedSize: 80,
-                getTitlesWidget: (value, meta) {
-                  final date = DateTime(
-                    0,
-                  ).add(Duration(minutes: value.toInt()));
-
-                  return Text(
-                    DateHelper.formatTime(date, context: context),
-                    style: const TextStyle(fontSize: 12),
-                  );
-                },
-              ),
-            ),
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: false,
-                getTitlesWidget: (value, meta) {
-                  final date = minDate.add(Duration(minutes: value.toInt()));
-
-                  return Text(
-                    '${date.day}/${date.month}',
-                    style: const TextStyle(fontSize: 10),
-                  );
-                },
-              ),
-            ),
-            rightTitles: const AxisTitles(),
-            topTitles: const AxisTitles(),
-          ),
-          barGroups: _map(sessions),
-        ),
-      ),
+        );
+      },
     );
   }
 
-  List<BarChartGroupData>? _map(List<Interval> sessions) {
+  List<BarChartGroupData>? _map(
+    List<Interval> sessions,
+    double width,
+    Color color,
+  ) {
     final List<BarChartGroupData> bars = [];
     for (int i = 0; i < sessions.length; i++) {
       final session = sessions[i];
@@ -467,12 +483,14 @@ class _EventsGraphState extends State<EventsGraph> {
       bars.add(
         BarChartGroupData(
           x: i,
+          barsSpace: width + 2,
           barRods: [
             BarChartRodData(
               fromY: start.inMinutes.toDouble(),
               toY: stop.inMinutes.toDouble(),
-              width: 4,
+              width: width,
               borderRadius: BorderRadius.circular(4),
+              color: color,
             ),
           ],
         ),
