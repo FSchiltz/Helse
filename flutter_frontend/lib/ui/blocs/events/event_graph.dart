@@ -47,6 +47,7 @@ class _EventsGraphState extends State<EventsGraph> {
   }
 
   DateTimeRange subDate = DateHelper.now();
+  List<EventSummary> _groups = [];
 
   void _setDate(DateTimeRange value) {
     var filter = widget.events
@@ -66,6 +67,7 @@ class _EventsGraphState extends State<EventsGraph> {
     super.initState();
     subDate = widget.range;
     filteredEvents = widget.events;
+    _groups = _group(widget.events, widget.range);
   }
 
   @override
@@ -73,6 +75,7 @@ class _EventsGraphState extends State<EventsGraph> {
     var event = _event;
     var id = _event?.id;
     var locale = Translation.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -87,10 +90,7 @@ class _EventsGraphState extends State<EventsGraph> {
               widget.range,
               subDate,
               _setDate,
-              graph: EventsSummary(
-                _group(widget.events, widget.range),
-                widget.range,
-              ),
+              graph: EventsSummary(_groups, widget.range),
             ),
           ),
         ),
@@ -105,14 +105,11 @@ class _EventsGraphState extends State<EventsGraph> {
             padding: const EdgeInsets.all(8.0),
             child: (filteredEvents.length < 200)
                 ? EventsTimelineGraph(
-                  filteredEvents,
-                  subDate,
-                  onselect: _selectionChanged,
-                )
-                : EventsSummary(
-                  _group(filteredEvents, subDate),
-                  subDate,
-                ),
+                    filteredEvents,
+                    subDate,
+                    onselect: _selectionChanged,
+                  )
+                : EventsSummary(_group(filteredEvents, subDate), subDate),
           ),
         ),
         Expanded(
@@ -201,7 +198,9 @@ class _EventsGraphState extends State<EventsGraph> {
 
   List<EventSummary> _group(List<Event> events, DateTimeRange range) {
     final stopwatch = Stopwatch()..start();
-    final buckets = min(events.length, 1000);
+
+    // we take between 120 and 1000 buckets
+    final buckets = min(max(events.length, 120), 1000);
 
     // First create the buckets
     final bucketLength = range.duration.inMilliseconds / buckets;
