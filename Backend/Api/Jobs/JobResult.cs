@@ -1,10 +1,10 @@
-using Api.Logic.Import;
+using Helse.Api.Logic.Import;
 
-namespace Api.Jobs;
+namespace Helse.Api.Jobs;
 
-public record JobResultInfo(Guid Id, JobResult Result);
+internal record JobResultInfo(Guid Id, JobResult Result);
 
-public class JobResult
+internal class JobResult
 {
     public required string Description { get; set; }
 

@@ -1,11 +1,10 @@
-using Api.Data;
-using Api.Data.Models.Common;
-using Api.Data.Models.Health;
-using Api.Data.Models.Persons;
-using Api.Logic;
-using Api.Models.Admin;
-using Api.Models.Common;
+using Helse.Api.Data;
+using Helse.Api.Data.Models.Health;
+using Helse.Api.Data.Models.Persons;
+using Helse.Models.Common;
+using Helse.Models.Admin;
 using NSubstitute;
+using Helse.Api.Logic;
 
 namespace Tests.Unit.Logic;
 

@@ -1,12 +1,12 @@
 using System.Security.Claims;
-using Api.Data;
-using Api.Data.Models.Persons;
-using Api.Helpers.Auth;
-using Api.Models.Persons;
+using Helse.Api.Data;
+using Helse.Api.Data.Models.Persons;
+using Helse.Api.Helpers.Auth;
+using Helse.Models.Persons;
 
-namespace Api.Helpers;
+namespace Helse.Api.Helpers;
 
-public static class RightsHelper
+internal static class RightsHelper
 {
     /// <summary>
     /// Validate that the user is a caregiver with the correct right

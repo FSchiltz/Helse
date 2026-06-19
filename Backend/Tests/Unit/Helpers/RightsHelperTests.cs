@@ -1,6 +1,6 @@
-using Api.Data;
-using Api.Data.Models.Persons;
-using Api.Helpers;
+using Helse.Api.Data;
+using Helse.Api.Data.Models.Persons;
+using Helse.Api.Helpers;
 using NSubstitute;
 using System.Security.Claims;
 
@@ -21,11 +21,11 @@ public class RightsHelperTests
             Type = (int)UserType.Caregiver,
             Created = DateTime.Now,
         };
-        var right = new Api.Models.Persons.Right { Start = DateTime.UtcNow };
-        db.HasRightAsync(1, 2, Api.Models.Persons.RightType.View, Arg.Any<DateTime>()).Returns(right);
+        var right = new Helse.Models.Persons.Right { Start = DateTime.UtcNow };
+        db.HasRightAsync(1, 2, Helse.Models.Persons.RightType.View, Arg.Any<DateTime>()).Returns(right);
 
         // Act
-        var result = await db.ValidateCaregiverAsync(user, 2, Api.Models.Persons.RightType.View);
+        var result = await db.ValidateCaregiverAsync(user, 2, Helse.Models.Persons.RightType.View);
 
         // Assert
         Assert.True(result);
@@ -44,10 +44,10 @@ public class RightsHelperTests
             Type = (int)UserType.Caregiver,
             Created = DateTime.Now,
         };
-        db.HasRightAsync(1, 2, Api.Models.Persons.RightType.View, Arg.Any<DateTime>()).Returns((Api.Models.Persons.Right?)null);
+        db.HasRightAsync(1, 2, Helse.Models.Persons.RightType.View, Arg.Any<DateTime>()).Returns((Helse.Models.Persons.Right?)null);
 
         // Act
-        var result = await db.ValidateCaregiverAsync(user, 2, Api.Models.Persons.RightType.View);
+        var result = await db.ValidateCaregiverAsync(user, 2, Helse.Models.Persons.RightType.View);
 
         // Assert
         Assert.False(result);

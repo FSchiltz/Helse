@@ -1,6 +1,6 @@
-using Api.Data;
-using Api.Data.Models.Health;
-using Api.Data.Models.Persons;
+using Helse.Api.Data;
+using Helse.Api.Data.Models.Health;
+using Helse.Api.Data.Models.Persons;
 using LinqToDB;
 using LinqToDB.Data;
 using Microsoft.Extensions.Logging;
@@ -104,8 +104,8 @@ public class HealthContextTests(DatabaseFixture fixture) : IAsyncLifetime
         await _db.GetTable<MetricType>().InsertAsync(() => new MetricType
         {
             Name = "HeartRate",
-            Type = (int)Api.Models.Metrics.MetricDataType.Number,
-            SummaryType = (int)Api.Models.Metrics.MetricSummary.Mean,
+            Type = (int)Helse.Models.Metrics.MetricDataType.Number,
+            SummaryType = (int)Helse.Models.Metrics.MetricSummary.Mean,
             Unit = 0,
             UserEditable = true,
             ShowOnDashboard = true,
@@ -152,8 +152,8 @@ public class HealthContextTests(DatabaseFixture fixture) : IAsyncLifetime
         var id = (long)await _db.GetTable<MetricType>().InsertWithIdentityAsync(() => new MetricType
         {
             Name = "Temperature",
-            Type = (int)Api.Models.Metrics.MetricDataType.Number,
-            SummaryType = (int)Api.Models.Metrics.MetricSummary.Mean,
+            Type = (int)Helse.Models.Metrics.MetricDataType.Number,
+            SummaryType = (int)Helse.Models.Metrics.MetricSummary.Mean,
             Unit = 0,
             UserEditable = true,
             Visible = true,

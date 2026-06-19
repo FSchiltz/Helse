@@ -1,9 +1,9 @@
 using LinqToDB.Mapping;
 
-namespace Api.Data.Models.Common;
+namespace Helse.Api.Data.Models.Common;
 
 [Table(Schema = "common")]
-public class Units
+internal class Units
 {
     [Column]
     public required int Id { get; set; }

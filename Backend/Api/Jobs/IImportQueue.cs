@@ -1,8 +1,6 @@
-using static Api.Jobs.ImporterService;
+namespace Helse.Api.Jobs;
 
-namespace Api.Jobs;
-
-public interface IImportQueue : IJobQueue<Job>
+internal interface IImportQueue : IJobQueue<ImporterService.Job>
 {
     void Cancel(Guid id);
 

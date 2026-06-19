@@ -1,18 +1,18 @@
-using Api.Data;
-using Api.Data.Models.Common;
-using Api.Helpers;
-using Api.Models.Common;
-using Api.Models.Imports;
-using Api.Models.Metrics;
-using Api.Models.Persons;
+using Helse.Api.Data;
+using Helse.Api.Data.Models.Common;
+using Helse.Api.Helpers;
+using Helse.Api.Mappers;
+using Helse.Models.Imports;
+using Helse.Models.Metrics;
+using Helse.Models.Persons;
 using LinqToDB;
 
-namespace Api.Logic;
+namespace Helse.Api.Logic;
 
 /// <summary>
 /// Logic over the management of the metrics
 /// </summary>
-public static class MetricsLogic
+internal static class MetricsLogic
 {
     public async static Task<IResult> GetAsync(int type, DateTime start, DateTime end, long? personId, IUserContext users, IMetricContext db, HttpContext context)
     {

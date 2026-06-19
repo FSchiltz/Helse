@@ -1,10 +1,10 @@
-using Api.Data.Models.Common;
+using Helse.Api.Data.Models.Common;
 using LinqToDB;
 using LinqToDB.Data;
 
-namespace Api.Data;
+namespace Helse.Api.Data;
 
-public class CommonContext(DataConnection db) : ICommonContext
+internal class CommonContext(DataConnection db) : ICommonContext
 {
     public Task<Units?> GetUnitAsync(int unitsId)
     {

@@ -70,11 +70,11 @@ class _CalendarViewState extends State<CalendarView> {
       children: [
         if (widget.date.duration.inHours > 24)
           TableCalendar<CalendarEvent>(
-           eventLoader: widget.getEvents,
+            eventLoader: widget.getEvents,
             firstDay: widget.date.start,
             lastDay: widget.date.end,
             focusedDay: _focusedDay,
-            loadEventsForDisabledDays: false,            
+            loadEventsForDisabledDays: false,
             selectedDayPredicate: (day) {
               return isSameDay(_selectedDay, day);
             },
@@ -90,7 +90,6 @@ class _CalendarViewState extends State<CalendarView> {
               isTodayHighlighted: true,
               //selectedDecoration: BoxDecoration(color: Colors.red),
               outsideDaysVisible: false,
-
             ),
             rangeSelectionMode: RangeSelectionMode.enforced,
             onDaySelected: _onDaySelected,

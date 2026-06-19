@@ -1,13 +1,13 @@
 using System.Data;
-using Api.Data.Models.Health;
-using Api.Models.Persons;
+using Helse.Api.Data.Models.Health;
+using Helse.Models.Persons;
 using LinqToDB;
 using LinqToDB.Data;
 using LinqToDB.Mapping;
 
-namespace Api.Data;
+namespace Helse.Api.Data;
 
-public class HealthContext(DataConnection db, SlowQueryLogInterceptor interceptor) : BaseContext(db, interceptor), IHealthContext, IMetricContext, IEventContext
+internal class HealthContext(DataConnection db, SlowQueryLogInterceptor interceptor) : BaseContext(db, interceptor), IHealthContext, IMetricContext, IEventContext
 {
     /// <summary>
     /// Chunked metric for the summary
@@ -31,7 +31,7 @@ public class HealthContext(DataConnection db, SlowQueryLogInterceptor intercepto
     }
 
     /// <inheritdoc/>
-    public Task Insert(Api.Models.Events.CreateEvent e, long person, long user)
+    public Task Insert(Helse.Models.Events.CreateEvent e, long person, long user)
     {
         return Db.GetTable<Event>().InsertAsync(() => new Event
         {
@@ -182,7 +182,7 @@ public class HealthContext(DataConnection db, SlowQueryLogInterceptor intercepto
     }
 
     /// <inheritdoc/>
-    public Task Insert(Api.Models.Events.EventType eventType)
+    public Task Insert(Helse.Models.Events.EventType eventType)
     {
         return Db.GetTable<EventType>().InsertAsync(() => new EventType
         {
@@ -198,7 +198,7 @@ public class HealthContext(DataConnection db, SlowQueryLogInterceptor intercepto
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task Insert(Api.Models.Metrics.CreateMetricType metric)
+    public Task Insert(Helse.Models.Metrics.CreateMetricType metric)
     {
         return Db.GetTable<MetricType>().InsertAsync(() => new MetricType
         {
@@ -219,7 +219,7 @@ public class HealthContext(DataConnection db, SlowQueryLogInterceptor intercepto
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task Insert(Api.Models.Metrics.CreateMetric metric, long person, long user)
+    public Task Insert(Helse.Models.Metrics.CreateMetric metric, long person, long user)
     {
         return Db.GetTable<Metric>().InsertAsync(() => new Metric
         {
@@ -237,7 +237,7 @@ public class HealthContext(DataConnection db, SlowQueryLogInterceptor intercepto
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task Update(Api.Models.Events.EventType type)
+    public Task Update(Helse.Models.Events.EventType type)
     {
         return Db.GetTable<EventType>()
             .Where(x => x.Id == type.Id)
@@ -251,7 +251,7 @@ public class HealthContext(DataConnection db, SlowQueryLogInterceptor intercepto
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task Update(Api.Models.Metrics.UpdateMetricType metric)
+    public Task Update(Helse.Models.Metrics.UpdateMetricType metric)
     {
         return Db.GetTable<MetricType>()
             .Where(x => x.Id == metric.Id)
@@ -283,7 +283,7 @@ public class HealthContext(DataConnection db, SlowQueryLogInterceptor intercepto
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public async Task<Metric[]> GetSummaryMetrics(int tile, long id, int type, Api.Models.Metrics.MetricSummary action, DateTime start, DateTime end)
+    public async Task<Metric[]> GetSummaryMetrics(int tile, long id, int type, Helse.Models.Metrics.MetricSummary action, DateTime start, DateTime end)
     {
         // Use a manual command to use the SQL function NTILE
         var groups = Db.FromSql<ChunkedMetric>($"SELECT NTILE({tile}) OVER (ORDER BY date) as chunk,* FROM health.metric m WHERE m.PersonId = {id} AND m.Type = {type} AND m.Date <= {end} AND m.Date >= {start}")
@@ -291,13 +291,13 @@ public class HealthContext(DataConnection db, SlowQueryLogInterceptor intercepto
          .GroupBy(x => x.Chunk);
         IQueryable<Chunked> query = action switch
         {
-            Api.Models.Metrics.MetricSummary.Mean => groups.Select(x => new Chunked
+            Helse.Models.Metrics.MetricSummary.Mean => groups.Select(x => new Chunked
             {
                 Chunk = x.Key,
                 Date = x.Min(y => y.Date),
                 Value = x.Average(y => Sql.Convert<double, string>(y.Value)).ToString(),
             }),
-            Api.Models.Metrics.MetricSummary.Sum => groups.Select(x => new Chunked
+            Helse.Models.Metrics.MetricSummary.Sum => groups.Select(x => new Chunked
             {
                 Chunk = x.Key,
                 Date = x.Min(y => y.Date),
@@ -334,7 +334,7 @@ public class HealthContext(DataConnection db, SlowQueryLogInterceptor intercepto
                 .SingleOrDefaultAsync();
     }
 
-    public Task Update(Api.Models.Metrics.UpdateMetric metric)
+    public Task Update(Helse.Models.Metrics.UpdateMetric metric)
     {
         return Db.GetTable<Metric>()
             .Where(x => x.Id == metric.Id)
@@ -346,7 +346,7 @@ public class HealthContext(DataConnection db, SlowQueryLogInterceptor intercepto
             .UpdateAsync();
     }
 
-    public Task Update(Api.Models.Events.UpdateEvent e)
+    public Task Update(Helse.Models.Events.UpdateEvent e)
     {
         return Db.GetTable<Event>()
         .Where(x => x.Id == e.Id)
@@ -362,7 +362,7 @@ public class HealthContext(DataConnection db, SlowQueryLogInterceptor intercepto
 
     public Task<int> DeleteMetricGroup(long id) => Db.GetTable<MetricGroup>().DeleteAsync(x => x.Id == id);
 
-    public Task Update(Api.Models.Metrics.MetricGroup metricGroup)
+    public Task Update(Helse.Models.Metrics.MetricGroup metricGroup)
     {
         return Db.GetTable<MetricGroup>()
             .Where(x => x.Id == metricGroup.Id)
@@ -373,7 +373,7 @@ public class HealthContext(DataConnection db, SlowQueryLogInterceptor intercepto
             .UpdateAsync();
     }
 
-    public Task Insert(Api.Models.Metrics.MetricGroup metricGroup)
+    public Task Insert(Helse.Models.Metrics.MetricGroup metricGroup)
     {
         return Db.GetTable<MetricGroup>().InsertAsync(() => new MetricGroup
         {
@@ -386,7 +386,7 @@ public class HealthContext(DataConnection db, SlowQueryLogInterceptor intercepto
 
     public Task<MetricGroup[]> GetMetricGroups() => Db.GetTable<MetricGroup>().OrderBy(x => x.Id).ToArrayAsync();
 
-    public Task<Metric[]> SearchMetricsAsync(long person, Api.Models.Metrics.SearchMetric search)
+    public Task<Metric[]> SearchMetricsAsync(long person, Helse.Models.Metrics.SearchMetric search)
     {
         var query = Db.GetTable<Metric>().Where(x => x.Type == search.Type && x.PersonId == person);
 

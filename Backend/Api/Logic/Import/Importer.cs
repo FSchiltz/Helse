@@ -1,18 +1,17 @@
-using Api.Data;
-using Api.Jobs;
-using Api.Models.Events;
-using Api.Models.Imports;
-using Api.Models.Metrics;
+using Helse.Api.Data;
+using Helse.Api.Jobs;
+using Helse.Models.Events;
+using Helse.Models.Imports;
+using Helse.Models.Metrics;
 
-namespace Api.Logic.Import;
+namespace Helse.Api.Logic.Import;
 
 /// <summary>
 /// Base class for the importers
 /// </summary>
-/// <param name="db"></param>
 /// <param name="user"></param>
 /// <param name="patient"></param>
-public abstract class Importer(IEventContext eventDb, IMetricContext metricDb , long user, long patient)
+internal abstract class Importer(IEventContext eventDb, IMetricContext metricDb , long user, long patient)
 {
     public abstract Task<ImportsResult> Import(IImportQueue queue, Guid id);
 

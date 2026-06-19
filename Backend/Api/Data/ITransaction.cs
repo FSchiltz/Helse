@@ -1,6 +1,6 @@
-namespace Api.Data;
+namespace Helse.Api.Data;
 
-public interface ITransaction : IAsyncDisposable
+internal interface ITransaction : IAsyncDisposable
 {
     Task CommitAsync();
 

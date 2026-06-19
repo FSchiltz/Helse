@@ -1,6 +1,6 @@
-namespace Api.Logic.Import;
+namespace Helse.Api.Logic.Import;
 
-public enum JobStatus
+internal enum JobStatus
 {
     NotStarted,
     InProgress,

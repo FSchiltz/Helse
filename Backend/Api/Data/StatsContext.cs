@@ -1,14 +1,14 @@
 using System.Data;
-using Api.Data.Models.Health;
-using Api.Data.Models.Persons;
-using Api.Models.Common;
+using Helse.Api.Data.Models.Health;
+using Helse.Api.Data.Models.Persons;
+using Helse.Models.Common;
 using LinqToDB;
 using LinqToDB.Data;
 
-namespace Api.Data;
+namespace Helse.Api.Data;
 
 /// <inheritdoc/>
-public class StatsContext(DataConnection db, SlowQueryLogInterceptor interceptor) : BaseContext(db, interceptor), IStatsContext
+internal class StatsContext(DataConnection db, SlowQueryLogInterceptor interceptor) : BaseContext(db, interceptor), IStatsContext
 {
     public Task<CountByDate[]> GetEventStats(DateTime start, DateTime end)
     {

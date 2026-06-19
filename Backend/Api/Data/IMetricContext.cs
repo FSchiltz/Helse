@@ -1,16 +1,16 @@
-using Api.Data.Models.Health;
+using Helse.Api.Data.Models.Health;
 
-namespace Api.Data;
+namespace Helse.Api.Data;
 
-public interface IMetricContext : IContext
+internal interface IMetricContext : IContext
 {
     Task<MetricType[]> GetMetricTypes(bool? all, long? group);
 
     Task<int> DeleteMetricType(long id);
 
-    Task Update(Api.Models.Metrics.UpdateMetricType metric);
+    Task Update(Helse.Models.Metrics.UpdateMetricType metric);
 
-    Task Insert(Api.Models.Metrics.CreateMetricType metric);
+    Task Insert(Helse.Models.Metrics.CreateMetricType metric);
 
     Task DeleteMetric(long id);
 
@@ -18,11 +18,11 @@ public interface IMetricContext : IContext
 
     Task<Metric[]> GetMetrics(long id, long type, DateTime start, DateTime end);
 
-    Task<Metric[]> GetSummaryMetrics(int tile, long id, int type, Api.Models.Metrics.MetricSummary action, DateTime start, DateTime end);
+    Task<Metric[]> GetSummaryMetrics(int tile, long id, int type, Helse.Models.Metrics.MetricSummary action, DateTime start, DateTime end);
 
-    Task Insert(Api.Models.Metrics.CreateMetric metric, long person, long id);
+    Task Insert(Helse.Models.Metrics.CreateMetric metric, long person, long id);
 
-    Task Update(Api.Models.Metrics.UpdateMetric metric);
+    Task Update(Helse.Models.Metrics.UpdateMetric metric);
 
     Task<bool> ExistsMetric(long person, long type, int source, string sourceId);
 
@@ -45,11 +45,11 @@ public interface IMetricContext : IContext
 
     Task<int> DeleteMetricGroup(long id);
 
-    Task Update(Api.Models.Metrics.MetricGroup metricGroup);
+    Task Update(Helse.Models.Metrics.MetricGroup metricGroup);
 
-    Task Insert(Api.Models.Metrics.MetricGroup metricGroup);
+    Task Insert(Helse.Models.Metrics.MetricGroup metricGroup);
 
     Task<MetricGroup[]> GetMetricGroups();
 
-    Task<Metric[]> SearchMetricsAsync(long person, Api.Models.Metrics.SearchMetric search);
+    Task<Metric[]> SearchMetricsAsync(long person, Helse.Models.Metrics.SearchMetric search);
 }

@@ -1,14 +1,14 @@
-using Api.Data;
-using Api.Logic.Import;
-using Api.Logic.Import.BabyTracker;
-using Api.Logic.Import.Clue;
-using Api.Logic.Import.Google;
-using Api.Logic.Import.Redmi;
-using Api.Models.Imports;
+using Helse.Api.Data;
+using Helse.Models.Imports;
+using Helse.Api.Logic.Import;
+using Helse.Api.Logic.Import.Redmi;
+using Helse.Api.Logic.Import.Clue;
+using Helse.Api.Logic.Import.BabyTracker;
+using Helse.Api.Logic.Import.Google;
 
-namespace Api.Jobs;
+namespace Helse.Api.Jobs;
 
-public class ImporterService(IServiceProvider serviceProvider, IImportQueue queue, ILogger<ImporterService> logger) : BackgroundService
+internal class ImporterService(IServiceProvider serviceProvider, IImportQueue queue, ILogger<ImporterService> logger) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -21,7 +21,7 @@ public class ImporterService(IServiceProvider serviceProvider, IImportQueue queu
                 using var scope = serviceProvider.CreateScope();
                 var eventDb = scope.ServiceProvider.GetRequiredService<IEventContext>();
                 var metricDb = scope.ServiceProvider.GetRequiredService<IMetricContext>();
-                Importer importer = job.Type switch
+                using FileImporter importer = job.Type switch
                 {
                     FileTypes.Clue => new ClueImporter(job.Input, eventDb, metricDb, job.UserId, job.Patient),
                     FileTypes.RedmiWatch => new RedmiWatchImporter(job.Input, eventDb, metricDb, job.UserId, job.Patient),
@@ -48,5 +48,5 @@ public class ImporterService(IServiceProvider serviceProvider, IImportQueue queu
         }
     }
 
-    public record Job(Guid Id, Stream Input, FileTypes Type, long UserId, long Patient);
+    internal record Job(Guid Id, Stream Input, FileTypes Type, long UserId, long Patient);
 }

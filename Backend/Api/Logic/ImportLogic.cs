@@ -1,31 +1,31 @@
-using Api.Data;
-using Api.Helpers;
-using Api.Jobs;
-using Api.Logic.Import;
-using Api.Models.Events;
-using Api.Models.Imports;
-using Api.Models.Metrics;
-using Api.Models.Persons;
+using Helse.Api.Data;
+using Helse.Api.Helpers;
+using Helse.Models.Events;
+using Helse.Models.Imports;
+using Helse.Models.Metrics;
+using Helse.Models.Persons;
 using LinqToDB;
 using Microsoft.AspNetCore.Mvc;
+using Helse.Api.Logic.Import;
+using Helse.Api.Jobs;
 
-namespace Api.Logic;
+namespace Helse.Api.Logic;
 
-public record FileType(int Type, string? Name);
+internal record FileType(int Type, string? Name);
 
-public record JobId(Guid Id);
+internal record JobId(Guid Id);
 
-public class ImportData
+internal class ImportData
 {
-    public List<CreateMetric> Metrics { get; set; } = [];
+    public List<CreateMetric> Metrics { get; } = [];
 
-    public List<CreateEvent> Events { get; set; } = [];
+    public List<CreateEvent> Events { get; } = [];
 }
 
 /// <summary>
 /// Logic for the import of file
 /// </summary>
-public static class ImportLogic
+internal static class ImportLogic
 {
     public static IResult GetImportTypes()
       => TypedResults.Ok(Enum.GetValues<FileTypes>().Select(x => new FileType((int)x, x.DescriptionAttr())));

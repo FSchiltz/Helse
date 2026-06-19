@@ -1,12 +1,12 @@
-using Api.Data;
-using Api.Models.Common;
+using Helse.Api.Data;
+using Helse.Api.Mappers;
 
-namespace Api.Logic;
+namespace Helse.Api.Logic;
 
 /// <summary>
 /// Logic over the management of common object like units
 /// </summary>
-public static class CommonLogic
+internal static class CommonLogic
 {
     public async static Task<IResult> GetUnitsAsync(ICommonContext db, HttpContext context)
     {

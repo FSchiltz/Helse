@@ -1,12 +1,12 @@
-using Api.Data.Models.Health;
-using Api.Models.Persons;
+using Helse.Api.Data.Models.Health;
+using Helse.Models.Persons;
 
-namespace Api.Data;
+namespace Helse.Api.Data;
 
 /// <summary>
 /// Interface for the health context.
 /// </summary>
-public interface IHealthContext : IContext
+internal interface IHealthContext : IContext
 {
     Task<Models.Persons.Person[]> GetPatients(long id, DateTime now, RightType view);
 

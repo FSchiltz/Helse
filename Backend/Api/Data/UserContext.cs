@@ -1,15 +1,16 @@
-using Api.Data.Models.Persons;
-using Api.Models.Events;
-using Api.Models.Persons;
-using Api.Models.Treatments;
+using Helse.Api.Data.Models.Persons;
+using Helse.Api.Mappers;
+using Helse.Models.Events;
+using Helse.Models.Persons;
+using Helse.Models.Treatments;
 using LinqToDB;
 using LinqToDB.Data;
 
-namespace Api.Data;
+namespace Helse.Api.Data;
 
-public record PersonFromDb(User User, Models.Persons.Person Person);
+internal record PersonFromDb(User User, Models.Persons.Person Person);
 
-public class UserContext(DataConnection db, SlowQueryLogInterceptor interceptor) : BaseContext(db, interceptor), IUserContext
+internal class UserContext(DataConnection db, SlowQueryLogInterceptor interceptor) : BaseContext(db, interceptor), IUserContext
 {
     /// <summary>
     /// Check that a user has the given right over someone
@@ -19,7 +20,7 @@ public class UserContext(DataConnection db, SlowQueryLogInterceptor interceptor)
     /// <param name="type"></param>
     /// <param name="time"></param>
     /// <returns></returns>
-    public async Task<Api.Models.Persons.Right?> HasRightAsync(long user, long person, RightType type, DateTime time)
+    public async Task<Helse.Models.Persons.Right?> HasRightAsync(long user, long person, RightType type, DateTime time)
      => (await Db.GetTable<Models.Persons.Right>()
         .Where(x => x.UserId == user
             && x.PersonId == person

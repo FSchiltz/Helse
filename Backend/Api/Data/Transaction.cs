@@ -1,8 +1,8 @@
 using LinqToDB.Data;
 
-namespace Api.Data;
+namespace Helse.Api.Data;
 
-public class Transaction(DataConnectionTransaction transaction) : ITransaction
+internal class Transaction(DataConnectionTransaction transaction) : ITransaction
 {
     public Task CommitAsync() => transaction.CommitAsync();
 

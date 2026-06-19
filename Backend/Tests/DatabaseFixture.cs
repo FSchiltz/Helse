@@ -1,11 +1,9 @@
-using Api.Data.Models.Common;
-using Api.Data.Models.Health;
-using Api.Data.Models.Persons;
-using DotNet.Testcontainers.Builders;
+using Helse.Api.Data.Models.Common;
+using Helse.Api.Data.Models.Health;
+using Helse.Api.Data.Models.Persons;
 using DotNet.Testcontainers.Containers;
 using LinqToDB;
 using LinqToDB.Data;
-using LinqToDB.DataProvider.PostgreSQL;
 using Testcontainers.PostgreSql;
 
 namespace Tests;
@@ -87,6 +85,6 @@ public class DatabaseFixture : IAsyncLifetime
         await db.CreateTableAsync<MetricGroup>();
         await db.CreateTableAsync<Right>();
         await db.CreateTableAsync<Settings>();
-        await db.CreateTableAsync<Api.Data.Models.Admin.Settings>();
+        await db.CreateTableAsync<Helse.Api.Data.Models.Admin.Settings>();
     }
 }

@@ -1,11 +1,11 @@
-using Api.Models.Common;
+using Helse.Models.Common;
 
-namespace Api.Data;
+namespace Helse.Api.Data;
 
 /// <summary>
 /// Context for statistics related database access
 /// </summary>
-public interface IStatsContext : IContext
+internal interface IStatsContext : IContext
 {
     /// <summary>
     /// Get the event stats for a given time frame

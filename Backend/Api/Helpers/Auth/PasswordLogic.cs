@@ -1,10 +1,10 @@
-using Api.Data;
-using Api.Models;
+using Helse.Api.Data;
+using Helse.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace Api.Helpers.Auth;
+namespace Helse.Api.Helpers.Auth;
 
-public static class PasswordHelper
+internal static class PasswordHelper
 {
     public static async Task<(bool, Data.Models.Persons.User?)> ConnectPassword(Connection user, IUserContext db, ILogger log)
     {
@@ -26,7 +26,7 @@ public static class PasswordHelper
                 break;
             case PasswordVerificationResult.Failed:
             default:
-                log.LogWarning("Unauthorized access to getToken with user {user}", user.User);
+                log.LogWarning("Unauthorized access to getToken with user {User}", user.User);
                 return (false, null);
         }
 

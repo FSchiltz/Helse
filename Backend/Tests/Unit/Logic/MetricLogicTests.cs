@@ -1,8 +1,6 @@
-using Api.Data;
-using Api.Logic;
-using Api.Models.Metrics;
-using Api.Models.Persons;
-using Microsoft.AspNetCore.Http;
+using Helse.Api.Data;
+using Helse.Api.Logic;
+using Helse.Models.Metrics;
 using Microsoft.AspNetCore.Http.HttpResults;
 using NSubstitute;
 
@@ -25,7 +23,7 @@ public class MetricLogicTests : LogicTests
             Unit = 0,
         };
 
-        var users = SetupUser(Api.Data.Models.Persons.UserType.User);
+        var users = SetupUser(Helse.Api.Data.Models.Persons.UserType.User);
         var context = SetupContext();
 
         var result = await MetricsLogic.CreateTypeAsync(type, users, _db, context);
@@ -45,7 +43,7 @@ public class MetricLogicTests : LogicTests
             Unit = 0,
         };
 
-        var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);
+        var users = SetupUser(Helse.Api.Data.Models.Persons.UserType.Admin);
         var context = SetupContext();
 
         await Assert.ThrowsAsync<InvalidDataException>(() => MetricsLogic.CreateTypeAsync(type, users, _db, context));
@@ -64,7 +62,7 @@ public class MetricLogicTests : LogicTests
             Unit = 0,
         };
 
-        var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);
+        var users = SetupUser(Helse.Api.Data.Models.Persons.UserType.Admin);
         var context = SetupContext();
 
         await Assert.ThrowsAsync<InvalidDataException>(() => MetricsLogic.CreateTypeAsync(type, users, _db, context));
@@ -83,7 +81,7 @@ public class MetricLogicTests : LogicTests
             Unit = 0,
         };
 
-        var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);
+        var users = SetupUser(Helse.Api.Data.Models.Persons.UserType.Admin);
         var context = SetupContext();
 
         var result = await MetricsLogic.CreateTypeAsync(type, users, _db, context);
@@ -103,7 +101,7 @@ public class MetricLogicTests : LogicTests
             Unit = 0,
         };
 
-        var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);
+        var users = SetupUser(Helse.Api.Data.Models.Persons.UserType.Admin);
         var context = SetupContext();
 
         var result = await MetricsLogic.CreateTypeAsync(type, users, _db, context);

@@ -1,12 +1,12 @@
 using System.Text.Json;
-using Api.Data;
-using Api.Jobs;
-using Api.Models.Imports;
-using Api.Models.Metrics;
+using Helse.Api.Data;
+using Helse.Api.Jobs;
+using Helse.Models.Imports;
+using Helse.Models.Metrics;
 
-namespace Api.Logic.Import.Clue;
+namespace Helse.Api.Logic.Import.Clue;
 
-public class ClueImporter(Stream file, IEventContext eventDb, IMetricContext metricDb, long user, long patient) : FileImporter(file, eventDb, metricDb, user, patient)
+internal class ClueImporter(Stream file, IEventContext eventDb, IMetricContext metricDb, long user, long patient) : FileImporter(file, eventDb, metricDb, user, patient)
 {
     private readonly JsonSerializerOptions _options = new()
     {
@@ -27,7 +27,7 @@ public class ClueImporter(Stream file, IEventContext eventDb, IMetricContext met
         long adds = 0;
         foreach (var node in json)
         {
-            if (node.Date is null || node.Value?.Any() != true)
+            if (node.Date is null || node.Value is null || node.Value.Count > 0)
             {
                 i++;
                 skips++;

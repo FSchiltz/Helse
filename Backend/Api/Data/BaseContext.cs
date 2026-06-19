@@ -1,8 +1,8 @@
 using LinqToDB.Data;
 
-namespace Api.Data;
+namespace Helse.Api.Data;
 
-public abstract class BaseContext : IContext
+internal abstract class BaseContext : IContext
 {
     private readonly DataConnection db;
 

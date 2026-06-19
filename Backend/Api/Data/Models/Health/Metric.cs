@@ -1,11 +1,11 @@
-using Api.Data.Models.Common;
-using Api.Data.Models.Persons;
+using Helse.Api.Data.Models.Common;
+using Helse.Api.Data.Models.Persons;
 using LinqToDB.Mapping;
 
-namespace Api.Data.Models.Health;
+namespace Helse.Api.Data.Models.Health;
 
 [Table(Schema = "health")]
-public class Metric
+internal class Metric
 {
     [PrimaryKey, Identity]
     public long Id { get; set; }

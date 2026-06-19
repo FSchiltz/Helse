@@ -1,8 +1,8 @@
-using Api.Data.Models.Common;
+using Helse.Api.Data.Models.Common;
 
-namespace Api.Data;
+namespace Helse.Api.Data;
 
-public interface ICommonContext
+internal interface ICommonContext
 {
     Task<Units?> GetUnitAsync(int unit);
 

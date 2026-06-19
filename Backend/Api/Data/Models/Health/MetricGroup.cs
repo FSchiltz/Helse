@@ -1,9 +1,9 @@
 using LinqToDB.Mapping;
 
-namespace Api.Data.Models.Health;
+namespace Helse.Api.Data.Models.Health;
 
 [Table(Schema = "health")]
-public class MetricGroup
+internal class MetricGroup
 {
     [PrimaryKey, Identity]
     public long Id { get; set; }

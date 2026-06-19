@@ -57,14 +57,16 @@ class _UserFormState extends State<UserForm> {
           label: locale.surname,
           icon: Icons.person_sharp,
         ),
-        if (widget.controllerIdentifier != null) const SizedBox(height: UIConstants.formPad),
+        if (widget.controllerIdentifier != null)
+          const SizedBox(height: UIConstants.formPad),
         if (widget.controllerIdentifier != null)
           SquareTextField(
             controller: widget.controllerIdentifier,
             label: locale.identifier,
             icon: Icons.person_sharp,
           ),
-        if (widget.controllerEmail != null) const SizedBox(height: UIConstants.formPad),
+        if (widget.controllerEmail != null)
+          const SizedBox(height: UIConstants.formPad),
         if (widget.controllerEmail != null)
           SquareTextField(
             controller: widget.controllerEmail,
@@ -74,14 +76,16 @@ class _UserFormState extends State<UserForm> {
             validator: validateEmail,
             onEditingComplete: () => _focusNodePassword.requestFocus(),
           ),
-        if (widget.controllerUsername != null) const SizedBox(height: UIConstants.formPad),
+        if (widget.controllerUsername != null)
+          const SizedBox(height: UIConstants.formPad),
         if (widget.controllerUsername != null)
           UserNameInput(
             controller: widget.controllerUsername,
             nextFocus: _focusNodePassword,
             validate: validateUser,
           ),
-        if (widget.controllerPassword != null) const SizedBox(height: UIConstants.formPad),
+        if (widget.controllerPassword != null)
+          const SizedBox(height: UIConstants.formPad),
         if (widget.controllerPassword != null)
           PasswordInput(
             controller: widget.controllerPassword,
@@ -89,7 +93,8 @@ class _UserFormState extends State<UserForm> {
             validate: validatePassword,
             focus: _focusNodePassword,
           ),
-        if (widget.controllerPassword != null) const SizedBox(height: UIConstants.formPad),
+        if (widget.controllerPassword != null)
+          const SizedBox(height: UIConstants.formPad),
         if (widget.controllerPassword != null)
           PasswordInput(
             text: Translation.of(context).confirmpassword,

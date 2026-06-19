@@ -1,6 +1,6 @@
-using Api.Data;
-using Api.Data.Models.Admin;
-using Api.Models.Settings.Admin;
+using Helse.Api.Data;
+using Helse.Api.Data.Models.Admin;
+using Helse.Models.Settings.Admin;
 using LinqToDB;
 using LinqToDB.Data;
 using Microsoft.Extensions.Logging;

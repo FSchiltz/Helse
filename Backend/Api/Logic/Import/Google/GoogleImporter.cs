@@ -1,10 +1,10 @@
-using Api.Data;
-using Api.Jobs;
-using Api.Models.Imports;
+using Helse.Api.Data;
+using Helse.Api.Jobs;
+using Helse.Models.Imports;
 
-namespace Api.Logic.Import.Google;
+namespace Helse.Api.Logic.Import.Google;
 
-public class GoogleImporter(Stream file, IEventContext eventDb,IMetricContext metricDb, long user, long patient) : FileImporter(file, eventDb, metricDb, user, patient)
+internal class GoogleImporter(Stream file, IEventContext eventDb,IMetricContext metricDb, long user, long patient) : FileImporter(file, eventDb, metricDb, user, patient)
 {
     public override Task<ImportsResult> Import(IImportQueue queue, Guid id)
     {

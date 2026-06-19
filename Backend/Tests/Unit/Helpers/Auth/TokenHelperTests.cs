@@ -1,5 +1,5 @@
-using Api.Helpers;
-using Api.Helpers.Auth;
+using Helse.Api.Helpers;
+using Helse.Api.Helpers.Auth;
 using System.Security.Claims;
 
 namespace Tests.Unit.Helpers.Auth;

@@ -1,9 +1,9 @@
 using System.Text.Json.Serialization;
-using Api;
-using Api.Data;
-using Api.Helpers.Auth;
-using Api.Jobs;
-using Api.Logic;
+using Helse.Api;
+using Helse.Api.Data;
+using Helse.Api.Helpers.Auth;
+using Helse.Api.Jobs;
+using Helse.Api.Logic;
 using LinqToDB;
 using LinqToDB.AspNet;
 using LinqToDB.AspNet.Logging;

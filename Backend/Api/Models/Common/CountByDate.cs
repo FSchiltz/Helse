@@ -1,5 +1,0 @@
-namespace Api.Models.Common;
-
-public record CountByDate(DateTime Date, int Count);
-
-public record CountRecord(string Id, int Count);

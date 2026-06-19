@@ -1,8 +1,8 @@
 using System.ComponentModel;
 
-namespace Api.Helpers;
+namespace Helse.Api.Helpers;
 
-public static class Helper
+internal static class Helper
 {
     public static string? DescriptionAttr<T>(this T source)
     {

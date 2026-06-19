@@ -1,12 +1,28 @@
 using System.Security.Cryptography;
-using Api.Data;
-using Api.Models.Persons;
-using Api.Models.Settings.Admin;
+using Helse.Api.Data;
+using Helse.Models.Persons;
+using Helse.Models.Settings.Admin;
 
-namespace Api.Helpers.Auth;
+namespace Helse.Api.Helpers.Auth;
 
-public static class ProxyAuthHelper
+internal static class ProxyAuthHelper
 {
+    private static string SanitizeForLog(string? value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return string.Empty;
+        }
+
+        var sanitized = value.Replace("\r", "\\r").Replace("\n", "\\n");
+        return new string(sanitized.Where(c => !char.IsControl(c) || c == '\\').ToArray());
+    }
+
+    private static string SanitizeHeadersForLog(IHeaderDictionary headers)
+    {
+        return string.Join(", ", headers.Select(h => $"{SanitizeForLog(h.Key)}={SanitizeForLog(h.Value.ToString())}"));
+    }
+
     public static async Task<(bool, Data.Models.Persons.User?)> ConnectHeader(IUserContext db, HttpContext context, Proxy settings, ILogger log)
     {
         if (settings.Header is null)
@@ -14,17 +30,17 @@ public static class ProxyAuthHelper
             return (false, null);
         }
 
-        log.LogInformation("Connexion by proxy tentative using {header} in {headers}", settings.Header, context.Request.Headers);
+        log.LogInformation("Connexion by proxy tentative using {Header} in {Headers}", settings.Header, SanitizeHeadersForLog(context.Request.Headers));
         context.Request.Headers.TryGetValue(settings.Header, out var headers);
         var header = headers.FirstOrDefault();
 
         if (header is not null)
         {
-            log.LogInformation("Connexion by proxy auth header {header} and user {user}", settings.Header, header);
+            log.LogInformation("Connexion by proxy auth header {Header} and user {User}", settings.Header, SanitizeForLog(header));
         }
         else
         {
-            log.LogWarning("Connexion by proxy auth header {header} rejected", settings.Header);
+            log.LogWarning("Connexion by proxy auth header {Header} rejected", settings.Header);
             return (false, null);
         }
 
@@ -35,7 +51,7 @@ public static class ProxyAuthHelper
         {
             if (settings.AutoRegister)
             {
-                log.LogInformation("User created for {Header}", context.Request.Headers);
+                log.LogInformation("User created for proxy header {Header} and user {User}", settings.Header, SanitizeForLog(header));
                 // If auto register and not found, we create it
                 await db.CreateUserAsync(new PersonCreation
                 {

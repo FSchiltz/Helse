@@ -2,22 +2,22 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text.Json;
-using Api.Data;
-using Api.Data.Models.Persons;
-using Api.Models;
-using Api.Models.Persons;
-using Api.Models.Settings.Admin;
+using Helse.Api.Data;
+using Helse.Api.Data.Models.Persons;
+using Helse.Models;
+using Helse.Models.Persons;
+using Helse.Models.Settings.Admin;
 
-namespace Api.Helpers.Auth;
+namespace Helse.Api.Helpers.Auth;
 
-public static class OauthHelper
+internal static class OauthHelper
 {
     private static readonly JsonSerializerOptions _options = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    private record Token(string Issuer, string User, string IdToken, string AccessToken);
+    private sealed record Token(string Issuer, string User, string IdToken, string AccessToken);
 
     private class UserInfo
     {
@@ -56,7 +56,7 @@ public static class OauthHelper
                 // get the claims from the claims endpoint.
                 var claims = await GetClaimsAsync(provider, token.AccessToken);
 
-                log.LogInformation("User created for {header}", user.Issuer);
+                log.LogInformation("User created for {Header}", user.Issuer);
                 await using var transaction = await db.BeginTransactionAsync();
                 var existing = await db.Get(claims.Preferred_username);
                 long? id = null;
@@ -71,7 +71,7 @@ public static class OauthHelper
                     {
                         UserName = claims.Preferred_username,
                         Password = RandomNumberGenerator.GetInt32(100000000, int.MaxValue).ToString(),
-                        Types = [Api.Models.Persons.UserType.User],
+                        Types = [Helse.Models.Persons.UserType.User],
                         Name = claims.Name,
                     }, 0);
                     id = newUser.User;

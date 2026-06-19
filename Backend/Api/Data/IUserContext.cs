@@ -1,11 +1,11 @@
-using Api.Data.Models.Persons;
-using Api.Models.Events;
-using Api.Models.Persons;
-using Api.Models.Treatments;
+using Helse.Api.Data.Models.Persons;
+using Helse.Models.Events;
+using Helse.Models.Persons;
+using Helse.Models.Treatments;
 
-namespace Api.Data;
+namespace Helse.Api.Data;
 
-public interface IUserContext : IContext
+internal interface IUserContext : IContext
 {
     Task UpdatePerson(UpdatePerson update);
 
@@ -19,7 +19,7 @@ public interface IUserContext : IContext
 
     Task<PersonFromDb?> Get(long id);
 
-    Task<Api.Models.Persons.Right?> HasRightAsync(long id, long personId, RightType type, DateTime now);
+    Task<Helse.Models.Persons.Right?> HasRightAsync(long id, long personId, RightType type, DateTime now);
 
     Task<long> InsertPerson(PersonCreation newUser);
 

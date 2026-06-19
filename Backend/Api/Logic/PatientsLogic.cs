@@ -1,12 +1,12 @@
-using Api.Data;
-using Api.Helpers;
-using Api.Models.Events;
-using Api.Models.Persons;
+using Helse.Api.Data;
+using Helse.Api.Helpers;
+using Helse.Models.Events;
+using Helse.Models.Persons;
 using LinqToDB;
 
-namespace Api.Logic;
+namespace Helse.Api.Logic;
 
-public static class PatientsLogic
+internal static class PatientsLogic
 {
     /// <summary>
     /// Get the list of person the caller can manage

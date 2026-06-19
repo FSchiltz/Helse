@@ -1,0 +1,14 @@
+namespace Helse.Models.Persons;
+
+public class Person : PersonBase
+{
+    public required long Id { get; set; }
+
+    public string? UserName { get; set; }
+
+    public List<Right> Rights { get; set; } = [];
+
+    public HashSet<UserType> Types { get; set; } = [];
+
+    public DateTime Created { get; set; }
+}

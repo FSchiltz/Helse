@@ -1,18 +1,18 @@
 using System.Net;
-using Api.Logic;
-using Api.Models.Events;
-using Api.Models.Metrics;
-using Api.Models.Persons;
-using Api.Models.Settings.Admin;
-using Api.Models.Admin;
-using Api.Jobs;
-using Api.Models.Settings;
-using Api.Models.Imports;
-using Api.Models.Common;
+using Helse.Models.Settings;
+using Helse.Models.Settings.Admin;
+using Helse.Models.Persons;
+using Helse.Models.Metrics;
+using Helse.Models.Imports;
+using Helse.Models.Events;
+using Helse.Models.Common;
+using Helse.Models.Admin;
+using Helse.Api.Logic;
+using Helse.Api.Jobs;
 
-namespace Api;
+namespace Helse.Api;
 
-public static class Endpoints
+internal static class Endpoints
 {
     public static void MapAuth(this RouteGroupBuilder api)
     {
@@ -181,7 +181,7 @@ public static class Endpoints
         var events = api.MapGroup("/events").RequireAuthorization();
 
         events.MapGet("/summary", EventsLogic.GetSummaryAsync)
-        .Produces<Models.Events.EventStats>((int)HttpStatusCode.OK)
+        .Produces<EventStats>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
         events.MapGet("/", EventsLogic.GetAsync)

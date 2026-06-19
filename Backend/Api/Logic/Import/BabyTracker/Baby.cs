@@ -1,6 +1,6 @@
-namespace Api.Logic.Import.BabyTracker;
+namespace Helse.Api.Logic.Import.BabyTracker;
 
-public class Baby
+internal class Baby
 {
     public string? Birthday { get; set; }
 

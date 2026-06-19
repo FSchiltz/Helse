@@ -1,8 +1,9 @@
-using Api.Data;
+using Helse.Api.Data;
 
-namespace Api.Logic.Import;
+namespace Helse.Api.Logic.Import;
 
-public abstract class FileImporter(Stream file, IEventContext eventDb,IMetricContext metricDb, long user, long patient) : Importer(eventDb, metricDb, user, patient), IDisposable
+internal abstract class FileImporter(Stream file, IEventContext eventDb,IMetricContext metricDb, long user, long patient) 
+: Importer(eventDb, metricDb, user, patient), IDisposable
 {
     private bool disposedValue;
 

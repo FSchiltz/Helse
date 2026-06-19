@@ -1,8 +1,9 @@
 using System.Text.Json.Serialization;
+using Api.Logic.Import.Clue;
 
-namespace Api.Logic.Import.Clue;
+namespace Helse.Api.Logic.Import.Clue;
 
-public class ClueItem
+internal class ClueItem
 {
     public string? Type { get; set; }
 

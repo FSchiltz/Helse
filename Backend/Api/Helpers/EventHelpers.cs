@@ -1,10 +1,9 @@
-using Api.Models.Common;
-using Api.Models.Events;
-using Api.Models.Imports;
+using Helse.Models.Common;
+using Helse.Models.Events;
 
-namespace Api.Helpers;
+namespace Helse.Api.Helpers;
 
-public static class EventHelpers
+internal static class EventHelpers
 {
     public static EventStats Summarize(this Data.Models.Health.Event[] events, DateTime start, DateTime end)
     {
@@ -47,7 +46,7 @@ public static class EventHelpers
                 // cut the steps into the different summary    
                 var steps = Cut(secondPerBucket, e, start, end);
                 if (steps.Count > bucketCount)
-                    throw new Exception("Date mismatched");
+                    throw new InvalidDataException("Date mismatched");
 
                 // add to the existing summary
                 foreach (var step in steps)

@@ -1,5 +1,5 @@
-using Api.Data;
-using Api.Data.Models.Persons;
+using Helse.Api.Data;
+using Helse.Api.Data.Models.Persons;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using System.Security.Claims;
@@ -22,7 +22,7 @@ public abstract class LogicTests
         };
     }
 
-    protected static IUserContext SetupUser(UserType user)
+    internal static IUserContext SetupUser(UserType user)
     {
         var users = Substitute.For<IUserContext>();
         users.Get("test").Returns(new User()

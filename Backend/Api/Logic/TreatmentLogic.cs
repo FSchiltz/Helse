@@ -1,16 +1,16 @@
-using Api.Data;
-using Api.Helpers;
-using Api.Models.Events;
-using Api.Models.Persons;
-using Api.Models.Treatments;
+using Helse.Api.Data;
+using Helse.Api.Helpers;
+using Helse.Models.Events;
+using Helse.Models.Persons;
+using Helse.Models.Treatments;
 using LinqToDB;
 
-namespace Api.Logic;
+namespace Helse.Api.Logic;
 
 /// <summary>
 /// Management of the users and rights
 /// </summary>
-public static class TreatmentLogic
+internal static class TreatmentLogic
 {
     public static async Task<IResult> GetTypeAsync(IEventContext db)
      => TypedResults.Ok(await db.GetEventTypes(false, true));

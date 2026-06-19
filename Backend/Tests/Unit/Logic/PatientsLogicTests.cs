@@ -1,6 +1,6 @@
-using Api.Data;
-using Api.Logic;
-using Api.Models.Persons;
+using Helse.Api.Data;
+using Helse.Api.Logic;
+using Helse.Models.Persons;
 using NSubstitute;
 
 namespace Tests.Unit.Logic;
@@ -11,10 +11,10 @@ public class PatientsLogicTests : LogicTests
     public async Task GetPatientsAsync_ReturnsPatients_WhenValidUser()
     {
         // Arrange
-        var users = SetupUser(Api.Data.Models.Persons.UserType.Admin);
+        var users = SetupUser(Helse.Api.Data.Models.Persons.UserType.Admin);
         var context = SetupContext();
         var db = Substitute.For<IHealthContext>();
-        Api.Data.Models.Persons.Person[] persons =
+        Helse.Api.Data.Models.Persons.Person[] persons =
         [
             new() { Id = 1, Name = "Test", Surname = "User",
             Created = DateTime.Now,}
