@@ -5,8 +5,8 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /source
 
 ## copy and publish app and libraries for the backend
-COPY ./Backend/Api .
-RUN  dotnet publish -o /backend -c release
+COPY ./Backend/ .
+RUN  dotnet publish ./Api/Api.csproj -o /output -c release
 
 # build the flutter web app 
 # preparing the ubuntu container with all necessary tools
@@ -31,7 +31,7 @@ RUN flutter build web --release
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
 WORKDIR /app
 ## Copy the backend
-COPY --from=build /backend ./
+COPY --from=build /output ./
 ## Copy the webApp
 COPY --from=build /app/build/web /app/wwwroot
 
