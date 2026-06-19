@@ -13,4 +13,6 @@ public class EventType
     public required long Id { get; set; }
 
     public required bool UserEditable { get; set; }
+
+    public TimeSpan? TimeDifference { get; set; }
 }

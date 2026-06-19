@@ -120,6 +120,7 @@ public static class EventsLogic
         StandAlone = x.StandAlone,
         Visible = x.Visible,
         UserEditable = x.UserEditable,
+        TimeDifference = x.TimeDifference,
     }));
 
     public static async Task<IResult> CreateTypeAsync(EventType type, IUserContext users, IEventContext events, HttpContext context)

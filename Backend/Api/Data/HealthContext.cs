@@ -191,6 +191,7 @@ public class HealthContext(DataConnection db, SlowQueryLogInterceptor intercepto
             StandAlone = eventType.StandAlone,
             UserEditable = true,
             Visible = eventType.Visible,
+            TimeDifference = eventType.TimeDifference,
         });
     }
 
@@ -243,6 +244,7 @@ public class HealthContext(DataConnection db, SlowQueryLogInterceptor intercepto
             .Set(x => x.Name, type.Name)
             .Set(x => x.Description, type.Description)
             .Set(x => x.Visible, type.Visible)
+            .Set(x => x.TimeDifference, type.TimeDifference)
             .UpdateAsync();
     }
 

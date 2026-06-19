@@ -25,12 +25,13 @@ class MetricTypeAdd extends StatefulWidget {
 class _MetricTypeAddState extends State<MetricTypeAdd> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
-  final focusNodeName = FocusNode();
-  final focusNodeDescription = FocusNode();
-  final focusNodeUnit = FocusNode();
-  final controllerName = TextEditingController();
-  final controllerDescription = TextEditingController();
-  final controllerValueCount = TextEditingController();
+  final _focusName = FocusNode();
+  final _focusDescription = FocusNode();
+  final _focusUnit = FocusNode();
+  final _name = TextEditingController();
+  final _description = TextEditingController();
+  final _valueCount = TextEditingController();
+  final _timeDifference = TextEditingController();
   MetricSummary? _metricSummary;
   MetricDataType? _type;
   bool _visible = true;
@@ -55,15 +56,16 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
     var edit = widget.edit;
     if (edit != null) {
       // this is not a new addition, just an edit
-      controllerDescription.text = edit.description ?? "";
-      controllerName.text = edit.name;
+      _description.text = edit.description ?? "";
+      _name.text = edit.name;
       _unit = edit.unit.id;
       _visible = edit.visible ?? true;
       _showDashboard = edit.showOnDashboard ?? true;
       _groupId = edit.groupId;
       _type = edit.type ?? MetricDataType.text;
       _metricSummary = edit.summaryType;
-      controllerValueCount.text = (edit.valueCount ?? 0).toString();
+      _valueCount.text = (edit.valueCount ?? 0).toString();
+      _timeDifference.text = (edit.timeDifference ?? '');
     }
     _loadGroup();
     _loadUnit();
@@ -99,19 +101,19 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
       children: [
         SquareTextField(
           icon: Icons.person_sharp,
-          controller: controllerName,
-          focusNode: focusNodeName,
+          controller: _name,
+          focusNode: _focusName,
           label: locale.name,
           validator: validateName,
-          onEditingComplete: () => focusNodeDescription.requestFocus(),
+          onEditingComplete: () => _focusDescription.requestFocus(),
         ),
         const SizedBox(height: UIConstants.formPad),
         SquareTextField(
           icon: Icons.person_sharp,
-          controller: controllerDescription,
-          focusNode: focusNodeDescription,
+          controller: _description,
+          focusNode: _focusDescription,
           label: locale.description,
-          onEditingComplete: () => focusNodeUnit.requestFocus(),
+          onEditingComplete: () => _focusUnit.requestFocus(),
         ),
         const SizedBox(height: UIConstants.formPad),
         ValuesInput(
@@ -137,7 +139,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
         if (_type == MetricDataType.numberrange)
           SquareTextField(
             icon: Icons.numbers_sharp,
-            controller: controllerValueCount,
+            controller: _valueCount,
             label: locale.value,
           ),
         SizedBox(height: UIConstants.formPad),
@@ -174,6 +176,12 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
             _showDashboard = value;
           }),
         ),
+        const SizedBox(height: UIConstants.formPad),
+        SquareTextField(
+          label: "Time difference",
+          icon: Icons.timeline,
+          controller: _timeDifference,
+        ),
       ],
     );
   }
@@ -182,13 +190,17 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
     var localContext = context;
     try {
       if (_formKey.currentState?.validate() ?? false) {
-        final int? valueCount = (controllerValueCount.text.isNotEmpty)
-            ? int.parse(controllerValueCount.text)
+        final int? valueCount = (_valueCount.text.isNotEmpty)
+            ? int.parse(_valueCount.text)
             : null;
+
+        final timeDifference = _timeDifference.text.isEmpty
+            ? null
+            : _timeDifference.text;
         if (widget.edit == null) {
           var metric = CreateMetricType(
-            description: controllerDescription.text,
-            name: controllerName.text,
+            description: _description.text,
+            name: _name.text,
             unit: _unit,
             summaryType: _metricSummary,
             type: _type,
@@ -197,12 +209,13 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
             groupId: _groupId,
             userEditable: true,
             valueCount: valueCount,
+            timeDifference: timeDifference,
           );
           await Dependencies.services.metric.addMetricsType(metric);
         } else {
           var metric = UpdateMetricType(
-            description: controllerDescription.text,
-            name: controllerName.text,
+            description: _description.text,
+            name: _name.text,
             unit: _unit,
             summaryType: _metricSummary,
             type: _type,
@@ -212,6 +225,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
             groupId: _groupId,
             userEditable: true,
             valueCount: valueCount,
+            timeDifference: timeDifference,
           );
           await Dependencies.services.metric.updateMetricsType(metric);
         }
@@ -231,8 +245,8 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
 
   @override
   void dispose() {
-    controllerDescription.dispose();
-    controllerName.dispose();
+    _description.dispose();
+    _name.dispose();
     super.dispose();
   }
 
