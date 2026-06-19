@@ -383,7 +383,9 @@ class _EventsGraphState extends State<EventsGraph> {
           barTouchData: BarTouchData(
             enabled: true,
             touchTooltipData: BarTouchTooltipData(
-              tooltipPadding: const EdgeInsets.all(12),
+              fitInsideHorizontally: true,
+              fitInsideVertically: true,
+              tooltipPadding: const EdgeInsets.all(UIConstants.formPad),
               getTooltipItem:
                   (
                     BarChartGroupData group,
