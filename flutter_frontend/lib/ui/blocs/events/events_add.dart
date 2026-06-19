@@ -141,6 +141,7 @@ class _EventAddState extends State<EventAdd> {
                 _start,
                 (date) => setState(() {
                   _start = date ?? DateTime.now();
+                  _stop = _stop.isBefore(_start) ? _start : _stop;
                 }),
               ),
               const SizedBox(height: UIConstants.formPad),
@@ -149,6 +150,7 @@ class _EventAddState extends State<EventAdd> {
                 _stop,
                 (date) => setState(() {
                   _stop = date ?? DateTime.now();
+                  _start = _start.isAfter(_stop) ? _stop : _start;
                 }),
               ),
               const SizedBox(height: UIConstants.formPad),

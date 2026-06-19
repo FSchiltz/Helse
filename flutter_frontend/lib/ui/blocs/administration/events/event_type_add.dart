@@ -37,6 +37,7 @@ class _EventTypeAddState extends State<EventTypeAdd> {
       // this is not a new addition, just an edit
       _description.text = edit.description ?? "";
       _name.text = edit.name;
+      _timeDifference.text = edit.timeDifference ?? '';
     }
   }
 
@@ -104,7 +105,7 @@ class _EventTypeAddState extends State<EventTypeAdd> {
         final timeDifference = _timeDifference.text.isEmpty
             ? null
             : _timeDifference.text;
-            
+
         final event = EventType(
           description: _description.text,
           name: _name.text,

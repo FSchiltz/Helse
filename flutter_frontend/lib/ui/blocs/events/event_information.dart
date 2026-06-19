@@ -19,6 +19,10 @@ class EventInformation extends StatelessWidget {
 
     var duration = Duration();
     for (var interval in data) {
+      if (interval.stop.isBefore(interval.start)) {
+        continue;
+      }
+      
       var range = DateTimeRange(
         start: interval.start,
         end: interval.stop,
