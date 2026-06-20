@@ -336,6 +336,9 @@ class _EventsGraphState extends State<EventsGraph> {
   }
 
   Widget _getRangeGraph(List<Interval> sessions) {
+    if (sessions.isEmpty) {
+      return Text("No data");
+    }
     final minDate = sessions
         .map((e) => e.start)
         .reduce((a, b) => a.isBefore(b) ? a : b);
