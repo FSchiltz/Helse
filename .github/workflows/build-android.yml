@@ -69,6 +69,8 @@ jobs:
       uses: actions/upload-artifact@v7.0.1   
       with:
         path: flutter_frontend/build/app/outputs/flutter-apk/*.apk
+        archive: false
+        if-no-files-found: error
       
     - name: Upload binaries to release
       if: ${{ inputs.upload }}
