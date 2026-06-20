@@ -66,6 +66,7 @@ jobs:
         } >> "$GITHUB_ENV"
 
     - name: Upload artefact
+      if: ${{ inputs.push }}
       uses: actions/upload-artifact@v7.0.1   
       with:
         path: flutter_frontend/build/app/outputs/flutter-apk/*-arm64-v8a-release.apk
