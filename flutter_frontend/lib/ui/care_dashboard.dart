@@ -14,9 +14,8 @@ import 'blocs/care/agenda.dart';
 class CareDashBoard extends StatelessWidget {
   const CareDashBoard({super.key});
 
-  Future<List<Person>> _getData(bool refresh) async {
-    return await Dependencies.services.user.patients() ?? [];
-  }
+  Future<List<Person>> _getData(bool refresh) async =>
+      await Dependencies.services.user.patients() ?? [];
 
   @override
   Widget build(BuildContext context) {
@@ -80,9 +79,7 @@ class CareDashBoard extends StatelessWidget {
           onPressed: () {
             showDialog<void>(
               context: context,
-              builder: (BuildContext context) {
-                return PatientAdd(reset);
-              },
+              builder: (context) => PatientAdd(reset),
             );
           },
           icon: const Icon(Icons.add_sharp),
