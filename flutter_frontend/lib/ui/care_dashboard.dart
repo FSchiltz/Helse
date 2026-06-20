@@ -36,7 +36,7 @@ class CareDashBoard extends StatelessWidget {
                       ? constraints.maxWidth
                       : constraints.maxWidth - maxWidth,
                   height: (isMobile) ? maxHeight : constraints.maxHeight,
-                  child: Agenda(data),
+                  child: Agenda(data, compact: isMobile),
                 ),
                 SizedBox(
                   width: (isMobile) ? constraints.maxWidth : maxWidth,

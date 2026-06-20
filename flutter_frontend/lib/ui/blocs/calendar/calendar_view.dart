@@ -22,6 +22,7 @@ class CalendarGroup {
 class CalendarView extends StatefulWidget {
   final DateTimeRange date;
   final CalendarFormat format;
+  final bool compact;
 
   final Future<List<CalendarGroup>> Function(DateTime) loadEvents;
   final List<CalendarEvent> Function(DateTime)? getEvents;
@@ -32,6 +33,7 @@ class CalendarView extends StatefulWidget {
     super.key,
     this.getEvents,
     this.format = CalendarFormat.month,
+    this.compact = false,
   });
 
   @override
@@ -104,6 +106,10 @@ class _CalendarViewState extends State<CalendarView> {
               outsideDaysVisible: false,
             ),
             rangeSelectionMode: RangeSelectionMode.enforced,
+            headerStyle: HeaderStyle(
+              formatButtonVisible: !widget.compact,
+              titleCentered: widget.compact,
+            ),
             onDaySelected: _onDaySelected,
           ),
         SizedBox(height: UIConstants.formPad),
