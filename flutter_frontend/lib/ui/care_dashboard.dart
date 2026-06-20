@@ -20,59 +20,36 @@ class CareDashBoard extends StatelessWidget {
 
     var theme = Theme.of(context).colorScheme;
 
-    return LoadingBuilder(
-      _getData,
-      builder: (context, data, reset) {
-        if (isMobile) {
-          return DefaultTabController(
-            length: 2,
-            child: Column(
+    return Padding(
+      padding: const EdgeInsets.all(UIConstants.formPad),
+      child: LoadingBuilder(
+        _getData,
+        builder: (context, data, reset) {
+          if (isMobile) {
+            return Column(
               children: [
-                Expanded(
-                  child: TabBarView(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Patients(data, reset),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Agenda(data),
-                      ),
-                    ],
-                  ),
-                ),
-                TabBar(
-                  tabs: [
-                    Tab(icon: Icon(Icons.personal_injury_sharp)),
-                    Tab(icon: Icon(Icons.edit_calendar_sharp)),
-                  ],
-                ),
+                Flexible(child: Agenda(data)),
+                Divider(),
+                Flexible(child: SingleChildScrollView(child: Patients(data, reset))),
               ],
-            ),
-          );
-        } else {
-          return Row(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                color: theme.surfaceContainer,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+            );
+          } else {
+            return Row(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  color: theme.surfaceContainer,
                   child: Patients(data, reset),
                 ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Agenda(data),
+                Expanded(
+                  child: SizedBox(width: 320, child: Agenda(data)),
                 ),
-              ),
-            ],
-          );
-        }
-      },
+              ],
+            );
+          }
+        },
+      ),
     );
   }
 }

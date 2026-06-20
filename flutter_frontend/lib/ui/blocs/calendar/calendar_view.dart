@@ -20,11 +20,18 @@ class CalendarGroup {
 
 class CalendarView extends StatefulWidget {
   final DateTimeRange date;
+  final CalendarFormat format;
 
   final Future<List<CalendarGroup>> Function(DateTime) loadEvents;
   final List<CalendarEvent> Function(DateTime)? getEvents;
 
-  const CalendarView(this.loadEvents, this.date, {super.key, this.getEvents});
+  const CalendarView(
+    this.loadEvents,
+    this.date, {
+    super.key,
+    this.getEvents,
+    this.format = CalendarFormat.month,
+  });
 
   @override
   State<CalendarView> createState() => _CalendarViewState();
@@ -50,6 +57,8 @@ class _CalendarViewState extends State<CalendarView> {
   @override
   void initState() {
     super.initState();
+
+    _calendarFormat = widget.format;
 
     if (_focusedDay.compareTo(widget.date.start) < 0) {
       _focusedDay = widget.date.start;

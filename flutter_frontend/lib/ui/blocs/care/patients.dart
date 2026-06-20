@@ -17,49 +17,50 @@ class Patients extends StatelessWidget {
     var theme = Theme.of(context).colorScheme;
     final cards = data.map((p) => PatientsCard(p, reset)).toList();
     var locale = Translation.of(context);
-    return SizedBox(
-      width: 320,
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                locale.patients,
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              SizedBox(width: 12),
-              IconButton(
-                onPressed: () {
-                  showDialog<void>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return PatientAdd(reset);
-                    },
+    return Column(
+      children: [
+        Row(
+          children: [
+            Text(
+              locale.patients,
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            SizedBox(width: 12),
+            IconButton(
+              onPressed: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return PatientAdd(reset);
+                  },
+                );
+              },
+              icon: const Icon(Icons.add_sharp),
+              iconSize: 35,
+              color: theme.primary,
+            ),
+            Spacer(),
+            HamburgerMenu(
+              items: [
+                MenuButton(locale.patientsSettings, Icons.edit_sharp, () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (context) =>
+                          PatientSettingsPage(null, patients: data),
+                    ),
                   );
-                },
-                icon: const Icon(Icons.add_sharp),
-                iconSize: 35,
-                color: theme.primary,
-              ),
-              Spacer(),
-              HamburgerMenu(
-                items: [
-                  MenuButton(locale.patientsSettings, Icons.edit_sharp, () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (context) =>
-                            PatientSettingsPage(null, patients: data),
-                      ),
-                    );
-                  }),
-                ],
-              ),
-            ],
-          ),
-          ListView(shrinkWrap: true, children: cards),
-        ],
-      ),
+                }),
+              ],
+            ),
+          ],
+        ),
+        ListView(
+          shrinkWrap: true,
+          scrollDirection: Axis.vertical,
+          children: cards,
+        ),
+      ],
     );
   }
 }

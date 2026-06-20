@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'dart:developer' as logger;
-import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:helse/helpers/date_helper.dart';
