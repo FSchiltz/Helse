@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'dart:developer' as logger;
-import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:helse/helpers/date_helper.dart';
@@ -336,6 +335,9 @@ class _EventsGraphState extends State<EventsGraph> {
   }
 
   Widget _getRangeGraph(List<Interval> sessions) {
+    if (sessions.isEmpty) {
+      return Text("No data");
+    }
     final minDate = sessions
         .map((e) => e.start)
         .reduce((a, b) => a.isBefore(b) ? a : b);

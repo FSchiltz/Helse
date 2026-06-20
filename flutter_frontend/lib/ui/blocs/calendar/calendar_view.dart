@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/date_helper.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -20,11 +21,20 @@ class CalendarGroup {
 
 class CalendarView extends StatefulWidget {
   final DateTimeRange date;
+  final CalendarFormat format;
+  final bool compact;
 
   final Future<List<CalendarGroup>> Function(DateTime) loadEvents;
   final List<CalendarEvent> Function(DateTime)? getEvents;
 
-  const CalendarView(this.loadEvents, this.date, {super.key, this.getEvents});
+  const CalendarView(
+    this.loadEvents,
+    this.date, {
+    super.key,
+    this.getEvents,
+    this.format = CalendarFormat.month,
+    this.compact = false,
+  });
 
   @override
   State<CalendarView> createState() => _CalendarViewState();
@@ -51,6 +61,8 @@ class _CalendarViewState extends State<CalendarView> {
   void initState() {
     super.initState();
 
+    _calendarFormat = widget.format;
+
     if (_focusedDay.compareTo(widget.date.start) < 0) {
       _focusedDay = widget.date.start;
     }
@@ -65,6 +77,8 @@ class _CalendarViewState extends State<CalendarView> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).textTheme;
+    var locale = Translation.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -92,21 +106,26 @@ class _CalendarViewState extends State<CalendarView> {
               outsideDaysVisible: false,
             ),
             rangeSelectionMode: RangeSelectionMode.enforced,
+            headerStyle: HeaderStyle(
+              formatButtonVisible: !widget.compact,
+              titleCentered: widget.compact,
+            ),
             onDaySelected: _onDaySelected,
           ),
         SizedBox(height: UIConstants.formPad),
-        Padding(
-          padding: const EdgeInsets.all(12.0),
+        Center(
           child: Text(
             "Showing events of ${DateHelper.formatDate(_selectedDay, context: context)}",
-            style: theme.headlineSmall,
+            style: theme.titleMedium,
           ),
         ),
-        Flexible(
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
+        if (_selectedEvents.isEmpty)
+          Center(child: Text(locale.nodata, style: theme.titleSmall)),
+        if (_selectedEvents.isNotEmpty)
+          Flexible(
             child: ListView.builder(
               itemCount: _selectedEvents.length,
+              shrinkWrap: true,
               itemBuilder: (x, index) {
                 var item = _selectedEvents[index];
                 return Column(
@@ -130,7 +149,6 @@ class _CalendarViewState extends State<CalendarView> {
               },
             ),
           ),
-        ),
       ],
     );
   }

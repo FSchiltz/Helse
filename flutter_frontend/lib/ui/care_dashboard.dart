@@ -1,78 +1,126 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/ui/blocs/care/patient_add.dart';
+import 'package:helse/ui/blocs/care/patients_card.dart';
+import 'package:helse/ui/common/hamburger_menu.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/ui_constants.dart';
+import 'package:helse/ui/patient_settings.dart';
 
 import 'blocs/care/agenda.dart';
-import 'blocs/care/patients.dart';
 
 class CareDashBoard extends StatelessWidget {
   const CareDashBoard({super.key});
 
-  Future<List<Person>> _getData(bool refresh) async {
-    return await Dependencies.services.user.patients() ?? [];
-  }
+  Future<List<Person>> _getData(bool refresh) async =>
+      await Dependencies.services.user.patients() ?? [];
 
   @override
   Widget build(BuildContext context) {
-    var isMobile = UIHelpers.isMobile(context);
-
-    var theme = Theme.of(context).colorScheme;
-
     return LoadingBuilder(
       _getData,
       builder: (context, data, reset) {
-        if (isMobile) {
-          return DefaultTabController(
-            length: 2,
-            child: Column(
-              children: [
-                Expanded(
-                  child: TabBarView(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Patients(data, reset),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Agenda(data),
-                      ),
-                    ],
+        final isMobile = UIHelpers.isMobile(context);
+        final theme = Theme.of(context).colorScheme;
+
+        return isMobile
+            ? Column(
+                children: [
+                  Flexible(child: Agenda(data, compact: isMobile)),
+                  Divider(),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: UIConstants.formPad,
+                      right: UIConstants.formPad,
+                    ),
+                    child: _getHeader(context, reset, data),
                   ),
-                ),
-                TabBar(
-                  tabs: [
-                    Tab(icon: Icon(Icons.personal_injury_sharp)),
-                    Tab(icon: Icon(Icons.edit_calendar_sharp)),
-                  ],
-                ),
-              ],
-            ),
-          );
-        } else {
-          return Row(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                color: theme.surfaceContainer,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Patients(data, reset),
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Agenda(data),
-                ),
-              ),
-            ],
-          );
-        }
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: UIConstants.formPad,
+                        right: UIConstants.formPad,
+                      ),
+                      child: ListView(
+                        children: data
+                            .map((e) => PatientsCard(e, reset))
+                            .toList(),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : Row(
+                children: [
+                  Expanded(child: Agenda(data, compact: isMobile)),
+                  SizedBox(
+                    width: 300,
+                    child: Container(
+                      padding: EdgeInsets.only(
+                        left: UIConstants.formPad,
+                        right: UIConstants.formPad,
+                      ),
+                      color: theme.surfaceContainer,
+                      child: Column(
+                        children: [
+                          _getHeader(context, reset, data),
+                          Expanded(
+                            child: ListView(
+                              children: data
+                                  .map((e) => PatientsCard(e, reset))
+                                  .toList(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
       },
+    );
+  }
+
+  Widget _getHeader(
+    BuildContext context,
+    void Function() reset,
+    List<Person> data,
+  ) {
+    var locale = Translation.of(context);
+    var theme = Theme.of(context).colorScheme;
+
+    return Row(
+      children: [
+        Text(locale.patients, style: Theme.of(context).textTheme.headlineSmall),
+        SizedBox(width: UIConstants.formPad),
+        IconButton(
+          onPressed: () {
+            showDialog<void>(
+              context: context,
+              builder: (context) => PatientAdd(reset),
+            );
+          },
+          icon: const Icon(Icons.add_sharp),
+          iconSize: 35,
+          color: theme.primary,
+        ),
+        Spacer(),
+        HamburgerMenu(
+          items: [
+            MenuButton(locale.patientsSettings, Icons.edit_sharp, () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (context) =>
+                      PatientSettingsPage(null, patients: data),
+                ),
+              );
+            }),
+          ],
+        ),
+      ],
     );
   }
 }
