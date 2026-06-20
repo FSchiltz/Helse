@@ -80,7 +80,7 @@ class _SmtpFormViewState extends State<GotifyFormView> {
     );
   }
 
-  void submit(AppLocalizations locale) async {
+  Future<void> submit(AppLocalizations locale) async {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         final smtp = Gotify(
