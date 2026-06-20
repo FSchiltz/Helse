@@ -126,11 +126,10 @@ class _EventTypeAddState extends State<EventTypeAdd> {
         _formKey.currentState?.reset();
         widget.callback?.call();
 
+        Notify.show(locale.saved);
         if (localContext.mounted) {
           Navigator.of(localContext).pop();
         }
-
-        Notify.show(locale.saved);
       }
     } catch (ex) {
       Notify.showError(locale.error(ex.toString()));

@@ -105,15 +105,13 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
           edit: edit,
         );
 
-        if (localContext.mounted) {
-          Navigator.of(localContext).pop();
-        }
-
         Notify.show(locale.saved);
-
         setState(() {
           _status = SubmissionStatus.success;
         });
+        if (localContext.mounted) {
+          Navigator.of(localContext).pop();
+        }
       } catch (_) {
         setState(() {
           _status = SubmissionStatus.failure;
