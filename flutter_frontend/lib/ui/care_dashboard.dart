@@ -25,39 +25,42 @@ class CareDashBoard extends StatelessWidget {
         _getData,
         builder: (context, data, reset) {
           final isMobile = UIHelpers.isMobile(context);
-          final double maxWidth = 300;
-          final double maxHeight = 250;
-          return LayoutBuilder(
-            builder: (context, constraints) => Wrap(
-              children: [
-                SizedBox(
-                  width: (isMobile)
-                      ? constraints.maxWidth
-                      : constraints.maxWidth - maxWidth,
-                  height: (isMobile) ? maxHeight : constraints.maxHeight,
-                  child: Agenda(data, compact: isMobile),
-                ),
-                SizedBox(
-                  width: (isMobile) ? constraints.maxWidth : maxWidth,
-                  height: (isMobile)
-                      ? constraints.maxHeight - maxHeight
-                      : constraints.maxHeight,
-                  child: Column(
-                    children: [
-                      _getHeader(context, reset, data),
-                      Expanded(
-                        child: ListView(
-                          children: data
-                              .map((e) => PatientsCard(e, reset))
-                              .toList(),
-                        ),
+
+          return isMobile
+              ? Column(
+                  children: [
+                    Flexible(child: Agenda(data, compact: isMobile)),
+                    Divider(),
+                    _getHeader(context, reset, data),
+                    Expanded(
+                      child: ListView(
+                        children: data
+                            .map((e) => PatientsCard(e, reset))
+                            .toList(),
                       ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
+                    ),
+                  ],
+                )
+              : Row(
+                  children: [
+                    Expanded(child: Agenda(data, compact: isMobile)),
+                    SizedBox(
+                      width: 300,
+                      child: Column(
+                        children: [
+                          _getHeader(context, reset, data),
+                          Expanded(
+                            child: ListView(
+                              children: data
+                                  .map((e) => PatientsCard(e, reset))
+                                  .toList(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
         },
       ),
     );
