@@ -19,33 +19,50 @@ class CareDashBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(UIConstants.formPad),
-      child: LoadingBuilder(
-        _getData,
-        builder: (context, data, reset) {
-          final isMobile = UIHelpers.isMobile(context);
+    return LoadingBuilder(
+      _getData,
+      builder: (context, data, reset) {
+        final isMobile = UIHelpers.isMobile(context);
+        final theme = Theme.of(context).colorScheme;
 
-          return isMobile
-              ? Column(
-                  children: [
-                    Flexible(child: Agenda(data, compact: isMobile)),
-                    Divider(),
-                    _getHeader(context, reset, data),
-                    Expanded(
+        return isMobile
+            ? Column(
+                children: [
+                  Flexible(child: Agenda(data, compact: isMobile)),
+                  Divider(),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: UIConstants.formPad,
+                      right: UIConstants.formPad,
+                    ),
+                    child: _getHeader(context, reset, data),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: UIConstants.formPad,
+                        right: UIConstants.formPad,
+                      ),
                       child: ListView(
                         children: data
                             .map((e) => PatientsCard(e, reset))
                             .toList(),
                       ),
                     ),
-                  ],
-                )
-              : Row(
-                  children: [
-                    Expanded(child: Agenda(data, compact: isMobile)),
-                    SizedBox(
-                      width: 300,
+                  ),
+                ],
+              )
+            : Row(
+                children: [
+                  Expanded(child: Agenda(data, compact: isMobile)),
+                  SizedBox(
+                    width: 300,
+                    child: Container(
+                      padding: EdgeInsets.only(
+                        left: UIConstants.formPad,
+                        right: UIConstants.formPad,
+                      ),
+                      color: theme.surfaceContainer,
                       child: Column(
                         children: [
                           _getHeader(context, reset, data),
@@ -59,10 +76,10 @@ class CareDashBoard extends StatelessWidget {
                         ],
                       ),
                     ),
-                  ],
-                );
-        },
-      ),
+                  ),
+                ],
+              );
+      },
     );
   }
 
