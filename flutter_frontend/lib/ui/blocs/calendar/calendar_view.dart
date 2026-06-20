@@ -114,34 +114,35 @@ class _CalendarViewState extends State<CalendarView> {
           ),
         ),
         if (_selectedEvents.isEmpty)
-          Center(child: Text(locale.nodata, style: theme.titleMedium)),
-        Flexible(
-          child: ListView.builder(
-            itemCount: _selectedEvents.length,
-            shrinkWrap: true,
-            itemBuilder: (x, index) {
-              var item = _selectedEvents[index];
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(item.name, style: theme.headlineSmall),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: item.events.length,
-                    itemBuilder: (x, index) => Row(
-                      children: [
-                        Text(
-                          "${item.events[index].value} at ${DateHelper.formatTime(item.events[index].to, context: x)}",
-                        ),
-                      ],
+          Center(child: Text(locale.nodata, style: theme.titleSmall)),
+        if (_selectedEvents.isNotEmpty)
+          Flexible(
+            child: ListView.builder(
+              itemCount: _selectedEvents.length,
+              shrinkWrap: true,
+              itemBuilder: (x, index) {
+                var item = _selectedEvents[index];
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(item.name, style: theme.headlineSmall),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: item.events.length,
+                      itemBuilder: (x, index) => Row(
+                        children: [
+                          Text(
+                            "${item.events[index].value} at ${DateHelper.formatTime(item.events[index].to, context: x)}",
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Divider(),
-                ],
-              );
-            },
+                    Divider(),
+                  ],
+                );
+              },
+            ),
           ),
-        ),
       ],
     );
   }
