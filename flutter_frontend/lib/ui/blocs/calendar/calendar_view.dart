@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/date_helper.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -74,6 +75,8 @@ class _CalendarViewState extends State<CalendarView> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).textTheme;
+    var locale = Translation.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -104,40 +107,39 @@ class _CalendarViewState extends State<CalendarView> {
             onDaySelected: _onDaySelected,
           ),
         SizedBox(height: UIConstants.formPad),
-        Padding(
-          padding: const EdgeInsets.all(12.0),
+        Center(
           child: Text(
             "Showing events of ${DateHelper.formatDate(_selectedDay, context: context)}",
-            style: theme.headlineSmall,
+            style: theme.titleMedium,
           ),
         ),
+        if (_selectedEvents.isEmpty)
+          Center(child: Text(locale.nodata, style: theme.titleMedium)),
         Flexible(
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: ListView.builder(
-              itemCount: _selectedEvents.length,
-              itemBuilder: (x, index) {
-                var item = _selectedEvents[index];
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(item.name, style: theme.headlineSmall),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: item.events.length,
-                      itemBuilder: (x, index) => Row(
-                        children: [
-                          Text(
-                            "${item.events[index].value} at ${DateHelper.formatTime(item.events[index].to, context: x)}",
-                          ),
-                        ],
-                      ),
+          child: ListView.builder(
+            itemCount: _selectedEvents.length,
+            shrinkWrap: true,
+            itemBuilder: (x, index) {
+              var item = _selectedEvents[index];
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(item.name, style: theme.headlineSmall),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: item.events.length,
+                    itemBuilder: (x, index) => Row(
+                      children: [
+                        Text(
+                          "${item.events[index].value} at ${DateHelper.formatTime(item.events[index].to, context: x)}",
+                        ),
+                      ],
                     ),
-                    Divider(),
-                  ],
-                );
-              },
-            ),
+                  ),
+                  Divider(),
+                ],
+              );
+            },
           ),
         ),
       ],

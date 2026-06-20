@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/calendar/calendar_view.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class Agenda extends StatelessWidget {
   final List<Person> data;
@@ -44,6 +45,7 @@ class Agenda extends StatelessWidget {
     return CalendarView(
       _getData,
       DateTimeRange<DateTime>(start: DateTime(1900), end: DateTime(3000)),
+      format: CalendarFormat.week,
     );
   }
 }
