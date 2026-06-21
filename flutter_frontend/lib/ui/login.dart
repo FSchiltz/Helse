@@ -342,16 +342,6 @@ class _LoginState extends State<LoginPage> {
         surname: _controllerSurname.text,
       );
 
-      final localContext = context;
-      if (localContext.mounted) {
-        var locale = Translation.of(localContext);
-
-        if (created) {
-          Notify.show(locale.welcomenew);
-        } else {
-          Notify.show(locale.welcome);
-        }
-      }
       log('Login successful');
       setState(() {
         _loginError = null;

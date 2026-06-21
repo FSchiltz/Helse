@@ -38,7 +38,6 @@ internal class ListImporter(ImportData file, IEventContext eventDb, IMetricConte
             metrics = new(0, 0, 0);
         }
 
-
         ImportResult events;
         if (Data.Events is not null)
         {
