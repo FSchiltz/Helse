@@ -45,7 +45,7 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     _getUser();
-    _startFitJob(Dependencies.blocs.fit);
+    Dependencies.blocs.fit.start();
     _startTaskResultJob(Dependencies.blocs.jobs);
   }
 
@@ -63,13 +63,6 @@ class _HomeState extends State<Home> {
       });
     } catch (ex) {
       Notify.showError("Error: $ex");
-    }
-  }
-
-  Future<void> _startFitJob(TaskBloc fit) async {
-    var settings = Dependencies.logics.settings.getHealth();
-    if (settings.syncHealth) {
-      fit.start();
     }
   }
 
