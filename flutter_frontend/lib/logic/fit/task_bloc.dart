@@ -19,7 +19,7 @@ class TaskBloc extends Cubit<SubmissionStatus> {
   final List<Execution> executions = [];
   Timer? timer;
   Future<String?> Function() action;
-  Future<bool> Function() check;
+  bool Function() check;
   Duration duration;
   bool _running = false;
 
@@ -40,20 +40,15 @@ class TaskBloc extends Cubit<SubmissionStatus> {
     try {
       if (!_running) {
         _running = true;
-        if (await check.call()) {
+        if (check.call()) {
           emit(SubmissionStatus.inProgress);
           var status = await action.call();
 
-          executions.add(
-            Execution(
-              DateTime.now(),
-              status != null
-                  ? SubmissionStatus.success
-                  : SubmissionStatus.skipped,
-              status: status,
-            ),
-          );
-          emit(SubmissionStatus.success);
+          final result = status != null
+              ? SubmissionStatus.success
+              : SubmissionStatus.skipped;
+          executions.add(Execution(DateTime.now(), result, status: status));
+          emit(result);
         } else {
           emit(SubmissionStatus.initial);
         }
