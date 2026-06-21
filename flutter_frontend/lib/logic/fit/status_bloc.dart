@@ -7,7 +7,7 @@ import '../event.dart';
 class StatusBloc extends Cubit<SubmissionStatus> {
   Timer? timer;
   Future<SubmissionStatus> Function() action;
-  Future<bool> Function() check;
+  bool Function() check;
   Duration duration;
   bool _running = false;
 
@@ -24,7 +24,7 @@ class StatusBloc extends Cubit<SubmissionStatus> {
       try {
         if (!_running) {
           _running = true;
-          if (await check.call()) {
+          if (check.call()) {
             var status = await action.call();
             emit(status);
           } else {

@@ -12,7 +12,7 @@ void main() {
       MaterialApp(
         home: LoadingBuilder<String>(
           (_) => completer.future,
-          builder: (_, data, __) => Text(data),
+          builder: (_, data, _) => Text(data),
         ),
       ),
     );
@@ -27,7 +27,7 @@ void main() {
       MaterialApp(
         home: LoadingBuilder<String>(
           (_) async => 'hello',
-          builder: (_, data, __) => Text(data),
+          builder: (_, data, _) => Text(data),
         ),
       ),
     );
@@ -50,10 +50,7 @@ void main() {
           builder: (_, data, reset) => Column(
             children: [
               Text('$data'),
-              ElevatedButton(
-                onPressed: reset,
-                child: const Text('reload'),
-              ),
+              ElevatedButton(onPressed: reset, child: const Text('reload')),
             ],
           ),
         ),

@@ -33,7 +33,7 @@ class WorkHelper {
           frequency: Duration(minutes: 15),
           constraints: Constraints(
             networkType: NetworkType.unmetered,
-            requiresBatteryNotLow: true,          
+            requiresBatteryNotLow: true,
           ),
         );
       }
@@ -44,7 +44,7 @@ class WorkHelper {
     try {
       log("Background sync started");
       await Dependencies.init();
-      if (await Dependencies.logics.fit.isEnabled()) {
+      if (Dependencies.logics.fit.isEnabled()) {
         var settings = Dependencies.logics.settings.getHealth();
         if (settings.background) {
           log("Background sync enabled");

@@ -12,11 +12,16 @@ class Blocs {
     return Blocs.build(
       TaskBloc(
         () async {
-          await logic.fit.checkRun();
-          return await logic.fit.sync();
+          final enabled = logic.fit.isEnabled();
+          if (enabled) {
+            await logic.fit.checkRun();
+            return await logic.fit.sync();
+          } else {
+            return null;
+          }
         },
         const Duration(minutes: 5),
-        logic.fit.isEnabled,
+        logic.fit.isSupported,
       ),
       StatusBloc(
         logic.import.sync,

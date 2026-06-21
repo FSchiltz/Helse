@@ -9,7 +9,7 @@ class ImportLogic {
   final Map<String, JobResult> jobs = {};
   ImportLogic();
 
-  Future<bool> isEnabled() async {
+  bool isEnabled() {
     return jobs.isNotEmpty;
   }
 

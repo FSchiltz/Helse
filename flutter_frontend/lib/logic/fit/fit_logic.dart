@@ -154,6 +154,9 @@ class FitLogic {
     var run = Dependencies.logics.settings.getLastRun();
     var history = Dependencies.logics.settings.getHasHistory() ?? false;
     var settings = Dependencies.logics.settings.getHealth();
+    if (!settings.syncHealth) {
+      return "Not enabled";
+    }
 
     var now = DateTime.now();
     // each sync we have to get the last 5 days because the apps can add metrics in the pasts
@@ -193,7 +196,7 @@ class FitLogic {
     log(
       "Sending ${converted.metrics?.length} metrics and ${converted.events?.length} events since $start",
     );
-    
+
     // import to the server
     // TODO add a loop here if too much events
     ImportsResult? result;
@@ -219,12 +222,6 @@ class FitLogic {
     );
 
     return text;
-  }
-
-  Future<bool> isEnabled() async {
-    Dependencies.health.configure();
-
-    return isSupported();
   }
 
   bool isSupported() {
@@ -432,5 +429,10 @@ class FitLogic {
     }
 
     return null;
+  }
+
+  bool isEnabled() {
+    final settings = Dependencies.logics.settings.getHealth();
+    return settings.syncHealth;
   }
 }
