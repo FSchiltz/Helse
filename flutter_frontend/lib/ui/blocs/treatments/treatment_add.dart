@@ -55,10 +55,10 @@ class _TreatementState extends State<TreatmentAdd> {
         _status = SubmissionStatus.success;
       });
 
+      Notify.show(locale.added);
       if (localContext.mounted) {
         Navigator.of(localContext).pop();
       }
-      Notify.show(locale.added);
     } catch (ex) {
       setState(() {
         _status = SubmissionStatus.failure;

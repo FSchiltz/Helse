@@ -142,16 +142,15 @@ class _MetricAddState extends State<MetricAdd> {
             person: widget.person,
           );
         }
-
-        if (localContext.mounted) {
-          Navigator.of(localContext).pop();
-        }
-        Notify.show(locale.added);
-
-        widget.callback();
         setState(() {
           _status = SubmissionStatus.success;
         });
+        Notify.show(locale.added);
+        if (localContext.mounted) {
+          Navigator.of(localContext).pop();
+        }
+
+        widget.callback();
       } catch (_) {
         setState(() {
           _status = SubmissionStatus.failure;

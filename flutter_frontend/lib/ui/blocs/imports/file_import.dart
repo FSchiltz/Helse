@@ -110,11 +110,10 @@ class _FileImportState extends State<FileImport> {
           status = SubmissionStatus.success;
         });
 
+        Notify.show("Imported");
         if (localContext.mounted) {
           Navigator.of(localContext).pop();
         }
-
-        Notify.show("Imported");
       } catch (ex) {
         Notify.showError(locale.error(ex.toString()));
 

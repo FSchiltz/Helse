@@ -99,14 +99,14 @@ class _PatientAddState extends State<PatientAdd> {
 
         _formKey.currentState?.reset();
         widget.callback.call();
-        if (localContext.mounted) {
-          Navigator.of(localContext).pop();
-          Notify.show(locale.added);
-        }
 
         setState(() {
           _status = SubmissionStatus.success;
         });
+        Notify.show(locale.added);
+        if (localContext.mounted) {
+          Navigator.of(localContext).pop();
+        }
       } catch (_) {
         setState(() {
           _status = SubmissionStatus.failure;
