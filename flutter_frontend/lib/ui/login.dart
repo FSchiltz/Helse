@@ -29,15 +29,13 @@ class LoginPage extends StatefulWidget {
 
 class _LoginState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  final textController = TextEditingController();
-
-  final TextEditingController _controllerUsername = TextEditingController();
-  final TextEditingController _controllerName = TextEditingController();
-  final TextEditingController _controllerSurname = TextEditingController();
-  final TextEditingController _controllerEmail = TextEditingController();
-  final TextEditingController _controllerPassword = TextEditingController();
-  final TextEditingController _controllerConFirmPassword =
-      TextEditingController();
+  final _urlController = TextEditingController();
+  final _controllerUsername = TextEditingController();
+  final _controllerName = TextEditingController();
+  final _controllerSurname = TextEditingController();
+  final _controllerEmail = TextEditingController();
+  final _controllerPassword = TextEditingController();
+  final _controllerConFirmPassword = TextEditingController();
 
   SubmissionStatus _status = SubmissionStatus.waiting;
   Status? _initStatus;
@@ -77,7 +75,7 @@ class _LoginState extends State<LoginPage> {
                       const SizedBox(height: UIConstants.headerPad),
                       SquareTextField(
                         label: locale.serverurl,
-                        controller: textController,
+                        controller: _urlController,
                         icon: Icons.home_sharp,
                         type: TextInputType.url,
                         onChanged: (v) => _urlTextChanged(v, locale),
@@ -184,6 +182,11 @@ class _LoginState extends State<LoginPage> {
     _operation?.cancel();
     _operation = null;
 
+    if (!url.startsWith("http")) {
+      // if the user id not specify the scheme, use https by default
+      url = "https://$url";
+    }
+
     setState(() {
       _url = url;
       _urlError = null;
@@ -194,10 +197,9 @@ class _LoginState extends State<LoginPage> {
     if (url.isNotEmpty) {
       // Launch the urlchanged handler with a delay
       // To only call when the user has finished typing and allows giving feedback
-      _operation = Timer(
-        Duration(seconds: 1),
-        () async => await _urlChanged(url),
-      );
+      _operation = Timer(Duration(seconds: 1), () async {
+        await _urlChanged(url);
+      });
     }
   }
 
@@ -257,7 +259,7 @@ class _LoginState extends State<LoginPage> {
     var url = Dependencies.logics.authentication.getUrl();
 
     if (url != null && url.isNotEmpty) {
-      textController.text = url;
+      _urlController.text = url;
 
       if (mounted) {
         setState(() {
@@ -275,7 +277,7 @@ class _LoginState extends State<LoginPage> {
     var init = _initStatus;
     var url = _url;
     if (init != null && url != null) {
-      Notify.show("Oauth started");
+      log("Oauth started");
       setState(() {
         _status = SubmissionStatus.inProgress;
       });
@@ -340,16 +342,6 @@ class _LoginState extends State<LoginPage> {
         surname: _controllerSurname.text,
       );
 
-      final localContext = context;
-      if (localContext.mounted) {
-        var locale = Translation.of(localContext);
-
-        if (created) {
-          Notify.show(locale.welcomenew);
-        } else {
-          Notify.show(locale.welcome);
-        }
-      }
       log('Login successful');
       setState(() {
         _loginError = null;

@@ -1,8 +1,6 @@
 using Helse.Api.Data;
 using Helse.Api.Helpers;
-using Helse.Models.Events;
 using Helse.Models.Imports;
-using Helse.Models.Metrics;
 using Helse.Models.Persons;
 using LinqToDB;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +12,6 @@ namespace Helse.Api.Logic;
 internal record FileType(int Type, string? Name);
 
 internal record JobId(Guid Id);
-
-internal class ImportData
-{
-    public List<CreateMetric> Metrics { get; } = [];
-
-    public List<CreateEvent> Events { get; } = [];
-}
 
 /// <summary>
 /// Logic for the import of file
