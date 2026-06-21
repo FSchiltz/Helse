@@ -39,20 +39,31 @@ class EventTimeline extends StatelessWidget {
     List<Widget> chartBars = [];
 
     int tick = 0;
-    double max = userData
-        .map((x) => x.data.values.map((y) => y as double).sum)
-        .max;
+    var data = events.map(
+      (x) => x.data.map((key, value) {
+        double x;
+        if (value is double) {
+          x = value;
+        } else {
+          x = (value as int).toDouble();
+        }
+
+        return MapEntry(key, x);
+      }),
+    );
+
+    double max = data.map((x) => x.values.sum).max;
 
     var coeff = (height / max) * 0.95;
 
-    for (var d in events) {
+    for (var d in data) {
       chartBars.add(
         Padding(
           padding: EdgeInsets.only(left: 1 * width, right: 1 * width),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: _map(
-              d.data,
+              d,
               tick,
               theme.primary,
               context,
@@ -92,7 +103,7 @@ class EventTimeline extends StatelessWidget {
   }
 
   List<Widget> _map(
-    Map<String, dynamic> p,
+    Map<String, double> p,
     int tick,
     Color empty,
     BuildContext context, {
@@ -102,7 +113,7 @@ class EventTimeline extends StatelessWidget {
     List<Widget> widgets = [];
 
     for (var entry in p.entries) {
-      var count = entry.value as double;
+      var count = entry.value;
       if (count > 0) {
         widgets.add(
           Tooltip(
