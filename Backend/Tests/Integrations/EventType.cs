@@ -6,7 +6,7 @@ namespace Tests.Integrations;
 [Collection("Database collection")]
 public class EventType(WebApplicationFactory<Program> factory, DatabaseFixture fixture) : IntegrationTest(factory, fixture)
 {
-    const string groupsUrl = "/api/metrics/type";
+    const string groupsUrl = "/api/events/type";
 
     [Fact]
     public async Task CreateType()
@@ -15,13 +15,11 @@ public class EventType(WebApplicationFactory<Program> factory, DatabaseFixture f
         var client = await ClientAsync();
         await ConnectAsync(client);
 
-        var response = await client.PostAsJsonAsync(groupsUrl, new Helse.Models.Events.EventType
+        var response = await client.PostAsJsonAsync(groupsUrl, new Helse.Models.Events.CreateEventType
         {
             Name = "test",
             Description = "test description",
             GroupId = 1,
-            Id = 0,
-            UserEditable = false,
         }, cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(response);
         var text = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);

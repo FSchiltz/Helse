@@ -185,7 +185,7 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
     }
 
     /// <inheritdoc/>
-    public Task Insert(Helse.Models.Events.EventType eventType)
+    public Task Insert(Helse.Models.Events.CreateEventType eventType)
     {
         return Db.GetTable<EventType>().InsertAsync(() => new EventType
         {
@@ -242,7 +242,7 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task Update(Helse.Models.Events.EventType type)
+    public Task Update(Helse.Models.Events.UpdateEventType type)
     {
         return Db.GetTable<EventType>()
             .Where(x => x.Id == type.Id)

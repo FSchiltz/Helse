@@ -297,7 +297,7 @@ public class HealthContextTests(DatabaseFixture fixture)
     {
         // Arrange
         await using var db = await GetDb();
-        var model = new Helse.Models.Events.EventType
+        var model = new Helse.Models.Events.CreateEventType
         {
             Name = "Medication",
             Description = "Medication event",
@@ -305,8 +305,6 @@ public class HealthContextTests(DatabaseFixture fixture)
             Visible = true,
             TimeDifference = TimeSpan.Zero,
             GroupId = 1,
-            Id = 0,
-            UserEditable = false,
         };
 
         var context = new HealthContext(db, _interceptor);
@@ -493,7 +491,7 @@ public class HealthContextTests(DatabaseFixture fixture)
 
         var context = new HealthContext(db, _interceptor);
 
-        var update = new Helse.Models.Events.EventType
+        var update = new Helse.Models.Events.UpdateEventType
         {
             Id = id,
             Name = "New",
@@ -501,7 +499,6 @@ public class HealthContextTests(DatabaseFixture fixture)
             Visible = false,
             TimeDifference = TimeSpan.Zero,
             GroupId = groupId,
-            UserEditable = false,
         };
 
         // Act

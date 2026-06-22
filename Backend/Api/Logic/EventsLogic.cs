@@ -135,7 +135,7 @@ internal static class EventsLogic
         GroupId = x.GroupId,
     }));
 
-    public static async Task<IResult> CreateTypeAsync(EventType type, IUserContext users, IEventContext events, HttpContext context)
+    public static async Task<IResult> CreateTypeAsync(CreateEventType type, IUserContext users, IEventContext events, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
@@ -146,7 +146,7 @@ internal static class EventsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> UpdateTypeAsync(EventType type, IUserContext users, IEventContext events, HttpContext context)
+    public static async Task<IResult> UpdateTypeAsync(UpdateEventType type, IUserContext users, IEventContext events, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
