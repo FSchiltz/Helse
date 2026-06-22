@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide TableRow;
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
@@ -13,6 +13,7 @@ import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/inputs/values_input.dart';
+import 'package:helse/ui/common/table.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 class _SettingsData {
@@ -164,7 +165,6 @@ class _MetricsSettingsState extends State<MetricsSettings> {
                       group: group,
                       metrics: data.groupedMetrics[group.id] ?? const [],
                       events: data.groupedEvents[group.id] ?? const [],
-                      locale: locale,
                     );
                   },
                 ),
@@ -181,24 +181,17 @@ class _GroupCard extends StatelessWidget {
   final OrderedEditItem group;
   final List<OrderedEditItem> metrics;
   final List<OrderedEditItem> events;
-  final AppLocalizations locale;
 
   const _GroupCard({
     super.key,
     required this.group,
     required this.metrics,
     required this.events,
-    required this.locale,
   });
-
-  static final List<DropdownItem<GraphKind>> _graphItems = GraphKind.values
-      .where((e) => e.index > 0)
-      .map((x) => DropdownItem(x, x.name))
-      .toList();
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final locale = Translation.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: UIConstants.formPad),
       child: Container(
@@ -225,88 +218,137 @@ class _GroupCard extends StatelessWidget {
                   group.visible = value;
                 }),
               ),
-              if (metrics.isNotEmpty)
-                DataTable(
-                  columns: [
-                    DataColumn(label: Text(locale.name)),
-                    DataColumn(label: Text(locale.visible)),
-                    DataColumn(label: Text(locale.showOnDashboard)),
-                    DataColumn(label: Text(locale.widgetType)),
-                    DataColumn(label: Text(locale.detailType)),
+              if (metrics.isNotEmpty) ...[
+                TableHeader(
+                  header: [
+                    Header(locale.name, 160),
+                    Header(locale.visible, 80),
+                    Header(locale.showOnDashboard, 80),
+                    Header(locale.widgetType, 160),
+                    Header(locale.detailType, 160),
                   ],
-                  rows: metrics
-                      .map((item) => _metricRow(item, theme, locale))
-                      .toList(),
                 ),
-              if (events.isNotEmpty)
-                DataTable(
-                  columns: [
-                    DataColumn(label: Text(locale.name)),
-                    DataColumn(label: Text(locale.visible)),
-                    DataColumn(label: Text(locale.showOnDashboard)),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: metrics.length,
+                  itemBuilder: (context, index) {
+                    var metric = metrics[index];
+                    return _MetricRow(metric: metric, key: ValueKey(metric.id));
+                  },
+                ),
+              ],
+              SizedBox(height: UIConstants.formPad),
+              if (events.isNotEmpty) ...[
+                TableHeader(
+                  header: [
+                    Header(locale.name, 160),
+                    Header(locale.visible, 80),
+                    Header(locale.showOnDashboard, 80),
                   ],
-                  rows: events.map((item) => _eventRow(item, theme)).toList(),
                 ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: events.length,
+                  itemBuilder: (context, index) {
+                    var event = events[index];
+                    return _EventRow(event: event, key: ValueKey(event.id));
+                  },
+                ),
+              ],
             ],
           ),
         ),
       ),
     );
   }
+}
 
-  DataRow _eventRow(OrderedEditItem item, ThemeData theme) {
-    return DataRow(
-      cells: [
-        DataCell(Text(item.name, style: theme.textTheme.titleLarge)),
-        DataCell(StatefullCheck(item.visible, (value) => item.visible = value)),
-        DataCell(
-          StatefullCheck(
-            item.showOnDashboard,
-            (value) => item.showOnDashboard = value,
-          ),
+class _EventRow extends StatelessWidget {
+  const _EventRow({super.key, required this.event});
+
+  final OrderedEditItem event;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return TableRow([
+      RowData(
+        width: 160,
+        child: Text(event.name, style: theme.textTheme.titleLarge),
+      ),
+      RowData(
+        width: 80,
+        child: StatefullCheck(event.visible, (value) => event.visible = value),
+      ),
+      RowData(
+        width: 80,
+        child: StatefullCheck(
+          event.showOnDashboard,
+          (value) => event.showOnDashboard = value,
         ),
-      ],
-    );
+      ),
+    ]);
   }
+}
 
-  DataRow _metricRow(
-    OrderedEditItem item,
-    ThemeData theme,
-    AppLocalizations locale,
-  ) {
-    return DataRow(
-      cells: [
-        DataCell(Text(item.name, style: theme.textTheme.titleLarge)),
-        DataCell(StatefullCheck(item.visible, (value) => item.visible = value)),
-        DataCell(
-          StatefullCheck(
-            item.showOnDashboard,
-            (value) => item.showOnDashboard = value,
+class _MetricRow extends StatelessWidget {
+  const _MetricRow({super.key, required this.metric});
+
+  final OrderedEditItem metric;
+
+  static final List<DropdownItem<GraphKind>> _graphItems = GraphKind.values
+      .where((e) => e.index > 0)
+      .map((x) => DropdownItem(x, x.name))
+      .toList();
+
+  @override
+  Widget build(BuildContext context) {
+    final locale = Translation.of(context);
+    final theme = Theme.of(context);
+    return TableRow([
+      RowData(
+        width: 160,
+        child: Text(metric.name, style: theme.textTheme.titleLarge),
+      ),
+      RowData(
+        width: 80,
+        child: StatefullCheck(
+          metric.visible,
+          (value) => metric.visible = value,
+        ),
+      ),
+      RowData(
+        width: 80,
+        child: StatefullCheck(
+          metric.showOnDashboard,
+          (value) => metric.showOnDashboard = value,
+        ),
+      ),
+
+      RowData(
+        width: 160,
+        child: Padding(
+          padding: const EdgeInsets.only(right: UIConstants.tablePad),
+          child: ValuesInput(
+            value: metric.graph,
+            _graphItems,
+            (value) => metric.graph = value ?? metric.graph,
+            label: locale.type,
           ),
         ),
-        DataCell(
-          SizedBox(
-            width: 160,
-            child: ValuesInput(
-              value: item.graph,
-              _graphItems,
-              (value) => item.graph = value ?? item.graph,
-              label: locale.type,
-            ),
-          ),
+      ),
+
+      RowData(
+        width: 160,
+        child: ValuesInput(
+          value: metric.detailGraph,
+          _graphItems,
+          (value) => metric.detailGraph = value ?? metric.detailGraph,
+          label: locale.type,
         ),
-        DataCell(
-          SizedBox(
-            width: 160,
-            child: ValuesInput(
-              value: item.detailGraph,
-              _graphItems,
-              (value) => item.detailGraph = value ?? item.detailGraph,
-              label: locale.type,
-            ),
-          ),
-        ),
-      ],
-    );
+      ),
+    ]);
   }
 }
