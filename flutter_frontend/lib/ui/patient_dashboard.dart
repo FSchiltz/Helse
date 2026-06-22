@@ -3,9 +3,6 @@ import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:helse/ui/common/inputs/date_range_picker.dart';
-import 'package:helse/ui/common/ui_constants.dart';
-
-import 'blocs/events/events_grid.dart';
 import 'blocs/metrics/metrics_grid.dart';
 
 class PatientDashboard extends StatefulWidget {
