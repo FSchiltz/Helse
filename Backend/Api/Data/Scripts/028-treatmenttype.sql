@@ -57,6 +57,42 @@ WHERE
 END $$;
 
 
+-- Add the new metric group
+DO $$
+DECLARE newId BIGINT;
+
+BEGIN
+SELECT
+    id + 1
+FROM
+    health.MetricGroup
+order by
+    id desc
+limit
+    1 INTO newId;
+
+INSERT INTO
+    health.MetricGroup(
+        id,
+        name,
+        description,
+        showtitle,
+        showOndashboard
+    )
+VALUES
+    (newId, 'Sleep', '', true, true) RETURNING id INTO newId;
+
+-- move the Sleep to the correct metricgroup
+UPDATE
+    health.EventType
+SET
+    GroupId = newId
+WHERE
+    ID = 1;
+
+END $$;
+
+
 UPDATE
     health.EventType
 SET
