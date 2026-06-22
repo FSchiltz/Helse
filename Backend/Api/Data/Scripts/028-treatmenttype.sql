@@ -1,16 +1,27 @@
 -- Add the new metric group
 DO $$
-DECLARE newId OAMENI.id%TYPE;
+DECLARE newId BIGINT;
+
+BEGIN
+SELECT
+    id + 1
+FROM
+    health.MetricGroup
+order by
+    id desc
+limit
+    1 INTO newId;
 
 INSERT INTO
     health.MetricGroup(
+        id,
         name,
         description,
         showtitle,
         showOndashboard
     )
 VALUES
-    ('Treatments', '', true, true) RETURNING id INTO newId;
+    (newId, 'Treatments', '', true, true) RETURNING id INTO newId;
 
 -- Add the metric group property to the event table
 ALTER TABLE
@@ -49,4 +60,5 @@ SET
     GroupId = 4
 WHERE
     ID = 3;
+
 END $$
