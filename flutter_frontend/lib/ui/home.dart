@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/logic/fit/fit_helper.dart';
 import 'package:helse/logic/fit/status_bloc.dart';
 import 'package:simple_icons/simple_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -122,7 +123,7 @@ class _HomeState extends State<Home> {
                   },
                 ),
               ),
-              if (Dependencies.logics.fit.isSupported())
+              if (FitHelper.isSupported())
                 BlocProvider<TaskBloc>.value(
                   value: Dependencies.blocs.fit,
                   child: BlocBuilder<TaskBloc, SubmissionStatus>(

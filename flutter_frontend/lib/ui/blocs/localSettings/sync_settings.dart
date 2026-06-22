@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
+import 'package:helse/logic/fit/fit_constants.dart';
+import 'package:helse/logic/fit/fit_helper.dart';
 import 'package:helse/logic/settings/health_settings.dart';
 import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/inputs/statefull_check.dart';
@@ -31,7 +33,7 @@ class _SyncSettingsState extends State<SyncSettings> {
   void initState() {
     super.initState();
 
-    _isSupported = Dependencies.logics.fit.isSupported();
+    _isSupported = FitHelper.isSupported();
   }
 
   Future<int> _getData(bool refresh) async {
@@ -42,7 +44,7 @@ class _SyncSettingsState extends State<SyncSettings> {
     _history = health.history;
     _status = Dependencies.logics.settings.getLastStatus();
 
-    _records = Dependencies.logics.fit.types.groupFoldBy(
+    _records = FitConstants.types.groupFoldBy(
       (e) => e.name,
       (v, e) => HealthRecordSettings(health.records[e.name]?.sync ?? false),
     );

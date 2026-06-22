@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:helse/di/logics.dart';
+import 'package:helse/logic/fit/fit_helper.dart';
 import 'package:helse/logic/fit/status_bloc.dart';
 import 'package:helse/logic/fit/task_bloc.dart';
 
@@ -25,7 +26,7 @@ class Blocs {
           }
         },
         const Duration(minutes: 5),
-        logic.fit.isSupported,
+        FitHelper.isSupported,
       ),
       StatusBloc(
         logic.import.sync,
