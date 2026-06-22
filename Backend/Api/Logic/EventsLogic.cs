@@ -76,7 +76,7 @@ internal static class EventsLogic
 
     private static void Validate(BaseEvent e)
     {
-        if(e.Stop < e.Start)
+        if (e.Stop < e.Start)
         {
             throw new InvalidDataException("The end date must be before the start");
         }
@@ -132,6 +132,7 @@ internal static class EventsLogic
         Visible = x.Visible,
         UserEditable = x.UserEditable,
         TimeDifference = x.TimeDifference,
+        GroupId = x.GroupId,
     }));
 
     public static async Task<IResult> CreateTypeAsync(EventType type, IUserContext users, IEventContext events, HttpContext context)

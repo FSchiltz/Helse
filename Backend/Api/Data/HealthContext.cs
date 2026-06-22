@@ -192,6 +192,7 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
             UserEditable = true,
             Visible = eventType.Visible,
             TimeDifference = eventType.TimeDifference,
+            GroupId = eventType.GroupId,
         });
     }
 
@@ -245,6 +246,7 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
             .Set(x => x.Description, type.Description)
             .Set(x => x.Visible, type.Visible)
             .Set(x => x.TimeDifference, type.TimeDifference)
+            .Set(x => x.GroupId, type.GroupId)
             .UpdateAsync();
     }
 

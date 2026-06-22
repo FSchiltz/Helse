@@ -19,6 +19,7 @@ public class EventsLogicTests : LogicTests
             Description = "",
             Id = 0,
             UserEditable = true,
+            GroupId = 1,
         };
 
         var users = SetupUser(UserType.User);
@@ -37,6 +38,7 @@ public class EventsLogicTests : LogicTests
             Description = "",
             Id = 0,
             UserEditable = true,
+            GroupId = 2,
         };
 
         var users = SetupUser(UserType.Admin);
