@@ -266,6 +266,7 @@ EventType _$EventTypeFromJson(Map<String, dynamic> json) => EventType(
   id: (json['id'] as num).toInt(),
   userEditable: json['userEditable'] as bool,
   timeDifference: json['timeDifference'] as String?,
+  groupId: (json['groupId'] as num).toInt(),
 );
 
 Map<String, dynamic> _$EventTypeToJson(EventType instance) => <String, dynamic>{
@@ -276,6 +277,7 @@ Map<String, dynamic> _$EventTypeToJson(EventType instance) => <String, dynamic>{
   'id': instance.id,
   'userEditable': instance.userEditable,
   'timeDifference': instance.timeDifference,
+  'groupId': instance.groupId,
 };
 
 FileType _$FileTypeFromJson(Map<String, dynamic> json) => FileType(

@@ -21,7 +21,9 @@ class MetricsGrid extends StatefulWidget {
 }
 
 class _MetricsGridState extends State<MetricsGrid> {
-  List<MetricGroup>? groups;
+  List<MetricGroup>? _groups;
+  Map<int, List<MetricType>>? _metrics;
+  Map<int, List<EventType>>? _events;
 
   @override
   void initState() {
@@ -32,26 +34,16 @@ class _MetricsGridState extends State<MetricsGrid> {
   void _getData() async {
     try {
       final model = await Dependencies.services.metric.metricsGroup();
+      final metrics =
+          await Dependencies.services.metric.metricsType(true, null) ?? [];
+      final events = await Dependencies.services.event.eventsType(true) ?? [];
 
       List<MetricGroup> filtered = [];
       if (model == null) {
         filtered = [];
       } else {
-        MetricGroupSettings settings;
-        if (widget.person == null) {
-          settings =
-              (Dependencies.logics.settings.getMetrics()).groups ??
-              MetricGroupSettings(displaySettings: []);
-          // filter using the user settings
-        } else {
-          settings =
-              (Dependencies.logics.patientsSettings.getMetrics(
-                widget.person,
-              )).groups ??
-              MetricGroupSettings(displaySettings: []);
-          // filter using the user settings
-        }
-
+        // filter the group to only show what the user wants
+        MetricGroupSettings settings = _getUserSettings();
         for (var item in model) {
           OrderedItem? setting = settings.displaySettings.firstWhereOrNull(
             (element) => element.id == item.id,
@@ -61,8 +53,28 @@ class _MetricsGridState extends State<MetricsGrid> {
         }
       }
 
+      final Map<int, List<EventType>> orderedEvent = events.groupFoldBy(
+        (e) => e.groupId,
+        (e, b) {
+          if (e == null) return [b];
+          e.add(b);
+          return e;
+        },
+      );
+
+      final Map<int, List<MetricType>> orderedMetric = metrics.groupFoldBy(
+        (e) => e.groupId,
+        (e, b) {
+          if (e == null) return [b];
+          e.add(b);
+          return e;
+        },
+      );
+      
       setState(() {
-        groups = filtered;
+        _groups = filtered;
+        _events = orderedEvent;
+        _metrics = orderedMetric;
       });
     } catch (ex) {
       Notify.showError("$ex");
@@ -71,7 +83,7 @@ class _MetricsGridState extends State<MetricsGrid> {
 
   @override
   Widget build(BuildContext context) {
-    var cached = groups;
+    var cached = _groups;
     return cached == null
         ? const HelseLoader()
         : BlocListener<SettingsBloc<bool>, bool>(
@@ -107,5 +119,23 @@ class _MetricsGridState extends State<MetricsGrid> {
         ),
       );
     }
+  }
+
+  MetricGroupSettings _getUserSettings() {
+    MetricGroupSettings settings;
+    if (widget.person == null) {
+      settings =
+          (Dependencies.logics.settings.getMetrics()).groups ??
+          MetricGroupSettings(displaySettings: []);
+      // filter using the user settings
+    } else {
+      settings =
+          (Dependencies.logics.patientsSettings.getMetrics(
+            widget.person,
+          )).groups ??
+          MetricGroupSettings(displaySettings: []);
+      // filter using the user settings
+    }
+    return settings;
   }
 }

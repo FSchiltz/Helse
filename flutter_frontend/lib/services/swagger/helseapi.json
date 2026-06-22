@@ -2559,7 +2559,8 @@
         "required": [
           "name",
           "id",
-          "userEditable"
+          "userEditable",
+          "groupId"
         ],
         "type": "object",
         "properties": {
@@ -2595,6 +2596,14 @@
               "null",
               "string"
             ]
+          },
+          "groupId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
           }
         }
       },
@@ -2665,19 +2674,13 @@
         "type": "object",
         "properties": {
           "metrics": {
-            "type": [
-              "null",
-              "array"
-            ],
+            "type": "array",
             "items": {
               "$ref": "#/components/schemas/CreateMetric"
             }
           },
           "events": {
-            "type": [
-              "null",
-              "array"
-            ],
+            "type": "array",
             "items": {
               "$ref": "#/components/schemas/CreateEvent"
             }

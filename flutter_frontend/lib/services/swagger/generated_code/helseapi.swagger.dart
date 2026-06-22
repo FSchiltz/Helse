@@ -3012,6 +3012,7 @@ class EventType {
     required this.id,
     required this.userEditable,
     this.timeDifference,
+    required this.groupId,
   });
 
   factory EventType.fromJson(Map<String, dynamic> json) =>
@@ -3034,6 +3035,8 @@ class EventType {
   final bool userEditable;
   @JsonKey(name: 'timeDifference')
   final String? timeDifference;
+  @JsonKey(name: 'groupId')
+  final int groupId;
   static const fromJsonFactory = _$EventTypeFromJson;
 
   @override
@@ -3068,7 +3071,9 @@ class EventType {
                 const DeepCollectionEquality().equals(
                   other.timeDifference,
                   timeDifference,
-                )));
+                )) &&
+            (identical(other.groupId, groupId) ||
+                const DeepCollectionEquality().equals(other.groupId, groupId)));
   }
 
   @override
@@ -3083,6 +3088,7 @@ class EventType {
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(userEditable) ^
       const DeepCollectionEquality().hash(timeDifference) ^
+      const DeepCollectionEquality().hash(groupId) ^
       runtimeType.hashCode;
 }
 
@@ -3095,6 +3101,7 @@ extension $EventTypeExtension on EventType {
     int? id,
     bool? userEditable,
     String? timeDifference,
+    int? groupId,
   }) {
     return EventType(
       name: name ?? this.name,
@@ -3104,6 +3111,7 @@ extension $EventTypeExtension on EventType {
       id: id ?? this.id,
       userEditable: userEditable ?? this.userEditable,
       timeDifference: timeDifference ?? this.timeDifference,
+      groupId: groupId ?? this.groupId,
     );
   }
 
@@ -3115,6 +3123,7 @@ extension $EventTypeExtension on EventType {
     Wrapped<int>? id,
     Wrapped<bool>? userEditable,
     Wrapped<String?>? timeDifference,
+    Wrapped<int>? groupId,
   }) {
     return EventType(
       name: (name != null ? name.value : this.name),
@@ -3128,6 +3137,7 @@ extension $EventTypeExtension on EventType {
       timeDifference: (timeDifference != null
           ? timeDifference.value
           : this.timeDifference),
+      groupId: (groupId != null ? groupId.value : this.groupId),
     );
   }
 }
