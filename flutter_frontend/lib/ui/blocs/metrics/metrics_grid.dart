@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/ui/blocs/metrics/widget_group.dart';
+import 'package:helse/ui/blocs/groups/widget_group.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../logic/settings/settings_logic.dart';

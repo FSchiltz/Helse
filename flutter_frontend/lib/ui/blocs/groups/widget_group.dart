@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/ui/blocs/events/events_widget.dart';
-import 'package:helse/ui/blocs/metrics/metric_group_detail.dart';
+import 'package:helse/ui/blocs/groups/group_detail.dart';
 import 'package:helse/ui/blocs/metrics/widget/metric_widget.dart';
 
 import '../../../di/dependencies.dart';
@@ -103,8 +103,13 @@ class WidgetGroups extends StatelessWidget {
     return IconButton(
       onPressed: () => Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (context) =>
-              MetricGroupDetail(date, person, group, types: metrics),
+          builder: (context) => MetricGroupDetail(
+            date,
+            person,
+            group,
+            metrics: metrics,
+            events: events,
+          ),
         ),
       ),
       icon: const Icon(Icons.open_in_new_sharp),
