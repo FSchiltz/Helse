@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/ui/blocs/administration/metrics/metric_group_add.dart';
+import 'package:helse/ui/blocs/administration/groups/metric_group_add.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 
@@ -22,7 +22,7 @@ class MetricGroupView extends StatelessWidget {
       builder: (context, data, reset) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
