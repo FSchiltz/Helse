@@ -56,6 +56,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
   static const int skippedWidth = 32;
   double boxWidth = 0;
   final double headerHeight = 50;
+  final double rowHeight = 18.0;
 
   final ScrollController _scrollController = ScrollController();
   final List<EventLayout> _eventLayouts = [];
@@ -72,8 +73,6 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
         .toSet()
         .toList();
     final rowCount = labels.length;
-
-    var rowHeight = 18.0;
 
     return widget.events.isEmpty
         ? Padding(
@@ -201,7 +200,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
           margin: const EdgeInsets.only(top: 52.0),
           child: SizedBox(
             width: max(timeline.grid.length * boxWidth, 500),
-            height: rowCount * 29.0 + 40,
+            height: rowCount * rowHeight + headerHeight,
             child: Stack(clipBehavior: Clip.none, children: timeline.bars),
           ),
         ),

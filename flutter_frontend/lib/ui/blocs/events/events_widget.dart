@@ -108,13 +108,16 @@ class _EventWidgetState extends State<EventWidget> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(12.0),
-                  child: (hasFullData)
-                      ? EventsTimelineGraph(
-                          data.events,
-                          widget.date,
-                          widthCoef: 0.8,
-                        )
-                      : EventsSummary(summaries, widget.date),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: 200),
+                    child: (hasFullData)
+                        ? EventsTimelineGraph(
+                            data.events,
+                            widget.date,
+                            widthCoef: 0.8,
+                          )
+                        : EventsSummary(summaries, widget.date),
+                  ),
                 ),
               ],
             ),

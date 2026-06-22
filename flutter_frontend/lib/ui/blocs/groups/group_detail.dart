@@ -5,6 +5,7 @@ import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/events/events_widget.dart';
 import 'package:helse/ui/blocs/metrics/widget/metric_widget.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class MetricGroupDetail extends StatelessWidget {
   final DateTimeRange<DateTime> date;
@@ -40,6 +41,8 @@ class MetricGroupDetail extends StatelessWidget {
           ).toDouble();
           return SingleChildScrollView(
             child: Wrap(
+              spacing: UIConstants.formPad,
+              runSpacing: UIConstants.formPad,
               children: [
                 ...metrics
                     .where((e) => e.$2.visible == true)
