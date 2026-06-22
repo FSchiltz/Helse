@@ -8,6 +8,7 @@ using LinqToDB;
 using LinqToDB.AspNet;
 using LinqToDB.AspNet.Logging;
 using LinqToDB.Data;
+using LinqToDB.Mapping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpLogging;
@@ -28,6 +29,8 @@ builder.Services.AddLinqToDBContext<DataConnection>((provider, options) =>
             {
                 var connection = builder.Configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("Database configuration missing");
 
+                var mapper = new MappingSchema();
+                mapper.SetConverter<DateTime, DateTime>(x => DateTime.SpecifyKind(x, DateTimeKind.Utc));
                 return options
                            .UsePostgreSQL(connection, LinqToDB.DataProvider.PostgreSQL.PostgreSQLVersion.v15, (x) => new()
                            {
@@ -35,7 +38,8 @@ builder.Services.AddLinqToDBContext<DataConnection>((provider, options) =>
                            })
 
                            //default logging will log everything using the ILoggerFactory configured in the provider
-                           .UseDefaultLogging(provider);
+                           .UseDefaultLogging(provider)
+                           .UseMappingSchema(mapper);
             });
 
 var config = builder.Configuration.GetRequiredSection("Jwt");

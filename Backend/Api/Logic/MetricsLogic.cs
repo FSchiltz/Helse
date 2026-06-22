@@ -29,7 +29,7 @@ internal static class MetricsLogic
         return TypedResults.Ok(metrics.Select(x => new Metric
         {
             Value = x.Value,
-            Date = DateTime.SpecifyKind(x.Date, DateTimeKind.Utc),
+            Date = x.Date,
             Id = x.Id,
             Person = user.PersonId,
             Type = x.Type,
@@ -71,7 +71,7 @@ internal static class MetricsLogic
         return TypedResults.Ok(metrics.Select(x => new Metric
         {
             Value = x.Value,
-            Date = DateTime.SpecifyKind(x.Date, DateTimeKind.Utc),
+            Date = x.Date,
             Id = x.Id,
             Person = user.PersonId,
             Type = x.Type,

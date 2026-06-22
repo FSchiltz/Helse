@@ -45,6 +45,9 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
             NotificationTime = e.NotificationTime,
             Source = (int)e.Source,
             SourceId = e.SourceId,
+            Valid = true,
+            NotificationSent = false,
+            Created = DateTime.UtcNow,
         });
     }
 
@@ -232,6 +235,7 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
             Type = metric.Type,
             Source = (int)metric.Source,
             SourceId = metric.SourceId,
+            Created = DateTime.UtcNow,
         });
     }
 
