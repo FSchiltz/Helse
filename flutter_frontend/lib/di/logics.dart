@@ -21,10 +21,11 @@ class Logics {
   );
 
   factory Logics(Account account, Services service) {
+    final settings = SettingsLogic(account, service.settings);
     return Logics.build(
       AuthenticationLogic(account),
-      SettingsLogic(account, service.settings),
-      FitLogic(account),
+      settings,
+      FitLogic(settings, service.import),
       PatientsSettingsLogic(account, service.settings),
     );
   }
