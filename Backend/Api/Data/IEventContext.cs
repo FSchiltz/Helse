@@ -64,5 +64,5 @@ internal interface IEventContext : IContext
 
     Task<Event[]> GetEvents(long id, RightType view, DateTime start, DateTime end);
 
-    Task<bool> ExistsEvent(long person, int type, int source, string sourceId);
+    Task<Event?> ExistingEvent(long person, int type, int source, string sourceId);
 }

@@ -11,7 +11,7 @@ namespace Helse.Api.Logic.Import;
 /// </summary>
 /// <param name="user"></param>
 /// <param name="patient"></param>
-internal abstract class Importer(IEventContext eventDb, IMetricContext metricDb , long user, long patient)
+internal abstract class Importer(IEventContext eventDb, IMetricContext metricDb, long user, long patient)
 {
     public abstract Task<ImportsResult> Import(IImportQueue queue, Guid id);
 
@@ -20,16 +20,27 @@ internal abstract class Importer(IEventContext eventDb, IMetricContext metricDb 
         bool added = false;
 
         // check if the event exists
-        var fromDb = await eventDb.ExistsEvent(patient, e.Type, (int)e.Source, e.SourceId);
+        var fromDb = await eventDb.ExistingEvent(patient, e.Type, (int)e.Source, e.SourceId);
 
-        if (!fromDb)
+        if (fromDb == null)
         {
             await eventDb.Insert(e, patient, user);
             added = true;
         }
         else
         {
-            // TODO update
+            await eventDb.Update(new UpdateEvent
+            {
+                Start = fromDb.Start,
+                Stop = fromDb.Stop,
+                Type = fromDb.Type,
+                Description = e.Description,
+                Id = fromDb.Id,
+                NotificationTime = fromDb.NotificationTime,
+                Source = (FileTypes)fromDb.Source,
+                SourceId = fromDb.SourceId,
+                Tag = fromDb.Tag
+            });
         }
 
         return added;

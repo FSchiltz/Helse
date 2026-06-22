@@ -277,8 +277,8 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task<bool> ExistsEvent(long person, int type, int source, string sourceId)
-    => Db.GetTable<Event>().AnyAsync(x => x.PersonId == person && x.Source == source && x.SourceId == sourceId && x.Type == type);
+    public Task<Event?> ExistingEvent(long person, int type, int source, string sourceId)
+    => Db.GetTable<Event>().FirstOrDefaultAsync(x => x.PersonId == person && x.Source == source && x.SourceId == sourceId && x.Type == type);
 
     /// <summary>
     /// <inheritdoc/>
