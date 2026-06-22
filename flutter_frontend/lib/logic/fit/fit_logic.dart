@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'dart:math' as math show min;
+import 'dart:math' as math show min, max;
 
 import 'package:health/health.dart';
 import 'package:helse/logic/event.dart';
@@ -13,14 +13,13 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../services/swagger/generated_code/helseapi.swagger.dart';
 
-class FitLogic {
+class HealthConnectLogic {
   final List<Execution> _executions = [];
   final SettingsLogic settingsLogic;
   final ImportService importService;
 
-  FitLogic(this.settingsLogic, this.importService);
+  HealthConnectLogic(this.settingsLogic, this.importService);
 
-  // get the data
   Future<void> requestPermissions() async {
     var health = Health();
     await health.configure();
@@ -128,7 +127,7 @@ class FitLogic {
     ImportsResult? result;
     if (converted.metrics?.isNotEmpty == true ||
         converted.events?.isNotEmpty == true) {
-      result = await _importInChunks(converted);
+      result = await importInChunks(converted);
     }
 
     settingsLogic.setFitRun(now.toString());
@@ -175,7 +174,7 @@ class FitLogic {
     return settings.syncHealth;
   }
 
-  Future<ImportsResult?> _importInChunks(
+  Future<ImportsResult?> importInChunks(
     ImportData data, {
     int chunkSize = 1000,
   }) async {
@@ -185,37 +184,22 @@ class FitLogic {
     final metrics = data.metrics ?? [];
     final events = data.events ?? [];
 
-    for (
-      var metricStart = 0;
-      metricStart < metrics.length;
-      metricStart += chunkSize
-    ) {
-      final metricChunk = metrics.sublist(
-        metricStart,
-        math.min(metricStart + chunkSize, metrics.length),
-      );
+    final maxLength = math.max(metrics.length, events.length);
+
+    for (var start = 0; start < maxLength; start += chunkSize) {
+      final metricChunk = start < metrics.length
+          ? metrics.sublist(start, math.min(start + chunkSize, metrics.length))
+          : <CreateMetric>[];
+
+      final eventChunk = start < events.length
+          ? events.sublist(start, math.min(start + chunkSize, events.length))
+          : <CreateEvent>[];
 
       final result = await importService.importData(
-        ImportData(metrics: metricChunk, events: []),
+        ImportData(metrics: metricChunk, events: eventChunk),
       );
 
       importedMetrics += result?.metrics.imported ?? 0;
-    }
-
-    for (
-      var eventStart = 0;
-      eventStart < events.length;
-      eventStart += chunkSize
-    ) {
-      final eventChunk = events.sublist(
-        eventStart,
-        math.min(eventStart + chunkSize, events.length),
-      );
-
-      final result = await importService.importData(
-        ImportData(metrics: [], events: eventChunk),
-      );
-
       importedEvents += result?.events.imported ?? 0;
     }
 

@@ -249,7 +249,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _showSynchroRuns(BuildContext context) async {
-    var tasks = Dependencies.logics.fit.executions();
+    var tasks = Dependencies.logics.health.executions();
 
     if (context.mounted) {
       _showTaskDialog(context, tasks, Translation.of(context).syncHistory);

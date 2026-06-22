@@ -60,15 +60,15 @@ class _SyncSettingsState extends State<SyncSettings> {
 
       Notify.show("Saved Successfully");
       if (_healthEnabled) {
-        await Dependencies.logics.fit.requestPermissions();
+        await Dependencies.logics.health.requestPermissions();
       }
 
       if (_history) {
-        await Dependencies.logics.fit.requestHistoryPermissions();
+        await Dependencies.logics.health.requestHistoryPermissions();
       }
 
       if (_background) {
-        await Dependencies.logics.fit.requestBackgroundPermission();
+        await Dependencies.logics.health.requestBackgroundPermission();
       }
     } catch (ex) {
       Notify.showError("Error: $ex");

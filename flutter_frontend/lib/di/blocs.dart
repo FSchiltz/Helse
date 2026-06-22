@@ -16,10 +16,10 @@ class Blocs {
       TaskBloc(
         () async {
           log("Started sync");
-          final enabled = logic.fit.isEnabled();
+          final enabled = logic.health.isEnabled();
           if (enabled) {
-            await logic.fit.checkRun();
-            return await logic.fit.sync();
+            await logic.health.checkRun();
+            return await logic.health.sync();
           } else {
             log("Skipped fit sync");
             return null;
