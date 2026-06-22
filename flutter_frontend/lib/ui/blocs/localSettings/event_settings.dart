@@ -60,9 +60,13 @@ class _EventsSettingsState extends State<EventsSettings> {
           widget.patient,
         );
       } else {
-        var settings = Dependencies.logics.settings.getEvents();
-        await Dependencies.logics.settings.saveEvents(
-          settings.copyWith(displaySettings: toSave),
+        var settings = Dependencies.logics.settings.userSettings();
+        await Dependencies.logics.settings.saveSettings(
+          settings.copyWith(
+            eventSettings: settings.eventSettings?.copyWith(
+              displaySettings: toSave,
+            ),
+          ),
           true,
         );
       }

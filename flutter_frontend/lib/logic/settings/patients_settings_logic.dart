@@ -11,7 +11,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
 
   PatientsSettingsLogic(super.account, super.service);
 
-  Future<void> _savePatientsSettings(
+  Future<void> savePatientsSettings(
     PatientSettings settings,
     bool toServer,
   ) async {
@@ -41,7 +41,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
     int? person,
   ) async {
     var settings = patientSettings(person);
-    await _savePatientsSettings(
+    await savePatientsSettings(
       settings.copyWith(metricSettings: metric, patientId: person),
       toServer,
     );
@@ -53,7 +53,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
     int? person,
   ) async {
     var settings = patientSettings(person);
-    await _savePatientsSettings(
+    await savePatientsSettings(
       settings.copyWith(eventSettings: events, patientId: person),
       toServer,
     );
@@ -96,7 +96,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
 
   Future<void> setDateRange(DatePreset run, int person) async {
     var settings = patientSettings(person);
-    await _savePatientsSettings(
+    await savePatientsSettings(
       settings.copyWith(datePreset: run, patientId: person),
       true,
     );

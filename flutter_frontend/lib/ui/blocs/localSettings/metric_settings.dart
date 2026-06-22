@@ -63,27 +63,26 @@ class _MetricsSettingsState extends State<MetricsSettings> {
       var groupsToSave = groups.map((e) => e.ordered()).toList();
       // save the user's settings;
       if (widget.isPatient) {
-        final settings = Dependencies.logics.patientsSettings.getMetrics(
+        final settings = Dependencies.logics.patientsSettings.patientSettings(
           widget.patient,
         );
-        await Dependencies.logics.patientsSettings.saveMetrics(
+        await Dependencies.logics.patientsSettings.savePatientsSettings(
           settings.copyWith(
-            displaySettings: metricsToSave,
-            groups:
-                (settings.groups ?? MetricGroupSettings(displaySettings: []))
-                    .copyWith(displaySettings: groupsToSave),
+            groups: settings.groups?.copyWith(displaySettings: groupsToSave),
+            metricSettings: settings.metricSettings?.copyWith(
+              displaySettings: metricsToSave,
+            ),
           ),
           true,
-          widget.patient,
         );
       } else {
-        final settings = Dependencies.logics.settings.getMetrics();
-        await Dependencies.logics.settings.saveMetrics(
+        final settings = Dependencies.logics.settings.userSettings();
+        await Dependencies.logics.settings.saveSettings(
           settings.copyWith(
-            displaySettings: metricsToSave,
-            groups:
-                (settings.groups ?? MetricGroupSettings(displaySettings: []))
-                    .copyWith(displaySettings: groupsToSave),
+            groups: settings.groups?.copyWith(displaySettings: groupsToSave),
+            metricSettings: settings.metricSettings?.copyWith(
+              displaySettings: metricsToSave,
+            ),
           ),
           true,
         );
