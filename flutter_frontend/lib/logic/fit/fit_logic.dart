@@ -6,18 +6,19 @@ import 'package:helse/logic/event.dart';
 import 'package:helse/logic/fit/fit_constants.dart';
 import 'package:helse/logic/fit/fit_helper.dart';
 import 'package:helse/logic/fit/task_bloc.dart';
-import 'package:helse/services/account.dart';
+import 'package:helse/logic/settings/settings_logic.dart';
+import 'package:helse/services/import_service.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../../di/dependencies.dart';
 
 class FitLogic {
   final List<Execution> _executions = [];
+  final SettingsLogic settingsLogic;
+  final ImportService importService;
 
-  Account account;
-  FitLogic(this.account);
+  FitLogic(this.settingsLogic, this.importService);
 
   // get the data
   Future<void> requestPermissions() async {
@@ -56,7 +57,7 @@ class FitLogic {
       }
     }
 
-    Dependencies.logics.settings.setHasHistory(history);
+    settingsLogic.setHasHistory(history);
   }
 
   Future<void> requestBackgroundPermission() async {
@@ -73,13 +74,13 @@ class FitLogic {
       }
     }
 
-    Dependencies.logics.settings.setBackgroundAccess(background);
+    settingsLogic.setBackgroundAccess(background);
   }
 
   Future<String> sync() async {
-    var run = Dependencies.logics.settings.getLastRun();
-    var history = Dependencies.logics.settings.getHasHistory() ?? false;
-    var settings = Dependencies.logics.settings.getHealth();
+    var run = settingsLogic.getLastRun();
+    var history = settingsLogic.getHasHistory() ?? false;
+    var settings = settingsLogic.getHealth();
     if (!settings.syncHealth) {
       return "Not enabled";
     }
@@ -130,7 +131,7 @@ class FitLogic {
       result = await _importInChunks(converted);
     }
 
-    Dependencies.logics.settings.setFitRun(now.toString());
+    settingsLogic.setFitRun(now.toString());
     var metrics = result?.metrics.imported ?? 0;
     var events = result?.events.imported ?? 0;
 
@@ -139,7 +140,7 @@ class FitLogic {
     log(text);
     if (firstRun || metrics > 0 || events > 0) {
       firstRun = false;
-      Dependencies.logics.settings.setFitStatus(text);
+      settingsLogic.setFitStatus(text);
     }
 
     _executions.add(
@@ -149,18 +150,17 @@ class FitLogic {
     return text;
   }
 
-
   List<Execution> executions() {
     return _executions;
   }
 
   Future<String?> checkRun() async {
-    var lastrun = Dependencies.logics.settings.getLastRun();
+    var lastrun = settingsLogic.getLastRun();
     if (lastrun != null) {
       var date = DateTime.parse(lastrun);
 
       if (_executions.isEmpty || date.isAfter(_executions.last.date)) {
-        var status = Dependencies.logics.settings.getLastStatus();
+        var status = settingsLogic.getLastStatus();
         _executions.add(
           Execution(date, SubmissionStatus.success, status: status),
         );
@@ -171,7 +171,7 @@ class FitLogic {
   }
 
   bool isEnabled() {
-    final settings = Dependencies.logics.settings.getHealth();
+    final settings = settingsLogic.getHealth();
     return settings.syncHealth;
   }
 
@@ -195,7 +195,7 @@ class FitLogic {
         math.min(metricStart + chunkSize, metrics.length),
       );
 
-      final result = await Dependencies.services.import.importData(
+      final result = await importService.importData(
         ImportData(metrics: metricChunk, events: []),
       );
 
@@ -212,7 +212,7 @@ class FitLogic {
         math.min(eventStart + chunkSize, events.length),
       );
 
-      final result = await Dependencies.services.import.importData(
+      final result = await importService.importData(
         ImportData(metrics: [], events: eventChunk),
       );
 
