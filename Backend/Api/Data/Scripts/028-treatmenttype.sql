@@ -1,3 +1,9 @@
+-- Add the metric group property to the event table
+ALTER TABLE
+    health.EventType
+ADD
+    COLUMN GroupId BIGINT NOT NULL DEFAULT 1;
+
 -- Add the new metric group
 DO $$
 DECLARE newId BIGINT;
@@ -22,12 +28,6 @@ INSERT INTO
     )
 VALUES
     (newId, 'Treatments', '', true, true) RETURNING id INTO newId;
-
--- Add the metric group property to the event table
-ALTER TABLE
-    health.EventType
-ADD
-    COLUMN GroupId BIGINT NOT NULL DEFAULT 1;
 
 -- update the name of the Test metric to checkups
 -- move the checkups metrics to the new group
@@ -54,11 +54,15 @@ SET
 WHERE
     ID = 2;
 
+END $$;
+
+
 UPDATE
     health.EventType
 SET
     GroupId = 4
 WHERE
     ID = 3;
-
-END $$
+    
+    -- Set the key at around 100 to leave space for future hardcoded metric
+SELECT setval(pg_get_serial_sequence('health.MetricGroup','id'), COALESCE((SELECT MAX(Id)+100 FROM health.MetricGroup), 1), false);

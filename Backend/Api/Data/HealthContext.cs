@@ -368,7 +368,7 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
 
     public Task<int> DeleteMetricGroup(long id) => Db.GetTable<MetricGroup>().DeleteAsync(x => x.Id == id);
 
-    public Task Update(Helse.Models.Metrics.MetricGroup metricGroup)
+    public Task Update(Helse.Models.Metrics.UpdateGroup metricGroup)
     {
         return Db.GetTable<MetricGroup>()
             .Where(x => x.Id == metricGroup.Id)
@@ -379,7 +379,7 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
             .UpdateAsync();
     }
 
-    public Task Insert(Helse.Models.Metrics.MetricGroup metricGroup)
+    public Task Insert(Helse.Models.Metrics.CreateGroup metricGroup)
     {
         return Db.GetTable<MetricGroup>().InsertAsync(() => new MetricGroup
         {

@@ -170,7 +170,7 @@ internal static class Endpoints
         .Produces((int)HttpStatusCode.Unauthorized);
 
         metricsGroup.MapGet("/", MetricsLogic.GetGroupsAsync)
-        .Produces<List<MetricGroup>>((int)HttpStatusCode.OK)
+        .Produces<List<Group>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
     }
 

@@ -15,7 +15,7 @@ public class MetricGroup(WebApplicationFactory<Program> factory, DatabaseFixture
         var client = await ClientAsync();
         await ConnectAsync(client);
 
-        var response = await client.PostAsJsonAsync(groupsUrl, new Helse.Models.Metrics.MetricGroup
+        var response = await client.PostAsJsonAsync(groupsUrl, new Helse.Models.Metrics.CreateGroup
         {
             Name = "test",
             Description = "test description",

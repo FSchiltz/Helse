@@ -258,7 +258,7 @@ internal static class MetricsLogic
             return TypedResults.BadRequest();
     }
 
-    public static async Task<IResult> GetGroupsAsync(IMetricContext db) => TypedResults.Ok((await db.GetMetricGroups()).Select(metric => new MetricGroup
+    public static async Task<IResult> GetGroupsAsync(IMetricContext db) => TypedResults.Ok((await db.GetMetricGroups()).Select(metric => new Group
     {
         Name = metric.Name,
         Description = metric.Description,
@@ -267,7 +267,7 @@ internal static class MetricsLogic
         Id = metric.Id,
     }));
 
-    public static async Task<IResult> CreateGroupAsync(MetricGroup metric, IUserContext users, IMetricContext db, HttpContext context)
+    public static async Task<IResult> CreateGroupAsync(CreateGroup metric, IUserContext users, IMetricContext db, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
@@ -278,7 +278,7 @@ internal static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> UpdateGroupAsync(MetricGroup metric, IUserContext users, IMetricContext db, HttpContext context)
+    public static async Task<IResult> UpdateGroupAsync(UpdateGroup metric, IUserContext users, IMetricContext db, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)

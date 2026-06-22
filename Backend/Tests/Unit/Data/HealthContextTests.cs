@@ -441,7 +441,7 @@ public class HealthContextTests(DatabaseFixture fixture)
     {
         // Arrange
         await using var db = await GetDb();
-        var model = new Helse.Models.Metrics.MetricGroup
+        var model = new Helse.Models.Metrics.CreateGroup
         {
             Name = "Vitals",
             Description = "Vital measurements",
