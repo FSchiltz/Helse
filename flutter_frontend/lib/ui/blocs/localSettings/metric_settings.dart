@@ -15,6 +15,22 @@ import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/inputs/values_input.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
+class _SettingsData {
+  final List<OrderedEditItem> metrics;
+  final List<OrderedEditItem> events;
+  final List<OrderedEditItem> groups;
+  final Map<int?, List<OrderedEditItem>> groupedMetrics;
+  final Map<int?, List<OrderedEditItem>> groupedEvents;
+
+  _SettingsData(
+    this.groups,
+    this.metrics,
+    this.events, {
+    required this.groupedMetrics,
+    required this.groupedEvents,
+  });
+}
+
 class MetricsSettings extends StatefulWidget {
   final bool isPatient;
   final int? patient;
@@ -25,8 +41,7 @@ class MetricsSettings extends StatefulWidget {
 }
 
 class _MetricsSettingsState extends State<MetricsSettings> {
-  Future<(List<OrderedEditItem>, List<OrderedEditItem>, List<OrderedEditItem>)>
-  _getData(bool refresh) async {
+  Future<_SettingsData> _getData(bool refresh) async {
     MetricSettings metrics;
     MetricGroupSettings groups;
     EventSettings events;
@@ -59,19 +74,23 @@ class _MetricsSettingsState extends State<MetricsSettings> {
         .map((e) => OrderedEditItem.of(e))
         .toList();
 
-    return (editGroups, editMetrics, editEvents);
+    final grouped = editMetrics.groupListsBy((e) => e.parent);
+    final groupedEvent = editEvents.groupListsBy((e) => e.parent);
+
+    return _SettingsData(
+      editGroups,
+      editMetrics,
+      editEvents,
+      groupedMetrics: grouped,
+      groupedEvents: groupedEvent,
+    );
   }
 
-  Future<void> _submit(
-    List<OrderedEditItem> metrics,
-    List<OrderedEditItem> groups,
-    List<OrderedEditItem> events,
-    AppLocalizations locale,
-  ) async {
+  Future<void> _submit(_SettingsData data, AppLocalizations locale) async {
     try {
-      var metricsToSave = metrics.map((e) => e.ordered()).toList();
-      var eventsToSave = events.map((e) => e.ordered()).toList();
-      var groupsToSave = groups.map((e) => e.ordered()).toList();
+      var metricsToSave = data.metrics.map((e) => e.ordered()).toList();
+      var eventsToSave = data.events.map((e) => e.ordered()).toList();
+      var groupsToSave = data.groups.map((e) => e.ordered()).toList();
       // save the user's settings;
       if (widget.isPatient) {
         final settings = Dependencies.logics.patientsSettings.patientSettings(
@@ -113,18 +132,11 @@ class _MetricsSettingsState extends State<MetricsSettings> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final locale = Translation.of(context);
 
     return LoadingBuilder(
       _getData,
-      builder: (context, tree, reset) {
-        final groups = tree.$1;
-        final metrics = tree.$2;
-        final events = tree.$3;
-        final grouped = metrics.groupListsBy((e) => e.parent);
-        final groupedEvent = events.groupListsBy((e) => e.parent);
-
+      builder: (context, data, reset) {
         return Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -134,206 +146,167 @@ class _MetricsSettingsState extends State<MetricsSettings> {
                 child: SizedBox(
                   width: 120,
                   child: SquareButton(locale.save, () async {
-                    await _submit(metrics, groups, events, locale);
+                    await _submit(data, locale);
                     reset();
                   }),
                 ),
               ),
               const SizedBox(height: UIConstants.formPad),
               Expanded(
-                child: ListView(
+                child: ListView.builder(
                   shrinkWrap: true,
-                  children: groups.map((group) {
-                    final metric = grouped[group.id] ?? [];
-                    final event = groupedEvent[group.id] ?? [];
-                    return Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: UIConstants.formPad,
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            left: BorderSide(
-                              color: Dependencies.theme.stateColor(
-                                group.id.toString(),
-                                StateType.metricGroup,
-                                context,
-                              ),
-                              width: 8,
-                            ),
-                          ),
-                        ),
-                        child: CommonCard(
-                          padding: false,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: UIConstants.formPad,
-                                ),
-                                child: HelseSwitch(group.name, group.visible, (
-                                  value,
-                                ) {
-                                  group.visible = value;
-                                }),
-                              ),
-                              if (metric.isNotEmpty)
-                                DataTable(
-                                  columns: [
-                                    DataColumn(
-                                      label: Expanded(child: Text(locale.name)),
-                                    ),
-                                    DataColumn(
-                                      label: Expanded(
-                                        child: Text(locale.visible),
-                                      ),
-                                    ),
-                                    DataColumn(
-                                      label: Expanded(
-                                        child: Text(locale.showOnDashboard),
-                                      ),
-                                    ),
-                                    DataColumn(
-                                      label: Expanded(
-                                        child: Text(locale.widgetType),
-                                      ),
-                                    ),
-                                    DataColumn(
-                                      label: Expanded(
-                                        child: Text(locale.detailType),
-                                      ),
-                                    ),
-                                  ],
-                                  rows: metric
-                                      .map(
-                                        (item) => DataRow(
-                                          cells: [
-                                            DataCell(
-                                              Text(
-                                                item.name,
-                                                style:
-                                                    theme.textTheme.titleLarge,
-                                              ),
-                                            ),
-                                            DataCell(
-                                              StatefullCheck(
-                                                item.visible,
-                                                (value) => item.visible = value,
-                                              ),
-                                            ),
-                                            DataCell(
-                                              StatefullCheck(
-                                                item.showOnDashboard,
-                                                (value) =>
-                                                    item.showOnDashboard =
-                                                        value,
-                                              ),
-                                            ),
-                                            DataCell(
-                                              SizedBox(
-                                                width: 160,
-                                                child: ValuesInput(
-                                                  value: item.graph,
-                                                  GraphKind.values
-                                                      .where((e) => e.index > 0)
-                                                      .map(
-                                                        (x) => DropdownItem(
-                                                          x,
-                                                          x.name,
-                                                        ),
-                                                      )
-                                                      .toList(),
-                                                  (value) => item.graph =
-                                                      value ?? item.graph,
-                                                  label: locale.type,
-                                                ),
-                                              ),
-                                            ),
-                                            DataCell(
-                                              SizedBox(
-                                                width: 160,
-                                                child: ValuesInput(
-                                                  value: item.detailGraph,
-                                                  GraphKind.values
-                                                      .where((e) => e.index > 0)
-                                                      .map(
-                                                        (x) => DropdownItem(
-                                                          x,
-                                                          x.name,
-                                                        ),
-                                                      )
-                                                      .toList(),
-                                                  (value) => item.detailGraph =
-                                                      value ?? item.detailGraph,
-                                                  label: locale.type,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                      .toList(),
-                                ),
-                              if (event.isNotEmpty)
-                                DataTable(
-                                  columns: [
-                                    DataColumn(
-                                      label: Expanded(child: Text(locale.name)),
-                                    ),
-                                    DataColumn(
-                                      label: Expanded(
-                                        child: Text(locale.visible),
-                                      ),
-                                    ),
-                                    DataColumn(
-                                      label: Expanded(
-                                        child: Text(locale.showOnDashboard),
-                                      ),
-                                    ),
-                                  ],
-                                  rows: event
-                                      .map(
-                                        (item) => DataRow(
-                                          cells: [
-                                            DataCell(
-                                              Text(
-                                                item.name,
-                                                style:
-                                                    theme.textTheme.titleLarge,
-                                              ),
-                                            ),
-                                            DataCell(
-                                              StatefullCheck(
-                                                item.visible,
-                                                (value) => item.visible = value,
-                                              ),
-                                            ),
-                                            DataCell(
-                                              StatefullCheck(
-                                                item.showOnDashboard,
-                                                (value) =>
-                                                    item.showOnDashboard =
-                                                        value,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                      .toList(),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
+                  itemCount: data.groups.length,
+                  itemBuilder: (context, index) {
+                    final group = data.groups[index];
+
+                    return _GroupCard(
+                      key: ValueKey(group.id),
+                      group: group,
+                      metrics: data.groupedMetrics[group.id] ?? const [],
+                      events: data.groupedEvents[group.id] ?? const [],
+                      locale: locale,
                     );
-                  }).toList(),
+                  },
                 ),
               ),
             ],
           ),
         );
       },
+    );
+  }
+}
+
+class _GroupCard extends StatelessWidget {
+  final OrderedEditItem group;
+  final List<OrderedEditItem> metrics;
+  final List<OrderedEditItem> events;
+  final AppLocalizations locale;
+
+  const _GroupCard({
+    super.key,
+    required this.group,
+    required this.metrics,
+    required this.events,
+    required this.locale,
+  });
+
+  static final List<DropdownItem<GraphKind>> _graphItems = GraphKind.values
+      .where((e) => e.index > 0)
+      .map((x) => DropdownItem(x, x.name))
+      .toList();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: UIConstants.formPad),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            left: BorderSide(
+              color: Dependencies.theme.stateColor(
+                group.id.toString(),
+                StateType.metricGroup,
+                context,
+              ),
+              width: 8,
+            ),
+          ),
+        ),
+        child: CommonCard(
+          padding: false,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: UIConstants.formPad),
+                child: HelseSwitch(group.name, group.visible, (value) {
+                  group.visible = value;
+                }),
+              ),
+              if (metrics.isNotEmpty)
+                DataTable(
+                  columns: [
+                    DataColumn(label: Text(locale.name)),
+                    DataColumn(label: Text(locale.visible)),
+                    DataColumn(label: Text(locale.showOnDashboard)),
+                    DataColumn(label: Text(locale.widgetType)),
+                    DataColumn(label: Text(locale.detailType)),
+                  ],
+                  rows: metrics
+                      .map((item) => _metricRow(item, theme, locale))
+                      .toList(),
+                ),
+              if (events.isNotEmpty)
+                DataTable(
+                  columns: [
+                    DataColumn(label: Text(locale.name)),
+                    DataColumn(label: Text(locale.visible)),
+                    DataColumn(label: Text(locale.showOnDashboard)),
+                  ],
+                  rows: events.map((item) => _eventRow(item, theme)).toList(),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  DataRow _eventRow(OrderedEditItem item, ThemeData theme) {
+    return DataRow(
+      cells: [
+        DataCell(Text(item.name, style: theme.textTheme.titleLarge)),
+        DataCell(StatefullCheck(item.visible, (value) => item.visible = value)),
+        DataCell(
+          StatefullCheck(
+            item.showOnDashboard,
+            (value) => item.showOnDashboard = value,
+          ),
+        ),
+      ],
+    );
+  }
+
+  DataRow _metricRow(
+    OrderedEditItem item,
+    ThemeData theme,
+    AppLocalizations locale,
+  ) {
+    return DataRow(
+      cells: [
+        DataCell(Text(item.name, style: theme.textTheme.titleLarge)),
+        DataCell(StatefullCheck(item.visible, (value) => item.visible = value)),
+        DataCell(
+          StatefullCheck(
+            item.showOnDashboard,
+            (value) => item.showOnDashboard = value,
+          ),
+        ),
+        DataCell(
+          SizedBox(
+            width: 160,
+            child: ValuesInput(
+              value: item.graph,
+              _graphItems,
+              (value) => item.graph = value ?? item.graph,
+              label: locale.type,
+            ),
+          ),
+        ),
+        DataCell(
+          SizedBox(
+            width: 160,
+            child: ValuesInput(
+              value: item.detailGraph,
+              _graphItems,
+              (value) => item.detailGraph = value ?? item.detailGraph,
+              label: locale.type,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
