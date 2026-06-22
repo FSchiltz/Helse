@@ -18,7 +18,6 @@ public class MetricLogicTests : LogicTests
             Name = "",
             Type = MetricDataType.Text,
             SummaryType = MetricSummary.Sum,
-            UserEditable = true,
             GroupId = 1,
             Unit = 0,
         };
@@ -38,7 +37,6 @@ public class MetricLogicTests : LogicTests
             Name = "",
             Type = MetricDataType.Text,
             SummaryType = MetricSummary.Sum,
-            UserEditable = true,
             GroupId = 1,
             Unit = 0,
         };
@@ -57,7 +55,6 @@ public class MetricLogicTests : LogicTests
             Name = "",
             Type = MetricDataType.Text,
             SummaryType = MetricSummary.Sum,
-            UserEditable = true,
             GroupId = 1,
             Unit = 0,
         };
@@ -76,7 +73,6 @@ public class MetricLogicTests : LogicTests
             Name = "",
             Type = MetricDataType.Text,
             SummaryType = MetricSummary.Latest,
-            UserEditable = true,
             GroupId = 1,
             Unit = 0,
         };
@@ -96,7 +92,6 @@ public class MetricLogicTests : LogicTests
             Name = "",
             Type = MetricDataType.Number,
             SummaryType = MetricSummary.Mean,
-            UserEditable = true,
             GroupId = 1,
             Unit = 0,
         };

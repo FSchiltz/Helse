@@ -17,6 +17,8 @@ public class MetricType : MetricTypeBase
     public required long Id { get; set; }
 
     public required Unit Unit { get; set; }
+
+    public required bool UserEditable { get; set; }
 }
 
 public class MetricTypeBase
@@ -28,8 +30,6 @@ public class MetricTypeBase
     public string? Description { get; set; }
 
     public MetricDataType Type { get; set; }
-
-    public required bool UserEditable { get; set; }
 
     public bool Visible { get; set; }
 
