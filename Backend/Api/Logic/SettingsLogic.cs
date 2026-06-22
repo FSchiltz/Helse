@@ -257,7 +257,7 @@ internal static class SettingsLogic
             var existing = data.FirstOrDefault((element) => element.Id == e.Id);
             if (existing != null)
             {
-                existing.Name = existing.Name;
+                existing.Name = e.Name;
                 newList.Add(existing);
             }
             else
@@ -286,7 +286,8 @@ internal static class SettingsLogic
             var existing = data.FirstOrDefault((element) => element.Id == e.Id);
             if (existing != null)
             {
-                existing.Name = existing.Name;
+                existing.Name = e.Name;
+                existing.Parent = e.GroupId;
                 newList.Add(existing);
             }
             else
@@ -300,6 +301,7 @@ internal static class SettingsLogic
                         DetailGraph = GraphKind.Text,
                         Visible = e.Visible,
                         ShowOnDashboard = true,
+                        Parent = e.GroupId,
                     });
             }
         }
@@ -372,7 +374,8 @@ internal static class SettingsLogic
             var existing = data.FirstOrDefault((element) => element.Id == metric.Id);
             if (existing != null)
             {
-                existing.Name = existing.Name;
+                existing.Name = metric.Name;
+                existing.Parent = metric.GroupId;
                 newList.Add(existing);
             }
             else

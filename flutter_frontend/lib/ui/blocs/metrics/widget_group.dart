@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/logic/theme_helper.dart';
-import 'package:helse/ui/blocs/events/events_grid.dart';
+import 'package:helse/ui/blocs/events/events_widget.dart';
 import 'package:helse/ui/blocs/metrics/metric_group_detail.dart';
-import 'package:helse/ui/blocs/metrics/metric_widgets_grid.dart';
+import 'package:helse/ui/blocs/metrics/widget/metric_widget.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -50,16 +53,46 @@ class WidgetGroups extends StatelessWidget {
               _openAll(context),
             ],
           ),
-          MetricWidgetsGrid(
-            date: date,
-            person: person,
-            types: metrics.where((e) => e.$2.showOnDashboard == true).toList(),
-            tile: 60,
-          ),
-          EventsGrid(
-            date: date,
-            person: person,
-            types: events.where((e) => e.$2.visible == true).toList(),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final maxHeight = min(
+                (constraints.maxWidth - 9 - 24) / 2,
+                200,
+              ).toDouble();
+              final maxWidth = maxHeight;
+              return Wrap(
+                runSpacing: 6,
+                spacing: 6,
+                children: [
+                  ...metrics
+                      .where((e) => e.$2.showOnDashboard == true)
+                      .map(
+                        (type) => ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: maxWidth,
+                            maxHeight: maxHeight,
+                          ),
+                          child: MetricWidget(
+                            type.$1,
+                            type.$2,
+                            DateHelper.offset(date, type.$1.timeDifference),
+                            key: Key(type.$1.id.toString()),
+                            person: person,
+                            tile: 60,
+                          ),
+                        ),
+                      ),
+                  ...events.where((e) => e.$2.visible == true).map((type) {
+                    return EventWidget(
+                      type.$1,
+                      DateHelper.offset(date, type.$1.timeDifference),
+                      key: Key(type.$1.id.toString()),
+                      person: person,
+                    );
+                  }),
+                ],
+              );
+            },
           ),
         ],
       ),
