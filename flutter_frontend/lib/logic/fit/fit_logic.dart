@@ -235,6 +235,7 @@ class FitLogic {
     for (var point in healthData) {
       int? metricType;
       int? eventType;
+      String? description;
       switch (point.type) {
         case HealthDataType.BLOOD_OXYGEN:
           metricType = MetricTypes.oxygen.value;
@@ -280,6 +281,7 @@ class FitLogic {
         case HealthDataType.SLEEP_SESSION:
         case HealthDataType.SLEEP_UNKNOWN:
           eventType = EventTypes.sleep.value;
+          description = point.typeString.split('_').skip(1).toCamel();
 
         case HealthDataType.WORKOUT:
           eventType = EventTypes.workout.value;
@@ -387,7 +389,7 @@ class FitLogic {
         var event = CreateEvent(
           start: point.dateFrom.toUtc(),
           stop: point.dateTo.toUtc(),
-          description: point.typeString,
+          description: description ?? point.typeString.split('_').toCamel(),
           source: FileTypes.googlehealthconnect,
           sourceId: '${point.uuid}_${point.type.name}_${point.dateFrom}',
           tag: point.recordingMethod.name,
@@ -434,5 +436,13 @@ class FitLogic {
   bool isEnabled() {
     final settings = Dependencies.logics.settings.getHealth();
     return settings.syncHealth;
+  }
+}
+
+extension on Iterable<String> {
+  String toCamel() {
+    final firstChar = first[0];
+    final rest = map((e) => e.toLowerCase()).join(' ');
+    return '${firstChar.toUpperCase()}${rest.substring(1, rest.length - 1)}';
   }
 }
