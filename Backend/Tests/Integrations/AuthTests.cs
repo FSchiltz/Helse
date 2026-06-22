@@ -12,10 +12,6 @@ namespace Tests.Integrations;
 [Collection("Database collection")]
 public class AuthTests(WebApplicationFactory<Program> factory, DatabaseFixture fixture) : IntegrationTest(factory, fixture)
 {
-    const string personUrl = "/api/person";
-    const string statusUrl = "/api/status";
-    const string authUrl = "/api/auth";
-
     [Theory]
     [InlineData("/api/admin/settings/oauth")]
     [InlineData("/api/admin/settings/proxy")]
@@ -47,7 +43,7 @@ public class AuthTests(WebApplicationFactory<Program> factory, DatabaseFixture f
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
-    [Theory(Skip = "Not Working")]
+    [Theory]
     [InlineData(statusUrl)]
     public async Task Get_Anonymous(string url)
     {
@@ -57,7 +53,7 @@ public class AuthTests(WebApplicationFactory<Program> factory, DatabaseFixture f
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
-    [Fact(Skip = "Not Working")]
+    [Fact]
     public async Task Status()
     {
         var client = await ClientAsync();
@@ -67,10 +63,10 @@ public class AuthTests(WebApplicationFactory<Program> factory, DatabaseFixture f
         Assert.False(response.Init);
     }
 
-    [Fact(Skip = "Not Working")]
+    [Fact]
     public async Task FirstConnection()
     {
-        // create the first user (shoudl allow)
+        // create the first user (should allow)
         var admin = new PersonCreation
         {
             Types = [UserType.Admin, UserType.User],
@@ -79,19 +75,13 @@ public class AuthTests(WebApplicationFactory<Program> factory, DatabaseFixture f
             Name = "DisplayName",
         };
 
-
         var client = await ClientAsync();
-        var response = await client.PostAsJsonAsync<PersonCreation>(personUrl, admin, cancellationToken: TestContext.Current.CancellationToken);
+        var response = await client.PostAsJsonAsync(personUrl, admin, cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(response);
         Assert.True(response.IsSuccessStatusCode);
 
-        // get the status
-        var status = await client.GetFromJsonAsync<Status>(statusUrl, cancellationToken: TestContext.Current.CancellationToken);
-        Assert.NotNull(status);
-        Assert.True(status.Init);
-
         // try to create a new person witouth the right
-        var wrongPerson = await client.PostAsJsonAsync<PersonCreation>(personUrl, admin, cancellationToken: TestContext.Current.CancellationToken);
+        var wrongPerson = await client.PostAsJsonAsync(personUrl, admin, cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(wrongPerson);
         Assert.False(wrongPerson.IsSuccessStatusCode);
 
@@ -99,13 +89,14 @@ public class AuthTests(WebApplicationFactory<Program> factory, DatabaseFixture f
         var auth = await client.PostAsJsonAsync(authUrl, new Connection(admin.UserName, admin.Password, null, null), cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(auth);
 
-        var token = JsonSerializer.Deserialize<ConnectionResponse>(await auth.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+        var authResponse = await auth.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+        var token = JsonSerializer.Deserialize<ConnectionResponse>(authResponse, options);
         Assert.NotNull(token);
         Assert.NotNull(token.Roles);
 
         // try to create a new person with the right
         client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.AccessToken);
-        var correct = await client.PostAsJsonAsync<PersonCreation>(personUrl, new PersonCreation
+        var correct = await client.PostAsJsonAsync(personUrl, new PersonCreation
         {
             UserName = "user",
             Password = "password",

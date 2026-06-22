@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/ui/blocs/administration/metrics/metric_group_add.dart';
+import 'package:helse/ui/blocs/administration/groups/metric_group_add.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 
@@ -10,7 +10,7 @@ import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 class MetricGroupView extends StatelessWidget {
   const MetricGroupView({super.key});
 
-  Future<List<MetricGroup>> _getGroupData(bool refresh) async {
+  Future<List<Group>> _getGroupData(bool refresh) async {
     return await Dependencies.services.metric.metricsGroup() ?? [];
   }
 
@@ -22,7 +22,7 @@ class MetricGroupView extends StatelessWidget {
       builder: (context, data, reset) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -114,7 +114,7 @@ class MetricGroupView extends StatelessWidget {
     );
   }
 
-  Future<void> _deleteGroup(MetricGroup type) async {
+  Future<void> _deleteGroup(Group type) async {
     var id = type.id;
     try {
       if (id != null) {

@@ -13,7 +13,7 @@ import '../../../common/notification.dart';
 
 class MetricGroupAdd extends StatefulWidget {
   final void Function()? callback;
-  final MetricGroup? edit;
+  final Group? edit;
 
   const MetricGroupAdd(this.callback, {super.key, this.edit});
 
@@ -118,18 +118,23 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
     var localContext = context;
     try {
       if (_formKey.currentState?.validate() ?? false) {
-        var metric = MetricGroup(
-          description: controllerDescription.text,
-          name: controllerName.text,
-          id: widget.edit?.id ?? 0,
-          showTitle: _visible,
-          showOnDashboard: _showDashboard,
-        );
-
         if (widget.edit == null) {
-          await Dependencies.services.metric.addMetricsGroup(metric);
+          final metric = CreateGroup(
+            description: controllerDescription.text,
+            name: controllerName.text,
+            showTitle: _visible,
+            showOnDashboard: _showDashboard,
+          );
+          await Dependencies.services.metric.addGroup(metric);
         } else {
-          await Dependencies.services.metric.updateMetricsGroup(metric);
+          final metric = UpdateGroup(
+            description: controllerDescription.text,
+            name: controllerName.text,
+            id: widget.edit?.id ?? 0,
+            showTitle: _visible,
+            showOnDashboard: _showDashboard,
+          );
+          await Dependencies.services.metric.updateGroup(metric);
         }
 
         _formKey.currentState?.reset();

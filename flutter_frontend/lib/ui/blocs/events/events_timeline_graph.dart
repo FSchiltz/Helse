@@ -56,6 +56,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
   static const int skippedWidth = 32;
   double boxWidth = 0;
   final double headerHeight = 50;
+  final double rowHeight = 18.0;
 
   final ScrollController _scrollController = ScrollController();
   final List<EventLayout> _eventLayouts = [];
@@ -81,37 +82,31 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
               style: Theme.of(context).textTheme.labelLarge,
             ),
           )
-        : LayoutBuilder(
-            builder: (context, constraints) {
-              var height = constraints.maxHeight - headerHeight;
-              var rowHeight = min(height / rowCount, 24.0);
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: headerHeight),
-                    child: buildRowLabels(labels, rowHeight),
-                  ),
-                  Expanded(
-                    child: Scrollbar(
-                      interactive: true,
-                      controller: _scrollController,
-                      child: SingleChildScrollView(
-                        controller: _scrollController,
-                        scrollDirection: Axis.horizontal,
-                        child: buildChart(
-                          widget.events,
-                          rowCount,
-                          rowHeight,
-                          context,
-                        ),
-                      ),
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: headerHeight),
+                child: buildRowLabels(labels, rowHeight),
+              ),
+              Expanded(
+                child: Scrollbar(
+                  interactive: true,
+                  controller: _scrollController,
+                  child: SingleChildScrollView(
+                    controller: _scrollController,
+                    scrollDirection: Axis.horizontal,
+                    child: buildChart(
+                      widget.events,
+                      rowCount,
+                      rowHeight,
+                      context,
                     ),
                   ),
-                ],
-              );
-            },
+                ),
+              ),
+            ],
           );
   }
 
@@ -205,7 +200,7 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
           margin: const EdgeInsets.only(top: 52.0),
           child: SizedBox(
             width: max(timeline.grid.length * boxWidth, 500),
-            height: rowCount * 29.0 + 40,
+            height: rowCount * rowHeight + headerHeight,
             child: Stack(clipBehavior: Clip.none, children: timeline.bars),
           ),
         ),
@@ -343,14 +338,6 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
         );
 
         var callback = widget.onselect;
-        var body = Container(
-          width: width.toDouble() * widget.widthCoef,
-          height: rowHeight - 8,
-          decoration: BoxDecoration(
-            color: color.withAlpha(150),
-            borderRadius: BorderRadius.circular(3),
-          ),
-        );
         timeline.bars.add(
           Positioned(
             left: left,
@@ -359,8 +346,25 @@ class _EventsTimelineGraphState extends State<EventsTimelineGraph> {
               message:
                   "${n.description ?? ""}: ${n.start.toLocal()} => ${n.stop.toLocal()}",
               child: callback != null
-                  ? InkWell(onTap: () => callback(n), child: body)
-                  : body,
+                  ? InkWell(
+                      onTap: () => callback(n),
+                      child: Container(
+                        width: width.toDouble() * widget.widthCoef,
+                        height: rowHeight - 8,
+                        decoration: BoxDecoration(
+                          color: color.withAlpha(150),
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      ),
+                    )
+                  : Container(
+                      width: width.toDouble() * widget.widthCoef,
+                      height: rowHeight - 8,
+                      decoration: BoxDecoration(
+                        color: color.withAlpha(150),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
             ),
           ),
         );

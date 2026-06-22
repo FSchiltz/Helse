@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import 'event_type_add.dart';
@@ -28,7 +29,7 @@ class EventTypeView extends StatelessWidget {
                   "Event Types",
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: UIConstants.formPad),
                 IconButton(
                   onPressed: () {
                     showDialog<void>(

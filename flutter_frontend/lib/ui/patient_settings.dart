@@ -17,7 +17,7 @@ class PatientSettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var locale = Translation.of(context);
     var theme = Theme.of(context).textTheme;
-    var settings = Dependencies.logics.patientsSettings.getSettings();
+    var settings = Dependencies.logics.patientsSettings.patientsSettings();
     return NavigationPage(
       header: (person == null)
           ? Padding(

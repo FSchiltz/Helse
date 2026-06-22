@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/metric_helper.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_detail_page.dart';
+import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -48,85 +49,89 @@ class _MetricWidgetState extends State<MetricWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return LoadingBuilder(
-      _getData,
-      builder: (ctx, data, reset) {
-        return InkWell(
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(
-              builder: (context) => MetricDetailPage(
-                date: widget.date,
-                type: widget.type,
-                person: widget.person,
-                summary: data,
-                settings: widget.settings.detailGraph ?? GraphKind.text,
+    return CommonCard(
+      padding: false,
+      child: LoadingBuilder(
+        _getData,
+        builder: (ctx, data, reset) {
+          return InkWell(
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (context) => MetricDetailPage(
+                  date: widget.date,
+                  type: widget.type,
+                  person: widget.person,
+                  summary: data,
+                  settings: widget.settings.detailGraph ?? GraphKind.text,
+                ),
               ),
             ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 16, top: 1, right: 1),
-            child: Column(
-              children: [
-                Flexible(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          widget.type.name,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ),
-                      Flexible(
-                        child: SizedBox(
-                          width: 40,
-                          child: IconButton(
-                            onPressed: () {
-                              showDialog<void>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return MetricAdd(
-                                    widget.type,
-                                    reset,
-                                    person: widget.person,
-                                  );
-                                },
-                              );
-                            },
-                            icon: const Icon(Icons.add_sharp),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16, top: 1, right: 1),
+              child: Column(
+                children: [
+                  Flexible(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            widget.type.name,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.titleMedium,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (data.isNotEmpty && widget.settings.graph != GraphKind.text)
-                  Expanded(
-                    child: Align(
-                      alignment: AlignmentGeometry.topCenter,
-                      child: MetricHelper.getTextInfo(
-                        data,
-                        widget.type,
-                        context,
-                      ),
+                        Flexible(
+                          child: SizedBox(
+                            width: 40,
+                            child: IconButton(
+                              onPressed: () {
+                                showDialog<void>(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return MetricAdd(
+                                      widget.type,
+                                      reset,
+                                      person: widget.person,
+                                    );
+                                  },
+                                );
+                              },
+                              icon: const Icon(Icons.add_sharp),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                  if (data.isNotEmpty &&
+                      widget.settings.graph != GraphKind.text)
+                    Expanded(
+                      child: Align(
+                        alignment: AlignmentGeometry.topCenter,
+                        child: MetricHelper.getTextInfo(
+                          data,
+                          widget.type,
+                          context,
+                        ),
+                      ),
+                    ),
 
-                Flexible(
-                  child: MetricCondensed(
-                    data,
-                    widget.type,
-                    widget.settings,
-                    widget.date,
-                    tile: widget.tile,
+                  Flexible(
+                    child: MetricCondensed(
+                      data,
+                      widget.type,
+                      widget.settings,
+                      widget.date,
+                      tile: widget.tile,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

@@ -29,9 +29,9 @@ internal static class EventsLogic
             Id = x.Id,
             Type = x.Type,
             Description = x.Description,
-            Stop = DateTime.SpecifyKind(x.Stop, DateTimeKind.Utc),
+            Stop = x.Stop,
             File = x.FileId,
-            Start = DateTime.SpecifyKind(x.Start, DateTimeKind.Utc),
+            Start = x.Start,
             Valid = x.Valid,
             NotificationTime = x.NotificationTime,
             Source = (FileTypes)x.Source,
@@ -76,7 +76,7 @@ internal static class EventsLogic
 
     private static void Validate(BaseEvent e)
     {
-        if(e.Stop < e.Start)
+        if (e.Stop < e.Start)
         {
             throw new InvalidDataException("The end date must be before the start");
         }
@@ -132,9 +132,10 @@ internal static class EventsLogic
         Visible = x.Visible,
         UserEditable = x.UserEditable,
         TimeDifference = x.TimeDifference,
+        GroupId = x.GroupId,
     }));
 
-    public static async Task<IResult> CreateTypeAsync(EventType type, IUserContext users, IEventContext events, HttpContext context)
+    public static async Task<IResult> CreateTypeAsync(CreateEventType type, IUserContext users, IEventContext events, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)
@@ -145,7 +146,7 @@ internal static class EventsLogic
         return TypedResults.NoContent();
     }
 
-    public static async Task<IResult> UpdateTypeAsync(EventType type, IUserContext users, IEventContext events, HttpContext context)
+    public static async Task<IResult> UpdateTypeAsync(UpdateEventType type, IUserContext users, IEventContext events, HttpContext context)
     {
         var admin = await users.IsAdmin(context.User);
         if (admin is not null)

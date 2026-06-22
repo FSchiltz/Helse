@@ -1,6 +1,20 @@
 namespace Helse.Models.Metrics;
 
-public class MetricGroup
+public class UpdateGroup : CreateGroup
+{
+    public long Id { get; set; }
+}
+
+public class CreateGroup : BaseGroup
+{
+}
+
+public class Group : BaseGroup
+{
+    public long Id { get; set; }
+}
+
+public abstract class BaseGroup
 {
     public required string Name { get; set; }
 
@@ -9,6 +23,4 @@ public class MetricGroup
     public bool ShowOnDashboard { get; set; }
 
     public bool ShowTitle { get; set; }
-
-    public long Id { get; set; }
 }

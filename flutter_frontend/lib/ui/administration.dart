@@ -3,6 +3,7 @@ import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/administration/constants_settings.dart';
 import 'package:helse/ui/blocs/administration/event_settings.dart';
 import 'package:helse/ui/blocs/administration/general_settings.dart';
+import 'package:helse/ui/blocs/administration/group_settings.dart';
 import 'package:helse/ui/blocs/administration/metric_settings.dart';
 import 'package:helse/ui/blocs/administration/user_settings.dart';
 import 'package:helse/ui/common/menu_destination.dart';
@@ -19,6 +20,7 @@ class AdministrationPage extends StatelessWidget {
       pages: [
         const GeneralSettings(),
         const UserSettings(),
+        const GroupSettings(),
         const MetricSettings(),
         const EventSettings(),
         const ConstantsSettings(),
@@ -35,8 +37,13 @@ class AdministrationPage extends StatelessWidget {
           label: locale.users,
         ),
         MenuDestination(
+          icon: Icon(Icons.subject),
+          selectedIcon: Icon(Icons.subject_outlined),
+          label: locale.group,
+        ),
+        MenuDestination(
           icon: Icon(Icons.post_add_sharp),
-          selectedIcon: Icon(Icons.analytics),
+          selectedIcon: Icon(Icons.post_add_outlined),
           label: locale.metrics,
         ),
         MenuDestination(

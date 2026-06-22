@@ -196,6 +196,15 @@ internal static class SettingsLogic
             }
         }
 
+        if (data.Version < 3)
+        {
+            data.Version = 3;
+            UpgradeV3(data.Default);
+            foreach (var patient in data.Patients)
+            {
+                UpgradeV3(patient);
+            }
+        }
 
         // update the metrics 
         var metricTypes = await metrics.GetMetricTypes(false, null);
@@ -206,13 +215,13 @@ internal static class SettingsLogic
         data.Default.EventSettings.DisplaySettings = UpdateEvents(data.Default.EventSettings.DisplaySettings, eventTypes);
 
         var metricGroups = await metrics.GetMetricGroups();
-        data.Default.MetricSettings.Groups.DisplaySettings = UpdateMetricGroups(data.Default.MetricSettings.Groups.DisplaySettings, metricGroups);
+        data.Default.Groups.DisplaySettings = UpdateMetricGroups(data.Default.Groups.DisplaySettings, metricGroups);
 
         foreach (var patient in data.Patients)
         {
             patient.MetricSettings.DisplaySettings = UpdateMetrics(patient.MetricSettings.DisplaySettings, metricTypes);
             patient.EventSettings.DisplaySettings = UpdateEvents(patient.EventSettings.DisplaySettings, eventTypes);
-            patient.MetricSettings.Groups.DisplaySettings = UpdateMetricGroups(patient.MetricSettings.Groups.DisplaySettings, metricGroups);
+            patient.Groups.DisplaySettings = UpdateMetricGroups(patient.Groups.DisplaySettings, metricGroups);
         }
     }
 
@@ -223,12 +232,17 @@ internal static class SettingsLogic
             UpgradeV2(data);
         }
 
+        if (data.Version < 3)
+        {
+            UpgradeV3(data);
+        }
+
         // update the metrics 
         var metricTypes = await metrics.GetMetricTypes(false, null);
         data.MetricSettings.DisplaySettings = UpdateMetrics(data.MetricSettings.DisplaySettings, metricTypes);
 
         var metricGroups = await metrics.GetMetricGroups();
-        data.MetricSettings.Groups.DisplaySettings = UpdateMetricGroups(data.MetricSettings.Groups.DisplaySettings, metricGroups);
+        data.Groups.DisplaySettings = UpdateMetricGroups(data.Groups.DisplaySettings, metricGroups);
 
         // update the events
         var eventTypes = await events.GetEventTypes(false);
@@ -243,7 +257,7 @@ internal static class SettingsLogic
             var existing = data.FirstOrDefault((element) => element.Id == e.Id);
             if (existing != null)
             {
-                existing.Name = existing.Name;
+                existing.Name = e.Name;
                 newList.Add(existing);
             }
             else
@@ -272,7 +286,8 @@ internal static class SettingsLogic
             var existing = data.FirstOrDefault((element) => element.Id == e.Id);
             if (existing != null)
             {
-                existing.Name = existing.Name;
+                existing.Name = e.Name;
+                existing.Parent = e.GroupId;
                 newList.Add(existing);
             }
             else
@@ -286,10 +301,18 @@ internal static class SettingsLogic
                         DetailGraph = GraphKind.Text,
                         Visible = e.Visible,
                         ShowOnDashboard = true,
+                        Parent = e.GroupId,
                     });
             }
         }
         return newList;
+    }
+
+    private static void UpgradeV3(UserSettings data)
+    {
+        data.Version = 3;
+        data.Groups = data.MetricSettings.Groups;
+        data.MetricSettings.Groups = null;
     }
 
     private static void UpgradeV2(UserSettings data)
@@ -351,7 +374,8 @@ internal static class SettingsLogic
             var existing = data.FirstOrDefault((element) => element.Id == metric.Id);
             if (existing != null)
             {
-                existing.Name = existing.Name;
+                existing.Name = metric.Name;
+                existing.Parent = metric.GroupId;
                 newList.Add(existing);
             }
             else

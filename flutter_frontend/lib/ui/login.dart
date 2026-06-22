@@ -332,7 +332,7 @@ class _LoginState extends State<LoginPage> {
       return;
     }
     try {
-      var created = await Dependencies.logics.authentication.startLogin(
+      await Dependencies.logics.authentication.startLogin(
         init: init,
         oauth: oAuth != null,
         password: password,

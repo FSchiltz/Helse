@@ -45,6 +45,9 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
             NotificationTime = e.NotificationTime,
             Source = (int)e.Source,
             SourceId = e.SourceId,
+            Valid = true,
+            NotificationSent = false,
+            Created = DateTime.UtcNow,
         });
     }
 
@@ -182,7 +185,7 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
     }
 
     /// <inheritdoc/>
-    public Task Insert(Helse.Models.Events.EventType eventType)
+    public Task Insert(Helse.Models.Events.CreateEventType eventType)
     {
         return Db.GetTable<EventType>().InsertAsync(() => new EventType
         {
@@ -192,6 +195,7 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
             UserEditable = true,
             Visible = eventType.Visible,
             TimeDifference = eventType.TimeDifference,
+            GroupId = eventType.GroupId,
         });
     }
 
@@ -231,13 +235,14 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
             Type = metric.Type,
             Source = (int)metric.Source,
             SourceId = metric.SourceId,
+            Created = DateTime.UtcNow,
         });
     }
 
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task Update(Helse.Models.Events.EventType type)
+    public Task Update(Helse.Models.Events.UpdateEventType type)
     {
         return Db.GetTable<EventType>()
             .Where(x => x.Id == type.Id)
@@ -245,6 +250,7 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
             .Set(x => x.Description, type.Description)
             .Set(x => x.Visible, type.Visible)
             .Set(x => x.TimeDifference, type.TimeDifference)
+            .Set(x => x.GroupId, type.GroupId)
             .UpdateAsync();
     }
 
@@ -362,7 +368,7 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
 
     public Task<int> DeleteMetricGroup(long id) => Db.GetTable<MetricGroup>().DeleteAsync(x => x.Id == id);
 
-    public Task Update(Helse.Models.Metrics.MetricGroup metricGroup)
+    public Task Update(Helse.Models.Metrics.UpdateGroup metricGroup)
     {
         return Db.GetTable<MetricGroup>()
             .Where(x => x.Id == metricGroup.Id)
@@ -373,7 +379,7 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
             .UpdateAsync();
     }
 
-    public Task Insert(Helse.Models.Metrics.MetricGroup metricGroup)
+    public Task Insert(Helse.Models.Metrics.CreateGroup metricGroup)
     {
         return Db.GetTable<MetricGroup>().InsertAsync(() => new MetricGroup
         {

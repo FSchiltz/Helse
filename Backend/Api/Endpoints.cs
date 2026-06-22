@@ -156,8 +156,7 @@ internal static class Endpoints
         .Produces<List<MetricType>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
-
-        var metricsGroup = metricsType.MapGroup("/groups").RequireAuthorization();
+        var metricsGroup = metrics.MapGroup("/groups").RequireAuthorization();
         metricsGroup.MapPost("/", MetricsLogic.CreateGroupAsync)
         .Produces((int)HttpStatusCode.NoContent)
         .Produces((int)HttpStatusCode.Unauthorized);
@@ -171,7 +170,7 @@ internal static class Endpoints
         .Produces((int)HttpStatusCode.Unauthorized);
 
         metricsGroup.MapGet("/", MetricsLogic.GetGroupsAsync)
-        .Produces<List<MetricGroup>>((int)HttpStatusCode.OK)
+        .Produces<List<Group>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
     }
 

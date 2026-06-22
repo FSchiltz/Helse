@@ -4,6 +4,7 @@ import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
+import 'package:helse/ui/common/inputs/values_input.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/ui_constants.dart';
@@ -28,6 +29,9 @@ class _EventTypeAddState extends State<EventTypeAdd> {
   final _description = TextEditingController();
   final _timeDifference = TextEditingController();
   bool _visible = true;
+  int _groupId = 0;
+
+  List<Group> _groups = [];
 
   @override
   void initState() {
@@ -38,7 +42,9 @@ class _EventTypeAddState extends State<EventTypeAdd> {
       _description.text = edit.description ?? "";
       _name.text = edit.name;
       _timeDifference.text = edit.timeDifference ?? '';
+      _groupId = edit.groupId;
     }
+    _loadGroup();
   }
 
   @override
@@ -77,6 +83,15 @@ class _EventTypeAddState extends State<EventTypeAdd> {
                   _visible = value;
                 }),
               ),
+              SizedBox(height: UIConstants.formPad),
+              ValuesInput(
+                value: _groupId,
+                _groups.map((x) => DropdownItem(x.id, x.name)).toList(),
+                (value) => setState(() {
+                  _groupId = value ?? 0;
+                }),
+                label: locale.group,
+              ),
               const SizedBox(height: UIConstants.formPad),
               Text(locale.timeShiftExplanation),
               SquareTextField(
@@ -99,6 +114,14 @@ class _EventTypeAddState extends State<EventTypeAdd> {
     return null;
   }
 
+  Future<void> _loadGroup() async {
+    var result = (await Dependencies.services.metric.metricsGroup()) ?? [];
+    result.add(Group(name: "Choose", description: '', id: 0));
+    setState(() {
+      _groups = result;
+    });
+  }
+
   void _submit(AppLocalizations locale) async {
     var localContext = context;
     try {
@@ -107,19 +130,26 @@ class _EventTypeAddState extends State<EventTypeAdd> {
             ? null
             : _timeDifference.text;
 
-        final event = EventType(
-          description: _description.text,
-          name: _name.text,
-          standAlone: true,
-          id: widget.edit?.id ?? 0,
-          visible: _visible,
-          userEditable: true,
-          timeDifference: timeDifference,
-        );
-
         if (widget.edit == null) {
+          final event = CreateEventType(
+            description: _description.text,
+            name: _name.text,
+            standAlone: true,
+            visible: _visible,
+            timeDifference: timeDifference,
+            groupId: _groupId,
+          );
           await Dependencies.services.event.addEventsType(event);
         } else {
+          final event = UpdateEventType(
+            description: _description.text,
+            name: _name.text,
+            standAlone: true,
+            id: widget.edit?.id ?? 0,
+            visible: _visible,
+            timeDifference: timeDifference,
+            groupId: _groupId,
+          );
           await Dependencies.services.event.updateEventsType(event);
         }
 

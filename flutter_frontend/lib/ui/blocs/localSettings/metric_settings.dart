@@ -29,17 +29,23 @@ class _MetricsSettingsState extends State<MetricsSettings> {
     bool refresh,
   ) async {
     MetricSettings metrics;
+    MetricGroupSettings groups;
+
     if (widget.isPatient) {
-      metrics = Dependencies.logics.patientsSettings.getMetrics(widget.patient);
+      var settings = Dependencies.logics.patientsSettings.patientSettings(
+        widget.patient,
+      );
+      metrics = settings.metricSettings ?? MetricSettings(displaySettings: []);
+      groups = settings.groups ?? MetricGroupSettings(displaySettings: []);
     } else {
-      metrics = Dependencies.logics.settings.getMetrics();
+      var settings = Dependencies.logics.settings.userSettings();
+      metrics = settings.metricSettings ?? MetricSettings(displaySettings: []);
+      groups = settings.groups ?? MetricGroupSettings(displaySettings: []);
     }
 
-    var editGroups =
-        metrics.groups?.displaySettings
-            .map((e) => OrderedEditItem.of(e))
-            .toList() ??
-        [];
+    var editGroups = groups.displaySettings
+        .map((e) => OrderedEditItem.of(e))
+        .toList();
     var editMetrics = metrics.displaySettings
         .map((e) => OrderedEditItem.of(e))
         .toList();
@@ -55,7 +61,7 @@ class _MetricsSettingsState extends State<MetricsSettings> {
     try {
       var metricsToSave = metrics.map((e) => e.ordered()).toList();
       var groupsToSave = groups.map((e) => e.ordered()).toList();
-      // save the user's settings
+      // save the user's settings;
       if (widget.isPatient) {
         final settings = Dependencies.logics.patientsSettings.getMetrics(
           widget.patient,

@@ -79,23 +79,23 @@ class MetricService extends ApiService {
     await call(() => api.apiMetricsPut(body: metric));
   }
 
-  Future<void> addMetricsGroup(MetricGroup metric) async {
+  Future<void> addGroup(CreateGroup metric) async {
     var api = await getService();
-    await call(() => api.apiMetricsTypeGroupsPost(body: metric));
+    await call(() => api.apiMetricsGroupsPost(body: metric));
   }
 
-  Future<void> updateMetricsGroup(MetricGroup metric) async {
+  Future<void> updateGroup(UpdateGroup metric) async {
     var api = await getService();
-    await call(() => api.apiMetricsTypeGroupsPut(body: metric));
+    await call(() => api.apiMetricsGroupsPut(body: metric));
   }
 
   Future<void> deleteMetricsGroup(int metric) async {
     var api = await getService();
-    await call(() => api.apiMetricsTypeGroupsIdDelete(id: metric));
+    await call(() => api.apiMetricsGroupsIdDelete(id: metric));
   }
 
-  Future<List<MetricGroup>?> metricsGroup() async {
+  Future<List<Group>?> metricsGroup() async {
     var api = await getService();
-    return await call(() => api.apiMetricsTypeGroupsGet());
+    return await call(() => api.apiMetricsGroupsGet());
   }
 }

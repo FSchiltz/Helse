@@ -26,4 +26,7 @@ internal class EventType
 
     [Column]
     public TimeSpan? TimeDifference { get; set; }
+
+    [Column]
+    public long GroupId { get; set; }
 }

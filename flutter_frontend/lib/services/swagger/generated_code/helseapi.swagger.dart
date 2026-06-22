@@ -862,16 +862,14 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response> apiMetricsTypeGroupsPost({
-    required MetricGroup? body,
-  }) {
-    return _apiMetricsTypeGroupsPost(body: body);
+  Future<chopper.Response> apiMetricsGroupsPost({required CreateGroup? body}) {
+    return _apiMetricsGroupsPost(body: body);
   }
 
   ///
-  @POST(path: '/api/metrics/type/groups', optionalBody: true)
-  Future<chopper.Response> _apiMetricsTypeGroupsPost({
-    @Body() required MetricGroup? body,
+  @POST(path: '/api/metrics/groups', optionalBody: true)
+  Future<chopper.Response> _apiMetricsGroupsPost({
+    @Body() required CreateGroup? body,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -886,16 +884,14 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response> apiMetricsTypeGroupsPut({
-    required MetricGroup? body,
-  }) {
-    return _apiMetricsTypeGroupsPut(body: body);
+  Future<chopper.Response> apiMetricsGroupsPut({required UpdateGroup? body}) {
+    return _apiMetricsGroupsPut(body: body);
   }
 
   ///
-  @PUT(path: '/api/metrics/type/groups', optionalBody: true)
-  Future<chopper.Response> _apiMetricsTypeGroupsPut({
-    @Body() required MetricGroup? body,
+  @PUT(path: '/api/metrics/groups', optionalBody: true)
+  Future<chopper.Response> _apiMetricsGroupsPut({
+    @Body() required UpdateGroup? body,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -910,18 +906,15 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response<List<MetricGroup>>> apiMetricsTypeGroupsGet() {
-    generatedMapping.putIfAbsent(
-      MetricGroup,
-      () => MetricGroup.fromJsonFactory,
-    );
+  Future<chopper.Response<List<Group>>> apiMetricsGroupsGet() {
+    generatedMapping.putIfAbsent(Group, () => Group.fromJsonFactory);
 
-    return _apiMetricsTypeGroupsGet();
+    return _apiMetricsGroupsGet();
   }
 
   ///
-  @GET(path: '/api/metrics/type/groups')
-  Future<chopper.Response<List<MetricGroup>>> _apiMetricsTypeGroupsGet({
+  @GET(path: '/api/metrics/groups')
+  Future<chopper.Response<List<Group>>> _apiMetricsGroupsGet({
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -937,14 +930,14 @@ abstract class Helseapi extends ChopperService {
 
   ///
   ///@param id
-  Future<chopper.Response> apiMetricsTypeGroupsIdDelete({required int? id}) {
-    return _apiMetricsTypeGroupsIdDelete(id: id);
+  Future<chopper.Response> apiMetricsGroupsIdDelete({required int? id}) {
+    return _apiMetricsGroupsIdDelete(id: id);
   }
 
   ///
   ///@param id
-  @DELETE(path: '/api/metrics/type/groups/{id}')
-  Future<chopper.Response> _apiMetricsTypeGroupsIdDelete({
+  @DELETE(path: '/api/metrics/groups/{id}')
+  Future<chopper.Response> _apiMetricsGroupsIdDelete({
     @Path('id') required int? id,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -1130,14 +1123,14 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response> apiEventsTypePost({required EventType? body}) {
+  Future<chopper.Response> apiEventsTypePost({required CreateEventType? body}) {
     return _apiEventsTypePost(body: body);
   }
 
   ///
   @POST(path: '/api/events/type', optionalBody: true)
   Future<chopper.Response> _apiEventsTypePost({
-    @Body() required EventType? body,
+    @Body() required CreateEventType? body,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -1152,14 +1145,14 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response> apiEventsTypePut({required EventType? body}) {
+  Future<chopper.Response> apiEventsTypePut({required UpdateEventType? body}) {
     return _apiEventsTypePut(body: body);
   }
 
   ///
   @PUT(path: '/api/events/type', optionalBody: true)
   Future<chopper.Response> _apiEventsTypePut({
-    @Body() required EventType? body,
+    @Body() required UpdateEventType? body,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -2178,6 +2171,213 @@ extension $CreateEventExtension on CreateEvent {
 }
 
 @JsonSerializable(explicitToJson: true)
+class CreateEventType {
+  const CreateEventType({
+    required this.name,
+    this.description,
+    this.standAlone,
+    this.visible,
+    this.timeDifference,
+    required this.groupId,
+  });
+
+  factory CreateEventType.fromJson(Map<String, dynamic> json) =>
+      _$CreateEventTypeFromJson(json);
+
+  static const toJsonFactory = _$CreateEventTypeToJson;
+  Map<String, dynamic> toJson() => _$CreateEventTypeToJson(this);
+
+  @JsonKey(name: 'name')
+  final String name;
+  @JsonKey(name: 'description')
+  final String? description;
+  @JsonKey(name: 'standAlone')
+  final bool? standAlone;
+  @JsonKey(name: 'visible')
+  final bool? visible;
+  @JsonKey(name: 'timeDifference')
+  final String? timeDifference;
+  @JsonKey(name: 'groupId')
+  final int groupId;
+  static const fromJsonFactory = _$CreateEventTypeFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is CreateEventType &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )) &&
+            (identical(other.standAlone, standAlone) ||
+                const DeepCollectionEquality().equals(
+                  other.standAlone,
+                  standAlone,
+                )) &&
+            (identical(other.visible, visible) ||
+                const DeepCollectionEquality().equals(
+                  other.visible,
+                  visible,
+                )) &&
+            (identical(other.timeDifference, timeDifference) ||
+                const DeepCollectionEquality().equals(
+                  other.timeDifference,
+                  timeDifference,
+                )) &&
+            (identical(other.groupId, groupId) ||
+                const DeepCollectionEquality().equals(other.groupId, groupId)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(standAlone) ^
+      const DeepCollectionEquality().hash(visible) ^
+      const DeepCollectionEquality().hash(timeDifference) ^
+      const DeepCollectionEquality().hash(groupId) ^
+      runtimeType.hashCode;
+}
+
+extension $CreateEventTypeExtension on CreateEventType {
+  CreateEventType copyWith({
+    String? name,
+    String? description,
+    bool? standAlone,
+    bool? visible,
+    String? timeDifference,
+    int? groupId,
+  }) {
+    return CreateEventType(
+      name: name ?? this.name,
+      description: description ?? this.description,
+      standAlone: standAlone ?? this.standAlone,
+      visible: visible ?? this.visible,
+      timeDifference: timeDifference ?? this.timeDifference,
+      groupId: groupId ?? this.groupId,
+    );
+  }
+
+  CreateEventType copyWithWrapped({
+    Wrapped<String>? name,
+    Wrapped<String?>? description,
+    Wrapped<bool?>? standAlone,
+    Wrapped<bool?>? visible,
+    Wrapped<String?>? timeDifference,
+    Wrapped<int>? groupId,
+  }) {
+    return CreateEventType(
+      name: (name != null ? name.value : this.name),
+      description: (description != null ? description.value : this.description),
+      standAlone: (standAlone != null ? standAlone.value : this.standAlone),
+      visible: (visible != null ? visible.value : this.visible),
+      timeDifference: (timeDifference != null
+          ? timeDifference.value
+          : this.timeDifference),
+      groupId: (groupId != null ? groupId.value : this.groupId),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class CreateGroup {
+  const CreateGroup({
+    required this.name,
+    required this.description,
+    this.showOnDashboard,
+    this.showTitle,
+  });
+
+  factory CreateGroup.fromJson(Map<String, dynamic> json) =>
+      _$CreateGroupFromJson(json);
+
+  static const toJsonFactory = _$CreateGroupToJson;
+  Map<String, dynamic> toJson() => _$CreateGroupToJson(this);
+
+  @JsonKey(name: 'name')
+  final String name;
+  @JsonKey(name: 'description')
+  final String description;
+  @JsonKey(name: 'showOnDashboard')
+  final bool? showOnDashboard;
+  @JsonKey(name: 'showTitle')
+  final bool? showTitle;
+  static const fromJsonFactory = _$CreateGroupFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is CreateGroup &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )) &&
+            (identical(other.showOnDashboard, showOnDashboard) ||
+                const DeepCollectionEquality().equals(
+                  other.showOnDashboard,
+                  showOnDashboard,
+                )) &&
+            (identical(other.showTitle, showTitle) ||
+                const DeepCollectionEquality().equals(
+                  other.showTitle,
+                  showTitle,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(showOnDashboard) ^
+      const DeepCollectionEquality().hash(showTitle) ^
+      runtimeType.hashCode;
+}
+
+extension $CreateGroupExtension on CreateGroup {
+  CreateGroup copyWith({
+    String? name,
+    String? description,
+    bool? showOnDashboard,
+    bool? showTitle,
+  }) {
+    return CreateGroup(
+      name: name ?? this.name,
+      description: description ?? this.description,
+      showOnDashboard: showOnDashboard ?? this.showOnDashboard,
+      showTitle: showTitle ?? this.showTitle,
+    );
+  }
+
+  CreateGroup copyWithWrapped({
+    Wrapped<String>? name,
+    Wrapped<String>? description,
+    Wrapped<bool?>? showOnDashboard,
+    Wrapped<bool?>? showTitle,
+  }) {
+    return CreateGroup(
+      name: (name != null ? name.value : this.name),
+      description: (description != null ? description.value : this.description),
+      showOnDashboard: (showOnDashboard != null
+          ? showOnDashboard.value
+          : this.showOnDashboard),
+      showTitle: (showTitle != null ? showTitle.value : this.showTitle),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class CreateMetric {
   const CreateMetric({
     this.unit,
@@ -2303,7 +2503,6 @@ class CreateMetricType {
     this.summaryType,
     this.description,
     this.type,
-    required this.userEditable,
     this.visible,
     this.showOnDashboard,
     required this.groupId,
@@ -2335,8 +2534,6 @@ class CreateMetricType {
     fromJson: metricDataTypeNullableFromJson,
   )
   final enums.MetricDataType? type;
-  @JsonKey(name: 'userEditable')
-  final bool userEditable;
   @JsonKey(name: 'visible')
   final bool? visible;
   @JsonKey(name: 'showOnDashboard')
@@ -2369,11 +2566,6 @@ class CreateMetricType {
                 )) &&
             (identical(other.type, type) ||
                 const DeepCollectionEquality().equals(other.type, type)) &&
-            (identical(other.userEditable, userEditable) ||
-                const DeepCollectionEquality().equals(
-                  other.userEditable,
-                  userEditable,
-                )) &&
             (identical(other.visible, visible) ||
                 const DeepCollectionEquality().equals(
                   other.visible,
@@ -2411,7 +2603,6 @@ class CreateMetricType {
       const DeepCollectionEquality().hash(summaryType) ^
       const DeepCollectionEquality().hash(description) ^
       const DeepCollectionEquality().hash(type) ^
-      const DeepCollectionEquality().hash(userEditable) ^
       const DeepCollectionEquality().hash(visible) ^
       const DeepCollectionEquality().hash(showOnDashboard) ^
       const DeepCollectionEquality().hash(groupId) ^
@@ -2427,7 +2618,6 @@ extension $CreateMetricTypeExtension on CreateMetricType {
     enums.MetricSummary? summaryType,
     String? description,
     enums.MetricDataType? type,
-    bool? userEditable,
     bool? visible,
     bool? showOnDashboard,
     int? groupId,
@@ -2440,7 +2630,6 @@ extension $CreateMetricTypeExtension on CreateMetricType {
       summaryType: summaryType ?? this.summaryType,
       description: description ?? this.description,
       type: type ?? this.type,
-      userEditable: userEditable ?? this.userEditable,
       visible: visible ?? this.visible,
       showOnDashboard: showOnDashboard ?? this.showOnDashboard,
       groupId: groupId ?? this.groupId,
@@ -2455,7 +2644,6 @@ extension $CreateMetricTypeExtension on CreateMetricType {
     Wrapped<enums.MetricSummary?>? summaryType,
     Wrapped<String?>? description,
     Wrapped<enums.MetricDataType?>? type,
-    Wrapped<bool>? userEditable,
     Wrapped<bool?>? visible,
     Wrapped<bool?>? showOnDashboard,
     Wrapped<int>? groupId,
@@ -2468,9 +2656,6 @@ extension $CreateMetricTypeExtension on CreateMetricType {
       summaryType: (summaryType != null ? summaryType.value : this.summaryType),
       description: (description != null ? description.value : this.description),
       type: (type != null ? type.value : this.type),
-      userEditable: (userEditable != null
-          ? userEditable.value
-          : this.userEditable),
       visible: (visible != null ? visible.value : this.visible),
       showOnDashboard: (showOnDashboard != null
           ? showOnDashboard.value
@@ -3005,13 +3190,14 @@ extension $EventSummaryExtension on EventSummary {
 @JsonSerializable(explicitToJson: true)
 class EventType {
   const EventType({
+    required this.id,
+    required this.userEditable,
     required this.name,
     this.description,
     this.standAlone,
     this.visible,
-    required this.id,
-    required this.userEditable,
     this.timeDifference,
+    required this.groupId,
   });
 
   factory EventType.fromJson(Map<String, dynamic> json) =>
@@ -3020,6 +3206,10 @@ class EventType {
   static const toJsonFactory = _$EventTypeToJson;
   Map<String, dynamic> toJson() => _$EventTypeToJson(this);
 
+  @JsonKey(name: 'id')
+  final int id;
+  @JsonKey(name: 'userEditable')
+  final bool userEditable;
   @JsonKey(name: 'name')
   final String name;
   @JsonKey(name: 'description')
@@ -3028,18 +3218,23 @@ class EventType {
   final bool? standAlone;
   @JsonKey(name: 'visible')
   final bool? visible;
-  @JsonKey(name: 'id')
-  final int id;
-  @JsonKey(name: 'userEditable')
-  final bool userEditable;
   @JsonKey(name: 'timeDifference')
   final String? timeDifference;
+  @JsonKey(name: 'groupId')
+  final int groupId;
   static const fromJsonFactory = _$EventTypeFromJson;
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is EventType &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.userEditable, userEditable) ||
+                const DeepCollectionEquality().equals(
+                  other.userEditable,
+                  userEditable,
+                )) &&
             (identical(other.name, name) ||
                 const DeepCollectionEquality().equals(other.name, name)) &&
             (identical(other.description, description) ||
@@ -3057,18 +3252,13 @@ class EventType {
                   other.visible,
                   visible,
                 )) &&
-            (identical(other.id, id) ||
-                const DeepCollectionEquality().equals(other.id, id)) &&
-            (identical(other.userEditable, userEditable) ||
-                const DeepCollectionEquality().equals(
-                  other.userEditable,
-                  userEditable,
-                )) &&
             (identical(other.timeDifference, timeDifference) ||
                 const DeepCollectionEquality().equals(
                   other.timeDifference,
                   timeDifference,
-                )));
+                )) &&
+            (identical(other.groupId, groupId) ||
+                const DeepCollectionEquality().equals(other.groupId, groupId)));
   }
 
   @override
@@ -3076,58 +3266,63 @@ class EventType {
 
   @override
   int get hashCode =>
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(userEditable) ^
       const DeepCollectionEquality().hash(name) ^
       const DeepCollectionEquality().hash(description) ^
       const DeepCollectionEquality().hash(standAlone) ^
       const DeepCollectionEquality().hash(visible) ^
-      const DeepCollectionEquality().hash(id) ^
-      const DeepCollectionEquality().hash(userEditable) ^
       const DeepCollectionEquality().hash(timeDifference) ^
+      const DeepCollectionEquality().hash(groupId) ^
       runtimeType.hashCode;
 }
 
 extension $EventTypeExtension on EventType {
   EventType copyWith({
+    int? id,
+    bool? userEditable,
     String? name,
     String? description,
     bool? standAlone,
     bool? visible,
-    int? id,
-    bool? userEditable,
     String? timeDifference,
+    int? groupId,
   }) {
     return EventType(
+      id: id ?? this.id,
+      userEditable: userEditable ?? this.userEditable,
       name: name ?? this.name,
       description: description ?? this.description,
       standAlone: standAlone ?? this.standAlone,
       visible: visible ?? this.visible,
-      id: id ?? this.id,
-      userEditable: userEditable ?? this.userEditable,
       timeDifference: timeDifference ?? this.timeDifference,
+      groupId: groupId ?? this.groupId,
     );
   }
 
   EventType copyWithWrapped({
+    Wrapped<int>? id,
+    Wrapped<bool>? userEditable,
     Wrapped<String>? name,
     Wrapped<String?>? description,
     Wrapped<bool?>? standAlone,
     Wrapped<bool?>? visible,
-    Wrapped<int>? id,
-    Wrapped<bool>? userEditable,
     Wrapped<String?>? timeDifference,
+    Wrapped<int>? groupId,
   }) {
     return EventType(
-      name: (name != null ? name.value : this.name),
-      description: (description != null ? description.value : this.description),
-      standAlone: (standAlone != null ? standAlone.value : this.standAlone),
-      visible: (visible != null ? visible.value : this.visible),
       id: (id != null ? id.value : this.id),
       userEditable: (userEditable != null
           ? userEditable.value
           : this.userEditable),
+      name: (name != null ? name.value : this.name),
+      description: (description != null ? description.value : this.description),
+      standAlone: (standAlone != null ? standAlone.value : this.standAlone),
+      visible: (visible != null ? visible.value : this.visible),
       timeDifference: (timeDifference != null
           ? timeDifference.value
           : this.timeDifference),
+      groupId: (groupId != null ? groupId.value : this.groupId),
     );
   }
 }
@@ -3242,6 +3437,107 @@ extension $GotifyExtension on Gotify {
       enabled: (enabled != null ? enabled.value : this.enabled),
       url: (url != null ? url.value : this.url),
       token: (token != null ? token.value : this.token),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class Group {
+  const Group({
+    this.id,
+    required this.name,
+    required this.description,
+    this.showOnDashboard,
+    this.showTitle,
+  });
+
+  factory Group.fromJson(Map<String, dynamic> json) => _$GroupFromJson(json);
+
+  static const toJsonFactory = _$GroupToJson;
+  Map<String, dynamic> toJson() => _$GroupToJson(this);
+
+  @JsonKey(name: 'id')
+  final int? id;
+  @JsonKey(name: 'name')
+  final String name;
+  @JsonKey(name: 'description')
+  final String description;
+  @JsonKey(name: 'showOnDashboard')
+  final bool? showOnDashboard;
+  @JsonKey(name: 'showTitle')
+  final bool? showTitle;
+  static const fromJsonFactory = _$GroupFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is Group &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )) &&
+            (identical(other.showOnDashboard, showOnDashboard) ||
+                const DeepCollectionEquality().equals(
+                  other.showOnDashboard,
+                  showOnDashboard,
+                )) &&
+            (identical(other.showTitle, showTitle) ||
+                const DeepCollectionEquality().equals(
+                  other.showTitle,
+                  showTitle,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(showOnDashboard) ^
+      const DeepCollectionEquality().hash(showTitle) ^
+      runtimeType.hashCode;
+}
+
+extension $GroupExtension on Group {
+  Group copyWith({
+    int? id,
+    String? name,
+    String? description,
+    bool? showOnDashboard,
+    bool? showTitle,
+  }) {
+    return Group(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      showOnDashboard: showOnDashboard ?? this.showOnDashboard,
+      showTitle: showTitle ?? this.showTitle,
+    );
+  }
+
+  Group copyWithWrapped({
+    Wrapped<int?>? id,
+    Wrapped<String>? name,
+    Wrapped<String>? description,
+    Wrapped<bool?>? showOnDashboard,
+    Wrapped<bool?>? showTitle,
+  }) {
+    return Group(
+      id: (id != null ? id.value : this.id),
+      name: (name != null ? name.value : this.name),
+      description: (description != null ? description.value : this.description),
+      showOnDashboard: (showOnDashboard != null
+          ? showOnDashboard.value
+          : this.showOnDashboard),
+      showTitle: (showTitle != null ? showTitle.value : this.showTitle),
     );
   }
 }
@@ -3921,108 +4217,6 @@ extension $MetricCreationStatsExtension on MetricCreationStats {
 }
 
 @JsonSerializable(explicitToJson: true)
-class MetricGroup {
-  const MetricGroup({
-    required this.name,
-    required this.description,
-    this.showOnDashboard,
-    this.showTitle,
-    this.id,
-  });
-
-  factory MetricGroup.fromJson(Map<String, dynamic> json) =>
-      _$MetricGroupFromJson(json);
-
-  static const toJsonFactory = _$MetricGroupToJson;
-  Map<String, dynamic> toJson() => _$MetricGroupToJson(this);
-
-  @JsonKey(name: 'name')
-  final String name;
-  @JsonKey(name: 'description')
-  final String description;
-  @JsonKey(name: 'showOnDashboard')
-  final bool? showOnDashboard;
-  @JsonKey(name: 'showTitle')
-  final bool? showTitle;
-  @JsonKey(name: 'id')
-  final int? id;
-  static const fromJsonFactory = _$MetricGroupFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is MetricGroup &&
-            (identical(other.name, name) ||
-                const DeepCollectionEquality().equals(other.name, name)) &&
-            (identical(other.description, description) ||
-                const DeepCollectionEquality().equals(
-                  other.description,
-                  description,
-                )) &&
-            (identical(other.showOnDashboard, showOnDashboard) ||
-                const DeepCollectionEquality().equals(
-                  other.showOnDashboard,
-                  showOnDashboard,
-                )) &&
-            (identical(other.showTitle, showTitle) ||
-                const DeepCollectionEquality().equals(
-                  other.showTitle,
-                  showTitle,
-                )) &&
-            (identical(other.id, id) ||
-                const DeepCollectionEquality().equals(other.id, id)));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(name) ^
-      const DeepCollectionEquality().hash(description) ^
-      const DeepCollectionEquality().hash(showOnDashboard) ^
-      const DeepCollectionEquality().hash(showTitle) ^
-      const DeepCollectionEquality().hash(id) ^
-      runtimeType.hashCode;
-}
-
-extension $MetricGroupExtension on MetricGroup {
-  MetricGroup copyWith({
-    String? name,
-    String? description,
-    bool? showOnDashboard,
-    bool? showTitle,
-    int? id,
-  }) {
-    return MetricGroup(
-      name: name ?? this.name,
-      description: description ?? this.description,
-      showOnDashboard: showOnDashboard ?? this.showOnDashboard,
-      showTitle: showTitle ?? this.showTitle,
-      id: id ?? this.id,
-    );
-  }
-
-  MetricGroup copyWithWrapped({
-    Wrapped<String>? name,
-    Wrapped<String>? description,
-    Wrapped<bool?>? showOnDashboard,
-    Wrapped<bool?>? showTitle,
-    Wrapped<int?>? id,
-  }) {
-    return MetricGroup(
-      name: (name != null ? name.value : this.name),
-      description: (description != null ? description.value : this.description),
-      showOnDashboard: (showOnDashboard != null
-          ? showOnDashboard.value
-          : this.showOnDashboard),
-      showTitle: (showTitle != null ? showTitle.value : this.showTitle),
-      id: (id != null ? id.value : this.id),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
 class MetricGroupSettings {
   const MetricGroupSettings({required this.displaySettings});
 
@@ -4087,7 +4281,7 @@ class MetricSettings {
   @JsonKey(name: 'displaySettings', defaultValue: <OrderedItem>[])
   final List<OrderedItem> displaySettings;
   @JsonKey(name: 'groups')
-  final MetricGroupSettings? groups;
+  final dynamic groups;
   static const fromJsonFactory = _$MetricSettingsFromJson;
 
   @override
@@ -4116,7 +4310,7 @@ class MetricSettings {
 extension $MetricSettingsExtension on MetricSettings {
   MetricSettings copyWith({
     List<OrderedItem>? displaySettings,
-    MetricGroupSettings? groups,
+    dynamic groups,
   }) {
     return MetricSettings(
       displaySettings: displaySettings ?? this.displaySettings,
@@ -4126,7 +4320,7 @@ extension $MetricSettingsExtension on MetricSettings {
 
   MetricSettings copyWithWrapped({
     Wrapped<List<OrderedItem>>? displaySettings,
-    Wrapped<MetricGroupSettings?>? groups,
+    Wrapped<dynamic>? groups,
   }) {
     return MetricSettings(
       displaySettings: (displaySettings != null
@@ -4142,11 +4336,11 @@ class MetricType {
   const MetricType({
     required this.id,
     required this.unit,
+    required this.userEditable,
     required this.name,
     this.summaryType,
     this.description,
     this.type,
-    required this.userEditable,
     this.visible,
     this.showOnDashboard,
     required this.groupId,
@@ -4164,6 +4358,8 @@ class MetricType {
   final int id;
   @JsonKey(name: 'unit')
   final Unit unit;
+  @JsonKey(name: 'userEditable')
+  final bool userEditable;
   @JsonKey(name: 'name')
   final String name;
   @JsonKey(
@@ -4180,8 +4376,6 @@ class MetricType {
     fromJson: metricDataTypeNullableFromJson,
   )
   final enums.MetricDataType? type;
-  @JsonKey(name: 'userEditable')
-  final bool userEditable;
   @JsonKey(name: 'visible')
   final bool? visible;
   @JsonKey(name: 'showOnDashboard')
@@ -4202,6 +4396,11 @@ class MetricType {
                 const DeepCollectionEquality().equals(other.id, id)) &&
             (identical(other.unit, unit) ||
                 const DeepCollectionEquality().equals(other.unit, unit)) &&
+            (identical(other.userEditable, userEditable) ||
+                const DeepCollectionEquality().equals(
+                  other.userEditable,
+                  userEditable,
+                )) &&
             (identical(other.name, name) ||
                 const DeepCollectionEquality().equals(other.name, name)) &&
             (identical(other.summaryType, summaryType) ||
@@ -4216,11 +4415,6 @@ class MetricType {
                 )) &&
             (identical(other.type, type) ||
                 const DeepCollectionEquality().equals(other.type, type)) &&
-            (identical(other.userEditable, userEditable) ||
-                const DeepCollectionEquality().equals(
-                  other.userEditable,
-                  userEditable,
-                )) &&
             (identical(other.visible, visible) ||
                 const DeepCollectionEquality().equals(
                   other.visible,
@@ -4255,11 +4449,11 @@ class MetricType {
   int get hashCode =>
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(unit) ^
+      const DeepCollectionEquality().hash(userEditable) ^
       const DeepCollectionEquality().hash(name) ^
       const DeepCollectionEquality().hash(summaryType) ^
       const DeepCollectionEquality().hash(description) ^
       const DeepCollectionEquality().hash(type) ^
-      const DeepCollectionEquality().hash(userEditable) ^
       const DeepCollectionEquality().hash(visible) ^
       const DeepCollectionEquality().hash(showOnDashboard) ^
       const DeepCollectionEquality().hash(groupId) ^
@@ -4272,11 +4466,11 @@ extension $MetricTypeExtension on MetricType {
   MetricType copyWith({
     int? id,
     Unit? unit,
+    bool? userEditable,
     String? name,
     enums.MetricSummary? summaryType,
     String? description,
     enums.MetricDataType? type,
-    bool? userEditable,
     bool? visible,
     bool? showOnDashboard,
     int? groupId,
@@ -4286,11 +4480,11 @@ extension $MetricTypeExtension on MetricType {
     return MetricType(
       id: id ?? this.id,
       unit: unit ?? this.unit,
+      userEditable: userEditable ?? this.userEditable,
       name: name ?? this.name,
       summaryType: summaryType ?? this.summaryType,
       description: description ?? this.description,
       type: type ?? this.type,
-      userEditable: userEditable ?? this.userEditable,
       visible: visible ?? this.visible,
       showOnDashboard: showOnDashboard ?? this.showOnDashboard,
       groupId: groupId ?? this.groupId,
@@ -4302,11 +4496,11 @@ extension $MetricTypeExtension on MetricType {
   MetricType copyWithWrapped({
     Wrapped<int>? id,
     Wrapped<Unit>? unit,
+    Wrapped<bool>? userEditable,
     Wrapped<String>? name,
     Wrapped<enums.MetricSummary?>? summaryType,
     Wrapped<String?>? description,
     Wrapped<enums.MetricDataType?>? type,
-    Wrapped<bool>? userEditable,
     Wrapped<bool?>? visible,
     Wrapped<bool?>? showOnDashboard,
     Wrapped<int>? groupId,
@@ -4316,13 +4510,13 @@ extension $MetricTypeExtension on MetricType {
     return MetricType(
       id: (id != null ? id.value : this.id),
       unit: (unit != null ? unit.value : this.unit),
+      userEditable: (userEditable != null
+          ? userEditable.value
+          : this.userEditable),
       name: (name != null ? name.value : this.name),
       summaryType: (summaryType != null ? summaryType.value : this.summaryType),
       description: (description != null ? description.value : this.description),
       type: (type != null ? type.value : this.type),
-      userEditable: (userEditable != null
-          ? userEditable.value
-          : this.userEditable),
       visible: (visible != null ? visible.value : this.visible),
       showOnDashboard: (showOnDashboard != null
           ? showOnDashboard.value
@@ -4798,6 +4992,7 @@ class PatientSettings {
     this.events,
     this.eventSettings,
     this.metricSettings,
+    this.groups,
   });
 
   factory PatientSettings.fromJson(Map<String, dynamic> json) =>
@@ -4832,6 +5027,8 @@ class PatientSettings {
   final EventSettings? eventSettings;
   @JsonKey(name: 'metricSettings')
   final MetricSettings? metricSettings;
+  @JsonKey(name: 'groups')
+  final MetricGroupSettings? groups;
   static const fromJsonFactory = _$PatientSettingsFromJson;
 
   @override
@@ -4876,7 +5073,9 @@ class PatientSettings {
                 const DeepCollectionEquality().equals(
                   other.metricSettings,
                   metricSettings,
-                )));
+                )) &&
+            (identical(other.groups, groups) ||
+                const DeepCollectionEquality().equals(other.groups, groups)));
   }
 
   @override
@@ -4893,6 +5092,7 @@ class PatientSettings {
       const DeepCollectionEquality().hash(events) ^
       const DeepCollectionEquality().hash(eventSettings) ^
       const DeepCollectionEquality().hash(metricSettings) ^
+      const DeepCollectionEquality().hash(groups) ^
       runtimeType.hashCode;
 }
 
@@ -4907,6 +5107,7 @@ extension $PatientSettingsExtension on PatientSettings {
     List<OrderedItem>? events,
     EventSettings? eventSettings,
     MetricSettings? metricSettings,
+    MetricGroupSettings? groups,
   }) {
     return PatientSettings(
       patientId: patientId ?? this.patientId,
@@ -4918,6 +5119,7 @@ extension $PatientSettingsExtension on PatientSettings {
       events: events ?? this.events,
       eventSettings: eventSettings ?? this.eventSettings,
       metricSettings: metricSettings ?? this.metricSettings,
+      groups: groups ?? this.groups,
     );
   }
 
@@ -4931,6 +5133,7 @@ extension $PatientSettingsExtension on PatientSettings {
     Wrapped<List<OrderedItem>?>? events,
     Wrapped<EventSettings?>? eventSettings,
     Wrapped<MetricSettings?>? metricSettings,
+    Wrapped<MetricGroupSettings?>? groups,
   }) {
     return PatientSettings(
       patientId: (patientId != null ? patientId.value : this.patientId),
@@ -4948,6 +5151,7 @@ extension $PatientSettingsExtension on PatientSettings {
       metricSettings: (metricSettings != null
           ? metricSettings.value
           : this.metricSettings),
+      groups: (groups != null ? groups.value : this.groups),
     );
   }
 }
@@ -6218,6 +6422,233 @@ extension $UpdateEventExtension on UpdateEvent {
 }
 
 @JsonSerializable(explicitToJson: true)
+class UpdateEventType {
+  const UpdateEventType({
+    required this.id,
+    required this.name,
+    this.description,
+    this.standAlone,
+    this.visible,
+    this.timeDifference,
+    required this.groupId,
+  });
+
+  factory UpdateEventType.fromJson(Map<String, dynamic> json) =>
+      _$UpdateEventTypeFromJson(json);
+
+  static const toJsonFactory = _$UpdateEventTypeToJson;
+  Map<String, dynamic> toJson() => _$UpdateEventTypeToJson(this);
+
+  @JsonKey(name: 'id')
+  final int id;
+  @JsonKey(name: 'name')
+  final String name;
+  @JsonKey(name: 'description')
+  final String? description;
+  @JsonKey(name: 'standAlone')
+  final bool? standAlone;
+  @JsonKey(name: 'visible')
+  final bool? visible;
+  @JsonKey(name: 'timeDifference')
+  final String? timeDifference;
+  @JsonKey(name: 'groupId')
+  final int groupId;
+  static const fromJsonFactory = _$UpdateEventTypeFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is UpdateEventType &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )) &&
+            (identical(other.standAlone, standAlone) ||
+                const DeepCollectionEquality().equals(
+                  other.standAlone,
+                  standAlone,
+                )) &&
+            (identical(other.visible, visible) ||
+                const DeepCollectionEquality().equals(
+                  other.visible,
+                  visible,
+                )) &&
+            (identical(other.timeDifference, timeDifference) ||
+                const DeepCollectionEquality().equals(
+                  other.timeDifference,
+                  timeDifference,
+                )) &&
+            (identical(other.groupId, groupId) ||
+                const DeepCollectionEquality().equals(other.groupId, groupId)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(standAlone) ^
+      const DeepCollectionEquality().hash(visible) ^
+      const DeepCollectionEquality().hash(timeDifference) ^
+      const DeepCollectionEquality().hash(groupId) ^
+      runtimeType.hashCode;
+}
+
+extension $UpdateEventTypeExtension on UpdateEventType {
+  UpdateEventType copyWith({
+    int? id,
+    String? name,
+    String? description,
+    bool? standAlone,
+    bool? visible,
+    String? timeDifference,
+    int? groupId,
+  }) {
+    return UpdateEventType(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      standAlone: standAlone ?? this.standAlone,
+      visible: visible ?? this.visible,
+      timeDifference: timeDifference ?? this.timeDifference,
+      groupId: groupId ?? this.groupId,
+    );
+  }
+
+  UpdateEventType copyWithWrapped({
+    Wrapped<int>? id,
+    Wrapped<String>? name,
+    Wrapped<String?>? description,
+    Wrapped<bool?>? standAlone,
+    Wrapped<bool?>? visible,
+    Wrapped<String?>? timeDifference,
+    Wrapped<int>? groupId,
+  }) {
+    return UpdateEventType(
+      id: (id != null ? id.value : this.id),
+      name: (name != null ? name.value : this.name),
+      description: (description != null ? description.value : this.description),
+      standAlone: (standAlone != null ? standAlone.value : this.standAlone),
+      visible: (visible != null ? visible.value : this.visible),
+      timeDifference: (timeDifference != null
+          ? timeDifference.value
+          : this.timeDifference),
+      groupId: (groupId != null ? groupId.value : this.groupId),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class UpdateGroup {
+  const UpdateGroup({
+    this.id,
+    required this.name,
+    required this.description,
+    this.showOnDashboard,
+    this.showTitle,
+  });
+
+  factory UpdateGroup.fromJson(Map<String, dynamic> json) =>
+      _$UpdateGroupFromJson(json);
+
+  static const toJsonFactory = _$UpdateGroupToJson;
+  Map<String, dynamic> toJson() => _$UpdateGroupToJson(this);
+
+  @JsonKey(name: 'id')
+  final int? id;
+  @JsonKey(name: 'name')
+  final String name;
+  @JsonKey(name: 'description')
+  final String description;
+  @JsonKey(name: 'showOnDashboard')
+  final bool? showOnDashboard;
+  @JsonKey(name: 'showTitle')
+  final bool? showTitle;
+  static const fromJsonFactory = _$UpdateGroupFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is UpdateGroup &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )) &&
+            (identical(other.showOnDashboard, showOnDashboard) ||
+                const DeepCollectionEquality().equals(
+                  other.showOnDashboard,
+                  showOnDashboard,
+                )) &&
+            (identical(other.showTitle, showTitle) ||
+                const DeepCollectionEquality().equals(
+                  other.showTitle,
+                  showTitle,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(showOnDashboard) ^
+      const DeepCollectionEquality().hash(showTitle) ^
+      runtimeType.hashCode;
+}
+
+extension $UpdateGroupExtension on UpdateGroup {
+  UpdateGroup copyWith({
+    int? id,
+    String? name,
+    String? description,
+    bool? showOnDashboard,
+    bool? showTitle,
+  }) {
+    return UpdateGroup(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      showOnDashboard: showOnDashboard ?? this.showOnDashboard,
+      showTitle: showTitle ?? this.showTitle,
+    );
+  }
+
+  UpdateGroup copyWithWrapped({
+    Wrapped<int?>? id,
+    Wrapped<String>? name,
+    Wrapped<String>? description,
+    Wrapped<bool?>? showOnDashboard,
+    Wrapped<bool?>? showTitle,
+  }) {
+    return UpdateGroup(
+      id: (id != null ? id.value : this.id),
+      name: (name != null ? name.value : this.name),
+      description: (description != null ? description.value : this.description),
+      showOnDashboard: (showOnDashboard != null
+          ? showOnDashboard.value
+          : this.showOnDashboard),
+      showTitle: (showTitle != null ? showTitle.value : this.showTitle),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class UpdateMetric {
   const UpdateMetric({
     this.id,
@@ -6354,7 +6785,6 @@ class UpdateMetricType {
     this.summaryType,
     this.description,
     this.type,
-    required this.userEditable,
     this.visible,
     this.showOnDashboard,
     required this.groupId,
@@ -6388,8 +6818,6 @@ class UpdateMetricType {
     fromJson: metricDataTypeNullableFromJson,
   )
   final enums.MetricDataType? type;
-  @JsonKey(name: 'userEditable')
-  final bool userEditable;
   @JsonKey(name: 'visible')
   final bool? visible;
   @JsonKey(name: 'showOnDashboard')
@@ -6424,11 +6852,6 @@ class UpdateMetricType {
                 )) &&
             (identical(other.type, type) ||
                 const DeepCollectionEquality().equals(other.type, type)) &&
-            (identical(other.userEditable, userEditable) ||
-                const DeepCollectionEquality().equals(
-                  other.userEditable,
-                  userEditable,
-                )) &&
             (identical(other.visible, visible) ||
                 const DeepCollectionEquality().equals(
                   other.visible,
@@ -6467,7 +6890,6 @@ class UpdateMetricType {
       const DeepCollectionEquality().hash(summaryType) ^
       const DeepCollectionEquality().hash(description) ^
       const DeepCollectionEquality().hash(type) ^
-      const DeepCollectionEquality().hash(userEditable) ^
       const DeepCollectionEquality().hash(visible) ^
       const DeepCollectionEquality().hash(showOnDashboard) ^
       const DeepCollectionEquality().hash(groupId) ^
@@ -6484,7 +6906,6 @@ extension $UpdateMetricTypeExtension on UpdateMetricType {
     enums.MetricSummary? summaryType,
     String? description,
     enums.MetricDataType? type,
-    bool? userEditable,
     bool? visible,
     bool? showOnDashboard,
     int? groupId,
@@ -6498,7 +6919,6 @@ extension $UpdateMetricTypeExtension on UpdateMetricType {
       summaryType: summaryType ?? this.summaryType,
       description: description ?? this.description,
       type: type ?? this.type,
-      userEditable: userEditable ?? this.userEditable,
       visible: visible ?? this.visible,
       showOnDashboard: showOnDashboard ?? this.showOnDashboard,
       groupId: groupId ?? this.groupId,
@@ -6514,7 +6934,6 @@ extension $UpdateMetricTypeExtension on UpdateMetricType {
     Wrapped<enums.MetricSummary?>? summaryType,
     Wrapped<String?>? description,
     Wrapped<enums.MetricDataType?>? type,
-    Wrapped<bool>? userEditable,
     Wrapped<bool?>? visible,
     Wrapped<bool?>? showOnDashboard,
     Wrapped<int>? groupId,
@@ -6528,9 +6947,6 @@ extension $UpdateMetricTypeExtension on UpdateMetricType {
       summaryType: (summaryType != null ? summaryType.value : this.summaryType),
       description: (description != null ? description.value : this.description),
       type: (type != null ? type.value : this.type),
-      userEditable: (userEditable != null
-          ? userEditable.value
-          : this.userEditable),
       visible: (visible != null ? visible.value : this.visible),
       showOnDashboard: (showOnDashboard != null
           ? showOnDashboard.value
@@ -6906,6 +7322,7 @@ class UserSettings {
     this.events,
     this.eventSettings,
     this.metricSettings,
+    this.groups,
   });
 
   factory UserSettings.fromJson(Map<String, dynamic> json) =>
@@ -6938,6 +7355,8 @@ class UserSettings {
   final EventSettings? eventSettings;
   @JsonKey(name: 'metricSettings')
   final MetricSettings? metricSettings;
+  @JsonKey(name: 'groups')
+  final MetricGroupSettings? groups;
   static const fromJsonFactory = _$UserSettingsFromJson;
 
   @override
@@ -6977,7 +7396,9 @@ class UserSettings {
                 const DeepCollectionEquality().equals(
                   other.metricSettings,
                   metricSettings,
-                )));
+                )) &&
+            (identical(other.groups, groups) ||
+                const DeepCollectionEquality().equals(other.groups, groups)));
   }
 
   @override
@@ -6993,6 +7414,7 @@ class UserSettings {
       const DeepCollectionEquality().hash(events) ^
       const DeepCollectionEquality().hash(eventSettings) ^
       const DeepCollectionEquality().hash(metricSettings) ^
+      const DeepCollectionEquality().hash(groups) ^
       runtimeType.hashCode;
 }
 
@@ -7006,6 +7428,7 @@ extension $UserSettingsExtension on UserSettings {
     List<OrderedItem>? events,
     EventSettings? eventSettings,
     MetricSettings? metricSettings,
+    MetricGroupSettings? groups,
   }) {
     return UserSettings(
       version: version ?? this.version,
@@ -7016,6 +7439,7 @@ extension $UserSettingsExtension on UserSettings {
       events: events ?? this.events,
       eventSettings: eventSettings ?? this.eventSettings,
       metricSettings: metricSettings ?? this.metricSettings,
+      groups: groups ?? this.groups,
     );
   }
 
@@ -7028,6 +7452,7 @@ extension $UserSettingsExtension on UserSettings {
     Wrapped<List<OrderedItem>?>? events,
     Wrapped<EventSettings?>? eventSettings,
     Wrapped<MetricSettings?>? metricSettings,
+    Wrapped<MetricGroupSettings?>? groups,
   }) {
     return UserSettings(
       version: (version != null ? version.value : this.version),
@@ -7044,6 +7469,7 @@ extension $UserSettingsExtension on UserSettings {
       metricSettings: (metricSettings != null
           ? metricSettings.value
           : this.metricSettings),
+      groups: (groups != null ? groups.value : this.groups),
     );
   }
 }

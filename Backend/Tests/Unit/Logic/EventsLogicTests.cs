@@ -13,12 +13,11 @@ public class EventsLogicTests : LogicTests
     [Fact]
     public async Task EventType_NonAdmin()
     {
-        var type = new Helse.Models.Events.EventType()
+        var type = new Helse.Models.Events.CreateEventType()
         {
             Name = "",
             Description = "",
-            Id = 0,
-            UserEditable = true,
+            GroupId = 1,
         };
 
         var users = SetupUser(UserType.User);
@@ -31,12 +30,11 @@ public class EventsLogicTests : LogicTests
     [Fact]
     public async Task EventType()
     {
-        var type = new Helse.Models.Events.EventType()
+        var type = new Helse.Models.Events.CreateEventType()
         {
             Name = "",
             Description = "",
-            Id = 0,
-            UserEditable = true,
+            GroupId = 2,
         };
 
         var users = SetupUser(UserType.Admin);

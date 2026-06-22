@@ -11,7 +11,8 @@ public class MetricSettings
 {
     public required List<OrderedItem> DisplaySettings { get; set; } = [];
 
-    public MetricGroupSettings Groups { get; set; } = new()
+    [Obsolete]
+    public MetricGroupSettings? Groups { get; set; } = new()
     {
         DisplaySettings = [],
     };
@@ -48,6 +49,11 @@ public class UserSettings : IJsonSettings
     };
 
     public MetricSettings MetricSettings { get; set; } = new()
+    {
+        DisplaySettings = [],
+    };
+
+    public MetricGroupSettings Groups { get; set; } = new()
     {
         DisplaySettings = [],
     };

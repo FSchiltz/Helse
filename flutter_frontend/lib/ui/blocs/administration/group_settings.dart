@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/ui/blocs/administration/metrics/metrics_settings.dart';
-import 'package:helse/ui/blocs/administration/metrics/metrics_type.dart';
+import 'package:helse/ui/blocs/administration/groups/metrics_group.dart';
+import 'package:helse/ui/blocs/administration/groups/metrics_settings.dart';
 
-class MetricSettings extends StatelessWidget {
-  const MetricSettings({super.key});
+class GroupSettings extends StatelessWidget {
+  const GroupSettings({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +18,9 @@ class MetricSettings extends StatelessWidget {
             Translation.of(context).metricSettings,
             style: Theme.of(context).textTheme.displaySmall,
           ),
-          MetricSettingsView(),
-          Flexible(child: MetricTypeView()),
+          GroupSettingsView(),
+
+          Flexible(child: MetricGroupView()),
         ],
       ),
     );

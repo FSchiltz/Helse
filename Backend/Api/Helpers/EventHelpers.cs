@@ -23,8 +23,8 @@ internal static class EventHelpers
                 Id = x.Id,
                 Type = x.Type,
                 Description = x.Description,
-                Stop = DateTime.SpecifyKind(x.Stop, DateTimeKind.Utc),
-                Start = DateTime.SpecifyKind(x.Start, DateTimeKind.Utc),
+                Stop = x.Stop,
+                Start = x.Start,
             })]);
         }
         else
