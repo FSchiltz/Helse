@@ -70,6 +70,7 @@ class _MetricsSettingsState extends State<MetricsSettings> {
   ) async {
     try {
       var metricsToSave = metrics.map((e) => e.ordered()).toList();
+      var eventsToSave = events.map((e) => e.ordered()).toList();
       var groupsToSave = groups.map((e) => e.ordered()).toList();
       // save the user's settings;
       if (widget.isPatient) {
@@ -82,6 +83,9 @@ class _MetricsSettingsState extends State<MetricsSettings> {
             metricSettings: settings.metricSettings?.copyWith(
               displaySettings: metricsToSave,
             ),
+            eventSettings: settings.eventSettings?.copyWith(
+              displaySettings: eventsToSave,
+            ),
           ),
           true,
         );
@@ -92,6 +96,9 @@ class _MetricsSettingsState extends State<MetricsSettings> {
             groups: settings.groups?.copyWith(displaySettings: groupsToSave),
             metricSettings: settings.metricSettings?.copyWith(
               displaySettings: metricsToSave,
+            ),
+            eventSettings: settings.eventSettings?.copyWith(
+              displaySettings: eventsToSave,
             ),
           ),
           true,
