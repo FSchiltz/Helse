@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:helse/di/logics.dart';
+import 'package:helse/logic/fit/fit_helper.dart';
 import 'package:helse/logic/fit/status_bloc.dart';
 import 'package:helse/logic/fit/task_bloc.dart';
 
@@ -15,17 +16,17 @@ class Blocs {
       TaskBloc(
         () async {
           log("Started sync");
-          final enabled = logic.fit.isEnabled();
+          final enabled = logic.health.isEnabled();
           if (enabled) {
-            await logic.fit.checkRun();
-            return await logic.fit.sync();
+            await logic.health.checkRun();
+            return await logic.health.sync();
           } else {
             log("Skipped fit sync");
             return null;
           }
         },
         const Duration(minutes: 5),
-        logic.fit.isSupported,
+        FitHelper.isSupported,
       ),
       StatusBloc(
         logic.import.sync,

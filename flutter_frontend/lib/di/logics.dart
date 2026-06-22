@@ -9,22 +9,23 @@ import 'package:helse/services/account.dart';
 class Logics {
   AuthenticationLogic authentication;
   ImportLogic import = ImportLogic();
-  FitLogic fit;
+  HealthConnectLogic health;
   SettingsLogic settings;
   PatientsSettingsLogic patientsSettings;
 
   Logics.build(
     this.authentication,
     this.settings,
-    this.fit,
+    this.health,
     this.patientsSettings,
   );
 
   factory Logics(Account account, Services service) {
+    final settings = SettingsLogic(account, service.settings);
     return Logics.build(
       AuthenticationLogic(account),
-      SettingsLogic(account, service.settings),
-      FitLogic(account),
+      settings,
+      HealthConnectLogic(settings, service.import),
       PatientsSettingsLogic(account, service.settings),
     );
   }

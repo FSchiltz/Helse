@@ -7,6 +7,7 @@ class UIConstants {
 
   static const double formPad = 14;
   static const double headerPad = 24;
+  static const double tablePad = 4;
 }
 
 class UIHelpers {

@@ -82,7 +82,9 @@ class WidgetGroups extends StatelessWidget {
                           ),
                         ),
                       ),
-                  ...events.where((e) => e.$2.visible == true).map((type) {
+                  ...events.where((e) => e.$2.showOnDashboard == true).map((
+                    type,
+                  ) {
                     return EventWidget(
                       type.$1,
                       DateHelper.offset(date, type.$1.timeDifference),

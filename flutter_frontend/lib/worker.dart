@@ -44,11 +44,11 @@ class WorkHelper {
     try {
       log("Background sync started");
       await Dependencies.init();
-      if (Dependencies.logics.fit.isEnabled()) {
+      if (Dependencies.logics.health.isEnabled()) {
         var settings = Dependencies.logics.settings.getHealth();
         if (settings.background) {
           log("Background sync enabled");
-          await Dependencies.logics.fit.sync();
+          await Dependencies.logics.health.sync();
         }
       }
     } catch (ex) {

@@ -55,26 +55,21 @@ class SettingsLogic extends BaseSettingsLogic {
 
   Future<void> saveTheme(InterfaceTheme theme) async {
     var settings = userSettings();
-    await _saveSettings(settings.copyWith(theme: theme), true, #saveTheme);
+    await saveSettings(settings.copyWith(theme: theme), true);
     themebloc.changed(theme);
   }
 
-  Future<void> _saveSettings(
-    UserSettings settings,
-    bool toServer,
-    Symbol caller,
-  ) async {
+  Future<void> saveSettings(UserSettings settings, bool toServer) async {
     if (toServer) {
       await service.savePersonSettings(settings);
     }
     await save(settingsName, settings.toJson());
-    log("settings saved by $caller");
   }
 
   Future<void> loadSettings() async {
     var serverSettings = await service.getPersonSettings();
     log("Settings loaded from server", name: "Settings");
-    await _saveSettings(serverSettings, false, #loadSettings);
+    await saveSettings(serverSettings, false);
 
     init = true;
     Dependencies.theme.loadColors(getColors());
@@ -104,28 +99,9 @@ class SettingsLogic extends BaseSettingsLogic {
         );
   }
 
-  Future<void> saveMetrics(MetricSettings metric, bool toServer) async {
-    var settings = userSettings();
-    await _saveSettings(
-      settings.copyWith(metricSettings: metric),
-      toServer,
-      #saveMetrics,
-    );
-    metrics.changed(true);
-  }
-
   EventSettings getEvents() {
     return (userSettings()).eventSettings ??
         EventSettings(displaySettings: [], displayValueSettings: []);
-  }
-
-  Future<void> saveEvents(EventSettings events, bool toServer) async {
-    var settings = userSettings();
-    await _saveSettings(
-      settings.copyWith(eventSettings: events),
-      toServer,
-      #saveEvents,
-    );
   }
 
   void setLastRun(String run) {
@@ -223,7 +199,7 @@ class SettingsLogic extends BaseSettingsLogic {
       list.addAll(newList);
     }
 
-    await _saveSettings(settings, toServer, #setColors);
+    await saveSettings(settings, toServer);
   }
 
   Map<StateType, Map<String, Color>> getColors() {
@@ -256,11 +232,7 @@ class SettingsLogic extends BaseSettingsLogic {
 
   Future<void> setDateRange(DatePreset run, {bool toServer = true}) async {
     var settings = userSettings();
-    await _saveSettings(
-      settings.copyWith(datePreset: run),
-      toServer,
-      #setDateRange,
-    );
+    await saveSettings(settings.copyWith(datePreset: run), toServer);
   }
 
   DatePreset getDateRange() {

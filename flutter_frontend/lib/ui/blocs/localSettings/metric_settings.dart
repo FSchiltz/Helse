@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide TableRow;
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
@@ -13,7 +13,24 @@ import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/inputs/values_input.dart';
+import 'package:helse/ui/common/table.dart';
 import 'package:helse/ui/common/ui_constants.dart';
+
+class _SettingsData {
+  final List<OrderedEditItem> metrics;
+  final List<OrderedEditItem> events;
+  final List<OrderedEditItem> groups;
+  final Map<int?, List<OrderedEditItem>> groupedMetrics;
+  final Map<int?, List<OrderedEditItem>> groupedEvents;
+
+  _SettingsData(
+    this.groups,
+    this.metrics,
+    this.events, {
+    required this.groupedMetrics,
+    required this.groupedEvents,
+  });
+}
 
 class MetricsSettings extends StatefulWidget {
   final bool isPatient;
@@ -25,11 +42,10 @@ class MetricsSettings extends StatefulWidget {
 }
 
 class _MetricsSettingsState extends State<MetricsSettings> {
-  Future<(List<OrderedEditItem>, List<OrderedEditItem>)> _getData(
-    bool refresh,
-  ) async {
+  Future<_SettingsData> _getData(bool refresh) async {
     MetricSettings metrics;
     MetricGroupSettings groups;
+    EventSettings events;
 
     if (widget.isPatient) {
       var settings = Dependencies.logics.patientsSettings.patientSettings(
@@ -37,10 +53,16 @@ class _MetricsSettingsState extends State<MetricsSettings> {
       );
       metrics = settings.metricSettings ?? MetricSettings(displaySettings: []);
       groups = settings.groups ?? MetricGroupSettings(displaySettings: []);
+      events =
+          settings.eventSettings ??
+          EventSettings(displaySettings: [], displayValueSettings: []);
     } else {
       var settings = Dependencies.logics.settings.userSettings();
       metrics = settings.metricSettings ?? MetricSettings(displaySettings: []);
       groups = settings.groups ?? MetricGroupSettings(displaySettings: []);
+      events =
+          settings.eventSettings ??
+          EventSettings(displaySettings: [], displayValueSettings: []);
     }
 
     var editGroups = groups.displaySettings
@@ -49,41 +71,55 @@ class _MetricsSettingsState extends State<MetricsSettings> {
     var editMetrics = metrics.displaySettings
         .map((e) => OrderedEditItem.of(e))
         .toList();
+    var editEvents = events.displaySettings
+        .map((e) => OrderedEditItem.of(e))
+        .toList();
 
-    return (editGroups, editMetrics);
+    final grouped = editMetrics.groupListsBy((e) => e.parent);
+    final groupedEvent = editEvents.groupListsBy((e) => e.parent);
+
+    return _SettingsData(
+      editGroups,
+      editMetrics,
+      editEvents,
+      groupedMetrics: grouped,
+      groupedEvents: groupedEvent,
+    );
   }
 
-  Future<void> _submit(
-    List<OrderedEditItem> metrics,
-    List<OrderedEditItem> groups,
-    AppLocalizations locale,
-  ) async {
+  Future<void> _submit(_SettingsData data, AppLocalizations locale) async {
     try {
-      var metricsToSave = metrics.map((e) => e.ordered()).toList();
-      var groupsToSave = groups.map((e) => e.ordered()).toList();
+      var metricsToSave = data.metrics.map((e) => e.ordered()).toList();
+      var eventsToSave = data.events.map((e) => e.ordered()).toList();
+      var groupsToSave = data.groups.map((e) => e.ordered()).toList();
       // save the user's settings;
       if (widget.isPatient) {
-        final settings = Dependencies.logics.patientsSettings.getMetrics(
+        final settings = Dependencies.logics.patientsSettings.patientSettings(
           widget.patient,
         );
-        await Dependencies.logics.patientsSettings.saveMetrics(
+        await Dependencies.logics.patientsSettings.savePatientsSettings(
           settings.copyWith(
-            displaySettings: metricsToSave,
-            groups:
-                (settings.groups ?? MetricGroupSettings(displaySettings: []))
-                    .copyWith(displaySettings: groupsToSave),
+            groups: settings.groups?.copyWith(displaySettings: groupsToSave),
+            metricSettings: settings.metricSettings?.copyWith(
+              displaySettings: metricsToSave,
+            ),
+            eventSettings: settings.eventSettings?.copyWith(
+              displaySettings: eventsToSave,
+            ),
           ),
           true,
-          widget.patient,
         );
       } else {
-        final settings = Dependencies.logics.settings.getMetrics();
-        await Dependencies.logics.settings.saveMetrics(
+        final settings = Dependencies.logics.settings.userSettings();
+        await Dependencies.logics.settings.saveSettings(
           settings.copyWith(
-            displaySettings: metricsToSave,
-            groups:
-                (settings.groups ?? MetricGroupSettings(displaySettings: []))
-                    .copyWith(displaySettings: groupsToSave),
+            groups: settings.groups?.copyWith(displaySettings: groupsToSave),
+            metricSettings: settings.metricSettings?.copyWith(
+              displaySettings: metricsToSave,
+            ),
+            eventSettings: settings.eventSettings?.copyWith(
+              displaySettings: eventsToSave,
+            ),
           ),
           true,
         );
@@ -97,16 +133,11 @@ class _MetricsSettingsState extends State<MetricsSettings> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final locale = Translation.of(context);
 
     return LoadingBuilder(
       _getData,
-      builder: (context, tree, reset) {
-        final groups = tree.$1;
-        final metrics = tree.$2;
-        final grouped = metrics.groupListsBy((e) => e.parent);
-
+      builder: (context, data, reset) {
         return Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -116,166 +147,26 @@ class _MetricsSettingsState extends State<MetricsSettings> {
                 child: SizedBox(
                   width: 120,
                   child: SquareButton(locale.save, () async {
-                    await _submit(metrics, groups, locale);
+                    await _submit(data, locale);
                     reset();
                   }),
                 ),
               ),
               const SizedBox(height: UIConstants.formPad),
               Expanded(
-                child: ListView(
+                child: ListView.builder(
                   shrinkWrap: true,
-                  children: groups.map((group) {
-                    return Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: UIConstants.formPad,
-                      ),
-                      child: CommonCard(
-                        padding: false,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  left: BorderSide(
-                                    color: Dependencies.theme.stateColor(
-                                      group.id.toString(),
-                                      StateType.metricGroup,
-                                      context,
-                                    ),
-                                    width: 8,
-                                  ),
-                                ),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: UIConstants.formPad,
-                                vertical: UIConstants.formPad,
-                              ),
-                              child: HelseSwitch(group.name, group.visible, (
-                                value,
-                              ) {
-                                group.visible = value;
-                              }),
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  left: BorderSide(
-                                    color: Dependencies.theme.stateColor(
-                                      group.id.toString(),
-                                      StateType.metricGroup,
-                                      context,
-                                    ),
-                                    width: 8,
-                                  ),
-                                ),
-                              ),
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: DataTable(
-                                  columns: [
-                                    DataColumn(
-                                      label: Expanded(child: Text(locale.name)),
-                                    ),
-                                    DataColumn(
-                                      label: Expanded(
-                                        child: Text(locale.visible),
-                                      ),
-                                    ),
-                                    DataColumn(
-                                      label: Expanded(
-                                        child: Text(locale.showOnDashboard),
-                                      ),
-                                    ),
-                                    DataColumn(
-                                      label: Expanded(
-                                        child: Text(locale.widgetType),
-                                      ),
-                                    ),
-                                    DataColumn(
-                                      label: Expanded(
-                                        child: Text(locale.detailType),
-                                      ),
-                                    ),
-                                  ],
-                                  rows: (grouped[group.id] ?? [])
-                                      .map(
-                                        (item) => DataRow(
-                                          cells: [
-                                            DataCell(
-                                              Text(
-                                                item.name,
-                                                style:
-                                                    theme.textTheme.titleLarge,
-                                              ),
-                                            ),
-                                            DataCell(
-                                              StatefullCheck(
-                                                item.visible,
-                                                (value) => item.visible = value,
-                                              ),
-                                            ),
-                                            DataCell(
-                                              StatefullCheck(
-                                                item.showOnDashboard,
-                                                (value) =>
-                                                    item.showOnDashboard =
-                                                        value,
-                                              ),
-                                            ),
-                                            DataCell(
-                                              SizedBox(
-                                                width: 160,
-                                                child: ValuesInput(
-                                                  value: item.graph,
-                                                  GraphKind.values
-                                                      .where((e) => e.index > 0)
-                                                      .map(
-                                                        (x) => DropdownItem(
-                                                          x,
-                                                          x.name,
-                                                        ),
-                                                      )
-                                                      .toList(),
-                                                  (value) => item.graph =
-                                                      value ?? item.graph,
-                                                  label: locale.type,
-                                                ),
-                                              ),
-                                            ),
-                                            DataCell(
-                                              SizedBox(
-                                                width: 160,
-                                                child: ValuesInput(
-                                                  value: item.detailGraph,
-                                                  GraphKind.values
-                                                      .where((e) => e.index > 0)
-                                                      .map(
-                                                        (x) => DropdownItem(
-                                                          x,
-                                                          x.name,
-                                                        ),
-                                                      )
-                                                      .toList(),
-                                                  (value) => item.detailGraph =
-                                                      value ?? item.detailGraph,
-                                                  label: locale.type,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                      .toList(),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                  itemCount: data.groups.length,
+                  itemBuilder: (context, index) {
+                    final group = data.groups[index];
+
+                    return _GroupCard(
+                      key: ValueKey(group.id),
+                      group: group,
+                      metrics: data.groupedMetrics[group.id] ?? const [],
+                      events: data.groupedEvents[group.id] ?? const [],
                     );
-                  }).toList(),
+                  },
                 ),
               ),
             ],
@@ -283,5 +174,181 @@ class _MetricsSettingsState extends State<MetricsSettings> {
         );
       },
     );
+  }
+}
+
+class _GroupCard extends StatelessWidget {
+  final OrderedEditItem group;
+  final List<OrderedEditItem> metrics;
+  final List<OrderedEditItem> events;
+
+  const _GroupCard({
+    super.key,
+    required this.group,
+    required this.metrics,
+    required this.events,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final locale = Translation.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: UIConstants.formPad),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            left: BorderSide(
+              color: Dependencies.theme.stateColor(
+                group.id.toString(),
+                StateType.metricGroup,
+                context,
+              ),
+              width: 8,
+            ),
+          ),
+        ),
+        child: CommonCard(
+          padding: false,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: UIConstants.formPad),
+                child: HelseSwitch(group.name, group.visible, (value) {
+                  group.visible = value;
+                }),
+              ),
+              if (metrics.isNotEmpty) ...[
+                TableHeader(
+                  header: [
+                    Header(locale.name, 160),
+                    Header(locale.visible, 80),
+                    Header(locale.showOnDashboard, 80),
+                    Header(locale.widgetType, 160),
+                    Header(locale.detailType, 160),
+                  ],
+                ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: metrics.length,
+                  itemBuilder: (context, index) {
+                    var metric = metrics[index];
+                    return _MetricRow(metric: metric, key: ValueKey(metric.id));
+                  },
+                ),
+              ],
+              SizedBox(height: UIConstants.formPad),
+              if (events.isNotEmpty) ...[
+                TableHeader(
+                  header: [
+                    Header(locale.name, 160),
+                    Header(locale.visible, 80),
+                    Header(locale.showOnDashboard, 80),
+                  ],
+                ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: events.length,
+                  itemBuilder: (context, index) {
+                    var event = events[index];
+                    return _EventRow(event: event, key: ValueKey(event.id));
+                  },
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _EventRow extends StatelessWidget {
+  const _EventRow({super.key, required this.event});
+
+  final OrderedEditItem event;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return TableRow([
+      RowData(
+        width: 160,
+        child: Text(event.name, style: theme.textTheme.titleLarge),
+      ),
+      RowData(
+        width: 80,
+        child: StatefullCheck(event.visible, (value) => event.visible = value),
+      ),
+      RowData(
+        width: 80,
+        child: StatefullCheck(
+          event.showOnDashboard,
+          (value) => event.showOnDashboard = value,
+        ),
+      ),
+    ]);
+  }
+}
+
+class _MetricRow extends StatelessWidget {
+  const _MetricRow({super.key, required this.metric});
+
+  final OrderedEditItem metric;
+
+  static final List<DropdownItem<GraphKind>> _graphItems = GraphKind.values
+      .where((e) => e.index > 0)
+      .map((x) => DropdownItem(x, x.name))
+      .toList();
+
+  @override
+  Widget build(BuildContext context) {
+    final locale = Translation.of(context);
+    final theme = Theme.of(context);
+    return TableRow([
+      RowData(
+        width: 160,
+        child: Text(metric.name, style: theme.textTheme.titleLarge),
+      ),
+      RowData(
+        width: 80,
+        child: StatefullCheck(
+          metric.visible,
+          (value) => metric.visible = value,
+        ),
+      ),
+      RowData(
+        width: 80,
+        child: StatefullCheck(
+          metric.showOnDashboard,
+          (value) => metric.showOnDashboard = value,
+        ),
+      ),
+
+      RowData(
+        width: 160,
+        child: Padding(
+          padding: const EdgeInsets.only(right: UIConstants.tablePad),
+          child: ValuesInput(
+            value: metric.graph,
+            _graphItems,
+            (value) => metric.graph = value ?? metric.graph,
+            label: locale.type,
+          ),
+        ),
+      ),
+
+      RowData(
+        width: 160,
+        child: ValuesInput(
+          value: metric.detailGraph,
+          _graphItems,
+          (value) => metric.detailGraph = value ?? metric.detailGraph,
+          label: locale.type,
+        ),
+      ),
+    ]);
   }
 }
