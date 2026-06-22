@@ -1,9 +1,13 @@
 import 'dart:developer';
 import 'dart:io';
+import 'dart:math' as math show min;
 
 import 'package:flutter/foundation.dart';
 import 'package:health/health.dart';
+import 'package:helse/helpers/string_helper.dart';
 import 'package:helse/logic/event.dart';
+import 'package:helse/logic/fit/event_types.dart';
+import 'package:helse/logic/fit/metric_types.dart';
 import 'package:helse/logic/fit/task_bloc.dart';
 import 'package:helse/services/account.dart';
 import 'package:helse/ui/common/notification.dart';
@@ -11,44 +15,6 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../di/dependencies.dart';
-
-enum MetricTypes {
-  none(0),
-  heart(1),
-  oxygen(2),
-  wheight(3),
-  height(4),
-  temperature(5),
-  steps(6),
-  calories(7),
-  distance(8),
-  pain(10),
-  mood(11),
-  medication(12),
-  tests(13),
-  sex(14),
-  stool(15),
-  spotting(16),
-  headDiameter(17),
-  diaper(18);
-
-  final int? value;
-
-  const MetricTypes(this.value);
-}
-
-enum EventTypes {
-  none(0),
-  sleep(1),
-  care(2),
-  workout(3),
-  bath(4),
-  feeding(5);
-
-  final int? value;
-
-  const EventTypes(this.value);
-}
 
 class FitLogic {
   final List<Execution> _executions = [];
@@ -198,11 +164,10 @@ class FitLogic {
     );
 
     // import to the server
-    // TODO add a loop here if too much events
     ImportsResult? result;
     if (converted.metrics?.isNotEmpty == true ||
         converted.events?.isNotEmpty == true) {
-      result = await Dependencies.services.import.importData(converted);
+      result = await _importInChunks(converted);
     }
 
     Dependencies.logics.settings.setFitRun(now.toString());
@@ -241,7 +206,7 @@ class FitLogic {
           metricType = MetricTypes.oxygen.value;
 
         case HealthDataType.WEIGHT:
-          metricType = MetricTypes.wheight.value;
+          metricType = MetricTypes.weight.value;
 
         case HealthDataType.STEPS:
           metricType = MetricTypes.steps.value;
@@ -437,12 +402,54 @@ class FitLogic {
     final settings = Dependencies.logics.settings.getHealth();
     return settings.syncHealth;
   }
-}
 
-extension on Iterable<String> {
-  String toCamel() {
-    final firstChar = first[0];
-    final rest = map((e) => e.toLowerCase()).join(' ');
-    return '${firstChar.toUpperCase()}${rest.substring(1, rest.length - 1)}';
+  Future<ImportsResult?> _importInChunks(
+    ImportData data, {
+    int chunkSize = 1000,
+  }) async {
+    int importedMetrics = 0;
+    int importedEvents = 0;
+
+    final metrics = data.metrics ?? [];
+    final events = data.events ?? [];
+
+    for (
+      var metricStart = 0;
+      metricStart < metrics.length;
+      metricStart += chunkSize
+    ) {
+      final metricChunk = metrics.sublist(
+        metricStart,
+        math.min(metricStart + chunkSize, metrics.length),
+      );
+
+      final result = await Dependencies.services.import.importData(
+        ImportData(metrics: metricChunk, events: []),
+      );
+
+      importedMetrics += result?.metrics.imported ?? 0;
+    }
+
+    for (
+      var eventStart = 0;
+      eventStart < events.length;
+      eventStart += chunkSize
+    ) {
+      final eventChunk = events.sublist(
+        eventStart,
+        math.min(eventStart + chunkSize, events.length),
+      );
+
+      final result = await Dependencies.services.import.importData(
+        ImportData(metrics: [], events: eventChunk),
+      );
+
+      importedEvents += result?.events.imported ?? 0;
+    }
+
+    return ImportsResult(
+      metrics: ImportResult(imported: importedMetrics, skipped: 0, failed: 0),
+      events: ImportResult(imported: importedEvents, skipped: 0, failed: 0),
+    );
   }
 }
