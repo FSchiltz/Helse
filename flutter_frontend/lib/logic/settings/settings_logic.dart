@@ -50,11 +50,11 @@ class SettingsLogic extends BaseSettingsLogic {
   }
 
   InterfaceTheme getTheme() {
-    return (_userSettings()).theme ?? InterfaceTheme.system;
+    return (userSettings()).theme ?? InterfaceTheme.system;
   }
 
   Future<void> saveTheme(InterfaceTheme theme) async {
-    var settings = _userSettings();
+    var settings = userSettings();
     await _saveSettings(settings.copyWith(theme: theme), true, #saveTheme);
     themebloc.changed(theme);
   }
@@ -83,7 +83,7 @@ class SettingsLogic extends BaseSettingsLogic {
     themebloc.changed(serverSettings.theme ?? InterfaceTheme.system);
   }
 
-  UserSettings _userSettings() {
+  UserSettings userSettings() {
     var encoded = getString(settingsName);
     log("settings loaded", name: "Settings");
     if (encoded == null) {
@@ -96,7 +96,7 @@ class SettingsLogic extends BaseSettingsLogic {
   }
 
   MetricSettings getMetrics() {
-    var settings = _userSettings().metricSettings;
+    var settings = userSettings().metricSettings;
     return settings ??
         MetricSettings(
           displaySettings: [],
@@ -105,7 +105,7 @@ class SettingsLogic extends BaseSettingsLogic {
   }
 
   Future<void> saveMetrics(MetricSettings metric, bool toServer) async {
-    var settings = _userSettings();
+    var settings = userSettings();
     await _saveSettings(
       settings.copyWith(metricSettings: metric),
       toServer,
@@ -115,12 +115,12 @@ class SettingsLogic extends BaseSettingsLogic {
   }
 
   EventSettings getEvents() {
-    return (_userSettings()).eventSettings ??
+    return (userSettings()).eventSettings ??
         EventSettings(displaySettings: [], displayValueSettings: []);
   }
 
   Future<void> saveEvents(EventSettings events, bool toServer) async {
-    var settings = _userSettings();
+    var settings = userSettings();
     await _saveSettings(
       settings.copyWith(eventSettings: events),
       toServer,
@@ -149,7 +149,7 @@ class SettingsLogic extends BaseSettingsLogic {
     Map<StateType, Map<String, Color>> colors, {
     bool toServer = true,
   }) async {
-    var settings = _userSettings();
+    var settings = userSettings();
     for (var group in colors.entries) {
       List<OrderedItem>? list;
       switch (group.key) {
@@ -184,15 +184,11 @@ class SettingsLogic extends BaseSettingsLogic {
             );
           }
         case StateType.metricGroup:
-          list = settings.metricSettings?.groups?.displaySettings;
+          list = settings.groups?.displaySettings;
           if (list == null) {
             list = [];
             settings = settings.copyWith(
-              metricSettings: settings.metricSettings?.copyWith(
-                groups: settings.metricSettings?.groups?.copyWith(
-                  displaySettings: list,
-                ),
-              ),
+              groups: settings.groups?.copyWith(displaySettings: list),
             );
           }
       }
@@ -231,7 +227,7 @@ class SettingsLogic extends BaseSettingsLogic {
   }
 
   Map<StateType, Map<String, Color>> getColors() {
-    var settings = _userSettings();
+    var settings = userSettings();
 
     Map<StateType, Map<String, Color>> map = {};
     map[StateType.events] = _map(settings.eventSettings?.displaySettings ?? []);
@@ -241,9 +237,7 @@ class SettingsLogic extends BaseSettingsLogic {
     map[StateType.metric] = _map(
       settings.metricSettings?.displaySettings ?? [],
     );
-    map[StateType.metricGroup] = _map(
-      settings.metricSettings?.groups?.displaySettings ?? [],
-    );
+    map[StateType.metricGroup] = _map(settings.groups?.displaySettings ?? []);
 
     return map;
   }
@@ -261,7 +255,7 @@ class SettingsLogic extends BaseSettingsLogic {
   }
 
   Future<void> setDateRange(DatePreset run, {bool toServer = true}) async {
-    var settings = _userSettings();
+    var settings = userSettings();
     await _saveSettings(
       settings.copyWith(datePreset: run),
       toServer,
@@ -270,7 +264,7 @@ class SettingsLogic extends BaseSettingsLogic {
   }
 
   DatePreset getDateRange() {
-    var settings = _userSettings();
+    var settings = userSettings();
     return settings.datePreset ?? DatePreset.today;
   }
 

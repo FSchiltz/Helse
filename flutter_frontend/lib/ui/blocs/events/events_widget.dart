@@ -53,50 +53,50 @@ class _EventWidgetState extends State<EventWidget> {
       builder: (ctx, data, reset) {
         final summaries = data?.summaries ?? [];
         final hasFullData = data != null && data.events.isNotEmpty;
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                SizedBox(width: 6),
-                Text(
-                  widget.type.name,
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 3.0),
-                    child: EventInformation(
-                      data: data?.durations ?? [],
-                      type: widget.type,
+        return CommonCard(
+          padding: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  SizedBox(width: 6),
+                  Text(
+                    widget.type.name,
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 3.0),
+                      child: EventInformation(
+                        data: data?.durations ?? [],
+                        type: widget.type,
+                      ),
                     ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    showDialog<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return EventAdd(
-                          _resetEvents,
-                          widget.type,
-                          person: widget.person,
-                        );
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.add_sharp),
-                ),
-              ],
-            ),
-            CommonCard(
-              padding: false,
-              child: InkWell(
+                  IconButton(
+                    onPressed: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return EventAdd(
+                            _resetEvents,
+                            widget.type,
+                            person: widget.person,
+                          );
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.add_sharp),
+                  ),
+                ],
+              ),
+              InkWell(
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute<void>(
                     builder: (context) => EventDetailPage(
@@ -120,8 +120,8 @@ class _EventWidgetState extends State<EventWidget> {
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );

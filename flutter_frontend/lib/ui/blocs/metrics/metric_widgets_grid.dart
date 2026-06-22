@@ -9,7 +9,7 @@ import 'package:helse/ui/common/layout/common_card.dart';
 class MetricWidgetsGrid extends StatelessWidget {
   const MetricWidgetsGrid({
     super.key,
-    required this.cached,
+    required this.types,
     required this.date,
     this.person,
     this.extend,
@@ -20,7 +20,7 @@ class MetricWidgetsGrid extends StatelessWidget {
   final bool fullWidth;
   final DateTimeRange<DateTime> date;
   final int? person;
-  final List<(MetricType, OrderedItem)> cached;
+  final List<(MetricType, OrderedItem)> types;
   final double? extend;
   final int tile;
 
@@ -36,7 +36,7 @@ class MetricWidgetsGrid extends StatelessWidget {
         return Wrap(
           runSpacing: 6,
           spacing: 6,
-          children: cached
+          children: types
               .map(
                 (type) => ConstrainedBox(
                   constraints: BoxConstraints(

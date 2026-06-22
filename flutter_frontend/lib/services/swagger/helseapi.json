@@ -3067,7 +3067,14 @@
             }
           },
           "groups": {
-            "$ref": "#/components/schemas/MetricGroupSettings"
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/MetricGroupSettings"
+              }
+            ]
           }
         }
       },
@@ -3343,6 +3350,9 @@
           },
           "metricSettings": {
             "$ref": "#/components/schemas/MetricSettings"
+          },
+          "groups": {
+            "$ref": "#/components/schemas/MetricGroupSettings"
           }
         }
       },
@@ -4245,6 +4255,9 @@
           },
           "metricSettings": {
             "$ref": "#/components/schemas/MetricSettings"
+          },
+          "groups": {
+            "$ref": "#/components/schemas/MetricGroupSettings"
           }
         }
       },

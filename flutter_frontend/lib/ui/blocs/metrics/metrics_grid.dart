@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/ui/blocs/metrics/metrics_group.dart';
+import 'package:helse/ui/blocs/metrics/widget_group.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../logic/settings/settings_logic.dart';
@@ -22,8 +22,8 @@ class MetricsGrid extends StatefulWidget {
 
 class _MetricsGridState extends State<MetricsGrid> {
   List<Group>? _groups;
-  Map<int, List<MetricType>>? _metrics;
-  Map<int, List<EventType>>? _events;
+  Map<int, List<(MetricType, OrderedItem)>>? _metrics;
+  Map<int, List<(EventType, OrderedItem)>>? _events;
 
   @override
   void initState() {
@@ -38,14 +38,38 @@ class _MetricsGridState extends State<MetricsGrid> {
           await Dependencies.services.metric.metricsType(true, null) ?? [];
       final events = await Dependencies.services.event.eventsType(true) ?? [];
 
+      MetricSettings metricSettings;
+      EventSettings eventSettings;
+      MetricGroupSettings groupSettings;
+      if (widget.person == null) {
+        final settings = Dependencies.logics.settings.userSettings();
+        metricSettings =
+            settings.metricSettings ?? MetricSettings(displaySettings: []);
+        eventSettings =
+            settings.eventSettings ??
+            EventSettings(displaySettings: [], displayValueSettings: []);
+        groupSettings =
+            settings.groups ?? MetricGroupSettings(displaySettings: []);
+      } else {
+        final settings = Dependencies.logics.patientsSettings.patientSettings(
+          widget.person,
+        );
+        metricSettings =
+            settings.metricSettings ?? MetricSettings(displaySettings: []);
+        eventSettings =
+            settings.eventSettings ??
+            EventSettings(displaySettings: [], displayValueSettings: []);
+        groupSettings =
+            settings.groups ?? MetricGroupSettings(displaySettings: []);
+      }
+
       List<Group> filtered = [];
       if (model == null) {
         filtered = [];
       } else {
         // filter the group to only show what the user wants
-        MetricGroupSettings settings = _getUserSettings();
         for (var item in model) {
-          OrderedItem? setting = settings.displaySettings.firstWhereOrNull(
+          OrderedItem? setting = groupSettings.displaySettings.firstWhereOrNull(
             (element) => element.id == item.id,
           );
 
@@ -53,24 +77,39 @@ class _MetricsGridState extends State<MetricsGrid> {
         }
       }
 
-      final Map<int, List<EventType>> orderedEvent = events.groupFoldBy(
-        (e) => e.groupId,
-        (e, b) {
-          if (e == null) return [b];
-          e.add(b);
-          return e;
-        },
-      );
+      final Map<int, List<(EventType, OrderedItem)>> orderedEvent = events
+          .groupFoldBy((e) => e.groupId, (e, type) {
+            // find the settings
+            e ??= [];
 
-      final Map<int, List<MetricType>> orderedMetric = metrics.groupFoldBy(
-        (e) => e.groupId,
-        (e, b) {
-          if (e == null) return [b];
-          e.add(b);
-          return e;
-        },
-      );
-      
+            OrderedItem? setting =
+                eventSettings.displaySettings.firstWhereOrNull(
+                  (element) => element.id == type.id,
+                ) ??
+                OrderedItem(name: type.name, id: type.id);
+
+            e.add((type, setting));
+            return e;
+          });
+
+      final Map<int, List<(MetricType, OrderedItem)>> orderedMetric = metrics
+          .groupFoldBy((e) => e.groupId, (e, type) {
+            e ??= [];
+            // find the settings
+            if (type.showOnDashboard != true) {
+              return e;
+            }
+
+            OrderedItem setting =
+                metricSettings.displaySettings.firstWhereOrNull(
+                  (element) => element.id == type.id,
+                ) ??
+                Dependencies.logics.settings.getDefault(type);
+
+            e.add((type, setting));
+            return e;
+          });
+
       setState(() {
         _groups = filtered;
         _events = orderedEvent;
@@ -108,34 +147,18 @@ class _MetricsGridState extends State<MetricsGrid> {
           crossAxisAlignment: WrapCrossAlignment.start,
           children: cached
               .map(
-                (type) => MetricsGroup(
+                (type) => WidgetGroups(
                   date: widget.date,
                   key: Key(type.id?.toString() ?? ""),
                   person: widget.person,
                   group: type,
+                  metrics: _metrics?[type.id] ?? [],
+                  events: _events?[type.id] ?? [],
                 ),
               )
               .toList(),
         ),
       );
     }
-  }
-
-  MetricGroupSettings _getUserSettings() {
-    MetricGroupSettings settings;
-    if (widget.person == null) {
-      settings =
-          (Dependencies.logics.settings.getMetrics()).groups ??
-          MetricGroupSettings(displaySettings: []);
-      // filter using the user settings
-    } else {
-      settings =
-          (Dependencies.logics.patientsSettings.getMetrics(
-            widget.person,
-          )).groups ??
-          MetricGroupSettings(displaySettings: []);
-      // filter using the user settings
-    }
-    return settings;
   }
 }

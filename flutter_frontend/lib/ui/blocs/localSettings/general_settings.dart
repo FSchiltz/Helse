@@ -58,8 +58,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     _theme = Dependencies.logics.settings.getTheme();
     _range = Dependencies.logics.settings.getDateRange();
 
-    final metrics = Dependencies.logics.settings.getMetrics();
-    final events = Dependencies.logics.settings.getEvents();
+    final settings = Dependencies.logics.settings.userSettings();
 
     _colors = (Dependencies.logics.settings.getColors()).map(
       (key, value) => MapEntry(
@@ -73,19 +72,19 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           switch (key) {
             case StateType.metric:
               name =
-                  metrics.displaySettings
+                  settings.metricSettings?.displaySettings
                       .firstWhereOrNull((m) => m.id == id)
                       ?.name ??
                   e.key;
             case StateType.events:
               name =
-                  events.displaySettings
+                  settings.eventSettings?.displaySettings
                       .firstWhereOrNull((m) => m.id == id)
                       ?.name ??
                   e.key;
             case StateType.metricGroup:
               name =
-                  metrics.groups?.displaySettings
+                  settings.groups?.displaySettings
                       .firstWhereOrNull((m) => m.id == id)
                       ?.name ??
                   e.key;

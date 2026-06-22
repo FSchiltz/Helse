@@ -15,7 +15,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
     PatientSettings settings,
     bool toServer,
   ) async {
-    var full = _patientsSettings();
+    var full = patientsSettings();
     if (settings.patientId == null) {
       full = full.copyWith($default: settings, patients: full.patients);
     } else {
@@ -40,7 +40,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
     bool toServer,
     int? person,
   ) async {
-    var settings = _patientSettings(person);
+    var settings = patientSettings(person);
     await _savePatientsSettings(
       settings.copyWith(metricSettings: metric, patientId: person),
       toServer,
@@ -52,14 +52,14 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
     bool toServer,
     int? person,
   ) async {
-    var settings = _patientSettings(person);
+    var settings = patientSettings(person);
     await _savePatientsSettings(
       settings.copyWith(eventSettings: events, patientId: person),
       toServer,
     );
   }
 
-  PatientsSettings _patientsSettings() {
+  PatientsSettings patientsSettings() {
     var encoded = getString(patientsName);
     if (encoded == null) {
       return PatientsSettings();
@@ -70,8 +70,8 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
     );
   }
 
-  PatientSettings _patientSettings(int? person) {
-    var object = _patientsSettings();
+  PatientSettings patientSettings(int? person) {
+    var object = patientsSettings();
     if (person == null) {
       return object.$default ?? PatientSettings(version: settingsVersion);
     }
@@ -85,17 +85,17 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
   }
 
   MetricSettings getMetrics(int? person) {
-    return (_patientSettings(person)).metricSettings ??
+    return (patientSettings(person)).metricSettings ??
         MetricSettings(displaySettings: []);
   }
 
   EventSettings getEvents(int? person) {
-    return (_patientSettings(person)).eventSettings ??
+    return (patientSettings(person)).eventSettings ??
         EventSettings(displaySettings: [], displayValueSettings: []);
   }
 
   Future<void> setDateRange(DatePreset run, int person) async {
-    var settings = _patientSettings(person);
+    var settings = patientSettings(person);
     await _savePatientsSettings(
       settings.copyWith(datePreset: run, patientId: person),
       true,
@@ -103,7 +103,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
   }
 
   DatePreset getPatientsDateRange(int? person) {
-    var settings = _patientSettings(person);
+    var settings = patientSettings(person);
     return settings.datePreset ?? DatePreset.today;
   }
 
@@ -113,9 +113,5 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
 
     await save(patientsName, serverSettings.toJson());
     init = true;
-  }
-
-  PatientsSettings getSettings() {
-    return _patientsSettings();
   }
 }

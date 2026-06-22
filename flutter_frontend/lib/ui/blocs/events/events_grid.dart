@@ -1,107 +1,48 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/logic/theme_helper.dart';
-import 'package:helse/ui/common/loader.dart';
 
 import '../../../di/dependencies.dart';
-import '../../../logic/settings/settings_logic.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../../common/notification.dart';
 import 'events_widget.dart';
 
-class EventsGrid extends StatefulWidget {
-  const EventsGrid({super.key, required this.date, this.person});
+class EventsGrid extends StatelessWidget {
+  const EventsGrid({
+    super.key,
+    required this.date,
+    this.person,
+    required this.types,
+  });
 
   final DateTimeRange date;
   final int? person;
-
-  @override
-  State<EventsGrid> createState() => _EventsGridState();
-}
-
-class _EventsGridState extends State<EventsGrid> {
-  List<EventType>? types;
-
-  @override
-  void initState() {
-    super.initState();
-    _getData();
-  }
-
-  void _getData() async {
-    try {
-      var model = await Dependencies.services.event.eventsType(false);
-      if (model != null) {
-        EventSettings settings;
-        if (widget.person == null) {
-          settings = Dependencies.logics.settings.getEvents();
-        } else {
-          settings = Dependencies.logics.patientsSettings.getEvents(
-            widget.person,
-          );
-        }
-
-        // filter using the user settings
-        List<EventType> filtered = [];
-        for (var item in model) {
-          OrderedItem? setting = settings.displaySettings.firstWhereOrNull(
-            (element) => element.id == item.id,
-          );
-
-          if (setting == null || setting.visible == true) filtered.add(item);
-        }
-
-        setState(() {
-          types = filtered;
-        });
-      }
-    } catch (ex) {
-      Notify.showError("$ex");
-    }
-  }
+  final List<(EventType, OrderedItem)> types;
 
   @override
   Widget build(BuildContext context) {
-    var childs =
-        types?.map((type) {
-          var color = Dependencies.theme.stateColor(
-            "${type.id}",
-            StateType.events,
-            context,
-          );
-          return Container(
-            decoration: BoxDecoration(
-              border: Border(left: BorderSide(color: color, width: 2)),
-            ),
-            child: EventWidget(
-              type,
-              DateHelper.offset(widget.date, type.timeDifference),
-              key: Key(type.id.toString()),
-              person: widget.person,
-            ),
-          );
-        }).toList() ??
-        [];
+    var childs = types.map((type) {
+      var color = Dependencies.theme.stateColor(
+        "${type.$1.id}",
+        StateType.events,
+        context,
+      );
+      return EventWidget(
+        type.$1,
+        DateHelper.offset(date, type.$1.timeDifference),
+        key: Key(type.$1.id.toString()),
+        person: person,
+      );
+    }).toList();
 
-    return types == null
-        ? const HelseLoader()
-        : BlocListener<SettingsBloc<bool>, bool>(
-            listener: (context, state) {
-              _getData();
-            },
-            bloc: Dependencies.logics.settings.events,
-            child: Align(
-              alignment: AlignmentGeometry.topLeft,
-              child: Wrap(
-                runAlignment: WrapAlignment.start,
-                alignment: WrapAlignment.start,
-                spacing: 24,
-                runSpacing: 16,
-                children: childs,
-              ),
-            ),
-          );
+    return Align(
+      alignment: AlignmentGeometry.topLeft,
+      child: Wrap(
+        runAlignment: WrapAlignment.start,
+        alignment: WrapAlignment.start,
+        spacing: 24,
+        runSpacing: 16,
+        children: childs,
+      ),
+    );
   }
 }

@@ -4281,7 +4281,7 @@ class MetricSettings {
   @JsonKey(name: 'displaySettings', defaultValue: <OrderedItem>[])
   final List<OrderedItem> displaySettings;
   @JsonKey(name: 'groups')
-  final MetricGroupSettings? groups;
+  final dynamic groups;
   static const fromJsonFactory = _$MetricSettingsFromJson;
 
   @override
@@ -4310,7 +4310,7 @@ class MetricSettings {
 extension $MetricSettingsExtension on MetricSettings {
   MetricSettings copyWith({
     List<OrderedItem>? displaySettings,
-    MetricGroupSettings? groups,
+    dynamic groups,
   }) {
     return MetricSettings(
       displaySettings: displaySettings ?? this.displaySettings,
@@ -4320,7 +4320,7 @@ extension $MetricSettingsExtension on MetricSettings {
 
   MetricSettings copyWithWrapped({
     Wrapped<List<OrderedItem>>? displaySettings,
-    Wrapped<MetricGroupSettings?>? groups,
+    Wrapped<dynamic>? groups,
   }) {
     return MetricSettings(
       displaySettings: (displaySettings != null
@@ -4992,6 +4992,7 @@ class PatientSettings {
     this.events,
     this.eventSettings,
     this.metricSettings,
+    this.groups,
   });
 
   factory PatientSettings.fromJson(Map<String, dynamic> json) =>
@@ -5026,6 +5027,8 @@ class PatientSettings {
   final EventSettings? eventSettings;
   @JsonKey(name: 'metricSettings')
   final MetricSettings? metricSettings;
+  @JsonKey(name: 'groups')
+  final MetricGroupSettings? groups;
   static const fromJsonFactory = _$PatientSettingsFromJson;
 
   @override
@@ -5070,7 +5073,9 @@ class PatientSettings {
                 const DeepCollectionEquality().equals(
                   other.metricSettings,
                   metricSettings,
-                )));
+                )) &&
+            (identical(other.groups, groups) ||
+                const DeepCollectionEquality().equals(other.groups, groups)));
   }
 
   @override
@@ -5087,6 +5092,7 @@ class PatientSettings {
       const DeepCollectionEquality().hash(events) ^
       const DeepCollectionEquality().hash(eventSettings) ^
       const DeepCollectionEquality().hash(metricSettings) ^
+      const DeepCollectionEquality().hash(groups) ^
       runtimeType.hashCode;
 }
 
@@ -5101,6 +5107,7 @@ extension $PatientSettingsExtension on PatientSettings {
     List<OrderedItem>? events,
     EventSettings? eventSettings,
     MetricSettings? metricSettings,
+    MetricGroupSettings? groups,
   }) {
     return PatientSettings(
       patientId: patientId ?? this.patientId,
@@ -5112,6 +5119,7 @@ extension $PatientSettingsExtension on PatientSettings {
       events: events ?? this.events,
       eventSettings: eventSettings ?? this.eventSettings,
       metricSettings: metricSettings ?? this.metricSettings,
+      groups: groups ?? this.groups,
     );
   }
 
@@ -5125,6 +5133,7 @@ extension $PatientSettingsExtension on PatientSettings {
     Wrapped<List<OrderedItem>?>? events,
     Wrapped<EventSettings?>? eventSettings,
     Wrapped<MetricSettings?>? metricSettings,
+    Wrapped<MetricGroupSettings?>? groups,
   }) {
     return PatientSettings(
       patientId: (patientId != null ? patientId.value : this.patientId),
@@ -5142,6 +5151,7 @@ extension $PatientSettingsExtension on PatientSettings {
       metricSettings: (metricSettings != null
           ? metricSettings.value
           : this.metricSettings),
+      groups: (groups != null ? groups.value : this.groups),
     );
   }
 }
@@ -7312,6 +7322,7 @@ class UserSettings {
     this.events,
     this.eventSettings,
     this.metricSettings,
+    this.groups,
   });
 
   factory UserSettings.fromJson(Map<String, dynamic> json) =>
@@ -7344,6 +7355,8 @@ class UserSettings {
   final EventSettings? eventSettings;
   @JsonKey(name: 'metricSettings')
   final MetricSettings? metricSettings;
+  @JsonKey(name: 'groups')
+  final MetricGroupSettings? groups;
   static const fromJsonFactory = _$UserSettingsFromJson;
 
   @override
@@ -7383,7 +7396,9 @@ class UserSettings {
                 const DeepCollectionEquality().equals(
                   other.metricSettings,
                   metricSettings,
-                )));
+                )) &&
+            (identical(other.groups, groups) ||
+                const DeepCollectionEquality().equals(other.groups, groups)));
   }
 
   @override
@@ -7399,6 +7414,7 @@ class UserSettings {
       const DeepCollectionEquality().hash(events) ^
       const DeepCollectionEquality().hash(eventSettings) ^
       const DeepCollectionEquality().hash(metricSettings) ^
+      const DeepCollectionEquality().hash(groups) ^
       runtimeType.hashCode;
 }
 
@@ -7412,6 +7428,7 @@ extension $UserSettingsExtension on UserSettings {
     List<OrderedItem>? events,
     EventSettings? eventSettings,
     MetricSettings? metricSettings,
+    MetricGroupSettings? groups,
   }) {
     return UserSettings(
       version: version ?? this.version,
@@ -7422,6 +7439,7 @@ extension $UserSettingsExtension on UserSettings {
       events: events ?? this.events,
       eventSettings: eventSettings ?? this.eventSettings,
       metricSettings: metricSettings ?? this.metricSettings,
+      groups: groups ?? this.groups,
     );
   }
 
@@ -7434,6 +7452,7 @@ extension $UserSettingsExtension on UserSettings {
     Wrapped<List<OrderedItem>?>? events,
     Wrapped<EventSettings?>? eventSettings,
     Wrapped<MetricSettings?>? metricSettings,
+    Wrapped<MetricGroupSettings?>? groups,
   }) {
     return UserSettings(
       version: (version != null ? version.value : this.version),
@@ -7450,6 +7469,7 @@ extension $UserSettingsExtension on UserSettings {
       metricSettings: (metricSettings != null
           ? metricSettings.value
           : this.metricSettings),
+      groups: (groups != null ? groups.value : this.groups),
     );
   }
 }

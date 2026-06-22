@@ -512,18 +512,14 @@ MetricSettings _$MetricSettingsFromJson(Map<String, dynamic> json) =>
               ?.map((e) => OrderedItem.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      groups: json['groups'] == null
-          ? null
-          : MetricGroupSettings.fromJson(
-              json['groups'] as Map<String, dynamic>,
-            ),
+      groups: json['groups'],
     );
 
 Map<String, dynamic> _$MetricSettingsToJson(
   MetricSettings instance,
 ) => <String, dynamic>{
   'displaySettings': instance.displaySettings.map((e) => e.toJson()).toList(),
-  'groups': instance.groups?.toJson(),
+  'groups': instance.groups,
 };
 
 MetricType _$MetricTypeFromJson(Map<String, dynamic> json) => MetricType(
@@ -666,6 +662,9 @@ PatientSettings _$PatientSettingsFromJson(
   metricSettings: json['metricSettings'] == null
       ? null
       : MetricSettings.fromJson(json['metricSettings'] as Map<String, dynamic>),
+  groups: json['groups'] == null
+      ? null
+      : MetricGroupSettings.fromJson(json['groups'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$PatientSettingsToJson(PatientSettings instance) =>
@@ -679,6 +678,7 @@ Map<String, dynamic> _$PatientSettingsToJson(PatientSettings instance) =>
       'events': instance.events?.map((e) => e.toJson()).toList(),
       'eventSettings': instance.eventSettings?.toJson(),
       'metricSettings': instance.metricSettings?.toJson(),
+      'groups': instance.groups?.toJson(),
     };
 
 PatientsSettings _$PatientsSettingsFromJson(Map<String, dynamic> json) =>
@@ -1103,6 +1103,9 @@ UserSettings _$UserSettingsFromJson(Map<String, dynamic> json) => UserSettings(
   metricSettings: json['metricSettings'] == null
       ? null
       : MetricSettings.fromJson(json['metricSettings'] as Map<String, dynamic>),
+  groups: json['groups'] == null
+      ? null
+      : MetricGroupSettings.fromJson(json['groups'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$UserSettingsToJson(UserSettings instance) =>
@@ -1115,6 +1118,7 @@ Map<String, dynamic> _$UserSettingsToJson(UserSettings instance) =>
       'events': instance.events?.map((e) => e.toJson()).toList(),
       'eventSettings': instance.eventSettings?.toJson(),
       'metricSettings': instance.metricSettings?.toJson(),
+      'groups': instance.groups?.toJson(),
     };
 
 ApiImportTypePost$RequestBody _$ApiImportTypePost$RequestBodyFromJson(
