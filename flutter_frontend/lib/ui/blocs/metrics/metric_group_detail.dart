@@ -11,7 +11,7 @@ import 'package:helse/ui/common/notification.dart';
 class MetricGroupDetail extends StatefulWidget {
   final DateTimeRange<DateTime> date;
   final int? person;
-  final MetricGroup group;
+  final Group group;
 
   const MetricGroupDetail(this.date, this.person, this.group, {super.key});
 

@@ -13,7 +13,7 @@ import '../../common/notification.dart';
 
 class MetricsGroup extends StatefulWidget {
   final int? person;
-  final MetricGroup group;
+  final Group group;
   final DateTimeRange date;
 
   const MetricsGroup({

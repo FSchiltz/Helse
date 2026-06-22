@@ -39,7 +39,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
   int _groupId = 0;
   int _unit = 0;
 
-  List<MetricGroup> _groups = [];
+  List<Group> _groups = [];
   List<Unit> _units = [];
 
   String? validateName(String? value) {
@@ -208,7 +208,6 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
             visible: _visible,
             showOnDashboard: _showDashboard,
             groupId: _groupId,
-            userEditable: true,
             valueCount: valueCount,
             timeDifference: timeDifference,
           );
@@ -224,7 +223,6 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
             visible: _visible,
             showOnDashboard: _showDashboard,
             groupId: _groupId,
-            userEditable: true,
             valueCount: valueCount,
             timeDifference: timeDifference,
           );
@@ -253,7 +251,7 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
 
   Future<void> _loadGroup() async {
     var result = (await Dependencies.services.metric.metricsGroup()) ?? [];
-    result.add(MetricGroup(name: "Choose", description: '', id: 0));
+    result.add(Group(name: "Choose", description: '', id: 0));
     setState(() {
       _groups = result;
     });

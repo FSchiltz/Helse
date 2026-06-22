@@ -806,8 +806,8 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<dynamic>> _apiMetricsTypeGroupsPost({
-    required MetricGroup? body,
+  Future<Response<dynamic>> _apiMetricsGroupsPost({
+    required CreateGroup? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
       summary: '',
@@ -819,7 +819,7 @@ final class _$Helseapi extends Helseapi {
       deprecated: false,
     ),
   }) {
-    final Uri $url = Uri.parse('/api/metrics/type/groups');
+    final Uri $url = Uri.parse('/api/metrics/groups');
     final $body = body;
     final Request $request = Request(
       'POST',
@@ -832,8 +832,8 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<dynamic>> _apiMetricsTypeGroupsPut({
-    required MetricGroup? body,
+  Future<Response<dynamic>> _apiMetricsGroupsPut({
+    required UpdateGroup? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
       summary: '',
@@ -845,7 +845,7 @@ final class _$Helseapi extends Helseapi {
       deprecated: false,
     ),
   }) {
-    final Uri $url = Uri.parse('/api/metrics/type/groups');
+    final Uri $url = Uri.parse('/api/metrics/groups');
     final $body = body;
     final Request $request = Request(
       'PUT',
@@ -858,7 +858,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<List<MetricGroup>>> _apiMetricsTypeGroupsGet({
+  Future<Response<List<Group>>> _apiMetricsGroupsGet({
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
       summary: '',
@@ -870,18 +870,18 @@ final class _$Helseapi extends Helseapi {
       deprecated: false,
     ),
   }) {
-    final Uri $url = Uri.parse('/api/metrics/type/groups');
+    final Uri $url = Uri.parse('/api/metrics/groups');
     final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
       tag: swaggerMetaData,
     );
-    return client.send<List<MetricGroup>, MetricGroup>($request);
+    return client.send<List<Group>, Group>($request);
   }
 
   @override
-  Future<Response<dynamic>> _apiMetricsTypeGroupsIdDelete({
+  Future<Response<dynamic>> _apiMetricsGroupsIdDelete({
     required int? id,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -894,7 +894,7 @@ final class _$Helseapi extends Helseapi {
       deprecated: false,
     ),
   }) {
-    final Uri $url = Uri.parse('/api/metrics/type/groups/${id}');
+    final Uri $url = Uri.parse('/api/metrics/groups/${id}');
     final Request $request = Request(
       'DELETE',
       $url,
@@ -1060,7 +1060,7 @@ final class _$Helseapi extends Helseapi {
 
   @override
   Future<Response<dynamic>> _apiEventsTypePost({
-    required EventType? body,
+    required CreateEventType? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
       summary: '',
@@ -1086,7 +1086,7 @@ final class _$Helseapi extends Helseapi {
 
   @override
   Future<Response<dynamic>> _apiEventsTypePut({
-    required EventType? body,
+    required UpdateEventType? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
       summary: '',

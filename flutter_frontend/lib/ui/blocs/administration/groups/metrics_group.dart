@@ -10,7 +10,7 @@ import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 class MetricGroupView extends StatelessWidget {
   const MetricGroupView({super.key});
 
-  Future<List<MetricGroup>> _getGroupData(bool refresh) async {
+  Future<List<Group>> _getGroupData(bool refresh) async {
     return await Dependencies.services.metric.metricsGroup() ?? [];
   }
 
@@ -114,7 +114,7 @@ class MetricGroupView extends StatelessWidget {
     );
   }
 
-  Future<void> _deleteGroup(MetricGroup type) async {
+  Future<void> _deleteGroup(Group type) async {
     var id = type.id;
     try {
       if (id != null) {

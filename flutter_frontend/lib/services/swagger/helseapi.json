@@ -974,7 +974,7 @@
         }
       }
     },
-    "/api/metrics/type/groups": {
+    "/api/metrics/groups": {
       "post": {
         "tags": [
           "MetricsLogic"
@@ -983,7 +983,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MetricGroup"
+                "$ref": "#/components/schemas/CreateGroup"
               }
             }
           },
@@ -1006,7 +1006,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MetricGroup"
+                "$ref": "#/components/schemas/UpdateGroup"
               }
             }
           },
@@ -1033,7 +1033,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/MetricGroup"
+                    "$ref": "#/components/schemas/Group"
                   }
                 }
               }
@@ -1045,7 +1045,7 @@
         }
       }
     },
-    "/api/metrics/type/groups/{id}": {
+    "/api/metrics/groups/{id}": {
       "delete": {
         "tags": [
           "MetricsLogic"
@@ -1325,7 +1325,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EventType"
+                "$ref": "#/components/schemas/CreateEventType"
               }
             }
           },
@@ -1348,7 +1348,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EventType"
+                "$ref": "#/components/schemas/UpdateEventType"
               }
             }
           },
@@ -2215,6 +2215,66 @@
           }
         }
       },
+      "CreateEventType": {
+        "required": [
+          "name",
+          "groupId"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "standAlone": {
+            "type": "boolean"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "timeDifference": {
+            "pattern": "^-?(\\d+\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$",
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "groupId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          }
+        }
+      },
+      "CreateGroup": {
+        "required": [
+          "name",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "showOnDashboard": {
+            "type": "boolean"
+          },
+          "showTitle": {
+            "type": "boolean"
+          }
+        }
+      },
       "CreateMetric": {
         "required": [
           "date",
@@ -2266,7 +2326,6 @@
         "required": [
           "unit",
           "name",
-          "userEditable",
           "groupId"
         ],
         "type": "object",
@@ -2293,9 +2352,6 @@
           },
           "type": {
             "$ref": "#/components/schemas/MetricDataType"
-          },
-          "userEditable": {
-            "type": "boolean"
           },
           "visible": {
             "type": "boolean"
@@ -2557,13 +2613,24 @@
       },
       "EventType": {
         "required": [
-          "name",
           "id",
           "userEditable",
+          "name",
           "groupId"
         ],
         "type": "object",
         "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "userEditable": {
+            "type": "boolean"
+          },
           "name": {
             "type": "string"
           },
@@ -2577,17 +2644,6 @@
             "type": "boolean"
           },
           "visible": {
-            "type": "boolean"
-          },
-          "id": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int64"
-          },
-          "userEditable": {
             "type": "boolean"
           },
           "timeDifference": {
@@ -2665,6 +2721,35 @@
           "Line",
           "Bar"
         ]
+      },
+      "Group": {
+        "required": [
+          "name",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "showOnDashboard": {
+            "type": "boolean"
+          },
+          "showTitle": {
+            "type": "boolean"
+          }
+        }
       },
       "IFormFile": {
         "type": "string",
@@ -2955,35 +3040,6 @@
           "NumberRange"
         ]
       },
-      "MetricGroup": {
-        "required": [
-          "name",
-          "description"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "showOnDashboard": {
-            "type": "boolean"
-          },
-          "showTitle": {
-            "type": "boolean"
-          },
-          "id": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int64"
-          }
-        }
-      },
       "MetricGroupSettings": {
         "required": [
           "displaySettings"
@@ -3026,8 +3082,8 @@
         "required": [
           "id",
           "unit",
-          "name",
           "userEditable",
+          "name",
           "groupId"
         ],
         "type": "object",
@@ -3043,6 +3099,9 @@
           "unit": {
             "$ref": "#/components/schemas/Unit"
           },
+          "userEditable": {
+            "type": "boolean"
+          },
           "name": {
             "type": "string"
           },
@@ -3057,9 +3116,6 @@
           },
           "type": {
             "$ref": "#/components/schemas/MetricDataType"
-          },
-          "userEditable": {
-            "type": "boolean"
           },
           "visible": {
             "type": "boolean"
@@ -3794,6 +3850,83 @@
           }
         }
       },
+      "UpdateEventType": {
+        "required": [
+          "id",
+          "name",
+          "groupId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "standAlone": {
+            "type": "boolean"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "timeDifference": {
+            "pattern": "^-?(\\d+\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$",
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "groupId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          }
+        }
+      },
+      "UpdateGroup": {
+        "required": [
+          "name",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "showOnDashboard": {
+            "type": "boolean"
+          },
+          "showTitle": {
+            "type": "boolean"
+          }
+        }
+      },
       "UpdateMetric": {
         "required": [
           "date",
@@ -3854,7 +3987,6 @@
           "id",
           "unit",
           "name",
-          "userEditable",
           "groupId"
         ],
         "type": "object",
@@ -3889,9 +4021,6 @@
           },
           "type": {
             "$ref": "#/components/schemas/MetricDataType"
-          },
-          "userEditable": {
-            "type": "boolean"
           },
           "visible": {
             "type": "boolean"

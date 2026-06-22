@@ -10,12 +10,12 @@ class EventService extends ApiService {
     return await call(() => api.apiEventsTypeGet(all: all));
   }
 
-  Future<void> addEventsType(EventType event) async {
+  Future<void> addEventsType(CreateEventType event) async {
     var api = await getService();
     await call(() => api.apiEventsTypePost(body: event));
   }
 
-  Future<void> updateEventsType(EventType event) async {
+  Future<void> updateEventsType(UpdateEventType event) async {
     var api = await getService();
     await call(() => api.apiEventsTypePut(body: event));
   }

@@ -31,7 +31,7 @@ class _EventTypeAddState extends State<EventTypeAdd> {
   bool _visible = true;
   int _groupId = 0;
 
-  List<MetricGroup> _groups = [];
+  List<Group> _groups = [];
 
   @override
   void initState() {
@@ -116,7 +116,7 @@ class _EventTypeAddState extends State<EventTypeAdd> {
 
   Future<void> _loadGroup() async {
     var result = (await Dependencies.services.metric.metricsGroup()) ?? [];
-    result.add(MetricGroup(name: "Choose", description: '', id: 0));
+    result.add(Group(name: "Choose", description: '', id: 0));
     setState(() {
       _groups = result;
     });
@@ -130,20 +130,26 @@ class _EventTypeAddState extends State<EventTypeAdd> {
             ? null
             : _timeDifference.text;
 
-        final event = EventType(
-          description: _description.text,
-          name: _name.text,
-          standAlone: true,
-          id: widget.edit?.id ?? 0,
-          visible: _visible,
-          userEditable: true,
-          timeDifference: timeDifference,
-          groupId: _groupId,
-        );
-
         if (widget.edit == null) {
+          final event = CreateEventType(
+            description: _description.text,
+            name: _name.text,
+            standAlone: true,
+            visible: _visible,
+            timeDifference: timeDifference,
+            groupId: _groupId,
+          );
           await Dependencies.services.event.addEventsType(event);
         } else {
+          final event = UpdateEventType(
+            description: _description.text,
+            name: _name.text,
+            standAlone: true,
+            id: widget.edit?.id ?? 0,
+            visible: _visible,
+            timeDifference: timeDifference,
+            groupId: _groupId,
+          );
           await Dependencies.services.event.updateEventsType(event);
         }
 

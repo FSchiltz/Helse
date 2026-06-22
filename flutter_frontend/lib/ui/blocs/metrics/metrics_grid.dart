@@ -21,7 +21,7 @@ class MetricsGrid extends StatefulWidget {
 }
 
 class _MetricsGridState extends State<MetricsGrid> {
-  List<MetricGroup>? _groups;
+  List<Group>? _groups;
   Map<int, List<MetricType>>? _metrics;
   Map<int, List<EventType>>? _events;
 
@@ -38,7 +38,7 @@ class _MetricsGridState extends State<MetricsGrid> {
           await Dependencies.services.metric.metricsType(true, null) ?? [];
       final events = await Dependencies.services.event.eventsType(true) ?? [];
 
-      List<MetricGroup> filtered = [];
+      List<Group> filtered = [];
       if (model == null) {
         filtered = [];
       } else {
@@ -95,7 +95,7 @@ class _MetricsGridState extends State<MetricsGrid> {
           );
   }
 
-  Widget _getGrid(List<MetricGroup> cached) {
+  Widget _getGrid(List<Group> cached) {
     if (cached.isEmpty) {
       return Text(Translation.of(context).nodata);
     } else {
