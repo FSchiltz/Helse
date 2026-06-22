@@ -25,11 +25,11 @@ class MetricsSettings extends StatefulWidget {
 }
 
 class _MetricsSettingsState extends State<MetricsSettings> {
-  Future<(List<OrderedEditItem>, List<OrderedEditItem>)> _getData(
-    bool refresh,
-  ) async {
+  Future<(List<OrderedEditItem>, List<OrderedEditItem>, List<OrderedEditItem>)>
+  _getData(bool refresh) async {
     MetricSettings metrics;
     MetricGroupSettings groups;
+    EventSettings events;
 
     if (widget.isPatient) {
       var settings = Dependencies.logics.patientsSettings.patientSettings(
@@ -37,10 +37,16 @@ class _MetricsSettingsState extends State<MetricsSettings> {
       );
       metrics = settings.metricSettings ?? MetricSettings(displaySettings: []);
       groups = settings.groups ?? MetricGroupSettings(displaySettings: []);
+      events =
+          settings.eventSettings ??
+          EventSettings(displaySettings: [], displayValueSettings: []);
     } else {
       var settings = Dependencies.logics.settings.userSettings();
       metrics = settings.metricSettings ?? MetricSettings(displaySettings: []);
       groups = settings.groups ?? MetricGroupSettings(displaySettings: []);
+      events =
+          settings.eventSettings ??
+          EventSettings(displaySettings: [], displayValueSettings: []);
     }
 
     var editGroups = groups.displaySettings
@@ -49,13 +55,17 @@ class _MetricsSettingsState extends State<MetricsSettings> {
     var editMetrics = metrics.displaySettings
         .map((e) => OrderedEditItem.of(e))
         .toList();
+    var editEvents = events.displaySettings
+        .map((e) => OrderedEditItem.of(e))
+        .toList();
 
-    return (editGroups, editMetrics);
+    return (editGroups, editMetrics, editEvents);
   }
 
   Future<void> _submit(
     List<OrderedEditItem> metrics,
     List<OrderedEditItem> groups,
+    List<OrderedEditItem> events,
     AppLocalizations locale,
   ) async {
     try {
@@ -104,7 +114,9 @@ class _MetricsSettingsState extends State<MetricsSettings> {
       builder: (context, tree, reset) {
         final groups = tree.$1;
         final metrics = tree.$2;
+        final events = tree.$3;
         final grouped = metrics.groupListsBy((e) => e.parent);
+        final groupedEvent = events.groupListsBy((e) => e.parent);
 
         return Padding(
           padding: const EdgeInsets.all(24),
@@ -115,7 +127,7 @@ class _MetricsSettingsState extends State<MetricsSettings> {
                 child: SizedBox(
                   width: 120,
                   child: SquareButton(locale.save, () async {
-                    await _submit(metrics, groups, locale);
+                    await _submit(metrics, groups, events, locale);
                     reset();
                   }),
                 ),
@@ -125,54 +137,42 @@ class _MetricsSettingsState extends State<MetricsSettings> {
                 child: ListView(
                   shrinkWrap: true,
                   children: groups.map((group) {
+                    final metric = grouped[group.id] ?? [];
+                    final event = groupedEvent[group.id] ?? [];
                     return Padding(
                       padding: const EdgeInsets.only(
                         bottom: UIConstants.formPad,
                       ),
-                      child: CommonCard(
-                        padding: false,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  left: BorderSide(
-                                    color: Dependencies.theme.stateColor(
-                                      group.id.toString(),
-                                      StateType.metricGroup,
-                                      context,
-                                    ),
-                                    width: 8,
-                                  ),
-                                ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            left: BorderSide(
+                              color: Dependencies.theme.stateColor(
+                                group.id.toString(),
+                                StateType.metricGroup,
+                                context,
                               ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: UIConstants.formPad,
-                                vertical: UIConstants.formPad,
-                              ),
-                              child: HelseSwitch(group.name, group.visible, (
-                                value,
-                              ) {
-                                group.visible = value;
-                              }),
+                              width: 8,
                             ),
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  left: BorderSide(
-                                    color: Dependencies.theme.stateColor(
-                                      group.id.toString(),
-                                      StateType.metricGroup,
-                                      context,
-                                    ),
-                                    width: 8,
-                                  ),
+                          ),
+                        ),
+                        child: CommonCard(
+                          padding: false,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: UIConstants.formPad,
                                 ),
+                                child: HelseSwitch(group.name, group.visible, (
+                                  value,
+                                ) {
+                                  group.visible = value;
+                                }),
                               ),
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: DataTable(
+                              if (metric.isNotEmpty)
+                                DataTable(
                                   columns: [
                                     DataColumn(
                                       label: Expanded(child: Text(locale.name)),
@@ -198,7 +198,7 @@ class _MetricsSettingsState extends State<MetricsSettings> {
                                       ),
                                     ),
                                   ],
-                                  rows: (grouped[group.id] ?? [])
+                                  rows: metric
                                       .map(
                                         (item) => DataRow(
                                           cells: [
@@ -268,9 +268,55 @@ class _MetricsSettingsState extends State<MetricsSettings> {
                                       )
                                       .toList(),
                                 ),
-                              ),
-                            ),
-                          ],
+                              if (event.isNotEmpty)
+                                DataTable(
+                                  columns: [
+                                    DataColumn(
+                                      label: Expanded(child: Text(locale.name)),
+                                    ),
+                                    DataColumn(
+                                      label: Expanded(
+                                        child: Text(locale.visible),
+                                      ),
+                                    ),
+                                    DataColumn(
+                                      label: Expanded(
+                                        child: Text(locale.showOnDashboard),
+                                      ),
+                                    ),
+                                  ],
+                                  rows: event
+                                      .map(
+                                        (item) => DataRow(
+                                          cells: [
+                                            DataCell(
+                                              Text(
+                                                item.name,
+                                                style:
+                                                    theme.textTheme.titleLarge,
+                                              ),
+                                            ),
+                                            DataCell(
+                                              StatefullCheck(
+                                                item.visible,
+                                                (value) => item.visible = value,
+                                              ),
+                                            ),
+                                            DataCell(
+                                              StatefullCheck(
+                                                item.showOnDashboard,
+                                                (value) =>
+                                                    item.showOnDashboard =
+                                                        value,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                      .toList(),
+                                ),
+                            ],
+                          ),
                         ),
                       ),
                     );

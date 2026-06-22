@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/localSettings/metric_settings.dart';
-import 'package:helse/ui/blocs/localSettings/event_settings.dart';
 import 'package:helse/ui/blocs/localSettings/general_settings.dart';
 import 'package:helse/ui/blocs/localSettings/sync_settings.dart';
 import 'package:helse/ui/blocs/localSettings/user_sessions.dart';
@@ -20,7 +19,6 @@ class LocalSettingsPage extends StatelessWidget {
         GeneralSettings(),
         SyncSettings(),
         MetricsSettings(),
-        EventsSettings(),
         UserSessions(),
       ],
       menu: [
@@ -38,11 +36,6 @@ class LocalSettingsPage extends StatelessWidget {
           icon: Icon(Icons.post_add_sharp),
           selectedIcon: Icon(Icons.post_add_outlined),
           label: locale.metrics,
-        ),
-        MenuDestination(
-          icon: Icon(Icons.event_repeat_sharp),
-          selectedIcon: Icon(Icons.event_repeat_outlined),
-          label: locale.events,
         ),
         MenuDestination(
           icon: Icon(Icons.network_locked_sharp),
