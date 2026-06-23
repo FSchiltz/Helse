@@ -30,7 +30,7 @@ class _MetricsGridState extends State<MetricsGrid> {
   @override
   void initState() {
     super.initState();
-    _getData();
+    Future.delayed(Duration.zero, () => _getData());
   }
 
   void _getData() async {

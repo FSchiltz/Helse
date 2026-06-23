@@ -45,7 +45,8 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    _getUser();
+
+    Future.delayed(Duration.zero, () => _getUser());
     Dependencies.blocs.fit.start();
     _startTaskResultJob(Dependencies.blocs.jobs);
   }
