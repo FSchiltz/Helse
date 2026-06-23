@@ -145,8 +145,9 @@ class _MetricAddState extends State<MetricAdd> {
         setState(() {
           _status = SubmissionStatus.success;
         });
-        Notify.show(locale.added);
+
         if (localContext.mounted) {
+          Notify.show(locale.added, localContext);
           Navigator.of(localContext).pop();
         }
 
@@ -157,7 +158,9 @@ class _MetricAddState extends State<MetricAdd> {
         });
       }
     } catch (ex) {
-      Notify.showError(locale.error(ex.toString()));
+      if (localContext.mounted) {
+        Notify.showError(locale.error(ex.toString()), localContext);
+      }
     }
   }
 }

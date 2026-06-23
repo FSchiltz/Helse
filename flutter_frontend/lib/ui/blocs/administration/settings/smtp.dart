@@ -80,7 +80,7 @@ class _SmtpFormViewState extends State<SmtpFormView> {
           const SizedBox(height: UIConstants.formPad),
           SizedBox(
             width: 200,
-            child: SquareButton(locale.save, () => submit(locale)),
+            child: SquareButton(locale.save, () => submit(context)),
           ),
         ],
       ),
@@ -169,7 +169,8 @@ class _SmtpFormViewState extends State<SmtpFormView> {
     ];
   }
 
-  void submit(AppLocalizations locale) async {
+  void submit(BuildContext context) async {
+    final locale = Translation.of(context);
     try {
       if (_formKey.currentState?.validate() ?? false) {
         final smtp = Smtp(
@@ -188,11 +189,13 @@ class _SmtpFormViewState extends State<SmtpFormView> {
 
         await Dependencies.services.settings.updateSmtp(smtp);
 
-        Notify.show(locale.saved);
+        if (context.mounted) Notify.show(locale.saved, context);
         widget.callback();
       }
     } catch (ex) {
-      Notify.showError(locale.error(ex.toString()));
+      if (context.mounted) {
+        Notify.showError(locale.error(ex.toString()), context);
+      }
     }
   }
 }

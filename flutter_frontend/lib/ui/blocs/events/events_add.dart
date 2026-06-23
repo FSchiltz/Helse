@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
@@ -35,7 +34,8 @@ class _EventAddState extends State<EventAdd> {
   final TextEditingController _tag = TextEditingController();
   bool _notify = false;
 
-  void _submit(AppLocalizations locale) async {
+  void _submit() async {
+    final locale = Translation.of(context);
     var localContext = context;
     try {
       setState(() {
@@ -80,8 +80,8 @@ class _EventAddState extends State<EventAdd> {
           _status = SubmissionStatus.success;
         });
 
-        Notify.show(locale.added);
         if (localContext.mounted) {
+          Notify.show(locale.added, localContext);
           Navigator.of(localContext).pop();
         }
       } catch (_) {
@@ -90,7 +90,9 @@ class _EventAddState extends State<EventAdd> {
         });
       }
     } catch (ex) {
-      Notify.showError(locale.error(ex.toString()));
+      if (localContext.mounted) {
+        Notify.showError(locale.error(ex.toString()), localContext);
+      }
     }
   }
 
@@ -117,7 +119,7 @@ class _EventAddState extends State<EventAdd> {
       actions: [
         _status == SubmissionStatus.inProgress
             ? const HelseLoader()
-            : SquareButton(locale.submit, () => _submit(locale)),
+            : SquareButton(locale.submit, _submit),
       ],
       content: Form(
         child: SingleChildScrollView(

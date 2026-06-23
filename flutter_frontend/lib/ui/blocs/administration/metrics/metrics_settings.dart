@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 
@@ -22,23 +23,25 @@ class _SettingsViewState extends State<MetricSettingsView> {
       _getData,
       builder: (context, data, reset) => Form(
         key: _formKey,
-        child: Column(
-          children: [
+        child: Column(children: [
           ],
         ),
       ),
     );
   }
 
-  void submit() async {
+  void submit(BuildContext localContext) async {
+    final locale = Translation.of(context);
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the settings
 
-        Notify.show("Saved Successfully");
+        Notify.show("Saved Successfully", context);
       }
     } catch (ex) {
-      Notify.showError("Error: $ex");
+      if (localContext.mounted) {
+        Notify.showError(locale.error(ex.toString()), localContext);
+      }
     }
   }
 }

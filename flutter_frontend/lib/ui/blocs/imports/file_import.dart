@@ -2,7 +2,6 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/inputs/values_input.dart';
@@ -51,7 +50,7 @@ class _FileImportState extends State<FileImport> {
       actions: [
         status == SubmissionStatus.inProgress
             ? const HelseLoader()
-            : SquareButton(locale.submit, () => submit(locale)),
+            : SquareButton(locale.submit, submit),
       ],
       content: SingleChildScrollView(
         padding: const EdgeInsets.all(30.0),
@@ -90,8 +89,9 @@ class _FileImportState extends State<FileImport> {
     );
   }
 
-  void submit(AppLocalizations locale) async {
-    var localContext = context;
+  void submit() async {
+    final locale = Translation.of(context);
+    final localContext = context;
     if (selected != null) {
       setState(() {
         status = SubmissionStatus.inProgress;
@@ -110,12 +110,14 @@ class _FileImportState extends State<FileImport> {
           status = SubmissionStatus.success;
         });
 
-        Notify.show("Imported");
         if (localContext.mounted) {
+          Notify.show(locale.added, localContext);
           Navigator.of(localContext).pop();
         }
       } catch (ex) {
-        Notify.showError(locale.error(ex.toString()));
+        if (localContext.mounted) {
+          Notify.showError(locale.error(ex.toString()), localContext);
+        }
 
         setState(() {
           status = SubmissionStatus.failure;

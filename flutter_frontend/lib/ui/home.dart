@@ -57,13 +57,17 @@ class _HomeState extends State<Home> {
   }
 
   void _getUser() {
+    final localContext = context;
+    final locale = Translation.of(context);
     try {
       var model = Dependencies.logics.authentication.getUser();
       setState(() {
         user = model;
       });
     } catch (ex) {
-      Notify.showError("Error: $ex");
+      if (localContext.mounted) {
+        Notify.showError(locale.error(ex.toString()), localContext);
+      }
     }
   }
 

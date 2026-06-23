@@ -274,6 +274,8 @@ class _LoginState extends State<LoginPage> {
   }
 
   Future<void> _submitOauth(OauthConnection oauth) async {
+    final localContext = context;
+    final locale = Translation.of(context);
     var init = _initStatus;
     var url = _url;
     if (init != null && url != null) {
@@ -292,7 +294,9 @@ class _LoginState extends State<LoginPage> {
 
         return;
       } catch (ex) {
-        Notify.showError('Failed to start the oauth process:$ex');
+        if (localContext.mounted) {
+          Notify.showError(locale.error(ex.toString()), localContext);
+        }
       }
     }
 
@@ -309,7 +313,7 @@ class _LoginState extends State<LoginPage> {
     });
 
     if (oAuth != null) {
-      Notify.show("Oauth in progress");
+      Notify.show("Oauth in progress", context);
     }
 
     var init = _initStatus?.init;
@@ -325,7 +329,7 @@ class _LoginState extends State<LoginPage> {
     var password = oAuth ?? _controllerPassword.text;
 
     if (oAuth == null && (user.isEmpty || password.isEmpty)) {
-      Notify.showError("Invalid login flow");
+      Notify.showError("Invalid login flow", context);
       setState(() {
         _status = SubmissionStatus.initial;
       });

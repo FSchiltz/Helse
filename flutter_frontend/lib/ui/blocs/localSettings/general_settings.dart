@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/di/dependencies.dart';
-import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:helse/ui/common/inputs/color_selector.dart';
@@ -33,24 +32,25 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   DatePreset _range = DatePreset.today;
   Map<StateType, List<ColoredValue>> _colors = {};
 
-  Future<void> themeCallback(
-    InterfaceTheme? value,
-    AppLocalizations locale,
-  ) async {
+  Future<void> themeCallback(InterfaceTheme? value) async {
     if (value == null) return;
     // save the settings
     _theme = value;
-    await _submitTheme(locale);
+    await _submitTheme();
   }
 
-  Future<void> _submitTheme(AppLocalizations locale) async {
+  Future<void> _submitTheme() async {
+    final locale = Translation.of(context);
+    final localContext = context;
     try {
       // save the user's settings
       await Dependencies.logics.settings.saveTheme(_theme);
 
-      Notify.show(locale.saved);
+      if (localContext.mounted) Notify.show(locale.saved, localContext);
     } catch (ex) {
-      Notify.showError(locale.error(ex.toString()));
+      if (localContext.mounted) {
+        Notify.showError(locale.error(ex.toString()), localContext);
+      }
     }
   }
 
@@ -101,14 +101,18 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     return 1;
   }
 
-  Future<void> rangeCallback(DatePreset? value, AppLocalizations locale) async {
+  Future<void> rangeCallback(DatePreset? value) async {
+    final locale = Translation.of(context);
+    final localContext = context;
     if (value == null) return;
     try {
       _range = value;
       await Dependencies.logics.settings.setDateRange(value);
-      Notify.show(locale.saved);
+      if (localContext.mounted) Notify.show(locale.saved, localContext);
     } catch (ex) {
-      Notify.showError(locale.error(ex.toString()));
+      if (localContext.mounted) {
+        Notify.showError(locale.error(ex.toString()), localContext);
+      }
     }
   }
 
@@ -137,7 +141,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   SizedBox(
                     width: 200,
                     child: ValuesInput(_getThemeValues(), (value) async {
-                      await themeCallback(value, locale);
+                      await themeCallback(value);
                       reset();
                     }, value: _theme),
                   ),
@@ -145,7 +149,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                     width: 200,
                     child: ValuesInput(
                       _getRangeValues(context),
-                      (v) async => await rangeCallback(v, locale),
+                      (v) async => await rangeCallback(v),
                       value: _range,
                     ),
                   ),
@@ -162,7 +166,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   SizedBox(
                     width: 120,
                     child: SquareButton(locale.save, () async {
-                      await _submit(_colors, locale);
+                      await _submit(_colors);
                       reset();
                     }),
                   ),
@@ -243,10 +247,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     );
   }
 
-  Future<void> _submit(
-    Map<StateType, List<ColoredValue>> colors,
-    AppLocalizations locale,
-  ) async {
+  Future<void> _submit(Map<StateType, List<ColoredValue>> colors) async {
+    final locale = Translation.of(context);
+    final localContext = context;
     try {
       var mapped = colors.map(
         (key, value) => MapEntry(key, {for (var e in value) e.key: e.color}),
@@ -255,9 +258,11 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       await Dependencies.logics.settings.setColors(mapped);
       Dependencies.theme.loadColors(mapped);
 
-      Notify.show(locale.saved);
+      if (localContext.mounted) Notify.show(locale.saved, localContext);
     } catch (ex) {
-      Notify.showError(locale.error(ex.toString()));
+      if (localContext.mounted) {
+        Notify.showError(locale.error(ex.toString()), localContext);
+      }
     }
   }
 

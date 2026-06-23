@@ -159,12 +159,14 @@ class _EventTypeAddState extends State<EventTypeAdd> {
         widget.callback?.call();
 
         if (localContext.mounted) {
-          Notify.show(locale.saved);
+          Notify.show(locale.saved, localContext);
           Navigator.of(localContext).pop();
         }
       }
     } catch (ex) {
-      Notify.showError(locale.error(ex.toString()));
+      if (localContext.mounted) {
+        Notify.showError(locale.error(ex.toString()), localContext);
+      }
       log(ex.toString());
     }
   }
