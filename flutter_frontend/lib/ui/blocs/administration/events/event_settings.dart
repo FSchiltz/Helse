@@ -31,18 +31,18 @@ class _SettingsViewState extends State<EventSettingsView> {
     );
   }
 
-  void submit() async {
+  void submit(BuildContext context) async {
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the settings
         // await AppState.settings?.save();
 
-        Notify.show("Saved Successfully");
+        Notify.show("Saved Successfully", context);
 
         //_resetSettings();
       }
     } catch (ex) {
-      Notify.show("Error: $ex");
+      Notify.show("Error: $ex", context);
     }
   }
 }

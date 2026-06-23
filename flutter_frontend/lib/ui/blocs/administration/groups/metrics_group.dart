@@ -53,10 +53,12 @@ class MetricGroupView extends StatelessWidget {
             SingleChildScrollView(
               child: FittedBox(
                 child: DataTable(
-                  columns:  [
+                  columns: [
                     DataColumn(label: Expanded(child: Text(locale.id))),
                     DataColumn(label: Expanded(child: Text(locale.name))),
-                    DataColumn(label: Expanded(child: Text(locale.description))),
+                    DataColumn(
+                      label: Expanded(child: Text(locale.description)),
+                    ),
                     DataColumn(label: Expanded(child: Text(locale.visible))),
                     DataColumn(label: Expanded(child: Text(""))),
                   ],
@@ -69,7 +71,7 @@ class MetricGroupView extends StatelessWidget {
                             DataCell(Text(type.description)),
                             DataCell(
                               Checkbox(
-                                value: type.showOnDashboard?? false,
+                                value: type.showOnDashboard ?? false,
                                 onChanged: null,
                               ),
                             ),
@@ -119,10 +121,10 @@ class MetricGroupView extends StatelessWidget {
     try {
       if (id != null) {
         await Dependencies.services.metric.deleteMetricsGroup(id);
-        Notify.show('Metric group ${type.name} deleted');
+        Notify.simple('Metric group ${type.name} deleted');
       }
     } catch (ex) {
-      Notify.showError('Error deleting metric group ${type.name}');
+      Notify.simple('Error deleting metric group ${type.name}');
     }
   }
 }

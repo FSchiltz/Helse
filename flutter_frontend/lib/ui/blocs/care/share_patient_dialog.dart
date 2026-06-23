@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
@@ -54,7 +53,7 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
                   ? const HelseLoader()
                   : SquareButton(
                       locale.share,
-                      (caregiver > 0) ? () => _submit(locale) : null,
+                      (caregiver > 0) ? _submit : null,
                     ),
             ],
           );
@@ -88,8 +87,9 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
     ];
   }
 
-  void _submit(AppLocalizations locale) async {
-    var localContext = context;
+  void _submit() async {
+    final locale = Translation.of(context);
+    final localContext = context;
     try {
       setState(() {
         _status = SubmissionStatus.inProgress;
@@ -105,11 +105,11 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
           edit: edit,
         );
 
-        Notify.show(locale.saved);
         setState(() {
           _status = SubmissionStatus.success;
         });
         if (localContext.mounted) {
+          Notify.show(locale.added, localContext);
           Navigator.of(localContext).pop();
         }
       } catch (_) {
@@ -118,7 +118,9 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
         });
       }
     } catch (ex) {
-      Notify.showError(locale.error(ex.toString()));
+      if (localContext.mounted) {
+        Notify.showError(locale.error(ex.toString()), localContext);
+      }
     }
   }
 }

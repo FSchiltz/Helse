@@ -110,7 +110,7 @@ class MetricTypeView extends StatelessWidget {
                                     if (type.userEditable == true)
                                       IconButton(
                                         onPressed: () async {
-                                          await _deleteType(type);
+                                          await _deleteType(type, context);
                                           reset();
                                         },
                                         icon: const Icon(Icons.delete_sharp),
@@ -132,13 +132,16 @@ class MetricTypeView extends StatelessWidget {
     );
   }
 
-  Future<void> _deleteType(MetricType type) async {
+  Future<void> _deleteType(MetricType type, BuildContext context) async {
     var id = type.id;
+    final locale = Translation.of(context);
     try {
       await Dependencies.services.metric.deleteMetricsType(id);
-      Notify.show('Metric ${type.name} deleted');
+      if (context.mounted) Notify.show('Metric ${type.name} deleted', context);
     } catch (ex) {
-      Notify.showError('Error deleting metric ${type.name}');
+      if (context.mounted) {
+        Notify.showError(locale.error(ex.toString()), context);
+      }
     }
   }
 

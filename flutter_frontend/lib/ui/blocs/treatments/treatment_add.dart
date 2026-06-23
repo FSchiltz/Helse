@@ -1,6 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/inputs/values_input.dart';
@@ -35,8 +36,9 @@ class _TreatementState extends State<TreatmentAdd> {
     return await Dependencies.services.treatement.treatmentTypes() ?? [];
   }
 
-  void _submit(AppLocalizations locale) async {
-    var localContext = context;
+  void _submit() async {
+    final locale = Translation.of(context);
+    final localContext = context;
 
     setState(() {
       _status = SubmissionStatus.inProgress;
@@ -55,15 +57,18 @@ class _TreatementState extends State<TreatmentAdd> {
         _status = SubmissionStatus.success;
       });
 
-      Notify.show(locale.added);
       if (localContext.mounted) {
+        Notify.show(locale.added, localContext);
         Navigator.of(localContext).pop();
       }
     } catch (ex) {
       setState(() {
         _status = SubmissionStatus.failure;
       });
-      Notify.showError(locale.error(ex.toString()));
+      if (localContext.mounted) {
+        Notify.showError(locale.error(ex.toString()), localContext);
+      }
+      log(ex.toString());
     }
   }
 
@@ -76,7 +81,7 @@ class _TreatementState extends State<TreatmentAdd> {
         SizedBox(
           child: _status == SubmissionStatus.inProgress
               ? const HelseLoader()
-              : SquareButton(locale.submit, () => _submit(locale)),
+              : SquareButton(locale.submit, _submit),
         ),
       ],
       content: Padding(

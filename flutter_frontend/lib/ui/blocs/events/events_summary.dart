@@ -124,7 +124,7 @@ class EventTimeline extends StatelessWidget {
                   entry.key,
                   StateType.eventValue,
                   context,
-                ),
+                ), 
               ),
               width: 12 * widthCoeff,
               height: (coeff * count).ceilToDouble(),

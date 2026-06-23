@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
@@ -83,14 +82,15 @@ class _ProxyFormViewState extends State<ProxyFormView> {
           const SizedBox(height: UIConstants.formPad),
           SizedBox(
             width: 200,
-            child: SquareButton(locale.save, () => submit(locale)),
+            child: SquareButton(locale.save, () => submit(context)),
           ),
         ],
       ),
     );
   }
 
-  void submit(AppLocalizations locale) async {
+  void submit(BuildContext context) async {
+    final locale = Translation.of(context);
     try {
       if (_formKey.currentState?.validate() ?? false) {
         // save the user
@@ -102,12 +102,14 @@ class _ProxyFormViewState extends State<ProxyFormView> {
           ),
         );
 
-        Notify.show(locale.saved);
+        if (context.mounted) Notify.show(locale.saved, context);
 
         widget.callback();
       }
     } catch (ex) {
-      Notify.showError(locale.error(ex.toString()));
+      if (context.mounted) {
+        Notify.showError(locale.error(ex.toString()), context);
+      }
     }
   }
 

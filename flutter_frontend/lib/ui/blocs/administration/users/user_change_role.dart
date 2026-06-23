@@ -72,14 +72,14 @@ class _ChangeRoleState extends State<ChangeRole> {
       );
 
       widget.callback.call();
-
       if (localContext.mounted) {
+        Notify.show(locale.saved, localContext);
         Navigator.of(localContext).pop();
       }
-
-      Notify.show(locale.saved);
     } catch (ex) {
-      Notify.showError(locale.error(ex.toString()));
+      if (localContext.mounted) {
+        Notify.showError(locale.error(ex.toString()), localContext);
+      }
     }
   }
 }

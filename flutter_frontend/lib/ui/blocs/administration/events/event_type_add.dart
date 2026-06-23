@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
@@ -156,13 +158,16 @@ class _EventTypeAddState extends State<EventTypeAdd> {
         _formKey.currentState?.reset();
         widget.callback?.call();
 
-        Notify.show(locale.saved);
         if (localContext.mounted) {
+          Notify.show(locale.saved, localContext);
           Navigator.of(localContext).pop();
         }
       }
     } catch (ex) {
-      Notify.showError(locale.error(ex.toString()));
+      if (localContext.mounted) {
+        Notify.showError(locale.error(ex.toString()), localContext);
+      }
+      log(ex.toString());
     }
   }
 

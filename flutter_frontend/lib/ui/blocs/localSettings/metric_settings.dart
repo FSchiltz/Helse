@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart' hide TableRow;
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/localSettings/ordered_edit_item.dart';
@@ -87,7 +86,9 @@ class _MetricsSettingsState extends State<MetricsSettings> {
     );
   }
 
-  Future<void> _submit(_SettingsData data, AppLocalizations locale) async {
+  Future<void> _submit(_SettingsData data) async {
+    final locale = Translation.of(context);
+    final localContext = context;
     try {
       var metricsToSave = data.metrics.map((e) => e.ordered()).toList();
       var eventsToSave = data.events.map((e) => e.ordered()).toList();
@@ -124,10 +125,11 @@ class _MetricsSettingsState extends State<MetricsSettings> {
           true,
         );
       }
-
-      Notify.show(locale.saved);
+      if (localContext.mounted) Notify.show(locale.saved, localContext);
     } catch (ex) {
-      Notify.showError(locale.error(ex.toString()));
+      if (localContext.mounted) {
+        Notify.showError(locale.error(ex.toString()), localContext);
+      }
     }
   }
 
@@ -147,7 +149,7 @@ class _MetricsSettingsState extends State<MetricsSettings> {
                 child: SizedBox(
                   width: 120,
                   child: SquareButton(locale.save, () async {
-                    await _submit(data, locale);
+                    await _submit(data);
                     reset();
                   }),
                 ),

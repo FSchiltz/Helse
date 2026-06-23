@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/ui_constants.dart';
@@ -83,7 +84,7 @@ class EventTypeView extends StatelessWidget {
                                   if (type.userEditable == true)
                                     IconButton(
                                       onPressed: () async {
-                                        await deleteType(type);
+                                        await deleteType(type, context);
                                         reset();
                                       },
                                       icon: const Icon(Icons.delete_sharp),
@@ -104,13 +105,16 @@ class EventTypeView extends StatelessWidget {
     );
   }
 
-  Future<void> deleteType(EventType type) async {
+  Future<void> deleteType(EventType type, BuildContext context) async {
+    final locale = Translation.of(context);
     var id = type.id;
     try {
       await Dependencies.services.event.deleteEventsType(id);
-      Notify.show('Event ${type.name} deleted');
+      if (context.mounted) Notify.show('Event ${type.name} deleted', context);
     } catch (ex) {
-      Notify.showError('Error deleting event ${type.name}');
+      if (context.mounted) {
+        Notify.showError(locale.error(ex.toString()), context);
+      }
     }
   }
 }

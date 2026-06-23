@@ -144,7 +144,9 @@ class _LoginState extends State<LoginPage> {
                                             _initStatus?.init == true
                                                 ? locale.login
                                                 : locale.create,
-                                            _submit,
+                                            _initStatus?.init == true
+                                                ? _login
+                                                : _create,
                                           ),
                                           const SizedBox(
                                             height: UIConstants.headerPad,
@@ -231,7 +233,7 @@ class _LoginState extends State<LoginPage> {
           }
         } else if (isInit.externalAuth == true) {
           // directly start the login procedure
-          await _submit(oAuth: 'Header');
+          await _submit('Header');
         }
       }
 
@@ -274,89 +276,163 @@ class _LoginState extends State<LoginPage> {
   }
 
   Future<void> _submitOauth(OauthConnection oauth) async {
+    final localContext = context;
+    final locale = Translation.of(context);
     var init = _initStatus;
     var url = _url;
     if (init != null && url != null) {
-      log("Oauth started");
-      setState(() {
-        _status = SubmissionStatus.inProgress;
-      });
+      _start();
       try {
         var grant = await Dependencies.services.authService.getGrant(
           url,
           oauth,
         );
         if (grant != null) {
-          await _submit(oAuth: grant);
+          await _submit(grant);
         }
 
         return;
       } catch (ex) {
-        Notify.showError('Failed to start the oauth process:$ex');
+        if (localContext.mounted) {
+          Notify.showError(locale.error(ex.toString()), localContext);
+        }
       }
     }
 
     Dependencies.logics.authentication.logOut(false);
+    _reset();
+  }
+
+  void _start() {
+    log('Login started');
     setState(() {
+      _loginError = null;
+      _status = SubmissionStatus.inProgress;
+    });
+  }
+
+  void _reset({String? error}) {
+    setState(() {
+      _loginError = error;
       _status = SubmissionStatus.initial;
     });
   }
 
-  Future<void> _submit({String? oAuth}) async {
-    log('Login started');
+  void _success() {
     setState(() {
-      _status = SubmissionStatus.inProgress;
+      _status = SubmissionStatus.success;
     });
+  }
 
-    if (oAuth != null) {
-      Notify.show("Oauth in progress");
-    }
+  Future<void> _create() async {
+    _start();
 
-    var init = _initStatus?.init;
+    var user = _controllerUsername.text;
+    var password = _controllerPassword.text;
+    var name = _controllerName.text;
+    var surname = _controllerSurname.text;
     var url = _url;
-    if (init == null || url == null) {
-      setState(() {
-        _status = SubmissionStatus.initial;
-      });
+
+    if (url == null) {
+      _reset();
       return;
     }
 
-    var user = _controllerUsername.text;
-    var password = oAuth ?? _controllerPassword.text;
-
-    if (oAuth == null && (user.isEmpty || password.isEmpty)) {
-      Notify.showError("Invalid login flow");
-      setState(() {
-        _status = SubmissionStatus.initial;
-      });
+    if (user.isEmpty) {
+      _reset(error: "Missing username");
       return;
     }
     try {
-      await Dependencies.logics.authentication.startLogin(
-        init: init,
-        oauth: oAuth != null,
+      var person = PersonCreation(
+        types: [UserType.admin],
+        userName: user,
         password: password,
+        name: name,
+        surname: surname,
+      );
+      await Dependencies.logics.authentication.initAccount(
         url: url,
-        user: user,
-        name: _controllerName.text,
-        surname: _controllerSurname.text,
+        person: person,
       );
 
-      log('Login successful');
-      setState(() {
-        _loginError = null;
-        _status = SubmissionStatus.success;
-      });
+      _success();
     } catch (ex) {
       log('error of login: $ex');
       // clear any info about the login
       await Dependencies.logics.authentication.logOut(false);
 
       // we start the login process again
-      setState(() {
-        _loginError = "Login failed";
-        _status = SubmissionStatus.initial;
-      });
+      _reset(error: "Login failed");
+    }
+  }
+
+  Future<void> _login() async {
+    _start();
+
+    var user = _controllerUsername.text;
+    var password = _controllerPassword.text;
+    var url = _url;
+
+    if (url == null) {
+      _reset();
+      return;
+    }
+
+    if (user.isEmpty) {
+      _reset(error: "Missing username");
+
+      return;
+    }
+    try {
+      await Dependencies.logics.authentication.logIn(
+        url: url,
+        connection: Connection(user: user, password: password),
+      );
+
+      _success();
+    } catch (ex) {
+      log('error of login: $ex');
+      // clear any info about the login
+      await Dependencies.logics.authentication.logOut(false);
+
+      _reset(error: "Login failed");
+    }
+  }
+
+  Future<void> _submit(String oAuth) async {
+    _start();
+
+    Notify.show("Oauth in progress", context);
+
+    var init = _initStatus?.init;
+    var url = _url;
+    if (init == null || url == null) {
+      _reset();
+      return;
+    }
+
+    var user = _controllerUsername.text;
+    var password = oAuth;
+
+    if (user.isEmpty) {
+      _reset(error: "Missing username");
+      return;
+    }
+
+    try {
+      await Dependencies.logics.authentication.startOauthLogin(
+        password: password,
+        url: url,
+        user: user,
+      );
+
+      _success();
+    } catch (ex) {
+      log('error of login: $ex');
+      // clear any info about the login
+      await Dependencies.logics.authentication.logOut(false);
+
+      _reset(error: "Login failed");
     }
   }
 

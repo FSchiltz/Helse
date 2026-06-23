@@ -33,7 +33,7 @@ class HealthConnectLogic {
         permissions: existingTypes.map((e) => HealthDataAccess.READ).toList(),
       );
     } catch (error) {
-      Notify.showError(error.toString());
+      Notify.simple(error.toString());
     }
 
     // If we are trying to read Step Count, Workout, Sleep or other data that requires

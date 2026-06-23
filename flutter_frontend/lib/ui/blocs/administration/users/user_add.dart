@@ -126,13 +126,15 @@ class _SignupState extends State<UserAdd> {
         _formKey.currentState?.reset();
         widget.callback?.call();
 
-        Notify.show(locale.saved);
         if (localContext.mounted) {
+          Notify.show(locale.saved, localContext);
           Navigator.of(localContext).pop();
         }
       }
     } catch (ex) {
-      Notify.showError(locale.error(ex.toString()));
+      if (localContext.mounted) {
+        Notify.showError(locale.error(ex.toString()), localContext);
+      }
     }
   }
 

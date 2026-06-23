@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,10 +30,12 @@ class _MetricsGridState extends State<MetricsGrid> {
   @override
   void initState() {
     super.initState();
-    _getData();
+    Future.delayed(Duration.zero, () => _getData());
   }
 
   void _getData() async {
+    final locale = Translation.of(context);
+    final localContext = context;
     try {
       final model = await Dependencies.services.metric.metricsGroup();
       final metrics =
@@ -116,7 +120,10 @@ class _MetricsGridState extends State<MetricsGrid> {
         _metrics = orderedMetric;
       });
     } catch (ex) {
-      Notify.showError("$ex");
+      if (localContext.mounted) {
+        Notify.showError(locale.error(ex.toString()), localContext);
+      }
+      log(ex.toString());
     }
   }
 
