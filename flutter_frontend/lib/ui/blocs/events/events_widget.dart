@@ -6,6 +6,7 @@ import 'package:helse/ui/blocs/events/events_summary.dart';
 import 'package:helse/ui/blocs/events/events_timeline_graph.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import 'events_add.dart';
@@ -107,17 +108,19 @@ class _EventWidgetState extends State<EventWidget> {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: 200),
-                    child: (hasFullData)
-                        ? EventsTimelineGraph(
+                  padding: const EdgeInsets.all(UIConstants.formPad),
+                  child: (hasFullData)
+                      ? ConstrainedBox(
+                          constraints: BoxConstraints(minHeight: 100),
+                          child: EventsTimelineGraph(
                             data.events,
                             widget.date,
                             widthCoef: 0.8,
-                          )
-                        : EventsSummary(summaries, widget.date),
-                  ),
+                          ),
+                        )
+                      : SizedBox(
+                        height: 200,
+                        child: EventsSummary(summaries, widget.date)),
                 ),
               ],
             ),
