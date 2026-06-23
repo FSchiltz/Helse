@@ -138,56 +138,27 @@ class AuthenticationLogic {
     return url;
   }
 
-  Future<bool> startLogin({
-    bool init = false,
-    bool oauth = false,
+  Future<void> startOauthLogin({
     required String url,
     required String user,
     required String password,
-    String? name,
-    String? surname,
   }) async {
-    bool creating = false;
-    if (init || oauth) {
-      String? issuer;
-      String? redirect;
+    String? issuer;
+    String? redirect;
 
-      if (oauth) {
-        issuer = getClientId();
-        redirect = getRedirect();
-      }
-      log('Auth with: $issuer - $redirect');
+    issuer = getClientId();
+    redirect = getRedirect();
+    log('Auth with: $issuer - $redirect');
 
-      await logIn(
-        url: url,
-        connection: Connection(
-          user: user,
-          password: password,
-          issuer: issuer,
-          redirect: redirect,
-        ),
-      );
-    } else {
-      creating = true;
-      var person = PersonCreation(
-        types: [UserType.admin],
-        userName: user,
+    await logIn(
+      url: url,
+      connection: Connection(
+        user: user,
         password: password,
-        name: name,
-        surname: surname,
-      );
-      await initAccount(url: url, person: person);
-
-      // after a succes, we auto login
-      await logIn(
-        url: url,
-        connection: Connection(user: user, password: password),
-      );
-
-      await clean();
-    }
-
-    return creating;
+        issuer: issuer,
+        redirect: redirect,
+      ),
+    );
   }
 
   void listen() async {
@@ -207,13 +178,7 @@ class AuthenticationLogic {
           var url = account.get(Account.url);
 
           set(AuthenticationStatus.unauthenticated);
-          await startLogin(
-            init: true,
-            oauth: true,
-            password: code,
-            url: url ?? '',
-            user: "",
-          );
+          await startOauthLogin(password: code, url: url ?? '', user: "");
         }
       }
     });
