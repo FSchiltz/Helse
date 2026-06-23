@@ -1,8 +1,7 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-
-import '../../ui/common/notification.dart';
 import '../event.dart';
 
 class Execution {
@@ -64,7 +63,7 @@ class TaskBloc extends Cubit<SubmissionStatus> {
         ),
       );
       emit(SubmissionStatus.failure);
-      Notify.showError("$ex");
+      log("$ex");
     }
   }
 }

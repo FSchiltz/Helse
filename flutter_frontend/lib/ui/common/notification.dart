@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:toastification/toastification.dart';
+import 'package:helse/main.dart';
 
 class Notify {
   static void showError(String content) {
-    toastification.show(
-      title: Text(content),
-      type: ToastificationType.error,
-      style: ToastificationStyle.minimal,
-      alignment: Alignment.centerRight,
-      autoCloseDuration: const Duration(seconds: 5)
+    final snackBar = SnackBar(
+      content: Text(content),
+      duration: const Duration(seconds: 3),
+      showCloseIcon: true,
     );
+
+    // Find the ScaffoldMessenger in the widget tree
+    // and use it to show a SnackBar.
+    snackbarKey.currentState?.showSnackBar(snackBar);
   }
 
   static void show(String content) {
-    toastification.show(
-      title: Text(content),
-      type: ToastificationType.success,
-      style: ToastificationStyle.minimal,
-      alignment: Alignment.centerRight,
-      autoCloseDuration: const Duration(seconds: 5)
+    final snackBar = SnackBar(
+      content: Text(content),
+      duration: const Duration(seconds: 3),
+      showCloseIcon: true,
     );
+
+    // Find the ScaffoldMessenger in the widget tree
+    // and use it to show a SnackBar.
+    snackbarKey.currentState?.showSnackBar(snackBar);
   }
 }

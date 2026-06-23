@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import '../../ui/common/notification.dart';
 import '../event.dart';
 
 class StatusBloc extends Cubit<SubmissionStatus> {
@@ -35,7 +35,7 @@ class StatusBloc extends Cubit<SubmissionStatus> {
       } catch (ex) {
         _running = false;
         emit(SubmissionStatus.failure);
-        Notify.showError("$ex");
+        log("$ex");
       }
     });
   }
