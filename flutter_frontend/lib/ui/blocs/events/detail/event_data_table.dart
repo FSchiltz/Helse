@@ -42,6 +42,7 @@ class _EventDataTableState extends State<EventDataTable> {
     super.didUpdateWidget(oldWidget);
     if (widget.count != oldWidget.count) {
       _page = 0;
+      _events = [];
       _search();
     }
   }
@@ -143,6 +144,10 @@ class _EventDataTableState extends State<EventDataTable> {
 
       setState(() {
         _events = events;
+      });
+    } else {
+      setState(() {
+        _events = [];
       });
     }
   }

@@ -41,6 +41,7 @@ class _MetricDataTableState extends State<MetricDataTable> {
   void didUpdateWidget(covariant MetricDataTable oldWidget) {
     super.didUpdateWidget(oldWidget);
     _page = 0;
+    _metrics = [];
     _search();
   }
 
