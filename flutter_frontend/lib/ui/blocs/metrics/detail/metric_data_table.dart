@@ -28,6 +28,7 @@ class MetricDataTable extends StatefulWidget {
 
 class _MetricDataTableState extends State<MetricDataTable> {
   List<Metric> _metrics = [];
+  List<Metric> _selected = [];
   int _page = 0;
 
   @override
@@ -49,6 +50,7 @@ class _MetricDataTableState extends State<MetricDataTable> {
   Widget build(BuildContext context) {
     final locale = Translation.of(context);
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Pagination(
           count: widget.count,
@@ -62,6 +64,18 @@ class _MetricDataTableState extends State<MetricDataTable> {
           },
         ),
         DataTable(
+          showCheckboxColumn: true,
+          onSelectAll: (value) {
+            if (value == true) {
+              setState(() {
+                _selected = _metrics.toList();
+              });
+            } else {
+              setState(() {
+                _selected = [];
+              });
+            }
+          },
           columns: [
             DataColumn(label: Expanded(child: Text("Id"))),
             DataColumn(label: Expanded(child: Text(locale.value))),
@@ -72,6 +86,16 @@ class _MetricDataTableState extends State<MetricDataTable> {
           ],
           rows: _metrics.map((m) {
             return DataRow(
+              selected: _selected.contains(m),
+              onSelectChanged: (v) {
+                setState(() {
+                  if (v = true) {
+                    _selected.add(m);
+                  } else {
+                    _selected.remove(m);
+                  }
+                });
+              },
               cells: [
                 DataCell(Text((m.id).toString())),
                 DataCell(Text('${m.value} ${widget.type.unit.code}')),

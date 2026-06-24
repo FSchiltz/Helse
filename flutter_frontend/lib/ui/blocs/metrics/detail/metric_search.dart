@@ -45,7 +45,7 @@ class _MetricSearchState extends State<MetricSearch> {
           padding: const EdgeInsets.all(UIConstants.formPad),
           child: SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Wrap(
