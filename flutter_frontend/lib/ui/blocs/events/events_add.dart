@@ -42,54 +42,48 @@ class _EventAddState extends State<EventAdd> {
         _status = SubmissionStatus.inProgress;
       });
 
-      try {
-        if (widget.edit != null) {
-          var event = UpdateEvent(
-            start: _start.toUtc(),
-            stop: _stop.toUtc(),
-            type: widget.type.id,
-            description: _description.text,
-            id: widget.edit?.id,
-            notificationTime: _notify ? _notification?.toUtc() : null,
-            source: widget.edit?.source,
-            sourceId: widget.edit?.sourceId,
-            tag: _tag.text,
-          );
-          await Dependencies.services.event.updateEvent(
-            event,
-            person: widget.person,
-          );
-        } else {
-          var event = CreateEvent(
-            start: _start.toUtc(),
-            stop: _stop.toUtc(),
-            type: widget.type.id,
-            description: _description.text,
-            notificationTime: _notify ? _notification?.toUtc() : null,
-            source: FileTypes.none,
-            sourceId: '',
-            tag: _tag.text,
-          );
-          await Dependencies.services.event.addEvent(
-            event,
-            person: widget.person,
-          );
-        }
-        widget.callback.call();
-        setState(() {
-          _status = SubmissionStatus.success;
-        });
+      if (widget.edit != null) {
+        var event = UpdateEvent(
+          start: _start.toUtc(),
+          stop: _stop.toUtc(),
+          type: widget.type.id,
+          description: _description.text,
+          id: widget.edit?.id,
+          notificationTime: _notify ? _notification?.toUtc() : null,
+          source: widget.edit?.source,
+          sourceId: widget.edit?.sourceId,
+          tag: _tag.text,
+        );
+        await Dependencies.services.event.updateEvent(event);
+      } else {
+        var event = CreateEvent(
+          start: _start.toUtc(),
+          stop: _stop.toUtc(),
+          type: widget.type.id,
+          description: _description.text,
+          notificationTime: _notify ? _notification?.toUtc() : null,
+          source: FileTypes.none,
+          sourceId: '',
+          tag: _tag.text,
+        );
+        await Dependencies.services.event.addEvent(
+          event,
+          person: widget.person,
+        );
+      }
+      widget.callback.call();
+      setState(() {
+        _status = SubmissionStatus.success;
+      });
 
-        if (localContext.mounted) {
-          Notify.show(locale.added, localContext);
-          Navigator.of(localContext).pop();
-        }
-      } catch (_) {
-        setState(() {
-          _status = SubmissionStatus.failure;
-        });
+      if (localContext.mounted) {
+        Notify.show(locale.added, localContext);
+        Navigator.of(localContext).pop();
       }
     } catch (ex) {
+      setState(() {
+        _status = SubmissionStatus.failure;
+      });
       if (localContext.mounted) {
         Notify.showError(locale.error(ex.toString()), localContext);
       }

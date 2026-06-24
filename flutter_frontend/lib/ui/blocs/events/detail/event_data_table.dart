@@ -3,8 +3,9 @@ import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/ui/blocs/events/delete_event.dart';
+import 'package:helse/ui/blocs/events/detail/event_bulk_edition.dart';
 import 'package:helse/ui/blocs/events/events_add.dart';
-import 'package:helse/ui/blocs/metrics/delete_metric.dart';
 import 'package:helse/ui/common/pagination.dart';
 
 class EventDataTable extends StatefulWidget {
@@ -54,6 +55,12 @@ class _EventDataTableState extends State<EventDataTable> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        EventBulkEdition(
+          person: widget.person,
+          type: widget.type,
+          events: _selected,
+          callback: widget.reset,
+        ),
         Pagination(
           count: widget.count,
           pageSize: 50,
@@ -139,7 +146,7 @@ class _EventDataTableState extends State<EventDataTable> {
                               showDialog<void>(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return DeleteMetric(() async {
+                                  return DeleteEvent(() async {
                                     await Dependencies.services.event
                                         .deleteEvent(m.id);
                                     widget.reset();
