@@ -22,15 +22,21 @@ class Pagination extends StatelessWidget {
     return Row(
       children: [
         IconButton(
-          onPressed: () => callBack(max(0, page - 1)),
+          onPressed: page <= 0 ? null : () => callBack(max(0, page - 1)),
           icon: Icon(Icons.arrow_left),
+          iconSize: 40,
+          padding: EdgeInsets.all(2),
         ),
-        Text(page.toString()),
+        Text('${page + 1} / ${maxPage + 1}'),
         SizedBox(width: UIConstants.formPad),
-        Text(count.toString()),
+        Text('$count items'),
         IconButton(
-          onPressed: () => callBack(min(maxPage, page + 1)),
+          onPressed: page >= maxPage
+              ? null
+              : () => callBack(min(maxPage, page + 1)),
           icon: Icon(Icons.arrow_right),
+          iconSize: 40,
+          padding: EdgeInsets.all(2),
         ),
       ],
     );
