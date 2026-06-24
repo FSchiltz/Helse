@@ -80,4 +80,11 @@ class EventService extends ApiService {
     var api = await getService();
     await call(() => api.apiEventsIdDelete(id: event));
   }
+
+  Future<List<Event>?> searchEvents(int? person, SearchEvent search) async {
+    var api = await getService();
+    return await call(
+      () => api.apiEventsSearchPost(body: search, personId: person),
+    );
+  }
 }

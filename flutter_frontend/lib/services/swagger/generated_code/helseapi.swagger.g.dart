@@ -795,6 +795,21 @@ Map<String, dynamic> _$RightToJson(Right instance) => <String, dynamic>{
   'type': rightTypeNullableToJson(instance.type),
 };
 
+SearchEvent _$SearchEventFromJson(Map<String, dynamic> json) => SearchEvent(
+  type: (json['type'] as num).toInt(),
+  value: json['value'] as String?,
+  from: json['from'] == null ? null : DateTime.parse(json['from'] as String),
+  to: json['to'] == null ? null : DateTime.parse(json['to'] as String),
+);
+
+Map<String, dynamic> _$SearchEventToJson(SearchEvent instance) =>
+    <String, dynamic>{
+      'type': instance.type,
+      'value': instance.value,
+      'from': instance.from?.toIso8601String(),
+      'to': instance.to?.toIso8601String(),
+    };
+
 SearchMetric _$SearchMetricFromJson(Map<String, dynamic> json) => SearchMetric(
   type: (json['type'] as num).toInt(),
   value: json['value'] as String?,

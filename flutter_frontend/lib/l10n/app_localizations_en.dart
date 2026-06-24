@@ -313,7 +313,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String searchItem(String item) {
-    return 'Search a $item';
+    return 'Search in $item';
   }
 
   @override

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/events/event_graph.dart';
+import 'package:helse/ui/blocs/events/detail/event_search.dart';
+import 'package:helse/ui/blocs/events/event_search_button.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
-import '../../../di/dependencies.dart';
-import '../../../services/swagger/generated_code/helseapi.swagger.dart';
-import 'events_add.dart';
+import '../../../../di/dependencies.dart';
+import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
+import '../events_add.dart';
 
 class EventDetailPage extends StatefulWidget {
   const EventDetailPage({
@@ -45,6 +47,8 @@ class _EventDetailPageState extends State<EventDetailPage> {
     return Scaffold(
       appBar: AppBar(
         actions: [
+          EventSearchButton(widget.type, person: widget.person),
+
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(

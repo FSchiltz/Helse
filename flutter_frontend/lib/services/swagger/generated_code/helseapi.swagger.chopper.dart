@@ -1059,6 +1059,37 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
+  Future<Response<List<Event>>> _apiEventsSearchPost({
+    int? personId,
+    required SearchEvent? body,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["EventsLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/events/search');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<List<Event>, Event>($request);
+  }
+
+  @override
   Future<Response<dynamic>> _apiEventsTypePost({
     required CreateEventType? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(

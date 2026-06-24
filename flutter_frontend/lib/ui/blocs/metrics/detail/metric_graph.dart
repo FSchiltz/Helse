@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/metric_helper.dart';
-import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
@@ -84,7 +83,6 @@ class _MetricGraphState extends State<MetricGraph> {
   @override
   Widget build(BuildContext context) {
     final metric = _metric;
-    var locale = Translation.of(context);
     return Column(
       children: [
         Padding(
@@ -130,7 +128,6 @@ class _MetricGraphState extends State<MetricGraph> {
             child: SingleChildScrollView(
               child: Center(
                 child: MetricDataTable(
-                  locale: locale,
                   metrics: metric?.metrics,
                   person: widget.person,
                   type: widget.type,

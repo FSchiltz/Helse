@@ -1123,6 +1123,36 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
+  ///@param personId
+  Future<chopper.Response<List<Event>>> apiEventsSearchPost({
+    int? personId,
+    required SearchEvent? body,
+  }) {
+    generatedMapping.putIfAbsent(Event, () => Event.fromJsonFactory);
+
+    return _apiEventsSearchPost(personId: personId, body: body);
+  }
+
+  ///
+  ///@param personId
+  @POST(path: '/api/events/search', optionalBody: true)
+  Future<chopper.Response<List<Event>>> _apiEventsSearchPost({
+    @Query('personId') int? personId,
+    @Body() required SearchEvent? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["EventsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
   Future<chopper.Response> apiEventsTypePost({required CreateEventType? body}) {
     return _apiEventsTypePost(body: body);
   }
@@ -5732,6 +5762,82 @@ extension $RightExtension on Right {
       start: (start != null ? start.value : this.start),
       stop: (stop != null ? stop.value : this.stop),
       type: (type != null ? type.value : this.type),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class SearchEvent {
+  const SearchEvent({required this.type, this.value, this.from, this.to});
+
+  factory SearchEvent.fromJson(Map<String, dynamic> json) =>
+      _$SearchEventFromJson(json);
+
+  static const toJsonFactory = _$SearchEventToJson;
+  Map<String, dynamic> toJson() => _$SearchEventToJson(this);
+
+  @JsonKey(name: 'type')
+  final int type;
+  @JsonKey(name: 'value')
+  final String? value;
+  @JsonKey(name: 'from')
+  final DateTime? from;
+  @JsonKey(name: 'to')
+  final DateTime? to;
+  static const fromJsonFactory = _$SearchEventFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is SearchEvent &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.value, value) ||
+                const DeepCollectionEquality().equals(other.value, value)) &&
+            (identical(other.from, from) ||
+                const DeepCollectionEquality().equals(other.from, from)) &&
+            (identical(other.to, to) ||
+                const DeepCollectionEquality().equals(other.to, to)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(value) ^
+      const DeepCollectionEquality().hash(from) ^
+      const DeepCollectionEquality().hash(to) ^
+      runtimeType.hashCode;
+}
+
+extension $SearchEventExtension on SearchEvent {
+  SearchEvent copyWith({
+    int? type,
+    String? value,
+    DateTime? from,
+    DateTime? to,
+  }) {
+    return SearchEvent(
+      type: type ?? this.type,
+      value: value ?? this.value,
+      from: from ?? this.from,
+      to: to ?? this.to,
+    );
+  }
+
+  SearchEvent copyWithWrapped({
+    Wrapped<int>? type,
+    Wrapped<String?>? value,
+    Wrapped<DateTime?>? from,
+    Wrapped<DateTime?>? to,
+  }) {
+    return SearchEvent(
+      type: (type != null ? type.value : this.type),
+      value: (value != null ? value.value : this.value),
+      from: (from != null ? from.value : this.from),
+      to: (to != null ? to.value : this.to),
     );
   }
 }

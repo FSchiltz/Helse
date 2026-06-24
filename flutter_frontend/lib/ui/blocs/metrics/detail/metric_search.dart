@@ -4,6 +4,7 @@ import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
+import 'package:helse/ui/common/inputs/date_input.dart';
 import 'package:helse/ui/common/loader.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
@@ -24,6 +25,8 @@ class _MetricSearchState extends State<MetricSearch> {
   final TextEditingController _min = TextEditingController();
   final TextEditingController _max = TextEditingController();
   bool _working = false;
+  DateTime? _from;
+  DateTime? _to;
 
   @override
   Widget build(BuildContext context) {
@@ -31,37 +34,35 @@ class _MetricSearchState extends State<MetricSearch> {
     var theme = Theme.of(context).colorScheme;
     return SquareDialog(
       title: Text(locale.searchItem(widget.type.name)),
-      content: SizedBox(
-        height: 500,
-        width: 500,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                ..._getFilter(theme, locale),
-                IconButton(
-                  onPressed: (_working) ? null : _search,
-                  icon: Icon(Icons.search_sharp),
-                ),
-              ],
-            ),
-            SizedBox(height: UIConstants.formPad),
-            if (_working) HelseLoader(),
-            Expanded(
-              child: SingleChildScrollView(
-                child: MetricDataTable(
-                  locale: locale,
-                  metrics: _metrics,
-                  person: widget.person,
-                  type: widget.type,
-                  reset: _search,
-                ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Wrap(
+            spacing: UIConstants.formPad,
+            runSpacing: UIConstants.formPad,
+            children: [
+              ..._getFilter(theme, locale),
+              DateInput(locale.start, _from, (v) => _from = v),
+              DateInput(locale.stop, _to, (v) => _to = v),
+              IconButton(
+                onPressed: (_working) ? null : _search,
+                icon: Icon(Icons.search_sharp),
+              ),
+            ],
+          ),
+          SizedBox(height: UIConstants.formPad),
+          if (_working) HelseLoader(),
+          Expanded(
+            child: SingleChildScrollView(
+              child: MetricDataTable(
+                metrics: _metrics,
+                person: widget.person,
+                type: widget.type,
+                reset: _search,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -81,6 +82,8 @@ class _MetricSearchState extends State<MetricSearch> {
           value: text,
           maxValue: max,
           minValue: min,
+          from: _from,
+          to: _to,
         ),
       );
       setState(() {

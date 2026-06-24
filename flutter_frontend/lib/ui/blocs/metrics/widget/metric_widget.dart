@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/metric_helper.dart';
+import 'package:helse/ui/blocs/metrics/detail/metric_add_button.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_detail_page.dart';
+import 'package:helse/ui/blocs/metrics/metric_search_button.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../metric_add.dart';
 import 'metric_condensed.dart';
 
 class MetricWidget extends StatefulWidget {
@@ -81,25 +82,19 @@ class _MetricWidgetState extends State<MetricWidget> {
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                         ),
-                        Flexible(
-                          child: SizedBox(
-                            width: 40,
-                            child: IconButton(
-                              onPressed: () {
-                                showDialog<void>(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return MetricAdd(
-                                      widget.type,
-                                      reset,
-                                      person: widget.person,
-                                    );
-                                  },
-                                );
-                              },
-                              icon: const Icon(Icons.add_sharp),
+
+                        Row(
+                          children: [
+                            MetricSearchButton(
+                              widget.type,
+                              person: widget.person,
                             ),
-                          ),
+                            MetricAddButton(
+                              widget.type,
+                              reset,
+                              person: widget.person,
+                            ),
+                          ],
                         ),
                       ],
                     ),
