@@ -70,7 +70,7 @@ internal static class EventsLogic
         }
     }
 
-    public static async Task<IResult> UpdateAsync(UpdateEvent e, long? personId, IUserContext users, IEventContext events, HttpContext context)
+    public static async Task<IResult> UpdateAsync(UpdateEvent e, IUserContext users, IEventContext events, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -83,6 +83,23 @@ internal static class EventsLogic
 
         Validate(e);
         await events.Update(e);
+
+        return TypedResults.NoContent();
+    }
+
+    public static async Task<IResult> UpdateBulkAsync(PatchEvent e, long? personId, IUserContext users, IEventContext events, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+        personId ??= user.PersonId;
+
+        if (personId != user.PersonId && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.Edit))
+            return TypedResults.Forbid();
+
+        Validate(e);
+        await events.UpdateBulk(e);
 
         return TypedResults.NoContent();
     }
@@ -106,6 +123,23 @@ internal static class EventsLogic
         await events.DeleteEvent(id);
 
         await transaction.CommitAsync();
+
+        return TypedResults.NoContent();
+    }
+
+    public async static Task<IResult> DeleteBulkAsync([FromBody] long[] ids, long? person, IUserContext users, IEventContext events, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+
+        person ??= user.PersonId;
+        if (user.PersonId != person && !await users.ValidateCaregiverAsync(user, person.Value, RightType.Edit))
+            return TypedResults.Forbid();
+
+        await events.DeleteEvents(ids, person.Value);
+
 
         return TypedResults.NoContent();
     }

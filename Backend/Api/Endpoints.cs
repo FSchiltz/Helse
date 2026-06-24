@@ -203,6 +203,10 @@ internal static class Endpoints
         .Produces((int)HttpStatusCode.NoContent)
         .Produces((int)HttpStatusCode.Unauthorized);
 
+        events.MapPost("/delete", EventsLogic.DeleteBulkAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
         events.MapPost("/search", EventsLogic.SearchAsync)
         .Produces<Event[]>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);

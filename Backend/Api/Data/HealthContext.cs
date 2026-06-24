@@ -5,7 +5,6 @@ using Helse.Models.Common;
 using Helse.Models.Persons;
 using LinqToDB;
 using LinqToDB.Data;
-using LinqToDB.Linq;
 using LinqToDB.Mapping;
 
 namespace Helse.Api.Data;
@@ -431,5 +430,35 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
         .ApplyFilter(search);
 
         return query.LongCountAsync();
+    }
+
+    public Task DeleteEvents(long[] ids, long person)
+    {
+        return Db.GetTable<Event>().DeleteAsync(x => ids.Contains(x.Id) && x.PersonId == person);
+    }
+
+    public Task UpdateBulk(Helse.Models.Events.PatchEvent e)
+    {
+        var query = Db.GetTable<Event>()
+        .Where(x => x.Id == e.Id).AsUpdatable();
+
+        if (e.UpdateStart)
+        {
+            query = query.Set(x => x.Start, e.Start);
+        }
+        if (e.UpdateStop)
+        {
+            query = query.Set(x => x.Stop, e.Stop);
+        }
+        if (e.UpdateDescription)
+        {
+            query = query.Set(x => x.Description, e.Description);
+        }
+        if (e.UpdateTag)
+        {
+            query = query.Set(x => x.Tag, e.Tag);
+        }
+
+        return query.UpdateAsync();
     }
 }

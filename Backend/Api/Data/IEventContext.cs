@@ -70,4 +70,8 @@ internal interface IEventContext : IContext
     Task<Event[]> SearchEventsAsync(long id, Helse.Models.Events.SearchEvent search, Pagination pagination);
 
     Task<long> CountEventsAsync(long id, Helse.Models.Events.SearchEvent search);
+
+    Task DeleteEvents(long[] ids, long person);
+
+    Task UpdateBulk(Helse.Models.Events.PatchEvent patch);
 }
