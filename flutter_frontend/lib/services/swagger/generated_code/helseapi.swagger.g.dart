@@ -634,6 +634,45 @@ Map<String, dynamic> _$OrderedItemToJson(OrderedItem instance) =>
       'color': instance.color,
     };
 
+PatchEvent _$PatchEventFromJson(Map<String, dynamic> json) => PatchEvent(
+  updateDescription: json['updateDescription'] as bool?,
+  updateStop: json['updateStop'] as bool?,
+  updateStart: json['updateStart'] as bool?,
+  updateTag: json['updateTag'] as bool?,
+  ids:
+      (json['ids'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toList() ??
+      [],
+  type: (json['type'] as num).toInt(),
+  description: json['description'] as String?,
+  start: DateTime.parse(json['start'] as String),
+  stop: DateTime.parse(json['stop'] as String),
+  tag: json['tag'] as String?,
+  notificationTime: json['notificationTime'] == null
+      ? null
+      : DateTime.parse(json['notificationTime'] as String),
+  source: fileTypesNullableFromJson(json['source']),
+  sourceId: json['sourceId'] as String?,
+);
+
+Map<String, dynamic> _$PatchEventToJson(PatchEvent instance) =>
+    <String, dynamic>{
+      'updateDescription': instance.updateDescription,
+      'updateStop': instance.updateStop,
+      'updateStart': instance.updateStart,
+      'updateTag': instance.updateTag,
+      'ids': instance.ids,
+      'type': instance.type,
+      'description': instance.description,
+      'start': instance.start.toIso8601String(),
+      'stop': instance.stop.toIso8601String(),
+      'tag': instance.tag,
+      'notificationTime': instance.notificationTime?.toIso8601String(),
+      'source': fileTypesNullableToJson(instance.source),
+      'sourceId': instance.sourceId,
+    };
+
 PatientSettings _$PatientSettingsFromJson(
   Map<String, dynamic> json,
 ) => PatientSettings(
@@ -794,6 +833,21 @@ Map<String, dynamic> _$RightToJson(Right instance) => <String, dynamic>{
   'stop': instance.stop?.toIso8601String(),
   'type': rightTypeNullableToJson(instance.type),
 };
+
+SearchEvent _$SearchEventFromJson(Map<String, dynamic> json) => SearchEvent(
+  type: (json['type'] as num).toInt(),
+  value: json['value'] as String?,
+  from: json['from'] == null ? null : DateTime.parse(json['from'] as String),
+  to: json['to'] == null ? null : DateTime.parse(json['to'] as String),
+);
+
+Map<String, dynamic> _$SearchEventToJson(SearchEvent instance) =>
+    <String, dynamic>{
+      'type': instance.type,
+      'value': instance.value,
+      'from': instance.from?.toIso8601String(),
+      'to': instance.to?.toIso8601String(),
+    };
 
 SearchMetric _$SearchMetricFromJson(Map<String, dynamic> json) => SearchMetric(
   type: (json['type'] as num).toInt(),

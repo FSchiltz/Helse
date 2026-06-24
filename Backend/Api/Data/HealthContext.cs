@@ -1,7 +1,10 @@
 using System.Data;
+using Helse.Api.Data.Helpers;
 using Helse.Api.Data.Models.Health;
+using Helse.Models.Common;
 using Helse.Models.Persons;
 using LinqToDB;
+using LinqToDB.Async;
 using LinqToDB.Data;
 using LinqToDB.Mapping;
 
@@ -392,40 +395,72 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
 
     public Task<MetricGroup[]> GetMetricGroups() => Db.GetTable<MetricGroup>().OrderBy(x => x.Id).ToArrayAsync();
 
-    public Task<Metric[]> SearchMetricsAsync(long person, Helse.Models.Metrics.SearchMetric search)
+    public Task<Metric[]> SearchMetricsAsync(long person, Helse.Models.Metrics.SearchMetric search, Pagination pagination)
     {
-        var query = Db.GetTable<Metric>().Where(x => x.Type == search.Type && x.PersonId == person);
-
-        if (search.From is not null)
-        {
-            query = query.Where(x => x.Date >= search.From);
-        }
-
-        if (search.To is not null)
-        {
-            query = query.Where(x => x.Date <= search.To);
-        }
-
-        if (search.Value is not null)
-        {
-            query = query.Where(x => x.Value.StartsWith(search.Value, StringComparison.CurrentCultureIgnoreCase));
-        }
-
-        if (search.IsTrue is not null)
-        {
-            query = query.Where(x => bool.Parse(x.Value) == search.IsTrue);
-        }
-
-        if (search.MinValue is not null)
-        {
-            query = query.Where(x => int.Parse(x.Value) >= search.MinValue);
-        }
-
-        if (search.MaxValue is not null)
-        {
-            query = query.Where(x => int.Parse(x.Value) <= search.MaxValue);
-        }
+        var query = Db.GetTable<Metric>()
+        .Where(x => x.Type == search.Type && x.PersonId == person)
+        .ApplyFilter(search)
+        .Skip(pagination.Page * pagination.PageSize).Take(pagination.PageSize); ;
 
         return query.ToArrayAsync();
+    }
+
+    public Task<long> CountMetricsAsync(long person, Helse.Models.Metrics.SearchMetric search)
+    {
+        var query = Db.GetTable<Metric>()
+        .Where(x => x.Type == search.Type && x.PersonId == person)
+        .ApplyFilter(search);
+
+        return query.LongCountAsync();
+    }
+
+    public Task<Event[]> SearchEventsAsync(long person, Helse.Models.Events.SearchEvent search, Pagination pagination)
+    {
+        var query = Db.GetTable<Event>()
+        .Where(x => x.Type == search.Type && x.PersonId == person)
+        .ApplyFilter(search)
+        .Skip(pagination.Page * pagination.PageSize).Take(pagination.PageSize);
+
+        return query.ToArrayAsync();
+    }
+
+    public Task<long> CountEventsAsync(long person, Helse.Models.Events.SearchEvent search)
+    {
+        var query = Db.GetTable<Event>()
+        .Where(x => x.Type == search.Type && x.PersonId == person)
+        .ApplyFilter(search);
+
+        return query.LongCountAsync();
+    }
+
+    public Task DeleteEvents(long[] ids, long person)
+    {
+        return Db.GetTable<Event>().DeleteAsync(x => ids.Contains(x.Id) && x.PersonId == person);
+    }
+
+    public Task UpdateBulk(Helse.Models.Events.PatchEvent e, long person)
+    {
+        var query = Db.GetTable<Event>()
+        .Where(x => e.Ids.Contains(x.Id))
+        .Where(x => x.PersonId == person).AsUpdatable();
+
+        if (e.UpdateStart)
+        {
+            query = query.Set(x => x.Start, e.Start);
+        }
+        if (e.UpdateStop)
+        {
+            query = query.Set(x => x.Stop, e.Stop);
+        }
+        if (e.UpdateDescription)
+        {
+            query = query.Set(x => x.Description, e.Description);
+        }
+        if (e.UpdateTag)
+        {
+            query = query.Set(x => x.Tag, e.Tag);
+        }
+
+        return query.UpdateAsync();
     }
 }

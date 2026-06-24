@@ -253,7 +253,7 @@
     },
     "color": "Color",
     "@color": {},
-    "searchItem": "Search a {item}",
+    "searchItem": "Search in {item}",
     "@searchItem": {
         "placeholders": {
             "item": {

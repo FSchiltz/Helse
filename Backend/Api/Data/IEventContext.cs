@@ -1,4 +1,5 @@
 using Helse.Api.Data.Models.Health;
+using Helse.Models.Common;
 using Helse.Models.Persons;
 
 namespace Helse.Api.Data;
@@ -65,4 +66,12 @@ internal interface IEventContext : IContext
     Task<Event[]> GetEvents(long id, RightType view, DateTime start, DateTime end);
 
     Task<Event?> ExistingEvent(long person, int type, int source, string sourceId);
+
+    Task<Event[]> SearchEventsAsync(long id, Helse.Models.Events.SearchEvent search, Pagination pagination);
+
+    Task<long> CountEventsAsync(long id, Helse.Models.Events.SearchEvent search);
+
+    Task DeleteEvents(long[] ids, long person);
+
+    Task UpdateBulk(Helse.Models.Events.PatchEvent patch, long person);
 }

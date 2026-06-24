@@ -1,6 +1,6 @@
 namespace Helse.Models.Metrics;
 
-public class SearchMetric
+public class SearchMetric 
 {
     public required long Type { get; set; }
 

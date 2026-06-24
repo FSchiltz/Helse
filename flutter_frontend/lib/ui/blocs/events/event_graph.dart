@@ -237,8 +237,8 @@ class _EventsGraphState extends State<EventsGraph> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return EventAdd(
-                                    widget.reset,
                                     widget.type,
+                                    widget.reset,
                                     person: widget.person,
                                     edit: event,
                                   );

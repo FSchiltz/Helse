@@ -2,10 +2,12 @@ using Helse.Api.Data;
 using Helse.Api.Data.Models.Common;
 using Helse.Api.Helpers;
 using Helse.Api.Mappers;
+using Helse.Models.Common;
 using Helse.Models.Imports;
 using Helse.Models.Metrics;
 using Helse.Models.Persons;
 using LinqToDB;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Helse.Api.Logic;
 
@@ -26,19 +28,7 @@ internal static class MetricsLogic
         var id = personId ?? user.PersonId;
         var metrics = await db.GetMetrics(id, type, start, end);
 
-        return TypedResults.Ok(metrics.Select(x => new Metric
-        {
-            Value = x.Value,
-            Date = x.Date,
-            Id = x.Id,
-            Person = user.PersonId,
-            Type = x.Type,
-            Tag = x.Tag,
-            User = x.UserId,
-            Source = (FileTypes)x.Source,
-            SourceId = x.SourceId,
-            Unit = x.UnitObject?.ToUnit(),
-        }));
+        return TypedResults.Ok(metrics.Select(MetricMapper.Map));
     }
 
     public async static Task<IResult> GetSummaryAsync(int tile, int type, DateTime start, DateTime end, long? personId, IUserContext users, IMetricContext db, HttpContext context)
@@ -303,7 +293,7 @@ internal static class MetricsLogic
             return TypedResults.BadRequest();
     }
 
-    internal static async Task<IResult> SearchAsync(SearchMetric search, long? personId, IUserContext users, IMetricContext db, HttpContext context)
+    internal static async Task<IResult> SearchAsync(SearchMetric search, long? personId, [AsParameters] Pagination pagination, IUserContext users, IMetricContext db, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -315,6 +305,50 @@ internal static class MetricsLogic
             return TypedResults.BadRequest("Wrong metric type");
         }
 
+        var validation = Validate(search, type);
+        if (validation is not null)
+        {
+            return validation;
+        }
+
+        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.View))
+            return TypedResults.Forbid();
+
+        var id = personId ?? user.PersonId;
+
+        var results = await db.SearchMetricsAsync(id, search, pagination);
+        return TypedResults.Ok(results.Select(MetricMapper.Map));
+    }
+
+    internal static async Task<IResult> CountAsync(SearchMetric search, long? personId, IUserContext users, IMetricContext db, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+        var type = await db.GetMetricType(search.Type);
+        if (type is null)
+        {
+            return TypedResults.BadRequest("Wrong metric type");
+        }
+
+        var validation = Validate(search, type);
+        if (validation is not null)
+        {
+            return validation;
+        }
+
+        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.View))
+            return TypedResults.Forbid();
+
+        var id = personId ?? user.PersonId;
+
+        var results = await db.CountMetricsAsync(id, search);
+        return TypedResults.Ok(results);
+    }
+
+    private static IResult? Validate(SearchMetric search, Data.Models.Health.MetricType type)
+    {
         if (search.Value is not null)
         {
             // search by value
@@ -342,23 +376,6 @@ internal static class MetricsLogic
             return TypedResults.NotFound();
         }
 
-        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.View))
-            return TypedResults.Forbid();
-
-        var id = personId ?? user.PersonId;
-
-        var results = await db.SearchMetricsAsync(id, search);
-        return TypedResults.Ok(results.Select(x => new Metric()
-        {
-            Value = x.Value,
-            Date = x.Date,
-            Id = x.Id,
-            Person = x.PersonId,
-            SourceId = x.SourceId,
-            Type = x.Type,
-            Source = (FileTypes)x.Source,
-            Tag = x.Tag,
-            Unit = x.UnitObject.ToUnit(),
-        }).ToArray());
+        return null;
     }
 }

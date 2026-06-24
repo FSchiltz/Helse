@@ -1,4 +1,5 @@
 using Helse.Api.Data.Models.Health;
+using Helse.Models.Common;
 
 namespace Helse.Api.Data;
 
@@ -51,5 +52,7 @@ internal interface IMetricContext : IContext
 
     Task<MetricGroup[]> GetMetricGroups();
 
-    Task<Metric[]> SearchMetricsAsync(long person, Helse.Models.Metrics.SearchMetric search);
+    Task<Metric[]> SearchMetricsAsync(long person, Helse.Models.Metrics.SearchMetric search, Pagination pagination);
+
+    Task<long> CountMetricsAsync(long person, Helse.Models.Metrics.SearchMetric search);
 }

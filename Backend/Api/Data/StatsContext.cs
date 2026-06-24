@@ -3,6 +3,7 @@ using Helse.Api.Data.Models.Health;
 using Helse.Api.Data.Models.Persons;
 using Helse.Models.Common;
 using LinqToDB;
+using LinqToDB.Async;
 using LinqToDB.Data;
 
 namespace Helse.Api.Data;

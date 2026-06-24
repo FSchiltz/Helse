@@ -71,13 +71,49 @@ class EventService extends ApiService {
     await call(() => api.apiEventsPost(body: event, personId: person));
   }
 
-  Future<void> updateEvent(UpdateEvent event, {int? person}) async {
+  Future<void> updateEvent(UpdateEvent event) async {
     var api = await getService();
-    await call(() => api.apiEventsPut(body: event, personId: person));
+    await call(() => api.apiEventsPut(body: event));
   }
 
   Future<void> deleteEvent(int event) async {
     var api = await getService();
     await call(() => api.apiEventsIdDelete(id: event));
+  }
+
+  Future<List<Event>?> searchEvents(
+    int? person,
+    SearchEvent search,
+    int page,
+    int pageSize,
+  ) async {
+    var api = await getService();
+    return await call(
+      () => api.apiEventsSearchPost(
+        body: search,
+        personId: person,
+        page: page,
+        pageSize: pageSize,
+      ),
+    );
+  }
+
+  Future<int?> countEvents(int? person, SearchEvent search) async {
+    var api = await getService();
+    return await call(
+      () => api.apiEventsCountPost(body: search, personId: person),
+    );
+  }
+
+  Future<void> deleteEvents(List<Event> events, {int? person}) async {
+    var api = await getService();
+    await call(
+      () => api.apiEventsDeletePost(body: events.map((e) => e.id).toList(), person: person),
+    );
+  }
+
+  Future<void> updateEvents(PatchEvent patch, {int? person}) async {
+    var api = await getService();
+    await call(() => api.apiEventsUpdatePut(body: patch, personId: person));
   }
 }

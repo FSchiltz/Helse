@@ -729,19 +729,60 @@ abstract class Helseapi extends ChopperService {
 
   ///
   ///@param personId
+  ///@param Page
+  ///@param PageSize
   Future<chopper.Response<List<Metric>>> apiMetricsSearchPost({
     int? personId,
+    required int? page,
+    required int? pageSize,
     required SearchMetric? body,
   }) {
     generatedMapping.putIfAbsent(Metric, () => Metric.fromJsonFactory);
 
-    return _apiMetricsSearchPost(personId: personId, body: body);
+    return _apiMetricsSearchPost(
+      personId: personId,
+      page: page,
+      pageSize: pageSize,
+      body: body,
+    );
   }
 
   ///
   ///@param personId
+  ///@param Page
+  ///@param PageSize
   @POST(path: '/api/metrics/search', optionalBody: true)
   Future<chopper.Response<List<Metric>>> _apiMetricsSearchPost({
+    @Query('personId') int? personId,
+    @Query('Page') required int? page,
+    @Query('PageSize') required int? pageSize,
+    @Body() required SearchMetric? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["MetricsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param personId
+  Future<chopper.Response<int>> apiMetricsCountPost({
+    int? personId,
+    required SearchMetric? body,
+  }) {
+    return _apiMetricsCountPost(personId: personId, body: body);
+  }
+
+  ///
+  ///@param personId
+  @POST(path: '/api/metrics/count', optionalBody: true)
+  Future<chopper.Response<int>> _apiMetricsCountPost({
     @Query('personId') int? personId,
     @Body() required SearchMetric? body,
     @chopper.Tag()
@@ -1071,19 +1112,13 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  ///@param personId
-  Future<chopper.Response> apiEventsPut({
-    int? personId,
-    required UpdateEvent? body,
-  }) {
-    return _apiEventsPut(personId: personId, body: body);
+  Future<chopper.Response> apiEventsPut({required UpdateEvent? body}) {
+    return _apiEventsPut(body: body);
   }
 
   ///
-  ///@param personId
   @PUT(path: '/api/events', optionalBody: true)
   Future<chopper.Response> _apiEventsPut({
-    @Query('personId') int? personId,
     @Body() required UpdateEvent? body,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -1109,6 +1144,133 @@ abstract class Helseapi extends ChopperService {
   @DELETE(path: '/api/events/{id}')
   Future<chopper.Response> _apiEventsIdDelete({
     @Path('id') required int? id,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["EventsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param personId
+  Future<chopper.Response> apiEventsUpdatePut({
+    int? personId,
+    required PatchEvent? body,
+  }) {
+    return _apiEventsUpdatePut(personId: personId, body: body);
+  }
+
+  ///
+  ///@param personId
+  @PUT(path: '/api/events/update', optionalBody: true)
+  Future<chopper.Response> _apiEventsUpdatePut({
+    @Query('personId') int? personId,
+    @Body() required PatchEvent? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["EventsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param person
+  Future<chopper.Response> apiEventsDeletePost({
+    int? person,
+    required List<int>? body,
+  }) {
+    return _apiEventsDeletePost(person: person, body: body);
+  }
+
+  ///
+  ///@param person
+  @POST(path: '/api/events/delete', optionalBody: true)
+  Future<chopper.Response> _apiEventsDeletePost({
+    @Query('person') int? person,
+    @Body() required List<int>? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["EventsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param personId
+  ///@param Page
+  ///@param PageSize
+  Future<chopper.Response<List<Event>>> apiEventsSearchPost({
+    int? personId,
+    required int? page,
+    required int? pageSize,
+    required SearchEvent? body,
+  }) {
+    generatedMapping.putIfAbsent(Event, () => Event.fromJsonFactory);
+
+    return _apiEventsSearchPost(
+      personId: personId,
+      page: page,
+      pageSize: pageSize,
+      body: body,
+    );
+  }
+
+  ///
+  ///@param personId
+  ///@param Page
+  ///@param PageSize
+  @POST(path: '/api/events/search', optionalBody: true)
+  Future<chopper.Response<List<Event>>> _apiEventsSearchPost({
+    @Query('personId') int? personId,
+    @Query('Page') required int? page,
+    @Query('PageSize') required int? pageSize,
+    @Body() required SearchEvent? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["EventsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param personId
+  Future<chopper.Response<int>> apiEventsCountPost({
+    int? personId,
+    required SearchEvent? body,
+  }) {
+    return _apiEventsCountPost(personId: personId, body: body);
+  }
+
+  ///
+  ///@param personId
+  @POST(path: '/api/events/count', optionalBody: true)
+  Future<chopper.Response<int>> _apiEventsCountPost({
+    @Query('personId') int? personId,
+    @Body() required SearchEvent? body,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -4981,6 +5143,206 @@ extension $OrderedItemExtension on OrderedItem {
 }
 
 @JsonSerializable(explicitToJson: true)
+class PatchEvent {
+  const PatchEvent({
+    this.updateDescription,
+    this.updateStop,
+    this.updateStart,
+    this.updateTag,
+    this.ids,
+    required this.type,
+    this.description,
+    required this.start,
+    required this.stop,
+    this.tag,
+    this.notificationTime,
+    this.source,
+    this.sourceId,
+  });
+
+  factory PatchEvent.fromJson(Map<String, dynamic> json) =>
+      _$PatchEventFromJson(json);
+
+  static const toJsonFactory = _$PatchEventToJson;
+  Map<String, dynamic> toJson() => _$PatchEventToJson(this);
+
+  @JsonKey(name: 'updateDescription')
+  final bool? updateDescription;
+  @JsonKey(name: 'updateStop')
+  final bool? updateStop;
+  @JsonKey(name: 'updateStart')
+  final bool? updateStart;
+  @JsonKey(name: 'updateTag')
+  final bool? updateTag;
+  @JsonKey(name: 'ids', defaultValue: <int>[])
+  final List<int>? ids;
+  @JsonKey(name: 'type')
+  final int type;
+  @JsonKey(name: 'description')
+  final String? description;
+  @JsonKey(name: 'start')
+  final DateTime start;
+  @JsonKey(name: 'stop')
+  final DateTime stop;
+  @JsonKey(name: 'tag')
+  final String? tag;
+  @JsonKey(name: 'notificationTime')
+  final DateTime? notificationTime;
+  @JsonKey(
+    name: 'source',
+    toJson: fileTypesNullableToJson,
+    fromJson: fileTypesNullableFromJson,
+  )
+  final enums.FileTypes? source;
+  @JsonKey(name: 'sourceId')
+  final String? sourceId;
+  static const fromJsonFactory = _$PatchEventFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is PatchEvent &&
+            (identical(other.updateDescription, updateDescription) ||
+                const DeepCollectionEquality().equals(
+                  other.updateDescription,
+                  updateDescription,
+                )) &&
+            (identical(other.updateStop, updateStop) ||
+                const DeepCollectionEquality().equals(
+                  other.updateStop,
+                  updateStop,
+                )) &&
+            (identical(other.updateStart, updateStart) ||
+                const DeepCollectionEquality().equals(
+                  other.updateStart,
+                  updateStart,
+                )) &&
+            (identical(other.updateTag, updateTag) ||
+                const DeepCollectionEquality().equals(
+                  other.updateTag,
+                  updateTag,
+                )) &&
+            (identical(other.ids, ids) ||
+                const DeepCollectionEquality().equals(other.ids, ids)) &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )) &&
+            (identical(other.start, start) ||
+                const DeepCollectionEquality().equals(other.start, start)) &&
+            (identical(other.stop, stop) ||
+                const DeepCollectionEquality().equals(other.stop, stop)) &&
+            (identical(other.tag, tag) ||
+                const DeepCollectionEquality().equals(other.tag, tag)) &&
+            (identical(other.notificationTime, notificationTime) ||
+                const DeepCollectionEquality().equals(
+                  other.notificationTime,
+                  notificationTime,
+                )) &&
+            (identical(other.source, source) ||
+                const DeepCollectionEquality().equals(other.source, source)) &&
+            (identical(other.sourceId, sourceId) ||
+                const DeepCollectionEquality().equals(
+                  other.sourceId,
+                  sourceId,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(updateDescription) ^
+      const DeepCollectionEquality().hash(updateStop) ^
+      const DeepCollectionEquality().hash(updateStart) ^
+      const DeepCollectionEquality().hash(updateTag) ^
+      const DeepCollectionEquality().hash(ids) ^
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(start) ^
+      const DeepCollectionEquality().hash(stop) ^
+      const DeepCollectionEquality().hash(tag) ^
+      const DeepCollectionEquality().hash(notificationTime) ^
+      const DeepCollectionEquality().hash(source) ^
+      const DeepCollectionEquality().hash(sourceId) ^
+      runtimeType.hashCode;
+}
+
+extension $PatchEventExtension on PatchEvent {
+  PatchEvent copyWith({
+    bool? updateDescription,
+    bool? updateStop,
+    bool? updateStart,
+    bool? updateTag,
+    List<int>? ids,
+    int? type,
+    String? description,
+    DateTime? start,
+    DateTime? stop,
+    String? tag,
+    DateTime? notificationTime,
+    enums.FileTypes? source,
+    String? sourceId,
+  }) {
+    return PatchEvent(
+      updateDescription: updateDescription ?? this.updateDescription,
+      updateStop: updateStop ?? this.updateStop,
+      updateStart: updateStart ?? this.updateStart,
+      updateTag: updateTag ?? this.updateTag,
+      ids: ids ?? this.ids,
+      type: type ?? this.type,
+      description: description ?? this.description,
+      start: start ?? this.start,
+      stop: stop ?? this.stop,
+      tag: tag ?? this.tag,
+      notificationTime: notificationTime ?? this.notificationTime,
+      source: source ?? this.source,
+      sourceId: sourceId ?? this.sourceId,
+    );
+  }
+
+  PatchEvent copyWithWrapped({
+    Wrapped<bool?>? updateDescription,
+    Wrapped<bool?>? updateStop,
+    Wrapped<bool?>? updateStart,
+    Wrapped<bool?>? updateTag,
+    Wrapped<List<int>?>? ids,
+    Wrapped<int>? type,
+    Wrapped<String?>? description,
+    Wrapped<DateTime>? start,
+    Wrapped<DateTime>? stop,
+    Wrapped<String?>? tag,
+    Wrapped<DateTime?>? notificationTime,
+    Wrapped<enums.FileTypes?>? source,
+    Wrapped<String?>? sourceId,
+  }) {
+    return PatchEvent(
+      updateDescription: (updateDescription != null
+          ? updateDescription.value
+          : this.updateDescription),
+      updateStop: (updateStop != null ? updateStop.value : this.updateStop),
+      updateStart: (updateStart != null ? updateStart.value : this.updateStart),
+      updateTag: (updateTag != null ? updateTag.value : this.updateTag),
+      ids: (ids != null ? ids.value : this.ids),
+      type: (type != null ? type.value : this.type),
+      description: (description != null ? description.value : this.description),
+      start: (start != null ? start.value : this.start),
+      stop: (stop != null ? stop.value : this.stop),
+      tag: (tag != null ? tag.value : this.tag),
+      notificationTime: (notificationTime != null
+          ? notificationTime.value
+          : this.notificationTime),
+      source: (source != null ? source.value : this.source),
+      sourceId: (sourceId != null ? sourceId.value : this.sourceId),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class PatientSettings {
   const PatientSettings({
     this.patientId,
@@ -5732,6 +6094,82 @@ extension $RightExtension on Right {
       start: (start != null ? start.value : this.start),
       stop: (stop != null ? stop.value : this.stop),
       type: (type != null ? type.value : this.type),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class SearchEvent {
+  const SearchEvent({required this.type, this.value, this.from, this.to});
+
+  factory SearchEvent.fromJson(Map<String, dynamic> json) =>
+      _$SearchEventFromJson(json);
+
+  static const toJsonFactory = _$SearchEventToJson;
+  Map<String, dynamic> toJson() => _$SearchEventToJson(this);
+
+  @JsonKey(name: 'type')
+  final int type;
+  @JsonKey(name: 'value')
+  final String? value;
+  @JsonKey(name: 'from')
+  final DateTime? from;
+  @JsonKey(name: 'to')
+  final DateTime? to;
+  static const fromJsonFactory = _$SearchEventFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is SearchEvent &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.value, value) ||
+                const DeepCollectionEquality().equals(other.value, value)) &&
+            (identical(other.from, from) ||
+                const DeepCollectionEquality().equals(other.from, from)) &&
+            (identical(other.to, to) ||
+                const DeepCollectionEquality().equals(other.to, to)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(value) ^
+      const DeepCollectionEquality().hash(from) ^
+      const DeepCollectionEquality().hash(to) ^
+      runtimeType.hashCode;
+}
+
+extension $SearchEventExtension on SearchEvent {
+  SearchEvent copyWith({
+    int? type,
+    String? value,
+    DateTime? from,
+    DateTime? to,
+  }) {
+    return SearchEvent(
+      type: type ?? this.type,
+      value: value ?? this.value,
+      from: from ?? this.from,
+      to: to ?? this.to,
+    );
+  }
+
+  SearchEvent copyWithWrapped({
+    Wrapped<int>? type,
+    Wrapped<String?>? value,
+    Wrapped<DateTime?>? from,
+    Wrapped<DateTime?>? to,
+  }) {
+    return SearchEvent(
+      type: (type != null ? type.value : this.type),
+      value: (value != null ? value.value : this.value),
+      from: (from != null ? from.value : this.from),
+      to: (to != null ? to.value : this.to),
     );
   }
 }

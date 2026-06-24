@@ -139,6 +139,10 @@ internal static class Endpoints
         .Produces<Metric[]>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
+        metrics.MapPost("/count", MetricsLogic.CountAsync)
+        .Produces<long>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
         var metricsType = metrics.MapGroup("/type").RequireAuthorization();
         metricsType.MapPost("/", MetricsLogic.CreateTypeAsync)
         .Produces((int)HttpStatusCode.NoContent)
@@ -197,8 +201,23 @@ internal static class Endpoints
 
         events.MapDelete("/{id}", EventsLogic.DeleteAsync)
         .Produces((int)HttpStatusCode.NoContent)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        ;
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        events.MapPut("/update", EventsLogic.UpdateBulkAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        events.MapPost("/delete", EventsLogic.DeleteBulkAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        events.MapPost("/search", EventsLogic.SearchAsync)
+        .Produces<Event[]>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        events.MapPost("/count", EventsLogic.CountAsync)
+        .Produces<long>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         var eventsType = events.MapGroup("/type").RequireAuthorization();
         eventsType.MapPost("/", EventsLogic.CreateTypeAsync)

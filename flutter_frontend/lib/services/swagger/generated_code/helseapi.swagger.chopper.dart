@@ -671,6 +671,8 @@ final class _$Helseapi extends Helseapi {
   @override
   Future<Response<List<Metric>>> _apiMetricsSearchPost({
     int? personId,
+    required int? page,
+    required int? pageSize,
     required SearchMetric? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -686,6 +688,8 @@ final class _$Helseapi extends Helseapi {
     final Uri $url = Uri.parse('/api/metrics/search');
     final Map<String, dynamic> $params = <String, dynamic>{
       'personId': personId,
+      'Page': page,
+      'PageSize': pageSize,
     };
     final $body = body;
     final Request $request = Request(
@@ -697,6 +701,37 @@ final class _$Helseapi extends Helseapi {
       tag: swaggerMetaData,
     );
     return client.send<List<Metric>, Metric>($request);
+  }
+
+  @override
+  Future<Response<int>> _apiMetricsCountPost({
+    int? personId,
+    required SearchMetric? body,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["MetricsLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/metrics/count');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<int, int>($request);
   }
 
   @override
@@ -1005,7 +1040,6 @@ final class _$Helseapi extends Helseapi {
 
   @override
   Future<Response<dynamic>> _apiEventsPut({
-    int? personId,
     required UpdateEvent? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -1019,16 +1053,12 @@ final class _$Helseapi extends Helseapi {
     ),
   }) {
     final Uri $url = Uri.parse('/api/events');
-    final Map<String, dynamic> $params = <String, dynamic>{
-      'personId': personId,
-    };
     final $body = body;
     final Request $request = Request(
       'PUT',
       $url,
       client.baseUrl,
       body: $body,
-      parameters: $params,
       tag: swaggerMetaData,
     );
     return client.send<dynamic, dynamic>($request);
@@ -1056,6 +1086,132 @@ final class _$Helseapi extends Helseapi {
       tag: swaggerMetaData,
     );
     return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiEventsUpdatePut({
+    int? personId,
+    required PatchEvent? body,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["EventsLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/events/update');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
+    final $body = body;
+    final Request $request = Request(
+      'PUT',
+      $url,
+      client.baseUrl,
+      body: $body,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiEventsDeletePost({
+    int? person,
+    required List<int>? body,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["EventsLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/events/delete');
+    final Map<String, dynamic> $params = <String, dynamic>{'person': person};
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<List<Event>>> _apiEventsSearchPost({
+    int? personId,
+    required int? page,
+    required int? pageSize,
+    required SearchEvent? body,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["EventsLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/events/search');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+      'Page': page,
+      'PageSize': pageSize,
+    };
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<List<Event>, Event>($request);
+  }
+
+  @override
+  Future<Response<int>> _apiEventsCountPost({
+    int? personId,
+    required SearchEvent? body,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["EventsLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/events/count');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<int, int>($request);
   }
 
   @override

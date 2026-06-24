@@ -671,7 +671,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchItem.
   ///
   /// In en, this message translates to:
-  /// **'Search a {item}'**
+  /// **'Search in {item}'**
   String searchItem(String item);
 
   /// No description provided for @min.
