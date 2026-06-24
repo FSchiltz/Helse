@@ -303,6 +303,50 @@ internal static class MetricsLogic
             return TypedResults.BadRequest("Wrong metric type");
         }
 
+        var validation = Validate(search, type);
+        if (validation is not null)
+        {
+            return validation;
+        }
+
+        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.View))
+            return TypedResults.Forbid();
+
+        var id = personId ?? user.PersonId;
+
+        var results = await db.SearchMetricsAsync(id, search);
+        return TypedResults.Ok(results.Select(MetricMapper.Map));
+    }
+
+    internal static async Task<IResult> CountAsync(SearchMetric search, long? personId, IUserContext users, IMetricContext db, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+        var type = await db.GetMetricType(search.Type);
+        if (type is null)
+        {
+            return TypedResults.BadRequest("Wrong metric type");
+        }
+
+        var validation = Validate(search, type);
+        if (validation is not null)
+        {
+            return validation;
+        }
+
+        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.View))
+            return TypedResults.Forbid();
+
+        var id = personId ?? user.PersonId;
+
+        var results = await db.CountMetricsAsync(id, search);
+        return TypedResults.Ok(results);
+    }
+
+    private static IResult? Validate(SearchMetric search, Data.Models.Health.MetricType type)
+    {
         if (search.Value is not null)
         {
             // search by value
@@ -330,12 +374,6 @@ internal static class MetricsLogic
             return TypedResults.NotFound();
         }
 
-        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.View))
-            return TypedResults.Forbid();
-
-        var id = personId ?? user.PersonId;
-
-        var results = await db.SearchMetricsAsync(id, search);
-        return TypedResults.Ok(results.Select(MetricMapper.Map).ToArray());
+        return null;
     }
 }

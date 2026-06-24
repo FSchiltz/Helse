@@ -20,7 +20,7 @@ internal static class EventMapper
         };
     }
 
-    internal static object Map(Event x)
+    internal static Models.Events.Event Map(Event x)
     {
         return new Models.Events.Event
         {

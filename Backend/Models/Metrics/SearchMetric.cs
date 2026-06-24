@@ -1,6 +1,8 @@
+using Helse.Models.Common;
+
 namespace Helse.Models.Metrics;
 
-public class SearchMetric
+public class SearchMetric : Pagination
 {
     public required long Type { get; set; }
 

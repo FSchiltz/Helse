@@ -139,6 +139,10 @@ internal static class Endpoints
         .Produces<Metric[]>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
+        metrics.MapPost("/count", MetricsLogic.CountAsync)
+        .Produces<long>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
         var metricsType = metrics.MapGroup("/type").RequireAuthorization();
         metricsType.MapPost("/", MetricsLogic.CreateTypeAsync)
         .Produces((int)HttpStatusCode.NoContent)
@@ -201,6 +205,10 @@ internal static class Endpoints
 
         events.MapPost("/search", EventsLogic.SearchAsync)
         .Produces<Event[]>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        events.MapPost("/count", EventsLogic.CountAsync)
+        .Produces<long>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
         var eventsType = events.MapGroup("/type").RequireAuthorization();

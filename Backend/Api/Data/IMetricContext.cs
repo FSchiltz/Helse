@@ -52,4 +52,6 @@ internal interface IMetricContext : IContext
     Task<MetricGroup[]> GetMetricGroups();
 
     Task<Metric[]> SearchMetricsAsync(long person, Helse.Models.Metrics.SearchMetric search);
+    
+    Task<long> CountMetricsAsync(long person, Helse.Models.Metrics.SearchMetric search);
 }

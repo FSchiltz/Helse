@@ -1,6 +1,8 @@
+using Helse.Models.Common;
+
 namespace Helse.Models.Events;
 
-public class SearchEvent
+public class SearchEvent : Pagination
 {
     public required long Type { get; set; }
 

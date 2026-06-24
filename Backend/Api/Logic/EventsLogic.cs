@@ -1,6 +1,7 @@
 using Helse.Api.Data;
 using Helse.Api.Helpers;
 using Helse.Api.Mappers;
+using Helse.Models.Common;
 using Helse.Models.Events;
 using Helse.Models.Persons;
 using LinqToDB;
@@ -159,6 +160,21 @@ internal static class EventsLogic
         var id = personId ?? user.PersonId;
 
         var results = await db.SearchEventsAsync(id, search);
-        return TypedResults.Ok(results.Select(EventMapper.Map).ToArray());
+        return TypedResults.Ok(results.Select(EventMapper.Map));
+    }
+
+     internal static async Task<IResult> CountAsync(SearchEvent search, long? personId, IUserContext users, IEventContext db, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.View))
+            return TypedResults.Forbid();
+
+        var id = personId ?? user.PersonId;
+
+        var results = await db.CountEventsAsync(id, search);
+        return TypedResults.Ok(results);
     }
 }
