@@ -40,10 +40,8 @@ class _MetricDataTableState extends State<MetricDataTable> {
   @override
   void didUpdateWidget(covariant MetricDataTable oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.count != oldWidget.count) {
-      _page = 0;
-      _search();
-    }
+    _page = 0;
+    _search();
   }
 
   @override
@@ -132,6 +130,10 @@ class _MetricDataTableState extends State<MetricDataTable> {
 
       setState(() {
         _metrics = metrics;
+      });
+    } else {
+      setState(() {
+        _metrics = [];
       });
     }
   }
