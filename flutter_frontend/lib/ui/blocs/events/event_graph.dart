@@ -117,7 +117,12 @@ class _EventsGraphState extends State<EventsGraph> {
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: DateRangePicker(_setDate, subDate, range: widget.range),
+          child: DateRangePicker(
+            _setDate,
+            subDate,
+            range: widget.range,
+            offset: widget.type.timeDifference,
+          ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),

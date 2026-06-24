@@ -10,8 +10,15 @@ class DateRangePicker extends StatelessWidget {
   final void Function(DateTimeRange value) setDate;
   final DateTimeRange initial;
   final DateTimeRange? range;
+  final String? offset;
 
-  const DateRangePicker(this.setDate, this.initial, {this.range, super.key});
+  const DateRangePicker(
+    this.setDate,
+    this.initial, {
+    this.range,
+    super.key,
+    this.offset,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +108,7 @@ class DateRangePicker extends StatelessWidget {
   void _setPreset(DatePreset? value) {
     if (value == null) return;
 
-    setDate(DateHelper.getRange(value));
+    setDate(DateHelper.getRange(value, offset));
 
     Dependencies.logics.settings.setDateRange(value, toServer: false);
   }

@@ -55,23 +55,26 @@ class DateHelper {
     return dateTimeFormat.format(date);
   }
 
-  static DateTimeRange getRange(DatePreset value) {
+  static DateTimeRange getRange(DatePreset value, String? offset) {
+    DateTimeRange range;
     switch (value) {
       case DatePreset.week:
-        return currentWeek();
+        range = currentWeek();
       case DatePreset.month:
-        return currentMonths();
+        range = currentMonths();
       case DatePreset.trimestre:
-        return currentMonths(count: 3);
+        range = currentMonths(count: 3);
       case DatePreset.halfyear:
-        return currentMonths(count: 6);
+        range = currentMonths(count: 6);
       case DatePreset.year:
-        return currentWeek(count: 365);
+        range = currentWeek(count: 365);
       case DatePreset.yeartodate:
-        return yearToDate();
+        range = yearToDate();
       default:
-        return now();
+        range = now();
     }
+
+    return DateHelper.offset(range, offset);
   }
 
   static DateTimeRange currentWeek({int count = 7}) {
