@@ -128,10 +128,17 @@ class _MetricGraphState extends State<MetricGraph> {
             child: SingleChildScrollView(
               child: Center(
                 child: MetricDataTable(
-                  metrics: metric?.metrics,
                   person: widget.person,
                   type: widget.type,
                   reset: widget.reset,
+                  count: metric?.metrics.length ?? 0,
+                  callback: (page, count) async {
+                    return metric?.metrics
+                            .skip(page * count)
+                            .take(count)
+                            .toList() ??
+                        [];
+                  },
                 ),
               ),
             ),

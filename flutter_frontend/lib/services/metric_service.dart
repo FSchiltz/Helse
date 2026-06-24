@@ -46,6 +46,13 @@ class MetricService extends ApiService {
     );
   }
 
+  Future<int?> countMetrics(int? person, SearchMetric search) async {
+    var api = await getService();
+    return await call(
+      () => api.apiMetricsCountPost(body: search, personId: person),
+    );
+  }
+
   Future<List<Metric>> metrics(
     int? type,
     DateTime? start,

@@ -14,13 +14,13 @@ class EventDataTable extends StatefulWidget {
     this.person,
     required this.type,
     required this.reset,
-    required this.search,
+    required this.callback,
   });
   final void Function() reset;
   final EventType type;
   final int? person;
   final int count;
-  final SearchEvent search;
+  final Future<List<Event>> Function(int page, int i) callback;
 
   @override
   State<EventDataTable> createState() => _EventDataTableState();
@@ -50,6 +50,7 @@ class _EventDataTableState extends State<EventDataTable> {
   Widget build(BuildContext context) {
     var locale = Translation.of(context);
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Pagination(
           count: widget.count,
@@ -138,14 +139,10 @@ class _EventDataTableState extends State<EventDataTable> {
 
   Future<void> _search() async {
     if (widget.count > 0) {
-      var events = await Dependencies.services.event.searchEvents(
-        widget.person,
-        widget.search,
-        _page,
-        50,
-      );
+      var events = await widget.callback(_page, 50);
+
       setState(() {
-        _events = events ?? [];
+        _events = events;
       });
     }
   }

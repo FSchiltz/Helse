@@ -67,7 +67,15 @@ class _EventSearchState extends State<EventSearch> {
                   person: widget.person,
                   type: widget.type,
                   reset: _countEvents,
-                  search: _search,
+                  callback: (page, count) async {
+                    return await Dependencies.services.event.searchEvents(
+                          widget.person,
+                          _search,
+                          page,
+                          count,
+                        ) ??
+                        [];
+                  },
                 ),
               ],
             ),

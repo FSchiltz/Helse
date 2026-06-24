@@ -20,6 +20,7 @@ class Pagination extends StatelessWidget {
   Widget build(BuildContext context) {
     final int maxPage = (count / pageSize).toInt();
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
           onPressed: page <= 0 ? null : () => callBack(max(0, page - 1)),
@@ -27,7 +28,9 @@ class Pagination extends StatelessWidget {
           iconSize: 40,
           padding: EdgeInsets.all(2),
         ),
-        Text('${page + 1} / ${maxPage + 1}'),
+        Text('${page + 1} / ${maxPage + 1} pages'),
+        SizedBox(width: UIConstants.formPad),
+        Text('-'),
         SizedBox(width: UIConstants.formPad),
         Text('$count items'),
         IconButton(

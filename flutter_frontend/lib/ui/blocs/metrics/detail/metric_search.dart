@@ -19,13 +19,20 @@ class MetricSearch extends StatefulWidget {
 }
 
 class _MetricSearchState extends State<MetricSearch> {
-  List<Metric> _metrics = [];
   final TextEditingController _value = TextEditingController();
   final TextEditingController _min = TextEditingController();
   final TextEditingController _max = TextEditingController();
   bool _working = false;
   DateTime? _from;
   DateTime? _to;
+  int _count = 0;
+  late SearchMetric _search;
+
+  @override
+  void initState() {
+    super.initState();
+    _search = SearchMetric(type: widget.type.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +56,7 @@ class _MetricSearchState extends State<MetricSearch> {
                     DateInput(locale.start, _from, (v) => _from = v),
                     DateInput(locale.stop, _to, (v) => _to = v),
                     IconButton(
-                      onPressed: (_working) ? null : _search,
+                      onPressed: (_working) ? null : _countEvents,
                       icon: Icon(Icons.search_sharp),
                     ),
                   ],
@@ -57,10 +64,18 @@ class _MetricSearchState extends State<MetricSearch> {
                 const SizedBox(height: UIConstants.formPad),
                 if (_working) HelseLoader(),
                 MetricDataTable(
-                  metrics: _metrics,
+                  count: _count,
                   person: widget.person,
                   type: widget.type,
-                  reset: _search,
+                  reset: _countEvents,
+                  callback: (page, count) async =>
+                      await Dependencies.services.metric.searchMetrics(
+                        widget.person,
+                        _search,
+                        page,
+                        count,
+                      ) ??
+                      [],
                 ),
               ],
             ),
@@ -70,29 +85,30 @@ class _MetricSearchState extends State<MetricSearch> {
     );
   }
 
-  Future<void> _search() async {
+  Future<void> _countEvents() async {
     setState(() {
       _working = true;
+      _count = 0;
     });
     try {
       final max = _max.text.isEmpty ? null : int.parse(_max.text);
       final min = _min.text.isEmpty ? null : int.parse(_min.text);
       final text = (_value.text.isEmpty) ? null : _value.text;
-      var metrics = await Dependencies.services.metric.searchMetrics(
+      final search = SearchMetric(
+        type: widget.type.id,
+        value: text,
+        maxValue: max,
+        minValue: min,
+        from: _from,
+        to: _to,
+      );
+      var events = await Dependencies.services.metric.countMetrics(
         widget.person,
-        SearchMetric(
-          type: widget.type.id,
-          value: text,
-          maxValue: max,
-          minValue: min,
-          from: _from,
-          to: _to,
-        ),
-        0,
-        100,
+        search,
       );
       setState(() {
-        _metrics = metrics ?? [];
+        _count = events ?? 0;
+        _search = search;
       });
     } finally {
       setState(() {
