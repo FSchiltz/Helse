@@ -89,7 +89,12 @@ class _MetricGraphState extends State<MetricGraph> {
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: DateRangePicker(_setDate, subDate, range: widget.date),
+          child: DateRangePicker(
+            _setDate,
+            subDate,
+            range: widget.date,
+            offset: widget.type.timeDifference,
+          ),
         ),
         Padding(
           padding: const EdgeInsets.all(24.0),

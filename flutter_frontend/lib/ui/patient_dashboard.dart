@@ -35,7 +35,7 @@ class _PatientDashboardState extends State<PatientDashboard>
     }
 
     setState(() {
-      date = DateHelper.getRange(range);
+      date = DateHelper.getRange(range, null);
     });
   }
 

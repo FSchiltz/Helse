@@ -13,6 +13,7 @@ import 'package:helse/ui/blocs/events/event_information.dart';
 import 'package:helse/ui/blocs/events/events_add.dart';
 import 'package:helse/ui/blocs/events/events_summary.dart';
 import 'package:helse/ui/blocs/events/events_timeline_graph.dart';
+import 'package:helse/ui/common/duration_widget.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/inputs/date_range_picker.dart';
 import 'package:helse/ui/common/navigator_chart.dart';
@@ -90,6 +91,8 @@ class _EventsGraphState extends State<EventsGraph> {
     final sessions = EventHelper.getSessions(filteredEvents);
 
     final radius = 40.0;
+    final graphHeight = 4 * radius;
+    final height = graphHeight + UIConstants.formPad * 2 + 10;
     final sections = stats.counts.entries.map((entry) {
       return PieChartSectionData(
         color: Dependencies.theme.stateColor(
@@ -114,7 +117,12 @@ class _EventsGraphState extends State<EventsGraph> {
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: DateRangePicker(_setDate, subDate, range: widget.range),
+          child: DateRangePicker(
+            _setDate,
+            subDate,
+            range: widget.range,
+            offset: widget.type.timeDifference,
+          ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -158,8 +166,8 @@ class _EventsGraphState extends State<EventsGraph> {
                         runSpacing: UIConstants.formPad,
                         children: [
                           SizedBox(
-                            height: 4 * radius,
-                            width: 4 * radius,
+                            height: graphHeight,
+                            width: graphHeight,
                             child: PieChart(
                               PieChartData(
                                 sections: sections,
@@ -266,11 +274,13 @@ class _EventsGraphState extends State<EventsGraph> {
                     ),
                   ),
                 CommonCard(
-                  child: Padding(
-                    padding: const EdgeInsets.all(UIConstants.formPad),
-                    child: _getRangeGraph(sessions),
+                  child: SizedBox(
+                    height: height,
+                    width: 420,
+                    child: _getSessionsList(sessions),
                   ),
                 ),
+                CommonCard(child: _getRangeGraph(sessions, height)),
               ],
             ),
           ),
@@ -334,7 +344,7 @@ class _EventsGraphState extends State<EventsGraph> {
     return _GroupStats(groups.toList(), counts, total);
   }
 
-  Widget _getRangeGraph(List<Interval> sessions) {
+  Widget _getRangeGraph(List<Interval> sessions, double height) {
     if (sessions.isEmpty) {
       return Text("No data");
     }
@@ -352,7 +362,7 @@ class _EventsGraphState extends State<EventsGraph> {
         );
 
         return SizedBox(
-          height: 200 - (2 * UIConstants.formPad),
+          height: height,
           width: (itemWidth + 2) * sessions.length,
           child: BarChart(
             BarChartData(
@@ -466,6 +476,41 @@ class _EventsGraphState extends State<EventsGraph> {
       );
     }
     return bars;
+  }
+
+  Widget? _getSessionsList(List<Interval> sessions) {
+    var color = Dependencies.theme.stateColor(
+      widget.type.id.toString(),
+      StateType.events,
+      context,
+    );
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: sessions.length,
+      itemBuilder: (context, index) {
+        final session = sessions[index];
+        return Wrap(
+          spacing: UIConstants.textPad,
+          runSpacing: UIConstants.textPad,
+          children: [
+            Text(
+              DateHelper.format(session.start, context: context, short: true),
+            ),
+            Text('-'),
+            Text(
+              DateHelper.format(session.stop, context: context, short: true),
+            ),
+            const SizedBox(width: UIConstants.formPad),
+            DurationWidget(
+              color: color,
+              duration: session.stop.difference(session.start),
+            ),
+
+            Divider(),
+          ],
+        );
+      },
+    );
   }
 }
 

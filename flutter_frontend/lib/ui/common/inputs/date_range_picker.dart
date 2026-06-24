@@ -10,13 +10,28 @@ class DateRangePicker extends StatelessWidget {
   final void Function(DateTimeRange value) setDate;
   final DateTimeRange initial;
   final DateTimeRange? range;
+  final String? offset;
 
-  const DateRangePicker(this.setDate, this.initial, {this.range, super.key});
+  const DateRangePicker(
+    this.setDate,
+    this.initial, {
+    this.range,
+    super.key,
+    this.offset,
+  });
 
   @override
   Widget build(BuildContext context) {
     List<MenuItemButton> presets = DatePreset.values
-        .where((e) => e.index > 0)
+        .where(
+          (e) =>
+              e.index > 0 &&
+              _isInRange(
+                e,
+                range ??
+                    DateTimeRange(start: DateTime(1000), end: DateTime(3000)),
+              ),
+        )
         .map(
           (v) => MenuItemButton(
             onPressed: () => _setPreset(v),
@@ -64,7 +79,9 @@ class DateRangePicker extends StatelessWidget {
           initial,
           isLargeScreen,
           showIcon: false,
-          range: range,
+          range:
+              range ??
+              DateTimeRange(start: DateTime(1000), end: DateTime(3000)),
         ),
         SizedBox(
           child: IconButton(
@@ -101,7 +118,7 @@ class DateRangePicker extends StatelessWidget {
   void _setPreset(DatePreset? value) {
     if (value == null) return;
 
-    setDate(DateHelper.getRange(value));
+    setDate(DateHelper.getRange(value, offset));
 
     Dependencies.logics.settings.setDateRange(value, toServer: false);
   }
@@ -126,5 +143,10 @@ class DateRangePicker extends StatelessWidget {
     var duration = _getDurationToMove();
     var start = initial.start.add(duration);
     return start == end || start.isAfter(end);
+  }
+
+  bool _isInRange(DatePreset value, DateTimeRange<DateTime> range) {
+    var other = DateHelper.getRange(value, offset);
+    return !other.start.isBefore(range.start) && !other.end.isAfter(range.end);
   }
 }
