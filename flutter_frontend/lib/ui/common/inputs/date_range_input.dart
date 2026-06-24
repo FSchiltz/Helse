@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 class DateRangeInput extends StatelessWidget {
   final void Function(DateTimeRange date) _setDateCallback;
   final DateTimeRange initial;
-  final DateTimeRange? range;
+  final DateTimeRange range;
   final DateFormat formatter = DateFormat('dd/MM/yyyy');
   final bool large;
   final bool showIcon;
@@ -14,7 +14,7 @@ class DateRangeInput extends StatelessWidget {
     this.initial,
     this.large, {
     super.key,
-    this.range,
+    required this.range,
     this.showIcon = true,
   }) : _setDateCallback = setDate;
 
@@ -36,8 +36,8 @@ class DateRangeInput extends StatelessWidget {
     var selectedDate = await showDateRangePicker(
       context: context,
       initialDateRange: initial, //get today's date
-      firstDate: range?.start ?? DateTime(1000),
-      lastDate: range?.end ?? DateTime(3000),
+      firstDate: range.start,
+      lastDate: range.end ,
     );
     if (selectedDate == null) return null;
 
