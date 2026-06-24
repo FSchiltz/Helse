@@ -428,4 +428,26 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
 
         return query.ToArrayAsync();
     }
+
+    public Task<Event[]> SearchEventsAsync(long person, Helse.Models.Events.SearchEvent search)
+    {
+        var query = Db.GetTable<Event>().Where(x => x.Type == search.Type && x.PersonId == person);
+
+        if (search.From is not null)
+        {
+            query = query.Where(x => x.Start >= search.From);
+        }
+
+        if (search.To is not null)
+        {
+            query = query.Where(x => x.Stop <= search.To);
+        }
+
+        if (search.Value is not null)
+        {
+            query = query.Where(x => x.Description.StartsWith(search.Value, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        return query.ToArrayAsync();
+    }
 }

@@ -26,19 +26,7 @@ internal static class MetricsLogic
         var id = personId ?? user.PersonId;
         var metrics = await db.GetMetrics(id, type, start, end);
 
-        return TypedResults.Ok(metrics.Select(x => new Metric
-        {
-            Value = x.Value,
-            Date = x.Date,
-            Id = x.Id,
-            Person = user.PersonId,
-            Type = x.Type,
-            Tag = x.Tag,
-            User = x.UserId,
-            Source = (FileTypes)x.Source,
-            SourceId = x.SourceId,
-            Unit = x.UnitObject?.ToUnit(),
-        }));
+        return TypedResults.Ok(metrics.Select(MetricMapper.Map));
     }
 
     public async static Task<IResult> GetSummaryAsync(int tile, int type, DateTime start, DateTime end, long? personId, IUserContext users, IMetricContext db, HttpContext context)
@@ -348,17 +336,6 @@ internal static class MetricsLogic
         var id = personId ?? user.PersonId;
 
         var results = await db.SearchMetricsAsync(id, search);
-        return TypedResults.Ok(results.Select(x => new Metric()
-        {
-            Value = x.Value,
-            Date = x.Date,
-            Id = x.Id,
-            Person = x.PersonId,
-            SourceId = x.SourceId,
-            Type = x.Type,
-            Source = (FileTypes)x.Source,
-            Tag = x.Tag,
-            Unit = x.UnitObject.ToUnit(),
-        }).ToArray());
+        return TypedResults.Ok(results.Select(MetricMapper.Map).ToArray());
     }
 }

@@ -65,4 +65,6 @@ internal interface IEventContext : IContext
     Task<Event[]> GetEvents(long id, RightType view, DateTime start, DateTime end);
 
     Task<Event?> ExistingEvent(long person, int type, int source, string sourceId);
+
+    Task<Event[]> SearchEventsAsync(long id, Helse.Models.Events.SearchEvent search);
 }

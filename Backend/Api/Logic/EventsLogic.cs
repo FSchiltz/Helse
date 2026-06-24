@@ -1,7 +1,7 @@
 using Helse.Api.Data;
 using Helse.Api.Helpers;
+using Helse.Api.Mappers;
 using Helse.Models.Events;
-using Helse.Models.Imports;
 using Helse.Models.Persons;
 using LinqToDB;
 
@@ -23,21 +23,7 @@ internal static class EventsLogic
 
         var id = personId ?? user.PersonId;
 
-        var result = (await events.GetEvents(id, type, start, end))
-        .Select(x => new Models.Events.Event
-        {
-            Id = x.Id,
-            Type = x.Type,
-            Description = x.Description,
-            Stop = x.Stop,
-            File = x.FileId,
-            Start = x.Start,
-            Valid = x.Valid,
-            NotificationTime = x.NotificationTime,
-            Source = (FileTypes)x.Source,
-            SourceId = x.SourceId,
-            Tag = x.Tag,
-        });
+        var result = (await events.GetEvents(id, type, start, end)).Select(EventMapper.Map);
 
         return TypedResults.Ok(result);
     }
@@ -123,17 +109,7 @@ internal static class EventsLogic
     }
 
     public static async Task<IResult> GetTypeAsync(bool? all, IEventContext events)
-    => TypedResults.Ok((await events.GetEventTypes(all)).Select(x => new EventType
-    {
-        Name = x.Name,
-        Description = x.Description,
-        Id = x.Id,
-        StandAlone = x.StandAlone,
-        Visible = x.Visible,
-        UserEditable = x.UserEditable,
-        TimeDifference = x.TimeDifference,
-        GroupId = x.GroupId,
-    }));
+    => TypedResults.Ok((await events.GetEventTypes(all)).Select(EventMapper.Map));
 
     public static async Task<IResult> CreateTypeAsync(CreateEventType type, IUserContext users, IEventContext events, HttpContext context)
     {
@@ -169,5 +145,20 @@ internal static class EventsLogic
             return TypedResults.NoContent();
         else
             return TypedResults.BadRequest();
+    }
+
+    internal static async Task<IResult> SearchAsync(SearchEvent search, long? personId, IUserContext users, IEventContext db, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.View))
+            return TypedResults.Forbid();
+
+        var id = personId ?? user.PersonId;
+
+        var results = await db.SearchEventsAsync(id, search);
+        return TypedResults.Ok(results.Select(EventMapper.Map).ToArray());
     }
 }
