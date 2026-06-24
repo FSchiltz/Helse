@@ -11,13 +11,20 @@ class DateHelper {
 
   static String format(
     DateTime? date, {
-    bool? second,
+    bool second = false,
+    bool short = false,
     required BuildContext context,
   }) {
     if (date == null) return "";
     var tag = Localizations.maybeLocaleOf(context)?.toLanguageTag();
 
-    DateFormat dateTimeFormat = DateFormat.yMMMMd(tag);
+    DateFormat dateTimeFormat;
+    if (short) {
+      dateTimeFormat = DateFormat.yMd(tag);
+    } else {
+      dateTimeFormat = DateFormat.yMMMMd(tag);
+    }
+
     if (second == true) {
       dateTimeFormat = dateTimeFormat.add_jms();
     } else {

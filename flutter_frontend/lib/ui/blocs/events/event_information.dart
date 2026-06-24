@@ -4,6 +4,7 @@ import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/ui/common/duration_widget.dart';
 
 class EventInformation extends StatelessWidget {
   const EventInformation({super.key, required this.data, required this.type});
@@ -58,19 +59,7 @@ class EventInformation extends StatelessWidget {
             ),
           ],
         ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.update, color: color),
-            SizedBox(width: 4),
-            Text(
-              DateHelper.formatDuration(averageDuration, locale),
-              style: theme.bodyMedium,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
+        DurationWidget(color: color, duration: averageDuration),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
