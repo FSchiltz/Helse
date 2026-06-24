@@ -6,7 +6,6 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
 import 'package:helse/ui/common/inputs/date_input.dart';
 import 'package:helse/ui/common/loader.dart';
-import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
@@ -32,37 +31,41 @@ class _MetricSearchState extends State<MetricSearch> {
   Widget build(BuildContext context) {
     var locale = Translation.of(context);
     var theme = Theme.of(context).colorScheme;
-    return SquareDialog(
-      title: Text(locale.searchItem(widget.type.name)),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Wrap(
-            spacing: UIConstants.formPad,
-            runSpacing: UIConstants.formPad,
-            children: [
-              ..._getFilter(theme, locale),
-              DateInput(locale.start, _from, (v) => _from = v),
-              DateInput(locale.stop, _to, (v) => _to = v),
-              IconButton(
-                onPressed: (_working) ? null : _search,
-                icon: Icon(Icons.search_sharp),
-              ),
-            ],
-          ),
-          SizedBox(height: UIConstants.formPad),
-          if (_working) HelseLoader(),
-          Expanded(
-            child: SingleChildScrollView(
-              child: MetricDataTable(
-                metrics: _metrics,
-                person: widget.person,
-                type: widget.type,
-                reset: _search,
-              ),
+    return Scaffold(
+      appBar: AppBar(title: Text(locale.searchItem(widget.type.name))),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(UIConstants.formPad),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Wrap(
+                  spacing: UIConstants.formPad,
+                  runSpacing: UIConstants.formPad,
+                  children: [
+                    ..._getFilter(theme, locale),
+                    DateInput(locale.start, _from, (v) => _from = v),
+                    DateInput(locale.stop, _to, (v) => _to = v),
+                    IconButton(
+                      onPressed: (_working) ? null : _search,
+                      icon: Icon(Icons.search_sharp),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: UIConstants.formPad),
+                if (_working) HelseLoader(),
+                MetricDataTable(
+                  metrics: _metrics,
+                  person: widget.person,
+                  type: widget.type,
+                  reset: _search,
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -99,19 +102,18 @@ class _MetricSearchState extends State<MetricSearch> {
   List<Widget> _getFilter(ColorScheme theme, AppLocalizations locale) {
     if (widget.type.type == MetricDataType.text) {
       return [
-        Expanded(
-          child: SquareTextField(
-            icon: Icons.add_sharp,
-            label: locale.value,
-            controller: _value,
-          ),
+        SquareTextField(
+          icon: Icons.add_sharp,
+          label: locale.value,
+          controller: _value,
         ),
       ];
     }
 
     if (widget.type.type == MetricDataType.number) {
       return [
-        Flexible(
+        ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 200),
           child: SquareTextField(
             icon: Icons.arrow_downward_sharp,
             label: locale.min,
@@ -119,7 +121,8 @@ class _MetricSearchState extends State<MetricSearch> {
             type: TextInputType.number,
           ),
         ),
-        Flexible(
+        ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 200),
           child: SquareTextField(
             icon: Icons.arrow_upward_sharp,
             label: locale.max,

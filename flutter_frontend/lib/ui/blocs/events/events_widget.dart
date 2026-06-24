@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/blocs/events/detail/event_detail_page.dart';
+import 'package:helse/ui/blocs/events/event_add_button.dart';
 import 'package:helse/ui/blocs/events/event_information.dart';
+import 'package:helse/ui/blocs/events/event_search_button.dart';
 import 'package:helse/ui/blocs/events/events_summary.dart';
 import 'package:helse/ui/blocs/events/events_timeline_graph.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
@@ -9,7 +11,6 @@ import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
-import 'events_add.dart';
 
 class EventWidget extends StatefulWidget {
   final EventType type;
@@ -90,20 +91,11 @@ class _EventWidgetState extends State<EventWidget> {
                         ),
                       ),
                     ),
-                    IconButton(
-                      onPressed: () {
-                        showDialog<void>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return EventAdd(
-                              _resetEvents,
-                              widget.type,
-                              person: widget.person,
-                            );
-                          },
-                        );
-                      },
-                      icon: const Icon(Icons.add_sharp),
+                    EventSearchButton(widget.type, person: widget.person),
+                    EventAddButton(
+                      widget.type,
+                      _resetEvents,
+                      person: widget.person,
                     ),
                   ],
                 ),
@@ -119,8 +111,9 @@ class _EventWidgetState extends State<EventWidget> {
                           ),
                         )
                       : SizedBox(
-                        height: 200,
-                        child: EventsSummary(summaries, widget.date)),
+                          height: 200,
+                          child: EventsSummary(summaries, widget.date),
+                        ),
                 ),
               ],
             ),

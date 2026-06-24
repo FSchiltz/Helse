@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/ui/blocs/events/event_add_button.dart';
 import 'package:helse/ui/blocs/events/event_graph.dart';
-import 'package:helse/ui/blocs/events/detail/event_search.dart';
 import 'package:helse/ui/blocs/events/event_search_button.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
 import '../../../../di/dependencies.dart';
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../events_add.dart';
 
 class EventDetailPage extends StatefulWidget {
   const EventDetailPage({
@@ -48,28 +47,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
       appBar: AppBar(
         actions: [
           EventSearchButton(widget.type, person: widget.person),
-
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              width: 32,
-              child: IconButton(
-                onPressed: () {
-                  showDialog<void>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return EventAdd(
-                        _resetEvents,
-                        widget.type,
-                        person: widget.person,
-                      );
-                    },
-                  );
-                },
-                icon: const Icon(Icons.add_sharp),
-              ),
-            ),
-          ),
+          EventAddButton(widget.type, _resetEvents, person: widget.person),
         ],
         title: Text(
           locale.detailof(widget.type.name),

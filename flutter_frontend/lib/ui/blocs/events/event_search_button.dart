@@ -9,14 +9,11 @@ class EventSearchButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SizedBox(
-        width: 32,
-        child: IconButton(
-          onPressed: () => _open(context),
-          icon: const Icon(Icons.search_sharp),
-        ),
+    return SizedBox(
+      width: 40,
+      child: IconButton(
+        onPressed: () => _open(context),
+        icon: const Icon(Icons.search_sharp),
       ),
     );
   }

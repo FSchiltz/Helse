@@ -39,7 +39,7 @@ class EventDataSource extends DataTableSource {
                   showDialog<void>(
                     context: context,
                     builder: (BuildContext context) {
-                      return EventAdd(reset, type, person: person, edit: m);
+                      return EventAdd(type, reset, person: person, edit: m);
                     },
                   );
                 },

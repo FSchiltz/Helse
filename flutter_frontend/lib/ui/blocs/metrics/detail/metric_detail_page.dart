@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/ui/blocs/metrics/detail/metric_add_button.dart';
+import 'package:helse/ui/blocs/metrics/metric_add_button.dart';
 import 'package:helse/ui/blocs/metrics/metric_search_button.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/ui_constants.dart';

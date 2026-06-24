@@ -19,7 +19,7 @@ class EventAdd extends StatefulWidget {
   final int? person;
   final Event? edit;
 
-  const EventAdd(this.callback, this.type, {super.key, this.person, this.edit});
+  const EventAdd(this.type, this.callback, {super.key, this.person, this.edit});
 
   @override
   State<EventAdd> createState() => _EventAddState();

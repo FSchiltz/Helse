@@ -35,36 +35,39 @@ class SquareTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
-    return TextFormField(
-      validator: validator,
-      controller: controller,
-      focusNode: focusNode,
-      onEditingComplete: onEditingComplete,
-      keyboardType: type ?? TextInputType.text,
-      obscureText: obscureText,
-      onTap: onTap,
-      onChanged: onChanged,
-      decoration: InputDecoration(
-        labelText: label,
-        alignLabelWithHint: false,
-        maintainLabelSize: true,
-        floatingLabelBehavior: FloatingLabelBehavior.always,
-        floatingLabelAlignment: FloatingLabelAlignment.start,
-        fillColor: theme.surfaceContainerLow,
-        prefixIcon: Icon(icon),
-        prefixIconColor: theme.primary,
-        suffixIcon: suffixIcon,
-        filled: true,
-        errorText: errorText,
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: theme.outlineVariant),
+    return Container(
+      margin: EdgeInsets.only(top: 4),
+      child: TextFormField(
+        validator: validator,
+        controller: controller,
+        focusNode: focusNode,
+        onEditingComplete: onEditingComplete,
+        keyboardType: type ?? TextInputType.text,
+        obscureText: obscureText,
+        onTap: onTap,
+        onChanged: onChanged,
+        decoration: InputDecoration(
+          labelText: label,
+          alignLabelWithHint: false,
+          maintainLabelSize: true,
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          floatingLabelAlignment: FloatingLabelAlignment.start,
+          fillColor: theme.surfaceContainerLow,
+          prefixIcon: Icon(icon),
+          prefixIconColor: theme.primary,
+          suffixIcon: suffixIcon,
+          filled: true,
+          errorText: errorText,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.zero,
+            borderSide: BorderSide(color: theme.outlineVariant),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.zero,
+            borderSide: BorderSide(color: theme.outline),
+          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.zero),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: theme.outline),
-        ),
-        border: OutlineInputBorder(borderRadius: BorderRadius.zero),
       ),
     );
   }
