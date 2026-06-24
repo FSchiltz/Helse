@@ -40,6 +40,14 @@ class _EventDataTableState extends State<EventDataTable> {
   }
 
   @override
+  void didUpdateWidget(covariant EventDataTable oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.count != oldWidget.count) {
+      _search();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     var locale = Translation.of(context);
     return Column(
@@ -48,9 +56,12 @@ class _EventDataTableState extends State<EventDataTable> {
           count: widget.count,
           pageSize: 50,
           page: _page,
-          callBack: (v) => setState(() {
-            _page = v;
-          }),
+          callBack: (v) {
+            setState(() {
+              _page = v;
+            });
+            _search();
+          },
         ),
         DataTable(
           columns: [
