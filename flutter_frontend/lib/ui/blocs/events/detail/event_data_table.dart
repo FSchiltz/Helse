@@ -29,6 +29,7 @@ class EventDataTable extends StatefulWidget {
 class _EventDataTableState extends State<EventDataTable> {
   List<Event> _events = [];
   int _page = 0;
+  List<Event> _selected = [];
 
   @override
   void initState() {
@@ -65,6 +66,18 @@ class _EventDataTableState extends State<EventDataTable> {
           },
         ),
         DataTable(
+          showCheckboxColumn: true,
+          onSelectAll: (value) {
+            if (value == true) {
+              setState(() {
+                _selected = _events.toList();
+              });
+            } else {
+              setState(() {
+                _selected = [];
+              });
+            }
+          },
           columns: [
             DataColumn(label: Expanded(child: Text("Id"))),
             DataColumn(label: Expanded(child: Text(locale.description))),
@@ -77,6 +90,16 @@ class _EventDataTableState extends State<EventDataTable> {
           rows: _events
               .map(
                 (m) => DataRow(
+                  selected: _selected.contains(m),
+                  onSelectChanged: (v) {
+                    setState(() {
+                      if (v = true) {
+                        _selected.add(m);
+                      } else {
+                        _selected.remove(m);
+                      }
+                    });
+                  },
                   cells: [
                     DataCell(Text((m.id).toString())),
                     DataCell(Text('${m.description}')),
