@@ -55,14 +55,7 @@ class _PatientDashboardState extends State<PatientDashboard>
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: DateRangePicker(
-                _setDate,
-                date,
-                range: DateTimeRange(
-                  start: DateTime(1000),
-                  end: DateTime(3000),
-                ),
-              ),
+              child: DateRangePicker(_setDate, date),
             ),
             MetricsGrid(date: date, person: widget.person),
           ],

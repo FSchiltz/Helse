@@ -9,13 +9,13 @@ import 'package:helse/ui/common/ui_constants.dart';
 class DateRangePicker extends StatelessWidget {
   final void Function(DateTimeRange value) setDate;
   final DateTimeRange initial;
-  final DateTimeRange range;
+  final DateTimeRange? range;
   final String? offset;
 
   const DateRangePicker(
     this.setDate,
     this.initial, {
-    required this.range,
+    this.range,
     super.key,
     this.offset,
   });
@@ -23,7 +23,15 @@ class DateRangePicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<MenuItemButton> presets = DatePreset.values
-        .where((e) => e.index > 0 && _isInRange(e, initial))
+        .where(
+          (e) =>
+              e.index > 0 &&
+              _isInRange(
+                e,
+                range ??
+                    DateTimeRange(start: DateTime(1000), end: DateTime(3000)),
+              ),
+        )
         .map(
           (v) => MenuItemButton(
             onPressed: () => _setPreset(v),
@@ -71,7 +79,9 @@ class DateRangePicker extends StatelessWidget {
           initial,
           isLargeScreen,
           showIcon: false,
-          range: range,
+          range:
+              range ??
+              DateTimeRange(start: DateTime(1000), end: DateTime(3000)),
         ),
         SizedBox(
           child: IconButton(
