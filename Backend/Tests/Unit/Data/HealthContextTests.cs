@@ -2,6 +2,7 @@ using Helse.Api.Data;
 using Helse.Api.Data.Models.Health;
 using Helse.Api.Data.Models.Persons;
 using LinqToDB;
+using LinqToDB.Async;
 using LinqToDB.Data;
 using LinqToDB.Mapping;
 using Microsoft.Extensions.Logging;

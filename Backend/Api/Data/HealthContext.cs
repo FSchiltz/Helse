@@ -4,6 +4,7 @@ using Helse.Api.Data.Models.Health;
 using Helse.Models.Common;
 using Helse.Models.Persons;
 using LinqToDB;
+using LinqToDB.Async;
 using LinqToDB.Data;
 using LinqToDB.Mapping;
 
@@ -440,7 +441,8 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
     public Task UpdateBulk(Helse.Models.Events.PatchEvent e, long person)
     {
         var query = Db.GetTable<Event>()
-        .Where(x => e.Ids.Contains(x.Id) && x.PersonId == person).AsUpdatable();
+        .Where(x => e.Ids.Contains(x.Id))
+        .Where(x => x.PersonId == person).AsUpdatable();
 
         if (e.UpdateStart)
         {

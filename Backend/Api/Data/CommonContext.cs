@@ -1,5 +1,6 @@
 using Helse.Api.Data.Models.Common;
 using LinqToDB;
+using LinqToDB.Async;
 using LinqToDB.Data;
 
 namespace Helse.Api.Data;

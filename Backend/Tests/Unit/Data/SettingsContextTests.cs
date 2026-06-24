@@ -3,6 +3,7 @@ using Helse.Api.Data.Models.Admin;
 using Helse.Models.Settings.Admin;
 using LinqToDB;
 using LinqToDB.Data;
+using LinqToDB.Async;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 

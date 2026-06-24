@@ -1,5 +1,6 @@
 using System.Text.Json;
 using LinqToDB;
+using LinqToDB.Async;
 using LinqToDB.Data;
 
 namespace Helse.Api.Data;

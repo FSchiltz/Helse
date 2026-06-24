@@ -58,7 +58,9 @@ class _EventsEditState extends State<EventsEdit> {
         description: _description.text,
         updateDescription: _updateDescription,
         tag: _tag.text,
-        updateTag: _updateTag
+        updateTag: _updateTag,
+        source: FileTypes.none,
+        ids: widget.edit.map((e) => e.id).toList(),
       );
 
       await Dependencies.services.event.updateEvents(

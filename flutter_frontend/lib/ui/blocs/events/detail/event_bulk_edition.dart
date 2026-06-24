@@ -41,7 +41,10 @@ class EventBulkEdition extends StatelessWidget {
               context: context,
               builder: (BuildContext context) {
                 return DeleteEvent(() async {
-                  await Dependencies.services.event.deleteEvents(events);
+                  await Dependencies.services.event.deleteEvents(
+                    events,
+                    person: person,
+                  );
                   callback();
                 }, person: person);
               },

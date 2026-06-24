@@ -4,6 +4,7 @@ using Helse.Models.Events;
 using Helse.Models.Persons;
 using Helse.Models.Treatments;
 using LinqToDB;
+using LinqToDB.Async;
 using LinqToDB.Data;
 
 namespace Helse.Api.Data;
