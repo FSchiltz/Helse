@@ -437,10 +437,10 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
         return Db.GetTable<Event>().DeleteAsync(x => ids.Contains(x.Id) && x.PersonId == person);
     }
 
-    public Task UpdateBulk(Helse.Models.Events.PatchEvent e)
+    public Task UpdateBulk(Helse.Models.Events.PatchEvent e, long person)
     {
         var query = Db.GetTable<Event>()
-        .Where(x => x.Id == e.Id).AsUpdatable();
+        .Where(x => e.Ids.Contains(x.Id) && x.PersonId == person).AsUpdatable();
 
         if (e.UpdateStart)
         {

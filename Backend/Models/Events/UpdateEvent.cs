@@ -1,12 +1,12 @@
 namespace Helse.Models.Events;
 
-public class UpdateEvent : BaseEvent
+public class UpdateEvent : CreateEvent
 {
     public long Id { get; set; }
 }
 
 
-public class PatchEvent : UpdateEvent
+public class PatchEvent : BaseEvent
 {
     public bool UpdateDescription { get; set; }
 

@@ -99,7 +99,7 @@ internal static class EventsLogic
             return TypedResults.Forbid();
 
         Validate(e);
-        await events.UpdateBulk(e);
+        await events.UpdateBulk(e, personId.Value);
 
         return TypedResults.NoContent();
     }

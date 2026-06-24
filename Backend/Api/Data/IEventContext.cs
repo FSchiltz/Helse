@@ -73,5 +73,5 @@ internal interface IEventContext : IContext
 
     Task DeleteEvents(long[] ids, long person);
 
-    Task UpdateBulk(Helse.Models.Events.PatchEvent patch);
+    Task UpdateBulk(Helse.Models.Events.PatchEvent patch, long person);
 }
