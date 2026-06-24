@@ -197,8 +197,11 @@ internal static class Endpoints
 
         events.MapDelete("/{id}", EventsLogic.DeleteAsync)
         .Produces((int)HttpStatusCode.NoContent)
-        .Produces((int)HttpStatusCode.Unauthorized)
-        ;
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        events.MapPost("/search", EventsLogic.SearchAsync)
+        .Produces<Event[]>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
 
         var eventsType = events.MapGroup("/type").RequireAuthorization();
         eventsType.MapPost("/", EventsLogic.CreateTypeAsync)
