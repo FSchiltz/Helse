@@ -1,6 +1,7 @@
 using System.Data;
 using Helse.Api.Data.Helpers;
 using Helse.Api.Data.Models.Health;
+using Helse.Models.Common;
 using Helse.Models.Persons;
 using LinqToDB;
 using LinqToDB.Data;
@@ -394,12 +395,12 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
 
     public Task<MetricGroup[]> GetMetricGroups() => Db.GetTable<MetricGroup>().OrderBy(x => x.Id).ToArrayAsync();
 
-    public Task<Metric[]> SearchMetricsAsync(long person, Helse.Models.Metrics.SearchMetric search)
+    public Task<Metric[]> SearchMetricsAsync(long person, Helse.Models.Metrics.SearchMetric search, Pagination pagination)
     {
         var query = Db.GetTable<Metric>()
         .Where(x => x.Type == search.Type && x.PersonId == person)
         .ApplyFilter(search)
-        .Skip(search.Page * search.Count).Take(search.Count); ;
+        .Skip(pagination.Page * pagination.PageSize).Take(pagination.PageSize); ;
 
         return query.ToArrayAsync();
     }
@@ -413,12 +414,12 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
         return query.LongCountAsync();
     }
 
-    public Task<Event[]> SearchEventsAsync(long person, Helse.Models.Events.SearchEvent search)
+    public Task<Event[]> SearchEventsAsync(long person, Helse.Models.Events.SearchEvent search, Pagination pagination)
     {
         var query = Db.GetTable<Event>()
         .Where(x => x.Type == search.Type && x.PersonId == person)
         .ApplyFilter(search)
-        .Skip(search.Page * search.Count).Take(search.Count);
+        .Skip(pagination.Page * pagination.PageSize).Take(pagination.PageSize);
 
         return query.ToArrayAsync();
     }

@@ -88,6 +88,8 @@ class _MetricSearchState extends State<MetricSearch> {
           from: _from,
           to: _to,
         ),
+        0,
+        100,
       );
       setState(() {
         _metrics = metrics ?? [];

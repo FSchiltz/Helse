@@ -18,11 +18,18 @@ class EventSearch extends StatefulWidget {
 }
 
 class _EventSearchState extends State<EventSearch> {
-  List<Event> _events = [];
   final TextEditingController _value = TextEditingController();
   bool _working = false;
   DateTime? _from;
   DateTime? _to;
+  int _count = 0;
+  late SearchEvent _search;
+
+  @override
+  void initState() {
+    super.initState();
+    _search = SearchEvent(type: widget.type.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,17 +47,15 @@ class _EventSearchState extends State<EventSearch> {
                   spacing: UIConstants.formPad,
                   runSpacing: UIConstants.formPad,
                   children: [
-                    Expanded(
-                      child: SquareTextField(
-                        icon: Icons.add_sharp,
-                        label: locale.value,
-                        controller: _value,
-                      ),
+                    SquareTextField(
+                      icon: Icons.add_sharp,
+                      label: locale.value,
+                      controller: _value,
                     ),
                     DateInput(locale.start, _from, (v) => _from = v),
                     DateInput(locale.stop, _to, (v) => _to = v),
                     IconButton(
-                      onPressed: (_working) ? null : _search,
+                      onPressed: (_working) ? null : _countEvents,
                       icon: Icon(Icons.search_sharp),
                     ),
                   ],
@@ -58,10 +63,11 @@ class _EventSearchState extends State<EventSearch> {
                 const SizedBox(height: UIConstants.formPad),
                 if (_working) HelseLoader(),
                 EventDataTable(
-                  events: _events,
+                  count: _count,
                   person: widget.person,
                   type: widget.type,
-                  reset: _search,
+                  reset: _countEvents,
+                  search: _search,
                 ),
               ],
             ),
@@ -71,18 +77,25 @@ class _EventSearchState extends State<EventSearch> {
     );
   }
 
-  Future<void> _search() async {
+  Future<void> _countEvents() async {
     setState(() {
       _working = true;
     });
     try {
       final text = (_value.text.isEmpty) ? null : _value.text;
-      var events = await Dependencies.services.event.searchEvents(
+      final search = SearchEvent(
+        type: widget.type.id,
+        value: text,
+        from: _from,
+        to: _to,
+      );
+      var events = await Dependencies.services.event.countEvents(
         widget.person,
-        SearchEvent(type: widget.type.id, value: text, from: _from, to: _to),
+        search,
       );
       setState(() {
-        _events = events ?? [];
+        _count = events ?? 0;
+        _search = search;
       });
     } finally {
       setState(() {

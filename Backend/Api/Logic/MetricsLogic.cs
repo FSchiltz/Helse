@@ -2,10 +2,12 @@ using Helse.Api.Data;
 using Helse.Api.Data.Models.Common;
 using Helse.Api.Helpers;
 using Helse.Api.Mappers;
+using Helse.Models.Common;
 using Helse.Models.Imports;
 using Helse.Models.Metrics;
 using Helse.Models.Persons;
 using LinqToDB;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Helse.Api.Logic;
 
@@ -291,7 +293,7 @@ internal static class MetricsLogic
             return TypedResults.BadRequest();
     }
 
-    internal static async Task<IResult> SearchAsync(SearchMetric search, long? personId, IUserContext users, IMetricContext db, HttpContext context)
+    internal static async Task<IResult> SearchAsync(SearchMetric search, long? personId, [AsParameters] Pagination pagination, IUserContext users, IMetricContext db, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -314,7 +316,7 @@ internal static class MetricsLogic
 
         var id = personId ?? user.PersonId;
 
-        var results = await db.SearchMetricsAsync(id, search);
+        var results = await db.SearchMetricsAsync(id, search, pagination);
         return TypedResults.Ok(results.Select(MetricMapper.Map));
     }
 

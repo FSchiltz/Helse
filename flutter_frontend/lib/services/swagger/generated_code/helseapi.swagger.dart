@@ -729,19 +729,60 @@ abstract class Helseapi extends ChopperService {
 
   ///
   ///@param personId
+  ///@param Page
+  ///@param PageSize
   Future<chopper.Response<List<Metric>>> apiMetricsSearchPost({
     int? personId,
+    required int? page,
+    required int? pageSize,
     required SearchMetric? body,
   }) {
     generatedMapping.putIfAbsent(Metric, () => Metric.fromJsonFactory);
 
-    return _apiMetricsSearchPost(personId: personId, body: body);
+    return _apiMetricsSearchPost(
+      personId: personId,
+      page: page,
+      pageSize: pageSize,
+      body: body,
+    );
   }
 
   ///
   ///@param personId
+  ///@param Page
+  ///@param PageSize
   @POST(path: '/api/metrics/search', optionalBody: true)
   Future<chopper.Response<List<Metric>>> _apiMetricsSearchPost({
+    @Query('personId') int? personId,
+    @Query('Page') required int? page,
+    @Query('PageSize') required int? pageSize,
+    @Body() required SearchMetric? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["MetricsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param personId
+  Future<chopper.Response<int>> apiMetricsCountPost({
+    int? personId,
+    required SearchMetric? body,
+  }) {
+    return _apiMetricsCountPost(personId: personId, body: body);
+  }
+
+  ///
+  ///@param personId
+  @POST(path: '/api/metrics/count', optionalBody: true)
+  Future<chopper.Response<int>> _apiMetricsCountPost({
     @Query('personId') int? personId,
     @Body() required SearchMetric? body,
     @chopper.Tag()
@@ -1124,19 +1165,60 @@ abstract class Helseapi extends ChopperService {
 
   ///
   ///@param personId
+  ///@param Page
+  ///@param PageSize
   Future<chopper.Response<List<Event>>> apiEventsSearchPost({
     int? personId,
+    required int? page,
+    required int? pageSize,
     required SearchEvent? body,
   }) {
     generatedMapping.putIfAbsent(Event, () => Event.fromJsonFactory);
 
-    return _apiEventsSearchPost(personId: personId, body: body);
+    return _apiEventsSearchPost(
+      personId: personId,
+      page: page,
+      pageSize: pageSize,
+      body: body,
+    );
   }
 
   ///
   ///@param personId
+  ///@param Page
+  ///@param PageSize
   @POST(path: '/api/events/search', optionalBody: true)
   Future<chopper.Response<List<Event>>> _apiEventsSearchPost({
+    @Query('personId') int? personId,
+    @Query('Page') required int? page,
+    @Query('PageSize') required int? pageSize,
+    @Body() required SearchEvent? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["EventsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param personId
+  Future<chopper.Response<int>> apiEventsCountPost({
+    int? personId,
+    required SearchEvent? body,
+  }) {
+    return _apiEventsCountPost(personId: personId, body: body);
+  }
+
+  ///
+  ///@param personId
+  @POST(path: '/api/events/count', optionalBody: true)
+  Future<chopper.Response<int>> _apiEventsCountPost({
     @Query('personId') int? personId,
     @Body() required SearchEvent? body,
     @chopper.Tag()

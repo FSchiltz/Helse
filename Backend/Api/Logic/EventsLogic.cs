@@ -5,6 +5,7 @@ using Helse.Models.Common;
 using Helse.Models.Events;
 using Helse.Models.Persons;
 using LinqToDB;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Helse.Api.Logic;
 
@@ -148,7 +149,7 @@ internal static class EventsLogic
             return TypedResults.BadRequest();
     }
 
-    internal static async Task<IResult> SearchAsync(SearchEvent search, long? personId, IUserContext users, IEventContext db, HttpContext context)
+    internal static async Task<IResult> SearchAsync(SearchEvent search, long? personId, [AsParameters] Pagination pagination, IUserContext users, IEventContext db, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -159,11 +160,11 @@ internal static class EventsLogic
 
         var id = personId ?? user.PersonId;
 
-        var results = await db.SearchEventsAsync(id, search);
+        var results = await db.SearchEventsAsync(id, search, pagination);
         return TypedResults.Ok(results.Select(EventMapper.Map));
     }
 
-     internal static async Task<IResult> CountAsync(SearchEvent search, long? personId, IUserContext users, IEventContext db, HttpContext context)
+    internal static async Task<IResult> CountAsync(SearchEvent search, long? personId, IUserContext users, IEventContext db, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
