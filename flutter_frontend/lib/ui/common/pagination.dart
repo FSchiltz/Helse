@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
@@ -16,17 +18,18 @@ class Pagination extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final int maxPage = (count / pageSize).toInt();
     return Row(
       children: [
         IconButton(
-          onPressed: () => callBack(page - 1),
+          onPressed: () => callBack(max(0, page - 1)),
           icon: Icon(Icons.arrow_left),
         ),
         Text(page.toString()),
         SizedBox(width: UIConstants.formPad),
         Text(count.toString()),
         IconButton(
-          onPressed: () => callBack(page + 1),
+          onPressed: () => callBack(min(maxPage, page + 1)),
           icon: Icon(Icons.arrow_right),
         ),
       ],

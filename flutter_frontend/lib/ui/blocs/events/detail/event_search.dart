@@ -80,6 +80,7 @@ class _EventSearchState extends State<EventSearch> {
   Future<void> _countEvents() async {
     setState(() {
       _working = true;
+      _count = 0;
     });
     try {
       final text = (_value.text.isEmpty) ? null : _value.text;

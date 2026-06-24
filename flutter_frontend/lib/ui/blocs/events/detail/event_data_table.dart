@@ -34,15 +34,14 @@ class _EventDataTableState extends State<EventDataTable> {
   void initState() {
     super.initState();
 
-    if (widget.count > 0) {
-      _search();
-    }
+    _search();
   }
 
   @override
   void didUpdateWidget(covariant EventDataTable oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.count != oldWidget.count) {
+      _page = 0;
       _search();
     }
   }
@@ -138,14 +137,16 @@ class _EventDataTableState extends State<EventDataTable> {
   }
 
   Future<void> _search() async {
-    var events = await Dependencies.services.event.searchEvents(
-      widget.person,
-      widget.search,
-      _page,
-      50,
-    );
-    setState(() {
-      _events = events ?? [];
-    });
+    if (widget.count > 0) {
+      var events = await Dependencies.services.event.searchEvents(
+        widget.person,
+        widget.search,
+        _page,
+        50,
+      );
+      setState(() {
+        _events = events ?? [];
+      });
+    }
   }
 }
