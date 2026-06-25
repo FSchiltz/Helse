@@ -82,9 +82,7 @@ class _EventsEditState extends PopupSubmitState<EventsEdit> {
             _editableField(
               label: locale.description,
               enabled: _updateDescription,
-              onChanged: (v) => setState(() {
-                _updateDescription = v;
-              }),
+              onChanged: (v) => setState(() => _updateDescription = v),
               child: SquareTextField(
                 icon: Icons.description_sharp,
                 label: locale.description,
@@ -95,9 +93,7 @@ class _EventsEditState extends PopupSubmitState<EventsEdit> {
             _editableField(
               label: locale.tag,
               enabled: _updateTag,
-              onChanged: (v) => setState(() {
-                _updateTag = v;
-              }),
+              onChanged: (v) => setState(() => _updateTag = v),
               child: SquareTextField(
                 icon: Icons.tag_sharp,
                 label: locale.tag,
@@ -107,9 +103,7 @@ class _EventsEditState extends PopupSubmitState<EventsEdit> {
             _editableField(
               label: locale.start,
               enabled: _updateStart,
-              onChanged: (v) => setState(() {
-                _updateStart = v;
-              }),
+              onChanged: (v) => setState(() => _updateStart = v),
               child: DateInput(
                 locale.start,
                 _start,
@@ -146,8 +140,17 @@ class _EventsEditState extends PopupSubmitState<EventsEdit> {
     required ValueChanged<bool> onChanged,
     required Widget child,
   }) {
-    return Column(
-      children: [HelseSwitch(label, enabled, onChanged), if (enabled) child],
+    return Row(
+      spacing: UIConstants.formPad,
+      children: [
+        CustomSwitch(enabled, onChanged),
+        Expanded(
+          child: IgnorePointer(
+            ignoring: !enabled,
+            child: Opacity(opacity: enabled ? 1 : 0.5, child: child),
+          ),
+        ),
+      ],
     );
   }
 }
