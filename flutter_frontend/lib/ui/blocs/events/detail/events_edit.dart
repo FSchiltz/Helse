@@ -6,6 +6,7 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/inputs/date_input.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
+import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
@@ -74,7 +75,18 @@ class _EventsEditState extends PopupSubmitState<EventsEdit> {
       content: SingleChildScrollView(
         child: Column(
           children: [
-            Text('${widget.edit.length} events'),
+            Row(
+              children: [
+                const Icon(Icons.edit_note),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Editing ${widget.edit.length} events',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: UIConstants.formPad),
 
             HelseSwitch(
