@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/logic/event.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/events/delete_event.dart';
 import 'package:helse/ui/blocs/events/detail/events_edit.dart';
 import 'package:helse/ui/blocs/events/events_add.dart';
+import 'package:helse/ui/common/loader.dart';
 import 'package:helse/ui/common/pagination.dart';
 
 class EventDataTable extends StatefulWidget {
@@ -31,6 +33,7 @@ class _EventDataTableState extends State<EventDataTable> {
   List<Event> _events = [];
   int _page = 0;
   List<Event> _selected = [];
+  SubmissionStatus _status = SubmissionStatus.initial;
 
   @override
   void initState() {
@@ -102,112 +105,133 @@ class _EventDataTableState extends State<EventDataTable> {
             ),
           ],
         ),
-        DataTable(
-          showCheckboxColumn: true,
-          onSelectAll: (value) {
-            if (value == true) {
-              setState(() {
-                _selected = _events.toList();
-              });
-            } else {
-              setState(() {
-                _selected = [];
-              });
-            }
-          },
-          columns: [
-            DataColumn(label: Expanded(child: Text("Id"))),
-            DataColumn(label: Expanded(child: Text(locale.description))),
-            DataColumn(label: Expanded(child: Text(locale.start))),
-            DataColumn(label: Expanded(child: Text(locale.stop))),
-            DataColumn(label: Expanded(child: Text(locale.tag))),
-            DataColumn(label: Expanded(child: Text(locale.source))),
-            DataColumn(label: Expanded(child: Text(""))),
-          ],
-          rows: _events
-              .map(
-                (m) => DataRow(
-                  selected: _selected.contains(m),
-                  onSelectChanged: (v) {
+        (_status == SubmissionStatus.inProgress)
+            ? HelseLoader(color: Theme.of(context).colorScheme.primary)
+            : DataTable(
+                showCheckboxColumn: true,
+                onSelectAll: (value) {
+                  if (value == true) {
                     setState(() {
-                      if (v = true) {
-                        _selected.add(m);
-                      } else {
-                        _selected.remove(m);
-                      }
+                      _selected = _events.toList();
                     });
-                  },
-                  cells: [
-                    DataCell(Text((m.id).toString())),
-                    DataCell(Text('${m.description}')),
-                    DataCell(
-                      Text(
-                        DateHelper.format(m.start.toLocal(), context: context),
-                      ),
-                    ),
-                    DataCell(
-                      Text(
-                        DateHelper.format(m.stop.toLocal(), context: context),
-                      ),
-                    ),
-                    DataCell(Text(m.tag.toString())),
-                    DataCell(Text(m.source.toString())),
-                    DataCell(
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              showDialog<void>(
+                  } else {
+                    setState(() {
+                      _selected = [];
+                    });
+                  }
+                },
+                columns: [
+                  DataColumn(label: Expanded(child: Text("Id"))),
+                  DataColumn(label: Expanded(child: Text(locale.description))),
+                  DataColumn(label: Expanded(child: Text(locale.start))),
+                  DataColumn(label: Expanded(child: Text(locale.stop))),
+                  DataColumn(label: Expanded(child: Text(locale.tag))),
+                  DataColumn(label: Expanded(child: Text(locale.source))),
+                  DataColumn(label: Expanded(child: Text(""))),
+                ],
+                rows: _events
+                    .map(
+                      (m) => DataRow(
+                        selected: _selected.contains(m),
+                        onSelectChanged: (v) {
+                          setState(() {
+                            if (v = true) {
+                              _selected.add(m);
+                            } else {
+                              _selected.remove(m);
+                            }
+                          });
+                        },
+                        cells: [
+                          DataCell(Text((m.id).toString())),
+                          DataCell(Text('${m.description}')),
+                          DataCell(
+                            Text(
+                              DateHelper.format(
+                                m.start.toLocal(),
                                 context: context,
-                                builder: (BuildContext context) {
-                                  return EventAdd(
-                                    widget.type,
-                                    widget.reset,
-                                    person: widget.person,
-                                    edit: m,
-                                  );
-                                },
-                              );
-                            },
-                            icon: const Icon(Icons.edit_sharp),
+                              ),
+                            ),
                           ),
-                          IconButton(
-                            onPressed: () {
-                              showDialog<void>(
+                          DataCell(
+                            Text(
+                              DateHelper.format(
+                                m.stop.toLocal(),
                                 context: context,
-                                builder: (BuildContext context) {
-                                  return DeleteEvent(() async {
-                                    await Dependencies.services.event
-                                        .deleteEvent(m.id);
-                                    widget.reset();
-                                  }, person: widget.person);
-                                },
-                              );
-                            },
-                            icon: const Icon(Icons.delete_sharp),
+                              ),
+                            ),
+                          ),
+                          DataCell(Text(m.tag.toString())),
+                          DataCell(Text(m.source.toString())),
+                          DataCell(
+                            Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    showDialog<void>(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return EventAdd(
+                                          widget.type,
+                                          widget.reset,
+                                          person: widget.person,
+                                          edit: m,
+                                        );
+                                      },
+                                    );
+                                  },
+                                  icon: const Icon(Icons.edit_sharp),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    showDialog<void>(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return DeleteEvent(() async {
+                                          await Dependencies.services.event
+                                              .deleteEvent(m.id);
+                                          widget.reset();
+                                        }, person: widget.person);
+                                      },
+                                    );
+                                  },
+                                  icon: const Icon(Icons.delete_sharp),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-              )
-              .toList(),
-        ),
+                    )
+                    .toList(),
+              ),
       ],
     );
   }
 
   Future<void> _search() async {
-    if (widget.count > 0) {
-      var events = await widget.callback(_page, 50);
+    setState(() {
+      _events = [];
+      _status = SubmissionStatus.inProgress;
+    });
+    try {
+      if (widget.count > 0) {
+        var events = await widget.callback(_page, 50);
 
-      setState(() {
-        _events = events;
-      });
-    } else {
+        setState(() {
+          _events = events;
+          _status = SubmissionStatus.success;
+        });
+      } else {
+        setState(() {
+          _events = [];
+          _status = SubmissionStatus.initial;
+        });
+      }
+    } catch (_) {
       setState(() {
         _events = [];
+        _status = SubmissionStatus.failure;
       });
     }
   }

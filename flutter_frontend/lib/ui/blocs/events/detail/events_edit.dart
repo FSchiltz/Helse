@@ -3,7 +3,6 @@ import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/inputs/date_input.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';

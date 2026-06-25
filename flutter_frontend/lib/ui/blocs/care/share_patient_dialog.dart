@@ -7,7 +7,6 @@ import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../di/dependencies.dart';
-import '../../../logic/event.dart';
 import '../../common/layout/square_dialog.dart';
 import '../../common/inputs/values_input.dart';
 

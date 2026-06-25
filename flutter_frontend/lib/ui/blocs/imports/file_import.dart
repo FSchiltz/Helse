@@ -3,16 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/inputs/values_input.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
-import '../../../logic/event.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/inputs/file_input.dart';
-import '../../common/loader.dart';
-import '../../common/notification.dart';
 
 class FileImport extends StatefulWidget {
   final int? patient;
