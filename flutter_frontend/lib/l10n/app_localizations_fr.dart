@@ -109,7 +109,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get submit => 'Soumettre';
 
   @override
-  String get description => 'Déscription';
+  String get description => 'Description';
 
   @override
   String get addPatients => 'Ajouter un nouveau patient';
