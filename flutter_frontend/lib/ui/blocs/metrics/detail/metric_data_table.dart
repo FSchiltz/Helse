@@ -62,6 +62,8 @@ class _MetricDataTableState extends State<MetricDataTable> {
             });
             _search();
           },
+          selected: _selected.length,
+          menu: [],
         ),
         DataTable(
           showCheckboxColumn: true,

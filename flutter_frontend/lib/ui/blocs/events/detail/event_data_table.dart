@@ -4,7 +4,7 @@ import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/events/delete_event.dart';
-import 'package:helse/ui/blocs/events/detail/event_bulk_edition.dart';
+import 'package:helse/ui/blocs/events/detail/events_edit.dart';
 import 'package:helse/ui/blocs/events/events_add.dart';
 import 'package:helse/ui/common/pagination.dart';
 
@@ -55,22 +55,52 @@ class _EventDataTableState extends State<EventDataTable> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        EventBulkEdition(
-          person: widget.person,
-          type: widget.type,
-          events: _selected,
-          callback: widget.reset,
-        ),
         Pagination(
           count: widget.count,
           pageSize: 50,
           page: _page,
+          selected: _selected.length,
           callBack: (v) {
             setState(() {
               _page = v;
             });
             _search();
           },
+          menu: [
+            IconButton(
+              onPressed: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return EventsEdit(
+                      widget.type,
+                      widget.reset,
+                      person: widget.person,
+                      edit: _selected,
+                    );
+                  },
+                );
+              },
+              icon: const Icon(Icons.edit_sharp),
+            ),
+            IconButton(
+              onPressed: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return DeleteEvent(() async {
+                      await Dependencies.services.event.deleteEvents(
+                        _selected,
+                        person: widget.person,
+                      );
+                      widget.reset();
+                    }, person: widget.person);
+                  },
+                );
+              },
+              icon: const Icon(Icons.delete_sharp),
+            ),
+          ],
         ),
         DataTable(
           showCheckboxColumn: true,
