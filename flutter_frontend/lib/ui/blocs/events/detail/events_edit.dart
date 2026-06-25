@@ -143,7 +143,7 @@ class _EventsEditState extends PopupSubmitState<EventsEdit> {
     return Row(
       spacing: UIConstants.formPad,
       children: [
-        CustomSwitch(enabled, onChanged),
+        Checkbox(value: enabled, onChanged: (v) => onChanged(v ?? false)),
         Expanded(
           child: IgnorePointer(
             ignoring: !enabled,
