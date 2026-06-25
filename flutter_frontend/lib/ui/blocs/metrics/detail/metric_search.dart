@@ -5,6 +5,7 @@ import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
 import 'package:helse/ui/common/inputs/date_input.dart';
+import 'package:helse/ui/common/inputs/values_input.dart';
 import 'package:helse/ui/common/loader.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
 import 'package:helse/ui/common/ui_constants.dart';
@@ -27,6 +28,7 @@ class _MetricSearchState extends State<MetricSearch> {
   DateTime? _to;
   int _count = 0;
   late SearchMetric _search;
+  FileTypes? _source;
 
   @override
   void initState() {
@@ -55,6 +57,26 @@ class _MetricSearchState extends State<MetricSearch> {
                     ..._getFilter(theme, locale),
                     DateInput(locale.start, _from, (v) => _from = v),
                     DateInput(locale.stop, _to, (v) => _to = v),
+                    SizedBox(
+                      width: 240,
+                      child: ValuesInput(
+                        value: _source,
+                        FileTypes.values
+                            .map(
+                              (x) => DropdownItem(
+                                x,
+                                (x == FileTypes.swaggerGeneratedUnknown)
+                                    ? "All"
+                                    : x.name,
+                              ),
+                            )
+                            .toList(),
+                        (value) => setState(() {
+                          _source = value;
+                        }),
+                        label: locale.source,
+                      ),
+                    ),
                     IconButton(
                       onPressed: (_working) ? null : _countEvents,
                       icon: Icon(Icons.search_sharp),
@@ -94,6 +116,11 @@ class _MetricSearchState extends State<MetricSearch> {
       final max = _max.text.isEmpty ? null : int.parse(_max.text);
       final min = _min.text.isEmpty ? null : int.parse(_min.text);
       final text = (_value.text.isEmpty) ? null : _value.text;
+      FileTypes source = _source ?? FileTypes.none;
+      if (_source == FileTypes.swaggerGeneratedUnknown) {
+        source = FileTypes.none;
+      }
+
       final search = SearchMetric(
         type: widget.type.id,
         value: text,
@@ -101,6 +128,8 @@ class _MetricSearchState extends State<MetricSearch> {
         minValue: min,
         from: _from,
         to: _to,
+        source: source,
+        filterSource: _source != FileTypes.swaggerGeneratedUnknown,
       );
       var events = await Dependencies.services.metric.countMetrics(
         widget.person,

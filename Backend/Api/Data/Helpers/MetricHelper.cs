@@ -36,11 +36,10 @@ internal static class MetricHelper
             query = query.Where(x => int.Parse(x.Value) <= search.MaxValue);
         }
 
-        if (search.Source is not null)
+        if (search.FilterSource)
         {
             query = query.Where(x => x.Source == (int)search.Source);
         }
         return query;
     }
-
 }

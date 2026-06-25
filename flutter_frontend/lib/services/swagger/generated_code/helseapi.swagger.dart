@@ -6323,7 +6323,14 @@ extension $RightExtension on Right {
 
 @JsonSerializable(explicitToJson: true)
 class SearchEvent {
-  const SearchEvent({required this.type, this.value, this.from, this.to});
+  const SearchEvent({
+    required this.type,
+    this.value,
+    this.from,
+    this.to,
+    this.source,
+    this.filterSource,
+  });
 
   factory SearchEvent.fromJson(Map<String, dynamic> json) =>
       _$SearchEventFromJson(json);
@@ -6339,6 +6346,14 @@ class SearchEvent {
   final DateTime? from;
   @JsonKey(name: 'to')
   final DateTime? to;
+  @JsonKey(
+    name: 'source',
+    toJson: fileTypesNullableToJson,
+    fromJson: fileTypesNullableFromJson,
+  )
+  final enums.FileTypes? source;
+  @JsonKey(name: 'filterSource')
+  final bool? filterSource;
   static const fromJsonFactory = _$SearchEventFromJson;
 
   @override
@@ -6352,7 +6367,14 @@ class SearchEvent {
             (identical(other.from, from) ||
                 const DeepCollectionEquality().equals(other.from, from)) &&
             (identical(other.to, to) ||
-                const DeepCollectionEquality().equals(other.to, to)));
+                const DeepCollectionEquality().equals(other.to, to)) &&
+            (identical(other.source, source) ||
+                const DeepCollectionEquality().equals(other.source, source)) &&
+            (identical(other.filterSource, filterSource) ||
+                const DeepCollectionEquality().equals(
+                  other.filterSource,
+                  filterSource,
+                )));
   }
 
   @override
@@ -6364,6 +6386,8 @@ class SearchEvent {
       const DeepCollectionEquality().hash(value) ^
       const DeepCollectionEquality().hash(from) ^
       const DeepCollectionEquality().hash(to) ^
+      const DeepCollectionEquality().hash(source) ^
+      const DeepCollectionEquality().hash(filterSource) ^
       runtimeType.hashCode;
 }
 
@@ -6373,12 +6397,16 @@ extension $SearchEventExtension on SearchEvent {
     String? value,
     DateTime? from,
     DateTime? to,
+    enums.FileTypes? source,
+    bool? filterSource,
   }) {
     return SearchEvent(
       type: type ?? this.type,
       value: value ?? this.value,
       from: from ?? this.from,
       to: to ?? this.to,
+      source: source ?? this.source,
+      filterSource: filterSource ?? this.filterSource,
     );
   }
 
@@ -6387,12 +6415,18 @@ extension $SearchEventExtension on SearchEvent {
     Wrapped<String?>? value,
     Wrapped<DateTime?>? from,
     Wrapped<DateTime?>? to,
+    Wrapped<enums.FileTypes?>? source,
+    Wrapped<bool?>? filterSource,
   }) {
     return SearchEvent(
       type: (type != null ? type.value : this.type),
       value: (value != null ? value.value : this.value),
       from: (from != null ? from.value : this.from),
       to: (to != null ? to.value : this.to),
+      source: (source != null ? source.value : this.source),
+      filterSource: (filterSource != null
+          ? filterSource.value
+          : this.filterSource),
     );
   }
 }
@@ -6406,7 +6440,9 @@ class SearchMetric {
     this.to,
     this.minValue,
     this.maxValue,
+    this.source,
     this.isTrue,
+    this.filterSource,
   });
 
   factory SearchMetric.fromJson(Map<String, dynamic> json) =>
@@ -6427,8 +6463,16 @@ class SearchMetric {
   final int? minValue;
   @JsonKey(name: 'maxValue')
   final int? maxValue;
+  @JsonKey(
+    name: 'source',
+    toJson: fileTypesNullableToJson,
+    fromJson: fileTypesNullableFromJson,
+  )
+  final enums.FileTypes? source;
   @JsonKey(name: 'isTrue')
   final bool? isTrue;
+  @JsonKey(name: 'filterSource')
+  final bool? filterSource;
   static const fromJsonFactory = _$SearchMetricFromJson;
 
   @override
@@ -6453,8 +6497,15 @@ class SearchMetric {
                   other.maxValue,
                   maxValue,
                 )) &&
+            (identical(other.source, source) ||
+                const DeepCollectionEquality().equals(other.source, source)) &&
             (identical(other.isTrue, isTrue) ||
-                const DeepCollectionEquality().equals(other.isTrue, isTrue)));
+                const DeepCollectionEquality().equals(other.isTrue, isTrue)) &&
+            (identical(other.filterSource, filterSource) ||
+                const DeepCollectionEquality().equals(
+                  other.filterSource,
+                  filterSource,
+                )));
   }
 
   @override
@@ -6468,7 +6519,9 @@ class SearchMetric {
       const DeepCollectionEquality().hash(to) ^
       const DeepCollectionEquality().hash(minValue) ^
       const DeepCollectionEquality().hash(maxValue) ^
+      const DeepCollectionEquality().hash(source) ^
       const DeepCollectionEquality().hash(isTrue) ^
+      const DeepCollectionEquality().hash(filterSource) ^
       runtimeType.hashCode;
 }
 
@@ -6480,7 +6533,9 @@ extension $SearchMetricExtension on SearchMetric {
     DateTime? to,
     int? minValue,
     int? maxValue,
+    enums.FileTypes? source,
     bool? isTrue,
+    bool? filterSource,
   }) {
     return SearchMetric(
       type: type ?? this.type,
@@ -6489,7 +6544,9 @@ extension $SearchMetricExtension on SearchMetric {
       to: to ?? this.to,
       minValue: minValue ?? this.minValue,
       maxValue: maxValue ?? this.maxValue,
+      source: source ?? this.source,
       isTrue: isTrue ?? this.isTrue,
+      filterSource: filterSource ?? this.filterSource,
     );
   }
 
@@ -6500,7 +6557,9 @@ extension $SearchMetricExtension on SearchMetric {
     Wrapped<DateTime?>? to,
     Wrapped<int?>? minValue,
     Wrapped<int?>? maxValue,
+    Wrapped<enums.FileTypes?>? source,
     Wrapped<bool?>? isTrue,
+    Wrapped<bool?>? filterSource,
   }) {
     return SearchMetric(
       type: (type != null ? type.value : this.type),
@@ -6509,7 +6568,11 @@ extension $SearchMetricExtension on SearchMetric {
       to: (to != null ? to.value : this.to),
       minValue: (minValue != null ? minValue.value : this.minValue),
       maxValue: (maxValue != null ? maxValue.value : this.maxValue),
+      source: (source != null ? source.value : this.source),
       isTrue: (isTrue != null ? isTrue.value : this.isTrue),
+      filterSource: (filterSource != null
+          ? filterSource.value
+          : this.filterSource),
     );
   }
 }

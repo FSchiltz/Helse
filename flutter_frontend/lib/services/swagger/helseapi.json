@@ -4122,6 +4122,12 @@
               "string"
             ],
             "format": "date-time"
+          },
+          "source": {
+            "$ref": "#/components/schemas/FileTypes"
+          },
+          "filterSource": {
+            "type": "boolean"
           }
         }
       },
@@ -4177,11 +4183,17 @@
             ],
             "format": "int32"
           },
+          "source": {
+            "$ref": "#/components/schemas/FileTypes"
+          },
           "isTrue": {
             "type": [
               "null",
               "boolean"
             ]
+          },
+          "filterSource": {
+            "type": "boolean"
           }
         }
       },

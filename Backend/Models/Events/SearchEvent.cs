@@ -15,5 +15,10 @@ public class SearchEvent
 
     public DateTime? To { get; set; }
 
-    public FileTypes? Source { get; set; }
+    public FileTypes Source { get; set; }
+
+    /// <summary>
+    /// We have to do this because flutter don't like nullable enum
+    /// </summary>
+    public bool FilterSource { get; set; }
 }
