@@ -188,7 +188,6 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
   }
 
   void submit(AppLocalizations locale) async {
-    
     try {
       if (_formKey.currentState?.validate() ?? false) {
         final int? valueCount = (_valueCount.text.isNotEmpty)
@@ -248,6 +247,8 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
   void dispose() {
     _description.dispose();
     _name.dispose();
+    _timeDifference.dispose();
+    _valueCount.dispose();
     super.dispose();
   }
 

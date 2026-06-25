@@ -24,10 +24,10 @@ class MetricGroupAdd extends StatefulWidget {
 class _MetricGroupAddState extends State<MetricGroupAdd> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
-  final FocusNode focusNodeName = FocusNode();
-  final FocusNode focusNodeDescription = FocusNode();
-  final TextEditingController controllerName = TextEditingController();
-  final TextEditingController controllerDescription = TextEditingController();
+  final FocusNode _focusNodeName = FocusNode();
+  final FocusNode _focusNodeDescription = FocusNode();
+  final TextEditingController _controllerName = TextEditingController();
+  final TextEditingController _controllerDescription = TextEditingController();
 
   bool _visible = true;
   bool _showDashboard = true;
@@ -38,11 +38,18 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
     var edit = widget.edit;
     if (edit != null) {
       // this is not a new addition, just an edit
-      controllerDescription.text = edit.description;
-      controllerName.text = edit.name;
+      _controllerDescription.text = edit.description;
+      _controllerName.text = edit.name;
       _visible = edit.showTitle ?? false;
       _showDashboard = edit.showOnDashboard ?? false;
     }
+  }
+
+  @override
+  void dispose() {
+    _controllerName.dispose();
+    _controllerDescription.dispose();
+    super.dispose();
   }
 
   @override
@@ -65,18 +72,18 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
                 children: [
                   SquareTextField(
                     icon: Icons.person_sharp,
-                    controller: controllerName,
-                    focusNode: focusNodeName,
+                    controller: _controllerName,
+                    focusNode: _focusNodeName,
                     label: locale.name,
                     validator: validateName,
                     onEditingComplete: () =>
-                        focusNodeDescription.requestFocus(),
+                        _focusNodeDescription.requestFocus(),
                   ),
                   const SizedBox(height: UIConstants.formPad),
                   SquareTextField(
                     icon: Icons.person_sharp,
-                    controller: controllerDescription,
-                    focusNode: focusNodeDescription,
+                    controller: _controllerDescription,
+                    focusNode: _focusNodeDescription,
                     label: locale.description,
                   ),
 
@@ -115,21 +122,20 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
   }
 
   void submit(AppLocalizations locale) async {
-    
     try {
       if (_formKey.currentState?.validate() ?? false) {
         if (widget.edit == null) {
           final metric = CreateGroup(
-            description: controllerDescription.text,
-            name: controllerName.text,
+            description: _controllerDescription.text,
+            name: _controllerName.text,
             showTitle: _visible,
             showOnDashboard: _showDashboard,
           );
           await Dependencies.services.metric.addGroup(metric);
         } else {
           final metric = UpdateGroup(
-            description: controllerDescription.text,
-            name: controllerName.text,
+            description: _controllerDescription.text,
+            name: _controllerName.text,
             id: widget.edit?.id ?? 0,
             showTitle: _visible,
             showOnDashboard: _showDashboard,
@@ -150,12 +156,5 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
         Notify.showError(locale.error(ex.toString()), context);
       }
     }
-  }
-
-  @override
-  void dispose() {
-    controllerDescription.dispose();
-    controllerName.dispose();
-    super.dispose();
   }
 }

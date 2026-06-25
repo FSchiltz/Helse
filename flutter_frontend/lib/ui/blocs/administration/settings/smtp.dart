@@ -61,6 +61,16 @@ class _SmtpFormViewState extends State<SmtpFormView> {
   }
 
   @override
+  void dispose() {
+    _controllerFromEmail.dispose();
+    _controllerHost.dispose();
+    _controllerPassword.dispose();
+    _controllerUserName.dispose();
+    _controllerPort.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
     var locale = Translation.of(context);

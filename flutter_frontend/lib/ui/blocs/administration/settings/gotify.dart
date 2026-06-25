@@ -52,6 +52,13 @@ class _SmtpFormViewState extends State<GotifyFormView> {
   }
 
   @override
+  void dispose() {
+    _controllerToken.dispose();
+    _controllerUrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
     var locale = Translation.of(context);

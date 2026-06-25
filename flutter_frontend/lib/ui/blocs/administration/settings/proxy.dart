@@ -54,6 +54,12 @@ class _ProxyFormViewState extends State<ProxyFormView> {
   }
 
   @override
+  void dispose() {
+    _controllerHeader.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
     var locale = Translation.of(context);

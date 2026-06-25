@@ -92,6 +92,13 @@ class _EventsEditState extends State<EventsEdit> {
   }
 
   @override
+  void dispose() {
+    _description.dispose();
+    _tag.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final locale = Translation.of(context);
     return SquareDialog(
@@ -101,77 +108,75 @@ class _EventsEditState extends State<EventsEdit> {
             ? const HelseLoader()
             : SquareButton(locale.submit, _submit),
       ],
-      content: Form(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Text('${widget.edit.length} events'),
-              const SizedBox(height: UIConstants.formPad),
+      content: SingleChildScrollView(
+        child: Column(
+          children: [
+            Text('${widget.edit.length} events'),
+            const SizedBox(height: UIConstants.formPad),
 
-              HelseSwitch(
-                locale.description,
-                _updateDescription,
-                (v) => setState(() {
-                  _updateDescription = v;
-                }),
+            HelseSwitch(
+              locale.description,
+              _updateDescription,
+              (v) => setState(() {
+                _updateDescription = v;
+              }),
+            ),
+            if (_updateDescription)
+              SquareTextField(
+                icon: Icons.description_sharp,
+                label: locale.description,
+                controller: _description,
               ),
-              if (_updateDescription)
-                SquareTextField(
-                  icon: Icons.description_sharp,
-                  label: locale.description,
-                  controller: _description,
-                ),
 
-              const SizedBox(height: UIConstants.formPad),
-              HelseSwitch(
-                locale.tag,
-                _updateTag,
-                (v) => setState(() {
-                  _updateTag = v;
-                }),
+            const SizedBox(height: UIConstants.formPad),
+            HelseSwitch(
+              locale.tag,
+              _updateTag,
+              (v) => setState(() {
+                _updateTag = v;
+              }),
+            ),
+            if (_updateTag)
+              SquareTextField(
+                icon: Icons.tag_sharp,
+                label: locale.tag,
+                controller: _tag,
               ),
-              if (_updateTag)
-                SquareTextField(
-                  icon: Icons.tag_sharp,
-                  label: locale.tag,
-                  controller: _tag,
-                ),
-              const SizedBox(height: UIConstants.formPad),
-              HelseSwitch(
+            const SizedBox(height: UIConstants.formPad),
+            HelseSwitch(
+              locale.start,
+              _updateStart,
+              (v) => setState(() {
+                _updateStart = v;
+              }),
+            ),
+            if (_updateStart)
+              DateInput(
                 locale.start,
-                _updateStart,
-                (v) => setState(() {
-                  _updateStart = v;
+                _start,
+                (date) => setState(() {
+                  _start = date ?? DateTime.now();
+                  _stop = _stop.isBefore(_start) ? _start : _stop;
                 }),
               ),
-              if (_updateStart)
-                DateInput(
-                  locale.start,
-                  _start,
-                  (date) => setState(() {
-                    _start = date ?? DateTime.now();
-                    _stop = _stop.isBefore(_start) ? _start : _stop;
-                  }),
-                ),
-              const SizedBox(height: UIConstants.formPad),
-              HelseSwitch(
-                locale.stop,
-                _updateStop,
-                (v) => setState(() {
-                  _updateStop = v;
+            const SizedBox(height: UIConstants.formPad),
+            HelseSwitch(
+              locale.stop,
+              _updateStop,
+              (v) => setState(() {
+                _updateStop = v;
+              }),
+            ),
+            if (_updateStop)
+              DateInput(
+                locale.end,
+                _stop,
+                (date) => setState(() {
+                  _stop = date ?? DateTime.now();
+                  _start = _start.isAfter(_stop) ? _stop : _start;
                 }),
               ),
-              if (_updateStop)
-                DateInput(
-                  locale.end,
-                  _stop,
-                  (date) => setState(() {
-                    _stop = date ?? DateTime.now();
-                    _start = _start.isAfter(_stop) ? _stop : _start;
-                  }),
-                ),
-            ],
-          ),
+          ],
         ),
       ),
     );

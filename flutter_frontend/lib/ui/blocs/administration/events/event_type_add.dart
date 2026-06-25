@@ -50,6 +50,13 @@ class _EventTypeAddState extends State<EventTypeAdd> {
   }
 
   @override
+  void dispose() {
+    _description.dispose();
+    _timeDifference.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var locale = Translation.of(context);
     return SquareDialog(
@@ -125,7 +132,6 @@ class _EventTypeAddState extends State<EventTypeAdd> {
   }
 
   void _submit(AppLocalizations locale) async {
-    
     try {
       if (_formKey.currentState?.validate() ?? false) {
         final timeDifference = _timeDifference.text.isEmpty
@@ -169,12 +175,5 @@ class _EventTypeAddState extends State<EventTypeAdd> {
       }
       log(ex.toString());
     }
-  }
-
-  @override
-  void dispose() {
-    _description.dispose();
-    _name.dispose();
-    super.dispose();
   }
 }
