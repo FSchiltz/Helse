@@ -1,6 +1,8 @@
+using Helse.Models.Imports;
+
 namespace Helse.Models.Metrics;
 
-public class SearchMetric 
+public class SearchMetric
 {
     public required long Type { get; set; }
 
@@ -16,6 +18,8 @@ public class SearchMetric
     public int? MinValue { get; set; }
 
     public int? MaxValue { get; set; }
+
+    public FileTypes? Source { get; set; }
 
     public bool? IsTrue { get; set; }
 }
