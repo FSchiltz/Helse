@@ -42,8 +42,10 @@ class _EventsEditState extends State<EventsEdit> {
   SubmissionStatus _status = SubmissionStatus.initial;
 
   Future<void> _submit() async {
+    if (_status == SubmissionStatus.inProgress) {
+      return;
+    }
     final locale = Translation.of(context);
-    var localContext = context;
     try {
       setState(() {
         _status = SubmissionStatus.inProgress;
@@ -68,20 +70,23 @@ class _EventsEditState extends State<EventsEdit> {
         person: widget.person,
       );
       widget.callback.call();
+
+      if (!mounted) {
+        return;
+      }
+
       setState(() {
         _status = SubmissionStatus.success;
       });
 
-      if (localContext.mounted) {
-        Notify.show(locale.added, localContext);
-        Navigator.of(localContext).pop();
-      }
+      Notify.show(locale.added, context);
+      Navigator.of(context).pop();
     } catch (ex) {
       setState(() {
         _status = SubmissionStatus.failure;
       });
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
+      if (mounted) {
+        Notify.showError(locale.error(ex.toString()), context);
       }
     }
   }

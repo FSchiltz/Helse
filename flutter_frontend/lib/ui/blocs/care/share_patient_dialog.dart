@@ -89,7 +89,7 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
 
   void _submit() async {
     final locale = Translation.of(context);
-    final localContext = context;
+    
     try {
       setState(() {
         _status = SubmissionStatus.inProgress;
@@ -108,9 +108,9 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
         setState(() {
           _status = SubmissionStatus.success;
         });
-        if (localContext.mounted) {
-          Notify.show(locale.added, localContext);
-          Navigator.of(localContext).pop();
+        if (mounted) {
+          Notify.show(locale.added, context);
+          Navigator.of(context).pop();
         }
       } catch (_) {
         setState(() {
@@ -118,8 +118,8 @@ class _SharePatientDialogState extends State<SharePatientDialog> {
         });
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
+      if (mounted) {
+        Notify.showError(locale.error(ex.toString()), context);
       }
     }
   }

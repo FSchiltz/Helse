@@ -110,7 +110,7 @@ class _MetricAddState extends State<MetricAdd> {
   }
 
   void _submit(AppLocalizations locale) async {
-    var localContext = context;
+    
     try {
       setState(() {
         _status = SubmissionStatus.inProgress;
@@ -146,9 +146,9 @@ class _MetricAddState extends State<MetricAdd> {
           _status = SubmissionStatus.success;
         });
 
-        if (localContext.mounted) {
-          Notify.show(locale.added, localContext);
-          Navigator.of(localContext).pop();
+        if (mounted) {
+          Notify.show(locale.added, context);
+          Navigator.of(context).pop();
         }
 
         widget.callback();
@@ -158,8 +158,8 @@ class _MetricAddState extends State<MetricAdd> {
         });
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
+      if (mounted) {
+        Notify.showError(locale.error(ex.toString()), context);
       }
     }
   }

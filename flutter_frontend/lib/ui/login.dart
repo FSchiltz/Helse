@@ -276,7 +276,6 @@ class _LoginState extends State<LoginPage> {
   }
 
   Future<void> _submitOauth(OauthConnection oauth) async {
-    final localContext = context;
     final locale = Translation.of(context);
     var init = _initStatus;
     var url = _url;
@@ -293,8 +292,8 @@ class _LoginState extends State<LoginPage> {
 
         return;
       } catch (ex) {
-        if (localContext.mounted) {
-          Notify.showError(locale.error(ex.toString()), localContext);
+        if (mounted) {
+          Notify.showError(locale.error(ex.toString()), context);
         }
       }
     }

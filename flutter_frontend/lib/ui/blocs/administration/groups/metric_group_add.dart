@@ -115,7 +115,7 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
   }
 
   void submit(AppLocalizations locale) async {
-    var localContext = context;
+    
     try {
       if (_formKey.currentState?.validate() ?? false) {
         if (widget.edit == null) {
@@ -140,14 +140,14 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
         _formKey.currentState?.reset();
         widget.callback?.call();
 
-        if (localContext.mounted) {
-          Notify.show(locale.saved, localContext);
-          Navigator.of(localContext).pop();
+        if (mounted) {
+          Notify.show(locale.saved, context);
+          Navigator.of(context).pop();
         }
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
+      if (mounted) {
+        Notify.showError(locale.error(ex.toString()), context);
       }
     }
   }

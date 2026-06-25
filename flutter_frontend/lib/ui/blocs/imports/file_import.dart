@@ -91,7 +91,7 @@ class _FileImportState extends State<FileImport> {
 
   void submit() async {
     final locale = Translation.of(context);
-    final localContext = context;
+    
     if (selected != null) {
       setState(() {
         status = SubmissionStatus.inProgress;
@@ -110,13 +110,13 @@ class _FileImportState extends State<FileImport> {
           status = SubmissionStatus.success;
         });
 
-        if (localContext.mounted) {
-          Notify.show(locale.added, localContext);
-          Navigator.of(localContext).pop();
+        if (mounted) {
+          Notify.show(locale.added, context);
+          Navigator.of(context).pop();
         }
       } catch (ex) {
-        if (localContext.mounted) {
-          Notify.showError(locale.error(ex.toString()), localContext);
+        if (mounted) {
+          Notify.showError(locale.error(ex.toString()), context);
         }
 
         setState(() {

@@ -59,7 +59,7 @@ class _ChangeRoleState extends State<ChangeRole> {
   }
 
   void submit(AppLocalizations locale) async {
-    var localContext = context;
+    
     try {
       // save the user
       await Dependencies.services.user.updatePerson(
@@ -72,13 +72,13 @@ class _ChangeRoleState extends State<ChangeRole> {
       );
 
       widget.callback.call();
-      if (localContext.mounted) {
-        Notify.show(locale.saved, localContext);
-        Navigator.of(localContext).pop();
+      if (mounted) {
+        Notify.show(locale.saved, context);
+        Navigator.of(context).pop();
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
+      if (mounted) {
+        Notify.showError(locale.error(ex.toString()), context);
       }
     }
   }

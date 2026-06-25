@@ -53,14 +53,14 @@ class _SyncSettingsState extends State<SyncSettings> {
 
   Future<void> _submitHealth() async {
     final locale = Translation.of(context);
-    final localContext = context;
+    
     try {
       // save the user's settings
       await Dependencies.logics.settings.saveHealth(
         HealthSettings(_healthEnabled, _history, _background, _records),
       );
 
-      if (localContext.mounted) Notify.show(locale.saved, localContext);
+      if (mounted) Notify.show(locale.saved, context);
       if (_healthEnabled) {
         await Dependencies.logics.health.requestPermissions();
       }
@@ -73,8 +73,8 @@ class _SyncSettingsState extends State<SyncSettings> {
         await Dependencies.logics.health.requestBackgroundPermission();
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
+      if (mounted) {
+        Notify.showError(locale.error(ex.toString()), context);
       }
     }
   }

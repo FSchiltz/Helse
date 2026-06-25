@@ -30,7 +30,7 @@ class _SettingsViewState extends State<MetricSettingsView> {
     );
   }
 
-  void submit(BuildContext localContext) async {
+  void submit(BuildContext context) async {
     final locale = Translation.of(context);
     try {
       if (_formKey.currentState?.validate() ?? false) {
@@ -39,8 +39,8 @@ class _SettingsViewState extends State<MetricSettingsView> {
         Notify.show("Saved Successfully", context);
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
+      if (mounted) {
+        Notify.showError(locale.error(ex.toString()), context);
       }
     }
   }

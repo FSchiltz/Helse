@@ -38,7 +38,7 @@ class _TreatementState extends State<TreatmentAdd> {
 
   void _submit() async {
     final locale = Translation.of(context);
-    final localContext = context;
+    
 
     setState(() {
       _status = SubmissionStatus.inProgress;
@@ -57,16 +57,16 @@ class _TreatementState extends State<TreatmentAdd> {
         _status = SubmissionStatus.success;
       });
 
-      if (localContext.mounted) {
-        Notify.show(locale.added, localContext);
-        Navigator.of(localContext).pop();
+      if (mounted) {
+        Notify.show(locale.added, context);
+        Navigator.of(context).pop();
       }
     } catch (ex) {
       setState(() {
         _status = SubmissionStatus.failure;
       });
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
+      if (mounted) {
+        Notify.showError(locale.error(ex.toString()), context);
       }
       log(ex.toString());
     }

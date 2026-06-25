@@ -36,7 +36,7 @@ class _EventAddState extends State<EventAdd> {
 
   void _submit() async {
     final locale = Translation.of(context);
-    var localContext = context;
+    
     try {
       setState(() {
         _status = SubmissionStatus.inProgress;
@@ -76,16 +76,16 @@ class _EventAddState extends State<EventAdd> {
         _status = SubmissionStatus.success;
       });
 
-      if (localContext.mounted) {
-        Notify.show(locale.added, localContext);
-        Navigator.of(localContext).pop();
+      if (mounted) {
+        Notify.show(locale.added, context);
+        Navigator.of(context).pop();
       }
     } catch (ex) {
       setState(() {
         _status = SubmissionStatus.failure;
       });
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
+      if (mounted) {
+        Notify.showError(locale.error(ex.toString()), context);
       }
     }
   }

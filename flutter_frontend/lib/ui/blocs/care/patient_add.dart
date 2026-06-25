@@ -64,7 +64,7 @@ class _PatientAddState extends State<PatientAdd> {
   }
 
   void _submit(AppLocalizations locale) async {
-    var localContext = context;
+    
     try {
       setState(() {
         _status = SubmissionStatus.inProgress;
@@ -103,9 +103,9 @@ class _PatientAddState extends State<PatientAdd> {
         setState(() {
           _status = SubmissionStatus.success;
         });
-        if (localContext.mounted) {
-          Notify.show(locale.added, localContext);
-          Navigator.of(localContext).pop();
+        if (mounted) {
+          Notify.show(locale.added, context);
+          Navigator.of(context).pop();
         }
       } catch (_) {
         setState(() {
@@ -113,8 +113,8 @@ class _PatientAddState extends State<PatientAdd> {
         });
       }
     } catch (ex) {
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
+      if (mounted) {
+        Notify.showError(locale.error(ex.toString()), context);
       }
     }
   }
