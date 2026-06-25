@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/logic/event.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/inputs/date_input.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
-import 'package:helse/ui/common/loader.dart';
-import 'package:helse/ui/common/notification.dart';
-import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 class EventsEdit extends StatefulWidget {
@@ -27,39 +24,6 @@ class EventsEdit extends StatefulWidget {
 
   @override
   State<EventsEdit> createState() => _EventsEditState();
-}
-
-abstract class PopupSubmitState<T extends StatefulWidget> extends State<T> {
-  SubmissionStatus status = SubmissionStatus.initial;
-
-  Future<void> submit(Future<void> Function() callback) async {
-    if (status == SubmissionStatus.inProgress) {
-      return;
-    }
-
-    final locale = Translation.of(context);
-    try {
-      setState(() {
-        status = SubmissionStatus.inProgress;
-      });
-
-      await callback();
-
-      if (!mounted) {
-        return;
-      }
-
-      Notify.show(locale.saved, context);
-      Navigator.of(context).pop();
-    } catch (ex) {
-      setState(() {
-        status = SubmissionStatus.failure;
-      });
-      if (mounted) {
-        Notify.showError(locale.error(ex.toString()), context);
-      }
-    }
-  }
 }
 
 class _EventsEditState extends PopupSubmitState<EventsEdit> {
@@ -92,12 +56,6 @@ class _EventsEditState extends PopupSubmitState<EventsEdit> {
       person: widget.person,
     );
     widget.callback.call();
-  }
-
-  Widget submitButton(String label, Future<void> Function() callback) {
-    return status == SubmissionStatus.inProgress
-        ? const HelseLoader()
-        : SquareButton(label, () => submit(callback));
   }
 
   @override

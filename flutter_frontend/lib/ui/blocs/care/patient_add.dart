@@ -4,17 +4,13 @@ import 'dart:typed_data';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/l10n/app_localizations.dart';
-import 'package:helse/ui/common/notification.dart';
-import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
-import '../../../logic/event.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../administration/users/user_form.dart';
-import '../../common/loader.dart';
 
 class PatientAdd extends StatefulWidget {
   final void Function() callback;
@@ -25,10 +21,7 @@ class PatientAdd extends StatefulWidget {
   State<PatientAdd> createState() => _PatientAddState();
 }
 
-class _PatientAddState extends State<PatientAdd> {
-  final GlobalKey<FormState> _formKey = GlobalKey();
-  SubmissionStatus _status = SubmissionStatus.initial;
-
+class _PatientAddState extends PopupSubmitState<PatientAdd> {
   final TextEditingController _controllerName = TextEditingController();
   final TextEditingController _controllerNiss = TextEditingController();
   final TextEditingController _controllerSurname = TextEditingController();
@@ -63,60 +56,35 @@ class _PatientAddState extends State<PatientAdd> {
     }
   }
 
-  void _submit(AppLocalizations locale) async {
-    
-    try {
-      setState(() {
-        _status = SubmissionStatus.inProgress;
-      });
-      try {
-        if (widget.edit != null) {
-          await Dependencies.services.user.updatePatient(
-            UpdatePatient(
-              id: widget.edit?.id,
-              name: _controllerName.text,
-              surname: _controllerSurname.text,
-              identifier: _controllerNiss.text,
-              profilePicture: _pictureData != null
-                  ? base64Encode(_pictureData!)
-                  : null,
-            ),
-          );
-        } else {
-          // save the user
-          await Dependencies.services.user.addPerson(
-            PersonCreation(
-              name: _controllerName.text,
-              surname: _controllerSurname.text,
-              identifier: _controllerNiss.text,
-              types: [],
-              profilePicture: _pictureData != null
-                  ? base64Encode(_pictureData!)
-                  : null,
-            ),
-          );
-        }
-
-        _formKey.currentState?.reset();
-        widget.callback.call();
-
-        setState(() {
-          _status = SubmissionStatus.success;
-        });
-        if (mounted) {
-          Notify.show(locale.added, context);
-          Navigator.of(context).pop();
-        }
-      } catch (_) {
-        setState(() {
-          _status = SubmissionStatus.failure;
-        });
-      }
-    } catch (ex) {
-      if (mounted) {
-        Notify.showError(locale.error(ex.toString()), context);
-      }
+  Future<void> _submit() async {
+    if (widget.edit != null) {
+      await Dependencies.services.user.updatePatient(
+        UpdatePatient(
+          id: widget.edit?.id,
+          name: _controllerName.text,
+          surname: _controllerSurname.text,
+          identifier: _controllerNiss.text,
+          profilePicture: _pictureData != null
+              ? base64Encode(_pictureData!)
+              : null,
+        ),
+      );
+    } else {
+      // save the user
+      await Dependencies.services.user.addPerson(
+        PersonCreation(
+          name: _controllerName.text,
+          surname: _controllerSurname.text,
+          identifier: _controllerNiss.text,
+          types: [],
+          profilePicture: _pictureData != null
+              ? base64Encode(_pictureData!)
+              : null,
+        ),
+      );
     }
+
+    widget.callback.call();
   }
 
   @override
@@ -124,11 +92,7 @@ class _PatientAddState extends State<PatientAdd> {
     var locale = Translation.of(context);
     return SquareDialog(
       title: Text(locale.add),
-      actions: [
-        _status == SubmissionStatus.inProgress
-            ? const HelseLoader()
-            : SquareButton(locale.submit, () => _submit(locale)),
-      ],
+      actions: [submitButton(locale.submit, _submit)],
       content: Container(
         constraints: const BoxConstraints(maxWidth: 500),
         child: Form(

@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/inputs/custom_switch.dart';
-import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../../../common/notification.dart';
 
 class MetricGroupAdd extends StatefulWidget {
   final void Function()? callback;
@@ -21,9 +19,7 @@ class MetricGroupAdd extends StatefulWidget {
   State<MetricGroupAdd> createState() => _MetricGroupAddState();
 }
 
-class _MetricGroupAddState extends State<MetricGroupAdd> {
-  final GlobalKey<FormState> _formKey = GlobalKey();
-
+class _MetricGroupAddState extends PopupSubmitState<MetricGroupAdd> {
   final FocusNode _focusNodeName = FocusNode();
   final FocusNode _focusNodeDescription = FocusNode();
   final TextEditingController _controllerName = TextEditingController();
@@ -58,13 +54,10 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
     return SquareDialog(
       title: const Text("Add a new metric type"),
       actions: [
-        SquareButton(
-          widget.edit == null ? locale.create : locale.edit,
-          () => submit(locale),
-        ),
+        submitButton(widget.edit == null ? locale.create : locale.edit, _submit),
       ],
       content: Form(
-        key: _formKey,
+        key: formKey,
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -121,40 +114,26 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
     return null;
   }
 
-  void submit(AppLocalizations locale) async {
-    try {
-      if (_formKey.currentState?.validate() ?? false) {
-        if (widget.edit == null) {
-          final metric = CreateGroup(
-            description: _controllerDescription.text,
-            name: _controllerName.text,
-            showTitle: _visible,
-            showOnDashboard: _showDashboard,
-          );
-          await Dependencies.services.metric.addGroup(metric);
-        } else {
-          final metric = UpdateGroup(
-            description: _controllerDescription.text,
-            name: _controllerName.text,
-            id: widget.edit?.id ?? 0,
-            showTitle: _visible,
-            showOnDashboard: _showDashboard,
-          );
-          await Dependencies.services.metric.updateGroup(metric);
-        }
-
-        _formKey.currentState?.reset();
-        widget.callback?.call();
-
-        if (mounted) {
-          Notify.show(locale.saved, context);
-          Navigator.of(context).pop();
-        }
-      }
-    } catch (ex) {
-      if (mounted) {
-        Notify.showError(locale.error(ex.toString()), context);
-      }
+  Future<void> _submit() async {
+    if (widget.edit == null) {
+      final metric = CreateGroup(
+        description: _controllerDescription.text,
+        name: _controllerName.text,
+        showTitle: _visible,
+        showOnDashboard: _showDashboard,
+      );
+      await Dependencies.services.metric.addGroup(metric);
+    } else {
+      final metric = UpdateGroup(
+        description: _controllerDescription.text,
+        name: _controllerName.text,
+        id: widget.edit?.id ?? 0,
+        showTitle: _visible,
+        showOnDashboard: _showDashboard,
+      );
+      await Dependencies.services.metric.updateGroup(metric);
     }
+
+    widget.callback?.call();
   }
 }

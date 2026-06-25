@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/inputs/custom_switch.dart';
-import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
 import 'package:helse/ui/common/inputs/values_input.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../../../common/notification.dart';
 
 class MetricTypeAdd extends StatefulWidget {
   final void Function()? callback;
@@ -22,9 +20,7 @@ class MetricTypeAdd extends StatefulWidget {
   State<MetricTypeAdd> createState() => _MetricTypeAddState();
 }
 
-class _MetricTypeAddState extends State<MetricTypeAdd> {
-  final GlobalKey<FormState> _formKey = GlobalKey();
-
+class _MetricTypeAddState extends PopupSubmitState<MetricTypeAdd> {
   final _focusName = FocusNode();
   final _focusDescription = FocusNode();
   final _focusUnit = FocusNode();
@@ -77,16 +73,13 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
     return SquareDialog(
       title: const Text("Add a new metric type"),
       actions: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SquareButton(
-            widget.edit == null ? locale.create : locale.update,
-            () => submit(locale),
-          ),
+        submitButton(
+          widget.edit == null ? locale.create : locale.update,
+          _submit,
         ),
       ],
       content: Form(
-        key: _formKey,
+        key: formKey,
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Column(children: [buildForm(context)]),
@@ -187,60 +180,46 @@ class _MetricTypeAddState extends State<MetricTypeAdd> {
     );
   }
 
-  void submit(AppLocalizations locale) async {
-    try {
-      if (_formKey.currentState?.validate() ?? false) {
-        final int? valueCount = (_valueCount.text.isNotEmpty)
-            ? int.parse(_valueCount.text)
-            : null;
+  Future<void> _submit() async {
+    final int? valueCount = (_valueCount.text.isNotEmpty)
+        ? int.parse(_valueCount.text)
+        : null;
 
-        final timeDifference = _timeDifference.text.isEmpty
-            ? null
-            : _timeDifference.text;
-        if (widget.edit == null) {
-          var metric = CreateMetricType(
-            description: _description.text,
-            name: _name.text,
-            unit: _unit,
-            summaryType: _metricSummary,
-            type: _type,
-            visible: _visible,
-            showOnDashboard: _showDashboard,
-            groupId: _groupId,
-            valueCount: valueCount,
-            timeDifference: timeDifference,
-          );
-          await Dependencies.services.metric.addMetricsType(metric);
-        } else {
-          var metric = UpdateMetricType(
-            description: _description.text,
-            name: _name.text,
-            unit: _unit,
-            summaryType: _metricSummary,
-            type: _type,
-            id: widget.edit?.id ?? 0,
-            visible: _visible,
-            showOnDashboard: _showDashboard,
-            groupId: _groupId,
-            valueCount: valueCount,
-            timeDifference: timeDifference,
-          );
-          await Dependencies.services.metric.updateMetricsType(metric);
-        }
-
-        _formKey.currentState?.reset();
-        widget.callback?.call();
-
-        if (mounted) {
-          Notify.show(locale.saved, context);
-          Navigator.of(context).pop();
-        }
-      }
-    } catch (ex) {
-      if (mounted) {
-        Notify.showError(locale.error(ex.toString()), context);
-      }
+    final timeDifference = _timeDifference.text.isEmpty
+        ? null
+        : _timeDifference.text;
+    if (widget.edit == null) {
+      var metric = CreateMetricType(
+        description: _description.text,
+        name: _name.text,
+        unit: _unit,
+        summaryType: _metricSummary,
+        type: _type,
+        visible: _visible,
+        showOnDashboard: _showDashboard,
+        groupId: _groupId,
+        valueCount: valueCount,
+        timeDifference: timeDifference,
+      );
+      await Dependencies.services.metric.addMetricsType(metric);
+    } else {
+      var metric = UpdateMetricType(
+        description: _description.text,
+        name: _name.text,
+        unit: _unit,
+        summaryType: _metricSummary,
+        type: _type,
+        id: widget.edit?.id ?? 0,
+        visible: _visible,
+        showOnDashboard: _showDashboard,
+        groupId: _groupId,
+        valueCount: valueCount,
+        timeDifference: timeDifference,
+      );
+      await Dependencies.services.metric.updateMetricsType(metric);
     }
+
+    widget.callback?.call();
   }
 
   @override

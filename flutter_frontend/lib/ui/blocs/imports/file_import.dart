@@ -1,6 +1,7 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
@@ -21,11 +22,10 @@ class FileImport extends StatefulWidget {
   State<FileImport> createState() => _FileImportState();
 }
 
-class _FileImportState extends State<FileImport> {
+class _FileImportState extends PopupSubmitState<FileImport> {
   List<FileType> types = [];
   XFile? file;
   int? selected;
-  SubmissionStatus status = SubmissionStatus.initial;
 
   @override
   void initState() {
@@ -47,11 +47,7 @@ class _FileImportState extends State<FileImport> {
     var locale = Translation.of(context);
     return SquareDialog(
       title: const Text("Import"),
-      actions: [
-        status == SubmissionStatus.inProgress
-            ? const HelseLoader()
-            : SquareButton(locale.submit, submit),
-      ],
+      actions: [submitButton(locale.submit, _submit)],
       content: SingleChildScrollView(
         padding: const EdgeInsets.all(30.0),
         child: Column(
@@ -89,40 +85,15 @@ class _FileImportState extends State<FileImport> {
     );
   }
 
-  void submit() async {
-    final locale = Translation.of(context);
-    
+  Future<void> _submit() async {
     if (selected != null) {
-      setState(() {
-        status = SubmissionStatus.inProgress;
-      });
-
-      try {
-        var content = await file?.readAsBytes();
-        if (content == null) return;
-        await Dependencies.logics.import.import(
-          content,
-          selected!,
-          widget.patient,
-        );
-
-        setState(() {
-          status = SubmissionStatus.success;
-        });
-
-        if (mounted) {
-          Notify.show(locale.added, context);
-          Navigator.of(context).pop();
-        }
-      } catch (ex) {
-        if (mounted) {
-          Notify.showError(locale.error(ex.toString()), context);
-        }
-
-        setState(() {
-          status = SubmissionStatus.failure;
-        });
-      }
+      var content = await file?.readAsBytes();
+      if (content == null) return;
+      await Dependencies.logics.import.import(
+        content,
+        selected!,
+        widget.patient,
+      );
     }
   }
 }
