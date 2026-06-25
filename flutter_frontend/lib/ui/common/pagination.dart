@@ -8,7 +8,7 @@ class Pagination extends StatelessWidget {
   final int pageSize;
   final int page;
   final void Function(int) callBack;
-  final List<IconButton> menu;
+  final List<Widget> menu;
   final int selected;
   const Pagination({
     super.key,

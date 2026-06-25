@@ -276,7 +276,21 @@
     "identifier": "Identifier",
     "@identifier": {},
     "timeShiftExplanation": "Enter a duration for which to shift the range in the format HH:mm:SS /n (Example to get the sleep events starting from the day before use 06:00:00)",
-    "@timeShiftExplanation": {
-
+    "@timeShiftExplanation": {},
+    "bulkEvent": "Editing {count} events",
+    "@bulkEvent": {
+        "placeholders": {
+            "count": {
+                "type": "String"
+            }
+        }
+    },
+    "bulkMetric": "Editing {count} metrics",
+    "@bulkMetric": {
+        "placeholders": {
+            "count": {
+                "type": "String"
+            }
+        }
     }
 }

@@ -70,7 +70,7 @@ abstract class AsyncDataTableState<U, T extends AsyncDataTable<U>>
   Widget buildTable(
     List<DataColumn> columns,
     List<DataRow> Function(List<U>, List<U>) builder,
-    List<IconButton> menu,
+    List<Widget> menu,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,

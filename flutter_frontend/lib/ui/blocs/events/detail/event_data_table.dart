@@ -106,41 +106,43 @@ class _EventDataTableState extends AsyncDataTableState<Event, EventDataTable> {
       DataColumn(label: Expanded(child: Text(locale.source))),
       DataColumn(label: Expanded(child: Text(""))),
     ];
-    final menu = [
-      IconButton(
-        onPressed: () {
-          showDialog<void>(
-            context: context,
-            builder: (BuildContext context) {
-              return EventsEdit(
-                widget.type,
-                widget.reset,
-                person: widget.person,
-                edit: selected,
-              );
-            },
-          );
-        },
-        icon: const Icon(Icons.edit_sharp),
-      ),
-      IconButton(
-        onPressed: () {
-          showDialog<void>(
-            context: context,
-            builder: (BuildContext context) {
-              return DeleteEvent(() async {
-                await Dependencies.services.event.deleteEvents(
-                  selected,
-                  person: widget.person,
+    final List<Widget> menu = selected.isEmpty
+        ? []
+        : [
+            IconButton(
+              onPressed: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return EventsEdit(
+                      widget.type,
+                      widget.reset,
+                      person: widget.person,
+                      edit: selected,
+                    );
+                  },
                 );
-                widget.reset();
-              }, person: widget.person);
-            },
-          );
-        },
-        icon: const Icon(Icons.delete_sharp),
-      ),
-    ];
+              },
+              icon: const Icon(Icons.edit_sharp),
+            ),
+            IconButton(
+              onPressed: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return DeleteEvent(() async {
+                      await Dependencies.services.event.deleteEvents(
+                        selected,
+                        person: widget.person,
+                      );
+                      widget.reset();
+                    }, person: widget.person);
+                  },
+                );
+              },
+              icon: const Icon(Icons.delete_sharp),
+            ),
+          ];
     return buildTable(columns, _builder, menu);
   }
 }

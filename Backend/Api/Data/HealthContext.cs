@@ -463,4 +463,33 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
 
         return query.UpdateAsync();
     }
+
+    public Task DeleteMetrics(long[] ids, long person)
+    {
+        return Db.GetTable<Metric>().DeleteAsync(x => ids.Contains(x.Id) && x.PersonId == person);
+    }
+
+    public Task UpdateBulk(Helse.Models.Metrics.PatchMetric metric, long person)
+    {
+        var query = Db.GetTable<Metric>()
+        .Where(x => metric.Ids.Contains(x.Id))
+        .Where(x => x.PersonId == person).AsUpdatable();
+
+        if (metric.UpdateDate)
+        {
+            query = query.Set(x => x.Date, metric.Date);
+        }
+
+        if (metric.UpdateValue)
+        {
+            query = query.Set(x => x.Value, metric.Value);
+        }
+        
+        if (metric.UpdateTag)
+        {
+            query = query.Set(x => x.Tag, metric.Tag);
+        }
+
+        return query.UpdateAsync();
+    }
 }

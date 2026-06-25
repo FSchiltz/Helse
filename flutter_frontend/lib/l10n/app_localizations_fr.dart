@@ -340,4 +340,14 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get timeShiftExplanation =>
       'Enter a duration for which to shift the range in the format HH:mm:SS /n (Example to get the sleep events starting from the day before use 06:00:00)';
+
+  @override
+  String bulkEvent(String count) {
+    return 'Editing $count events';
+  }
+
+  @override
+  String bulkMetric(String count) {
+    return 'Editing $count metrics';
+  }
 }

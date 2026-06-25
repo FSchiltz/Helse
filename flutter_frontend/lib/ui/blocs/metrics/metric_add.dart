@@ -111,7 +111,7 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
         source: FileTypes.none,
         sourceId: "",
       );
-      await Dependencies.services.metric.updateMetrics(metric);
+      await Dependencies.services.metric.updateMetric(metric);
     } else {
       var metric = CreateMetric(
         date: _date.toUtc(),
