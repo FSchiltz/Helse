@@ -45,10 +45,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get initialrange => 'Durée initale';
 
   @override
-  String get start => 'start';
+  String get start => 'Start';
 
   @override
-  String get stop => 'stop';
+  String get stop => 'Stop';
 
   @override
   String get end => 'fin';
@@ -83,7 +83,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get type => 'Type';
 
   @override
-  String get eventSettings => 'Options d\'évenements';
+  String get eventSettings => 'Options d\'événements';
 
   @override
   String get generalSettings => 'Options générales';
@@ -109,7 +109,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get submit => 'Soumettre';
 
   @override
-  String get description => 'Description';
+  String get description => 'Déscription';
 
   @override
   String get addPatients => 'Ajouter un nouveau patient';
@@ -133,11 +133,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get deleteMetric => 'Supprimer la métrique ?';
 
   @override
-  String get deleteEvent => 'Supprimer l\'evenement ?';
+  String get deleteEvent => 'Supprimer l\'événement ?';
 
   @override
   String detailof(String item) {
-    return 'Detail de $item';
+    return 'Détail de $item';
   }
 
   @override
@@ -253,7 +253,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String lastStatus(String status) {
-    return 'Last status: $status';
+    return 'Dernier status: $status';
   }
 
   @override
@@ -304,7 +304,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mean => 'Moyenne';
 
   @override
-  String eventInformationSummary(String total, String length, String mean) {
+  String eventInformationSummary(String total, int length, String mean) {
     return 'Total de $total en $length sessions avec une moyenne de $mean';
   }
 
@@ -317,13 +317,13 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get min => 'Minimum';
+  String get min => 'Min';
 
   @override
-  String get max => 'Maximum';
+  String get max => 'Max';
 
   @override
-  String get defaultdate => 'Default Date range';
+  String get defaultdate => 'Range par défault';
 
   @override
   String get theme => 'Theme';
@@ -332,22 +332,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get interface => 'Interface';
 
   @override
-  String get update => 'Update';
+  String get update => 'Edition';
 
   @override
-  String get identifier => 'Identifier';
+  String get identifier => 'Identifiant';
 
   @override
   String get timeShiftExplanation =>
-      'Enter a duration for which to shift the range in the format HH:mm:SS /n (Example to get the sleep events starting from the day before use 06:00:00)';
+      'Entré une durée avec laquelle decaller la plage horaires au format  HH:mm:SS /n (Par example pour pour avoir les événements du sommeil du soir avant, utiliser 06:00:00)';
 
   @override
-  String bulkEvent(String count) {
-    return 'Editing $count events';
+  String bulkEvent(int count) {
+    return 'Edition de $count events';
   }
 
   @override
-  String bulkMetric(String count) {
-    return 'Editing $count metrics';
+  String bulkMetric(int count) {
+    return 'Edition de $count metriques';
   }
 }

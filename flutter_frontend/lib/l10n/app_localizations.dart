@@ -660,7 +660,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Total of {total} in {length} sessions with an average of {mean}'**
-  String eventInformationSummary(String total, String length, String mean);
+  String eventInformationSummary(String total, int length, String mean);
 
   /// No description provided for @color.
   ///
@@ -726,13 +726,13 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Editing {count} events'**
-  String bulkEvent(String count);
+  String bulkEvent(int count);
 
   /// No description provided for @bulkMetric.
   ///
   /// In en, this message translates to:
   /// **'Editing {count} metrics'**
-  String bulkMetric(String count);
+  String bulkMetric(int count);
 }
 
 class _AppLocalizationsDelegate

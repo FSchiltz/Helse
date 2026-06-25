@@ -244,7 +244,7 @@
                 "type": "String"
             },
             "length": {
-                "type": "String"
+                "type": "int"
             },
             "mean": {
                 "type": "String"
@@ -281,7 +281,7 @@
     "@bulkEvent": {
         "placeholders": {
             "count": {
-                "type": "String"
+                "type": "int"
             }
         }
     },
@@ -289,7 +289,7 @@
     "@bulkMetric": {
         "placeholders": {
             "count": {
-                "type": "String"
+                "type": "int"
             }
         }
     }
