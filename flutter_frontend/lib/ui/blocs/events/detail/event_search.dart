@@ -4,6 +4,7 @@ import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/events/detail/event_data_table.dart';
 import 'package:helse/ui/common/inputs/date_input.dart';
+import 'package:helse/ui/common/inputs/values_input.dart';
 import 'package:helse/ui/common/loader.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
 import 'package:helse/ui/common/ui_constants.dart';
@@ -24,6 +25,7 @@ class _EventSearchState extends State<EventSearch> {
   DateTime? _to;
   int _count = 0;
   late SearchEvent _search;
+  FileTypes? _source;
 
   @override
   void initState() {
@@ -54,6 +56,26 @@ class _EventSearchState extends State<EventSearch> {
                     ),
                     DateInput(locale.start, _from, (v) => _from = v),
                     DateInput(locale.stop, _to, (v) => _to = v),
+                    SizedBox(
+                      width: 240,
+                      child: ValuesInput(
+                        value: _source,
+                        FileTypes.values
+                            .map(
+                              (x) => DropdownItem(
+                                x,
+                                (x == FileTypes.swaggerGeneratedUnknown)
+                                    ? "All"
+                                    : x.name,
+                              ),
+                            )
+                            .toList(),
+                        (value) => setState(() {
+                          _source = value;
+                        }),
+                        label: locale.source,
+                      ),
+                    ),
                     IconButton(
                       onPressed: (_working) ? null : _countEvents,
                       icon: Icon(Icons.search_sharp),
@@ -92,11 +114,17 @@ class _EventSearchState extends State<EventSearch> {
     });
     try {
       final text = (_value.text.isEmpty) ? null : _value.text;
+      FileTypes source = _source ?? FileTypes.none;
+      if (_source == FileTypes.swaggerGeneratedUnknown) {
+        source = FileTypes.none;
+      }
       final search = SearchEvent(
         type: widget.type.id,
         value: text,
         from: _from,
         to: _to,
+        source: source,
+        filterSource: _source != FileTypes.swaggerGeneratedUnknown,
       );
       var events = await Dependencies.services.event.countEvents(
         widget.person,

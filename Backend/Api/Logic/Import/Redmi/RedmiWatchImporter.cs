@@ -92,7 +92,7 @@ internal class RedmiWatchImporter(Stream file, IEventContext eventDb,IMetricCont
                         Start = DateTimeOffset.FromUnixTimeSeconds(item.Start_time).DateTime,
                         Stop = DateTimeOffset.FromUnixTimeSeconds(item.End_time).DateTime,
                         Type = (int)EventTypes.Sleep,
-                        Description = item.State.ToString(),
+                        Description = item.StringState,
                         SourceId = item.GetKey,
                         Source = FileTypes.RedmiWatch,
                     })];

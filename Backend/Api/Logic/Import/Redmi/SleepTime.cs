@@ -7,4 +7,13 @@ internal class SleepTime
     public int Start_time { get; set; }
 
     public string GetKey => Start_time + "_" + End_time;
+
+    public string StringState => State switch
+    {
+        2 => "Deep",
+        3 => "Light",
+        4 => "Rem",
+        5 => "Awake",
+        _ => State.ToString(),
+    };
 }

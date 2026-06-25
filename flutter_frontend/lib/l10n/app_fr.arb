@@ -23,7 +23,7 @@
   "deleteEvent": "Supprimer l'événement ?",
   "deleteMetric": "Supprimer la métrique ?",
   "deleteUser": "Supprimer l'utilisateur ?",
-  "description": "Déscription",
+  "description": "Description",
   "detailType": "Type de détail",
   "detailof": "Détail de {item}",
   "edit": "Editer",

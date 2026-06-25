@@ -20,6 +20,11 @@ internal static class EventHelper
             query = query.Where(x => x.Description.StartsWith(search.Value, StringComparison.CurrentCultureIgnoreCase));
         }
 
+        if (search.FilterSource)
+        {
+            query = query.Where(x => x.Source == (int)search.Source);
+        }
+
         return query;
     }
 }

@@ -1,6 +1,7 @@
 using Helse.Api.Data.Models.Health;
 
 namespace Helse.Api.Data.Helpers;
+
 internal static class MetricHelper
 {
     public static IQueryable<Metric> ApplyFilter(this IQueryable<Metric> query, Helse.Models.Metrics.SearchMetric search)
@@ -34,7 +35,11 @@ internal static class MetricHelper
         {
             query = query.Where(x => int.Parse(x.Value) <= search.MaxValue);
         }
+
+        if (search.FilterSource)
+        {
+            query = query.Where(x => x.Source == (int)search.Source);
+        }
         return query;
     }
-
 }

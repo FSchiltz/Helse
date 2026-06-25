@@ -872,6 +872,8 @@ SearchEvent _$SearchEventFromJson(Map<String, dynamic> json) => SearchEvent(
   value: json['value'] as String?,
   from: json['from'] == null ? null : DateTime.parse(json['from'] as String),
   to: json['to'] == null ? null : DateTime.parse(json['to'] as String),
+  source: fileTypesNullableFromJson(json['source']),
+  filterSource: json['filterSource'] as bool?,
 );
 
 Map<String, dynamic> _$SearchEventToJson(SearchEvent instance) =>
@@ -880,6 +882,8 @@ Map<String, dynamic> _$SearchEventToJson(SearchEvent instance) =>
       'value': instance.value,
       'from': instance.from?.toIso8601String(),
       'to': instance.to?.toIso8601String(),
+      'source': fileTypesNullableToJson(instance.source),
+      'filterSource': instance.filterSource,
     };
 
 SearchMetric _$SearchMetricFromJson(Map<String, dynamic> json) => SearchMetric(
@@ -889,7 +893,9 @@ SearchMetric _$SearchMetricFromJson(Map<String, dynamic> json) => SearchMetric(
   to: json['to'] == null ? null : DateTime.parse(json['to'] as String),
   minValue: (json['minValue'] as num?)?.toInt(),
   maxValue: (json['maxValue'] as num?)?.toInt(),
+  source: fileTypesNullableFromJson(json['source']),
   isTrue: json['isTrue'] as bool?,
+  filterSource: json['filterSource'] as bool?,
 );
 
 Map<String, dynamic> _$SearchMetricToJson(SearchMetric instance) =>
@@ -900,7 +906,9 @@ Map<String, dynamic> _$SearchMetricToJson(SearchMetric instance) =>
       'to': instance.to?.toIso8601String(),
       'minValue': instance.minValue,
       'maxValue': instance.maxValue,
+      'source': fileTypesNullableToJson(instance.source),
       'isTrue': instance.isTrue,
+      'filterSource': instance.filterSource,
     };
 
 Session _$SessionFromJson(Map<String, dynamic> json) => Session(
