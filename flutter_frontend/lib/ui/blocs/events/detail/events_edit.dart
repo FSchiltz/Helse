@@ -29,7 +29,40 @@ class EventsEdit extends StatefulWidget {
   State<EventsEdit> createState() => _EventsEditState();
 }
 
-class _EventsEditState extends State<EventsEdit> {
+abstract class PopupSubmitState<T extends StatefulWidget> extends State<T> {
+  SubmissionStatus status = SubmissionStatus.initial;
+
+  Future<void> submit(Future<void> Function() callback) async {
+    if (status == SubmissionStatus.inProgress) {
+      return;
+    }
+
+    final locale = Translation.of(context);
+    try {
+      setState(() {
+        status = SubmissionStatus.inProgress;
+      });
+
+      await callback();
+
+      if (!mounted) {
+        return;
+      }
+
+      Notify.show(locale.saved, context);
+      Navigator.of(context).pop();
+    } catch (ex) {
+      setState(() {
+        status = SubmissionStatus.failure;
+      });
+      if (mounted) {
+        Notify.showError(locale.error(ex.toString()), context);
+      }
+    }
+  }
+}
+
+class _EventsEditState extends PopupSubmitState<EventsEdit> {
   DateTime _start = DateTime.now();
   DateTime _stop = DateTime.now();
   final TextEditingController _description = TextEditingController();
@@ -39,56 +72,32 @@ class _EventsEditState extends State<EventsEdit> {
   bool _updateStart = false;
   bool _updateStop = false;
 
-  SubmissionStatus _status = SubmissionStatus.initial;
-
   Future<void> _submit() async {
-    if (_status == SubmissionStatus.inProgress) {
-      return;
-    }
-    final locale = Translation.of(context);
-    try {
-      setState(() {
-        _status = SubmissionStatus.inProgress;
-      });
+    final patch = PatchEvent(
+      type: widget.type.id,
+      start: _start,
+      updateStart: _updateStart,
+      stop: _stop,
+      updateStop: _updateStop,
+      description: _description.text,
+      updateDescription: _updateDescription,
+      tag: _tag.text,
+      updateTag: _updateTag,
+      source: FileTypes.none,
+      ids: widget.edit.map((e) => e.id).toList(),
+    );
 
-      final patch = PatchEvent(
-        type: widget.type.id,
-        start: _start,
-        updateStart: _updateStart,
-        stop: _stop,
-        updateStop: _updateStop,
-        description: _description.text,
-        updateDescription: _updateDescription,
-        tag: _tag.text,
-        updateTag: _updateTag,
-        source: FileTypes.none,
-        ids: widget.edit.map((e) => e.id).toList(),
-      );
+    await Dependencies.services.event.updateEvents(
+      patch,
+      person: widget.person,
+    );
+    widget.callback.call();
+  }
 
-      await Dependencies.services.event.updateEvents(
-        patch,
-        person: widget.person,
-      );
-      widget.callback.call();
-
-      if (!mounted) {
-        return;
-      }
-
-      setState(() {
-        _status = SubmissionStatus.success;
-      });
-
-      Notify.show(locale.added, context);
-      Navigator.of(context).pop();
-    } catch (ex) {
-      setState(() {
-        _status = SubmissionStatus.failure;
-      });
-      if (mounted) {
-        Notify.showError(locale.error(ex.toString()), context);
-      }
-    }
+  Widget submitButton(String label, Future<void> Function() callback) {
+    return status == SubmissionStatus.inProgress
+        ? const HelseLoader()
+        : SquareButton(label, () => submit(callback));
   }
 
   @override
@@ -103,11 +112,7 @@ class _EventsEditState extends State<EventsEdit> {
     final locale = Translation.of(context);
     return SquareDialog(
       title: Text(locale.addItem(widget.type.name)),
-      actions: [
-        _status == SubmissionStatus.inProgress
-            ? const HelseLoader()
-            : SquareButton(locale.submit, _submit),
-      ],
+      actions: [submitButton(locale.submit, _submit)],
       content: SingleChildScrollView(
         child: Column(
           children: [
