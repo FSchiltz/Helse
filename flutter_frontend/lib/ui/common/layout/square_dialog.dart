@@ -6,10 +6,12 @@ class SquareDialog extends StatelessWidget {
     required this.content,
     this.actions,
     this.title,
+    this.icon,
   });
 
+  final Icon? icon;
   final Widget? content;
-  final Text? title;
+  final Widget? title;
   final List<Widget>? actions;
 
   @override
@@ -23,14 +25,26 @@ class SquareDialog extends StatelessWidget {
       ),
       scrollable: true,
       content: content,
-      title: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: theme.outlineVariant, width: 2),
-          ),
-        ),
-        child: title,
-      ),
+      title: title == null
+          ? null
+          : Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: theme.outlineVariant, width: 2),
+                ),
+              ),
+              child: icon == null
+                  ? title
+                  : Row(
+                      children: [
+                        icon!,
+                        const SizedBox(width: 12),
+
+                        Expanded(child: title!),
+                      ],
+                    ),
+            ),
+
       actions: actions,
       backgroundColor: theme.surfaceContainerLow,
     );

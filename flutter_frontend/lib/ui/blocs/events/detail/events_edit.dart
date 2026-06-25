@@ -70,25 +70,15 @@ class _EventsEditState extends PopupSubmitState<EventsEdit> {
   Widget build(BuildContext context) {
     final locale = Translation.of(context);
     return SquareDialog(
-      title: Text(locale.addItem(widget.type.name)),
+      icon: const Icon(Icons.edit_note),
+      title: Text(
+        'Editing ${widget.edit.length} events',
+        style: Theme.of(context).textTheme.titleLarge,
+      ),
       actions: [submitButton(locale.submit, _submit)],
       content: SingleChildScrollView(
         child: Column(
           children: [
-            Row(
-              children: [
-                const Icon(Icons.edit_note),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'Editing ${widget.edit.length} events',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: UIConstants.formPad),
-
             HelseSwitch(
               locale.description,
               _updateDescription,

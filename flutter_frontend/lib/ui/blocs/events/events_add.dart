@@ -80,6 +80,7 @@ class _EventAddState extends PopupSubmitState<EventAdd> {
     var locale = Translation.of(context);
     return SquareDialog(
       title: Text(locale.addItem(widget.type.name)),
+      icon: const Icon(Icons.add_chart_sharp),
       actions: [submitButton(locale.submit, _submit)],
       content: Form(
         child: SingleChildScrollView(

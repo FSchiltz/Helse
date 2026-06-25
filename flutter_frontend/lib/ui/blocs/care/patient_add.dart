@@ -91,7 +91,8 @@ class _PatientAddState extends PopupSubmitState<PatientAdd> {
   Widget build(BuildContext context) {
     var locale = Translation.of(context);
     return SquareDialog(
-      title: Text(locale.add),
+      title: Text(locale.addPatients),
+      icon: const Icon(Icons.person_add_alt_1_sharp),
       actions: [submitButton(locale.submit, _submit)],
       content: Container(
         constraints: const BoxConstraints(maxWidth: 500),
@@ -99,11 +100,6 @@ class _PatientAddState extends PopupSubmitState<PatientAdd> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Text(
-                  locale.addPatients,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: UIConstants.formPad),
                 Center(
                   child: Column(
                     children: [
