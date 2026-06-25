@@ -77,45 +77,40 @@ class _EventsEditState extends PopupSubmitState<EventsEdit> {
       actions: [submitButton(locale.submit, _submit)],
       content: SingleChildScrollView(
         child: Column(
+          spacing: UIConstants.formPad,
           children: [
-            HelseSwitch(
-              locale.description,
-              _updateDescription,
-              (v) => setState(() {
+            _editableField(
+              label: locale.description,
+              enabled: _updateDescription,
+              onChanged: (v) => setState(() {
                 _updateDescription = v;
               }),
-            ),
-            if (_updateDescription)
-              SquareTextField(
+              child: SquareTextField(
                 icon: Icons.description_sharp,
                 label: locale.description,
                 controller: _description,
               ),
+            ),
 
-            const SizedBox(height: UIConstants.formPad),
-            HelseSwitch(
-              locale.tag,
-              _updateTag,
-              (v) => setState(() {
+            _editableField(
+              label: locale.tag,
+              enabled: _updateTag,
+              onChanged: (v) => setState(() {
                 _updateTag = v;
               }),
-            ),
-            if (_updateTag)
-              SquareTextField(
+              child: SquareTextField(
                 icon: Icons.tag_sharp,
                 label: locale.tag,
                 controller: _tag,
               ),
-            const SizedBox(height: UIConstants.formPad),
-            HelseSwitch(
-              locale.start,
-              _updateStart,
-              (v) => setState(() {
+            ),
+            _editableField(
+              label: locale.start,
+              enabled: _updateStart,
+              onChanged: (v) => setState(() {
                 _updateStart = v;
               }),
-            ),
-            if (_updateStart)
-              DateInput(
+              child: DateInput(
                 locale.start,
                 _start,
                 (date) => setState(() {
@@ -123,16 +118,14 @@ class _EventsEditState extends PopupSubmitState<EventsEdit> {
                   _stop = _stop.isBefore(_start) ? _start : _stop;
                 }),
               ),
-            const SizedBox(height: UIConstants.formPad),
-            HelseSwitch(
-              locale.stop,
-              _updateStop,
-              (v) => setState(() {
+            ),
+            _editableField(
+              label: locale.stop,
+              enabled: _updateStop,
+              onChanged: (v) => setState(() {
                 _updateStop = v;
               }),
-            ),
-            if (_updateStop)
-              DateInput(
+              child: DateInput(
                 locale.end,
                 _stop,
                 (date) => setState(() {
@@ -140,9 +133,21 @@ class _EventsEditState extends PopupSubmitState<EventsEdit> {
                   _start = _start.isAfter(_stop) ? _stop : _start;
                 }),
               ),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _editableField({
+    required String label,
+    required bool enabled,
+    required ValueChanged<bool> onChanged,
+    required Widget child,
+  }) {
+    return Column(
+      children: [HelseSwitch(label, enabled, onChanged), if (enabled) child],
     );
   }
 }
