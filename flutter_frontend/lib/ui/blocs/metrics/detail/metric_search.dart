@@ -129,7 +129,8 @@ class _MetricSearchState extends State<MetricSearch> {
         from: _from,
         to: _to,
         source: source,
-        filterSource: _source != FileTypes.swaggerGeneratedUnknown,
+        filterSource:
+            _source != null && _source != FileTypes.swaggerGeneratedUnknown,
       );
       var events = await Dependencies.services.metric.countMetrics(
         widget.person,
