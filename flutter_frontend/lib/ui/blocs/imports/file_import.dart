@@ -1,7 +1,7 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
-import 'package:helse/helpers/popup_submit_state.dart';
+import 'package:helse/ui/common/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/inputs/values_input.dart';

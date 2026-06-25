@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
-import 'package:helse/helpers/popup_submit_state.dart';
+import 'package:helse/ui/common/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/inputs/date_input.dart';
