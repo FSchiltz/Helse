@@ -1,38 +1,18 @@
 using Helse.Api.Data;
 using Helse.Api.Data.Models.Persons;
 using LinqToDB;
-using LinqToDB.Data;
-using Microsoft.Extensions.Logging;
-using NSubstitute;
 
 namespace Tests.Unit.Data;
 
 [Collection("Database collection")]
-public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
+public class UserContextTests(DatabaseFixture fixture) : ContextTests(fixture)
 {
-    private DataConnection _db = null!;
-
-    private readonly SlowQueryLogInterceptor _interceptor = new(
-        Substitute.For<ILogger<SlowQueryLogInterceptor>>());
-
-    public async ValueTask InitializeAsync()
-    {
-        var temp = await fixture.GetTempDB();
-        _db = new DataConnection(x => new DataOptions().UsePostgreSQL(temp));
-        await DatabaseFixture.InitForUnit(_db);
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_db != null)
-            await _db.DisposeAsync();
-    }
-
     [Fact]
     public async Task Count_ReturnsZero_WhenNoUsers()
     {
         // Arrange
-        var context = new UserContext(_db, _interceptor);
+        var db = await GetDb();
+        var context = new UserContext(db, _interceptor);
 
         // Act
         var count = await context.Count();
@@ -45,7 +25,8 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task Count_ReturnsCorrectCount_WhenUsersExist()
     {
         // Arrange
-        var personId = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
+        var db = await GetDb();
+        var personId = (long)await db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
         {
             Name = "Test",
             Identifier = "test",
@@ -53,7 +34,7 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
             Created = DateTime.Now,
         }, token: TestContext.Current.CancellationToken);
 
-        await _db.GetTable<User>().InsertAsync(() => new User
+        await db.GetTable<User>().InsertAsync(() => new User
         {
             PersonId = personId,
             Identifier = "testuser",
@@ -62,7 +43,7 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
             Created = DateTime.Now,
         }, token: TestContext.Current.CancellationToken);
 
-        var context = new UserContext(_db, _interceptor);
+        var context = new UserContext(db, _interceptor);
 
         // Act
         var count = await context.Count();
@@ -75,7 +56,8 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task Get_ReturnsNull_WhenUserNotFound()
     {
         // Arrange
-        var context = new UserContext(_db, _interceptor);
+        var db = await GetDb();
+        var context = new UserContext(db, _interceptor);
 
         // Act
         var result = await context.Get("nonexistent");
@@ -88,7 +70,8 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task Get_ReturnsUser_WhenUserExists()
     {
         // Arrange
-        var personId = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
+        var db = await GetDb();
+        var personId = (long)await db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
         {
             Name = "John",
             Identifier = "john",
@@ -96,7 +79,7 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
             Created = DateTime.Now,
         }, token: TestContext.Current.CancellationToken);
 
-        await _db.GetTable<User>().InsertAsync(() => new User
+        await db.GetTable<User>().InsertAsync(() => new User
         {
             PersonId = personId,
             Identifier = "john_user",
@@ -106,7 +89,7 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
             Created = DateTime.Now,
         }, token: TestContext.Current.CancellationToken);
 
-        var context = new UserContext(_db, _interceptor);
+        var context = new UserContext(db, _interceptor);
 
         // Act
         var result = await context.Get("john_user");
@@ -120,7 +103,8 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task HasRightAsync_ReturnsNull_WhenNoRight()
     {
         // Arrange
-        var person1Id = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
+        var db = await GetDb();
+        var person1Id = (long)await db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
         {
             Name = "Person1",
             Identifier = "p1",
@@ -128,7 +112,7 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
             Created = DateTime.Now,
         }, token: TestContext.Current.CancellationToken);
 
-        var person2Id = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
+        var person2Id = (long)await db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
         {
             Name = "Person2",
             Identifier = "p2",
@@ -136,7 +120,7 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
             Created = DateTime.Now,
         }, token: TestContext.Current.CancellationToken);
 
-        var userId = (long)await _db.GetTable<User>().InsertWithIdentityAsync(() => new User
+        var userId = (long)await db.GetTable<User>().InsertWithIdentityAsync(() => new User
         {
             PersonId = person1Id,
             Identifier = "user",
@@ -145,7 +129,7 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
             Created = DateTime.Now,
         }, token: TestContext.Current.CancellationToken);
 
-        var context = new UserContext(_db, _interceptor);
+        var context = new UserContext(db, _interceptor);
         var now = DateTime.UtcNow;
 
         // Act
@@ -159,7 +143,8 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task HasRightAsync_ReturnsRight_WhenRightExists()
     {
         // Arrange
-        var person1Id = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
+        var db = await GetDb();
+        var person1Id = (long)await db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
         {
             Name = "Person1",
             Identifier = "p1",
@@ -167,7 +152,7 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
             Created = DateTime.Now,
         }, token: TestContext.Current.CancellationToken);
 
-        var person2Id = (long)await _db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
+        var person2Id = (long)await db.GetTable<Person>().InsertWithIdentityAsync(() => new Person
         {
             Name = "Person2",
             Identifier = "p2",
@@ -175,7 +160,7 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
             Created = DateTime.Now,
         }, token: TestContext.Current.CancellationToken);
 
-        var userId = (long)await _db.GetTable<User>().InsertWithIdentityAsync(() => new User
+        var userId = (long)await db.GetTable<User>().InsertWithIdentityAsync(() => new User
         {
             PersonId = person1Id,
             Identifier = "user",
@@ -185,7 +170,7 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
         }, token: TestContext.Current.CancellationToken);
 
         var now = DateTime.UtcNow;
-        await _db.GetTable<Right>().InsertAsync(() => new Right
+        await db.GetTable<Right>().InsertAsync(() => new Right
         {
             UserId = userId,
             PersonId = person2Id,
@@ -195,7 +180,7 @@ public class UserContextTests(DatabaseFixture fixture) : IAsyncLifetime
             Created = DateTime.Now,
         }, token: TestContext.Current.CancellationToken);
 
-        var context = new UserContext(_db, _interceptor);
+        var context = new UserContext(db, _interceptor);
 
         // Act
         var result = await context.HasRightAsync(userId, person2Id, Helse.Models.Persons.RightType.View, now);
