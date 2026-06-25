@@ -3,33 +3,12 @@ using Helse.Api.Data.Models.Health;
 using Helse.Api.Data.Models.Persons;
 using LinqToDB;
 using LinqToDB.Async;
-using LinqToDB.Data;
-using LinqToDB.Mapping;
-using Microsoft.Extensions.Logging;
-using NSubstitute;
 
 namespace Tests.Unit.Data;
 
 [Collection("Database collection")]
-public class HealthContextTests(DatabaseFixture fixture)
+public class HealthContextTests(DatabaseFixture fixture) : ContextTests(fixture)
 {
-    private readonly SlowQueryLogInterceptor _interceptor = new(
-        Substitute.For<ILogger<SlowQueryLogInterceptor>>());
-
-    public async Task<DataConnection> GetDb()
-    {
-        var temp = await fixture.GetTempDB();
-        var db = new DataConnection(x =>
-        {
-            var mapper = new MappingSchema();
-            mapper.SetConverter<DateTime, DateTime>(x => DateTime.SpecifyKind(x, DateTimeKind.Utc));
-
-            return new DataOptions().UsePostgreSQL(temp).UseMappingSchema(mapper);
-        });
-        await DatabaseFixture.InitForUnit(db);
-        return db;
-    }
-
     [Fact]
     public async Task GetEventTypes_ReturnsEmpty_WhenNoneExist()
     {

@@ -41,15 +41,15 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   Future<void> _submitTheme() async {
     final locale = Translation.of(context);
-    final localContext = context;
+
     try {
       // save the user's settings
       await Dependencies.logics.settings.saveTheme(_theme);
 
-      if (localContext.mounted) Notify.show(locale.saved, localContext);
+      if (mounted) Notify.show(locale.saved, context);
     } catch (ex) {
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
+      if (mounted) {
+        Notify.showError(locale.error(ex.toString()), context);
       }
     }
   }
@@ -103,15 +103,15 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   Future<void> rangeCallback(DatePreset? value) async {
     final locale = Translation.of(context);
-    final localContext = context;
+
     if (value == null) return;
     try {
       _range = value;
       await Dependencies.logics.settings.setDateRange(value);
-      if (localContext.mounted) Notify.show(locale.saved, localContext);
+      if (mounted) Notify.show(locale.saved, context);
     } catch (ex) {
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
+      if (mounted) {
+        Notify.showError(locale.error(ex.toString()), context);
       }
     }
   }
@@ -249,7 +249,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   Future<void> _submit(Map<StateType, List<ColoredValue>> colors) async {
     final locale = Translation.of(context);
-    final localContext = context;
+
     try {
       var mapped = colors.map(
         (key, value) => MapEntry(key, {for (var e in value) e.key: e.color}),
@@ -258,10 +258,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       await Dependencies.logics.settings.setColors(mapped);
       Dependencies.theme.loadColors(mapped);
 
-      if (localContext.mounted) Notify.show(locale.saved, localContext);
+      if (mounted) Notify.show(locale.saved, context);
     } catch (ex) {
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
+      if (mounted) {
+        Notify.showError(locale.error(ex.toString()), context);
       }
     }
   }

@@ -2,19 +2,15 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/metric_helper.dart';
+import 'package:helse/ui/common/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/l10n/app_localizations.dart';
-import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../di/dependencies.dart';
-import '../../../logic/event.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/inputs/date_input.dart';
-import '../../common/notification.dart';
 import '../../common/layout/square_dialog.dart';
 import '../../common/inputs/square_text_field.dart';
-import '../../common/loader.dart';
 
 class MetricAdd extends StatefulWidget {
   final MetricType type;
@@ -34,9 +30,7 @@ class MetricAdd extends StatefulWidget {
   State<MetricAdd> createState() => _MetricAddState();
 }
 
-class _MetricAddState extends State<MetricAdd> {
-  SubmissionStatus _status = SubmissionStatus.initial;
-
+class _MetricAddState extends PopupSubmitState<MetricAdd> {
   DateTime _date = DateTime.now();
   List<TextEditingController> _values = [];
   final TextEditingController _tag = TextEditingController();
@@ -67,11 +61,8 @@ class _MetricAddState extends State<MetricAdd> {
     var locale = Translation.of(context);
     return SquareDialog(
       title: Text(locale.addItem(widget.type.name)),
-      actions: [
-        _status == SubmissionStatus.inProgress
-            ? const HelseLoader()
-            : SquareButton(locale.submit, () => _submit(locale)),
-      ],
+      icon: const Icon(Icons.add_chart_sharp),
+      actions: [submitButton(locale.submit, _submit)],
       content: Container(
         constraints: const BoxConstraints(maxWidth: 500),
         child: Form(
@@ -109,58 +100,33 @@ class _MetricAddState extends State<MetricAdd> {
     );
   }
 
-  void _submit(AppLocalizations locale) async {
-    var localContext = context;
-    try {
-      setState(() {
-        _status = SubmissionStatus.inProgress;
-      });
-
-      try {
-        if (widget.edit?.id != null) {
-          var metric = UpdateMetric(
-            id: widget.edit?.id ?? 0,
-            date: _date.toUtc(),
-            type: widget.type.id,
-            tag: _tag.text,
-            value: MetricHelper().joinValue(_values.map((e) => e.text)),
-            source: FileTypes.none,
-            sourceId: "",
-          );
-          await Dependencies.services.metric.updateMetrics(metric);
-        } else {
-          var metric = CreateMetric(
-            date: _date.toUtc(),
-            type: widget.type.id,
-            tag: _tag.text,
-            value: MetricHelper().joinValue(_values.map((e) => e.text)),
-            source: FileTypes.none,
-            sourceId: "",
-          );
-          await Dependencies.services.metric.addMetrics(
-            metric,
-            person: widget.person,
-          );
-        }
-        setState(() {
-          _status = SubmissionStatus.success;
-        });
-
-        if (localContext.mounted) {
-          Notify.show(locale.added, localContext);
-          Navigator.of(localContext).pop();
-        }
-
-        widget.callback();
-      } catch (_) {
-        setState(() {
-          _status = SubmissionStatus.failure;
-        });
-      }
-    } catch (ex) {
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
-      }
+  Future<void> _submit() async {
+    if (widget.edit?.id != null) {
+      var metric = UpdateMetric(
+        id: widget.edit?.id ?? 0,
+        date: _date.toUtc(),
+        type: widget.type.id,
+        tag: _tag.text,
+        value: MetricHelper().joinValue(_values.map((e) => e.text)),
+        source: FileTypes.none,
+        sourceId: "",
+      );
+      await Dependencies.services.metric.updateMetric(metric);
+    } else {
+      var metric = CreateMetric(
+        date: _date.toUtc(),
+        type: widget.type.id,
+        tag: _tag.text,
+        value: MetricHelper().joinValue(_values.map((e) => e.text)),
+        source: FileTypes.none,
+        sourceId: "",
+      );
+      await Dependencies.services.metric.addMetrics(
+        metric,
+        person: widget.person,
+      );
     }
+
+    widget.callback();
   }
 }

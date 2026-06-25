@@ -68,6 +68,17 @@ class _OauthFormViewState extends State<OauthFormView> {
   }
 
   @override
+  void dispose() {
+    _controllerId.dispose();
+    _controllerAuth.dispose();
+    _controllerClaims.dispose();
+    _controllerName.dispose();
+    _controllerSecret.dispose();
+    _controllerToken.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
     var locale = Translation.of(context);

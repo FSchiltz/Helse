@@ -45,7 +45,7 @@ public abstract class IntegrationTest : IClassFixture<WebApplicationFactory<Prog
                             var db = services.Single(d => d.ServiceType == typeof(DataConnection));
                             services.Remove(db);
                             // Create open SqliteConnection so EF won't automatically close it.
-                            services.AddSingleton(new DataConnection((_) => new DataOptions().UsePostgreSQL(connection, LinqToDB.DataProvider.PostgreSQL.PostgreSQLVersion.v15, (x) => new()
+                            services.AddSingleton(new DataConnection(new DataOptions().UsePostgreSQL(connection, LinqToDB.DataProvider.PostgreSQL.PostgreSQLVersion.v15, (x) => new()
                             {
                                 IdentifierQuoteMode = LinqToDB.DataProvider.PostgreSQL.PostgreSQLIdentifierQuoteMode.None
                             })));

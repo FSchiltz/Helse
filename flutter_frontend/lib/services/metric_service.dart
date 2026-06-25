@@ -9,9 +9,19 @@ class MetricService extends ApiService {
     return await call(() => api.apiMetricsTypeGet(all: all, group: group));
   }
 
-  Future<void> deleteMetrics(int id) async {
+  Future<void> deleteMetric(int id) async {
     var api = await getService();
     await call(() => api.apiMetricsIdDelete(id: id));
+  }
+
+  Future<void> deleteMetrics(List<Metric> events, {int? person}) async {
+    var api = await getService();
+    await call(
+      () => api.apiMetricsDeletePost(
+        body: events.map((e) => e.id).toList(),
+        person: person,
+      ),
+    );
   }
 
   Future<void> addMetricsType(CreateMetricType metric) async {
@@ -91,9 +101,14 @@ class MetricService extends ApiService {
     await call(() => api.apiMetricsPost(body: metric, personId: person));
   }
 
-  Future<void> updateMetrics(UpdateMetric metric) async {
+  Future<void> updateMetric(UpdateMetric metric) async {
     var api = await getService();
     await call(() => api.apiMetricsPut(body: metric));
+  }
+
+  Future<void> updateMetrics(PatchMetric patch, {int? person}) async {
+    var api = await getService();
+    await call(() => api.apiMetricsUpdatePut(body: patch, personId: person));
   }
 
   Future<void> addGroup(CreateGroup metric) async {

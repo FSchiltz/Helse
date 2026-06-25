@@ -803,6 +803,92 @@
         }
       }
     },
+    "/api/metrics/update": {
+      "put": {
+        "tags": [
+          "MetricsLogic"
+        ],
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchMetric"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/metrics/delete": {
+      "post": {
+        "tags": [
+          "MetricsLogic"
+        ],
+        "parameters": [
+          {
+            "name": "person",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int64"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/api/metrics/search": {
       "post": {
         "tags": [
@@ -3641,6 +3727,73 @@
               "string"
             ],
             "format": "date-time"
+          },
+          "source": {
+            "$ref": "#/components/schemas/FileTypes"
+          },
+          "sourceId": {
+            "type": "string"
+          }
+        }
+      },
+      "PatchMetric": {
+        "required": [
+          "date",
+          "value",
+          "type",
+          "sourceId"
+        ],
+        "type": "object",
+        "properties": {
+          "updateValue": {
+            "type": "boolean"
+          },
+          "updateDate": {
+            "type": "boolean"
+          },
+          "updateTag": {
+            "type": "boolean"
+          },
+          "ids": {
+            "type": "array",
+            "items": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          },
+          "unit": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "value": {
+            "type": "string"
+          },
+          "tag": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "type": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
           },
           "source": {
             "$ref": "#/components/schemas/FileTypes"

@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/ui/common/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/inputs/custom_switch.dart';
-import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../../../common/notification.dart';
 
 class MetricGroupAdd extends StatefulWidget {
   final void Function()? callback;
@@ -21,13 +19,11 @@ class MetricGroupAdd extends StatefulWidget {
   State<MetricGroupAdd> createState() => _MetricGroupAddState();
 }
 
-class _MetricGroupAddState extends State<MetricGroupAdd> {
-  final GlobalKey<FormState> _formKey = GlobalKey();
-
-  final FocusNode focusNodeName = FocusNode();
-  final FocusNode focusNodeDescription = FocusNode();
-  final TextEditingController controllerName = TextEditingController();
-  final TextEditingController controllerDescription = TextEditingController();
+class _MetricGroupAddState extends PopupSubmitState<MetricGroupAdd> {
+  final FocusNode _focusNodeName = FocusNode();
+  final FocusNode _focusNodeDescription = FocusNode();
+  final TextEditingController _controllerName = TextEditingController();
+  final TextEditingController _controllerDescription = TextEditingController();
 
   bool _visible = true;
   bool _showDashboard = true;
@@ -38,11 +34,18 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
     var edit = widget.edit;
     if (edit != null) {
       // this is not a new addition, just an edit
-      controllerDescription.text = edit.description;
-      controllerName.text = edit.name;
+      _controllerDescription.text = edit.description;
+      _controllerName.text = edit.name;
       _visible = edit.showTitle ?? false;
       _showDashboard = edit.showOnDashboard ?? false;
     }
+  }
+
+  @override
+  void dispose() {
+    _controllerName.dispose();
+    _controllerDescription.dispose();
+    super.dispose();
   }
 
   @override
@@ -51,13 +54,10 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
     return SquareDialog(
       title: const Text("Add a new metric type"),
       actions: [
-        SquareButton(
-          widget.edit == null ? locale.create : locale.edit,
-          () => submit(locale),
-        ),
+        submitButton(widget.edit == null ? locale.create : locale.edit, _submit),
       ],
       content: Form(
-        key: _formKey,
+        key: formKey,
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -65,18 +65,18 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
                 children: [
                   SquareTextField(
                     icon: Icons.person_sharp,
-                    controller: controllerName,
-                    focusNode: focusNodeName,
+                    controller: _controllerName,
+                    focusNode: _focusNodeName,
                     label: locale.name,
                     validator: validateName,
                     onEditingComplete: () =>
-                        focusNodeDescription.requestFocus(),
+                        _focusNodeDescription.requestFocus(),
                   ),
                   const SizedBox(height: UIConstants.formPad),
                   SquareTextField(
                     icon: Icons.person_sharp,
-                    controller: controllerDescription,
-                    focusNode: focusNodeDescription,
+                    controller: _controllerDescription,
+                    focusNode: _focusNodeDescription,
                     label: locale.description,
                   ),
 
@@ -114,48 +114,26 @@ class _MetricGroupAddState extends State<MetricGroupAdd> {
     return null;
   }
 
-  void submit(AppLocalizations locale) async {
-    var localContext = context;
-    try {
-      if (_formKey.currentState?.validate() ?? false) {
-        if (widget.edit == null) {
-          final metric = CreateGroup(
-            description: controllerDescription.text,
-            name: controllerName.text,
-            showTitle: _visible,
-            showOnDashboard: _showDashboard,
-          );
-          await Dependencies.services.metric.addGroup(metric);
-        } else {
-          final metric = UpdateGroup(
-            description: controllerDescription.text,
-            name: controllerName.text,
-            id: widget.edit?.id ?? 0,
-            showTitle: _visible,
-            showOnDashboard: _showDashboard,
-          );
-          await Dependencies.services.metric.updateGroup(metric);
-        }
-
-        _formKey.currentState?.reset();
-        widget.callback?.call();
-
-        if (localContext.mounted) {
-          Notify.show(locale.saved, localContext);
-          Navigator.of(localContext).pop();
-        }
-      }
-    } catch (ex) {
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
-      }
+  Future<void> _submit() async {
+    if (widget.edit == null) {
+      final metric = CreateGroup(
+        description: _controllerDescription.text,
+        name: _controllerName.text,
+        showTitle: _visible,
+        showOnDashboard: _showDashboard,
+      );
+      await Dependencies.services.metric.addGroup(metric);
+    } else {
+      final metric = UpdateGroup(
+        description: _controllerDescription.text,
+        name: _controllerName.text,
+        id: widget.edit?.id ?? 0,
+        showTitle: _visible,
+        showOnDashboard: _showDashboard,
+      );
+      await Dependencies.services.metric.updateGroup(metric);
     }
-  }
 
-  @override
-  void dispose() {
-    controllerDescription.dispose();
-    controllerName.dispose();
-    super.dispose();
+    widget.callback?.call();
   }
 }

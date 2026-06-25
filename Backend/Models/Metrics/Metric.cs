@@ -3,6 +3,17 @@ using Helse.Models.Imports;
 
 namespace Helse.Models.Metrics;
 
+public class PatchMetric : CreateMetric
+{
+    public bool UpdateValue { get; set; }
+    
+    public bool UpdateDate { get; set; }
+
+    public bool UpdateTag { get; set; }
+
+    public long[] Ids { get; set; } = [];
+}
+
 public class UpdateMetric : CreateMetric
 {
     public long Id { get; set; }

@@ -660,7 +660,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Total of {total} in {length} sessions with an average of {mean}'**
-  String eventInformationSummary(String total, String length, String mean);
+  String eventInformationSummary(String total, int length, String mean);
 
   /// No description provided for @color.
   ///
@@ -721,6 +721,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter a duration for which to shift the range in the format HH:mm:SS /n (Example to get the sleep events starting from the day before use 06:00:00)'**
   String get timeShiftExplanation;
+
+  /// No description provided for @bulkEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Editing {count} events'**
+  String bulkEvent(int count);
+
+  /// No description provided for @bulkMetric.
+  ///
+  /// In en, this message translates to:
+  /// **'Editing {count} metrics'**
+  String bulkMetric(int count);
 }
 
 class _AppLocalizationsDelegate

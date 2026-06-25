@@ -11,7 +11,7 @@ public class MetricSettings
 {
     public required List<OrderedItem> DisplaySettings { get; set; } = [];
 
-    [Obsolete]
+    [Obsolete("Not used anymore")]
     public MetricGroupSettings? Groups { get; set; } = new()
     {
         DisplaySettings = [],

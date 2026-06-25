@@ -304,7 +304,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mean => 'Average';
 
   @override
-  String eventInformationSummary(String total, String length, String mean) {
+  String eventInformationSummary(String total, int length, String mean) {
     return 'Total of $total in $length sessions with an average of $mean';
   }
 
@@ -340,4 +340,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get timeShiftExplanation =>
       'Enter a duration for which to shift the range in the format HH:mm:SS /n (Example to get the sleep events starting from the day before use 06:00:00)';
+
+  @override
+  String bulkEvent(int count) {
+    return 'Editing $count events';
+  }
+
+  @override
+  String bulkMetric(int count) {
+    return 'Editing $count metrics';
+  }
 }

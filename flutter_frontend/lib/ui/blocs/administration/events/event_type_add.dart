@@ -1,18 +1,14 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/ui/common/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
 import 'package:helse/ui/common/inputs/values_input.dart';
-import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../../../common/notification.dart';
 
 class EventTypeAdd extends StatefulWidget {
   final void Function()? callback;
@@ -24,8 +20,7 @@ class EventTypeAdd extends StatefulWidget {
   State<EventTypeAdd> createState() => _EventTypeAddState();
 }
 
-class _EventTypeAddState extends State<EventTypeAdd> {
-  final GlobalKey<FormState> _formKey = GlobalKey();
+class _EventTypeAddState extends PopupSubmitState<EventTypeAdd> {
 
   final _name = TextEditingController();
   final _description = TextEditingController();
@@ -50,18 +45,25 @@ class _EventTypeAddState extends State<EventTypeAdd> {
   }
 
   @override
+  void dispose() {
+    _description.dispose();
+    _timeDifference.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var locale = Translation.of(context);
     return SquareDialog(
       title: const Text("Add a new Event type"),
       actions: [
-        SquareButton(
+        submitButton(
           widget.edit == null ? locale.create : locale.update,
-          () => _submit(locale),
+          _submit,
         ),
       ],
       content: Form(
-        key: _formKey,
+        key: formKey,
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -124,57 +126,37 @@ class _EventTypeAddState extends State<EventTypeAdd> {
     });
   }
 
-  void _submit(AppLocalizations locale) async {
-    var localContext = context;
-    try {
-      if (_formKey.currentState?.validate() ?? false) {
-        final timeDifference = _timeDifference.text.isEmpty
-            ? null
-            : _timeDifference.text;
+  Future<void> _submit() async {
+    if (formKey.currentState?.validate() ?? false) {
+      final timeDifference = _timeDifference.text.isEmpty
+          ? null
+          : _timeDifference.text;
 
-        if (widget.edit == null) {
-          final event = CreateEventType(
-            description: _description.text,
-            name: _name.text,
-            standAlone: true,
-            visible: _visible,
-            timeDifference: timeDifference,
-            groupId: _groupId,
-          );
-          await Dependencies.services.event.addEventsType(event);
-        } else {
-          final event = UpdateEventType(
-            description: _description.text,
-            name: _name.text,
-            standAlone: true,
-            id: widget.edit?.id ?? 0,
-            visible: _visible,
-            timeDifference: timeDifference,
-            groupId: _groupId,
-          );
-          await Dependencies.services.event.updateEventsType(event);
-        }
-
-        _formKey.currentState?.reset();
-        widget.callback?.call();
-
-        if (localContext.mounted) {
-          Notify.show(locale.saved, localContext);
-          Navigator.of(localContext).pop();
-        }
+      if (widget.edit == null) {
+        final event = CreateEventType(
+          description: _description.text,
+          name: _name.text,
+          standAlone: true,
+          visible: _visible,
+          timeDifference: timeDifference,
+          groupId: _groupId,
+        );
+        await Dependencies.services.event.addEventsType(event);
+      } else {
+        final event = UpdateEventType(
+          description: _description.text,
+          name: _name.text,
+          standAlone: true,
+          id: widget.edit?.id ?? 0,
+          visible: _visible,
+          timeDifference: timeDifference,
+          groupId: _groupId,
+        );
+        await Dependencies.services.event.updateEventsType(event);
       }
-    } catch (ex) {
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
-      }
-      log(ex.toString());
+
+      formKey.currentState?.reset();
+      widget.callback?.call();
     }
-  }
-
-  @override
-  void dispose() {
-    _description.dispose();
-    _name.dispose();
-    super.dispose();
   }
 }

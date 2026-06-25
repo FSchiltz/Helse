@@ -9,12 +9,12 @@ import 'package:helse/ui/common/inputs/square_text_field.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
-class EventsEdit extends StatefulWidget {
-  final EventType type;
+class MetricsEdit extends StatefulWidget {
+  final MetricType type;
   final void Function() callback;
   final int? person;
-  final List<Event> edit;
-  const EventsEdit(
+  final List<Metric> edit;
+  const MetricsEdit(
     this.type,
     this.callback, {
     super.key,
@@ -23,35 +23,32 @@ class EventsEdit extends StatefulWidget {
   });
 
   @override
-  State<EventsEdit> createState() => _EventsEditState();
+  State<MetricsEdit> createState() => _MetricsEditState();
 }
 
-class _EventsEditState extends PopupSubmitState<EventsEdit> {
-  DateTime _start = DateTime.now();
-  DateTime _stop = DateTime.now();
-  final TextEditingController _description = TextEditingController();
+class _MetricsEditState extends PopupSubmitState<MetricsEdit> {
+  DateTime _date = DateTime.now();
+  final TextEditingController _value = TextEditingController();
   final TextEditingController _tag = TextEditingController();
-  bool _updateDescription = false;
+  bool _updateValue = false;
   bool _updateTag = false;
-  bool _updateStart = false;
-  bool _updateStop = false;
+  bool _updateDate = false;
 
   Future<void> _submit() async {
-    final patch = PatchEvent(
+    final patch = PatchMetric(
       type: widget.type.id,
-      start: _start,
-      updateStart: _updateStart,
-      stop: _stop,
-      updateStop: _updateStop,
-      description: _description.text,
-      updateDescription: _updateDescription,
+      date: _date,
+      updateDate: _updateDate,
+      value: _value.text,
+      updateValue: _updateValue,
       tag: _tag.text,
       updateTag: _updateTag,
       source: FileTypes.none,
+      sourceId: "",
       ids: widget.edit.map((e) => e.id).toList(),
     );
 
-    await Dependencies.services.event.updateEvents(
+    await Dependencies.services.metric.updateMetrics(
       patch,
       person: widget.person,
     );
@@ -60,7 +57,7 @@ class _EventsEditState extends PopupSubmitState<EventsEdit> {
 
   @override
   void dispose() {
-    _description.dispose();
+    _value.dispose();
     _tag.dispose();
     super.dispose();
   }
@@ -71,7 +68,7 @@ class _EventsEditState extends PopupSubmitState<EventsEdit> {
     return SquareDialog(
       icon: const Icon(Icons.edit_note),
       title: Text(
-        locale.bulkEvent(widget.edit.length),
+        locale.bulkMetric(widget.edit.length),
         style: Theme.of(context).textTheme.titleLarge,
       ),
       actions: [submitButton(locale.submit, _submit)],
@@ -81,12 +78,12 @@ class _EventsEditState extends PopupSubmitState<EventsEdit> {
           children: [
             EnabledInput(
               label: locale.description,
-              enabled: _updateDescription,
-              onChanged: (v) => setState(() => _updateDescription = v),
+              enabled: _updateValue,
+              onChanged: (v) => setState(() => _updateValue = v),
               child: SquareTextField(
-                icon: Icons.description_sharp,
-                label: locale.description,
-                controller: _description,
+                icon: Icons.numbers_sharp,
+                label: locale.value,
+                controller: _value,
               ),
             ),
 
@@ -102,29 +99,13 @@ class _EventsEditState extends PopupSubmitState<EventsEdit> {
             ),
             EnabledInput(
               label: locale.start,
-              enabled: _updateStart,
-              onChanged: (v) => setState(() => _updateStart = v),
+              enabled: _updateDate,
+              onChanged: (v) => setState(() => _updateDate = v),
               child: DateInput(
-                locale.start,
-                _start,
+                locale.date,
+                _date,
                 (date) => setState(() {
-                  _start = date ?? DateTime.now();
-                  _stop = _stop.isBefore(_start) ? _start : _stop;
-                }),
-              ),
-            ),
-            EnabledInput(
-              label: locale.stop,
-              enabled: _updateStop,
-              onChanged: (v) => setState(() {
-                _updateStop = v;
-              }),
-              child: DateInput(
-                locale.end,
-                _stop,
-                (date) => setState(() {
-                  _stop = date ?? DateTime.now();
-                  _start = _start.isAfter(_stop) ? _stop : _start;
+                  _date = date ?? DateTime.now();
                 }),
               ),
             ),

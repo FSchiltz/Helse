@@ -63,7 +63,7 @@ public class DatabaseFixture : IAsyncLifetime
     internal async Task<string> GetTempDB()
     {
         string name = RandomString(10);
-        await using var _db = new DataConnection(x => new DataOptions().UsePostgreSQL(GetDatabaseConnection(null)));
+        await using var _db = new DataConnection(new DataOptions().UsePostgreSQL(GetDatabaseConnection(null)));
         var result = await _db.ExecuteAsync($"CREATE DATABASE {name};");
 
         return GetDatabaseConnection(name);

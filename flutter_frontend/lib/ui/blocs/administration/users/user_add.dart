@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/ui/common/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/ui/blocs/administration/users/userright_input.dart';
-import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../../../common/notification.dart';
 import 'user_form.dart';
 
 class UserAdd extends StatefulWidget {
@@ -21,7 +19,7 @@ class UserAdd extends StatefulWidget {
   State<UserAdd> createState() => _SignupState();
 }
 
-class _SignupState extends State<UserAdd> {
+class _SignupState extends PopupSubmitState<UserAdd> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   List<UserType> _type = [];
@@ -52,7 +50,7 @@ class _SignupState extends State<UserAdd> {
     var locale = Translation.of(context);
     return SquareDialog(
       title: const Text("Add a new user"),
-      actions: [SquareButton(locale.create, () => submit(locale))],
+      actions: [submitButton(locale.create, _submit)],
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -86,56 +84,41 @@ class _SignupState extends State<UserAdd> {
     );
   }
 
-  void submit(AppLocalizations locale) async {
-    var localContext = context;
-    try {
-      if (_formKey.currentState?.validate() ?? false) {
-        var edit = widget.edit;
-        if (edit != null) {
-          await Dependencies.services.user.updatePerson(
-            UpdatePerson(
-              id: edit.id,
-              types: _type,
-              name: _controllerName.text,
-              surname: _controllerSurname.text,
-              email: _controllerEmail.text,
-            ),
-          );
-        } else {
-          // save the user
-          var result = await Dependencies.services.user.addPerson(
-            PersonCreation(
-              userName: _controllerUsername.text,
-              name: _controllerName.text,
-              surname: _controllerSurname.text,
-              password: _controllerPassword.text,
-              email: _controllerEmail.text,
-              types: _type,
-            ),
-          );
+  Future<void> _submit() async {
+    var edit = widget.edit;
+    if (edit != null) {
+      await Dependencies.services.user.updatePerson(
+        UpdatePerson(
+          id: edit.id,
+          types: _type,
+          name: _controllerName.text,
+          surname: _controllerSurname.text,
+          email: _controllerEmail.text,
+        ),
+      );
+    } else {
+      // save the user
+      var result = await Dependencies.services.user.addPerson(
+        PersonCreation(
+          userName: _controllerUsername.text,
+          name: _controllerName.text,
+          surname: _controllerSurname.text,
+          password: _controllerPassword.text,
+          email: _controllerEmail.text,
+          types: _type,
+        ),
+      );
 
-          if (result == null) {
-            throw StateError("No user created");
-          }
-
-          if (result.user == null) {
-            throw StateError("The person was only added as a patient");
-          }
-        }
-
-        _formKey.currentState?.reset();
-        widget.callback?.call();
-
-        if (localContext.mounted) {
-          Notify.show(locale.saved, localContext);
-          Navigator.of(localContext).pop();
-        }
+      if (result == null) {
+        throw StateError("No user created");
       }
-    } catch (ex) {
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
+
+      if (result.user == null) {
+        throw StateError("The person was only added as a patient");
       }
     }
+
+    widget.callback?.call();
   }
 
   @override

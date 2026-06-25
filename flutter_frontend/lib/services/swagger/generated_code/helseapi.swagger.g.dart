@@ -673,6 +673,39 @@ Map<String, dynamic> _$PatchEventToJson(PatchEvent instance) =>
       'sourceId': instance.sourceId,
     };
 
+PatchMetric _$PatchMetricFromJson(Map<String, dynamic> json) => PatchMetric(
+  updateValue: json['updateValue'] as bool?,
+  updateDate: json['updateDate'] as bool?,
+  updateTag: json['updateTag'] as bool?,
+  ids:
+      (json['ids'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toList() ??
+      [],
+  unit: (json['unit'] as num?)?.toInt(),
+  date: DateTime.parse(json['date'] as String),
+  value: json['value'] as String,
+  tag: json['tag'] as String?,
+  type: (json['type'] as num).toInt(),
+  source: fileTypesNullableFromJson(json['source']),
+  sourceId: json['sourceId'] as String,
+);
+
+Map<String, dynamic> _$PatchMetricToJson(PatchMetric instance) =>
+    <String, dynamic>{
+      'updateValue': instance.updateValue,
+      'updateDate': instance.updateDate,
+      'updateTag': instance.updateTag,
+      'ids': instance.ids,
+      'unit': instance.unit,
+      'date': instance.date.toIso8601String(),
+      'value': instance.value,
+      'tag': instance.tag,
+      'type': instance.type,
+      'source': fileTypesNullableToJson(instance.source),
+      'sourceId': instance.sourceId,
+    };
+
 PatientSettings _$PatientSettingsFromJson(
   Map<String, dynamic> json,
 ) => PatientSettings(

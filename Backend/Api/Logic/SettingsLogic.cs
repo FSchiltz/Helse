@@ -311,7 +311,10 @@ internal static class SettingsLogic
     private static void UpgradeV3(UserSettings data)
     {
         data.Version = 3;
-        data.Groups = data.MetricSettings.Groups;
+        data.Groups = data.MetricSettings.Groups ?? new()
+        {
+            DisplaySettings = [],
+        };
         data.MetricSettings.Groups = null;
     }
 

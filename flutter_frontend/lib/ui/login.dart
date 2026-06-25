@@ -28,7 +28,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginState extends State<LoginPage> {
-  final GlobalKey<FormState> _formKey = GlobalKey();
   final _urlController = TextEditingController();
   final _controllerUsername = TextEditingController();
   final _controllerName = TextEditingController();
@@ -51,6 +50,18 @@ class _LoginState extends State<LoginPage> {
   }
 
   @override
+  void dispose() {
+    _urlController.dispose();
+    _controllerUsername.dispose();
+    _controllerName.dispose();
+    _controllerSurname.dispose();
+    _controllerEmail.dispose();
+    _controllerPassword.dispose();
+    _controllerConFirmPassword.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var locale = Translation.of(context);
     return Scaffold(
@@ -63,105 +74,101 @@ class _LoginState extends State<LoginPage> {
               padding: const EdgeInsets.all(8.0),
               child: Container(
                 constraints: const BoxConstraints(maxWidth: 500),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      const SizedBox(height: UIConstants.formPad),
-                      Text(
-                        locale.welcome,
-                        style: Theme.of(context).textTheme.headlineLarge,
-                      ),
-                      const SizedBox(height: UIConstants.headerPad),
-                      SquareTextField(
-                        label: locale.serverurl,
-                        controller: _urlController,
-                        icon: Icons.home_sharp,
-                        type: TextInputType.url,
-                        onChanged: (v) => _urlTextChanged(v, locale),
-                        key: const Key('loginForm_urlInput_textField'),
-                        errorText: _urlError,
-                      ),
-                      const SizedBox(height: UIConstants.headerPad),
-                      (_status == SubmissionStatus.waiting)
-                          ? const HelseLoader()
-                          : Column(
-                              children: [
-                                (_initStatus?.init == true)
-                                    ? Column(
-                                        children: [
-                                          UserNameInput(
-                                            controller: _controllerUsername,
-                                            validate: validateUserName,
-                                          ),
-                                          const SizedBox(
-                                            height: UIConstants.formPad,
-                                          ),
-                                          PasswordInput(
-                                            controller: _controllerPassword,
-                                            error: _loginError,
-                                          ),
-                                        ],
-                                      )
-                                    : Column(
-                                        children: [
-                                          Text(
-                                            locale.createAccount,
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.headlineLarge,
-                                          ),
-                                          Text(
-                                            locale.adminDescription,
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.bodyLarge,
-                                          ),
-                                          const SizedBox(
-                                            height: UIConstants.headerPad,
-                                          ),
-                                          UserForm(
-                                            [UserType.admin],
-                                            controllerUsername:
-                                                _controllerUsername,
-                                            controllerEmail: _controllerEmail,
-                                            controllerPassword:
-                                                _controllerPassword,
-                                            controllerConFirmPassword:
-                                                _controllerConFirmPassword,
-                                            controllerName: _controllerName,
-                                            controllerSurname:
-                                                _controllerSurname,
-                                          ),
-                                        ],
-                                      ),
-                                const SizedBox(height: UIConstants.headerPad),
-                                _status == SubmissionStatus.inProgress
-                                    ? const HelseLoader()
-                                    : Column(
-                                        children: [
-                                          SquareButton(
-                                            _initStatus?.init == true
-                                                ? locale.login
-                                                : locale.create,
-                                            _initStatus?.init == true
-                                                ? _login
-                                                : _create,
-                                          ),
-                                          const SizedBox(
-                                            height: UIConstants.headerPad,
-                                          ),
-                                          ..._providers(
-                                            _initStatus?.oauths,
-                                            Theme.of(context).textTheme,
-                                            locale,
-                                          ),
-                                        ],
-                                      ),
-                              ],
-                            ),
-                    ],
-                  ),
+                child: Column(
+                  children: [
+                    const SizedBox(height: UIConstants.formPad),
+                    Text(
+                      locale.welcome,
+                      style: Theme.of(context).textTheme.headlineLarge,
+                    ),
+                    const SizedBox(height: UIConstants.headerPad),
+                    SquareTextField(
+                      label: locale.serverurl,
+                      controller: _urlController,
+                      icon: Icons.home_sharp,
+                      type: TextInputType.url,
+                      onChanged: (v) => _urlTextChanged(v, locale),
+                      key: const Key('loginForm_urlInput_textField'),
+                      errorText: _urlError,
+                    ),
+                    const SizedBox(height: UIConstants.headerPad),
+                    (_status == SubmissionStatus.waiting)
+                        ? const HelseLoader()
+                        : Column(
+                            children: [
+                              (_initStatus?.init == true)
+                                  ? Column(
+                                      children: [
+                                        UserNameInput(
+                                          controller: _controllerUsername,
+                                          validate: validateUserName,
+                                        ),
+                                        const SizedBox(
+                                          height: UIConstants.formPad,
+                                        ),
+                                        PasswordInput(
+                                          controller: _controllerPassword,
+                                          error: _loginError,
+                                        ),
+                                      ],
+                                    )
+                                  : Column(
+                                      children: [
+                                        Text(
+                                          locale.createAccount,
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.headlineLarge,
+                                        ),
+                                        Text(
+                                          locale.adminDescription,
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodyLarge,
+                                        ),
+                                        const SizedBox(
+                                          height: UIConstants.headerPad,
+                                        ),
+                                        UserForm(
+                                          [UserType.admin],
+                                          controllerUsername:
+                                              _controllerUsername,
+                                          controllerEmail: _controllerEmail,
+                                          controllerPassword:
+                                              _controllerPassword,
+                                          controllerConFirmPassword:
+                                              _controllerConFirmPassword,
+                                          controllerName: _controllerName,
+                                          controllerSurname: _controllerSurname,
+                                        ),
+                                      ],
+                                    ),
+                              const SizedBox(height: UIConstants.headerPad),
+                              _status == SubmissionStatus.inProgress
+                                  ? const HelseLoader()
+                                  : Column(
+                                      children: [
+                                        SquareButton(
+                                          _initStatus?.init == true
+                                              ? locale.login
+                                              : locale.create,
+                                          _initStatus?.init == true
+                                              ? _login
+                                              : _create,
+                                        ),
+                                        const SizedBox(
+                                          height: UIConstants.headerPad,
+                                        ),
+                                        ..._providers(
+                                          _initStatus?.oauths,
+                                          Theme.of(context).textTheme,
+                                          locale,
+                                        ),
+                                      ],
+                                    ),
+                            ],
+                          ),
+                  ],
                 ),
               ),
             ),
@@ -276,7 +283,6 @@ class _LoginState extends State<LoginPage> {
   }
 
   Future<void> _submitOauth(OauthConnection oauth) async {
-    final localContext = context;
     final locale = Translation.of(context);
     var init = _initStatus;
     var url = _url;
@@ -293,8 +299,8 @@ class _LoginState extends State<LoginPage> {
 
         return;
       } catch (ex) {
-        if (localContext.mounted) {
-          Notify.showError(locale.error(ex.toString()), localContext);
+        if (mounted) {
+          Notify.showError(locale.error(ex.toString()), context);
         }
       }
     }

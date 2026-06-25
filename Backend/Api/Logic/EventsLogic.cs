@@ -1,3 +1,4 @@
+using System.Net;
 using Helse.Api.Data;
 using Helse.Api.Helpers;
 using Helse.Api.Mappers;
@@ -14,6 +15,65 @@ namespace Helse.Api.Logic;
 /// </summary>
 internal static class EventsLogic
 {
+    public static void MapEvents(this RouteGroupBuilder api)
+    {
+        /* Events endpoints*/
+        var events = api.MapGroup("/events").RequireAuthorization();
+
+        events.MapGet("/summary", GetSummaryAsync)
+        .Produces<EventStats>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        events.MapGet("/", GetAsync)
+        .Produces<List<Event>>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        events.MapPost("/", CreateAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        events.MapPut("/", UpdateAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        events.MapDelete("/{id}", DeleteAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        events.MapPut("/update", UpdateBulkAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        events.MapPost("/delete", DeleteBulkAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        events.MapPost("/search", SearchAsync)
+        .Produces<Event[]>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        events.MapPost("/count", CountAsync)
+        .Produces<long>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        var eventsType = events.MapGroup("/type").RequireAuthorization();
+        eventsType.MapPost("/", CreateTypeAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        eventsType.MapPut("/", UpdateTypeAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        eventsType.MapDelete("/{id}", DeleteTypeAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        eventsType.MapGet("/", GetTypeAsync)
+        .Produces<List<EventType>>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+    }
+
     public async static Task<IResult> GetAsync(int type, DateTime start, DateTime end, long? personId, IUserContext users, IEventContext events, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);

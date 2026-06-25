@@ -55,4 +55,8 @@ internal interface IMetricContext : IContext
     Task<Metric[]> SearchMetricsAsync(long person, Helse.Models.Metrics.SearchMetric search, Pagination pagination);
 
     Task<long> CountMetricsAsync(long person, Helse.Models.Metrics.SearchMetric search);
+
+    Task DeleteMetrics(long[] ids, long person);
+    
+    Task UpdateBulk(Helse.Models.Metrics.PatchMetric metric, long value);
 }

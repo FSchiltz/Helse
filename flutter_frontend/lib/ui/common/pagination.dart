@@ -8,18 +8,23 @@ class Pagination extends StatelessWidget {
   final int pageSize;
   final int page;
   final void Function(int) callBack;
+  final List<Widget> menu;
+  final int selected;
   const Pagination({
     super.key,
     required this.count,
     required this.pageSize,
     required this.page,
     required this.callBack,
+    required this.menu,
+    this.selected = 0,
   });
 
   @override
   Widget build(BuildContext context) {
     final int maxPage = (count / pageSize).toInt();
     return Row(
+      spacing: UIConstants.formPad,
       mainAxisSize: MainAxisSize.min,
       children: [
         if (maxPage > 1) ...[
@@ -30,11 +35,10 @@ class Pagination extends StatelessWidget {
             padding: EdgeInsets.all(2),
           ),
           Text('${page + 1} / ${maxPage + 1} pages'),
-          SizedBox(width: UIConstants.formPad),
           Text('-'),
-          SizedBox(width: UIConstants.formPad),
         ],
         Text('$count items'),
+        if (selected > 0) Text('$selected selected'),
         if (maxPage > 1)
           IconButton(
             onPressed: page >= maxPage
@@ -44,6 +48,8 @@ class Pagination extends StatelessWidget {
             iconSize: 40,
             padding: EdgeInsets.all(2),
           ),
+
+        ...menu,
       ],
     );
   }

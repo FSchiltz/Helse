@@ -1,18 +1,13 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:helse/ui/common/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/loading_builder.dart';
-import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/inputs/values_input.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../di/dependencies.dart';
-import '../../../logic/event.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/inputs/date_input.dart';
-import '../../common/loader.dart';
-import '../../common/notification.dart';
 import '../../common/layout/square_dialog.dart';
 import '../../common/inputs/square_text_field.dart';
 
@@ -25,8 +20,7 @@ class TreatmentAdd extends StatefulWidget {
   State<TreatmentAdd> createState() => _TreatementState();
 }
 
-class _TreatementState extends State<TreatmentAdd> {
-  SubmissionStatus _status = SubmissionStatus.initial;
+class _TreatementState extends PopupSubmitState<TreatmentAdd> {
   DateTime _start = DateTime.now();
   DateTime _stop = DateTime.now();
   final TextEditingController _description = TextEditingController();
@@ -36,40 +30,15 @@ class _TreatementState extends State<TreatmentAdd> {
     return await Dependencies.services.treatement.treatmentTypes() ?? [];
   }
 
-  void _submit() async {
-    final locale = Translation.of(context);
-    final localContext = context;
-
-    setState(() {
-      _status = SubmissionStatus.inProgress;
-    });
-    try {
-      var event = CreateEvent(
-        start: _start,
-        stop: _stop,
-        type: _type ?? 0,
-        description: _description.text,
-      );
-      var treatment = CreateTreatment(events: [event], personId: widget.person);
-      await Dependencies.services.treatement.addTreatment(treatment);
-
-      setState(() {
-        _status = SubmissionStatus.success;
-      });
-
-      if (localContext.mounted) {
-        Notify.show(locale.added, localContext);
-        Navigator.of(localContext).pop();
-      }
-    } catch (ex) {
-      setState(() {
-        _status = SubmissionStatus.failure;
-      });
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
-      }
-      log(ex.toString());
-    }
+  Future<void> _submit() async {
+    var event = CreateEvent(
+      start: _start,
+      stop: _stop,
+      type: _type ?? 0,
+      description: _description.text,
+    );
+    var treatment = CreateTreatment(events: [event], personId: widget.person);
+    await Dependencies.services.treatement.addTreatment(treatment);
   }
 
   @override
@@ -77,13 +46,7 @@ class _TreatementState extends State<TreatmentAdd> {
     var locale = Translation.of(context);
     return SquareDialog(
       title: Text(locale.addItem(locale.treatment)),
-      actions: [
-        SizedBox(
-          child: _status == SubmissionStatus.inProgress
-              ? const HelseLoader()
-              : SquareButton(locale.submit, _submit),
-        ),
-      ],
+      actions: [submitButton(locale.submit, _submit)],
       content: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Form(

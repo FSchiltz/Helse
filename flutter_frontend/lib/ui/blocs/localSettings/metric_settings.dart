@@ -88,7 +88,7 @@ class _MetricsSettingsState extends State<MetricsSettings> {
 
   Future<void> _submit(_SettingsData data) async {
     final locale = Translation.of(context);
-    final localContext = context;
+    
     try {
       var metricsToSave = data.metrics.map((e) => e.ordered()).toList();
       var eventsToSave = data.events.map((e) => e.ordered()).toList();
@@ -125,10 +125,10 @@ class _MetricsSettingsState extends State<MetricsSettings> {
           true,
         );
       }
-      if (localContext.mounted) Notify.show(locale.saved, localContext);
+      if (mounted) Notify.show(locale.saved, context);
     } catch (ex) {
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
+      if (mounted) {
+        Notify.showError(locale.error(ex.toString()), context);
       }
     }
   }

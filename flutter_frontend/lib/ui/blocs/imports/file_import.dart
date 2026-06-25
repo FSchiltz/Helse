@@ -1,17 +1,14 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/ui/common/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/inputs/values_input.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
-import '../../../logic/event.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/inputs/file_input.dart';
-import '../../common/loader.dart';
-import '../../common/notification.dart';
 
 class FileImport extends StatefulWidget {
   final int? patient;
@@ -21,11 +18,10 @@ class FileImport extends StatefulWidget {
   State<FileImport> createState() => _FileImportState();
 }
 
-class _FileImportState extends State<FileImport> {
+class _FileImportState extends PopupSubmitState<FileImport> {
   List<FileType> types = [];
   XFile? file;
   int? selected;
-  SubmissionStatus status = SubmissionStatus.initial;
 
   @override
   void initState() {
@@ -47,11 +43,7 @@ class _FileImportState extends State<FileImport> {
     var locale = Translation.of(context);
     return SquareDialog(
       title: const Text("Import"),
-      actions: [
-        status == SubmissionStatus.inProgress
-            ? const HelseLoader()
-            : SquareButton(locale.submit, submit),
-      ],
+      actions: [submitButton(locale.submit, _submit)],
       content: SingleChildScrollView(
         padding: const EdgeInsets.all(30.0),
         child: Column(
@@ -89,40 +81,15 @@ class _FileImportState extends State<FileImport> {
     );
   }
 
-  void submit() async {
-    final locale = Translation.of(context);
-    final localContext = context;
+  Future<void> _submit() async {
     if (selected != null) {
-      setState(() {
-        status = SubmissionStatus.inProgress;
-      });
-
-      try {
-        var content = await file?.readAsBytes();
-        if (content == null) return;
-        await Dependencies.logics.import.import(
-          content,
-          selected!,
-          widget.patient,
-        );
-
-        setState(() {
-          status = SubmissionStatus.success;
-        });
-
-        if (localContext.mounted) {
-          Notify.show(locale.added, localContext);
-          Navigator.of(localContext).pop();
-        }
-      } catch (ex) {
-        if (localContext.mounted) {
-          Notify.showError(locale.error(ex.toString()), localContext);
-        }
-
-        setState(() {
-          status = SubmissionStatus.failure;
-        });
-      }
+      var content = await file?.readAsBytes();
+      if (content == null) return;
+      await Dependencies.logics.import.import(
+        content,
+        selected!,
+        widget.patient,
+      );
     }
   }
 }

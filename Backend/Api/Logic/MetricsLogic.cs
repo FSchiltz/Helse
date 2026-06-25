@@ -1,3 +1,4 @@
+using System.Net;
 using Helse.Api.Data;
 using Helse.Api.Data.Models.Common;
 using Helse.Api.Helpers;
@@ -16,6 +17,81 @@ namespace Helse.Api.Logic;
 /// </summary>
 internal static class MetricsLogic
 {
+    public static void MapMetrics(this RouteGroupBuilder api)
+    {
+        /* Metrics endpoints*/
+        var metrics = api.MapGroup("/metrics").RequireAuthorization();
+        metrics.MapGet("/summary", GetSummaryAsync)
+        .Produces<Metric[]>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        metrics.MapGet("/", GetAsync)
+        .Produces<Metric[]>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        metrics.MapPost("/", CreateAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        metrics.MapPut("/", UpdateAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        metrics.MapDelete("/{id}", DeleteAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        metrics.MapPut("/update", UpdateBulkAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        metrics.MapPost("/delete", DeleteBulkAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        metrics.MapPost("/search", SearchAsync)
+        .Produces<Metric[]>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        metrics.MapPost("/count", CountAsync)
+        .Produces<long>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        var metricsType = metrics.MapGroup("/type").RequireAuthorization();
+        metricsType.MapPost("/", MetricsLogic.CreateTypeAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        metricsType.MapPut("/", UpdateTypeAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        metricsType.MapDelete("/{id}", DeleteTypeAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        metricsType.MapGet("/", GetTypeAsync)
+        .Produces<List<MetricType>>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        var metricsGroup = metrics.MapGroup("/groups").RequireAuthorization();
+        metricsGroup.MapPost("/", CreateGroupAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        metricsGroup.MapPut("/", UpdateGroupAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        metricsGroup.MapDelete("/{id}", DeleteGroupAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        metricsGroup.MapGet("/", GetGroupsAsync)
+        .Produces<List<Group>>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+    }
+
     public async static Task<IResult> GetAsync(int type, DateTime start, DateTime end, long? personId, IUserContext users, IMetricContext db, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
@@ -256,6 +332,40 @@ internal static class MetricsLogic
         ShowTitle = metric.ShowTitle,
         Id = metric.Id,
     }));
+
+    public async static Task<IResult> DeleteBulkAsync([FromBody] long[] ids, long? person, IUserContext users, IMetricContext events, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+
+        person ??= user.PersonId;
+        if (user.PersonId != person && !await users.ValidateCaregiverAsync(user, person.Value, RightType.Edit))
+            return TypedResults.Forbid();
+
+        await events.DeleteMetrics(ids, person.Value);
+
+
+        return TypedResults.NoContent();
+    }
+
+    public static async Task<IResult> UpdateBulkAsync(PatchMetric metric, long? personId, IUserContext users, IMetricContext metrics, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+        personId ??= user.PersonId;
+
+        if (personId != user.PersonId && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.Edit))
+            return TypedResults.Forbid();
+        var type = await metrics.GetMetricType((int)metric.Type);
+        Validate(metric, null, type);
+        await metrics.UpdateBulk(metric, personId.Value);
+
+        return TypedResults.NoContent();
+    }
 
     public static async Task<IResult> CreateGroupAsync(CreateGroup metric, IUserContext users, IMetricContext db, HttpContext context)
     {

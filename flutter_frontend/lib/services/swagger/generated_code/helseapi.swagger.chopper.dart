@@ -669,6 +669,66 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
+  Future<Response<dynamic>> _apiMetricsUpdatePut({
+    int? personId,
+    required PatchMetric? body,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["MetricsLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/metrics/update');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
+    final $body = body;
+    final Request $request = Request(
+      'PUT',
+      $url,
+      client.baseUrl,
+      body: $body,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiMetricsDeletePost({
+    int? person,
+    required List<int>? body,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["MetricsLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/metrics/delete');
+    final Map<String, dynamic> $params = <String, dynamic>{'person': person};
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
   Future<Response<List<Metric>>> _apiMetricsSearchPost({
     int? personId,
     required int? page,

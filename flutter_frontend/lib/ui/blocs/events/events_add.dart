@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/common/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/inputs/custom_switch.dart';
-import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../di/dependencies.dart';
-import '../../../logic/event.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/inputs/date_input.dart';
-import '../../common/loader.dart';
-import '../../common/notification.dart';
 import '../../common/layout/square_dialog.dart';
 
 class EventAdd extends StatefulWidget {
@@ -25,8 +22,7 @@ class EventAdd extends StatefulWidget {
   State<EventAdd> createState() => _EventAddState();
 }
 
-class _EventAddState extends State<EventAdd> {
-  SubmissionStatus _status = SubmissionStatus.initial;
+class _EventAddState extends PopupSubmitState<EventAdd> {
   DateTime _start = DateTime.now();
   DateTime _stop = DateTime.now();
   DateTime? _notification;
@@ -34,60 +30,34 @@ class _EventAddState extends State<EventAdd> {
   final TextEditingController _tag = TextEditingController();
   bool _notify = false;
 
-  void _submit() async {
-    final locale = Translation.of(context);
-    var localContext = context;
-    try {
-      setState(() {
-        _status = SubmissionStatus.inProgress;
-      });
-
-      if (widget.edit != null) {
-        var event = UpdateEvent(
-          start: _start.toUtc(),
-          stop: _stop.toUtc(),
-          type: widget.type.id,
-          description: _description.text,
-          id: widget.edit?.id,
-          notificationTime: _notify ? _notification?.toUtc() : null,
-          source: widget.edit?.source,
-          sourceId: widget.edit?.sourceId,
-          tag: _tag.text,
-        );
-        await Dependencies.services.event.updateEvent(event);
-      } else {
-        var event = CreateEvent(
-          start: _start.toUtc(),
-          stop: _stop.toUtc(),
-          type: widget.type.id,
-          description: _description.text,
-          notificationTime: _notify ? _notification?.toUtc() : null,
-          source: FileTypes.none,
-          sourceId: '',
-          tag: _tag.text,
-        );
-        await Dependencies.services.event.addEvent(
-          event,
-          person: widget.person,
-        );
-      }
-      widget.callback.call();
-      setState(() {
-        _status = SubmissionStatus.success;
-      });
-
-      if (localContext.mounted) {
-        Notify.show(locale.added, localContext);
-        Navigator.of(localContext).pop();
-      }
-    } catch (ex) {
-      setState(() {
-        _status = SubmissionStatus.failure;
-      });
-      if (localContext.mounted) {
-        Notify.showError(locale.error(ex.toString()), localContext);
-      }
+  Future<void> _submit() async {
+    if (widget.edit != null) {
+      var event = UpdateEvent(
+        start: _start.toUtc(),
+        stop: _stop.toUtc(),
+        type: widget.type.id,
+        description: _description.text,
+        id: widget.edit?.id,
+        notificationTime: _notify ? _notification?.toUtc() : null,
+        source: widget.edit?.source,
+        sourceId: widget.edit?.sourceId,
+        tag: _tag.text,
+      );
+      await Dependencies.services.event.updateEvent(event);
+    } else {
+      var event = CreateEvent(
+        start: _start.toUtc(),
+        stop: _stop.toUtc(),
+        type: widget.type.id,
+        description: _description.text,
+        notificationTime: _notify ? _notification?.toUtc() : null,
+        source: FileTypes.none,
+        sourceId: '',
+        tag: _tag.text,
+      );
+      await Dependencies.services.event.addEvent(event, person: widget.person);
     }
+    widget.callback.call();
   }
 
   @override
@@ -110,11 +80,8 @@ class _EventAddState extends State<EventAdd> {
     var locale = Translation.of(context);
     return SquareDialog(
       title: Text(locale.addItem(widget.type.name)),
-      actions: [
-        _status == SubmissionStatus.inProgress
-            ? const HelseLoader()
-            : SquareButton(locale.submit, _submit),
-      ],
+      icon: const Icon(Icons.add_chart_sharp),
+      actions: [submitButton(locale.submit, _submit)],
       content: Form(
         child: SingleChildScrollView(
           child: Column(

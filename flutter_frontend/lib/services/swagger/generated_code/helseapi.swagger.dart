@@ -729,6 +729,62 @@ abstract class Helseapi extends ChopperService {
 
   ///
   ///@param personId
+  Future<chopper.Response> apiMetricsUpdatePut({
+    int? personId,
+    required PatchMetric? body,
+  }) {
+    return _apiMetricsUpdatePut(personId: personId, body: body);
+  }
+
+  ///
+  ///@param personId
+  @PUT(path: '/api/metrics/update', optionalBody: true)
+  Future<chopper.Response> _apiMetricsUpdatePut({
+    @Query('personId') int? personId,
+    @Body() required PatchMetric? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["MetricsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param person
+  Future<chopper.Response> apiMetricsDeletePost({
+    int? person,
+    required List<int>? body,
+  }) {
+    return _apiMetricsDeletePost(person: person, body: body);
+  }
+
+  ///
+  ///@param person
+  @POST(path: '/api/metrics/delete', optionalBody: true)
+  Future<chopper.Response> _apiMetricsDeletePost({
+    @Query('person') int? person,
+    @Body() required List<int>? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["MetricsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param personId
   ///@param Page
   ///@param PageSize
   Future<chopper.Response<List<Metric>>> apiMetricsSearchPost({
@@ -5336,6 +5392,173 @@ extension $PatchEventExtension on PatchEvent {
       notificationTime: (notificationTime != null
           ? notificationTime.value
           : this.notificationTime),
+      source: (source != null ? source.value : this.source),
+      sourceId: (sourceId != null ? sourceId.value : this.sourceId),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class PatchMetric {
+  const PatchMetric({
+    this.updateValue,
+    this.updateDate,
+    this.updateTag,
+    this.ids,
+    this.unit,
+    required this.date,
+    required this.value,
+    this.tag,
+    required this.type,
+    this.source,
+    required this.sourceId,
+  });
+
+  factory PatchMetric.fromJson(Map<String, dynamic> json) =>
+      _$PatchMetricFromJson(json);
+
+  static const toJsonFactory = _$PatchMetricToJson;
+  Map<String, dynamic> toJson() => _$PatchMetricToJson(this);
+
+  @JsonKey(name: 'updateValue')
+  final bool? updateValue;
+  @JsonKey(name: 'updateDate')
+  final bool? updateDate;
+  @JsonKey(name: 'updateTag')
+  final bool? updateTag;
+  @JsonKey(name: 'ids', defaultValue: <int>[])
+  final List<int>? ids;
+  @JsonKey(name: 'unit')
+  final int? unit;
+  @JsonKey(name: 'date')
+  final DateTime date;
+  @JsonKey(name: 'value')
+  final String value;
+  @JsonKey(name: 'tag')
+  final String? tag;
+  @JsonKey(name: 'type')
+  final int type;
+  @JsonKey(
+    name: 'source',
+    toJson: fileTypesNullableToJson,
+    fromJson: fileTypesNullableFromJson,
+  )
+  final enums.FileTypes? source;
+  @JsonKey(name: 'sourceId')
+  final String sourceId;
+  static const fromJsonFactory = _$PatchMetricFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is PatchMetric &&
+            (identical(other.updateValue, updateValue) ||
+                const DeepCollectionEquality().equals(
+                  other.updateValue,
+                  updateValue,
+                )) &&
+            (identical(other.updateDate, updateDate) ||
+                const DeepCollectionEquality().equals(
+                  other.updateDate,
+                  updateDate,
+                )) &&
+            (identical(other.updateTag, updateTag) ||
+                const DeepCollectionEquality().equals(
+                  other.updateTag,
+                  updateTag,
+                )) &&
+            (identical(other.ids, ids) ||
+                const DeepCollectionEquality().equals(other.ids, ids)) &&
+            (identical(other.unit, unit) ||
+                const DeepCollectionEquality().equals(other.unit, unit)) &&
+            (identical(other.date, date) ||
+                const DeepCollectionEquality().equals(other.date, date)) &&
+            (identical(other.value, value) ||
+                const DeepCollectionEquality().equals(other.value, value)) &&
+            (identical(other.tag, tag) ||
+                const DeepCollectionEquality().equals(other.tag, tag)) &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.source, source) ||
+                const DeepCollectionEquality().equals(other.source, source)) &&
+            (identical(other.sourceId, sourceId) ||
+                const DeepCollectionEquality().equals(
+                  other.sourceId,
+                  sourceId,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(updateValue) ^
+      const DeepCollectionEquality().hash(updateDate) ^
+      const DeepCollectionEquality().hash(updateTag) ^
+      const DeepCollectionEquality().hash(ids) ^
+      const DeepCollectionEquality().hash(unit) ^
+      const DeepCollectionEquality().hash(date) ^
+      const DeepCollectionEquality().hash(value) ^
+      const DeepCollectionEquality().hash(tag) ^
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(source) ^
+      const DeepCollectionEquality().hash(sourceId) ^
+      runtimeType.hashCode;
+}
+
+extension $PatchMetricExtension on PatchMetric {
+  PatchMetric copyWith({
+    bool? updateValue,
+    bool? updateDate,
+    bool? updateTag,
+    List<int>? ids,
+    int? unit,
+    DateTime? date,
+    String? value,
+    String? tag,
+    int? type,
+    enums.FileTypes? source,
+    String? sourceId,
+  }) {
+    return PatchMetric(
+      updateValue: updateValue ?? this.updateValue,
+      updateDate: updateDate ?? this.updateDate,
+      updateTag: updateTag ?? this.updateTag,
+      ids: ids ?? this.ids,
+      unit: unit ?? this.unit,
+      date: date ?? this.date,
+      value: value ?? this.value,
+      tag: tag ?? this.tag,
+      type: type ?? this.type,
+      source: source ?? this.source,
+      sourceId: sourceId ?? this.sourceId,
+    );
+  }
+
+  PatchMetric copyWithWrapped({
+    Wrapped<bool?>? updateValue,
+    Wrapped<bool?>? updateDate,
+    Wrapped<bool?>? updateTag,
+    Wrapped<List<int>?>? ids,
+    Wrapped<int?>? unit,
+    Wrapped<DateTime>? date,
+    Wrapped<String>? value,
+    Wrapped<String?>? tag,
+    Wrapped<int>? type,
+    Wrapped<enums.FileTypes?>? source,
+    Wrapped<String>? sourceId,
+  }) {
+    return PatchMetric(
+      updateValue: (updateValue != null ? updateValue.value : this.updateValue),
+      updateDate: (updateDate != null ? updateDate.value : this.updateDate),
+      updateTag: (updateTag != null ? updateTag.value : this.updateTag),
+      ids: (ids != null ? ids.value : this.ids),
+      unit: (unit != null ? unit.value : this.unit),
+      date: (date != null ? date.value : this.date),
+      value: (value != null ? value.value : this.value),
+      tag: (tag != null ? tag.value : this.tag),
+      type: (type != null ? type.value : this.type),
       source: (source != null ? source.value : this.source),
       sourceId: (sourceId != null ? sourceId.value : this.sourceId),
     );
