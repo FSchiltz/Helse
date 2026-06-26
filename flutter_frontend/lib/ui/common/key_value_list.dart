@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 class KeyValue {
-  String label;
-  String? value;
-  List<KeyValue>? values;
+  final String label;
+  final String? value;
+  final List<KeyValue>? values;
 
-  KeyValue(this.label, {this.value, this.values});
+  const KeyValue(this.label, {this.value, this.values});
 }
 
 class KeyValueList extends StatelessWidget {
@@ -22,8 +22,14 @@ class KeyValueList extends StatelessWidget {
         1: IntrinsicColumnWidth(),
       },
       border: TableBorder(
-        horizontalInside: BorderSide(color: theme.colorScheme.outlineVariant, width: 0.3),
-        verticalInside: BorderSide(color: theme.colorScheme.outlineVariant, width: 2),
+        horizontalInside: BorderSide(
+          color: theme.colorScheme.outlineVariant,
+          width: 0.3,
+        ),
+        verticalInside: BorderSide(
+          color: theme.colorScheme.outlineVariant,
+          width: 2,
+        ),
       ),
       children: list
           .map(
@@ -40,15 +46,15 @@ class KeyValueList extends StatelessWidget {
                 (e.values != null)
                     ? KeyValueList(e.values ?? [])
                     : Align(
-                      alignment: AlignmentGeometry.centerLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.all(UIConstants.formPad),
-                        child: Text(
+                        alignment: AlignmentGeometry.centerLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.all(UIConstants.formPad),
+                          child: Text(
                             e.value ?? '',
                             style: theme.textTheme.bodyMedium,
                           ),
+                        ),
                       ),
-                    ),
               ],
             ),
           )
