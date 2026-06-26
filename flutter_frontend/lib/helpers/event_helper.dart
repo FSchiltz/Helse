@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/blocs/events/event_graph.dart';
+import 'package:helse/ui/blocs/events/detail/event_graph.dart';
 
 class EventHelper {
   static List<Interval> getSessions(List<Event> events) {

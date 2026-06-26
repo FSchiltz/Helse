@@ -19,12 +19,12 @@ import 'package:helse/ui/common/inputs/date_range_picker.dart';
 import 'package:helse/ui/common/navigator_chart.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
-class _GroupStats {
+class GroupStats {
   final List<EventSummary> groups;
   final Map<String, int> counts;
   final int total;
 
-  const _GroupStats(this.groups, this.counts, this.total);
+  const GroupStats(this.groups, this.counts, this.total);
 }
 
 class EventsGraph extends StatefulWidget {
@@ -289,7 +289,7 @@ class _EventsGraphState extends State<EventsGraph> {
     );
   }
 
-  _GroupStats _group(List<Event> events, DateTimeRange range) {
+  GroupStats _group(List<Event> events, DateTimeRange range) {
     final stopwatch = Stopwatch()..start();
 
     // we take between 120 and 1000 buckets
@@ -341,7 +341,7 @@ class _EventsGraphState extends State<EventsGraph> {
     }
 
     logger.log('_group() executed in ${stopwatch.elapsed}', name: "Events");
-    return _GroupStats(groups.toList(), counts, total);
+    return GroupStats(groups.toList(), counts, total);
   }
 
   Widget _getRangeGraph(List<Interval> sessions, double height) {

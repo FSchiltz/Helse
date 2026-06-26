@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/events/event_add_button.dart';
-import 'package:helse/ui/blocs/events/event_graph.dart';
+import 'package:helse/ui/blocs/events/detail/event_graph.dart';
 import 'package:helse/ui/blocs/events/event_search_button.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 
