@@ -2,57 +2,103 @@ import 'package:flutter/material.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 class KeyValue {
-  String label;
-  String? value;
-  List<KeyValue>? values;
+  final String label;
+  final String? value;
+  final List<KeyValue>? children;
 
-  KeyValue(this.label, {this.value, this.values});
+  const KeyValue(this.label, {this.value, this.children});
+}
+
+class _KeyValueRow {
+  final String label;
+  final String? value;
+  final int depth;
+
+  const _KeyValueRow({
+    required this.label,
+    required this.value,
+    required this.depth,
+  });
 }
 
 class KeyValueList extends StatelessWidget {
-  final List<KeyValue> list;
-  const KeyValueList(this.list, {super.key});
+  final List<KeyValue> items;
+
+  const KeyValueList(this.items, {super.key});
+
+  List<_KeyValueRow> _flatten(List<KeyValue> items, [int depth = 0]) {
+    return items.expand((item) {
+      return [
+        _KeyValueRow(label: item.label, value: item.value, depth: depth),
+        ..._flatten(item.children ?? const [], depth + 1),
+      ];
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final rows = _flatten(items);
+
     return Table(
-      columnWidths: const <int, TableColumnWidth>{
+      columnWidths: const {
         0: IntrinsicColumnWidth(),
         1: IntrinsicColumnWidth(),
       },
       border: TableBorder(
-        horizontalInside: BorderSide(color: theme.colorScheme.outlineVariant, width: 0.3),
-        verticalInside: BorderSide(color: theme.colorScheme.outlineVariant, width: 2),
+        horizontalInside: BorderSide(
+          color: theme.colorScheme.outlineVariant,
+          width: 0.3,
+        ),
+        verticalInside: BorderSide(
+          color: theme.colorScheme.outlineVariant,
+          width: 2,
+        ),
       ),
-      children: list
-          .map(
-            (e) => TableRow(
-              children: [
-                Align(
-                  alignment: AlignmentGeometry.centerEnd,
-                  child: Padding(
-                    padding: const EdgeInsets.all(UIConstants.formPad),
-                    child: Text(e.label, style: theme.textTheme.bodyLarge),
+      children: rows.map((row) {
+        return TableRow(
+          children: [
+            _buildLabel(context, row),
+            Padding(
+              padding: const EdgeInsets.only(
+                top: UIConstants.tablePad,
+                bottom: UIConstants.tablePad,
+                left: UIConstants.formPad,
+              ),
+              child: Text(row.value ?? '', style: theme.textTheme.bodyMedium),
+            ),
+          ],
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildLabel(BuildContext context, _KeyValueRow row) {
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        vertical: UIConstants.tablePad,
+        horizontal: UIConstants.tablePad,
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (var i = 0; i < row.depth; i++)
+              SizedBox(
+                width: 16,
+                child: Center(
+                  child: Container(
+                    width: 2,
+                    color: theme.colorScheme.outlineVariant,
                   ),
                 ),
-
-                (e.values != null)
-                    ? KeyValueList(e.values ?? [])
-                    : Align(
-                      alignment: AlignmentGeometry.centerLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.all(UIConstants.formPad),
-                        child: Text(
-                            e.value ?? '',
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                      ),
-                    ),
-              ],
-            ),
-          )
-          .toList(),
+              ),
+            Expanded(child: Text(row.label, style: theme.textTheme.bodyLarge)),
+          ],
+        ),
+      ),
     );
   }
 }
