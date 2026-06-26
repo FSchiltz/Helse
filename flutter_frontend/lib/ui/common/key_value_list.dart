@@ -60,7 +60,11 @@ class KeyValueList extends StatelessWidget {
           children: [
             _buildLabel(context, row),
             Padding(
-              padding: const EdgeInsets.all(UIConstants.formPad),
+              padding: const EdgeInsets.only(
+                top: UIConstants.tablePad,
+                bottom: UIConstants.tablePad,
+                left: UIConstants.formPad,
+              ),
               child: Text(row.value ?? '', style: theme.textTheme.bodyMedium),
             ),
           ],
@@ -74,8 +78,8 @@ class KeyValueList extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(
-        vertical: UIConstants.formPad,
-        horizontal: UIConstants.formPad,
+        vertical: UIConstants.tablePad,
+        horizontal: UIConstants.tablePad,
       ),
       child: IntrinsicHeight(
         child: Row(
