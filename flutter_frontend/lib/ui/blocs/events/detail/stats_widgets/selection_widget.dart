@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/date_helper.dart';
+import 'package:helse/helpers/event_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/blocs/events/delete_event.dart';
 import 'package:helse/ui/blocs/events/events_add.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
 
@@ -72,24 +71,12 @@ class SelectionWidget extends StatelessWidget {
                     icon: const Icon(Icons.edit_sharp),
                   ),
                 ),
-                SizedBox(
-                  width: 40,
-                  child: IconButton(
-                    onPressed: () {
-                      showDialog<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return DeleteEvent(() async {
-                            await Dependencies.services.event.deleteEvent(
-                              event.id,
-                            );
-                            reset();
-                          }, person: person);
-                        },
-                      );
-                    },
-                    icon: const Icon(Icons.delete_sharp),
-                  ),
+                ...EventHelper.getButtons(
+                  event,
+                  type,
+                  reset,
+                  person: person,
+                  context: context,
                 ),
               ],
             ),

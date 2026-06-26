@@ -7,6 +7,7 @@ import 'package:helse/ui/blocs/metrics/delete_metric.dart';
 import 'package:helse/ui/blocs/metrics/detail/metrics_edit.dart';
 import 'package:helse/ui/blocs/metrics/metric_add.dart';
 import 'package:helse/ui/common/async_data_table.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class MetricDataTable extends AsyncDataTable<Metric> {
   const MetricDataTable({
@@ -29,6 +30,7 @@ class _MetricDataTableState
   @override
   Widget build(BuildContext context) {
     final locale = Translation.of(context);
+    final extended = !UIHelpers.isMobile(context);
 
     final List<Widget> menu = selected.isEmpty
         ? []
@@ -68,18 +70,22 @@ class _MetricDataTableState
             ),
           ];
     final columns = [
-      DataColumn(label: Expanded(child: Text("Id"))),
+      if (extended) DataColumn(label: Expanded(child: Text(locale.id))),
       DataColumn(label: Expanded(child: Text(locale.value))),
       DataColumn(label: Expanded(child: Text(locale.date))),
-      DataColumn(label: Expanded(child: Text(locale.tag))),
-      DataColumn(label: Expanded(child: Text(locale.source))),
+      if (extended) DataColumn(label: Expanded(child: Text(locale.tag))),
+      if (extended) DataColumn(label: Expanded(child: Text(locale.source))),
       DataColumn(label: Expanded(child: Text(""))),
     ];
 
-    return buildTable(columns, _builder, menu);
+    return buildTable(columns, _builder, menu, extended);
   }
 
-  List<DataRow> _builder(List<Metric> items, List<Metric> selected) {
+  List<DataRow> _builder(
+    List<Metric> items,
+    List<Metric> selected,
+    bool extended,
+  ) {
     return items.map((m) {
       return DataRow(
         selected: selected.contains(m),
@@ -93,11 +99,11 @@ class _MetricDataTableState
           });
         },
         cells: [
-          DataCell(Text((m.id).toString())),
+          if (extended) DataCell(Text((m.id).toString())),
           DataCell(Text('${m.value} ${widget.type.unit.code}')),
           DataCell(Text(DateHelper.format(m.date.toLocal(), context: context))),
-          DataCell(Text(m.tag.toString())),
-          DataCell(Text(m.source?.name ?? '')),
+          if (extended) DataCell(Text(m.tag.toString())),
+          if (extended) DataCell(Text(m.source?.name ?? '')),
           DataCell(
             Row(
               children: [

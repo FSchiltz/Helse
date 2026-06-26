@@ -69,8 +69,9 @@ abstract class AsyncDataTableState<U, T extends AsyncDataTable<U>>
 
   Widget buildTable(
     List<DataColumn> columns,
-    List<DataRow> Function(List<U>, List<U>) builder,
+    List<DataRow> Function(List<U>, List<U>, bool) builder,
     List<Widget> menu,
+    bool extended,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -104,7 +105,7 @@ abstract class AsyncDataTableState<U, T extends AsyncDataTable<U>>
                   }
                 },
                 columns: columns,
-                rows: builder(_items, selected),
+                rows: builder(_items, selected, extended),
               ),
       ],
     );
