@@ -43,7 +43,7 @@ class MetricMoreInfo extends StatelessWidget {
         KeyValue(
           locale.unit,
           value: '',
-          values: [
+          children: [
             KeyValue('Description', value: unit.description),
             KeyValue('Unit', value: unit.code),
           ],

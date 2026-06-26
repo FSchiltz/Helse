@@ -5,7 +5,6 @@ import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/key_value_list.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
-import 'package:helse/ui/common/ui_constants.dart';
 
 class EventMoreInfo extends StatelessWidget {
   final Event event;
