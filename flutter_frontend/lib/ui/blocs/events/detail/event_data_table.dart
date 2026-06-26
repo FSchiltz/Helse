@@ -4,6 +4,7 @@ import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/events/delete_event.dart';
+import 'package:helse/ui/blocs/events/detail/event_more_info.dart';
 import 'package:helse/ui/common/async_data_table.dart';
 import 'package:helse/ui/blocs/events/detail/events_edit.dart';
 import 'package:helse/ui/blocs/events/events_add.dart';
@@ -49,10 +50,26 @@ class _EventDataTableState extends AsyncDataTableState<Event, EventDataTable> {
                 Text(DateHelper.format(m.stop.toLocal(), context: context)),
               ),
               DataCell(Text(m.tag.toString())),
-              DataCell(Text(m.source.toString())),
+              DataCell(Text(m.source?.name ?? '')),
               DataCell(
                 Row(
                   children: [
+                    IconButton(
+                      onPressed: () {
+                        showDialog<void>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return EventMoreInfo(
+                              widget.type,
+                              widget.reset,
+                              person: widget.person,
+                              event: m,
+                            );
+                          },
+                        );
+                      },
+                      icon: const Icon(Icons.open_in_new_sharp),
+                    ),
                     IconButton(
                       onPressed: () {
                         showDialog<void>(

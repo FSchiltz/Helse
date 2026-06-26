@@ -97,7 +97,7 @@ class _MetricDataTableState
           DataCell(Text('${m.value} ${widget.type.unit.code}')),
           DataCell(Text(DateHelper.format(m.date.toLocal(), context: context))),
           DataCell(Text(m.tag.toString())),
-          DataCell(Text(m.source.toString())),
+          DataCell(Text(m.source?.name ?? '')),
           DataCell(
             Row(
               children: [
