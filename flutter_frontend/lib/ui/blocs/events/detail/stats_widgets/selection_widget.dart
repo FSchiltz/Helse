@@ -35,10 +35,18 @@ class SelectionWidget extends StatelessWidget {
                 Text('(${event.id})'),
                 Text(' ${event.description} '),
                 Text(
-                  locale.range(
-                    DateHelper.format(event.start.toLocal(), context: context),
-                    DateHelper.format(event.stop.toLocal(), context: context),
-                  ),
+                  locale
+                      .range(
+                        DateHelper.format(
+                          event.start.toLocal(),
+                          context: context,
+                        ),
+                        DateHelper.format(
+                          event.stop.toLocal(),
+                          context: context,
+                        ),
+                      )
+                      .toLowerCase(),
                 ),
                 if (event.tag != null)
                   Padding(
