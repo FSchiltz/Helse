@@ -23,9 +23,11 @@ class Pagination extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final int maxPage = (count / pageSize).toInt();
-    return Row(
+    return Wrap(
       spacing: UIConstants.formPad,
-      mainAxisSize: MainAxisSize.min,
+      alignment: WrapAlignment.center,
+      runAlignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         if (maxPage > 1) ...[
           IconButton(
