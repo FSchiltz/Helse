@@ -3,7 +3,6 @@ import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/event_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/blocs/events/events_add.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
 
 class SelectionWidget extends StatelessWidget {
@@ -52,25 +51,7 @@ class SelectionWidget extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(event.tag.toString()),
                   ),
-                SizedBox(
-                  width: 40,
-                  child: IconButton(
-                    onPressed: () {
-                      showDialog<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return EventAdd(
-                            type,
-                            reset,
-                            person: person,
-                            edit: event,
-                          );
-                        },
-                      );
-                    },
-                    icon: const Icon(Icons.edit_sharp),
-                  ),
-                ),
+
                 ...EventHelper.getButtons(
                   event,
                   type,
