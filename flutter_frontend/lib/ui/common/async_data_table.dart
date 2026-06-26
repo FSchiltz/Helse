@@ -76,18 +76,21 @@ abstract class AsyncDataTableState<U, T extends AsyncDataTable<U>>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Pagination(
-          count: widget.count,
-          pageSize: 50,
-          page: _page,
-          selected: selected.length,
-          callBack: (v) {
-            setState(() {
-              _page = v;
-            });
-            search();
-          },
-          menu: menu,
+        SizedBox(
+          height: 40,
+          child: Pagination(
+            count: widget.count,
+            pageSize: 50,
+            page: _page,
+            selected: selected.length,
+            callBack: (v) {
+              setState(() {
+                _page = v;
+              });
+              search();
+            },
+            menu: menu,
+          ),
         ),
         (_status == SubmissionStatus.inProgress)
             ? HelseLoader(color: Theme.of(context).colorScheme.primary)

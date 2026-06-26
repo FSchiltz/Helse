@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/date_helper.dart';
+import 'package:helse/helpers/metric_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/delete_metric.dart';
 import 'package:helse/ui/blocs/metrics/detail/metrics_edit.dart';
-import 'package:helse/ui/blocs/metrics/metric_add.dart';
 import 'package:helse/ui/common/async_data_table.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
@@ -106,38 +106,13 @@ class _MetricDataTableState
           if (extended) DataCell(Text(m.source?.name ?? '')),
           DataCell(
             Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    showDialog<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return MetricAdd(
-                          widget.type,
-                          widget.reset,
-                          person: widget.person,
-                          edit: m,
-                        );
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.edit_sharp),
-                ),
-                IconButton(
-                  onPressed: () {
-                    showDialog<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return DeleteMetric(() async {
-                          await Dependencies.services.metric.deleteMetric(m.id);
-                          widget.reset();
-                        }, person: widget.person);
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.delete_sharp),
-                ),
-              ],
+              children: MetricHelper.getButtons(
+                m,
+                widget.type,
+                widget.reset,
+                context: context,
+                person: widget.person,
+              ),
             ),
           ),
         ],

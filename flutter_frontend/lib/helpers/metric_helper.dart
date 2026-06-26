@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/ui/blocs/metrics/delete_metric.dart';
+import 'package:helse/ui/blocs/metrics/detail/metric_more_info.dart';
+import 'package:helse/ui/blocs/metrics/metric_add.dart';
 import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
 
 class RangeList<T> {
@@ -201,5 +204,59 @@ class MetricHelper {
     }
 
     return type.id.toString();
+  }
+
+  static List<Widget> getButtons(
+    Metric metric,
+    MetricType type,
+    void Function() reset, {
+    required BuildContext context,
+    int? person,
+    bool open = true,
+  }) {
+    return [
+      if (open)
+        IconButton(
+          onPressed: () {
+            showDialog<void>(
+              context: context,
+              builder: (BuildContext context) {
+                return MetricMoreInfo(
+                  type,
+                  reset,
+                  person: person,
+                  metric: metric,
+                );
+              },
+            );
+          },
+          icon: const Icon(Icons.open_in_new_sharp),
+        ),
+      IconButton(
+        onPressed: () {
+          showDialog<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return MetricAdd(type, reset, person: person, edit: metric);
+            },
+          );
+        },
+        icon: const Icon(Icons.edit_sharp),
+      ),
+      IconButton(
+        onPressed: () {
+          showDialog<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return DeleteMetric(() async {
+                await Dependencies.services.metric.deleteMetric(metric.id);
+                reset();
+              }, person: person);
+            },
+          );
+        },
+        icon: const Icon(Icons.delete_sharp),
+      ),
+    ];
   }
 }

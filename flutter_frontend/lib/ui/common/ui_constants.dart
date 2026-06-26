@@ -9,6 +9,8 @@ class UIConstants {
   static const double headerPad = 24;
   static const double tablePad = 4;
   static const double textPad = 4;
+
+  static const double icon = 32;
 }
 
 class UIHelpers {

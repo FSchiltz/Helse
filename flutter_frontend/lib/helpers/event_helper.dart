@@ -52,19 +52,21 @@ class EventHelper {
     void Function() reset, {
     required BuildContext context,
     int? person,
+    bool open = true,
   }) {
     return [
-      IconButton(
-        onPressed: () {
-          showDialog<void>(
-            context: context,
-            builder: (BuildContext context) {
-              return EventMoreInfo(type, reset, person: person, event: m);
-            },
-          );
-        },
-        icon: const Icon(Icons.open_in_new_sharp),
-      ),
+      if (open)
+        IconButton(
+          onPressed: () {
+            showDialog<void>(
+              context: context,
+              builder: (BuildContext context) {
+                return EventMoreInfo(type, reset, person: person, event: m);
+              },
+            );
+          },
+          icon: const Icon(Icons.open_in_new_sharp),
+        ),
       IconButton(
         onPressed: () {
           showDialog<void>(
