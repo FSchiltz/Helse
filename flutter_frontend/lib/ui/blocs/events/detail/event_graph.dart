@@ -95,41 +95,31 @@ class _EventsGraphState extends State<EventsGraph> {
     );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: UIConstants.formPad,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: DateRangePicker(
-            _setDate,
+        DateRangePicker(
+          _setDate,
+          subDate,
+          range: widget.range,
+          offset: widget.type.timeDifference,
+        ),
+        SizedBox(
+          child: NavigatorChart(
+            widget.range,
             subDate,
-            range: widget.range,
-            offset: widget.type.timeDifference,
+            _setDate,
+            graph: EventsSummary(_groups, widget.range),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SizedBox(
-            child: NavigatorChart(
-              widget.range,
-              subDate,
-              _setDate,
-              graph: EventsSummary(_groups, widget.range),
-            ),
-          ),
-        ),
-        SizedBox(height: UIConstants.formPad),
         Flexible(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: (filteredEvents.length < 200)
-                ? EventsTimelineGraph(
-                    filteredEvents,
-                    subDate,
-                    onselect: _selectionChanged,
-                  )
-                : EventsSummary(stats.groups, subDate),
-          ),
+          child: (filteredEvents.length < 200)
+              ? EventsTimelineGraph(
+                  filteredEvents,
+                  subDate,
+                  onselect: _selectionChanged,
+                )
+              : EventsSummary(stats.groups, subDate),
         ),
-        SizedBox(height: UIConstants.formPad),
         Expanded(
           child: SingleChildScrollView(
             child: Wrap(
