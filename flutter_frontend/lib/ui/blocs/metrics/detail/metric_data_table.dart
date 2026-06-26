@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/date_helper.dart';
+import 'package:helse/helpers/metric_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/delete_metric.dart';
 import 'package:helse/ui/blocs/metrics/detail/metrics_edit.dart';
-import 'package:helse/ui/blocs/metrics/metric_add.dart';
 import 'package:helse/ui/common/async_data_table.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class MetricDataTable extends AsyncDataTable<Metric> {
   const MetricDataTable({
@@ -29,6 +30,7 @@ class _MetricDataTableState
   @override
   Widget build(BuildContext context) {
     final locale = Translation.of(context);
+    final extended = !UIHelpers.isMobile(context);
 
     final List<Widget> menu = selected.isEmpty
         ? []
@@ -68,18 +70,22 @@ class _MetricDataTableState
             ),
           ];
     final columns = [
-      DataColumn(label: Expanded(child: Text("Id"))),
+      if (extended) DataColumn(label: Expanded(child: Text(locale.id))),
       DataColumn(label: Expanded(child: Text(locale.value))),
       DataColumn(label: Expanded(child: Text(locale.date))),
-      DataColumn(label: Expanded(child: Text(locale.tag))),
-      DataColumn(label: Expanded(child: Text(locale.source))),
+      if (extended) DataColumn(label: Expanded(child: Text(locale.tag))),
+      if (extended) DataColumn(label: Expanded(child: Text(locale.source))),
       DataColumn(label: Expanded(child: Text(""))),
     ];
 
-    return buildTable(columns, _builder, menu);
+    return buildTable(columns, _builder, menu, extended);
   }
 
-  List<DataRow> _builder(List<Metric> items, List<Metric> selected) {
+  List<DataRow> _builder(
+    List<Metric> items,
+    List<Metric> selected,
+    bool extended,
+  ) {
     return items.map((m) {
       return DataRow(
         selected: selected.contains(m),
@@ -93,45 +99,20 @@ class _MetricDataTableState
           });
         },
         cells: [
-          DataCell(Text((m.id).toString())),
+          if (extended) DataCell(Text((m.id).toString())),
           DataCell(Text('${m.value} ${widget.type.unit.code}')),
           DataCell(Text(DateHelper.format(m.date.toLocal(), context: context))),
-          DataCell(Text(m.tag.toString())),
-          DataCell(Text(m.source.toString())),
+          if (extended) DataCell(Text(m.tag.toString())),
+          if (extended) DataCell(Text(m.source?.name ?? '')),
           DataCell(
             Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    showDialog<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return MetricAdd(
-                          widget.type,
-                          widget.reset,
-                          person: widget.person,
-                          edit: m,
-                        );
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.edit_sharp),
-                ),
-                IconButton(
-                  onPressed: () {
-                    showDialog<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return DeleteMetric(() async {
-                          await Dependencies.services.metric.deleteMetric(m.id);
-                          widget.reset();
-                        }, person: widget.person);
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.delete_sharp),
-                ),
-              ],
+              children: MetricHelper.getButtons(
+                m,
+                widget.type,
+                widget.reset,
+                context: context,
+                person: widget.person,
+              ),
             ),
           ),
         ],

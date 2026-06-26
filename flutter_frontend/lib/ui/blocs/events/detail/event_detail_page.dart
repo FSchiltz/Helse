@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/events/event_add_button.dart';
-import 'package:helse/ui/blocs/events/event_graph.dart';
+import 'package:helse/ui/blocs/events/detail/event_graph.dart';
 import 'package:helse/ui/blocs/events/event_search_button.dart';
 import 'package:helse/ui/common/loading_builder.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../di/dependencies.dart';
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -54,17 +55,20 @@ class _EventDetailPageState extends State<EventDetailPage> {
           style: Theme.of(context).textTheme.displaySmall,
         ),
       ),
-      body: LoadingBuilder(
-        _getData,
-        builder: (context, data, reset) {
-          return EventsGraph(
-            range: widget.date,
-            person: widget.person,
-            type: widget.type,
-            events: data,
-            reset: reset,
-          );
-        },
+      body: Padding(
+        padding: const EdgeInsets.all(UIConstants.formPad),
+        child: LoadingBuilder(
+          _getData,
+          builder: (context, data, reset) {
+            return EventsGraph(
+              range: widget.date,
+              person: widget.person,
+              type: widget.type,
+              events: data,
+              reset: reset,
+            );
+          },
+        ),
       ),
     );
   }

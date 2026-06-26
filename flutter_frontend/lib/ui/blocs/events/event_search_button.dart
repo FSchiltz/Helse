@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/events/detail/event_search.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class EventSearchButton extends StatelessWidget {
   final EventType type;
@@ -10,7 +11,7 @@ class EventSearchButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 40,
+      width: UIConstants.icon,
       child: IconButton(
         onPressed: () => _open(context),
         icon: const Icon(Icons.search_sharp),

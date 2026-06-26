@@ -28,12 +28,12 @@ internal static class MetricHelper
 
         if (search.MinValue is not null)
         {
-            query = query.Where(x => int.Parse(x.Value) >= search.MinValue);
+            query = query.Where(x => double.Parse(x.Value) >= search.MinValue);
         }
 
         if (search.MaxValue is not null)
         {
-            query = query.Where(x => int.Parse(x.Value) <= search.MaxValue);
+            query = query.Where(x => double.Parse(x.Value) <= search.MaxValue);
         }
 
         if (search.FilterSource)

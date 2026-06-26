@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/date_helper.dart';
+import 'package:helse/helpers/event_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/events/delete_event.dart';
 import 'package:helse/ui/common/async_data_table.dart';
 import 'package:helse/ui/blocs/events/detail/events_edit.dart';
-import 'package:helse/ui/blocs/events/events_add.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class EventDataTable extends AsyncDataTable<Event> {
   const EventDataTable({
@@ -25,7 +26,11 @@ class EventDataTable extends AsyncDataTable<Event> {
 }
 
 class _EventDataTableState extends AsyncDataTableState<Event, EventDataTable> {
-  List<DataRow> _builder(List<Event> items, List<Event> selected) {
+  List<DataRow> _builder(
+    List<Event> items,
+    List<Event> selected,
+    bool extended,
+  ) {
     return items
         .map(
           (m) => DataRow(
@@ -40,7 +45,7 @@ class _EventDataTableState extends AsyncDataTableState<Event, EventDataTable> {
               });
             },
             cells: [
-              DataCell(Text((m.id).toString())),
+              if (extended) DataCell(Text((m.id).toString())),
               DataCell(Text('${m.description}')),
               DataCell(
                 Text(DateHelper.format(m.start.toLocal(), context: context)),
@@ -48,44 +53,17 @@ class _EventDataTableState extends AsyncDataTableState<Event, EventDataTable> {
               DataCell(
                 Text(DateHelper.format(m.stop.toLocal(), context: context)),
               ),
-              DataCell(Text(m.tag.toString())),
-              DataCell(Text(m.source.toString())),
+              if (extended) DataCell(Text(m.tag.toString())),
+              if (extended) DataCell(Text(m.source?.name ?? '')),
               DataCell(
                 Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        showDialog<void>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return EventAdd(
-                              widget.type,
-                              widget.reset,
-                              person: widget.person,
-                              edit: m,
-                            );
-                          },
-                        );
-                      },
-                      icon: const Icon(Icons.edit_sharp),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        showDialog<void>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return DeleteEvent(() async {
-                              await Dependencies.services.event.deleteEvent(
-                                m.id,
-                              );
-                              widget.reset();
-                            }, person: widget.person);
-                          },
-                        );
-                      },
-                      icon: const Icon(Icons.delete_sharp),
-                    ),
-                  ],
+                  children: EventHelper.getButtons(
+                    m,
+                    widget.type,
+                    widget.reset,
+                    person: widget.person,
+                    context: context,
+                  ),
                 ),
               ),
             ],
@@ -96,53 +74,60 @@ class _EventDataTableState extends AsyncDataTableState<Event, EventDataTable> {
 
   @override
   Widget build(BuildContext context) {
+    var extended = !UIHelpers.isMobile(context);
     var locale = Translation.of(context);
     final columns = [
-      DataColumn(label: Expanded(child: Text("Id"))),
+      if (extended) DataColumn(label: Expanded(child: Text("Id"))),
       DataColumn(label: Expanded(child: Text(locale.description))),
       DataColumn(label: Expanded(child: Text(locale.start))),
       DataColumn(label: Expanded(child: Text(locale.stop))),
-      DataColumn(label: Expanded(child: Text(locale.tag))),
-      DataColumn(label: Expanded(child: Text(locale.source))),
+      if (extended) DataColumn(label: Expanded(child: Text(locale.tag))),
+      if (extended) DataColumn(label: Expanded(child: Text(locale.source))),
       DataColumn(label: Expanded(child: Text(""))),
     ];
     final List<Widget> menu = selected.isEmpty
         ? []
         : [
-            IconButton(
-              onPressed: () {
-                showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return EventsEdit(
-                      widget.type,
-                      widget.reset,
-                      person: widget.person,
-                      edit: selected,
-                    );
-                  },
-                );
-              },
-              icon: const Icon(Icons.edit_sharp),
-            ),
-            IconButton(
-              onPressed: () {
-                showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return DeleteEvent(() async {
-                      await Dependencies.services.event.deleteEvents(
-                        selected,
+            SizedBox(
+              width: UIConstants.icon,
+              child: IconButton(
+                onPressed: () {
+                  showDialog<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return EventsEdit(
+                        widget.type,
+                        widget.reset,
                         person: widget.person,
+                        edit: selected,
                       );
-                      widget.reset();
-                    }, person: widget.person);
-                  },
-                );
-              },
-              icon: const Icon(Icons.delete_sharp),
+                    },
+                  );
+                },
+                icon: const Icon(Icons.edit_sharp),
+              ),
+            ),
+            SizedBox(
+              width: UIConstants.icon,
+              child: IconButton(
+                onPressed: () {
+                  showDialog<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return DeleteEvent(() async {
+                        await Dependencies.services.event.deleteEvents(
+                          selected,
+                          person: widget.person,
+                        );
+                        widget.reset();
+                      }, person: widget.person);
+                    },
+                  );
+                },
+                icon: const Icon(Icons.delete_sharp),
+              ),
             ),
           ];
-    return buildTable(columns, _builder, menu);
+    return buildTable(columns, _builder, menu, extended);
   }
 }
