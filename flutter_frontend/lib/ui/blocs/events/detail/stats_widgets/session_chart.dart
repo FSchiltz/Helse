@@ -14,14 +14,14 @@ class SessionChart extends StatelessWidget {
   const SessionChart({
     super.key,
     required this.sessions,
-    required this.widget,
     required this.graphHeight,
     required this.radius,
     required this.stats,
+    required this.type,
   });
-
+  
+  final EventType type;
   final List<Interval> sessions;
-  final EventsGraph widget;
   final double graphHeight;
   final double radius;
   final GroupStats stats;
@@ -51,7 +51,7 @@ class SessionChart extends StatelessWidget {
     return CommonCard(
       child: Column(
         children: [
-          EventInformation(data: sessions, type: widget.type),
+          EventInformation(data: sessions, type: type),
           const SizedBox(height: UIConstants.formPad),
           Wrap(
             runAlignment: WrapAlignment.start,

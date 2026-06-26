@@ -45,17 +45,19 @@ class EventsGraph extends StatefulWidget {
 }
 
 class _EventsGraphState extends State<EventsGraph> {
-  Event? _event;
-  List<Event> filteredEvents = [];
+  Event? _selected;
+  late List<Event> _filteredEvents;
+  late DateTimeRange _subDate;
+  late Color _color;
+  late GroupStats _stats;
+  late List<Interval> _sessions;
+  late List<EventSummary> _groups;
 
   void _selectionChanged(Event event) {
     setState(() {
-      _event = event;
+      _selected = event;
     });
   }
-
-  DateTimeRange subDate = DateHelper.now();
-  List<EventSummary> _groups = [];
 
   void _setDate(DateTimeRange value) {
     var filter = widget.events
@@ -64,87 +66,96 @@ class _EventsGraphState extends State<EventsGraph> {
         )
         .toList();
 
+    final stats = _group(filter, value);
+    final sessions = EventHelper.getSessions(filter);
+
     setState(() {
-      subDate = value;
-      filteredEvents = filter;
+      _subDate = value;
+      _filteredEvents = filter;
+      _stats = stats;
+      _sessions = sessions;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    subDate = widget.range;
-    filteredEvents = widget.events;
-    var stats = _group(widget.events, widget.range);
-    _groups = stats.groups;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var event = _event;
-    final stats = _group(filteredEvents, subDate);
-    final sessions = EventHelper.getSessions(filteredEvents);
-
-    final radius = 40.0;
-    final graphHeight = 4 * radius;
-    final height = graphHeight + UIConstants.formPad * 2 + 10;
-    var color = Dependencies.theme.stateColor(
+    _subDate = widget.range;
+    _filteredEvents = widget.events;
+    _stats = _group(widget.events, widget.range);
+    _groups = _stats.groups;
+    _sessions = EventHelper.getSessions(widget.events);
+    _color = Dependencies.theme.stateColor(
       widget.type.id.toString(),
       StateType.events,
       context,
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var selected = _selected;
+
+    final radius = 40.0;
+    final graphHeight = 4 * radius;
+    final height = graphHeight + UIConstants.formPad * 2 + 10;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: UIConstants.formPad,
       children: [
         DateRangePicker(
           _setDate,
-          subDate,
+          _subDate,
           range: widget.range,
           offset: widget.type.timeDifference,
         ),
         SizedBox(
           child: NavigatorChart(
             widget.range,
-            subDate,
+            _subDate,
             _setDate,
             graph: EventsSummary(_groups, widget.range),
           ),
         ),
         Flexible(
-          child: (filteredEvents.length < 200)
+          child: (_filteredEvents.length < 200)
               ? EventsTimelineGraph(
-                  filteredEvents,
-                  subDate,
+                  _filteredEvents,
+                  _subDate,
                   onselect: _selectionChanged,
                 )
-              : EventsSummary(stats.groups, subDate),
+              : EventsSummary(_stats.groups, _subDate),
         ),
         Expanded(
           child: SingleChildScrollView(
             child: Wrap(
               children: [
                 SessionChart(
-                  sessions: sessions,
-                  widget: widget,
+                  sessions: _sessions,
+                  type: widget.type,
                   graphHeight: graphHeight,
                   radius: radius,
-                  stats: stats,
+                  stats: _stats,
                 ),
-                if (event != null)
+                if (selected != null)
                   SelectionWidget(
-                    event: event,
+                    selected: selected,
                     reset: () {
                       widget.reset();
                       setState(() {
-                        _event = null;
+                        _selected = null;
                       });
                     },
                     person: widget.person,
                     type: widget.type,
                   ),
-                SessionList(height: height, color: color, sessions: sessions),
-                SessionsRange(height: height, color: color, sessions: sessions),
+                SessionList(height: height, color: _color, sessions: _sessions),
+                SessionsRange(
+                  height: height,
+                  color: _color,
+                  sessions: _sessions,
+                ),
               ],
             ),
           ),
@@ -163,7 +174,7 @@ class _EventsGraphState extends State<EventsGraph> {
     final bucketLength = range.duration.inMilliseconds / buckets;
 
     logger.log(
-      'grouping with buckets: $buckets and bucket lenght: $bucketLength for $subDate',
+      'grouping with buckets: $buckets and bucket lenght: $bucketLength for $_subDate',
       name: "Events",
     );
 
@@ -207,10 +218,4 @@ class _EventsGraphState extends State<EventsGraph> {
     logger.log('_group() executed in ${stopwatch.elapsed}', name: "Events");
     return GroupStats(groups.toList(), counts, total);
   }
-}
-
-class MutableInterval {
-  DateTime start;
-  DateTime stop;
-  MutableInterval({required this.start, required this.stop});
 }

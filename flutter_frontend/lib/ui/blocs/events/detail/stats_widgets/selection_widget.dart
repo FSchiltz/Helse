@@ -10,13 +10,13 @@ import 'package:helse/ui/common/layout/common_card.dart';
 class SelectionWidget extends StatelessWidget {
   const SelectionWidget({
     super.key,
-    required this.event,
+    this.selected,
     required this.reset,
     required this.person,
     required this.type,
   });
 
-  final Event event;
+  final Event? selected;
   final void Function() reset;
   final int? person;
   final EventType type;
@@ -24,57 +24,67 @@ class SelectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = Translation.of(context);
+    final event = selected;
     return CommonCard(
-      child: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          Text('Selected: '),
-          Text('(${event.id})'),
-          Text(' ${event.description} '),
-          Text(
-            locale.range(
-              DateHelper.format(event.start.toLocal(), context: context),
-              DateHelper.format(event.stop.toLocal(), context: context),
+      child: event == null
+          ? SizedBox.shrink()
+          : Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text('Selected: '),
+                Text('(${event.id})'),
+                Text(' ${event.description} '),
+                Text(
+                  locale.range(
+                    DateHelper.format(event.start.toLocal(), context: context),
+                    DateHelper.format(event.stop.toLocal(), context: context),
+                  ),
+                ),
+                if (event.tag != null)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(event.tag.toString()),
+                  ),
+                SizedBox(
+                  width: 40,
+                  child: IconButton(
+                    onPressed: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return EventAdd(
+                            type,
+                            reset,
+                            person: person,
+                            edit: event,
+                          );
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.edit_sharp),
+                  ),
+                ),
+                SizedBox(
+                  width: 40,
+                  child: IconButton(
+                    onPressed: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return DeleteEvent(() async {
+                            await Dependencies.services.event.deleteEvent(
+                              event.id,
+                            );
+                            reset();
+                          }, person: person);
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.delete_sharp),
+                  ),
+                ),
+              ],
             ),
-          ),
-          if (event.tag != null)
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(event.tag.toString()),
-            ),
-          SizedBox(
-            width: 40,
-            child: IconButton(
-              onPressed: () {
-                showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return EventAdd(type, reset, person: person, edit: event);
-                  },
-                );
-              },
-              icon: const Icon(Icons.edit_sharp),
-            ),
-          ),
-          SizedBox(
-            width: 40,
-            child: IconButton(
-              onPressed: () {
-                showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return DeleteEvent(() async {
-                      await Dependencies.services.event.deleteEvent(event.id);
-                      reset();
-                    }, person: person);
-                  },
-                );
-              },
-              icon: const Icon(Icons.delete_sharp),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
