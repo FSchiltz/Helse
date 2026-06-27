@@ -1,9 +1,9 @@
 import 'dart:developer';
+import 'dart:math' show max;
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
-import 'package:helse/helpers/metrics/metric_stats.dart';
 import 'package:helse/helpers/metrics/range_list.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
@@ -46,29 +46,35 @@ class MetricHelper {
       'grouping with bucket lenght: $bucketLength for $range',
       name: "Metrics",
     );
-    int graphCount = type.valueCount ?? 1;
+    int graphCount = max(1, type.valueCount ?? 1);
     Map<int, MetricGrouped> groups = {};
 
     int i = 0;
-    double max = 0;
-    double min = double.maxFinite;
-    double mean = 0;
-    final List<double> allValues = [];
+    double maxY = 0;
+    List<double> maximum = List<double>.filled(graphCount, 0);
+    List<double> minimum = List<double>.filled(graphCount, double.maxFinite);
+    List<double> mean = List<double>.filled(graphCount, 0);
+    final List<List<(int, double)>> allValues =
+        List<List<(int, double)>>.generate(graphCount, (index) => []);
+
     for (var metric in metrics) {
       final values = getValue(metric.value, type.type);
-      allValues.add(values[0]);
+      for (var j = 0; j < graphCount; j++) {
+        allValues[j].add((metric.id, values[j]));
+      }
 
+      // get to max value possible to set the Y axis of the graph
       final maxValue = values.max;
-      if (maxValue > max) {
-        max = maxValue;
+      if (maxValue > maxY) {
+        maxY = maxValue;
       }
 
-      final minValue = values.min;
-      if (minValue > min) {
-        min = minValue;
-      }
+      for (int j = 0; j < graphCount; j++) {
+        final value = values[j];
+        // add the value to the correct stats
 
-      mean = mean + value;
+        mean[j] = mean[j] + value;
+      }
 
       // find the bucket
       if (skipGroup) {
@@ -98,15 +104,20 @@ class MetricHelper {
       i++;
     }
 
-    mean = mean / metrics.length;
+    List<RawStats> stats = [];
+    for (var i = 0; i < graphCount; i++) {
+      stats.add(
+        RawStats(
+          allValues[i],
+          min: minimum[i],
+          max: maximum[i],
+          mean: mean[i] / metrics.length,
+        ),
+      );
+    }
 
     log('_group() executed in ${stopwatch.elapsed}', name: "Metrics");
-    return RangeList(
-      values: groups.values.toList(),
-      min: 0,
-      max: max,
-      stats: MetricStats.calculate(allValues, min: min, max: max, mean: mean),
-    );
+    return RangeList(values: groups.values.toList(), maxY: maxY, stats: stats);
   }
 
   String joinValue(Iterable<String> map) {

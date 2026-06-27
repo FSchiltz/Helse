@@ -10,7 +10,6 @@ import 'package:helse/helpers/metrics/range_list.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
-import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_outliers.dart';
 import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_statistics_card.dart';
 import 'package:helse/ui/blocs/metrics/widget/widget_graph.dart';
 import 'package:helse/ui/common/navigator_chart.dart';
@@ -141,13 +140,12 @@ class _MetricGraphState extends State<MetricGraph> {
                           [];
                     },
                   ),
-                  MetricStatisticsCard(
-                    stats: filteredMetrics.stats,
-                    unit: widget.type.unit.code,
+                  ...filteredMetrics.stats.map(
+                    (e) => MetricStatisticsCard(
+                      stats: e,
+                      unit: widget.type.unit.code,
+                    ),
                   ),
-                  MetricOutliers(
-                    stats: filteredMetrics.stats,
-                    unit: widget.type.unit.code,),
                 ],
               ),
             ),
@@ -224,7 +222,7 @@ class _MetricGraphState extends State<MetricGraph> {
         accessor: (MetricGrouped datumn) {
           return datumn.value[index];
         },
-        scale: LinearScale(min: filteredMetrics.min, max: filteredMetrics.max),
+        scale: LinearScale(min: 0, max: filteredMetrics.maxY),
       );
     }
 

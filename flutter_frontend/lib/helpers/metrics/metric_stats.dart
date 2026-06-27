@@ -1,29 +1,28 @@
 import 'dart:math';
 
+import 'package:helse/helpers/metrics/range_list.dart';
+
 class MetricStats {
   MetricStats({
     this.minValue = 0,
     this.maxValue = 0,
     this.mean = 0,
     this.median = 0,
+    this.p01 = 0,
     this.p10 = 0,
     this.p90 = 0,
+    this.p99 = 0,
     this.coefficientOfVariation = 0,
     this.stdDev = 0,
-    required this.outliers,
   });
 
-  factory MetricStats.calculate(
-    List<double> values, {
-    required double min,
-    required double max,
-    required double mean,
-  }) {
+  factory MetricStats.calculate(RawStats stats) {
     // first sort the value
-    if (values.isEmpty) {
-      return MetricStats(outliers: []);
+    if (stats.values.isEmpty) {
+      return MetricStats();
     }
-    final sorted = values..sort();
+
+    final sorted = stats.values.map((e) => e.$2).toList()..sort();
 
     // do all stats that need the sorted version
 
@@ -37,27 +36,28 @@ class MetricStats {
     final p01 = percentile(0.01, sorted);
     final p99 = percentile(0.99, sorted);
 
-    final outliers = values.where((v) => v < p01 || v > p99).toList();
-
     // loop once more to finish the stats
     double variance =
-        values.map((v) => pow(v - mean, 2)).reduce((a, b) => a + b) /
-        values.length;
+        stats.values
+            .map((v) => pow(v.$2 - stats.mean, 2))
+            .reduce((a, b) => a + b) /
+        stats.values.length;
     final stdDev = sqrt(variance);
-    final double coefficientOfVariation = (mean == 0)
+    final double coefficientOfVariation = (stats.mean == 0)
         ? 0
-        : (stdDev / mean) * 100;
+        : (stdDev / stats.mean) * 100;
 
     return MetricStats(
-      minValue: min,
-      maxValue: max,
-      mean: mean,
+      minValue: stats.min,
+      maxValue: stats.max,
+      mean: stats.mean,
       median: median,
+      p01: p01,
       p10: p10,
       p90: p90,
+      p99: p99,
       coefficientOfVariation: coefficientOfVariation,
       stdDev: stdDev,
-      outliers: outliers,
     );
   }
 
@@ -65,11 +65,12 @@ class MetricStats {
   final double maxValue;
   final double mean;
   final double median;
+  final double p01;
   final double p10;
   final double p90;
+  final double p99;
   final double stdDev;
   final double coefficientOfVariation;
-  final List<double> outliers;
 
   double get range => maxValue - minValue;
 
