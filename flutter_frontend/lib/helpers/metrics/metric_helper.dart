@@ -3,20 +3,14 @@ import 'dart:developer';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/metrics/metric_stats.dart';
+import 'package:helse/helpers/metrics/range_list.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/delete_metric.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_more_info.dart';
 import 'package:helse/ui/blocs/metrics/metric_add.dart';
 import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
-
-class RangeList<T> {
-  final List<MetricGrouped> values;
-  final double min;
-  final double max;
-
-  RangeList({required this.values, required this.min, required this.max});
-}
 
 class MetricHelper {
   static String getMetricText(Metric metric) {
@@ -38,13 +32,16 @@ class MetricHelper {
     return split.map((e) => double.parse(e)).toList();
   }
 
-  static RangeList<MetricGrouped> group(
+  static RangeList group(
     List<Metric> metrics,
     DateTimeRange range,
-    double bucketLength,
+    int tile,
     MetricType type,
   ) {
     final stopwatch = Stopwatch()..start();
+
+    final bucketLength = range.duration.inMilliseconds / tile;
+    final skipGroup = metrics.length <= tile * 2;
     log(
       'grouping with bucket lenght: $bucketLength for $range',
       name: "Metrics",
@@ -52,39 +49,64 @@ class MetricHelper {
     int graphCount = type.valueCount ?? 1;
     Map<int, MetricGrouped> groups = {};
 
+    int i = 0;
     double max = 0;
+    double min = double.maxFinite;
+    double mean = 0;
+    final List<double> allValues = [];
     for (var metric in metrics) {
       final values = getValue(metric.value, type.type);
+      allValues.add(values[0]);
 
       final maxValue = values.max;
       if (maxValue > max) {
         max = maxValue;
       }
 
-      // find the bucket
-      final duration = metric.date.difference(range.start);
-      final index = (duration.inMilliseconds / bucketLength).toInt();
-      final bucket = groups[index];
-      // if it does not exists create it
-      if (bucket == null) {
-        final start = range.start.add(
-          Duration(milliseconds: (index * bucketLength).toInt()),
-        );
-        groups[index] = MetricGrouped(
-          start.add(Duration(milliseconds: (bucketLength / 2).toInt())),
-          values,
-          [metric],
-        );
-      } else {
-        for (int i = 0; i < graphCount; i++) {
-          bucket.value[i] = (bucket.value[i] + values[i]) / 2;
-        }
-        bucket.metrics.add(metric);
+      final minValue = values.min;
+      if (minValue > min) {
+        min = minValue;
       }
+
+      mean = mean + value;
+
+      // find the bucket
+      if (skipGroup) {
+        groups[i] = MetricGrouped(metric.date, values, [metric]);
+      } else {
+        final duration = metric.date.difference(range.start);
+        final index = (duration.inMilliseconds / bucketLength).toInt();
+        final bucket = groups[index];
+        // if it does not exists create it
+        if (bucket == null) {
+          final start = range.start.add(
+            Duration(milliseconds: (index * bucketLength).toInt()),
+          );
+          groups[index] = MetricGrouped(
+            start.add(Duration(milliseconds: (bucketLength / 2).toInt())),
+            values,
+            [metric],
+          );
+        } else {
+          for (int i = 0; i < graphCount; i++) {
+            bucket.value[i] = (bucket.value[i] + values[i]) / 2;
+          }
+          bucket.metrics.add(metric);
+        }
+      }
+
+      i++;
     }
 
+    mean = mean / metrics.length;
+
     log('_group() executed in ${stopwatch.elapsed}', name: "Metrics");
-    return RangeList(values: groups.values.toList(), min: 0, max: max);
+    return RangeList(
+      values: groups.values.toList(),
+      min: 0,
+      max: max,
+      stats: MetricStats.calculate(allValues, min: min, max: max, mean: mean),
+    );
   }
 
   String joinValue(Iterable<String> map) {

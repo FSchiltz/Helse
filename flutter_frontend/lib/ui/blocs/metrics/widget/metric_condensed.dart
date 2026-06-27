@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helse/helpers/metric_helper.dart';
+import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/metrics/widget/widget_graph.dart';
 

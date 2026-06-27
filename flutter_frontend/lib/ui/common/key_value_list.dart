@@ -4,20 +4,23 @@ import 'package:helse/ui/common/ui_constants.dart';
 class KeyValue {
   final String label;
   final String? value;
+  final IconData? icon;
   final List<KeyValue>? children;
 
-  const KeyValue(this.label, {this.value, this.children});
+  const KeyValue(this.label, {this.value, this.children, this.icon});
 }
 
 class _KeyValueRow {
   final String label;
   final String? value;
   final int depth;
+  final IconData? icon;
 
   const _KeyValueRow({
     required this.label,
-    required this.value,
+    this.value,
     required this.depth,
+    this.icon,
   });
 }
 
@@ -29,7 +32,12 @@ class KeyValueList extends StatelessWidget {
   List<_KeyValueRow> _flatten(List<KeyValue> items, [int depth = 0]) {
     return items.expand((item) {
       return [
-        _KeyValueRow(label: item.label, value: item.value, depth: depth),
+        _KeyValueRow(
+          label: item.label,
+          value: item.value,
+          depth: depth,
+          icon: item.icon,
+        ),
         ..._flatten(item.children ?? const [], depth + 1),
       ];
     }).toList();
@@ -95,7 +103,13 @@ class KeyValueList extends StatelessWidget {
                   ),
                 ),
               ),
+            if (row.icon != null)
+              Padding(
+                padding: const EdgeInsets.only(right: UIConstants.tablePad),
+                child: Icon(row.icon, size: 16),
+              ),
             Expanded(child: Text(row.label, style: theme.textTheme.bodyLarge)),
+            const SizedBox(width: UIConstants.tablePad),
           ],
         ),
       ),
