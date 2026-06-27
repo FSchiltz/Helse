@@ -1,22 +1,16 @@
 import 'dart:developer';
+import 'dart:math' show max;
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/metrics/range_list.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/delete_metric.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_more_info.dart';
 import 'package:helse/ui/blocs/metrics/metric_add.dart';
 import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
-
-class RangeList<T> {
-  final List<MetricGrouped> values;
-  final double min;
-  final double max;
-
-  RangeList({required this.values, required this.min, required this.max});
-}
 
 class MetricHelper {
   static String getMetricText(Metric metric) {
@@ -38,53 +32,99 @@ class MetricHelper {
     return split.map((e) => double.parse(e)).toList();
   }
 
-  static RangeList<MetricGrouped> group(
+  static RangeList group(
     List<Metric> metrics,
     DateTimeRange range,
-    double bucketLength,
+    int tile,
     MetricType type,
   ) {
     final stopwatch = Stopwatch()..start();
+
+    final bucketLength = range.duration.inMilliseconds / tile;
+    final skipGroup = metrics.length <= tile * 2;
     log(
       'grouping with bucket lenght: $bucketLength for $range',
       name: "Metrics",
     );
-    int graphCount = type.valueCount ?? 1;
+    int graphCount = max(1, type.valueCount ?? 1);
     Map<int, MetricGrouped> groups = {};
 
-    double max = 0;
+    int i = 0;
+    double maxY = 0;
+    List<double> maximum = List<double>.filled(graphCount, 0);
+    List<double> minimum = List<double>.filled(graphCount, double.maxFinite);
+    List<double> mean = List<double>.filled(graphCount, 0);
+    final List<List<(int, double)>> allValues =
+        List<List<(int, double)>>.generate(graphCount, (index) => []);
+
     for (var metric in metrics) {
       final values = getValue(metric.value, type.type);
+      for (var j = 0; j < graphCount; j++) {
+        allValues[j].add((metric.id, values[j]));
+      }
 
-      final maxValue = values.max;
-      if (maxValue > max) {
-        max = maxValue;
+      for (int j = 0; j < graphCount; j++) {
+        final value = values[j];
+        // add the value to the correct stats
+
+        mean[j] = mean[j] + value;
+
+        if (value > maximum[j]) {
+          maximum[j] = value;
+        }
+
+        if (value < minimum[j]) {
+          minimum[j] = value;
+        }
+
+        // find the max value possible to set the Y axis of the graph
+        if (value > maxY) {
+          maxY = value;
+        }
       }
 
       // find the bucket
-      final duration = metric.date.difference(range.start);
-      final index = (duration.inMilliseconds / bucketLength).toInt();
-      final bucket = groups[index];
-      // if it does not exists create it
-      if (bucket == null) {
-        final start = range.start.add(
-          Duration(milliseconds: (index * bucketLength).toInt()),
-        );
-        groups[index] = MetricGrouped(
-          start.add(Duration(milliseconds: (bucketLength / 2).toInt())),
-          values,
-          [metric],
-        );
+      if (skipGroup) {
+        groups[i] = MetricGrouped(metric.date, values, [metric]);
       } else {
-        for (int i = 0; i < graphCount; i++) {
-          bucket.value[i] = (bucket.value[i] + values[i]) / 2;
+        final duration = metric.date.difference(range.start);
+        final index = (duration.inMilliseconds / bucketLength).toInt();
+        final bucket = groups[index];
+        // if it does not exists create it
+        if (bucket == null) {
+          final start = range.start.add(
+            Duration(milliseconds: (index * bucketLength).toInt()),
+          );
+          groups[index] = MetricGrouped(
+            start.add(Duration(milliseconds: (bucketLength / 2).toInt())),
+            values,
+            [metric],
+          );
+        } else {
+          for (int i = 0; i < graphCount; i++) {
+            bucket.value[i] = (bucket.value[i] + values[i]) / 2;
+          }
+          bucket.metrics.add(metric);
         }
-        bucket.metrics.add(metric);
       }
+
+      i++;
+    }
+
+    List<RawStats> stats = [];
+    for (var i = 0; i < graphCount; i++) {
+      stats.add(
+        RawStats(
+          allValues[i],
+          min: minimum[i],
+          max: maximum[i],
+          mean: mean[i] / metrics.length,
+        ),
+      );
     }
 
     log('_group() executed in ${stopwatch.elapsed}', name: "Metrics");
-    return RangeList(values: groups.values.toList(), min: 0, max: max);
+    return RangeList(values: groups.values.toList(), maxY: maxY, stats: stats);
   }
 
   String joinValue(Iterable<String> map) {

@@ -5,10 +5,12 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
 import 'package:helse/di/dependencies.dart';
-import 'package:helse/helpers/metric_helper.dart';
+import 'package:helse/helpers/metrics/metric_helper.dart';
+import 'package:helse/helpers/metrics/range_list.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
+import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_statistics_card.dart';
 import 'package:helse/ui/blocs/metrics/widget/widget_graph.dart';
 import 'package:helse/ui/common/navigator_chart.dart';
 import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
@@ -41,17 +43,8 @@ class MetricGraph extends StatefulWidget {
 
 class _MetricGraphState extends State<MetricGraph> {
   MetricGrouped? _metric;
-  RangeList<MetricGrouped> filteredMetrics = RangeList(
-    values: [],
-    min: 0,
-    max: 0,
-  );
-  RangeList<MetricGrouped> groupedMetrics = RangeList(
-    values: [],
-    min: 0,
-    max: 0,
-  );
-  int _graphCount = 0;
+  RangeList filteredMetrics = RangeList.empty();
+  RangeList groupedMetrics = RangeList.empty();
 
   final StreamController<Map<String, Set<int>>?> _selection =
       StreamController.broadcast();
@@ -61,7 +54,7 @@ class _MetricGraphState extends State<MetricGraph> {
   void _setDate(DateTimeRange value) {
     logger.log('set date with $value', name: "Metrics");
     var filter = _filter(widget.metrics, value);
-    var grouped = _group(filter, _graphCount);
+    var grouped = MetricHelper.group(filter, value, 500, widget.type);
     setState(() {
       subDate = value;
       filteredMetrics = grouped;
@@ -74,8 +67,12 @@ class _MetricGraphState extends State<MetricGraph> {
     subDate = widget.date;
     _selection.stream.listen(_onData);
 
-    _graphCount = max(widget.type.valueCount ?? 1, 1);
-    var initGroup = _group(widget.metrics, _graphCount);
+    var initGroup = MetricHelper.group(
+      widget.metrics,
+      subDate,
+      500,
+      widget.type,
+    );
     filteredMetrics = initGroup;
     groupedMetrics = initGroup;
   }
@@ -121,25 +118,35 @@ class _MetricGraphState extends State<MetricGraph> {
             ),
           ),
         ),
-        Expanded(child: _grapichChart(context, _graphCount)),
+        Expanded(
+          child: _grapichChart(context, max(widget.type.valueCount ?? 1, 1)),
+        ),
         Flexible(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: SingleChildScrollView(
-              child: Center(
-                child: MetricDataTable(
-                  person: widget.person,
-                  type: widget.type,
-                  reset: widget.reset,
-                  count: metric?.metrics.length ?? 0,
-                  callback: (page, count) async {
-                    return metric?.metrics
-                            .skip(page * count)
-                            .take(count)
-                            .toList() ??
-                        [];
-                  },
-                ),
+              child: Wrap(
+                children: [
+                  ...filteredMetrics.stats.map(
+                    (e) => MetricStatisticsCard(
+                      stats: e,
+                      unit: widget.type.unit.code,
+                    ),
+                  ),
+                  MetricDataTable(
+                    person: widget.person,
+                    type: widget.type,
+                    reset: widget.reset,
+                    count: metric?.metrics.length ?? 0,
+                    callback: (page, count) async {
+                      return metric?.metrics
+                              .skip(page * count)
+                              .take(count)
+                              .toList() ??
+                          [];
+                    },
+                  ),
+                ],
               ),
             ),
           ),
@@ -215,7 +222,7 @@ class _MetricGraphState extends State<MetricGraph> {
         accessor: (MetricGrouped datumn) {
           return datumn.value[index];
         },
-        scale: LinearScale(min: filteredMetrics.min, max: filteredMetrics.max),
+        scale: LinearScale(min: 0, max: filteredMetrics.maxY),
       );
     }
 
@@ -256,33 +263,6 @@ class _MetricGraphState extends State<MetricGraph> {
 
     var metric = filteredMetrics.values[click.value.first];
     _selectionChanged(metric);
-  }
-
-  RangeList<MetricGrouped> _group(List<Metric> metrics, int graphCount) {
-    final max = 500;
-
-    double maxValue = 0;
-
-    if (metrics.length <= max) {
-      final List<MetricGrouped> list = [];
-
-      for (var metric in metrics) {
-        final values = MetricHelper.getValue(metric.value, widget.type.type);
-        final max = values.max;
-        if (max > maxValue) {
-          maxValue = max;
-        }
-
-        list.add(MetricGrouped(metric.date, values, [metric]));
-      }
-      // no need to group
-      return RangeList(values: list, min: 0, max: maxValue);
-    }
-
-    // First create the buckets
-    final bucketLength = subDate.duration.inMilliseconds / max;
-
-    return MetricHelper.group(metrics, subDate, bucketLength, widget.type);
   }
 
   List<Metric> _filter(List<Metric> metrics, DateTimeRange<DateTime> value) {

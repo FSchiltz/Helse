@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/date_helper.dart';
-import 'package:helse/helpers/metric_helper.dart';
+import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/key_value_list.dart';

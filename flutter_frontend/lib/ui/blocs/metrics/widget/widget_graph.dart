@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
-import 'package:helse/helpers/metric_helper.dart';
+import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
@@ -47,13 +47,11 @@ class WidgetGraph extends StatelessWidget {
         graphCount = 1;
     }
 
-    final bucketLength = range.duration.inMilliseconds / tile;
-
     final Duration delta = Duration(
-      milliseconds: (bucketLength * tile * 0.20).toInt(),
+      milliseconds: (range.duration.inMilliseconds * 0.20).toInt(),
     );
 
-    final groups = MetricHelper.group(raw, range, bucketLength, type);
+    final groups = MetricHelper.group(raw, range, tile, type);
     final spots = List<GraphRange>.generate(graphCount, (i) => GraphRange());
 
     for (final item in groups.values) {
