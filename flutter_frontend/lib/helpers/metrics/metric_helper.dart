@@ -63,17 +63,24 @@ class MetricHelper {
         allValues[j].add((metric.id, values[j]));
       }
 
-      // get to max value possible to set the Y axis of the graph
-      final maxValue = values.max;
-      if (maxValue > maxY) {
-        maxY = maxValue;
-      }
-
       for (int j = 0; j < graphCount; j++) {
         final value = values[j];
         // add the value to the correct stats
 
         mean[j] = mean[j] + value;
+
+        if (value > maximum[j]) {
+          maximum[j] = value;
+        }
+
+        if (value < minimum[j]) {
+          minimum[j] = value;
+        }
+
+        // find the max value possible to set the Y axis of the graph
+        if (value > maxY) {
+          maxY = value;
+        }
       }
 
       // find the bucket

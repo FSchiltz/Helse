@@ -45,7 +45,6 @@ class _MetricGraphState extends State<MetricGraph> {
   MetricGrouped? _metric;
   RangeList filteredMetrics = RangeList.empty();
   RangeList groupedMetrics = RangeList.empty();
-  int _graphCount = 0;
 
   final StreamController<Map<String, Set<int>>?> _selection =
       StreamController.broadcast();
@@ -55,7 +54,7 @@ class _MetricGraphState extends State<MetricGraph> {
   void _setDate(DateTimeRange value) {
     logger.log('set date with $value', name: "Metrics");
     var filter = _filter(widget.metrics, value);
-    var grouped = MetricHelper.group(filter, value, _graphCount, widget.type);
+    var grouped = MetricHelper.group(filter, value, 500, widget.type);
     setState(() {
       subDate = value;
       filteredMetrics = grouped;
@@ -68,11 +67,10 @@ class _MetricGraphState extends State<MetricGraph> {
     subDate = widget.date;
     _selection.stream.listen(_onData);
 
-    _graphCount = max(widget.type.valueCount ?? 1, 1);
     var initGroup = MetricHelper.group(
       widget.metrics,
       subDate,
-      _graphCount,
+      500,
       widget.type,
     );
     filteredMetrics = initGroup;
@@ -120,13 +118,21 @@ class _MetricGraphState extends State<MetricGraph> {
             ),
           ),
         ),
-        Expanded(child: _grapichChart(context, _graphCount)),
+        Expanded(
+          child: _grapichChart(context, max(widget.type.valueCount ?? 1, 1)),
+        ),
         Flexible(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: SingleChildScrollView(
               child: Wrap(
                 children: [
+                  ...filteredMetrics.stats.map(
+                    (e) => MetricStatisticsCard(
+                      stats: e,
+                      unit: widget.type.unit.code,
+                    ),
+                  ),
                   MetricDataTable(
                     person: widget.person,
                     type: widget.type,
@@ -139,12 +145,6 @@ class _MetricGraphState extends State<MetricGraph> {
                               .toList() ??
                           [];
                     },
-                  ),
-                  ...filteredMetrics.stats.map(
-                    (e) => MetricStatisticsCard(
-                      stats: e,
-                      unit: widget.type.unit.code,
-                    ),
                   ),
                 ],
               ),

@@ -3,6 +3,7 @@ import 'package:helse/helpers/metrics/metric_stats.dart';
 import 'package:helse/helpers/metrics/range_list.dart';
 import 'package:helse/ui/common/key_value_list.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class MetricStatisticsCard extends StatelessWidget {
   final RawStats stats;
@@ -62,6 +63,26 @@ class MetricStatisticsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fullStats = MetricStats.calculate(stats);
-    return CommonCard(child: KeyValueList(_statistics(fullStats, unit)));
+    final theme = Theme.of(context);
+    return CommonCard(
+      child: Column(
+        spacing: UIConstants.tablePad,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  width: 2,
+                  color: theme.colorScheme.outlineVariant,
+                ),
+              ),
+            ),
+            child: Text("Stats", style: theme.textTheme.titleLarge),
+          ),
+          KeyValueList(_statistics(fullStats, unit)),
+        ],
+      ),
+    );
   }
 }
