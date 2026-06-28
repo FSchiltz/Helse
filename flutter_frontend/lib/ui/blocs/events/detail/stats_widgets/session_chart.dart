@@ -6,7 +6,6 @@ import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/events/detail/event_graph.dart';
-import 'package:helse/ui/blocs/events/event_information.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
@@ -19,7 +18,7 @@ class SessionChart extends StatelessWidget {
     required this.stats,
     required this.type,
   });
-  
+
   final EventType type;
   final List<Interval> sessions;
   final double graphHeight;
@@ -29,24 +28,7 @@ class SessionChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = Translation.of(context);
-    final sections = stats.counts.entries.map((entry) {
-      return PieChartSectionData(
-        color: Dependencies.theme.stateColor(
-          entry.key,
-          StateType.eventValue,
-          context,
-        ),
-        value: entry.value.toDouble(),
-        title: entry.key,
-        radius: radius,
-        showTitle: false,
-        titleStyle: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 12,
-        ),
-      );
-    }).toList();
+    final sections = _getCharts(context);
 
     return CommonCard(
       child: Column(
@@ -94,5 +76,59 @@ class SessionChart extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  List<PieChartSectionData> _getCharts(BuildContext context) {
+    List<PieChartSectionData> charts = [];
+    double otherValue = 0;
+
+    for (final entry in stats.counts.entries) {
+      final percentage = entry.value / stats.total * 100;
+      if (percentage < 5) {
+        otherValue = otherValue + entry.value;
+      } else {
+        charts.add(
+          PieChartSectionData(
+            color: Dependencies.theme.stateColor(
+              entry.key,
+              StateType.eventValue,
+              context,
+            ),
+            value: entry.value.toDouble(),
+            title: entry.key,
+            radius: radius,
+            showTitle: false,
+            titleStyle: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
+          ),
+        );
+      }
+    }
+
+    if (otherValue > 0) {
+      charts.add(
+        PieChartSectionData(
+          color: Dependencies.theme.stateColor(
+            "other",
+            StateType.eventValue,
+            context,
+          ),
+          value: otherValue.toDouble(),
+          title: "other",
+          radius: radius,
+          showTitle: false,
+          titleStyle: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+          ),
+        ),
+      );
+    }
+
+    return charts;
   }
 }
