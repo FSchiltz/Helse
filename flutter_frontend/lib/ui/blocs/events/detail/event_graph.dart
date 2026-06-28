@@ -150,7 +150,12 @@ class _EventsGraphState extends State<EventsGraph> {
                     person: widget.person,
                     type: widget.type,
                   ),
-                SessionList(height: height, color: _color, sessions: _sessions),
+                SessionList(
+                  height: height,
+                  color: _color,
+                  sessions: _sessions,
+                  type: widget.type,
+                ),
                 SessionsRange(
                   height: height,
                   color: _color,

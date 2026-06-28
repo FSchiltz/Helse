@@ -1,25 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/metrics/metric_stats.dart';
 import 'package:helse/helpers/metrics/range_list.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_histogram.dart';
+import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_information.dart';
 import 'package:helse/ui/common/key_value_list.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 class MetricStatisticsCard extends StatelessWidget {
   final RawStats stats;
-  final String unit;
+
+  final MetricType type;
 
   const MetricStatisticsCard({
     super.key,
     required this.stats,
-    required this.unit,
+
+    required this.type,
   });
 
   List<KeyValue> _statistics(MetricStats s, String u) {
     return [
       KeyValue(
         'Mean',
-        icon: Icons.functions,
+        icon: Icons.update,
         value: '${s.mean.toStringAsFixed(2)} $u',
       ),
       KeyValue(
@@ -37,26 +42,6 @@ class MetricStatisticsCard extends StatelessWidget {
         icon: Icons.arrow_upward,
         value: '${s.maxValue.toStringAsFixed(2)} $u',
       ),
-      KeyValue(
-        'Range',
-        icon: Icons.swap_vert,
-        value: '${s.range.toStringAsFixed(2)} $u',
-      ),
-      KeyValue(
-        'Std Dev',
-        icon: Icons.scatter_plot,
-        value: s.stdDev.toStringAsFixed(2),
-      ),
-      KeyValue(
-        '10th Percentile',
-        icon: Icons.percent,
-        value: '${s.p10.toStringAsFixed(2)} $u',
-      ),
-      KeyValue(
-        '90th Percentile',
-        icon: Icons.percent,
-        value: '${s.p90.toStringAsFixed(2)} $u',
-      ),
     ];
   }
 
@@ -66,10 +51,11 @@ class MetricStatisticsCard extends StatelessWidget {
     final theme = Theme.of(context);
     return CommonCard(
       child: Column(
-        spacing: UIConstants.tablePad,
+        spacing: UIConstants.headerPad,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
+            padding: EdgeInsets.only(bottom: UIConstants.formPad),
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
@@ -78,9 +64,12 @@ class MetricStatisticsCard extends StatelessWidget {
                 ),
               ),
             ),
-            child: Text("Stats", style: theme.textTheme.titleLarge),
+            child: MetricInformation(
+              _statistics(fullStats, type.unit.code),
+              type: type,
+            ),
           ),
-          KeyValueList(_statistics(fullStats, unit)),
+          MetricHistogram(stats, type),
         ],
       ),
     );
