@@ -129,6 +129,7 @@ class _MetricGraphState extends State<MetricGraph> {
                 children: [
                   ...filteredMetrics.stats.map(
                     (e) => MetricStatisticsCard(stats: e, type: widget.type),
+
                   ),
                   MetricDataTable(
                     person: widget.person,

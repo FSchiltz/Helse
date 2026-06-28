@@ -10,11 +10,13 @@ import 'package:helse/ui/common/ui_constants.dart';
 
 class MetricStatisticsCard extends StatelessWidget {
   final RawStats stats;
+
   final MetricType type;
 
   const MetricStatisticsCard({
     super.key,
     required this.stats,
+
     required this.type,
   });
 
