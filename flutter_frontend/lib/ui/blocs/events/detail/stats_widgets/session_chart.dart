@@ -51,7 +51,6 @@ class SessionChart extends StatelessWidget {
     return CommonCard(
       child: Column(
         children: [
-          EventInformation(data: sessions, type: type),
           const SizedBox(height: UIConstants.formPad),
           Wrap(
             runAlignment: WrapAlignment.start,
