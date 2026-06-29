@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/main.dart';
 
 enum NotificationKind { info, warning, error }
@@ -40,6 +42,12 @@ class Notify {
   }
 
   static Future<void> init() async {
+    if (kIsWeb) {
+      // disabled on webs
+      enabled = false;
+      return;
+    }
+
     _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     final initializationSettings = InitializationSettings(
       android: AndroidInitializationSettings("ic_launcher"),
@@ -51,11 +59,25 @@ class Notify {
         ) ??
         false;
 
-    _flutterLocalNotificationsPlugin
+    // ask for permission on android
+    final android = _flutterLocalNotificationsPlugin
         ?.resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
-        >()
-        ?.requestNotificationsPermission();
+        >();
+    if (android != null) {
+      var isEnabled = await android.areNotificationsEnabled();
+      if (enabled != true) {
+        var alreadyAsked = Dependencies.logics.settings.getBool(
+          "notificationAsked",
+        );
+        if (alreadyAsked != true) {
+          isEnabled = await android.requestNotificationsPermission();
+
+          await Dependencies.logics.settings.setBool("notificationAsked", true);
+        }
+      }
+      enabled = isEnabled == true;
+    }
   }
 
   static Future<void> showBackground(
