@@ -3,6 +3,7 @@ import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/event.dart';
 import 'package:helse/logic/fit/task_bloc.dart';
+import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 class TaskStatusDialog extends StatelessWidget {
@@ -13,7 +14,7 @@ class TaskStatusDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var locale = Translation.of(context);
-    return AlertDialog(
+    return SquareDialog(
       title: Text(title),
       content: tasks.isEmpty
           ? Text(locale.notask)
