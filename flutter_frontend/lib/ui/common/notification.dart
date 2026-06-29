@@ -50,6 +50,12 @@ class Notify {
           settings: initializationSettings,
         ) ??
         false;
+
+    _flutterLocalNotificationsPlugin
+        ?.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.requestNotificationsPermission();
   }
 
   static Future<void> showBackground(
