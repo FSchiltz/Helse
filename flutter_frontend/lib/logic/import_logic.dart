@@ -4,6 +4,7 @@ import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/event.dart';
 import 'package:helse/logic/fit/task_bloc.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/ui/common/notification.dart';
 
 class ImportLogic {
   final Map<String, JobResult> jobs = {};
@@ -23,6 +24,15 @@ class ImportLogic {
         var status = await Dependencies.services.import.status(job.key);
         if (status != null) {
           result = SubmissionStatus.inProgress;
+          if (status.status == JobStatus.done) {
+            Notify.showBackground('${status.description} done');
+          } else if (status.status == JobStatus.inerror) {
+            Notify.show(
+              '${status.description} failed with ${status.error}',
+              kind: NotificationKind.error,
+            );
+          }
+
           jobs[job.key] = status;
         }
       }
