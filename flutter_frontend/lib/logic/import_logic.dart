@@ -25,10 +25,14 @@ class ImportLogic {
         if (status != null) {
           result = SubmissionStatus.inProgress;
           if (status.status == JobStatus.done) {
-            Notify.showBackground('${status.description} done');
+            Notify.showBackground(
+              '${status.description} done',
+              description: status.result,
+            );
           } else if (status.status == JobStatus.inerror) {
-            Notify.show(
-              '${status.description} failed with ${status.error}',
+            Notify.showBackground(
+              '${status.description} failed',
+              description: '${status.error}',
               kind: NotificationKind.error,
             );
           }

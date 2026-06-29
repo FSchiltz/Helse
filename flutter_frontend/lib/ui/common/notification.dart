@@ -54,6 +54,7 @@ class Notify {
 
   static Future<void> showBackground(
     String content, {
+    String? description,
     NotificationKind kind = NotificationKind.info,
   }) async {
     if (enabled) {
@@ -75,7 +76,7 @@ class Notify {
       await _flutterLocalNotificationsPlugin?.show(
         id: 0,
         title: content,
-        body: 'plain body',
+        body: description,
         notificationDetails: notificationDetails,
         payload: 'item x',
       );
