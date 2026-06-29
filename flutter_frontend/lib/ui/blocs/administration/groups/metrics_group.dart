@@ -121,10 +121,13 @@ class MetricGroupView extends StatelessWidget {
     try {
       if (id != null) {
         await Dependencies.services.metric.deleteMetricsGroup(id);
-        Notify.simple('Metric group ${type.name} deleted');
+        Notify.show('Metric group ${type.name} deleted');
       }
     } catch (ex) {
-      Notify.simple('Error deleting metric group ${type.name}');
+      Notify.show(
+        'Error deleting metric group ${type.name}',
+        kind: NotificationKind.error,
+      );
     }
   }
 }

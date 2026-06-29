@@ -199,12 +199,16 @@ class _SmtpFormViewState extends State<SmtpFormView> {
 
         await Dependencies.services.settings.updateSmtp(smtp);
 
-        if (context.mounted) Notify.show(locale.saved, context);
+        if (context.mounted) Notify.show(locale.saved, context: context);
         widget.callback();
       }
     } catch (ex) {
       if (context.mounted) {
-        Notify.showError(locale.error(ex.toString()), context);
+        Notify.show(
+          locale.error(ex.toString()),
+          context: context,
+          kind: NotificationKind.error,
+        );
       }
     }
   }

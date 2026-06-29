@@ -299,9 +299,11 @@ class _LoginState extends State<LoginPage> {
 
         return;
       } catch (ex) {
-        if (mounted) {
-          Notify.showError(locale.error(ex.toString()), context);
-        }
+        Notify.show(
+          locale.error(ex.toString()),
+          context: mounted ? context : null,
+          kind: NotificationKind.error,
+        );
       }
     }
 
@@ -408,7 +410,7 @@ class _LoginState extends State<LoginPage> {
   Future<void> _submit(String oAuth) async {
     _start();
 
-    Notify.show("Oauth in progress", context);
+    log("Oauth in progress");
 
     var init = _initStatus?.init;
     var url = _url;

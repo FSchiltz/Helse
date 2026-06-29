@@ -36,11 +36,15 @@ class _SettingsViewState extends State<MetricSettingsView> {
       if (_formKey.currentState?.validate() ?? false) {
         // save the settings
 
-        Notify.show("Saved Successfully", context);
+        Notify.show("Saved Successfully", context: context);
       }
     } catch (ex) {
       if (mounted) {
-        Notify.showError(locale.error(ex.toString()), context);
+        Notify.show(
+          locale.error(ex.toString()),
+          context: context,
+          kind: NotificationKind.error,
+        );
       }
     }
   }

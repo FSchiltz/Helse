@@ -35,7 +35,7 @@ class _MetricsGridState extends State<MetricsGrid> {
 
   void _getData() async {
     final locale = Translation.of(context);
-    
+
     try {
       final model = await Dependencies.services.metric.metricsGroup();
       final metrics =
@@ -120,9 +120,12 @@ class _MetricsGridState extends State<MetricsGrid> {
         _metrics = orderedMetric;
       });
     } catch (ex) {
-      if (mounted) {
-        Notify.showError(locale.error(ex.toString()), context);
-      }
+      Notify.show(
+        locale.error(ex.toString()),
+        context: (mounted) ? context : null,
+        kind: NotificationKind.error,
+      );
+
       log(ex.toString());
     }
   }

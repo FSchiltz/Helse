@@ -7,30 +7,21 @@ enum NotificationKind { info, warning, error }
 class Notify {
   static FlutterLocalNotificationsPlugin? _flutterLocalNotificationsPlugin;
 
-  static void simple(String content, NotificationKind kind) {
-    final snackBar = SnackBar(
-      content: Text(content),
-      duration: const Duration(seconds: 3),
-      showCloseIcon: true,
-    );
-
-    // Find the ScaffoldMessenger in the widget tree
-    // and use it to show a SnackBar.
-    snackbarKey.currentState?.showSnackBar(snackBar);
-  }
-
   static void show(
-    String content,
-    BuildContext context,
-    NotificationKind kind,
-  ) {
-    final theme = Theme.of(context).colorScheme;
-    var color = theme.surfaceContainerHighest;
+    String content, {
+    BuildContext? context,
+    NotificationKind kind = NotificationKind.info,
+  }) {
+    Color? color;
+    if (context != null) {
+      final theme = Theme.of(context).colorScheme;
+      color = theme.surfaceContainerHighest;
 
-    if (kind == NotificationKind.error) {
-      color = theme.errorContainer;
-    } else if (kind == NotificationKind.warning) {
-      color = theme.secondaryContainer;
+      if (kind == NotificationKind.error) {
+        color = theme.errorContainer;
+      } else if (kind == NotificationKind.warning) {
+        color = theme.secondaryContainer;
+      }
     }
 
     final snackBar = SnackBar(
@@ -40,9 +31,11 @@ class Notify {
       backgroundColor: color,
     );
 
-    // Find the ScaffoldMessenger in the widget tree
-    // and use it to show a SnackBar.
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    if (context == null) {
+      snackbarKey.currentState?.showSnackBar(snackBar);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   static Future<void> init() async {
@@ -57,16 +50,16 @@ class Notify {
   }
 
   static Future<void> showBackground(
-    String content,
-    NotificationKind kind,
-  ) async {
+    String content, {
+    NotificationKind kind = NotificationKind.info,
+  }) async {
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
-          'your channel id',
-          'your channel name',
+          'helse',
+          'helse',
           channelDescription: 'your channel description',
-          importance: Importance.max,
-          priority: Priority.high,
+          importance: Importance.defaultImportance,
+          priority: Priority.defaultPriority,
           ticker: 'ticker',
         );
     const NotificationDetails notificationDetails = NotificationDetails(
@@ -74,10 +67,10 @@ class Notify {
       linux: LinuxNotificationDetails(),
       web: WebNotificationDetails(),
     );
-    
+
     await _flutterLocalNotificationsPlugin?.show(
       id: 0,
-      title: 'plain title',
+      title: content,
       body: 'plain body',
       notificationDetails: notificationDetails,
       payload: 'item x',

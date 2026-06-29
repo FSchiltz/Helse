@@ -65,9 +65,11 @@ class _HomeState extends State<Home> {
         user = model;
       });
     } catch (ex) {
-      if (mounted) {
-        Notify.showError(locale.error(ex.toString()), context);
-      }
+      Notify.show(
+        locale.error(ex.toString()),
+        context: mounted ? context : null,
+        kind: NotificationKind.error,
+      );
     }
   }
 
