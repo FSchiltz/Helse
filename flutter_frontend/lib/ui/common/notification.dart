@@ -5,6 +5,7 @@ import 'package:helse/main.dart';
 enum NotificationKind { info, warning, error }
 
 class Notify {
+  static bool enabled = false;
   static FlutterLocalNotificationsPlugin? _flutterLocalNotificationsPlugin;
 
   static void show(
@@ -44,36 +45,43 @@ class Notify {
       android: AndroidInitializationSettings("app_icon"),
       linux: LinuxInitializationSettings(defaultActionName: "open"),
     );
-    await _flutterLocalNotificationsPlugin?.initialize(
-      settings: initializationSettings,
-    );
+    enabled =
+        await _flutterLocalNotificationsPlugin?.initialize(
+          settings: initializationSettings,
+        ) ??
+        false;
   }
 
   static Future<void> showBackground(
     String content, {
     NotificationKind kind = NotificationKind.info,
   }) async {
-    const AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails(
-          'helse',
-          'helse',
-          channelDescription: 'your channel description',
-          importance: Importance.defaultImportance,
-          priority: Priority.defaultPriority,
-          ticker: 'ticker',
-        );
-    const NotificationDetails notificationDetails = NotificationDetails(
-      android: androidNotificationDetails,
-      linux: LinuxNotificationDetails(),
-      web: WebNotificationDetails(),
-    );
+    if (enabled) {
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+            'helse',
+            'helse',
+            channelDescription: 'your channel description',
+            importance: Importance.defaultImportance,
+            priority: Priority.defaultPriority,
+            ticker: 'ticker',
+          );
+      const NotificationDetails notificationDetails = NotificationDetails(
+        android: androidNotificationDetails,
+        linux: LinuxNotificationDetails(),
+        web: WebNotificationDetails(),
+      );
 
-    await _flutterLocalNotificationsPlugin?.show(
-      id: 0,
-      title: content,
-      body: 'plain body',
-      notificationDetails: notificationDetails,
-      payload: 'item x',
-    );
+      await _flutterLocalNotificationsPlugin?.show(
+        id: 0,
+        title: content,
+        body: 'plain body',
+        notificationDetails: notificationDetails,
+        payload: 'item x',
+      );
+    } else {
+      // if the user has not enabled notification, fallback to in app toast
+      show(content, kind: kind);
+    }
   }
 }
