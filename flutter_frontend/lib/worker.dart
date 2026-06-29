@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/ui/common/notification.dart';
 import 'package:workmanager/workmanager.dart';
 
 @pragma('vm:entry-point')
@@ -53,6 +54,8 @@ class WorkHelper {
       }
     } catch (ex) {
       log("Background sync failed with $ex");
+
+      Notify.simple(ex.toString(), NotificationKind.error);
       Dependencies.logics.settings.setFitStatus("Error: $ex");
       return false;
     }
