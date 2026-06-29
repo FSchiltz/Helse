@@ -1,6 +1,7 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
@@ -85,6 +86,7 @@ class _FileImportState extends PopupSubmitState<FileImport> {
     if (selected != null) {
       var content = await file?.readAsBytes();
       if (content == null) return;
+
       await Dependencies.logics.import.import(
         content,
         selected!,

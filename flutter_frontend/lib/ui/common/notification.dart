@@ -42,7 +42,7 @@ class Notify {
   static Future<void> init() async {
     _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     final initializationSettings = InitializationSettings(
-      android: AndroidInitializationSettings("app_icon"),
+      android: AndroidInitializationSettings("ic_launcher"),
       linux: LinuxInitializationSettings(defaultActionName: "open"),
     );
     enabled =
@@ -69,7 +69,12 @@ class Notify {
           );
       const NotificationDetails notificationDetails = NotificationDetails(
         android: androidNotificationDetails,
-        linux: LinuxNotificationDetails(),
+        linux: LinuxNotificationDetails(
+          urgency: LinuxNotificationUrgency.critical,
+          category: LinuxNotificationCategory.emailArrived,
+          resident: true,
+          timeout: LinuxNotificationTimeout.systemDefault(),
+        ),
         web: WebNotificationDetails(),
       );
 
