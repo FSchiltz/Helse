@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/fit/fit_helper.dart';
 import 'package:helse/ui/common/progress_icon_button.dart';
-import 'package:helse/ui/server_job_dialog.dart';
+import 'package:helse/ui/blocs/imports/server_job_dialog.dart';
 import 'package:simple_icons/simple_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 

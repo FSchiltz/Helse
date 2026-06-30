@@ -30,65 +30,7 @@ class TaskStatusDialog extends StatelessWidget {
                       Flexible(
                         child: ListView.builder(
                           itemCount: tasks.length,
-                          itemBuilder: (x, key) {
-                            var theme = Theme.of(x).textTheme;
-                            var task = tasks[key];
-                            Color color = Theme.of(
-                              context,
-                            ).colorScheme.surfaceContainerHighest;
-
-                            if (task.state == SubmissionStatus.failure) {
-                              color = Theme.of(
-                                context,
-                              ).colorScheme.errorContainer;
-                            } else if (task.state == SubmissionStatus.success) {
-                              color = Theme.of(
-                                context,
-                              ).colorScheme.primaryContainer;
-                            } else if (task.state ==
-                                SubmissionStatus.inProgress) {
-                              color = Theme.of(
-                                context,
-                              ).colorScheme.secondaryContainer;
-                            }
-
-                            return Container(
-                              padding: EdgeInsets.all(8),
-                              color: color,
-                              child: Column(
-                                children: [
-                                  Text(
-                                    '${task.title ?? task.state.name} at ${DateHelper.format(task.date, context: x)}',
-                                    style: theme.bodyLarge,
-                                  ),
-                                  Text(
-                                    task.status ?? '',
-                                    style: theme.bodySmall,
-                                  ),
-
-                                  if (task.progress != null &&
-                                      (task.progress ?? 0) < 100)
-                                    Row(
-                                      children: [
-                                        SizedBox(width: 12),
-                                        Text(
-                                          '${task.progress?.toStringAsFixed(2)}%',
-                                        ),
-                                        SizedBox(width: 8),
-                                        Flexible(
-                                          child: LinearProgressIndicator(
-                                            value: (task.progress ?? 0) / 100,
-                                          ),
-                                        ),
-                                        SizedBox(width: 12),
-                                        Expanded(child: Text(task.state.name)),
-                                      ],
-                                    ),
-                                  const SizedBox(height: UIConstants.formPad),
-                                ],
-                              ),
-                            );
-                          },
+                          itemBuilder: (x, key) => _taskCard(tasks[key], x),
                         ),
                       ),
                     ],
@@ -96,6 +38,57 @@ class TaskStatusDialog extends StatelessWidget {
                 ),
               ),
             ),
+    );
+  }
+
+  Container _taskCard(Execution task, BuildContext context) {
+    var theme = Theme.of(context).textTheme;
+    Color color = Theme.of(context).colorScheme.surfaceContainerHighest;
+    if (task.state == SubmissionStatus.failure) {
+      color = Theme.of(context).colorScheme.errorContainer;
+    } else if (task.state == SubmissionStatus.success) {
+      color = Theme.of(context).colorScheme.primaryContainer;
+    } else if (task.state == SubmissionStatus.inProgress) {
+      color = Theme.of(context).colorScheme.secondaryContainer;
+    }
+
+    final hasProgress = task.progress != null && (task.progress ?? 0) < 100;
+
+    return Container(
+      margin: const EdgeInsets.all(UIConstants.tablePad),
+      padding: const EdgeInsets.all(UIConstants.formPad),
+      color: color,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '${task.title ?? task.state.name} at ${DateHelper.format(task.date, context: context)}',
+            style: theme.bodyMedium,
+          ),
+          Text(task.status ?? '', style: theme.bodySmall),
+
+          Row(
+            spacing: UIConstants.formPad,
+            children: [
+              Flexible(child: Text(task.state.name)),
+              if (hasProgress)
+                Flexible(
+                  child: Stack(
+                    children: [
+                      LinearProgressIndicator(
+                        value: (task.progress ?? 0) / 100,
+                        minHeight: 20,
+                      ),
+                      Center(
+                        child: Text('${task.progress?.toStringAsFixed(2)}%'),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
