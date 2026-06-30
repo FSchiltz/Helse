@@ -56,9 +56,10 @@ class ImportLogic {
       id,
       () => JobResult(
         status: JobStatus.notstarted,
-        progress: 0,
+        progress: null,
         userId: 0,
         description: "",
+        enque: DateTime.now(),
         start: DateTime.now(),
       ),
     );
@@ -75,11 +76,12 @@ class ImportLogic {
 
   List<Execution> executions() {
     return jobs.entries
-        .sortedByCompare((e) => e.value.start, (a, b) => -a.compareTo(b))
+        .sortedByCompare((e) => e.value.enque, (a, b) => -a.compareTo(b))
         .map(
           (e) => Execution(
-            e.value.start,
+            e.value.enque,
             _getStatus(e.value.status),
+            status: e.value.result,
             title: e.value.description,
             progress: e.value.progress,
           ),

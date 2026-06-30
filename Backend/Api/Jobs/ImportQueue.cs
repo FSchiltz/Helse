@@ -24,6 +24,7 @@ internal sealed class ImportQueue : IImportQueue
             Status = JobStatus.NotStarted,
             Start = DateTime.MinValue,
             Description = description,
+            Enque = DateTime.UtcNow,
         });
     }
 

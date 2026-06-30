@@ -3,18 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/main.dart';
+import 'package:helse/ui/common/overlay.dart';
 
-enum NotificationKind { info, warning, error }
+enum NotificationKind { info, warning, error, success }
 
 class Notify {
   static const notificationSettings = "notificationAsked";
   static bool enabled = false;
+  static OverlayEntry? _entry;
   static FlutterLocalNotificationsPlugin? _localNotifications;
-
 
   static Future<void> init() async {
     if (kIsWeb) {
-      // disabled on webs
+      // disabled on web
       enabled = false;
       return;
     }
@@ -33,13 +34,30 @@ class Notify {
     await _askPermission();
   }
 
-  static Future<void> show(
+  static void showIcon(NotificationKind kind) {
+    final overlay = navigatorKey.currentState?.overlay;
+    if (overlay == null) return;
+
+    _entry?.remove();
+
+    _entry = OverlayEntry(builder: (_) => IconOverlay(kind));
+
+    overlay.insert(_entry!);
+
+    final duration = const Duration(seconds: 5);
+    Future.delayed(duration, () {
+      _entry?.remove();
+      _entry = null;
+    });
+  }
+
+  static void show(
     String content, {
     String? description,
     BuildContext? context,
     NotificationKind kind = NotificationKind.info,
     bool isBackground = false,
-  }) async {
+  }) {
     if (enabled && isBackground) {
       _showSystem(content, description, kind);
     } else {
@@ -53,23 +71,40 @@ class Notify {
     NotificationKind kind,
     BuildContext? context,
   ) {
+    TextStyle? style;
     Color? color;
     if (context != null) {
       final theme = Theme.of(context).colorScheme;
-      color = theme.surfaceContainerHighest;
+      final textTheme = Theme.of(context).textTheme;
 
-      if (kind == NotificationKind.error) {
-        color = theme.errorContainer;
-      } else if (kind == NotificationKind.warning) {
-        color = theme.secondaryContainer;
+      style = textTheme.headlineSmall;
+      switch (kind) {
+        case NotificationKind.error:
+          color = theme.errorContainer;
+          style = style?.copyWith(color: theme.onErrorContainer);
+        case NotificationKind.warning:
+          color = theme.secondaryContainer;
+          style = style?.copyWith(color: theme.onSecondaryContainer);
+        default:
+          color = theme.surfaceContainerHighest;
+          style = style?.copyWith(color: theme.onSurface);
+      }
+    } else {
+      switch (kind) {
+        case NotificationKind.error:
+          color = Colors.redAccent;
+        case NotificationKind.warning:
+          color = Colors.deepOrangeAccent;
+        default:
       }
     }
 
     final snackBar = SnackBar(
-      content: Text(content),
+      content: Text(content, style: style),
       duration: const Duration(seconds: 3),
       showCloseIcon: true,
-      backgroundColor: color,      
+      backgroundColor: color,
+      behavior: SnackBarBehavior.floating,
     );
 
     if (context == null) {

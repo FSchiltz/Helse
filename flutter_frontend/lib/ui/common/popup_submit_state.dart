@@ -37,7 +37,7 @@ abstract class PopupSubmitState<T extends StatefulWidget> extends State<T> {
           return;
         }
 
-        Notify.show(locale.saved, context: context);
+        Notify.showIcon(NotificationKind.success);
         Navigator.of(context).pop();
       } else {
         setState(() {
