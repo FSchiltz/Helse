@@ -148,7 +148,7 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
                         style: theme.bodyLarge,
                       ),
                     ),
-                
+
                     if (task.progress != null &&
                         (task.progress ?? 0) < 100) ...[
                       Padding(
@@ -158,16 +158,17 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
                           style: theme.bodyLarge,
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SizedBox(
-                          width: 200,
-                          height: 12,
-                          child: LinearProgressIndicator(
-                            value: (task.progress ?? 0) / 100,
+                      if (task.progress != null)
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            width: 200,
+                            height: 12,
+                            child: LinearProgressIndicator(
+                              value: (task.progress ?? 0) / 100,
+                            ),
                           ),
                         ),
-                      ),
                     ],
                   ],
                 ),

@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/fit/fit_helper.dart';
-import 'package:helse/logic/fit/status_bloc.dart';
+import 'package:helse/ui/common/progress_icon_button.dart';
+import 'package:helse/ui/server_job_dialog.dart';
 import 'package:simple_icons/simple_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../di/dependencies.dart';
-import '../logic/event.dart';
-import '../logic/fit/task_bloc.dart';
+import '../logic/task_bloc.dart';
 import '../services/swagger/generated_code/helseapi.swagger.dart';
 import 'administration.dart';
 import 'blocs/imports/file_import.dart';
-import 'common/loader.dart';
 import 'common/notification.dart';
 import 'dashboard.dart';
 import 'local_settings.dart';
@@ -99,64 +98,30 @@ class _HomeState extends State<Home> {
                   color: theme.colorScheme.onPrimaryContainer,
                 ),
               ),
-              BlocProvider<StatusBloc>.value(
+              BlocProvider<TaskBloc>.value(
                 value: Dependencies.blocs.jobs,
-                child: BlocBuilder<StatusBloc, SubmissionStatus>(
-                  builder: (context, state) {
-                    Color? color;
-                    bool static = true;
-                    switch (state) {
-                      case SubmissionStatus.success:
-                        color = Colors.green;
-                        break;
-                      case SubmissionStatus.failure:
-                        color = Colors.red;
-                        break;
-                      case SubmissionStatus.inProgress:
-                        static = false;
-                        break;
-                      default:
-                        color = null;
-                    }
-
-                    return HelseLoader(
-                      static: static,
-                      color: color,
-                      size: 22,
-                      onTouch: () => _showJobs(context),
-                      icon: Icons.list_alt_sharp,
-                    );
-                  },
+                child: BlocBuilder<TaskBloc, Execution>(
+                  builder: (context, data) => ProgressIconButton(
+                    state: data,
+                    icon: Icons.list_alt_sharp,
+                    onOpen: () => showDialog<void>(
+                      context: context,
+                      builder: (context) => ServerJobDialog(context: context),
+                    ),
+                  ),
                 ),
               ),
               if (FitHelper.isSupported())
                 BlocProvider<TaskBloc>.value(
                   value: Dependencies.blocs.fit,
-                  child: BlocBuilder<TaskBloc, SubmissionStatus>(
-                    builder: (context, state) {
-                      Color? color;
-                      bool static = true;
-                      switch (state) {
-                        case SubmissionStatus.success:
-                          color = Colors.green;
-                          break;
-                        case SubmissionStatus.failure:
-                          color = Colors.red;
-                          break;
-                        case SubmissionStatus.inProgress:
-                          static = false;
-                          break;
-                        default:
-                          color = null;
-                      }
-
-                      return HelseLoader(
-                        static: static,
-                        color: color,
-                        size: 22,
-                        onTouch: () => _showSynchroRuns(context),
-                      );
-                    },
+                  child: BlocBuilder<TaskBloc, Execution>(
+                    builder: (context, state) => ProgressIconButton(
+                      state: state,
+                      onOpen: () => showDialog<void>(
+                        context: context,
+                        builder: (context) => _showSynchroRuns(),
+                      ),
+                    ),
                   ),
                 ),
               PopupMenuButton(
@@ -246,7 +211,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Future<void> _startTaskResultJob(StatusBloc jobs) async {
+  Future<void> _startTaskResultJob(TaskBloc jobs) async {
     jobs.start();
     var existingJobs = await Dependencies.services.import.getJobs();
     for (var job in existingJobs) {
@@ -254,27 +219,8 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Future<void> _showSynchroRuns(BuildContext context) async {
-    var tasks = Dependencies.logics.health.executions();
-
-    if (context.mounted) {
-      _showTaskDialog(context, tasks, Translation.of(context).syncHistory);
-    }
-  }
-
-  void _showJobs(BuildContext context) {
-    var tasks = Dependencies.logics.import.executions();
-    _showTaskDialog(context, tasks, Translation.of(context).importHistory);
-  }
-
-  void _showTaskDialog(
-    BuildContext context,
-    List<Execution> tasks,
-    String title,
-  ) {
-    showDialog<void>(
-      context: context,
-      builder: (context) => TaskStatusDialog(tasks, title),
-    );
+  Widget _showSynchroRuns() {
+    var tasks = Dependencies.blocs.jobs.executions;
+    return TaskStatusDialog(tasks, Translation.of(context).syncHistory);
   }
 }

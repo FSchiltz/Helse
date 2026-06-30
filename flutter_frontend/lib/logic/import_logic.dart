@@ -1,8 +1,9 @@
 import 'dart:typed_data';
 
+import 'package:collection/collection.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/event.dart';
-import 'package:helse/logic/fit/task_bloc.dart';
+import 'package:helse/logic/task_bloc.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/notification.dart';
 
@@ -14,16 +15,16 @@ class ImportLogic {
     return jobs.isNotEmpty;
   }
 
-  Future<SubmissionStatus> sync() async {
+  Future<Execution> sync() async {
     var entries = jobs.entries.toList();
     SubmissionStatus result = SubmissionStatus.initial;
+    double? progress;
 
     for (var job in entries) {
       if (job.value.status == JobStatus.inprogress ||
           job.value.status == JobStatus.notstarted) {
         var status = await Dependencies.services.import.status(job.key);
         if (status != null) {
-          result = SubmissionStatus.inProgress;
           if (status.status == JobStatus.done) {
             Notify.show(
               '${status.description} done',
@@ -37,6 +38,9 @@ class ImportLogic {
               kind: NotificationKind.error,
               isBackground: true,
             );
+          } else if (status.status == JobStatus.inprogress) {
+            result = SubmissionStatus.inProgress;
+            progress = status.progress;
           }
 
           jobs[job.key] = status;
@@ -44,7 +48,7 @@ class ImportLogic {
       }
     }
 
-    return result;
+    return Execution(DateTime.now(), result, progress: progress);
   }
 
   void add(String id) {
@@ -71,6 +75,7 @@ class ImportLogic {
 
   List<Execution> executions() {
     return jobs.entries
+        .sortedByCompare((e) => e.value.start, (a, b) => -a.compareTo(b))
         .map(
           (e) => Execution(
             e.value.start,

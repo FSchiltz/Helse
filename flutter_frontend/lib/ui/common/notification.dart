@@ -11,6 +11,7 @@ class Notify {
   static bool enabled = false;
   static FlutterLocalNotificationsPlugin? _localNotifications;
 
+
   static Future<void> init() async {
     if (kIsWeb) {
       // disabled on webs
@@ -68,7 +69,7 @@ class Notify {
       content: Text(content),
       duration: const Duration(seconds: 3),
       showCloseIcon: true,
-      backgroundColor: color,
+      backgroundColor: color,      
     );
 
     if (context == null) {

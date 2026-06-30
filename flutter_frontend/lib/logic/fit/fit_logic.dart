@@ -5,7 +5,7 @@ import 'package:health/health.dart';
 import 'package:helse/logic/event.dart';
 import 'package:helse/logic/fit/fit_constants.dart';
 import 'package:helse/logic/fit/fit_helper.dart';
-import 'package:helse/logic/fit/task_bloc.dart';
+import 'package:helse/logic/task_bloc.dart';
 import 'package:helse/logic/settings/settings_logic.dart';
 import 'package:helse/services/import_service.dart';
 import 'package:helse/ui/common/notification.dart';
@@ -14,7 +14,6 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../services/swagger/generated_code/helseapi.swagger.dart';
 
 class HealthConnectLogic {
-  final List<Execution> _executions = [];
   final SettingsLogic settingsLogic;
   final ImportService importService;
 
@@ -76,12 +75,12 @@ class HealthConnectLogic {
     settingsLogic.setBackgroundAccess(background);
   }
 
-  Future<String> sync() async {
+  Future<Execution> sync() async {
     var run = settingsLogic.getLastRun();
     var history = settingsLogic.getHasHistory() ?? false;
     var settings = settingsLogic.getHealth();
     if (!settings.syncHealth) {
-      return "Not enabled";
+      return Execution.skipped(status: "Not enabled");
     }
 
     var now = DateTime.now();
@@ -98,7 +97,7 @@ class HealthConnectLogic {
     log("Syncing from $start");
 
     // don't sync if in the future
-    if (start.compareTo(now) >= 0) return "";
+    if (start.compareTo(now) >= 0) return Execution.skipped();
 
     var health = Health();
     await health.configure();
@@ -142,31 +141,7 @@ class HealthConnectLogic {
       settingsLogic.setFitStatus(text);
     }
 
-    _executions.add(
-      Execution(DateTime.now(), SubmissionStatus.success, status: text),
-    );
-
-    return text;
-  }
-
-  List<Execution> executions() {
-    return _executions;
-  }
-
-  Future<String?> checkRun() async {
-    var lastrun = settingsLogic.getLastRun();
-    if (lastrun != null) {
-      var date = DateTime.parse(lastrun);
-
-      if (_executions.isEmpty || date.isAfter(_executions.last.date)) {
-        var status = settingsLogic.getLastStatus();
-        _executions.add(
-          Execution(date, SubmissionStatus.success, status: status),
-        );
-      }
-    }
-
-    return null;
+    return Execution(DateTime.now(), SubmissionStatus.success, status: text);
   }
 
   bool isEnabled() {
