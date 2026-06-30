@@ -55,7 +55,11 @@ class WorkHelper {
     } catch (ex) {
       log("Background sync failed with $ex");
 
-      Notify.showBackground(ex.toString(), kind: NotificationKind.error);
+      Notify.show(
+        ex.toString(),
+        kind: NotificationKind.error,
+        isBackground: true,
+      );
       Dependencies.logics.settings.setFitStatus("Error: $ex");
       return false;
     }
