@@ -137,17 +137,14 @@ class MetricTypeView extends StatelessWidget {
     final locale = Translation.of(context);
     try {
       await Dependencies.services.metric.deleteMetricsType(id);
-      if (context.mounted) {
-        Notify.show('Metric ${type.name} deleted', context: context);
-      }
+
+      Notify.showIcon(NotificationKind.success);
     } catch (ex) {
-      if (context.mounted) {
-        Notify.show(
-          locale.error(ex.toString()),
-          context: context,
-          kind: NotificationKind.error,
-        );
-      }
+      Notify.show(
+        locale.error(ex.toString()),
+        context: context.mounted ? context : null,
+        kind: NotificationKind.error,
+      );
     }
   }
 

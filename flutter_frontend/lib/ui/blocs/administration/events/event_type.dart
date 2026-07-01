@@ -110,17 +110,14 @@ class EventTypeView extends StatelessWidget {
     var id = type.id;
     try {
       await Dependencies.services.event.deleteEventsType(id);
-      if (context.mounted) {
-        Notify.show('Event ${type.name} deleted', context: context);
-      }
+
+      Notify.showIcon(NotificationKind.success);
     } catch (ex) {
-      if (context.mounted) {
-        Notify.show(
-          locale.error(ex.toString()),
-          context: context,
-          kind: NotificationKind.error,
-        );
-      }
+      Notify.show(
+        locale.error(ex.toString()),
+        context: context.mounted ? context : null,
+        kind: NotificationKind.error,
+      );
     }
   }
 }

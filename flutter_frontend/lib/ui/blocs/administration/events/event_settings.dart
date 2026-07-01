@@ -37,7 +37,7 @@ class _SettingsViewState extends State<EventSettingsView> {
         // save the settings
         // await AppState.settings?.save();
 
-        Notify.show("Saved Successfully", context: context);
+        Notify.showIcon(NotificationKind.success);
 
         //_resetSettings();
       }

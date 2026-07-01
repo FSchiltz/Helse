@@ -46,15 +46,13 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       // save the user's settings
       await Dependencies.logics.settings.saveTheme(_theme);
 
-      if (mounted) Notify.show(locale.saved, context: context);
+      Notify.showIcon(NotificationKind.success);
     } catch (ex) {
-      if (mounted) {
-        Notify.show(
-          locale.error(ex.toString()),
-          context: context,
-          kind: NotificationKind.error,
-        );
-      }
+      Notify.show(
+        locale.error(ex.toString()),
+        context: context.mounted ? context : null,
+        kind: NotificationKind.error,
+      );
     }
   }
 
@@ -112,15 +110,13 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     try {
       _range = value;
       await Dependencies.logics.settings.setDateRange(value);
-      if (mounted) Notify.show(locale.saved, context: context);
+      Notify.showIcon(NotificationKind.success);
     } catch (ex) {
-      if (mounted) {
-        Notify.show(
-          locale.error(ex.toString()),
-          context: context,
-          kind: NotificationKind.error,
-        );
-      }
+      Notify.show(
+        locale.error(ex.toString()),
+        context: context.mounted ? context : null,
+        kind: NotificationKind.error,
+      );
     }
   }
 
@@ -266,15 +262,13 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       await Dependencies.logics.settings.setColors(mapped);
       Dependencies.theme.loadColors(mapped);
 
-      if (mounted) Notify.show(locale.saved, context: context);
+      Notify.showIcon(NotificationKind.success);
     } catch (ex) {
-      if (mounted) {
-        Notify.show(
-          locale.error(ex.toString()),
-          context: context,
-          kind: NotificationKind.error,
-        );
-      }
+      Notify.show(
+        locale.error(ex.toString()),
+        context: context.mounted ? context : null,
+        kind: NotificationKind.error,
+      );
     }
   }
 

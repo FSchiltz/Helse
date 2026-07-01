@@ -34,7 +34,7 @@ class _SettingsViewState extends State<GroupSettingsView> {
       if (_formKey.currentState?.validate() ?? false) {
         // save the settings
 
-        Notify.show("Saved Successfully", context: context);
+        Notify.showIcon(NotificationKind.success);
       }
     } catch (ex) {
       Notify.show("Error: $ex", context: context, kind: NotificationKind.error);

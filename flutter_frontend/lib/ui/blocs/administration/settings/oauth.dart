@@ -130,18 +130,16 @@ class _OauthFormViewState extends State<OauthFormView> {
           Oauth(enabled: _enabled, providers: providers),
         );
 
-        if (context.mounted) Notify.show(locale.saved, context: context);
+        Notify.showIcon(NotificationKind.success);
 
         widget.callback();
       }
     } catch (ex) {
-      if (context.mounted) {
-        Notify.show(
-          locale.error(ex.toString()),
-          context: context,
-          kind: NotificationKind.error,
-        );
-      }
+      Notify.show(
+        locale.error(ex.toString()),
+        context: context.mounted ? context : null,
+        kind: NotificationKind.error,
+      );
     }
   }
 

@@ -60,7 +60,7 @@ class _SyncSettingsState extends State<SyncSettings> {
         HealthSettings(_healthEnabled, _history, _background, _records),
       );
 
-      Notify.show(locale.saved, context: (mounted) ? context : null);
+      Notify.showIcon(NotificationKind.success);
       if (_healthEnabled) {
         await Dependencies.logics.health.requestPermissions();
       }
@@ -73,13 +73,11 @@ class _SyncSettingsState extends State<SyncSettings> {
         await Dependencies.logics.health.requestBackgroundPermission();
       }
     } catch (ex) {
-      if (mounted) {
-        Notify.show(
-          locale.error(ex.toString()),
-          context: context,
-          kind: NotificationKind.error,
-        );
-      }
+      Notify.show(
+        locale.error(ex.toString()),
+        context: context.mounted ? context : null,
+        kind: NotificationKind.error,
+      );
     }
   }
 
