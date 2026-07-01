@@ -37,12 +37,12 @@ class _SettingsViewState extends State<EventSettingsView> {
         // save the settings
         // await AppState.settings?.save();
 
-        Notify.show("Saved Successfully", context);
+        Notify.showIcon(NotificationKind.success);
 
         //_resetSettings();
       }
     } catch (ex) {
-      Notify.show("Error: $ex", context);
+      Notify.show("Error: $ex", context: context, kind: NotificationKind.error);
     }
   }
 }

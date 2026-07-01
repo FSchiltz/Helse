@@ -18,6 +18,8 @@ internal class JobResult
 
     public required DateTime Start { get; set; }
 
+    public required DateTime Enque { get; set; }
+
     public DateTime? Stop { get; set; }
 
     /// <summary>

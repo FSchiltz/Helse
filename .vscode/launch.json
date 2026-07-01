@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (web)",
+            "name": ".NET Core Launch",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
@@ -48,28 +48,6 @@
             "args": [
                 "--web-port=8000"
             ]
-        },
-        {
-            "name": "Flutter Desktop",
-            "type": "dart",
-            "request": "launch",            
-            "program": "flutter_frontend/lib/main.dart",
-            "args": [
-                "-d",
-                "linux",
-                "--offline"
-            ]
-        },
-        {
-            "name": "Flutter web",
-            "type": "dart",
-            "request": "launch",
-            "cwd": "flutter_frontend",
-            "args": [
-                "-d",
-                "chrome",
-                "--web-port=8000"
-            ]
         }
     ],
     "compounds": [
@@ -77,7 +55,7 @@
             "name": "Launch",
             "configurations": [
                 "Flutter",
-                ".NET Core Launch (web)"
+                ".NET Core Launch"
             ],
             "stopAll": true
         }

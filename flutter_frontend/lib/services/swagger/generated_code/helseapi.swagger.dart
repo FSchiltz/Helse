@@ -4052,6 +4052,7 @@ class JobResult {
     this.status,
     this.error,
     required this.start,
+    required this.enque,
     this.stop,
     this.result,
   });
@@ -4078,6 +4079,8 @@ class JobResult {
   final String? error;
   @JsonKey(name: 'start')
   final DateTime start;
+  @JsonKey(name: 'enque')
+  final DateTime enque;
   @JsonKey(name: 'stop')
   final DateTime? stop;
   @JsonKey(name: 'result')
@@ -4106,6 +4109,8 @@ class JobResult {
                 const DeepCollectionEquality().equals(other.error, error)) &&
             (identical(other.start, start) ||
                 const DeepCollectionEquality().equals(other.start, start)) &&
+            (identical(other.enque, enque) ||
+                const DeepCollectionEquality().equals(other.enque, enque)) &&
             (identical(other.stop, stop) ||
                 const DeepCollectionEquality().equals(other.stop, stop)) &&
             (identical(other.result, result) ||
@@ -4123,6 +4128,7 @@ class JobResult {
       const DeepCollectionEquality().hash(status) ^
       const DeepCollectionEquality().hash(error) ^
       const DeepCollectionEquality().hash(start) ^
+      const DeepCollectionEquality().hash(enque) ^
       const DeepCollectionEquality().hash(stop) ^
       const DeepCollectionEquality().hash(result) ^
       runtimeType.hashCode;
@@ -4136,6 +4142,7 @@ extension $JobResultExtension on JobResult {
     enums.JobStatus? status,
     String? error,
     DateTime? start,
+    DateTime? enque,
     DateTime? stop,
     String? result,
   }) {
@@ -4146,6 +4153,7 @@ extension $JobResultExtension on JobResult {
       status: status ?? this.status,
       error: error ?? this.error,
       start: start ?? this.start,
+      enque: enque ?? this.enque,
       stop: stop ?? this.stop,
       result: result ?? this.result,
     );
@@ -4158,6 +4166,7 @@ extension $JobResultExtension on JobResult {
     Wrapped<enums.JobStatus?>? status,
     Wrapped<String?>? error,
     Wrapped<DateTime>? start,
+    Wrapped<DateTime>? enque,
     Wrapped<DateTime?>? stop,
     Wrapped<String?>? result,
   }) {
@@ -4168,6 +4177,7 @@ extension $JobResultExtension on JobResult {
       status: (status != null ? status.value : this.status),
       error: (error != null ? error.value : this.error),
       start: (start != null ? start.value : this.start),
+      enque: (enque != null ? enque.value : this.enque),
       stop: (stop != null ? stop.value : this.stop),
       result: (result != null ? result.value : this.result),
     );

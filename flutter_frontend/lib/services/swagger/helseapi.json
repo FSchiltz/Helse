@@ -3222,7 +3222,8 @@
         "required": [
           "description",
           "userId",
-          "start"
+          "start",
+          "enque"
         ],
         "type": "object",
         "properties": {
@@ -3255,6 +3256,10 @@
             ]
           },
           "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "enque": {
             "type": "string",
             "format": "date-time"
           },

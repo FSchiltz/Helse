@@ -95,7 +95,7 @@ class MetricGroupView extends StatelessWidget {
                                   ),
                                   IconButton(
                                     onPressed: () async {
-                                      await _deleteGroup(type);
+                                      await _deleteGroup(type, context);
                                       reset();
                                     },
                                     icon: const Icon(Icons.delete_sharp),
@@ -116,15 +116,19 @@ class MetricGroupView extends StatelessWidget {
     );
   }
 
-  Future<void> _deleteGroup(Group type) async {
+  Future<void> _deleteGroup(Group type, BuildContext context) async {
     var id = type.id;
     try {
       if (id != null) {
         await Dependencies.services.metric.deleteMetricsGroup(id);
-        Notify.simple('Metric group ${type.name} deleted');
+        Notify.showIcon(NotificationKind.success);
       }
     } catch (ex) {
-      Notify.simple('Error deleting metric group ${type.name}');
+      Notify.show(
+        'Error deleting metric group ${type.name}',
+        context: context.mounted ? context : null,
+        kind: NotificationKind.error,
+      );
     }
   }
 }

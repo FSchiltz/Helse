@@ -6,6 +6,28 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import '../di/dependencies.dart';
 import 'account.dart';
 
+class ServiceError {
+  final String message;
+  final String? description;
+  final int code;
+
+  ServiceError(this.code, {required this.message, this.description});
+
+  bool _isClientError() {
+    return code < 500 && code >= 400;
+  }
+
+  @override
+  String toString() {
+    // TODO better manage the return values
+    if (_isClientError()) {
+      return "Invalid object state";
+    }
+
+    return "Server error";
+  }
+}
+
 abstract class ApiService {
   final Account account;
 
@@ -13,7 +35,7 @@ abstract class ApiService {
 
   Future<T?> call<T>(Future<Response<T>> Function() call) async {
     final stopwatch = Stopwatch()..start();
-    var response = await call();
+    final response = await call();
     if (stopwatch.elapsedMilliseconds > 300) {
       log(
         'Service call executed in ${stopwatch.elapsed}',
@@ -32,7 +54,11 @@ abstract class ApiService {
           result = null;
           break;
         default:
-          throw StateError(response.error?.toString() ?? "Login error");
+          throw ServiceError(
+            response.statusCode,
+            message: "Error during the call",
+            description: response.error?.toString(),
+          );
       }
     } else {
       result = response.body;

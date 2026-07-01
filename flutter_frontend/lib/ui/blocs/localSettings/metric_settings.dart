@@ -88,7 +88,7 @@ class _MetricsSettingsState extends State<MetricsSettings> {
 
   Future<void> _submit(_SettingsData data) async {
     final locale = Translation.of(context);
-    
+
     try {
       var metricsToSave = data.metrics.map((e) => e.ordered()).toList();
       var eventsToSave = data.events.map((e) => e.ordered()).toList();
@@ -125,11 +125,13 @@ class _MetricsSettingsState extends State<MetricsSettings> {
           true,
         );
       }
-      if (mounted) Notify.show(locale.saved, context);
+      Notify.showIcon(NotificationKind.success);
     } catch (ex) {
-      if (mounted) {
-        Notify.showError(locale.error(ex.toString()), context);
-      }
+      Notify.show(
+        locale.error(ex.toString()),
+        context: context.mounted ? context : null,
+        kind: NotificationKind.error,
+      );
     }
   }
 

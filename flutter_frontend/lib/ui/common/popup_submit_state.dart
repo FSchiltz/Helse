@@ -28,7 +28,8 @@ abstract class PopupSubmitState<T extends StatefulWidget> extends State<T> {
         status = SubmissionStatus.inProgress;
       });
 
-      if (formKey.currentState == null || formKey.currentState?.validate() == true) {
+      if (formKey.currentState == null ||
+          formKey.currentState?.validate() == true) {
         await callback?.call();
 
         formKey.currentState?.reset();
@@ -36,7 +37,7 @@ abstract class PopupSubmitState<T extends StatefulWidget> extends State<T> {
           return;
         }
 
-        Notify.show(locale.saved, context);
+        Notify.showIcon(NotificationKind.success);
         Navigator.of(context).pop();
       } else {
         setState(() {
@@ -44,13 +45,15 @@ abstract class PopupSubmitState<T extends StatefulWidget> extends State<T> {
         });
       }
     } catch (ex) {
-      log(locale.error(ex.toString()));
+      log(ex.toString());
       setState(() {
         status = SubmissionStatus.failure;
       });
-      if (mounted) {
-        Notify.showError(locale.error(ex.toString()), context);
-      }
+      Notify.show(
+        locale.error(ex.toString()),
+        context: mounted ? context : null,
+        kind: NotificationKind.error,
+      );
     }
   }
 }

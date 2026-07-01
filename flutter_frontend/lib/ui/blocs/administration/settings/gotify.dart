@@ -98,13 +98,15 @@ class _SmtpFormViewState extends State<GotifyFormView> {
 
         await Dependencies.services.settings.updateGotify(smtp);
 
-        if (context.mounted) Notify.show(locale.saved, context);
+        Notify.showIcon(NotificationKind.success);
         widget.callback();
       }
     } catch (ex) {
-      if (context.mounted) {
-        Notify.showError(locale.error(ex.toString()), context);
-      }
+      Notify.show(
+        locale.error(ex.toString()),
+        context: context.mounted ? context : null,
+        kind: NotificationKind.error,
+      );
     }
   }
 

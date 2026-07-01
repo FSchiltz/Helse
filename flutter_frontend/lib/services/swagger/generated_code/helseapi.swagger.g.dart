@@ -419,6 +419,7 @@ JobResult _$JobResultFromJson(Map<String, dynamic> json) => JobResult(
   status: jobStatusNullableFromJson(json['status']),
   error: json['error'] as String?,
   start: DateTime.parse(json['start'] as String),
+  enque: DateTime.parse(json['enque'] as String),
   stop: json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
   result: json['result'] as String?,
 );
@@ -430,6 +431,7 @@ Map<String, dynamic> _$JobResultToJson(JobResult instance) => <String, dynamic>{
   'status': jobStatusNullableToJson(instance.status),
   'error': instance.error,
   'start': instance.start.toIso8601String(),
+  'enque': instance.enque.toIso8601String(),
   'stop': instance.stop?.toIso8601String(),
   'result': instance.result,
 };

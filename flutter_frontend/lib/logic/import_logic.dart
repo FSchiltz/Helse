@@ -1,9 +1,11 @@
 import 'dart:typed_data';
 
+import 'package:collection/collection.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/event.dart';
-import 'package:helse/logic/fit/task_bloc.dart';
+import 'package:helse/logic/task_bloc.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/ui/common/notification.dart';
 
 class ImportLogic {
   final Map<String, JobResult> jobs = {};
@@ -13,22 +15,40 @@ class ImportLogic {
     return jobs.isNotEmpty;
   }
 
-  Future<SubmissionStatus> sync() async {
+  Future<Execution> sync() async {
     var entries = jobs.entries.toList();
     SubmissionStatus result = SubmissionStatus.initial;
+    double? progress;
 
     for (var job in entries) {
       if (job.value.status == JobStatus.inprogress ||
           job.value.status == JobStatus.notstarted) {
         var status = await Dependencies.services.import.status(job.key);
         if (status != null) {
-          result = SubmissionStatus.inProgress;
+          if (status.status == JobStatus.done) {
+            Notify.showSystem(
+              '${status.description} done',
+              description: status.result,
+              channel: "Imports"
+            );
+          } else if (status.status == JobStatus.inerror) {
+            Notify.showSystem(
+              '${status.description} failed',
+              description: '${status.error}',
+              kind: NotificationKind.error,
+              channel: "Imports"
+            );
+          } else if (status.status == JobStatus.inprogress) {
+            result = SubmissionStatus.inProgress;
+            progress = status.progress;
+          }
+
           jobs[job.key] = status;
         }
       }
     }
 
-    return result;
+    return Execution(DateTime.now(), result, progress: progress);
   }
 
   void add(String id) {
@@ -36,9 +56,10 @@ class ImportLogic {
       id,
       () => JobResult(
         status: JobStatus.notstarted,
-        progress: 0,
+        progress: null,
         userId: 0,
         description: "",
+        enque: DateTime.now(),
         start: DateTime.now(),
       ),
     );
@@ -55,10 +76,12 @@ class ImportLogic {
 
   List<Execution> executions() {
     return jobs.entries
+        .sortedByCompare((e) => e.value.enque, (a, b) => -a.compareTo(b))
         .map(
           (e) => Execution(
-            e.value.start,
+            e.value.enque,
             _getStatus(e.value.status),
+            status: e.value.result,
             title: e.value.description,
             progress: e.value.progress,
           ),

@@ -350,4 +350,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String bulkMetric(int count) {
     return 'Edition de $count metriques';
   }
+
+  @override
+  String get importLabel => 'Import external metric';
+
+  @override
+  String get file => 'File';
 }

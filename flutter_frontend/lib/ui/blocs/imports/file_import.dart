@@ -49,7 +49,7 @@ class _FileImportState extends PopupSubmitState<FileImport> {
         child: Column(
           children: [
             Text(
-              "Import external metric",
+              locale.importLabel,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             ValuesInput(
@@ -59,7 +59,7 @@ class _FileImportState extends PopupSubmitState<FileImport> {
               (value) => setState(() {
                 selected = value;
               }),
-              label: 'Type',
+              label: locale.type,
             ),
             const SizedBox(height: UIConstants.formPad),
             FileInput(
@@ -68,7 +68,7 @@ class _FileImportState extends PopupSubmitState<FileImport> {
                   file = value;
                 });
               },
-              "File",
+              locale.file,
               Icons.upload_file_sharp,
             ),
             Padding(
@@ -85,6 +85,7 @@ class _FileImportState extends PopupSubmitState<FileImport> {
     if (selected != null) {
       var content = await file?.readAsBytes();
       if (content == null) return;
+
       await Dependencies.logics.import.import(
         content,
         selected!,

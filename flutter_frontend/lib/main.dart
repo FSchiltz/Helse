@@ -11,8 +11,8 @@ import 'ui/home.dart';
 import 'ui/login.dart';
 import 'ui/splash.dart';
 
-final GlobalKey<ScaffoldMessengerState> snackbarKey =
-    GlobalKey<ScaffoldMessengerState>();
+final snackbarKey = GlobalKey<ScaffoldMessengerState>();
+final navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,9 +34,6 @@ class App extends StatefulWidget {
 
 class AppState extends State<App> {
   ThemeMode _themeMode = ThemeMode.system;
-  final _navigatorKey = GlobalKey<NavigatorState>();
-
-  NavigatorState get _navigator => _navigatorKey.currentState!;
 
   @override
   void initState() {
@@ -90,19 +87,19 @@ class AppState extends State<App> {
           ),
           themeMode: _themeMode,
           debugShowCheckedModeBanner: false,
-          navigatorKey: _navigatorKey,
+          navigatorKey: navigatorKey,
           scaffoldMessengerKey: snackbarKey,
           builder: (context, child) {
             return BlocListener<AuthenticationBloc, AuthenticationStatus>(
               listener: (context, state) {
                 switch (state) {
                   case AuthenticationStatus.authenticated:
-                    _navigator.pushAndRemoveUntil<void>(
+                    navigatorKey.currentState!.pushAndRemoveUntil<void>(
                       Home.route(),
                       (route) => false,
                     );
                   case AuthenticationStatus.unauthenticated:
-                    _navigator.pushAndRemoveUntil<void>(
+                    navigatorKey.currentState!.pushAndRemoveUntil<void>(
                       LoginPage.route(),
                       (route) => false,
                     );
