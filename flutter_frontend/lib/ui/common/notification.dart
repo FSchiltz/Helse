@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -11,6 +13,7 @@ class Notify {
   static const notificationSettings = "notificationAsked";
   static bool enabled = false;
   static OverlayEntry? _entry;
+  static Timer? _timer;
   static FlutterLocalNotificationsPlugin? _localNotifications;
 
   static Future<void> init() async {
@@ -38,16 +41,25 @@ class Notify {
     final overlay = navigatorKey.currentState?.overlay;
     if (overlay == null) return;
 
+    _timer?.cancel();
     _entry?.remove();
 
-    _entry = OverlayEntry(builder: (_) => IconOverlay(kind));
+    final controller = IconOverlayController();
 
-    overlay.insert(_entry!);
+    final entry = OverlayEntry(
+      builder: (_) => IconOverlay(kind, controller: controller),
+    );
 
-    final duration = const Duration(seconds: 5);
-    Future.delayed(duration, () {
-      _entry?.remove();
-      _entry = null;
+    _entry = entry;
+    overlay.insert(entry);
+
+    _timer = Timer(const Duration(seconds: 3), () async {
+      await controller.hide();
+
+      if (_entry == entry) {
+        entry.remove();
+        _entry = null;
+      }
     });
   }
 
