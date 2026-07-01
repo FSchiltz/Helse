@@ -45,7 +45,7 @@ abstract class PopupSubmitState<T extends StatefulWidget> extends State<T> {
         });
       }
     } catch (ex) {
-      log(locale.error(ex.toString()));
+      log(ex.toString());
       setState(() {
         status = SubmissionStatus.failure;
       });
