@@ -26,17 +26,17 @@ class ImportLogic {
         var status = await Dependencies.services.import.status(job.key);
         if (status != null) {
           if (status.status == JobStatus.done) {
-            Notify.show(
+            Notify.showSystem(
               '${status.description} done',
               description: status.result,
-              isBackground: true,
+              channel: "Imports"
             );
           } else if (status.status == JobStatus.inerror) {
-            Notify.show(
+            Notify.showSystem(
               '${status.description} failed',
               description: '${status.error}',
               kind: NotificationKind.error,
-              isBackground: true,
+              channel: "Imports"
             );
           } else if (status.status == JobStatus.inprogress) {
             result = SubmissionStatus.inProgress;

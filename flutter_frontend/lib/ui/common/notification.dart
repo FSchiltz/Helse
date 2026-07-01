@@ -51,26 +51,25 @@ class Notify {
     });
   }
 
-  static void show(
+  static void showSystem(
     String content, {
     String? description,
-    BuildContext? context,
     NotificationKind kind = NotificationKind.info,
-    bool isBackground = false,
+    String? channel,
   }) {
-    if (enabled && isBackground) {
-      _showSystem(content, description, kind);
+    if (enabled) {
+      _showSystem(content, description, kind, channel);
     } else {
       // if the user has not enabled notification, fallback to in app toast
-      _show(content, kind, context);
+      show(content, kind: kind);
     }
   }
 
-  static void _show(
-    String content,
-    NotificationKind kind,
+  static void show(
+    String content, {
+    NotificationKind kind = NotificationKind.info,
     BuildContext? context,
-  ) {
+  }) {
     TextStyle? style;
     Color? color;
     if (context != null) {
@@ -142,17 +141,17 @@ class Notify {
     String content,
     String? description,
     NotificationKind kind,
+    String? channel,
   ) async {
-    const AndroidNotificationDetails androidNotificationDetails =
+    AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
-          'helse',
-          'helse',
-          channelDescription: 'your channel description',
+          channel ?? 'helse',
+          channel ?? 'helse',
           importance: Importance.defaultImportance,
           priority: Priority.defaultPriority,
           ticker: 'ticker',
         );
-    const NotificationDetails notificationDetails = NotificationDetails(
+    NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
       linux: LinuxNotificationDetails(
         urgency: LinuxNotificationUrgency.critical,

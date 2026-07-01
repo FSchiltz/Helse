@@ -141,7 +141,13 @@ class HealthConnectLogic {
       settingsLogic.setFitStatus(text);
     }
 
-    return Execution(DateTime.now(), SubmissionStatus.success, status: text);
+    return Execution(
+      DateTime.now(),
+      (metrics > 0 || events > 0)
+          ? SubmissionStatus.success
+          : SubmissionStatus.skipped,
+      status: text,
+    );
   }
 
   bool isEnabled() {

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/logic/event.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -49,16 +50,23 @@ class WorkHelper {
         var settings = Dependencies.logics.settings.getHealth();
         if (settings.background) {
           log("Background sync enabled");
-          await Dependencies.logics.health.sync();
+          final result = await Dependencies.logics.health.sync();
+          if (result.state == SubmissionStatus.success) {
+            Notify.showSystem(
+              result.status ?? '',
+              kind: NotificationKind.info,
+              channel: "Health sync",
+            );
+          }
         }
       }
     } catch (ex) {
       log("Background sync failed with $ex");
 
-      Notify.show(
+      Notify.showSystem(
         ex.toString(),
         kind: NotificationKind.error,
-        isBackground: true,
+        channel: "Health sync",
       );
       Dependencies.logics.settings.setFitStatus("Error: $ex");
       return false;
