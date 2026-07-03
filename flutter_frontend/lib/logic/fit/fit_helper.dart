@@ -69,6 +69,12 @@ class FitHelper {
         case HealthDataType.WORKOUT:
           eventType = EventTypes.workout.value;
 
+        case HealthDataType.FLIGHTS_CLIMBED:
+        case HealthDataType.WALKING_SPEED:
+        case HealthDataType.EXERCISE_TIME:
+        case HealthDataType.WORKOUT_ROUTE:
+          eventType = EventTypes.workout.value;
+
         case HealthDataType.ATRIAL_FIBRILLATION_BURDEN:
         case HealthDataType.APPLE_STAND_HOUR:
         case HealthDataType.APPLE_MOVE_TIME:
@@ -126,13 +132,9 @@ class FitHelper {
         case HealthDataType.RESPIRATORY_RATE:
         case HealthDataType.PERIPHERAL_PERFUSION_INDEX:
         case HealthDataType.WAIST_CIRCUMFERENCE:
-        case HealthDataType.FLIGHTS_CLIMBED:
-        case HealthDataType.WALKING_SPEED:
         case HealthDataType.SPEED:
         case HealthDataType.MINDFULNESS:
         case HealthDataType.WATER:
-        case HealthDataType.EXERCISE_TIME:
-        case HealthDataType.WORKOUT_ROUTE:
         case HealthDataType.HEADACHE_NOT_PRESENT:
         case HealthDataType.HEADACHE_MILD:
         case HealthDataType.HEADACHE_MODERATE:
@@ -152,14 +154,14 @@ class FitHelper {
         case HealthDataType.ELECTRODERMAL_ACTIVITY:
         case HealthDataType.ELECTROCARDIOGRAM:
         case HealthDataType.ACTIVITY_INTENSITY:
-        // do nothing for now
+                // do nothing for now
       }
 
       // the uuid is not unique because some events have subevents
       if (metricType != null) {
         var metric = CreateMetric(
           date: point.dateFrom.toUtc(),
-          value: _convertValue(point.value) ?? '',
+          value: _convertValue(point.value) ?? point.value.toString(),
           source: FileTypes.googlehealthconnect,
           tag: point.recordingMethod.name,
           type: metricType,
@@ -172,7 +174,7 @@ class FitHelper {
         var event = CreateEvent(
           start: point.dateFrom.toUtc(),
           stop: point.dateTo.toUtc(),
-          description: description ?? point.typeString.split('_').toCamel(),
+          description: description ?? _convertValue(point.value) ?? point.typeString.split('_').toCamel(),
           source: FileTypes.googlehealthconnect,
           sourceId: '${point.uuid}_${point.type.name}_${point.dateFrom}',
           tag: point.recordingMethod.name,
@@ -191,8 +193,9 @@ class FitHelper {
       case NutritionHealthValue nutrition:
         return nutrition.calories.toString();
       case WorkoutHealthValue workout:
-        return '${workout.totalDistance}-${workout.totalEnergyBurned}-${workout.totalSteps}';
+        return  workout.workoutActivityType.name.toCamel();
     }
-    return value.toString();
+    
+    return null;
   }
 }
