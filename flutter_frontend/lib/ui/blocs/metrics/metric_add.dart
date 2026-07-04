@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';
+import 'package:helse/ui/common/inputs/file_list_widget.dart';
+import 'package:helse/ui/common/loader.dart';
 import 'package:helse/ui/common/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/ui_constants.dart';
@@ -34,11 +36,12 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
   DateTime _date = DateTime.now();
   List<TextEditingController> _values = [];
   final TextEditingController _tag = TextEditingController();
+  List<UIFile>? files;
 
   @override
   void initState() {
     super.initState();
-
+    _getFileList();
     final edit = widget.edit;
     if (edit != null) {
       _date = edit.date.toLocal();
@@ -56,6 +59,26 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
     }
   }
 
+  Future<void> _getFileList() async {
+    final edit = widget.edit;
+    if (edit != null) {
+      final result = await Dependencies.services.files.getMetricFiles(
+        edit.id,
+        widget.person,
+      );
+
+      final xfiles = result.map((e)=> UIFile(null, e.name, e.id)).toList();
+
+      setState(() {
+        files = xfiles;
+      });
+    } else {
+      setState(() {
+        files = [];
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final locale = Translation.of(context);
@@ -68,6 +91,7 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
         child: Form(
           child: SingleChildScrollView(
             child: Column(
+              spacing: UIConstants.formPad,
               children: [
                 ..._values.expand(
                   (e) => [
@@ -79,7 +103,6 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
                           ? TextInputType.numberWithOptions(decimal: true)
                           : null,
                     ),
-                    const SizedBox(height: UIConstants.formPad),
                   ],
                 ),
                 SquareTextField(
@@ -87,7 +110,6 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
                   label: locale.tag,
                   controller: _tag,
                 ),
-                const SizedBox(height: UIConstants.formPad),
                 DateInput(
                   locale.date,
                   _date,
@@ -95,6 +117,15 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
                     _date = value ?? DateTime.now();
                   }),
                 ),
+                (files == null)
+                    ? HelseLoader()
+                    : FileListWidget(
+                        files: files!,
+                        callback: (x) => setState(() {
+                          files = x;
+                        }),
+                        label: locale.file,
+                      ),
               ],
             ),
           ),
