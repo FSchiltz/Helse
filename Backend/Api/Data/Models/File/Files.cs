@@ -15,7 +15,7 @@ internal class Files
     public required byte[] Data { get; set; }
 
     [Column, NotNull]
-    public int DataType { get; set; }
+    public required string DataType { get; set; }
 
     [Column, NotNull]
     public int Type { get; set; }

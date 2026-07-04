@@ -9,7 +9,7 @@ internal class EventFiles
     public long FileId { get; set; }
 
     [Association(ThisKey = nameof(FileId), OtherKey = nameof(Files.Id))]
-    public Files? File {get;set;}
+    public Files File { get; set; } = null!;
 
     [Column]
     public long EventId { get; set; }

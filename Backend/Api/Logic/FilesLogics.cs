@@ -1,6 +1,7 @@
 using System.Net;
 using Helse.Api.Data;
 using Helse.Api.Helpers;
+using Helse.Models.Common;
 using Helse.Models.Files;
 using Helse.Models.Persons;
 
@@ -13,6 +14,10 @@ internal static class FilesLogics
         var files = api.MapGroup("/files").RequireAuthorization();
 
         files.MapGet("/{id}", GetFileAsync)
+        .Produces<Models.Files.File>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        files.MapGet("/data/{id}", GetDataAsync)
         .Produces<Models.Files.File>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
@@ -160,13 +165,13 @@ internal static class FilesLogics
         return TypedResults.NoContent();
     }
 
-    private static async Task<IResult> GetFilesAsync(long? personId, IUserContext users, IFilesContext files, HttpContext context)
+    private static async Task<IResult> GetFilesAsync(long? personId, [AsParameters] Pagination pagination, IUserContext users, IFilesContext files, HttpContext context)
     {
         var (error, user) = await users.ValidateUserOrCaregiver(personId, RightType.View, context.User);
         if (error is not null)
             return error;
 
-        Models.Files.File[] result = await files.GetAsync(user);
+        var result = await files.GetAsync(user, pagination);
 
         return TypedResults.Ok(result);
     }
@@ -177,8 +182,19 @@ internal static class FilesLogics
         if (error is not null)
             return error;
 
-        await files.DeleteAsync(id, user);
+        var result = await files.GetAsync(id, user);
 
-        return TypedResults.NoContent();
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<IResult> GetDataAsync(long id, long? personId, IUserContext users, IFilesContext files, HttpContext context)
+    {
+        var (error, user) = await users.ValidateUserOrCaregiver(personId, RightType.View, context.User);
+        if (error is not null)
+            return error;
+
+        var result = await files.GetDataAsync(id, user);
+
+        return TypedResults.Ok(result);
     }
 }
