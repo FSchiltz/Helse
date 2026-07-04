@@ -61,7 +61,7 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
     public Task<int> DeleteEventType(long id) => Db.GetTable<EventType>().DeleteAsync(x => x.Id == id && x.UserEditable);
 
     /// <inheritdoc/>
-    public Task DeleteMetric(long id) => Db.GetTable<Metric>().DeleteAsync(x => x.Id == id);
+    public Task DeleteMetric(long id, long personId) => Db.GetTable<Metric>().DeleteAsync(x => x.Id == id && x.PersonId == personId);
 
     /// <inheritdoc/>
     public Task<int> DeleteMetricType(long id) => Db.GetTable<MetricType>().DeleteAsync(x => x.Id == id && x.UserEditable);
@@ -474,7 +474,7 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
         {
             query = query.Set(x => x.Value, metric.Value);
         }
-        
+
         if (metric.UpdateTag)
         {
             query = query.Set(x => x.Tag, metric.Tag);

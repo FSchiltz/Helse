@@ -1,4 +1,8 @@
 using System.Net;
+using Helse.Api.Data;
+using Helse.Api.Helpers;
+using Helse.Models.Files;
+using Helse.Models.Persons;
 
 namespace Helse.Api.Logic;
 
@@ -29,7 +33,7 @@ internal static class FilesLogics
         .Produces((int)HttpStatusCode.Unauthorized);
 
         var metrics = files.MapGroup("/metrics").RequireAuthorization();
-        metrics.MapGet("/{id}", GetMetricFilesAsync)
+        metrics.MapGet("/{metricid}", GetMetricFilesAsync)
         .Produces<Models.Files.File[]>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
@@ -42,7 +46,7 @@ internal static class FilesLogics
         .Produces((int)HttpStatusCode.Unauthorized);
 
         var events = files.MapGroup("/events").RequireAuthorization();
-        events.MapGet("/{id}", GetEventFilesAsync)
+        events.MapGet("/{eventid}", GetEventFilesAsync)
         .Produces<Models.Files.File[]>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
@@ -57,4 +61,124 @@ internal static class FilesLogics
         return api;
     }
 
+    private static async Task<IResult> UnlinkEventAsync(long eventId, long fileId, long? personId, IUserContext users, IFilesContext files, HttpContext context)
+    {
+        var (error, user) = await users.ValidateUserOrCaregiver(personId, RightType.Edit, context.User);
+        if (error is not null)
+            return error;
+
+        await files.UnlinkEventAsync(eventId, fileId, user);
+
+        return TypedResults.NoContent();
+    }
+
+    private static async Task<IResult> LinkEventAsync(long eventId, long fileId, long? personId, IUserContext users, IFilesContext files, HttpContext context)
+    {
+        var (error, user) = await users.ValidateUserOrCaregiver(personId, RightType.Edit, context.User);
+        if (error is not null)
+            return error;
+
+        await files.LinkEventAsync(eventId, fileId, user);
+
+        return TypedResults.NoContent();
+    }
+
+    private static async Task<IResult> GetEventFilesAsync(long eventId, long? personId, IUserContext users, IFilesContext files, HttpContext context)
+    {
+        var (error, user) = await users.ValidateUserOrCaregiver(personId, RightType.View, context.User);
+        if (error is not null)
+            return error;
+
+        Models.Files.File[] result = await files.GetFilesByEventAsync(eventId, user);
+
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<IResult> UnlinkMetricAsync(long metricId, long fileId, long? personId, IUserContext users, IFilesContext files, HttpContext context)
+    {
+        var (error, user) = await users.ValidateUserOrCaregiver(personId, RightType.Edit, context.User);
+        if (error is not null)
+            return error;
+
+        await files.UnlinkMetricAsync(metricId, fileId, user);
+
+        return TypedResults.NoContent();
+    }
+
+    private static async Task<IResult> LinkMetricAsync(long metricId, long fileId, long? personId, IUserContext users, IFilesContext files, HttpContext context)
+    {
+        var (error, user) = await users.ValidateUserOrCaregiver(personId, RightType.Edit, context.User);
+        if (error is not null)
+            return error;
+
+        await files.LinkMetricAsync(metricId, fileId, user);
+
+        return TypedResults.NoContent();
+    }
+
+    private static async Task<IResult> GetMetricFilesAsync(long metricId, long? personId, IUserContext users, IFilesContext files, HttpContext context)
+    {
+        var (error, user) = await users.ValidateUserOrCaregiver(personId, RightType.View, context.User);
+        if (error is not null)
+            return error;
+
+        Models.Files.File[] result = await files.GetFilesByMetricAsync(metricId, user);
+
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<IResult> DeleteAsync(long id, long? personId, IUserContext users, IFilesContext files, HttpContext context)
+    {
+        var (error, user) = await users.ValidateUserOrCaregiver(personId, RightType.Edit, context.User);
+        if (error is not null)
+            return error;
+
+        await files.DeleteAsync(id, user);
+
+        return TypedResults.NoContent();
+    }
+
+    private static async Task<IResult> CreateAsync(CreateFile file, long? personId, IUserContext users, IFilesContext files, HttpContext context)
+    {
+        var (error, user) = await users.ValidateUserOrCaregiver(personId, RightType.Edit, context.User);
+        if (error is not null)
+            return error;
+
+        await files.CreateAsync(file, user);
+
+        return TypedResults.NoContent();
+    }
+
+    private static async Task<IResult> UpdateAsync(UpdateFile file, long? personId, IUserContext users, IFilesContext files, HttpContext context)
+    {
+        var (error, user) = await users.ValidateUserOrCaregiver(personId, RightType.Edit, context.User);
+        if (error is not null)
+            return error;
+
+        await files.UpdateAsync(file, user);
+
+        return TypedResults.NoContent();
+    }
+
+    private static async Task<IResult> GetFilesAsync(long? personId, IUserContext users, IFilesContext files, HttpContext context)
+    {
+        var (error, user) = await users.ValidateUserOrCaregiver(personId, RightType.View, context.User);
+        if (error is not null)
+            return error;
+
+        Models.Files.File[] result = await files.GetAsync(user);
+
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<IResult> GetFileAsync(long id, long? personId, IUserContext users, IFilesContext files, HttpContext context)
+    {
+        var (error, user) = await users.ValidateUserOrCaregiver(personId, RightType.View, context.User);
+        if (error is not null)
+            return error;
+
+        await files.DeleteAsync(id, user);
+
+        return TypedResults.NoContent();
+    }
 }

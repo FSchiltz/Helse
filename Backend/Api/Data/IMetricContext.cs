@@ -13,7 +13,7 @@ internal interface IMetricContext : IContext
 
     Task Insert(Helse.Models.Metrics.CreateMetricType metric);
 
-    Task DeleteMetric(long id);
+    Task DeleteMetric(long id, long personId);
 
     Task<Metric?> GetMetric(long id);
 

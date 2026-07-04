@@ -233,24 +233,17 @@ internal static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public async static Task<IResult> DeleteAsync(long id, IUserContext users, IMetricContext db, HttpContext context)
+    public async static Task<IResult> DeleteAsync(long id, long? personId, IUserContext users, IMetricContext db, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
             return error;
 
-        await using var transaction = await db.BeginTransactionAsync();
-
-        var existing = await db.GetMetric(id);
-        if (existing is null)
-            return TypedResults.NoContent();
-
-        if (user.PersonId != existing.PersonId && !await users.ValidateCaregiverAsync(user, existing.PersonId, RightType.Edit))
+        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.Edit))
             return TypedResults.Forbid();
 
-        await db.DeleteMetric(id);
+        await db.DeleteMetric(id, personId ?? user.PersonId);
 
-        await transaction.CommitAsync();
 
         return TypedResults.NoContent();
     }
