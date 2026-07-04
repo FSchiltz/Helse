@@ -145,7 +145,7 @@ internal static class MetricsLogic
             Type = x.Type,
             Tag = x.Tag,
             User = x.UserId,
-            Source = (FileTypes)x.Source,
+            Source = (ImportTypes)x.Source,
             SourceId = x.SourceId,
         }));
     }

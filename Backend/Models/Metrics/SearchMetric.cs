@@ -19,7 +19,7 @@ public class SearchMetric
 
     public int? MaxValue { get; set; }
 
-    public FileTypes Source { get; set; }
+    public ImportTypes Source { get; set; }
 
     public bool? IsTrue { get; set; }
 

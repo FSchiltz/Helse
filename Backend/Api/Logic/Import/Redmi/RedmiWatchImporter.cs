@@ -94,7 +94,7 @@ internal class RedmiWatchImporter(Stream file, IEventContext eventDb,IMetricCont
                         Type = (int)EventTypes.Sleep,
                         Description = item.StringState,
                         SourceId = item.GetKey,
-                        Source = FileTypes.RedmiWatch,
+                        Source = ImportTypes.RedmiWatch,
                     })];
 
                     break;
@@ -112,7 +112,7 @@ internal class RedmiWatchImporter(Stream file, IEventContext eventDb,IMetricCont
                         Value = weight.Weight,
                         Date = DateTimeOffset.FromUnixTimeSeconds(weight.Time ?? weight.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Wheight,
-                        Source = FileTypes.RedmiWatch,
+                        Source = ImportTypes.RedmiWatch,
                     }];
                     break;
                 case Steps:
@@ -129,7 +129,7 @@ internal class RedmiWatchImporter(Stream file, IEventContext eventDb,IMetricCont
                         Value = steps.Steps.ToString(),
                         Date = DateTimeOffset.FromUnixTimeSeconds(steps.Time ?? steps.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Steps,
-                        Source = FileTypes.RedmiWatch,
+                        Source = ImportTypes.RedmiWatch,
                     }];
                     break;
                 case Calories:
@@ -147,7 +147,7 @@ internal class RedmiWatchImporter(Stream file, IEventContext eventDb,IMetricCont
                         Value = calorie.Calories.ToString(),
                         Date = DateTimeOffset.FromUnixTimeSeconds(calorie.Time ?? calorie.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Calories,
-                        Source = FileTypes.RedmiWatch,
+                        Source = ImportTypes.RedmiWatch,
                     }];
                     break;
                 case MaxHeart:
@@ -168,7 +168,7 @@ internal class RedmiWatchImporter(Stream file, IEventContext eventDb,IMetricCont
                         Value = heart.Bpm.ToString(),
                         Date = DateTimeOffset.FromUnixTimeSeconds(heart.Time ?? heart.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Heart,
-                        Source = FileTypes.RedmiWatch,
+                        Source = ImportTypes.RedmiWatch,
                     }];
                     break;
                 case MaxSpo:
@@ -188,7 +188,7 @@ internal class RedmiWatchImporter(Stream file, IEventContext eventDb,IMetricCont
                         Value = spo.Spo2.ToString(),
                         Date = DateTimeOffset.FromUnixTimeSeconds(spo.Time ?? spo.Date_time ?? 0).DateTime,
                         Type = (long)MetricTypes.Oxygen,
-                        Source = FileTypes.RedmiWatch,
+                        Source = ImportTypes.RedmiWatch,
                     }];
                     break;
             }

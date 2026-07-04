@@ -5,7 +5,7 @@ namespace Helse.Models.Imports;
 /// <summary>
 /// Import file type supported by the app
 /// </summary>
-public enum FileTypes
+public enum ImportTypes
 {
     /// <summary>
     /// Manually added data

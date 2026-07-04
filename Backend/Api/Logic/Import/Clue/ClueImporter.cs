@@ -41,7 +41,7 @@ internal class ClueImporter(Stream file, IEventContext eventDb, IMetricContext m
                 {
                     Type = (int)type,
                     SourceId = node.Id + value.Option,
-                    Source = FileTypes.Clue,
+                    Source = ImportTypes.Clue,
                     Date = DateTime.Parse(node.Date),
                     Value = $"{subValue}{value.Option?.Replace('_', ' ')}",
                 };

@@ -103,7 +103,7 @@ internal class BabyTrackerImporter(Stream file, IEventContext eventDb,IMetricCon
         {
             Value = item.Amount.ToString(),
             Date = ToDate(item.FromDate),
-            Source = FileTypes.BabyTracker,
+            Source = ImportTypes.BabyTracker,
             Type = (long)MetricTypes.Diaper,
             SourceId = GetKey(item),
         };
@@ -123,7 +123,7 @@ internal class BabyTrackerImporter(Stream file, IEventContext eventDb,IMetricCon
                     Description = string.Empty,
                     Tag = item.Details,
                     Type = (int)EventTypes.Bath,
-                    Source = FileTypes.BabyTracker,
+                    Source = ImportTypes.BabyTracker,
                     SourceId = GetKey(item),
                 };
             default:
@@ -141,7 +141,7 @@ internal class BabyTrackerImporter(Stream file, IEventContext eventDb,IMetricCon
             Description = string.Empty,
             Tag = item.Details,
             Type = (int)EventTypes.Sleep,
-            Source = FileTypes.BabyTracker,
+            Source = ImportTypes.BabyTracker,
             SourceId = GetKey(item),
         };
     }
@@ -159,7 +159,7 @@ internal class BabyTrackerImporter(Stream file, IEventContext eventDb,IMetricCon
         {
             Value = item.Amount.ToString(),
             Date = ToDate(item.FromDate),
-            Source = FileTypes.BabyTracker,
+            Source = ImportTypes.BabyTracker,
             Type = type,
             SourceId = GetKey(item),
         };
@@ -184,7 +184,7 @@ internal class BabyTrackerImporter(Stream file, IEventContext eventDb,IMetricCon
             Description = description,
             Tag = $"{item.Amount}{GetUnit(item.Unit)} {item.Details}",
             Type = (int)EventTypes.Feeding,
-            Source = FileTypes.BabyTracker,
+            Source = ImportTypes.BabyTracker,
             SourceId = GetKey(item),
         };
     }
@@ -211,7 +211,7 @@ internal class BabyTrackerImporter(Stream file, IEventContext eventDb,IMetricCon
                 {
                     Value = "Vaccination: " + item.Details,
                     Date = ToDate(item.FromDate),
-                    Source = FileTypes.BabyTracker,
+                    Source = ImportTypes.BabyTracker,
                     Type = (int)MetricTypes.Medication,
                     SourceId = GetKey(item),
                 };
@@ -220,7 +220,7 @@ internal class BabyTrackerImporter(Stream file, IEventContext eventDb,IMetricCon
                 {
                     Value = item.Details,
                     Date = ToDate(item.FromDate),
-                    Source = FileTypes.BabyTracker,
+                    Source = ImportTypes.BabyTracker,
                     Type = (int)MetricTypes.Medication,
                     SourceId = GetKey(item),
                 };
@@ -229,7 +229,7 @@ internal class BabyTrackerImporter(Stream file, IEventContext eventDb,IMetricCon
                 {
                     Value = item.Amount.ToString(),
                     Date = ToDate(item.FromDate),
-                    Source = FileTypes.BabyTracker,
+                    Source = ImportTypes.BabyTracker,
                     Type = (int)MetricTypes.Temperature,
                     SourceId = GetKey(item),
                 };

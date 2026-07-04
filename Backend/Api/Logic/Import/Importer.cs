@@ -37,7 +37,7 @@ internal abstract class Importer(IEventContext eventDb, IMetricContext metricDb,
                 Description = e.Description,
                 Id = fromDb.Id,
                 NotificationTime = fromDb.NotificationTime,
-                Source = (FileTypes)fromDb.Source,
+                Source = (ImportTypes)fromDb.Source,
                 SourceId = fromDb.SourceId,
                 Tag = fromDb.Tag
             });

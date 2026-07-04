@@ -53,7 +53,7 @@ internal static class ImportLogic
     }
 
     public static IResult GetImportTypes()
-      => TypedResults.Ok(Enum.GetValues<FileTypes>().Select(x => new FileType((int)x, x.DescriptionAttr())));
+      => TypedResults.Ok(Enum.GetValues<ImportTypes>().Select(x => new FileType((int)x, x.DescriptionAttr())));
 
     public static async Task<IResult> GetJobResultAsync([FromRoute] Guid id, IImportQueue queue, IUserContext users, HttpContext context)
     {
@@ -121,7 +121,7 @@ internal static class ImportLogic
         // save the data so the background job does not fail
         await stream.CopyToAsync(ms);
         ms.Position = 0;
-        var fileType = (FileTypes)type;
+        var fileType = (ImportTypes)type;
 
         queue.Enqueue(new ImporterService.Job(id, ms, fileType, user.Id, person), $"Import from {fileType}{(patient is not null ? $" for {patient}" : string.Empty)}");
 

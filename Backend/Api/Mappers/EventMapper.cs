@@ -31,7 +31,7 @@ internal static class EventMapper
             Start = x.Start,
             Valid = x.Valid,
             NotificationTime = x.NotificationTime,
-            Source = (FileTypes)x.Source,
+            Source = (ImportTypes)x.Source,
             SourceId = x.SourceId,
             Tag = x.Tag,
         };
