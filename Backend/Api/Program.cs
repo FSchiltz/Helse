@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using Helse.Api;
 using Helse.Api.Data;
 using Helse.Api.Helpers.Auth;
 using Helse.Api.Jobs;
@@ -60,7 +59,8 @@ builder.Services.AddSingleton<TokenService>()
     .AddTransient<IMetricContext, HealthContext>()
     .AddTransient<IEventContext, HealthContext>()
     .AddTransient<IStatsContext, StatsContext>()
-    .AddTransient<ICommonContext, CommonContext>();
+    .AddTransient<ICommonContext, CommonContext>()
+    .AddTransient<IFilesContext, FilesContext>();
 
 builder.Services.AddAuthentication(options =>
   {
