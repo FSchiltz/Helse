@@ -2,6 +2,7 @@ import 'package:helse/services/account.dart';
 import 'package:helse/services/admin_service.dart';
 import 'package:helse/services/common_service.dart';
 import 'package:helse/services/event_service.dart';
+import 'package:helse/services/file_service.dart';
 import 'package:helse/services/helper_service.dart';
 import 'package:helse/services/import_service.dart';
 import 'package:helse/services/metric_service.dart';
@@ -19,6 +20,7 @@ class Services {
   AdminService admin;
   SettingService settings;
   CommonService common;
+  FileService files;
 
   Services.build(
     this.authService,
@@ -30,6 +32,7 @@ class Services {
     this.import,
     this.settings,
     this.common,
+    this.files,
   );
 
   factory Services(Account account) {
@@ -43,6 +46,7 @@ class Services {
       ImportService(account),
       SettingService(account),
       CommonService(account),
+      FileService(account),
     );
   }
 }

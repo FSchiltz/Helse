@@ -39,7 +39,7 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
   void initState() {
     super.initState();
 
-    var edit = widget.edit;
+    final edit = widget.edit;
     if (edit != null) {
       _date = edit.date.toLocal();
       final values = MetricHelper.getValue(edit.value, widget.type.type);
@@ -58,7 +58,7 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
 
   @override
   Widget build(BuildContext context) {
-    var locale = Translation.of(context);
+    final locale = Translation.of(context);
     return SquareDialog(
       title: Text(locale.addItem(widget.type.name)),
       icon: const Icon(Icons.add_chart_sharp),
@@ -75,6 +75,9 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
                       icon: Icons.add_sharp,
                       label: locale.value,
                       controller: e,
+                      type: (widget.type.type == MetricDataType.number)
+                          ? TextInputType.numberWithOptions(decimal: true)
+                          : null,
                     ),
                     const SizedBox(height: UIConstants.formPad),
                   ],
@@ -101,26 +104,29 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
   }
 
   Future<void> _submit() async {
+    final value = MetricHelper().joinValue(_values.map((e) => e.text));
     if (widget.edit?.id != null) {
-      var metric = UpdateMetric(
+      final metric = UpdateMetric(
         id: widget.edit?.id ?? 0,
         date: _date.toUtc(),
         type: widget.type.id,
         tag: _tag.text,
-        value: MetricHelper().joinValue(_values.map((e) => e.text)),
+        value: value,
         source: ImportTypes.none,
         sourceId: "",
       );
+
       await Dependencies.services.metric.updateMetric(metric);
     } else {
-      var metric = CreateMetric(
+      final metric = CreateMetric(
         date: _date.toUtc(),
         type: widget.type.id,
         tag: _tag.text,
-        value: MetricHelper().joinValue(_values.map((e) => e.text)),
+        value: value,
         source: ImportTypes.none,
         sourceId: "",
       );
+
       await Dependencies.services.metric.addMetrics(
         metric,
         person: widget.person,
@@ -128,5 +134,16 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
     }
 
     widget.callback();
+  }
+
+  @override
+  void dispose() {
+    for (final controller in _values) {
+      controller.dispose();
+    }
+
+    _tag.dispose();
+
+    super.dispose();
   }
 }
