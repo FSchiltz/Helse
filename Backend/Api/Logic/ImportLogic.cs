@@ -6,6 +6,7 @@ using LinqToDB;
 using Microsoft.AspNetCore.Mvc;
 using Helse.Api.Logic.Import;
 using Helse.Api.Jobs;
+using System.Net;
 
 namespace Helse.Api.Logic;
 
@@ -18,6 +19,39 @@ internal record JobId(Guid Id);
 /// </summary>
 internal static class ImportLogic
 {
+    public static RouteGroupBuilder MapImports(this RouteGroupBuilder api)
+    {
+        /* Importer endpoint */
+        var import = api.MapGroup("/import").RequireAuthorization();
+        import.MapGet("/types", GetImportTypes)
+            .Produces<List<FileType>>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
+        import.MapPost("/{type}", PostFileAsync)
+            .DisableAntiforgery()
+            .Produces<JobId>((int)HttpStatusCode.Accepted)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
+        import.MapGet("/jobs/all", GetAllJobsAsync)
+            .Produces<JobResultInfo[]>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
+        import.MapGet("/jobs", GetJobsAsync)
+            .Produces<JobResultInfo[]>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
+        import.MapGet("/{id:Guid}", GetJobResultAsync)
+            .Produces<JobResult>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.NotFound)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
+        import.MapPost("/", PostListAsync)
+            .Produces<ImportsResult>((int)HttpStatusCode.OK)
+            .Produces((int)HttpStatusCode.Unauthorized);
+
+        return api;
+    }
+
     public static IResult GetImportTypes()
       => TypedResults.Ok(Enum.GetValues<FileTypes>().Select(x => new FileType((int)x, x.DescriptionAttr())));
 

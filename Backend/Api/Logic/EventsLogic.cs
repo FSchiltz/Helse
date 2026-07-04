@@ -15,7 +15,7 @@ namespace Helse.Api.Logic;
 /// </summary>
 internal static class EventsLogic
 {
-    public static void MapEvents(this RouteGroupBuilder api)
+    public static RouteGroupBuilder MapEvents(this RouteGroupBuilder api)
     {
         /* Events endpoints*/
         var events = api.MapGroup("/events").RequireAuthorization();
@@ -72,6 +72,8 @@ internal static class EventsLogic
         eventsType.MapGet("/", GetTypeAsync)
         .Produces<List<EventType>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
+
+        return api;
     }
 
     public async static Task<IResult> GetAsync(int type, DateTime start, DateTime end, long? personId, IUserContext users, IEventContext events, HttpContext context)

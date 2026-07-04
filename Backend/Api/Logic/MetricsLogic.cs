@@ -17,7 +17,7 @@ namespace Helse.Api.Logic;
 /// </summary>
 internal static class MetricsLogic
 {
-    public static void MapMetrics(this RouteGroupBuilder api)
+    public static RouteGroupBuilder MapMetrics(this RouteGroupBuilder api)
     {
         /* Metrics endpoints*/
         var metrics = api.MapGroup("/metrics").RequireAuthorization();
@@ -90,6 +90,8 @@ internal static class MetricsLogic
         metricsGroup.MapGet("/", GetGroupsAsync)
         .Produces<List<Group>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
+
+        return api;
     }
 
     public async static Task<IResult> GetAsync(int type, DateTime start, DateTime end, long? personId, IUserContext users, IMetricContext db, HttpContext context)

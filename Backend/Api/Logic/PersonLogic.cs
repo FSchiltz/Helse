@@ -1,8 +1,10 @@
+using System.Net;
 using Helse.Api.Data;
 using Helse.Api.Helpers;
 using Helse.Api.Helpers.Auth;
 using Helse.Api.Mappers;
 using Helse.Models.Persons;
+using Helse.Models.Settings;
 using LinqToDB;
 
 namespace Helse.Api.Logic;
@@ -12,6 +14,70 @@ namespace Helse.Api.Logic;
 /// </summary>
 internal static class PersonLogic
 {
+    public static RouteGroupBuilder MapPerson(this RouteGroupBuilder api)
+    {
+        var person = api.MapGroup("/person").RequireAuthorization();
+
+        person.MapPost("/", CreateAsync)
+        .AllowAnonymous()
+        .Produces<UserId>((int)HttpStatusCode.Created)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        person.MapGet("/", GetAsync)
+        .Produces<List<Person>>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        person.MapDelete("/{userId}", DeleteAsync)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        person.MapGet("/caregiver", GetCaregiverAsync)
+        .Produces<List<Person>>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        person.MapPut("/", UpdatePersonAsync)
+            .Produces((int)HttpStatusCode.Unauthorized)
+            .Produces((int)HttpStatusCode.NoContent);
+
+        person.MapGet("/settings", GetUserSettings)
+        .Produces<UserSettings>((int)HttpStatusCode.OK)
+       .Produces((int)HttpStatusCode.Unauthorized);
+
+        person.MapPost("/settings", PostUserSettingsAsync)
+       .Produces((int)HttpStatusCode.NoContent)
+       .Produces((int)HttpStatusCode.Unauthorized);
+
+        var rights = person.MapGroup("/rights");
+        rights.MapPost("/{personId}", SetRight)
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        return api;
+    }
+
+    public static async Task<IResult> GetUserSettings(IUserContext users, ISettingsContext settings, IMetricContext metrics, IEventContext events, HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        var data = await settings.GetSettings<UserSettings>(UserSettings.Name, user.Id);
+        await SettingsLogic.Upgrade(data, events, metrics);
+        return error ?? TypedResults.Ok(data);
+    }
+
+    /// <summary>
+    /// Update the user settings
+    /// </summary>
+    /// <param name="settings"></param>
+    /// <param name="users"></param>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public static async Task<IResult> PostUserSettingsAsync(UserSettings settings, IUserContext users, ISettingsContext db, HttpContext context, ILoggerFactory logger)
+    {
+        var log = logger.CreateLogger(nameof(SettingsLogic));
+
+        var (error, user) = await users.GetUser(context.User);
+        return error ?? await db.Save(settings, user.Id, log);
+    }
+
     /// <summary>
     /// Get the list of users/person with their rights
     /// The caller needs to be an adminInvalidType

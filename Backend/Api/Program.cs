@@ -115,7 +115,16 @@ app.UseStaticFiles();
 
 app.UseHttpLogging();
 
-app.MapGroup("/api").MapEnpoints();
+app.MapGroup("/api")
+    .MapAuth()
+    .MapPerson()
+    .MapPatients()
+    .MapCommon()
+    .MapFiles()
+    .MapMetrics()
+    .MapEvents()
+    .MapAdmin()
+    .MapImports();
 
 app.Run();
 
