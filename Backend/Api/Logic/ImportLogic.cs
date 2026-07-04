@@ -10,10 +10,6 @@ using System.Net;
 
 namespace Helse.Api.Logic;
 
-internal record FileType(int Type, string? Name);
-
-internal record JobId(Guid Id);
-
 /// <summary>
 /// Logic for the import of file
 /// </summary>
@@ -24,10 +20,10 @@ internal static class ImportLogic
         /* Importer endpoint */
         var import = api.MapGroup("/import").RequireAuthorization();
         import.MapGet("/types", GetImportTypes)
-            .Produces<List<FileType>>((int)HttpStatusCode.OK)
+            .Produces<List<ImportType>>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
 
-        import.MapPost("/", PostFileAsync)
+        import.MapPost("/{type}", PostFileAsync)
             .DisableAntiforgery()
             .Produces<JobId>((int)HttpStatusCode.Accepted)
             .Produces((int)HttpStatusCode.Unauthorized);
@@ -53,7 +49,7 @@ internal static class ImportLogic
     }
 
     public static IResult GetImportTypes()
-      => TypedResults.Ok(Enum.GetValues<ImportTypes>().Select(x => new FileType((int)x, x.DescriptionAttr())));
+      => TypedResults.Ok(Enum.GetValues<ImportTypes>().Select(x => new ImportType((int)x, x.DescriptionAttr())));
 
     public static async Task<IResult> GetJobResultAsync([FromRoute] Guid id, IImportQueue queue, IUserContext users, HttpContext context)
     {
@@ -92,7 +88,7 @@ internal static class ImportLogic
         return TypedResults.Ok(results);
     }
 
-    public static async Task<IResult> PostFileAsync([FromForm] IFormFile file, [FromQuery] ImportTypes type, [FromQuery] long? patient, IUserContext users, IImportQueue queue, HttpContext context)
+    public static async Task<IResult> PostFileAsync([FromForm] IFormFile file, [FromRoute] int type, [FromQuery] long? patient, IUserContext users, IImportQueue queue, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)

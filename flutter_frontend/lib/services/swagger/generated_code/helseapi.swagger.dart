@@ -2116,15 +2116,15 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response<List<FileType>>> apiImportTypesGet() {
-    generatedMapping.putIfAbsent(FileType, () => FileType.fromJsonFactory);
+  Future<chopper.Response<List<ImportType>>> apiImportTypesGet() {
+    generatedMapping.putIfAbsent(ImportType, () => ImportType.fromJsonFactory);
 
     return _apiImportTypesGet();
   }
 
   ///
   @GET(path: '/api/import/types')
-  Future<chopper.Response<List<FileType>>> _apiImportTypesGet({
+  Future<chopper.Response<List<ImportType>>> _apiImportTypesGet({
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -2141,23 +2141,23 @@ abstract class Helseapi extends ChopperService {
   ///
   ///@param type
   ///@param patient
-  Future<chopper.Response<JobId>> apiImportPost({
-    required ImportTypes? type,
+  Future<chopper.Response<JobId>> apiImportTypePost({
+    required int? type,
     int? patient,
     required dynamic file,
   }) {
     generatedMapping.putIfAbsent(JobId, () => JobId.fromJsonFactory);
 
-    return _apiImportPost(type: type, patient: patient, file: file);
+    return _apiImportTypePost(type: type, patient: patient, file: file);
   }
 
   ///
   ///@param type
   ///@param patient
-  @POST(path: '/api/import', optionalBody: true)
+  @POST(path: '/api/import/{type}', optionalBody: true)
   @Multipart()
-  Future<chopper.Response<JobId>> _apiImportPost({
-    @Query('type') required ImportTypes? type,
+  Future<chopper.Response<JobId>> _apiImportTypePost({
+    @Path('type') required int? type,
     @Query('patient') int? patient,
     @Part('file') required dynamic file,
     @chopper.Tag()
@@ -4415,6 +4415,55 @@ extension $ImportsResultExtension on ImportsResult {
     return ImportsResult(
       metrics: (metrics != null ? metrics.value : this.metrics),
       events: (events != null ? events.value : this.events),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class ImportType {
+  const ImportType({required this.type, this.name});
+
+  factory ImportType.fromJson(Map<String, dynamic> json) =>
+      _$ImportTypeFromJson(json);
+
+  static const toJsonFactory = _$ImportTypeToJson;
+  Map<String, dynamic> toJson() => _$ImportTypeToJson(this);
+
+  @JsonKey(name: 'type')
+  final int type;
+  @JsonKey(name: 'name')
+  final String? name;
+  static const fromJsonFactory = _$ImportTypeFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is ImportType &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(name) ^
+      runtimeType.hashCode;
+}
+
+extension $ImportTypeExtension on ImportType {
+  ImportType copyWith({int? type, String? name}) {
+    return ImportType(type: type ?? this.type, name: name ?? this.name);
+  }
+
+  ImportType copyWithWrapped({Wrapped<int>? type, Wrapped<String?>? name}) {
+    return ImportType(
+      type: (type != null ? type.value : this.type),
+      name: (name != null ? name.value : this.name),
     );
   }
 }
@@ -8794,23 +8843,23 @@ extension $UserSettingsExtension on UserSettings {
 }
 
 @JsonSerializable(explicitToJson: true)
-class ApiImportPost$RequestBody {
-  const ApiImportPost$RequestBody({required this.file});
+class ApiImportTypePost$RequestBody {
+  const ApiImportTypePost$RequestBody({required this.file});
 
-  factory ApiImportPost$RequestBody.fromJson(Map<String, dynamic> json) =>
-      _$ApiImportPost$RequestBodyFromJson(json);
+  factory ApiImportTypePost$RequestBody.fromJson(Map<String, dynamic> json) =>
+      _$ApiImportTypePost$RequestBodyFromJson(json);
 
-  static const toJsonFactory = _$ApiImportPost$RequestBodyToJson;
-  Map<String, dynamic> toJson() => _$ApiImportPost$RequestBodyToJson(this);
+  static const toJsonFactory = _$ApiImportTypePost$RequestBodyToJson;
+  Map<String, dynamic> toJson() => _$ApiImportTypePost$RequestBodyToJson(this);
 
   @JsonKey(name: 'file')
   final String file;
-  static const fromJsonFactory = _$ApiImportPost$RequestBodyFromJson;
+  static const fromJsonFactory = _$ApiImportTypePost$RequestBodyFromJson;
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other is ApiImportPost$RequestBody &&
+        (other is ApiImportTypePost$RequestBody &&
             (identical(other.file, file) ||
                 const DeepCollectionEquality().equals(other.file, file)));
   }
@@ -8823,13 +8872,14 @@ class ApiImportPost$RequestBody {
       const DeepCollectionEquality().hash(file) ^ runtimeType.hashCode;
 }
 
-extension $ApiImportPost$RequestBodyExtension on ApiImportPost$RequestBody {
-  ApiImportPost$RequestBody copyWith({String? file}) {
-    return ApiImportPost$RequestBody(file: file ?? this.file);
+extension $ApiImportTypePost$RequestBodyExtension
+    on ApiImportTypePost$RequestBody {
+  ApiImportTypePost$RequestBody copyWith({String? file}) {
+    return ApiImportTypePost$RequestBody(file: file ?? this.file);
   }
 
-  ApiImportPost$RequestBody copyWithWrapped({Wrapped<String>? file}) {
-    return ApiImportPost$RequestBody(
+  ApiImportTypePost$RequestBody copyWithWrapped({Wrapped<String>? file}) {
+    return ApiImportTypePost$RequestBody(
       file: (file != null ? file.value : this.file),
     );
   }

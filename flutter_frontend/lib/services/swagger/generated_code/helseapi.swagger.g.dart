@@ -418,6 +418,14 @@ Map<String, dynamic> _$ImportsResultToJson(ImportsResult instance) =>
       'events': instance.events.toJson(),
     };
 
+ImportType _$ImportTypeFromJson(Map<String, dynamic> json) => ImportType(
+  type: (json['type'] as num).toInt(),
+  name: json['name'] as String?,
+);
+
+Map<String, dynamic> _$ImportTypeToJson(ImportType instance) =>
+    <String, dynamic>{'type': instance.type, 'name': instance.name};
+
 Interval _$IntervalFromJson(Map<String, dynamic> json) => Interval(
   start: DateTime.parse(json['start'] as String),
   stop: DateTime.parse(json['stop'] as String),
@@ -1262,10 +1270,10 @@ Map<String, dynamic> _$UserSettingsToJson(UserSettings instance) =>
       'groups': instance.groups?.toJson(),
     };
 
-ApiImportPost$RequestBody _$ApiImportPost$RequestBodyFromJson(
+ApiImportTypePost$RequestBody _$ApiImportTypePost$RequestBodyFromJson(
   Map<String, dynamic> json,
-) => ApiImportPost$RequestBody(file: json['file'] as String);
+) => ApiImportTypePost$RequestBody(file: json['file'] as String);
 
-Map<String, dynamic> _$ApiImportPost$RequestBodyToJson(
-  ApiImportPost$RequestBody instance,
+Map<String, dynamic> _$ApiImportTypePost$RequestBodyToJson(
+  ApiImportTypePost$RequestBody instance,
 ) => <String, dynamic>{'file': instance.file};

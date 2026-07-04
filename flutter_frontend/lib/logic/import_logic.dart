@@ -65,7 +65,7 @@ class ImportLogic {
     );
   }
 
-  Future<void> import(Uint8List content, ImportTypes type, int? patient) async {
+  Future<void> import(Uint8List content, int type, int? patient) async {
     var id = await Dependencies.services.import.import(content, type, patient);
     if (id == null) {
       throw StateError("Incorrect job id");

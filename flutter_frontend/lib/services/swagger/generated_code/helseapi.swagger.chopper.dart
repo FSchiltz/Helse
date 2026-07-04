@@ -2020,7 +2020,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<List<InvalidType>>> _apiImportTypesGet({
+  Future<Response<List<ImportType>>> _apiImportTypesGet({
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
       summary: '',
@@ -2039,12 +2039,12 @@ final class _$Helseapi extends Helseapi {
       client.baseUrl,
       tag: swaggerMetaData,
     );
-    return client.send<List<InvalidType>, InvalidType>($request);
+    return client.send<List<ImportType>, ImportType>($request);
   }
 
   @override
-  Future<Response<JobId>> _apiImportPost({
-    required InvalidType type,
+  Future<Response<JobId>> _apiImportTypePost({
+    required int? type,
     int? patient,
     required dynamic file,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -2058,11 +2058,8 @@ final class _$Helseapi extends Helseapi {
       deprecated: false,
     ),
   }) {
-    final Uri $url = Uri.parse('/api/import');
-    final Map<String, dynamic> $params = <String, dynamic>{
-      'type': type,
-      'patient': patient,
-    };
+    final Uri $url = Uri.parse('/api/import/${type}');
+    final Map<String, dynamic> $params = <String, dynamic>{'patient': patient};
     final List<PartValue> $parts = <PartValue>[
       PartValue<dynamic>('file', file),
     ];

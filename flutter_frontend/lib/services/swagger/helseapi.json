@@ -2695,7 +2695,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/FileType"
+                    "$ref": "#/components/schemas/ImportType"
                   }
                 }
               }
@@ -2707,7 +2707,7 @@
         }
       }
     },
-    "/api/import": {
+    "/api/import/{type}": {
       "post": {
         "tags": [
           "ImportLogic"
@@ -2715,10 +2715,15 @@
         "parameters": [
           {
             "name": "type",
-            "in": "query",
+            "in": "path",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/ImportTypes"
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
             }
           },
           {
@@ -3690,6 +3695,29 @@
           },
           "events": {
             "$ref": "#/components/schemas/ImportResult"
+          }
+        }
+      },
+      "ImportType": {
+        "required": [
+          "type",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },

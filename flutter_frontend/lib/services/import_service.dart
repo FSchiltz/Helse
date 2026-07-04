@@ -8,17 +8,17 @@ import 'swagger/generated_code/helseapi.swagger.dart';
 class ImportService extends ApiService {
   ImportService(super.account);
 
-  Future<List<ImportTypes>?> fileTypes() async {
+  Future<List<ImportType>?> fileTypes() async {
     var api = await getService();
     return await call(api.apiImportTypesGet);
   }
 
-  Future<JobId?> import(Uint8List file, ImportTypes type, int? patient) async {
+  Future<JobId?> import(Uint8List file, int type, int? patient) async {
     var api = await getService();
 
     var part = MultipartFile.fromBytes("file", file, filename: 'upload');
     return await call(
-      () => api.apiImportPost(file: part, type: type, patient: patient),
+      () => api.apiImportTypePost(file: part, type: type, patient: patient),
     );
   }
 

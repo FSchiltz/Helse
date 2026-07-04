@@ -2,6 +2,10 @@ using System.ComponentModel;
 
 namespace Helse.Models.Imports;
 
+public record ImportType(int Type, string? Name);
+
+public record JobId(Guid Id);
+
 /// <summary>
 /// Import file type supported by the app
 /// </summary>
