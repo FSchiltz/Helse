@@ -77,7 +77,6 @@ internal static class PatientsLogic
             Type = x.Type,
             Description = x.Description,
             Stop = x.Stop,
-            File = x.FileId,
             Start = x.Start,
             Valid = x.Valid,
             Person = x.PersonId,

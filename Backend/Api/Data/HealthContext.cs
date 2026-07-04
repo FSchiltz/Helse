@@ -90,16 +90,6 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
             .ToArrayAsync();
     }
 
-    /// <inheritdoc/>
-    public Task<Event[]> GetTreatmentEvents(long id, DateTime start, DateTime end)
-    {
-        return Db.GetTable<Event>()
-            .Where(x => x.PersonId == id
-                && x.TreatmentId != null
-                && x.Start <= end && start <= x.Stop)
-            .ToArrayAsync();
-    }
-
     public Task<Event[]> GetEventToPublish(DateTime start, DateTime end)
     {
         return Db.GetTable<Event>()

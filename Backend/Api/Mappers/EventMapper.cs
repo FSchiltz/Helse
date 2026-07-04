@@ -28,7 +28,6 @@ internal static class EventMapper
             Type = x.Type,
             Description = x.Description,
             Stop = x.Stop,
-            File = x.FileId,
             Start = x.Start,
             Valid = x.Valid,
             NotificationTime = x.NotificationTime,

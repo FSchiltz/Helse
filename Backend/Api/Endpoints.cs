@@ -110,24 +110,6 @@ internal static class Endpoints
        .Produces((int)HttpStatusCode.NoContent)
        .Produces((int)HttpStatusCode.Unauthorized);
     }
-    
-    public static void MapTreatments(this RouteGroupBuilder api)
-    {
-        var treatment = api.MapGroup("/treatment").RequireAuthorization();
-
-        treatment.MapPost("/", TreatmentLogic.PostAsync)
-            .Produces((int)HttpStatusCode.NoContent)
-            .Produces((int)HttpStatusCode.Unauthorized);
-
-        treatment.MapGet("/", TreatmentLogic.GetAsync)
-            .Produces<List<Event>>((int)HttpStatusCode.OK)
-            .Produces((int)HttpStatusCode.Unauthorized);
-
-        var eventsType = treatment.MapGroup("/type").RequireAuthorization();
-        eventsType.MapGet("/", TreatmentLogic.GetTypeAsync)
-            .Produces<List<EventType>>((int)HttpStatusCode.OK)
-            .Produces((int)HttpStatusCode.Unauthorized);
-    }
 
     public static void MapAdmin(this RouteGroupBuilder api)
     {
@@ -232,8 +214,6 @@ internal static class Endpoints
 
         api.MapMetrics();
         api.MapEvents();
-
-        api.MapTreatments();
 
         api.MapAdmin();
 

@@ -22,18 +22,6 @@ internal class Event
     [Association(ThisKey = nameof(UserId), OtherKey = nameof(Persons.User.Id))]
     public User? User { get; set; }
 
-    [Column]
-    public long? FileId { get; set; }
-
-    [Association(ThisKey = nameof(FileId), OtherKey = nameof(Files.Id))]
-    public Files? File { get; set; }
-
-    [Column]
-    public long? TreatmentId { get; set; }
-
-    [Association(ThisKey = nameof(TreatmentId), OtherKey = nameof(Health.Treatment.Id))]
-    public Treatment? Treatment { get; set; }
-
     [Column, NotNull]
     public int Type { get; set; }
 
