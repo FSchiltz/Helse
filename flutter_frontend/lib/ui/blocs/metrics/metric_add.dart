@@ -108,7 +108,7 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
         type: widget.type.id,
         tag: _tag.text,
         value: MetricHelper().joinValue(_values.map((e) => e.text)),
-        source: FileTypes.none,
+        source: ImportTypes.none,
         sourceId: "",
       );
       await Dependencies.services.metric.updateMetric(metric);
@@ -118,7 +118,7 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
         type: widget.type.id,
         tag: _tag.text,
         value: MetricHelper().joinValue(_values.map((e) => e.text)),
-        source: FileTypes.none,
+        source: ImportTypes.none,
         sourceId: "",
       );
       await Dependencies.services.metric.addMetrics(

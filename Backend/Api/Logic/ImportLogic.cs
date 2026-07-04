@@ -27,7 +27,7 @@ internal static class ImportLogic
             .Produces<List<FileType>>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
 
-        import.MapPost("/{type}", PostFileAsync)
+        import.MapPost("/", PostFileAsync)
             .DisableAntiforgery()
             .Produces<JobId>((int)HttpStatusCode.Accepted)
             .Produces((int)HttpStatusCode.Unauthorized);
@@ -45,7 +45,7 @@ internal static class ImportLogic
             .Produces((int)HttpStatusCode.NotFound)
             .Produces((int)HttpStatusCode.Unauthorized);
 
-        import.MapPost("/", PostListAsync)
+        import.MapPost("/results", PostListAsync)
             .Produces<ImportsResult>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
 
@@ -92,7 +92,7 @@ internal static class ImportLogic
         return TypedResults.Ok(results);
     }
 
-    public static async Task<IResult> PostFileAsync([FromForm] IFormFile file, [FromRoute] int type, [FromQuery] long? patient, IUserContext users, IImportQueue queue, HttpContext context)
+    public static async Task<IResult> PostFileAsync([FromForm] IFormFile file, [FromQuery] ImportTypes type, [FromQuery] long? patient, IUserContext users, IImportQueue queue, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)

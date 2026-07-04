@@ -7,7 +7,6 @@ import 'package:helse/services/import_service.dart';
 import 'package:helse/services/metric_service.dart';
 import 'package:helse/services/oauth_service.dart';
 import 'package:helse/services/setting_service.dart';
-import 'package:helse/services/treatment_service.dart';
 import 'package:helse/services/user_service.dart';
 
 class Services {
@@ -18,7 +17,6 @@ class Services {
   ImportService import;
   UserService user;
   AdminService admin;
-  TreatmentService treatement;
   SettingService settings;
   CommonService common;
 
@@ -29,7 +27,6 @@ class Services {
     this.event,
     this.user,
     this.admin,
-    this.treatement,
     this.import,
     this.settings,
     this.common,
@@ -43,7 +40,6 @@ class Services {
       EventService(account),
       UserService(account),
       AdminService(account),
-      TreatmentService(account),
       ImportService(account),
       SettingService(account),
       CommonService(account),

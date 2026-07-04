@@ -19,9 +19,9 @@ class FileImport extends StatefulWidget {
 }
 
 class _FileImportState extends PopupSubmitState<FileImport> {
-  List<FileType> types = [];
+  List<ImportTypes> types = [];
   XFile? file;
-  int? selected;
+  ImportTypes? selected;
 
   @override
   void initState() {
@@ -54,7 +54,7 @@ class _FileImportState extends PopupSubmitState<FileImport> {
             ),
             ValuesInput(
               types
-                  .map((type) => DropdownItem(type.type, type.name ?? ""))
+                  .map((type) => DropdownItem(type, type.name))
                   .toList(),
               (value) => setState(() {
                 selected = value;

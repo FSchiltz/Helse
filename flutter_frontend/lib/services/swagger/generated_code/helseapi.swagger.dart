@@ -336,7 +336,7 @@ abstract class Helseapi extends ChopperService {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["PersonLogic"],
       deprecated: false,
     ),
   });
@@ -360,7 +360,7 @@ abstract class Helseapi extends ChopperService {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["PersonLogic"],
       deprecated: false,
     ),
   });
@@ -529,7 +529,7 @@ abstract class Helseapi extends ChopperService {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["PatientsLogic"],
       deprecated: false,
     ),
   });
@@ -553,7 +553,406 @@ abstract class Helseapi extends ChopperService {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["PatientsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param id
+  ///@param personId
+  Future<chopper.Response<File>> apiFilesIdGet({
+    required int? id,
+    int? personId,
+  }) {
+    generatedMapping.putIfAbsent(File, () => File.fromJsonFactory);
+
+    return _apiFilesIdGet(id: id, personId: personId);
+  }
+
+  ///
+  ///@param id
+  ///@param personId
+  @GET(path: '/api/files/{id}')
+  Future<chopper.Response<File>> _apiFilesIdGet({
+    @Path('id') required int? id,
+    @Query('personId') int? personId,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param id
+  ///@param personId
+  Future<chopper.Response> apiFilesIdDelete({required int? id, int? personId}) {
+    return _apiFilesIdDelete(id: id, personId: personId);
+  }
+
+  ///
+  ///@param id
+  ///@param personId
+  @DELETE(path: '/api/files/{id}')
+  Future<chopper.Response> _apiFilesIdDelete({
+    @Path('id') required int? id,
+    @Query('personId') int? personId,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param id
+  ///@param personId
+  Future<chopper.Response<File>> apiFilesDataIdGet({
+    required int? id,
+    int? personId,
+  }) {
+    generatedMapping.putIfAbsent(File, () => File.fromJsonFactory);
+
+    return _apiFilesDataIdGet(id: id, personId: personId);
+  }
+
+  ///
+  ///@param id
+  ///@param personId
+  @GET(path: '/api/files/data/{id}')
+  Future<chopper.Response<File>> _apiFilesDataIdGet({
+    @Path('id') required int? id,
+    @Query('personId') int? personId,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param personId
+  ///@param Page
+  ///@param PageSize
+  Future<chopper.Response<List<File>>> apiFilesGet({
+    int? personId,
+    required int? page,
+    required int? pageSize,
+  }) {
+    generatedMapping.putIfAbsent(File, () => File.fromJsonFactory);
+
+    return _apiFilesGet(personId: personId, page: page, pageSize: pageSize);
+  }
+
+  ///
+  ///@param personId
+  ///@param Page
+  ///@param PageSize
+  @GET(path: '/api/files')
+  Future<chopper.Response<List<File>>> _apiFilesGet({
+    @Query('personId') int? personId,
+    @Query('Page') required int? page,
+    @Query('PageSize') required int? pageSize,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param personId
+  Future<chopper.Response> apiFilesPut({
+    int? personId,
+    required UpdateFile? body,
+  }) {
+    return _apiFilesPut(personId: personId, body: body);
+  }
+
+  ///
+  ///@param personId
+  @PUT(path: '/api/files', optionalBody: true)
+  Future<chopper.Response> _apiFilesPut({
+    @Query('personId') int? personId,
+    @Body() required UpdateFile? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param personId
+  Future<chopper.Response> apiFilesPost({
+    int? personId,
+    required CreateFile? body,
+  }) {
+    return _apiFilesPost(personId: personId, body: body);
+  }
+
+  ///
+  ///@param personId
+  @POST(path: '/api/files', optionalBody: true)
+  Future<chopper.Response> _apiFilesPost({
+    @Query('personId') int? personId,
+    @Body() required CreateFile? body,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param metricid
+  ///@param personId
+  Future<chopper.Response<List<File>>> apiFilesMetricsMetricidGet({
+    required int? metricid,
+    int? personId,
+  }) {
+    generatedMapping.putIfAbsent(File, () => File.fromJsonFactory);
+
+    return _apiFilesMetricsMetricidGet(metricid: metricid, personId: personId);
+  }
+
+  ///
+  ///@param metricid
+  ///@param personId
+  @GET(path: '/api/files/metrics/{metricid}')
+  Future<chopper.Response<List<File>>> _apiFilesMetricsMetricidGet({
+    @Path('metricid') required int? metricid,
+    @Query('personId') int? personId,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param metricid
+  ///@param fileid
+  ///@param personId
+  Future<chopper.Response> apiFilesMetricsMetricidFileidPost({
+    required int? metricid,
+    required int? fileid,
+    int? personId,
+  }) {
+    return _apiFilesMetricsMetricidFileidPost(
+      metricid: metricid,
+      fileid: fileid,
+      personId: personId,
+    );
+  }
+
+  ///
+  ///@param metricid
+  ///@param fileid
+  ///@param personId
+  @POST(path: '/api/files/metrics/{metricid}/{fileid}', optionalBody: true)
+  Future<chopper.Response> _apiFilesMetricsMetricidFileidPost({
+    @Path('metricid') required int? metricid,
+    @Path('fileid') required int? fileid,
+    @Query('personId') int? personId,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param metricid
+  ///@param fileid
+  ///@param personId
+  Future<chopper.Response> apiFilesMetricsMetricidFileidDelete({
+    required int? metricid,
+    required int? fileid,
+    int? personId,
+  }) {
+    return _apiFilesMetricsMetricidFileidDelete(
+      metricid: metricid,
+      fileid: fileid,
+      personId: personId,
+    );
+  }
+
+  ///
+  ///@param metricid
+  ///@param fileid
+  ///@param personId
+  @DELETE(path: '/api/files/metrics/{metricid}/{fileid}')
+  Future<chopper.Response> _apiFilesMetricsMetricidFileidDelete({
+    @Path('metricid') required int? metricid,
+    @Path('fileid') required int? fileid,
+    @Query('personId') int? personId,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param eventid
+  ///@param personId
+  Future<chopper.Response<List<File>>> apiFilesEventsEventidGet({
+    required int? eventid,
+    int? personId,
+  }) {
+    generatedMapping.putIfAbsent(File, () => File.fromJsonFactory);
+
+    return _apiFilesEventsEventidGet(eventid: eventid, personId: personId);
+  }
+
+  ///
+  ///@param eventid
+  ///@param personId
+  @GET(path: '/api/files/events/{eventid}')
+  Future<chopper.Response<List<File>>> _apiFilesEventsEventidGet({
+    @Path('eventid') required int? eventid,
+    @Query('personId') int? personId,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param eventid
+  ///@param fileid
+  ///@param personId
+  Future<chopper.Response> apiFilesEventsEventidFileidPost({
+    required int? eventid,
+    required int? fileid,
+    int? personId,
+  }) {
+    return _apiFilesEventsEventidFileidPost(
+      eventid: eventid,
+      fileid: fileid,
+      personId: personId,
+    );
+  }
+
+  ///
+  ///@param eventid
+  ///@param fileid
+  ///@param personId
+  @POST(path: '/api/files/events/{eventid}/{fileid}', optionalBody: true)
+  Future<chopper.Response> _apiFilesEventsEventidFileidPost({
+    @Path('eventid') required int? eventid,
+    @Path('fileid') required int? fileid,
+    @Query('personId') int? personId,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  });
+
+  ///
+  ///@param eventid
+  ///@param fileid
+  ///@param personId
+  Future<chopper.Response> apiFilesEventsEventidFileidDelete({
+    required int? eventid,
+    required int? fileid,
+    int? personId,
+  }) {
+    return _apiFilesEventsEventidFileidDelete(
+      eventid: eventid,
+      fileid: fileid,
+      personId: personId,
+    );
+  }
+
+  ///
+  ///@param eventid
+  ///@param fileid
+  ///@param personId
+  @DELETE(path: '/api/files/events/{eventid}/{fileid}')
+  Future<chopper.Response> _apiFilesEventsEventidFileidDelete({
+    @Path('eventid') required int? eventid,
+    @Path('fileid') required int? fileid,
+    @Query('personId') int? personId,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
       deprecated: false,
     ),
   });
@@ -705,15 +1104,21 @@ abstract class Helseapi extends ChopperService {
 
   ///
   ///@param id
-  Future<chopper.Response> apiMetricsIdDelete({required int? id}) {
-    return _apiMetricsIdDelete(id: id);
+  ///@param personId
+  Future<chopper.Response> apiMetricsIdDelete({
+    required int? id,
+    int? personId,
+  }) {
+    return _apiMetricsIdDelete(id: id, personId: personId);
   }
 
   ///
   ///@param id
+  ///@param personId
   @DELETE(path: '/api/metrics/{id}')
   Future<chopper.Response> _apiMetricsIdDelete({
     @Path('id') required int? id,
+    @Query('personId') int? personId,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -1435,87 +1840,6 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response> apiTreatmentPost({required CreateTreatment? body}) {
-    return _apiTreatmentPost(body: body);
-  }
-
-  ///
-  @POST(path: '/api/treatment', optionalBody: true)
-  Future<chopper.Response> _apiTreatmentPost({
-    @Body() required CreateTreatment? body,
-    @chopper.Tag()
-    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
-      description: '',
-      summary: '',
-      operationId: '',
-      consumes: [],
-      produces: [],
-      security: [],
-      tags: ["TreatmentLogic"],
-      deprecated: false,
-    ),
-  });
-
-  ///
-  ///@param start
-  ///@param end
-  ///@param personId
-  Future<chopper.Response<List<Event>>> apiTreatmentGet({
-    required DateTime? start,
-    required DateTime? end,
-    int? personId,
-  }) {
-    generatedMapping.putIfAbsent(Event, () => Event.fromJsonFactory);
-
-    return _apiTreatmentGet(start: start, end: end, personId: personId);
-  }
-
-  ///
-  ///@param start
-  ///@param end
-  ///@param personId
-  @GET(path: '/api/treatment')
-  Future<chopper.Response<List<Event>>> _apiTreatmentGet({
-    @Query('start') required DateTime? start,
-    @Query('end') required DateTime? end,
-    @Query('personId') int? personId,
-    @chopper.Tag()
-    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
-      description: '',
-      summary: '',
-      operationId: '',
-      consumes: [],
-      produces: [],
-      security: [],
-      tags: ["TreatmentLogic"],
-      deprecated: false,
-    ),
-  });
-
-  ///
-  Future<chopper.Response<List<EventType>>> apiTreatmentTypeGet() {
-    generatedMapping.putIfAbsent(EventType, () => EventType.fromJsonFactory);
-
-    return _apiTreatmentTypeGet();
-  }
-
-  ///
-  @GET(path: '/api/treatment/type')
-  Future<chopper.Response<List<EventType>>> _apiTreatmentTypeGet({
-    @chopper.Tag()
-    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
-      description: '',
-      summary: '',
-      operationId: '',
-      consumes: [],
-      produces: [],
-      security: [],
-      tags: ["TreatmentLogic"],
-      deprecated: false,
-    ),
-  });
-
-  ///
   Future<chopper.Response> apiAdminSettingsOauthPost({required Oauth? body}) {
     return _apiAdminSettingsOauthPost(body: body);
   }
@@ -1532,7 +1856,7 @@ abstract class Helseapi extends ChopperService {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["AdminLogic"],
       deprecated: false,
     ),
   });
@@ -1555,7 +1879,7 @@ abstract class Helseapi extends ChopperService {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["AdminLogic"],
       deprecated: false,
     ),
   });
@@ -1577,7 +1901,7 @@ abstract class Helseapi extends ChopperService {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["AdminLogic"],
       deprecated: false,
     ),
   });
@@ -1600,7 +1924,7 @@ abstract class Helseapi extends ChopperService {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["AdminLogic"],
       deprecated: false,
     ),
   });
@@ -1622,7 +1946,7 @@ abstract class Helseapi extends ChopperService {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["AdminLogic"],
       deprecated: false,
     ),
   });
@@ -1645,7 +1969,7 @@ abstract class Helseapi extends ChopperService {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["AdminLogic"],
       deprecated: false,
     ),
   });
@@ -1668,7 +1992,7 @@ abstract class Helseapi extends ChopperService {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["AdminLogic"],
       deprecated: false,
     ),
   });
@@ -1690,30 +2014,7 @@ abstract class Helseapi extends ChopperService {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
-      deprecated: false,
-    ),
-  });
-
-  ///
-  Future<chopper.Response<List<JobResult>>> apiAdminSettingsJobsGet() {
-    generatedMapping.putIfAbsent(JobResult, () => JobResult.fromJsonFactory);
-
-    return _apiAdminSettingsJobsGet();
-  }
-
-  ///
-  @GET(path: '/api/admin/settings/jobs')
-  Future<chopper.Response<List<JobResult>>> _apiAdminSettingsJobsGet({
-    @chopper.Tag()
-    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
-      description: '',
-      summary: '',
-      operationId: '',
-      consumes: [],
-      produces: [],
-      security: [],
-      tags: ["ImportLogic"],
+      tags: ["AdminLogic"],
       deprecated: false,
     ),
   });
@@ -1840,23 +2141,23 @@ abstract class Helseapi extends ChopperService {
   ///
   ///@param type
   ///@param patient
-  Future<chopper.Response<JobId>> apiImportTypePost({
-    required int? type,
+  Future<chopper.Response<JobId>> apiImportPost({
+    required ImportTypes? type,
     int? patient,
     required dynamic file,
   }) {
     generatedMapping.putIfAbsent(JobId, () => JobId.fromJsonFactory);
 
-    return _apiImportTypePost(type: type, patient: patient, file: file);
+    return _apiImportPost(type: type, patient: patient, file: file);
   }
 
   ///
   ///@param type
   ///@param patient
-  @POST(path: '/api/import/{type}', optionalBody: true)
+  @POST(path: '/api/import', optionalBody: true)
   @Multipart()
-  Future<chopper.Response<JobId>> _apiImportTypePost({
-    @Path('type') required int? type,
+  Future<chopper.Response<JobId>> _apiImportPost({
+    @Query('type') required ImportTypes? type,
     @Query('patient') int? patient,
     @Part('file') required dynamic file,
     @chopper.Tag()
@@ -1952,7 +2253,7 @@ abstract class Helseapi extends ChopperService {
 
   ///
   ///@param patient
-  Future<chopper.Response<ImportsResult>> apiImportPost({
+  Future<chopper.Response<ImportsResult>> apiImportResultsPost({
     int? patient,
     required ImportData? body,
   }) {
@@ -1961,13 +2262,13 @@ abstract class Helseapi extends ChopperService {
       () => ImportsResult.fromJsonFactory,
     );
 
-    return _apiImportPost(patient: patient, body: body);
+    return _apiImportResultsPost(patient: patient, body: body);
   }
 
   ///
   ///@param patient
-  @POST(path: '/api/import', optionalBody: true)
-  Future<chopper.Response<ImportsResult>> _apiImportPost({
+  @POST(path: '/api/import/results', optionalBody: true)
+  Future<chopper.Response<ImportsResult>> _apiImportResultsPost({
     @Query('patient') int? patient,
     @Body() required ImportData? body,
     @chopper.Tag()
@@ -2285,10 +2586,10 @@ class CreateEvent {
   final DateTime? notificationTime;
   @JsonKey(
     name: 'source',
-    toJson: fileTypesNullableToJson,
-    fromJson: fileTypesNullableFromJson,
+    toJson: importTypesNullableToJson,
+    fromJson: importTypesNullableFromJson,
   )
-  final enums.FileTypes? source;
+  final enums.ImportTypes? source;
   @JsonKey(name: 'sourceId')
   final String? sourceId;
   static const fromJsonFactory = _$CreateEventFromJson;
@@ -2348,7 +2649,7 @@ extension $CreateEventExtension on CreateEvent {
     DateTime? stop,
     String? tag,
     DateTime? notificationTime,
-    enums.FileTypes? source,
+    enums.ImportTypes? source,
     String? sourceId,
   }) {
     return CreateEvent(
@@ -2370,7 +2671,7 @@ extension $CreateEventExtension on CreateEvent {
     Wrapped<DateTime>? stop,
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
-    Wrapped<enums.FileTypes?>? source,
+    Wrapped<enums.ImportTypes?>? source,
     Wrapped<String?>? sourceId,
   }) {
     return CreateEvent(
@@ -2504,6 +2805,114 @@ extension $CreateEventTypeExtension on CreateEventType {
 }
 
 @JsonSerializable(explicitToJson: true)
+class CreateFile {
+  const CreateFile({
+    required this.data,
+    this.type,
+    this.start,
+    this.stop,
+    required this.name,
+    required this.description,
+  });
+
+  factory CreateFile.fromJson(Map<String, dynamic> json) =>
+      _$CreateFileFromJson(json);
+
+  static const toJsonFactory = _$CreateFileToJson;
+  Map<String, dynamic> toJson() => _$CreateFileToJson(this);
+
+  @JsonKey(name: 'data')
+  final FileData data;
+  @JsonKey(
+    name: 'type',
+    toJson: fileTypeNullableToJson,
+    fromJson: fileTypeNullableFromJson,
+  )
+  final enums.FileType? type;
+  @JsonKey(name: 'start')
+  final DateTime? start;
+  @JsonKey(name: 'stop')
+  final DateTime? stop;
+  @JsonKey(name: 'name')
+  final String name;
+  @JsonKey(name: 'description')
+  final String description;
+  static const fromJsonFactory = _$CreateFileFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is CreateFile &&
+            (identical(other.data, data) ||
+                const DeepCollectionEquality().equals(other.data, data)) &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.start, start) ||
+                const DeepCollectionEquality().equals(other.start, start)) &&
+            (identical(other.stop, stop) ||
+                const DeepCollectionEquality().equals(other.stop, stop)) &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(data) ^
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(start) ^
+      const DeepCollectionEquality().hash(stop) ^
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(description) ^
+      runtimeType.hashCode;
+}
+
+extension $CreateFileExtension on CreateFile {
+  CreateFile copyWith({
+    FileData? data,
+    enums.FileType? type,
+    DateTime? start,
+    DateTime? stop,
+    String? name,
+    String? description,
+  }) {
+    return CreateFile(
+      data: data ?? this.data,
+      type: type ?? this.type,
+      start: start ?? this.start,
+      stop: stop ?? this.stop,
+      name: name ?? this.name,
+      description: description ?? this.description,
+    );
+  }
+
+  CreateFile copyWithWrapped({
+    Wrapped<FileData>? data,
+    Wrapped<enums.FileType?>? type,
+    Wrapped<DateTime?>? start,
+    Wrapped<DateTime?>? stop,
+    Wrapped<String>? name,
+    Wrapped<String>? description,
+  }) {
+    return CreateFile(
+      data: (data != null ? data.value : this.data),
+      type: (type != null ? type.value : this.type),
+      start: (start != null ? start.value : this.start),
+      stop: (stop != null ? stop.value : this.stop),
+      name: (name != null ? name.value : this.name),
+      description: (description != null ? description.value : this.description),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class CreateGroup {
   const CreateGroup({
     required this.name,
@@ -2625,10 +3034,10 @@ class CreateMetric {
   final int type;
   @JsonKey(
     name: 'source',
-    toJson: fileTypesNullableToJson,
-    fromJson: fileTypesNullableFromJson,
+    toJson: importTypesNullableToJson,
+    fromJson: importTypesNullableFromJson,
   )
-  final enums.FileTypes? source;
+  final enums.ImportTypes? source;
   @JsonKey(name: 'sourceId')
   final String sourceId;
   static const fromJsonFactory = _$CreateMetricFromJson;
@@ -2678,7 +3087,7 @@ extension $CreateMetricExtension on CreateMetric {
     String? value,
     String? tag,
     int? type,
-    enums.FileTypes? source,
+    enums.ImportTypes? source,
     String? sourceId,
   }) {
     return CreateMetric(
@@ -2698,7 +3107,7 @@ extension $CreateMetricExtension on CreateMetric {
     Wrapped<String>? value,
     Wrapped<String?>? tag,
     Wrapped<int>? type,
-    Wrapped<enums.FileTypes?>? source,
+    Wrapped<enums.ImportTypes?>? source,
     Wrapped<String>? sourceId,
   }) {
     return CreateMetric(
@@ -2888,68 +3297,9 @@ extension $CreateMetricTypeExtension on CreateMetricType {
 }
 
 @JsonSerializable(explicitToJson: true)
-class CreateTreatment {
-  const CreateTreatment({this.events, this.personId});
-
-  factory CreateTreatment.fromJson(Map<String, dynamic> json) =>
-      _$CreateTreatmentFromJson(json);
-
-  static const toJsonFactory = _$CreateTreatmentToJson;
-  Map<String, dynamic> toJson() => _$CreateTreatmentToJson(this);
-
-  @JsonKey(name: 'events', defaultValue: <CreateEvent>[])
-  final List<CreateEvent>? events;
-  @JsonKey(name: 'personId')
-  final int? personId;
-  static const fromJsonFactory = _$CreateTreatmentFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is CreateTreatment &&
-            (identical(other.events, events) ||
-                const DeepCollectionEquality().equals(other.events, events)) &&
-            (identical(other.personId, personId) ||
-                const DeepCollectionEquality().equals(
-                  other.personId,
-                  personId,
-                )));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(events) ^
-      const DeepCollectionEquality().hash(personId) ^
-      runtimeType.hashCode;
-}
-
-extension $CreateTreatmentExtension on CreateTreatment {
-  CreateTreatment copyWith({List<CreateEvent>? events, int? personId}) {
-    return CreateTreatment(
-      events: events ?? this.events,
-      personId: personId ?? this.personId,
-    );
-  }
-
-  CreateTreatment copyWithWrapped({
-    Wrapped<List<CreateEvent>?>? events,
-    Wrapped<int?>? personId,
-  }) {
-    return CreateTreatment(
-      events: (events != null ? events.value : this.events),
-      personId: (personId != null ? personId.value : this.personId),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
 class Event {
   const Event({
     this.user,
-    this.file,
     this.treatment,
     required this.id,
     this.person,
@@ -2972,8 +3322,6 @@ class Event {
 
   @JsonKey(name: 'user')
   final int? user;
-  @JsonKey(name: 'file')
-  final int? file;
   @JsonKey(name: 'treatment')
   final int? treatment;
   @JsonKey(name: 'id')
@@ -2998,10 +3346,10 @@ class Event {
   final DateTime? notificationTime;
   @JsonKey(
     name: 'source',
-    toJson: fileTypesNullableToJson,
-    fromJson: fileTypesNullableFromJson,
+    toJson: importTypesNullableToJson,
+    fromJson: importTypesNullableFromJson,
   )
-  final enums.FileTypes? source;
+  final enums.ImportTypes? source;
   @JsonKey(name: 'sourceId')
   final String? sourceId;
   static const fromJsonFactory = _$EventFromJson;
@@ -3012,8 +3360,6 @@ class Event {
         (other is Event &&
             (identical(other.user, user) ||
                 const DeepCollectionEquality().equals(other.user, user)) &&
-            (identical(other.file, file) ||
-                const DeepCollectionEquality().equals(other.file, file)) &&
             (identical(other.treatment, treatment) ||
                 const DeepCollectionEquality().equals(
                   other.treatment,
@@ -3063,7 +3409,6 @@ class Event {
   @override
   int get hashCode =>
       const DeepCollectionEquality().hash(user) ^
-      const DeepCollectionEquality().hash(file) ^
       const DeepCollectionEquality().hash(treatment) ^
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(person) ^
@@ -3083,7 +3428,6 @@ class Event {
 extension $EventExtension on Event {
   Event copyWith({
     int? user,
-    int? file,
     int? treatment,
     int? id,
     int? person,
@@ -3095,12 +3439,11 @@ extension $EventExtension on Event {
     DateTime? stop,
     String? tag,
     DateTime? notificationTime,
-    enums.FileTypes? source,
+    enums.ImportTypes? source,
     String? sourceId,
   }) {
     return Event(
       user: user ?? this.user,
-      file: file ?? this.file,
       treatment: treatment ?? this.treatment,
       id: id ?? this.id,
       person: person ?? this.person,
@@ -3119,7 +3462,6 @@ extension $EventExtension on Event {
 
   Event copyWithWrapped({
     Wrapped<int?>? user,
-    Wrapped<int?>? file,
     Wrapped<int?>? treatment,
     Wrapped<int>? id,
     Wrapped<int?>? person,
@@ -3131,12 +3473,11 @@ extension $EventExtension on Event {
     Wrapped<DateTime>? stop,
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
-    Wrapped<enums.FileTypes?>? source,
+    Wrapped<enums.ImportTypes?>? source,
     Wrapped<String?>? sourceId,
   }) {
     return Event(
       user: (user != null ? user.value : this.user),
-      file: (file != null ? file.value : this.file),
       treatment: (treatment != null ? treatment.value : this.treatment),
       id: (id != null ? id.value : this.id),
       person: (person != null ? person.value : this.person),
@@ -3546,29 +3887,66 @@ extension $EventTypeExtension on EventType {
 }
 
 @JsonSerializable(explicitToJson: true)
-class FileType {
-  const FileType({required this.type, this.name});
+class File {
+  const File({
+    this.id,
+    this.created,
+    this.type,
+    this.start,
+    this.stop,
+    required this.name,
+    required this.description,
+  });
 
-  factory FileType.fromJson(Map<String, dynamic> json) =>
-      _$FileTypeFromJson(json);
+  factory File.fromJson(Map<String, dynamic> json) => _$FileFromJson(json);
 
-  static const toJsonFactory = _$FileTypeToJson;
-  Map<String, dynamic> toJson() => _$FileTypeToJson(this);
+  static const toJsonFactory = _$FileToJson;
+  Map<String, dynamic> toJson() => _$FileToJson(this);
 
-  @JsonKey(name: 'type')
-  final int type;
+  @JsonKey(name: 'id')
+  final int? id;
+  @JsonKey(name: 'created')
+  final DateTime? created;
+  @JsonKey(
+    name: 'type',
+    toJson: fileTypeNullableToJson,
+    fromJson: fileTypeNullableFromJson,
+  )
+  final enums.FileType? type;
+  @JsonKey(name: 'start')
+  final DateTime? start;
+  @JsonKey(name: 'stop')
+  final DateTime? stop;
   @JsonKey(name: 'name')
-  final String? name;
-  static const fromJsonFactory = _$FileTypeFromJson;
+  final String name;
+  @JsonKey(name: 'description')
+  final String description;
+  static const fromJsonFactory = _$FileFromJson;
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other is FileType &&
+        (other is File &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.created, created) ||
+                const DeepCollectionEquality().equals(
+                  other.created,
+                  created,
+                )) &&
             (identical(other.type, type) ||
                 const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.start, start) ||
+                const DeepCollectionEquality().equals(other.start, start)) &&
+            (identical(other.stop, stop) ||
+                const DeepCollectionEquality().equals(other.stop, stop)) &&
             (identical(other.name, name) ||
-                const DeepCollectionEquality().equals(other.name, name)));
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )));
   }
 
   @override
@@ -3576,20 +3954,109 @@ class FileType {
 
   @override
   int get hashCode =>
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(created) ^
       const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(start) ^
+      const DeepCollectionEquality().hash(stop) ^
       const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(description) ^
       runtimeType.hashCode;
 }
 
-extension $FileTypeExtension on FileType {
-  FileType copyWith({int? type, String? name}) {
-    return FileType(type: type ?? this.type, name: name ?? this.name);
+extension $FileExtension on File {
+  File copyWith({
+    int? id,
+    DateTime? created,
+    enums.FileType? type,
+    DateTime? start,
+    DateTime? stop,
+    String? name,
+    String? description,
+  }) {
+    return File(
+      id: id ?? this.id,
+      created: created ?? this.created,
+      type: type ?? this.type,
+      start: start ?? this.start,
+      stop: stop ?? this.stop,
+      name: name ?? this.name,
+      description: description ?? this.description,
+    );
   }
 
-  FileType copyWithWrapped({Wrapped<int>? type, Wrapped<String?>? name}) {
-    return FileType(
+  File copyWithWrapped({
+    Wrapped<int?>? id,
+    Wrapped<DateTime?>? created,
+    Wrapped<enums.FileType?>? type,
+    Wrapped<DateTime?>? start,
+    Wrapped<DateTime?>? stop,
+    Wrapped<String>? name,
+    Wrapped<String>? description,
+  }) {
+    return File(
+      id: (id != null ? id.value : this.id),
+      created: (created != null ? created.value : this.created),
       type: (type != null ? type.value : this.type),
+      start: (start != null ? start.value : this.start),
+      stop: (stop != null ? stop.value : this.stop),
       name: (name != null ? name.value : this.name),
+      description: (description != null ? description.value : this.description),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class FileData {
+  const FileData({required this.data, required this.dataType});
+
+  factory FileData.fromJson(Map<String, dynamic> json) =>
+      _$FileDataFromJson(json);
+
+  static const toJsonFactory = _$FileDataToJson;
+  Map<String, dynamic> toJson() => _$FileDataToJson(this);
+
+  @JsonKey(name: 'data')
+  final String data;
+  @JsonKey(name: 'dataType')
+  final String dataType;
+  static const fromJsonFactory = _$FileDataFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is FileData &&
+            (identical(other.data, data) ||
+                const DeepCollectionEquality().equals(other.data, data)) &&
+            (identical(other.dataType, dataType) ||
+                const DeepCollectionEquality().equals(
+                  other.dataType,
+                  dataType,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(data) ^
+      const DeepCollectionEquality().hash(dataType) ^
+      runtimeType.hashCode;
+}
+
+extension $FileDataExtension on FileData {
+  FileData copyWith({String? data, String? dataType}) {
+    return FileData(
+      data: data ?? this.data,
+      dataType: dataType ?? this.dataType,
+    );
+  }
+
+  FileData copyWithWrapped({Wrapped<String>? data, Wrapped<String>? dataType}) {
+    return FileData(
+      data: (data != null ? data.value : this.data),
+      dataType: (dataType != null ? dataType.value : this.dataType),
     );
   }
 }
@@ -4274,10 +4741,10 @@ class Metric {
   final int type;
   @JsonKey(
     name: 'source',
-    toJson: fileTypesNullableToJson,
-    fromJson: fileTypesNullableFromJson,
+    toJson: importTypesNullableToJson,
+    fromJson: importTypesNullableFromJson,
   )
-  final enums.FileTypes? source;
+  final enums.ImportTypes? source;
   @JsonKey(name: 'sourceId')
   final String sourceId;
   static const fromJsonFactory = _$MetricFromJson;
@@ -4339,7 +4806,7 @@ extension $MetricExtension on Metric {
     String? value,
     String? tag,
     int? type,
-    enums.FileTypes? source,
+    enums.ImportTypes? source,
     String? sourceId,
   }) {
     return Metric(
@@ -4365,7 +4832,7 @@ extension $MetricExtension on Metric {
     Wrapped<String>? value,
     Wrapped<String?>? tag,
     Wrapped<int>? type,
-    Wrapped<enums.FileTypes?>? source,
+    Wrapped<enums.ImportTypes?>? source,
     Wrapped<String>? sourceId,
   }) {
     return Metric(
@@ -5256,10 +5723,10 @@ class PatchEvent {
   final DateTime? notificationTime;
   @JsonKey(
     name: 'source',
-    toJson: fileTypesNullableToJson,
-    fromJson: fileTypesNullableFromJson,
+    toJson: importTypesNullableToJson,
+    fromJson: importTypesNullableFromJson,
   )
-  final enums.FileTypes? source;
+  final enums.ImportTypes? source;
   @JsonKey(name: 'sourceId')
   final String? sourceId;
   static const fromJsonFactory = _$PatchEventFromJson;
@@ -5351,7 +5818,7 @@ extension $PatchEventExtension on PatchEvent {
     DateTime? stop,
     String? tag,
     DateTime? notificationTime,
-    enums.FileTypes? source,
+    enums.ImportTypes? source,
     String? sourceId,
   }) {
     return PatchEvent(
@@ -5383,7 +5850,7 @@ extension $PatchEventExtension on PatchEvent {
     Wrapped<DateTime>? stop,
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
-    Wrapped<enums.FileTypes?>? source,
+    Wrapped<enums.ImportTypes?>? source,
     Wrapped<String?>? sourceId,
   }) {
     return PatchEvent(
@@ -5450,10 +5917,10 @@ class PatchMetric {
   final int type;
   @JsonKey(
     name: 'source',
-    toJson: fileTypesNullableToJson,
-    fromJson: fileTypesNullableFromJson,
+    toJson: importTypesNullableToJson,
+    fromJson: importTypesNullableFromJson,
   )
-  final enums.FileTypes? source;
+  final enums.ImportTypes? source;
   @JsonKey(name: 'sourceId')
   final String sourceId;
   static const fromJsonFactory = _$PatchMetricFromJson;
@@ -5528,7 +5995,7 @@ extension $PatchMetricExtension on PatchMetric {
     String? value,
     String? tag,
     int? type,
-    enums.FileTypes? source,
+    enums.ImportTypes? source,
     String? sourceId,
   }) {
     return PatchMetric(
@@ -5556,7 +6023,7 @@ extension $PatchMetricExtension on PatchMetric {
     Wrapped<String>? value,
     Wrapped<String?>? tag,
     Wrapped<int>? type,
-    Wrapped<enums.FileTypes?>? source,
+    Wrapped<enums.ImportTypes?>? source,
     Wrapped<String>? sourceId,
   }) {
     return PatchMetric(
@@ -6358,10 +6825,10 @@ class SearchEvent {
   final DateTime? to;
   @JsonKey(
     name: 'source',
-    toJson: fileTypesNullableToJson,
-    fromJson: fileTypesNullableFromJson,
+    toJson: importTypesNullableToJson,
+    fromJson: importTypesNullableFromJson,
   )
-  final enums.FileTypes? source;
+  final enums.ImportTypes? source;
   @JsonKey(name: 'filterSource')
   final bool? filterSource;
   static const fromJsonFactory = _$SearchEventFromJson;
@@ -6407,7 +6874,7 @@ extension $SearchEventExtension on SearchEvent {
     String? value,
     DateTime? from,
     DateTime? to,
-    enums.FileTypes? source,
+    enums.ImportTypes? source,
     bool? filterSource,
   }) {
     return SearchEvent(
@@ -6425,7 +6892,7 @@ extension $SearchEventExtension on SearchEvent {
     Wrapped<String?>? value,
     Wrapped<DateTime?>? from,
     Wrapped<DateTime?>? to,
-    Wrapped<enums.FileTypes?>? source,
+    Wrapped<enums.ImportTypes?>? source,
     Wrapped<bool?>? filterSource,
   }) {
     return SearchEvent(
@@ -6475,10 +6942,10 @@ class SearchMetric {
   final int? maxValue;
   @JsonKey(
     name: 'source',
-    toJson: fileTypesNullableToJson,
-    fromJson: fileTypesNullableFromJson,
+    toJson: importTypesNullableToJson,
+    fromJson: importTypesNullableFromJson,
   )
-  final enums.FileTypes? source;
+  final enums.ImportTypes? source;
   @JsonKey(name: 'isTrue')
   final bool? isTrue;
   @JsonKey(name: 'filterSource')
@@ -6543,7 +7010,7 @@ extension $SearchMetricExtension on SearchMetric {
     DateTime? to,
     int? minValue,
     int? maxValue,
-    enums.FileTypes? source,
+    enums.ImportTypes? source,
     bool? isTrue,
     bool? filterSource,
   }) {
@@ -6567,7 +7034,7 @@ extension $SearchMetricExtension on SearchMetric {
     Wrapped<DateTime?>? to,
     Wrapped<int?>? minValue,
     Wrapped<int?>? maxValue,
-    Wrapped<enums.FileTypes?>? source,
+    Wrapped<enums.ImportTypes?>? source,
     Wrapped<bool?>? isTrue,
     Wrapped<bool?>? filterSource,
   }) {
@@ -7045,10 +7512,10 @@ class UpdateEvent {
   final DateTime? notificationTime;
   @JsonKey(
     name: 'source',
-    toJson: fileTypesNullableToJson,
-    fromJson: fileTypesNullableFromJson,
+    toJson: importTypesNullableToJson,
+    fromJson: importTypesNullableFromJson,
   )
-  final enums.FileTypes? source;
+  final enums.ImportTypes? source;
   @JsonKey(name: 'sourceId')
   final String? sourceId;
   static const fromJsonFactory = _$UpdateEventFromJson;
@@ -7112,7 +7579,7 @@ extension $UpdateEventExtension on UpdateEvent {
     DateTime? stop,
     String? tag,
     DateTime? notificationTime,
-    enums.FileTypes? source,
+    enums.ImportTypes? source,
     String? sourceId,
   }) {
     return UpdateEvent(
@@ -7136,7 +7603,7 @@ extension $UpdateEventExtension on UpdateEvent {
     Wrapped<DateTime>? stop,
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
-    Wrapped<enums.FileTypes?>? source,
+    Wrapped<enums.ImportTypes?>? source,
     Wrapped<String?>? sourceId,
   }) {
     return UpdateEvent(
@@ -7281,6 +7748,124 @@ extension $UpdateEventTypeExtension on UpdateEventType {
 }
 
 @JsonSerializable(explicitToJson: true)
+class UpdateFile {
+  const UpdateFile({
+    this.id,
+    required this.data,
+    this.type,
+    this.start,
+    this.stop,
+    required this.name,
+    required this.description,
+  });
+
+  factory UpdateFile.fromJson(Map<String, dynamic> json) =>
+      _$UpdateFileFromJson(json);
+
+  static const toJsonFactory = _$UpdateFileToJson;
+  Map<String, dynamic> toJson() => _$UpdateFileToJson(this);
+
+  @JsonKey(name: 'id')
+  final int? id;
+  @JsonKey(name: 'data')
+  final FileData data;
+  @JsonKey(
+    name: 'type',
+    toJson: fileTypeNullableToJson,
+    fromJson: fileTypeNullableFromJson,
+  )
+  final enums.FileType? type;
+  @JsonKey(name: 'start')
+  final DateTime? start;
+  @JsonKey(name: 'stop')
+  final DateTime? stop;
+  @JsonKey(name: 'name')
+  final String name;
+  @JsonKey(name: 'description')
+  final String description;
+  static const fromJsonFactory = _$UpdateFileFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is UpdateFile &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.data, data) ||
+                const DeepCollectionEquality().equals(other.data, data)) &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.start, start) ||
+                const DeepCollectionEquality().equals(other.start, start)) &&
+            (identical(other.stop, stop) ||
+                const DeepCollectionEquality().equals(other.stop, stop)) &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(data) ^
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(start) ^
+      const DeepCollectionEquality().hash(stop) ^
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(description) ^
+      runtimeType.hashCode;
+}
+
+extension $UpdateFileExtension on UpdateFile {
+  UpdateFile copyWith({
+    int? id,
+    FileData? data,
+    enums.FileType? type,
+    DateTime? start,
+    DateTime? stop,
+    String? name,
+    String? description,
+  }) {
+    return UpdateFile(
+      id: id ?? this.id,
+      data: data ?? this.data,
+      type: type ?? this.type,
+      start: start ?? this.start,
+      stop: stop ?? this.stop,
+      name: name ?? this.name,
+      description: description ?? this.description,
+    );
+  }
+
+  UpdateFile copyWithWrapped({
+    Wrapped<int?>? id,
+    Wrapped<FileData>? data,
+    Wrapped<enums.FileType?>? type,
+    Wrapped<DateTime?>? start,
+    Wrapped<DateTime?>? stop,
+    Wrapped<String>? name,
+    Wrapped<String>? description,
+  }) {
+    return UpdateFile(
+      id: (id != null ? id.value : this.id),
+      data: (data != null ? data.value : this.data),
+      type: (type != null ? type.value : this.type),
+      start: (start != null ? start.value : this.start),
+      stop: (stop != null ? stop.value : this.stop),
+      name: (name != null ? name.value : this.name),
+      description: (description != null ? description.value : this.description),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class UpdateGroup {
   const UpdateGroup({
     this.id,
@@ -7415,10 +8000,10 @@ class UpdateMetric {
   final int type;
   @JsonKey(
     name: 'source',
-    toJson: fileTypesNullableToJson,
-    fromJson: fileTypesNullableFromJson,
+    toJson: importTypesNullableToJson,
+    fromJson: importTypesNullableFromJson,
   )
-  final enums.FileTypes? source;
+  final enums.ImportTypes? source;
   @JsonKey(name: 'sourceId')
   final String sourceId;
   static const fromJsonFactory = _$UpdateMetricFromJson;
@@ -7472,7 +8057,7 @@ extension $UpdateMetricExtension on UpdateMetric {
     String? value,
     String? tag,
     int? type,
-    enums.FileTypes? source,
+    enums.ImportTypes? source,
     String? sourceId,
   }) {
     return UpdateMetric(
@@ -7494,7 +8079,7 @@ extension $UpdateMetricExtension on UpdateMetric {
     Wrapped<String>? value,
     Wrapped<String?>? tag,
     Wrapped<int>? type,
-    Wrapped<enums.FileTypes?>? source,
+    Wrapped<enums.ImportTypes?>? source,
     Wrapped<String>? sourceId,
   }) {
     return UpdateMetric(
@@ -8209,23 +8794,23 @@ extension $UserSettingsExtension on UserSettings {
 }
 
 @JsonSerializable(explicitToJson: true)
-class ApiImportTypePost$RequestBody {
-  const ApiImportTypePost$RequestBody({required this.file});
+class ApiImportPost$RequestBody {
+  const ApiImportPost$RequestBody({required this.file});
 
-  factory ApiImportTypePost$RequestBody.fromJson(Map<String, dynamic> json) =>
-      _$ApiImportTypePost$RequestBodyFromJson(json);
+  factory ApiImportPost$RequestBody.fromJson(Map<String, dynamic> json) =>
+      _$ApiImportPost$RequestBodyFromJson(json);
 
-  static const toJsonFactory = _$ApiImportTypePost$RequestBodyToJson;
-  Map<String, dynamic> toJson() => _$ApiImportTypePost$RequestBodyToJson(this);
+  static const toJsonFactory = _$ApiImportPost$RequestBodyToJson;
+  Map<String, dynamic> toJson() => _$ApiImportPost$RequestBodyToJson(this);
 
   @JsonKey(name: 'file')
   final String file;
-  static const fromJsonFactory = _$ApiImportTypePost$RequestBodyFromJson;
+  static const fromJsonFactory = _$ApiImportPost$RequestBodyFromJson;
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other is ApiImportTypePost$RequestBody &&
+        (other is ApiImportPost$RequestBody &&
             (identical(other.file, file) ||
                 const DeepCollectionEquality().equals(other.file, file)));
   }
@@ -8238,14 +8823,13 @@ class ApiImportTypePost$RequestBody {
       const DeepCollectionEquality().hash(file) ^ runtimeType.hashCode;
 }
 
-extension $ApiImportTypePost$RequestBodyExtension
-    on ApiImportTypePost$RequestBody {
-  ApiImportTypePost$RequestBody copyWith({String? file}) {
-    return ApiImportTypePost$RequestBody(file: file ?? this.file);
+extension $ApiImportPost$RequestBodyExtension on ApiImportPost$RequestBody {
+  ApiImportPost$RequestBody copyWith({String? file}) {
+    return ApiImportPost$RequestBody(file: file ?? this.file);
   }
 
-  ApiImportTypePost$RequestBody copyWithWrapped({Wrapped<String>? file}) {
-    return ApiImportTypePost$RequestBody(
+  ApiImportPost$RequestBody copyWithWrapped({Wrapped<String>? file}) {
+    return ApiImportPost$RequestBody(
       file: (file != null ? file.value : this.file),
     );
   }
@@ -8317,66 +8901,66 @@ List<enums.DatePreset>? datePresetNullableListFromJson(
   return datePreset.map((e) => datePresetFromJson(e.toString())).toList();
 }
 
-String? fileTypesNullableToJson(enums.FileTypes? fileTypes) {
-  return fileTypes?.value;
+String? fileTypeNullableToJson(enums.FileType? fileType) {
+  return fileType?.value;
 }
 
-String? fileTypesToJson(enums.FileTypes fileTypes) {
-  return fileTypes.value;
+String? fileTypeToJson(enums.FileType fileType) {
+  return fileType.value;
 }
 
-enums.FileTypes fileTypesFromJson(
-  Object? fileTypes, [
-  enums.FileTypes? defaultValue,
+enums.FileType fileTypeFromJson(
+  Object? fileType, [
+  enums.FileType? defaultValue,
 ]) {
-  return enums.FileTypes.values.firstWhereOrNull((e) => e.value == fileTypes) ??
+  return enums.FileType.values.firstWhereOrNull((e) => e.value == fileType) ??
       defaultValue ??
-      enums.FileTypes.swaggerGeneratedUnknown;
+      enums.FileType.swaggerGeneratedUnknown;
 }
 
-enums.FileTypes? fileTypesNullableFromJson(
-  Object? fileTypes, [
-  enums.FileTypes? defaultValue,
+enums.FileType? fileTypeNullableFromJson(
+  Object? fileType, [
+  enums.FileType? defaultValue,
 ]) {
-  if (fileTypes == null) {
+  if (fileType == null) {
     return null;
   }
-  return enums.FileTypes.values.firstWhereOrNull((e) => e.value == fileTypes) ??
+  return enums.FileType.values.firstWhereOrNull((e) => e.value == fileType) ??
       defaultValue;
 }
 
-String fileTypesExplodedListToJson(List<enums.FileTypes>? fileTypes) {
-  return fileTypes?.map((e) => e.value!).join(',') ?? '';
+String fileTypeExplodedListToJson(List<enums.FileType>? fileType) {
+  return fileType?.map((e) => e.value!).join(',') ?? '';
 }
 
-List<String> fileTypesListToJson(List<enums.FileTypes>? fileTypes) {
-  if (fileTypes == null) {
+List<String> fileTypeListToJson(List<enums.FileType>? fileType) {
+  if (fileType == null) {
     return [];
   }
 
-  return fileTypes.map((e) => e.value!).toList();
+  return fileType.map((e) => e.value!).toList();
 }
 
-List<enums.FileTypes> fileTypesListFromJson(
-  List? fileTypes, [
-  List<enums.FileTypes>? defaultValue,
+List<enums.FileType> fileTypeListFromJson(
+  List? fileType, [
+  List<enums.FileType>? defaultValue,
 ]) {
-  if (fileTypes == null) {
+  if (fileType == null) {
     return defaultValue ?? [];
   }
 
-  return fileTypes.map((e) => fileTypesFromJson(e.toString())).toList();
+  return fileType.map((e) => fileTypeFromJson(e.toString())).toList();
 }
 
-List<enums.FileTypes>? fileTypesNullableListFromJson(
-  List? fileTypes, [
-  List<enums.FileTypes>? defaultValue,
+List<enums.FileType>? fileTypeNullableListFromJson(
+  List? fileType, [
+  List<enums.FileType>? defaultValue,
 ]) {
-  if (fileTypes == null) {
+  if (fileType == null) {
     return defaultValue;
   }
 
-  return fileTypes.map((e) => fileTypesFromJson(e.toString())).toList();
+  return fileType.map((e) => fileTypeFromJson(e.toString())).toList();
 }
 
 String? graphKindNullableToJson(enums.GraphKind? graphKind) {
@@ -8439,6 +9023,72 @@ List<enums.GraphKind>? graphKindNullableListFromJson(
   }
 
   return graphKind.map((e) => graphKindFromJson(e.toString())).toList();
+}
+
+String? importTypesNullableToJson(enums.ImportTypes? importTypes) {
+  return importTypes?.value;
+}
+
+String? importTypesToJson(enums.ImportTypes importTypes) {
+  return importTypes.value;
+}
+
+enums.ImportTypes importTypesFromJson(
+  Object? importTypes, [
+  enums.ImportTypes? defaultValue,
+]) {
+  return enums.ImportTypes.values.firstWhereOrNull(
+        (e) => e.value == importTypes,
+      ) ??
+      defaultValue ??
+      enums.ImportTypes.swaggerGeneratedUnknown;
+}
+
+enums.ImportTypes? importTypesNullableFromJson(
+  Object? importTypes, [
+  enums.ImportTypes? defaultValue,
+]) {
+  if (importTypes == null) {
+    return null;
+  }
+  return enums.ImportTypes.values.firstWhereOrNull(
+        (e) => e.value == importTypes,
+      ) ??
+      defaultValue;
+}
+
+String importTypesExplodedListToJson(List<enums.ImportTypes>? importTypes) {
+  return importTypes?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> importTypesListToJson(List<enums.ImportTypes>? importTypes) {
+  if (importTypes == null) {
+    return [];
+  }
+
+  return importTypes.map((e) => e.value!).toList();
+}
+
+List<enums.ImportTypes> importTypesListFromJson(
+  List? importTypes, [
+  List<enums.ImportTypes>? defaultValue,
+]) {
+  if (importTypes == null) {
+    return defaultValue ?? [];
+  }
+
+  return importTypes.map((e) => importTypesFromJson(e.toString())).toList();
+}
+
+List<enums.ImportTypes>? importTypesNullableListFromJson(
+  List? importTypes, [
+  List<enums.ImportTypes>? defaultValue,
+]) {
+  if (importTypes == null) {
+    return defaultValue;
+  }
+
+  return importTypes.map((e) => importTypesFromJson(e.toString())).toList();
 }
 
 String? interfaceThemeNullableToJson(enums.InterfaceTheme? interfaceTheme) {

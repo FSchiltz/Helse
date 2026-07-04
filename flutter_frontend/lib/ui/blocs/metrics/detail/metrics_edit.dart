@@ -43,7 +43,7 @@ class _MetricsEditState extends PopupSubmitState<MetricsEdit> {
       updateValue: _updateValue,
       tag: _tag.text,
       updateTag: _updateTag,
-      source: FileTypes.none,
+      source: ImportTypes.none,
       sourceId: "",
       ids: widget.edit.map((e) => e.id).toList(),
     );
