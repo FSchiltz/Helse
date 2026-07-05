@@ -1,7 +1,6 @@
-import 'dart:typed_data';
-
+import 'package:file_selector/file_selector.dart';
+import 'package:helse/helpers/file_helper.dart';
 import 'package:helse/services/api_service.dart';
-import 'package:http/http.dart';
 
 import 'swagger/generated_code/helseapi.swagger.dart';
 
@@ -13,10 +12,10 @@ class ImportService extends ApiService {
     return await call(api.apiImportTypesGet);
   }
 
-  Future<JobId?> import(Uint8List file, int type, int? patient) async {
+  Future<JobId?> import(XFile file, int type, int? patient) async {
     var api = await getService();
 
-    var part = MultipartFile.fromBytes("file", file, filename: 'upload');
+    var part = FileHelper.extract(file);
     return await call(
       () => api.apiImportTypePost(file: part, type: type, patient: patient),
     );

@@ -1,3 +1,5 @@
+import 'package:file_selector/file_selector.dart';
+import 'package:helse/helpers/file_helper.dart';
 import 'package:helse/services/api_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/inputs/file_list_widget.dart';
@@ -35,7 +37,7 @@ class FileService extends ApiService {
           name: file.name,
           description: file.description,
           type: FileType.none,
-          start: DateTime.now()
+          start: DateTime.now(),
         ),
         personId: person,
       ),
@@ -53,10 +55,12 @@ class FileService extends ApiService {
     );
   }
 
-  Future<void> postFileData(int fileId, UIFile file, int? person) async {
+  Future<void> postFileData(int fileId, XFile file, int? person) async {
     var api = await getService();
+
+    var part = FileHelper.extract(file);
     await call(
-      () => api.apiFilesDataIdPost(id: fileId, file: file, personId: person),
+      () => api.apiFilesDataIdPost(id: fileId, file: part, personId: person),
     );
   }
 }

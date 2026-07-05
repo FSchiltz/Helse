@@ -4,10 +4,10 @@ import 'package:helse/ui/common/inputs/file_input.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 class UIFile {
-  final XFile? file;
+  XFile? file;
   final String name;
   final String description;
-  final int? id;
+  int? id;
 
   UIFile(this.file, this.name, this.id, this.description);
 }

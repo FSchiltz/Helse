@@ -72,7 +72,7 @@ internal static class FilesLogics
         return api;
     }
 
-    private static async Task<IResult> AddFileDataAsync([FromForm]IFormFile file, [FromRoute] long id, long? personId, IUserContext users, IFilesContext files, HttpContext context)
+    private static async Task<IResult> AddFileDataAsync([FromForm] IFormFile file, [FromRoute] long id, [FromQuery] long? personId, IUserContext users, IFilesContext files, HttpContext context)
     {
         var (error, user) = await users.ValidateUserOrCaregiver(personId, RightType.Edit, context.User);
         if (error is not null)
@@ -83,7 +83,8 @@ internal static class FilesLogics
         var data = reader.ReadToEndAsync();
 
         await using MemoryStream ms = new();
-        stream.CopyTo(ms);
+        await stream.CopyToAsync(ms);
+        ms.Position = 0;
 
         await files.SaveDataAsync(id, user, ms.ToArray());
         return TypedResults.NoContent();

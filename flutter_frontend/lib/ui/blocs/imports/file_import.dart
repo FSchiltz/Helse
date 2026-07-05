@@ -82,15 +82,8 @@ class _FileImportState extends PopupSubmitState<FileImport> {
   }
 
   Future<void> _submit() async {
-    if (selected != null) {
-      var content = await file?.readAsBytes();
-      if (content == null) return;
-
-      await Dependencies.logics.import.import(
-        content,
-        selected!,
-        widget.patient,
-      );
+    if (selected != null && file != null) {
+      await Dependencies.logics.import.import(file!, selected!, widget.patient);
     }
   }
 }

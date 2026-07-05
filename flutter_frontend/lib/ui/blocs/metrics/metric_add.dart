@@ -139,8 +139,12 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
   Future<void> _submit() async {
     final value = MetricHelper().joinValue(_values.map((e) => e.text));
     // find the files to add
+    final fileToAdd =
+        files?.where((e) => e.id == null || e.id == 0 || e.file != null) ?? [];
+        
     // find the file to delete
-    final fileToAdd = files?.where((e) => e.id == null || e.id == 0) ?? [];
+    // TODO
+    
     int? metricId;
     if (widget.edit?.id != null) {
       final metric = UpdateMetric(
@@ -175,16 +179,23 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
     if (metricId != null) {
       for (var file in fileToAdd) {
         var fileId = file.id;
+
         if (fileId == null) {
           fileId =
               await Dependencies.services.files.postFile(file, widget.person) ??
               0;
 
+          file.id = fileId;
+        }
+
+        if (file.file != null) {
           await Dependencies.services.files.postFileData(
             fileId,
-            file,
+            file.file!,
             widget.person,
           );
+
+          file.file = null;
         }
 
         await Dependencies.services.files.linkMetric(
@@ -192,8 +203,6 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
           metricId,
           widget.person,
         );
-
-        // TODO save progress so that if an error occurs we don't have to upload anymore
       }
     }
 
