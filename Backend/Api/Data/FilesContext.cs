@@ -7,17 +7,18 @@ using LinqToDB.Data;
 
 namespace Helse.Api.Data;
 
-internal class FilesContext(DataConnection db, SlowQueryLogInterceptor interceptor) : BaseContext(db, interceptor), IFilesContext
+internal class FilesContext(DataConnection db, SlowQueryLogInterceptor interceptor)
+: BaseContext(db, interceptor), IFilesContext
 {
-    public Task CreateAsync(CreateFile file, long personId)
+    public Task<long> CreateAsync(CreateFile file, long personId)
     {
-        return Db.GetTable<Files>().InsertAsync(() => new Files
+        return Db.GetTable<Files>().InsertWithInt64IdentityAsync(() => new Files
         {
-            Data = file.Data.Data,
+            Data = Array.Empty<byte>(),
             Description = file.Description,
             Name = file.Name,
             Created = DateTime.UtcNow,
-            DataType = file.Data.DataType,
+            DataType = file.DataType,
             PersonId = personId,
             Start = file.Start,
             Stop = file.Stop,
@@ -82,15 +83,11 @@ internal class FilesContext(DataConnection db, SlowQueryLogInterceptor intercept
             .FirstAsync();
     }
 
-    public Task<FileData> GetDataAsync(long id, long personId)
+    public Task<IFilesContext.FileData> GetDataAsync(long id, long personId)
     {
         return Db.GetTable<Files>()
             .Where(x => x.Id == id && x.PersonId == personId)
-            .Select(x => new FileData
-            {
-                Data = x.Data,
-                DataType = x.DataType,
-            })
+            .Select(x => new IFilesContext.FileData(x.DataType, x.Data))
             .FirstAsync();
     }
 
@@ -148,6 +145,14 @@ internal class FilesContext(DataConnection db, SlowQueryLogInterceptor intercept
         });
     }
 
+    public Task SaveDataAsync(long id, long personId, byte[] data)
+    {
+        return Db.GetTable<Files>()
+            .Where(x => x.Id == id && x.PersonId == personId)
+            .Set(x => x.Data, data)
+            .UpdateAsync();
+    }
+
     public async Task UnlinkEventAsync(long eventId, long fileId, long personId)
     {
         var result = await Db.GetTable<EventFiles>()
@@ -174,7 +179,11 @@ internal class FilesContext(DataConnection db, SlowQueryLogInterceptor intercept
     {
         var result = await Db.GetTable<Files>()
         .Where(x => x.Id == file.Id && x.PersonId == personId)
-        .Set(x => x.Data, file.Data.Data)
+        .Set(x => x.Name, file.Name)
+        .Set(x => x.Description, file.Description)
+        .Set(x => x.DataType, file.DataType)
+        .Set(x => x.Start, file.Start)
+        .Set(x => x.Stop, file.Stop)
         .UpdateAsync();
 
         if (result == 0)

@@ -605,6 +605,41 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
+  Future<Response<dynamic>> _apiFilesDataIdPost({
+    required int? id,
+    int? personId,
+    required dynamic file,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/files/data/${id}');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
+    final List<PartValue> $parts = <PartValue>[
+      PartValue<dynamic>('file', file),
+    ];
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      parts: $parts,
+      multipart: true,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
   Future<Response<List<File>>> _apiFilesGet({
     int? personId,
     required int? page,
@@ -668,7 +703,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<dynamic>> _apiFilesPost({
+  Future<Response<int>> _apiFilesPost({
     int? personId,
     required CreateFile? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -695,7 +730,7 @@ final class _$Helseapi extends Helseapi {
       parameters: $params,
       tag: swaggerMetaData,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<int, int>($request);
   }
 
   @override
@@ -947,7 +982,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<dynamic>> _apiMetricsPost({
+  Future<Response<int>> _apiMetricsPost({
     int? personId,
     required CreateMetric? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -974,7 +1009,7 @@ final class _$Helseapi extends Helseapi {
       parameters: $params,
       tag: swaggerMetaData,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<int, int>($request);
   }
 
   @override
@@ -1432,7 +1467,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<dynamic>> _apiEventsPost({
+  Future<Response<int>> _apiEventsPost({
     int? personId,
     required CreateEvent? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -1459,7 +1494,7 @@ final class _$Helseapi extends Helseapi {
       parameters: $params,
       tag: swaggerMetaData,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<int, int>($request);
   }
 
   @override

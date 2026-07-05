@@ -650,6 +650,39 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
+  ///@param id
+  ///@param personId
+  Future<chopper.Response> apiFilesDataIdPost({
+    required int? id,
+    int? personId,
+    required dynamic file,
+  }) {
+    return _apiFilesDataIdPost(id: id, personId: personId, file: file);
+  }
+
+  ///
+  ///@param id
+  ///@param personId
+  @POST(path: '/api/files/data/{id}', optionalBody: true)
+  @Multipart()
+  Future<chopper.Response> _apiFilesDataIdPost({
+    @Path('id') required int? id,
+    @Query('personId') int? personId,
+    @Part('file') required dynamic file,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  });
+
+  ///
   ///@param personId
   ///@param Page
   ///@param PageSize
@@ -715,7 +748,7 @@ abstract class Helseapi extends ChopperService {
 
   ///
   ///@param personId
-  Future<chopper.Response> apiFilesPost({
+  Future<chopper.Response<int>> apiFilesPost({
     int? personId,
     required CreateFile? body,
   }) {
@@ -725,7 +758,7 @@ abstract class Helseapi extends ChopperService {
   ///
   ///@param personId
   @POST(path: '/api/files', optionalBody: true)
-  Future<chopper.Response> _apiFilesPost({
+  Future<chopper.Response<int>> _apiFilesPost({
     @Query('personId') int? personId,
     @Body() required CreateFile? body,
     @chopper.Tag()
@@ -1054,7 +1087,7 @@ abstract class Helseapi extends ChopperService {
 
   ///
   ///@param personId
-  Future<chopper.Response> apiMetricsPost({
+  Future<chopper.Response<int>> apiMetricsPost({
     int? personId,
     required CreateMetric? body,
   }) {
@@ -1064,7 +1097,7 @@ abstract class Helseapi extends ChopperService {
   ///
   ///@param personId
   @POST(path: '/api/metrics', optionalBody: true)
-  Future<chopper.Response> _apiMetricsPost({
+  Future<chopper.Response<int>> _apiMetricsPost({
     @Query('personId') int? personId,
     @Body() required CreateMetric? body,
     @chopper.Tag()
@@ -1546,7 +1579,7 @@ abstract class Helseapi extends ChopperService {
 
   ///
   ///@param personId
-  Future<chopper.Response> apiEventsPost({
+  Future<chopper.Response<int>> apiEventsPost({
     int? personId,
     required CreateEvent? body,
   }) {
@@ -1556,7 +1589,7 @@ abstract class Helseapi extends ChopperService {
   ///
   ///@param personId
   @POST(path: '/api/events', optionalBody: true)
-  Future<chopper.Response> _apiEventsPost({
+  Future<chopper.Response<int>> _apiEventsPost({
     @Query('personId') int? personId,
     @Body() required CreateEvent? body,
     @chopper.Tag()
@@ -2807,7 +2840,7 @@ extension $CreateEventTypeExtension on CreateEventType {
 @JsonSerializable(explicitToJson: true)
 class CreateFile {
   const CreateFile({
-    required this.data,
+    required this.dataType,
     this.type,
     this.start,
     this.stop,
@@ -2821,8 +2854,8 @@ class CreateFile {
   static const toJsonFactory = _$CreateFileToJson;
   Map<String, dynamic> toJson() => _$CreateFileToJson(this);
 
-  @JsonKey(name: 'data')
-  final FileData data;
+  @JsonKey(name: 'dataType')
+  final String dataType;
   @JsonKey(
     name: 'type',
     toJson: fileTypeNullableToJson,
@@ -2843,8 +2876,11 @@ class CreateFile {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is CreateFile &&
-            (identical(other.data, data) ||
-                const DeepCollectionEquality().equals(other.data, data)) &&
+            (identical(other.dataType, dataType) ||
+                const DeepCollectionEquality().equals(
+                  other.dataType,
+                  dataType,
+                )) &&
             (identical(other.type, type) ||
                 const DeepCollectionEquality().equals(other.type, type)) &&
             (identical(other.start, start) ||
@@ -2865,7 +2901,7 @@ class CreateFile {
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(data) ^
+      const DeepCollectionEquality().hash(dataType) ^
       const DeepCollectionEquality().hash(type) ^
       const DeepCollectionEquality().hash(start) ^
       const DeepCollectionEquality().hash(stop) ^
@@ -2876,7 +2912,7 @@ class CreateFile {
 
 extension $CreateFileExtension on CreateFile {
   CreateFile copyWith({
-    FileData? data,
+    String? dataType,
     enums.FileType? type,
     DateTime? start,
     DateTime? stop,
@@ -2884,7 +2920,7 @@ extension $CreateFileExtension on CreateFile {
     String? description,
   }) {
     return CreateFile(
-      data: data ?? this.data,
+      dataType: dataType ?? this.dataType,
       type: type ?? this.type,
       start: start ?? this.start,
       stop: stop ?? this.stop,
@@ -2894,7 +2930,7 @@ extension $CreateFileExtension on CreateFile {
   }
 
   CreateFile copyWithWrapped({
-    Wrapped<FileData>? data,
+    Wrapped<String>? dataType,
     Wrapped<enums.FileType?>? type,
     Wrapped<DateTime?>? start,
     Wrapped<DateTime?>? stop,
@@ -2902,7 +2938,7 @@ extension $CreateFileExtension on CreateFile {
     Wrapped<String>? description,
   }) {
     return CreateFile(
-      data: (data != null ? data.value : this.data),
+      dataType: (dataType != null ? dataType.value : this.dataType),
       type: (type != null ? type.value : this.type),
       start: (start != null ? start.value : this.start),
       stop: (stop != null ? stop.value : this.stop),
@@ -4002,61 +4038,6 @@ extension $FileExtension on File {
       stop: (stop != null ? stop.value : this.stop),
       name: (name != null ? name.value : this.name),
       description: (description != null ? description.value : this.description),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
-class FileData {
-  const FileData({required this.data, required this.dataType});
-
-  factory FileData.fromJson(Map<String, dynamic> json) =>
-      _$FileDataFromJson(json);
-
-  static const toJsonFactory = _$FileDataToJson;
-  Map<String, dynamic> toJson() => _$FileDataToJson(this);
-
-  @JsonKey(name: 'data')
-  final String data;
-  @JsonKey(name: 'dataType')
-  final String dataType;
-  static const fromJsonFactory = _$FileDataFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is FileData &&
-            (identical(other.data, data) ||
-                const DeepCollectionEquality().equals(other.data, data)) &&
-            (identical(other.dataType, dataType) ||
-                const DeepCollectionEquality().equals(
-                  other.dataType,
-                  dataType,
-                )));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(data) ^
-      const DeepCollectionEquality().hash(dataType) ^
-      runtimeType.hashCode;
-}
-
-extension $FileDataExtension on FileData {
-  FileData copyWith({String? data, String? dataType}) {
-    return FileData(
-      data: data ?? this.data,
-      dataType: dataType ?? this.dataType,
-    );
-  }
-
-  FileData copyWithWrapped({Wrapped<String>? data, Wrapped<String>? dataType}) {
-    return FileData(
-      data: (data != null ? data.value : this.data),
-      dataType: (dataType != null ? dataType.value : this.dataType),
     );
   }
 }
@@ -7800,7 +7781,7 @@ extension $UpdateEventTypeExtension on UpdateEventType {
 class UpdateFile {
   const UpdateFile({
     this.id,
-    required this.data,
+    required this.dataType,
     this.type,
     this.start,
     this.stop,
@@ -7816,8 +7797,8 @@ class UpdateFile {
 
   @JsonKey(name: 'id')
   final int? id;
-  @JsonKey(name: 'data')
-  final FileData data;
+  @JsonKey(name: 'dataType')
+  final String dataType;
   @JsonKey(
     name: 'type',
     toJson: fileTypeNullableToJson,
@@ -7840,8 +7821,11 @@ class UpdateFile {
         (other is UpdateFile &&
             (identical(other.id, id) ||
                 const DeepCollectionEquality().equals(other.id, id)) &&
-            (identical(other.data, data) ||
-                const DeepCollectionEquality().equals(other.data, data)) &&
+            (identical(other.dataType, dataType) ||
+                const DeepCollectionEquality().equals(
+                  other.dataType,
+                  dataType,
+                )) &&
             (identical(other.type, type) ||
                 const DeepCollectionEquality().equals(other.type, type)) &&
             (identical(other.start, start) ||
@@ -7863,7 +7847,7 @@ class UpdateFile {
   @override
   int get hashCode =>
       const DeepCollectionEquality().hash(id) ^
-      const DeepCollectionEquality().hash(data) ^
+      const DeepCollectionEquality().hash(dataType) ^
       const DeepCollectionEquality().hash(type) ^
       const DeepCollectionEquality().hash(start) ^
       const DeepCollectionEquality().hash(stop) ^
@@ -7875,7 +7859,7 @@ class UpdateFile {
 extension $UpdateFileExtension on UpdateFile {
   UpdateFile copyWith({
     int? id,
-    FileData? data,
+    String? dataType,
     enums.FileType? type,
     DateTime? start,
     DateTime? stop,
@@ -7884,7 +7868,7 @@ extension $UpdateFileExtension on UpdateFile {
   }) {
     return UpdateFile(
       id: id ?? this.id,
-      data: data ?? this.data,
+      dataType: dataType ?? this.dataType,
       type: type ?? this.type,
       start: start ?? this.start,
       stop: stop ?? this.stop,
@@ -7895,7 +7879,7 @@ extension $UpdateFileExtension on UpdateFile {
 
   UpdateFile copyWithWrapped({
     Wrapped<int?>? id,
-    Wrapped<FileData>? data,
+    Wrapped<String>? dataType,
     Wrapped<enums.FileType?>? type,
     Wrapped<DateTime?>? start,
     Wrapped<DateTime?>? stop,
@@ -7904,7 +7888,7 @@ extension $UpdateFileExtension on UpdateFile {
   }) {
     return UpdateFile(
       id: (id != null ? id.value : this.id),
-      data: (data != null ? data.value : this.data),
+      dataType: (dataType != null ? dataType.value : this.dataType),
       type: (type != null ? type.value : this.type),
       start: (start != null ? start.value : this.start),
       stop: (stop != null ? stop.value : this.stop),
@@ -8838,6 +8822,49 @@ extension $UserSettingsExtension on UserSettings {
           ? metricSettings.value
           : this.metricSettings),
       groups: (groups != null ? groups.value : this.groups),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class ApiFilesDataIdPost$RequestBody {
+  const ApiFilesDataIdPost$RequestBody({required this.file});
+
+  factory ApiFilesDataIdPost$RequestBody.fromJson(Map<String, dynamic> json) =>
+      _$ApiFilesDataIdPost$RequestBodyFromJson(json);
+
+  static const toJsonFactory = _$ApiFilesDataIdPost$RequestBodyToJson;
+  Map<String, dynamic> toJson() => _$ApiFilesDataIdPost$RequestBodyToJson(this);
+
+  @JsonKey(name: 'file')
+  final String file;
+  static const fromJsonFactory = _$ApiFilesDataIdPost$RequestBodyFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is ApiFilesDataIdPost$RequestBody &&
+            (identical(other.file, file) ||
+                const DeepCollectionEquality().equals(other.file, file)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(file) ^ runtimeType.hashCode;
+}
+
+extension $ApiFilesDataIdPost$RequestBodyExtension
+    on ApiFilesDataIdPost$RequestBody {
+  ApiFilesDataIdPost$RequestBody copyWith({String? file}) {
+    return ApiFilesDataIdPost$RequestBody(file: file ?? this.file);
+  }
+
+  ApiFilesDataIdPost$RequestBody copyWithWrapped({Wrapped<String>? file}) {
+    return ApiFilesDataIdPost$RequestBody(
+      file: (file != null ? file.value : this.file),
     );
   }
 }

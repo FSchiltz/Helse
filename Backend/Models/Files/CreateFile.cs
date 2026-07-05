@@ -2,5 +2,5 @@ namespace Helse.Models.Files;
 
 public class CreateFile : BaseFile
 {
-    public required FileData Data { get; set; }
+    public required string DataType { get; set; }
 }

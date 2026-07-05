@@ -696,6 +696,64 @@
             "description": "Unauthorized"
           }
         }
+      },
+      "post": {
+        "tags": [
+          "FilesLogics"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          },
+          {
+            "name": "personId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "$ref": "#/components/schemas/IFormFile"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
       }
     },
     "/api/files": {
@@ -828,8 +886,20 @@
           "required": true
         },
         "responses": {
-          "204": {
-            "description": "No Content"
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int64"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -1338,8 +1408,20 @@
           "required": true
         },
         "responses": {
-          "204": {
-            "description": "No Content"
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int64"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -2012,8 +2094,20 @@
           "required": true
         },
         "responses": {
-          "204": {
-            "description": "No Content"
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int64"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -3096,14 +3190,14 @@
       },
       "CreateFile": {
         "required": [
-          "data",
+          "dataType",
           "name",
           "description"
         ],
         "type": "object",
         "properties": {
-          "data": {
-            "$ref": "#/components/schemas/FileData"
+          "dataType": {
+            "type": "string"
           },
           "type": {
             "$ref": "#/components/schemas/FileType"
@@ -3544,22 +3638,6 @@
             "type": "string"
           },
           "description": {
-            "type": "string"
-          }
-        }
-      },
-      "FileData": {
-        "required": [
-          "data",
-          "dataType"
-        ],
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "string",
-            "format": "byte"
-          },
-          "dataType": {
             "type": "string"
           }
         }
@@ -5013,7 +5091,7 @@
       },
       "UpdateFile": {
         "required": [
-          "data",
+          "dataType",
           "name",
           "description"
         ],
@@ -5027,8 +5105,8 @@
             ],
             "format": "int64"
           },
-          "data": {
-            "$ref": "#/components/schemas/FileData"
+          "dataType": {
+            "type": "string"
           },
           "type": {
             "$ref": "#/components/schemas/FileType"

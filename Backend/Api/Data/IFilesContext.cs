@@ -6,7 +6,9 @@ namespace Helse.Api.Data;
 
 internal interface IFilesContext : IContext
 {
-    Task CreateAsync(CreateFile file, long personId);
+    public record FileData(string Type, byte[] Data);
+
+    Task<long> CreateAsync(CreateFile file, long personId);
 
     Task DeleteAsync(long id, long personId);
 
@@ -14,7 +16,9 @@ internal interface IFilesContext : IContext
 
     Task<Helse.Models.Files.File> GetAsync(long id, long personId);
 
-    Task<Helse.Models.Files.FileData> GetDataAsync(long id, long user);
+    Task<FileData> GetDataAsync(long id, long user);
+
+    Task SaveDataAsync(long id, long personId, byte[] data);
 
     Task<Helse.Models.Files.File[]> GetFilesByEventAsync(long eventId, long personId);
 

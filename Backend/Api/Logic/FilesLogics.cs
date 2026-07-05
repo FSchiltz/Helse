@@ -4,6 +4,7 @@ using Helse.Api.Helpers;
 using Helse.Models.Common;
 using Helse.Models.Files;
 using Helse.Models.Persons;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Helse.Api.Logic;
 
@@ -30,6 +31,11 @@ internal static class FilesLogics
         .Produces((int)HttpStatusCode.Unauthorized);
 
         files.MapPost("/", CreateAsync)
+        .Produces<long>((int)HttpStatusCode.Created)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        files.MapPost("/data/{id}", AddFileDataAsync)
+        .DisableAntiforgery()
         .Produces((int)HttpStatusCode.NoContent)
         .Produces((int)HttpStatusCode.Unauthorized);
 
@@ -64,6 +70,23 @@ internal static class FilesLogics
         .Produces((int)HttpStatusCode.Unauthorized);
 
         return api;
+    }
+
+    private static async Task<IResult> AddFileDataAsync([FromForm]IFormFile file, [FromRoute] long id, long? personId, IUserContext users, IFilesContext files, HttpContext context)
+    {
+        var (error, user) = await users.ValidateUserOrCaregiver(personId, RightType.Edit, context.User);
+        if (error is not null)
+            return error;
+
+        var stream = file.OpenReadStream();
+        using var reader = new StreamReader(stream);
+        var data = reader.ReadToEndAsync();
+
+        await using MemoryStream ms = new();
+        stream.CopyTo(ms);
+
+        await files.SaveDataAsync(id, user, ms.ToArray());
+        return TypedResults.NoContent();
     }
 
     private static async Task<IResult> UnlinkEventAsync(long eventId, long fileId, long? personId, IUserContext users, IFilesContext files, HttpContext context)
@@ -149,9 +172,9 @@ internal static class FilesLogics
         if (error is not null)
             return error;
 
-        await files.CreateAsync(file, user);
+        var id = await files.CreateAsync(file, user);
 
-        return TypedResults.NoContent();
+        return TypedResults.Created(default(Uri), id);
     }
 
     private static async Task<IResult> UpdateAsync(UpdateFile file, long? personId, IUserContext users, IFilesContext files, HttpContext context)

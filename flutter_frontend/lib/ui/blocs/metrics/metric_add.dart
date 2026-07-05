@@ -67,7 +67,9 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
         widget.person,
       );
 
-      final xfiles = result.map((e) => UIFile(null, e.name, e.id)).toList();
+      final xfiles = result
+          .map((e) => UIFile(null, e.name, e.id, e.description))
+          .toList();
 
       setState(() {
         files = xfiles;
@@ -138,7 +140,8 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
     final value = MetricHelper().joinValue(_values.map((e) => e.text));
     // find the files to add
     // find the file to delete
-    final fileToAdd = files?.where((e) => e.id == 0) ?? [];
+    final fileToAdd = files?.where((e) => e.id == null || e.id == 0) ?? [];
+    int? metricId;
     if (widget.edit?.id != null) {
       final metric = UpdateMetric(
         id: widget.edit?.id ?? 0,
@@ -151,6 +154,7 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
       );
 
       await Dependencies.services.metric.updateMetric(metric);
+      metricId = widget.edit?.id;
     } else {
       final metric = CreateMetric(
         date: _date.toUtc(),
@@ -161,14 +165,35 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
         sourceId: "",
       );
 
-      // TODO get the new id
-      await Dependencies.services.metric.addMetrics(
+      metricId = await Dependencies.services.metric.addMetrics(
         metric,
         person: widget.person,
       );
+    }
 
-      for(var file in fileToAdd){
-        await Dependencies.services.files.postMetricFile(file);
+    // TODO add a loader for the user
+    if (metricId != null) {
+      for (var file in fileToAdd) {
+        var fileId = file.id;
+        if (fileId == null) {
+          fileId =
+              await Dependencies.services.files.postFile(file, widget.person) ??
+              0;
+
+          await Dependencies.services.files.postFileData(
+            fileId,
+            file,
+            widget.person,
+          );
+        }
+
+        await Dependencies.services.files.linkMetric(
+          fileId,
+          metricId,
+          widget.person,
+        );
+
+        // TODO save progress so that if an error occurs we don't have to upload anymore
       }
     }
 

@@ -6,9 +6,10 @@ import 'package:helse/ui/common/ui_constants.dart';
 class UIFile {
   final XFile? file;
   final String name;
+  final String description;
   final int? id;
 
-  UIFile(this.file, this.name, this.id);
+  UIFile(this.file, this.name, this.id, this.description);
 }
 
 class FileListWidget extends StatelessWidget {
@@ -29,7 +30,7 @@ class FileListWidget extends StatelessWidget {
       children: [
         FileInput(
           (value) {
-            files.add(UIFile(value, value.name, null));
+            files.add(UIFile(value, value.name, null, ''));
             callback(files);
           },
           label,

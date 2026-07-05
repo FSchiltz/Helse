@@ -100,7 +100,7 @@ Map<String, dynamic> _$CreateEventTypeToJson(CreateEventType instance) =>
     };
 
 CreateFile _$CreateFileFromJson(Map<String, dynamic> json) => CreateFile(
-  data: FileData.fromJson(json['data'] as Map<String, dynamic>),
+  dataType: json['dataType'] as String,
   type: fileTypeNullableFromJson(json['type']),
   start: json['start'] == null ? null : DateTime.parse(json['start'] as String),
   stop: json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
@@ -110,7 +110,7 @@ CreateFile _$CreateFileFromJson(Map<String, dynamic> json) => CreateFile(
 
 Map<String, dynamic> _$CreateFileToJson(CreateFile instance) =>
     <String, dynamic>{
-      'data': instance.data.toJson(),
+      'dataType': instance.dataType,
       'type': fileTypeNullableToJson(instance.type),
       'start': instance.start?.toIso8601String(),
       'stop': instance.stop?.toIso8601String(),
@@ -334,16 +334,6 @@ Map<String, dynamic> _$FileToJson(File instance) => <String, dynamic>{
   'stop': instance.stop?.toIso8601String(),
   'name': instance.name,
   'description': instance.description,
-};
-
-FileData _$FileDataFromJson(Map<String, dynamic> json) => FileData(
-  data: json['data'] as String,
-  dataType: json['dataType'] as String,
-);
-
-Map<String, dynamic> _$FileDataToJson(FileData instance) => <String, dynamic>{
-  'data': instance.data,
-  'dataType': instance.dataType,
 };
 
 Gotify _$GotifyFromJson(Map<String, dynamic> json) => Gotify(
@@ -1067,7 +1057,7 @@ Map<String, dynamic> _$UpdateEventTypeToJson(UpdateEventType instance) =>
 
 UpdateFile _$UpdateFileFromJson(Map<String, dynamic> json) => UpdateFile(
   id: (json['id'] as num?)?.toInt(),
-  data: FileData.fromJson(json['data'] as Map<String, dynamic>),
+  dataType: json['dataType'] as String,
   type: fileTypeNullableFromJson(json['type']),
   start: json['start'] == null ? null : DateTime.parse(json['start'] as String),
   stop: json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
@@ -1078,7 +1068,7 @@ UpdateFile _$UpdateFileFromJson(Map<String, dynamic> json) => UpdateFile(
 Map<String, dynamic> _$UpdateFileToJson(UpdateFile instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'data': instance.data.toJson(),
+      'dataType': instance.dataType,
       'type': fileTypeNullableToJson(instance.type),
       'start': instance.start?.toIso8601String(),
       'stop': instance.stop?.toIso8601String(),
@@ -1269,6 +1259,14 @@ Map<String, dynamic> _$UserSettingsToJson(UserSettings instance) =>
       'metricSettings': instance.metricSettings?.toJson(),
       'groups': instance.groups?.toJson(),
     };
+
+ApiFilesDataIdPost$RequestBody _$ApiFilesDataIdPost$RequestBodyFromJson(
+  Map<String, dynamic> json,
+) => ApiFilesDataIdPost$RequestBody(file: json['file'] as String);
+
+Map<String, dynamic> _$ApiFilesDataIdPost$RequestBodyToJson(
+  ApiFilesDataIdPost$RequestBody instance,
+) => <String, dynamic>{'file': instance.file};
 
 ApiImportTypePost$RequestBody _$ApiImportTypePost$RequestBodyFromJson(
   Map<String, dynamic> json,

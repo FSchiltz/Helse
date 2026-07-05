@@ -1,5 +1,6 @@
 import 'package:helse/services/api_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/ui/common/inputs/file_list_widget.dart';
 
 class FileService extends ApiService {
   FileService(super.account);
@@ -18,5 +19,44 @@ class FileService extends ApiService {
           () => api.apiFilesEventsEventidGet(eventid: id, personId: person),
         ) ??
         [];
+  }
+
+  Future<int?> postFile(UIFile file, int? person) async {
+    final fileData = file.file;
+    if (fileData == null) {
+      return null;
+    }
+
+    var api = await getService();
+    return await call(
+      () => api.apiFilesPost(
+        body: CreateFile(
+          dataType: fileData.mimeType ?? '',
+          name: file.name,
+          description: file.description,
+          type: FileType.none,
+          start: DateTime.now()
+        ),
+        personId: person,
+      ),
+    );
+  }
+
+  Future<void> linkMetric(int? fileId, int metricId, int? person) async {
+    var api = await getService();
+    await call(
+      () => api.apiFilesMetricsMetricidFileidPost(
+        metricid: metricId,
+        fileid: fileId,
+        personId: person,
+      ),
+    );
+  }
+
+  Future<void> postFileData(int fileId, UIFile file, int? person) async {
+    var api = await getService();
+    await call(
+      () => api.apiFilesDataIdPost(id: fileId, file: file, personId: person),
+    );
   }
 }
