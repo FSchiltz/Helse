@@ -12,7 +12,7 @@ internal interface IEventContext : IContext
     /// <param name="e">The event</param>
     /// <param name="person">The person to which add the event to</param>
     /// <param name="user">The user making the addition</param>
-    Task Insert(Helse.Models.Events.CreateEvent e, long person, long user);
+    Task<long> Insert(Helse.Models.Events.CreateEvent e, long person, long user);
 
     /// <summary>
     /// Get a single event by id

@@ -67,7 +67,7 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
         widget.person,
       );
 
-      final xfiles = result.map((e)=> UIFile(null, e.name, e.id)).toList();
+      final xfiles = result.map((e) => UIFile(null, e.name, e.id)).toList();
 
       setState(() {
         files = xfiles;
@@ -136,6 +136,9 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
 
   Future<void> _submit() async {
     final value = MetricHelper().joinValue(_values.map((e) => e.text));
+    // find the files to add
+    // find the file to delete
+    final fileToAdd = files?.where((e) => e.id == 0) ?? [];
     if (widget.edit?.id != null) {
       final metric = UpdateMetric(
         id: widget.edit?.id ?? 0,
@@ -158,10 +161,15 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
         sourceId: "",
       );
 
+      // TODO get the new id
       await Dependencies.services.metric.addMetrics(
         metric,
         person: widget.person,
       );
+
+      for(var file in fileToAdd){
+        await Dependencies.services.files.postMetricFile(file);
+      }
     }
 
     widget.callback();

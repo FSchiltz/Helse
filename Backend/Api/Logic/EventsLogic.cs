@@ -29,7 +29,7 @@ internal static class EventsLogic
         .Produces((int)HttpStatusCode.Unauthorized);
 
         events.MapPost("/", CreateAsync)
-        .Produces((int)HttpStatusCode.NoContent)
+        .Produces<long>((int)HttpStatusCode.Created)
         .Produces((int)HttpStatusCode.Unauthorized);
 
         events.MapPut("/", UpdateAsync)
@@ -119,9 +119,9 @@ internal static class EventsLogic
 
         Validate(e);
 
-        await events.Insert(e, personId ?? user.PersonId, user.Id);
+        var id = await events.Insert(e, personId ?? user.PersonId, user.Id);
 
-        return TypedResults.NoContent();
+        return TypedResults.Created(default(Uri), id);
     }
 
     private static void Validate(BaseEvent e)

@@ -30,7 +30,7 @@ internal static class MetricsLogic
         .Produces((int)HttpStatusCode.Unauthorized);
 
         metrics.MapPost("/", CreateAsync)
-        .Produces((int)HttpStatusCode.NoContent)
+        .Produces<long>((int)HttpStatusCode.Created)
         .Produces((int)HttpStatusCode.Unauthorized);
 
         metrics.MapPut("/", UpdateAsync)
@@ -170,9 +170,9 @@ internal static class MetricsLogic
 
         Validate(metric, unit, type);
 
-        await db.Insert(metric, personId ?? user.PersonId, user.Id);
+        var id = await db.Insert(metric, personId ?? user.PersonId, user.Id);
 
-        return TypedResults.NoContent();
+        return TypedResults.Created(default(Uri), id);
     }
 
     private static void Validate(CreateMetric metric, Units? unit, Data.Models.Health.MetricType? type)
