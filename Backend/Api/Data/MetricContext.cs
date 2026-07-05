@@ -57,9 +57,9 @@ internal class MetricContext(DataConnection db, SlowQueryLogInterceptor intercep
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task Insert(Helse.Models.Metrics.CreateMetric metric, long person, long user)
+    public Task<long> Insert(Helse.Models.Metrics.CreateMetric metric, long person, long user)
     {
-        return Db.GetTable<Metric>().InsertAsync(() => new Metric
+        return Db.GetTable<Metric>().InsertWithInt64IdentityAsync(() => new Metric
         {
             PersonId = person,
             Value = metric.Value,
