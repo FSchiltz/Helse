@@ -58,7 +58,7 @@ class FileService extends ApiService {
   Future<void> postFileData(int fileId, XFile file, int? person) async {
     var api = await getService();
 
-    var part = FileHelper.extract(file);
+    var part = await FileHelper.extract(file);
     await call(
       () => api.apiFilesDataIdPost(id: fileId, file: part, personId: person),
     );

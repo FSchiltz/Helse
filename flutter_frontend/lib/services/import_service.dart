@@ -15,7 +15,7 @@ class ImportService extends ApiService {
   Future<JobId?> import(XFile file, int type, int? patient) async {
     var api = await getService();
 
-    var part = FileHelper.extract(file);
+    var part = await FileHelper.extract(file);
     return await call(
       () => api.apiImportTypePost(file: part, type: type, patient: patient),
     );
