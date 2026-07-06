@@ -63,4 +63,15 @@ class FileService extends ApiService {
       () => api.apiFilesDataIdPost(id: fileId, file: part, personId: person),
     );
   }
+
+  Future<void> unlinkMetric(int fileId, int metricId, int? person) async {
+    var api = await getService();
+    await call(
+      () => api.apiFilesMetricsMetricidFileidDelete(
+        metricid: metricId,
+        fileid: fileId,
+        personId: person,
+      ),
+    );
+  }
 }

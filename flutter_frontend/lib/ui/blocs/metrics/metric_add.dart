@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/file_helper.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/ui/common/inputs/file_list_widget.dart';
 import 'package:helse/ui/common/loader.dart';
@@ -153,9 +154,6 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
     final fileToAdd =
         files?.where((e) => e.id == null || e.id == 0 || e.file != null) ?? [];
 
-    // find the file to delete
-    // TODO
-
     int? metricId;
     if (widget.edit?.id != null) {
       final metric = UpdateMetric(
@@ -187,41 +185,25 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
     }
 
     if (metricId != null) {
-      var i = 0;
-      for (var file in fileToAdd) {
-        setState(() {
-          progress = i / fileToAdd.length * 100;
-          stateInfo = "Uploading File ${file.name}";
-        });
-
-        var fileId = file.id;
-
-        if (fileId == null) {
-          fileId =
-              await Dependencies.services.files.postFile(file, widget.person) ??
-              0;
-
-          file.id = fileId;
-        }
-
-        if (file.file != null) {
-          await Dependencies.services.files.postFileData(
-            fileId,
-            file.file!,
-            widget.person,
-          );
-
-          file.file = null;
-        }
-
-        await Dependencies.services.files.linkMetric(
+      await FileHelper.syncFiles(
+        fileToAdd,
+        _toDelete,
+        widget.person,
+        (int fileId) => Dependencies.services.files.linkMetric(
           fileId,
-          metricId,
+          metricId!,
           widget.person,
-        );
-
-        i++;
-      }
+        ),
+        (int fileId) => Dependencies.services.files.unlinkMetric(
+          fileId,
+          metricId!,
+          widget.person,
+        ),
+        (double progress, String status) => setState(() {
+          progress = progress;
+          stateInfo = status;
+        }),
+      );
     }
 
     widget.callback();
