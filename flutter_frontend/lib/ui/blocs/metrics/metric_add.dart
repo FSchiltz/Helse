@@ -141,10 +141,10 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
     // find the files to add
     final fileToAdd =
         files?.where((e) => e.id == null || e.id == 0 || e.file != null) ?? [];
-        
+
     // find the file to delete
     // TODO
-    
+
     int? metricId;
     if (widget.edit?.id != null) {
       final metric = UpdateMetric(
@@ -175,9 +175,14 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
       );
     }
 
-    // TODO add a loader for the user
     if (metricId != null) {
+      var i = 0;
       for (var file in fileToAdd) {
+        setState(() {
+          progress = i / fileToAdd.length * 100;
+          stateInfo = "Uploading File ${file.name}";
+        });
+
         var fileId = file.id;
 
         if (fileId == null) {
@@ -203,6 +208,8 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
           metricId,
           widget.person,
         );
+
+        i++;
       }
     }
 

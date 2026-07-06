@@ -102,7 +102,8 @@ class _HomeState extends State<Home> {
                 value: Dependencies.blocs.jobs,
                 child: BlocBuilder<TaskBloc, Execution>(
                   builder: (context, data) => ProgressIconButton(
-                    state: data,
+                    state: data.state,
+                    progress: data.progress,
                     icon: Icons.list_alt_sharp,
                     onOpen: () => showDialog<void>(
                       context: context,
@@ -116,7 +117,8 @@ class _HomeState extends State<Home> {
                   value: Dependencies.blocs.fit,
                   child: BlocBuilder<TaskBloc, Execution>(
                     builder: (context, state) => ProgressIconButton(
-                      state: state,
+                      state: state.state,
+                      progress: state.progress,
                       onOpen: () => showDialog<void>(
                         context: context,
                         builder: (context) => _showSynchroRuns(),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:helse/logic/event.dart';
-import 'package:helse/logic/task_bloc.dart';
 import 'package:helse/ui/common/loader.dart';
 
 class ProgressIconButton extends StatelessWidget {
@@ -8,18 +7,22 @@ class ProgressIconButton extends StatelessWidget {
     super.key,
     required this.state,
     this.icon,
-    required this.onOpen,
+    this.onOpen,
+    this.progress,
+    this.info,
   });
 
-  final Execution state;
+  final SubmissionStatus state;
   final IconData? icon;
-  final void Function() onOpen;
+  final void Function()? onOpen;
+  final double? progress;
+  final String? info;
 
   @override
   Widget build(BuildContext context) {
     Color? color;
     bool static = true;
-    switch (state.state) {
+    switch (state) {
       case SubmissionStatus.success:
         color = Colors.green;
         break;
@@ -35,7 +38,8 @@ class ProgressIconButton extends StatelessWidget {
 
     return Stack(
       children: [
-        if (state.progress != null)
+        if (info != null) Positioned(top: 0, child: Text(info ?? '')),
+        if (progress != null)
           Positioned(
             left: 0,
             right: 0,
@@ -43,9 +47,7 @@ class ProgressIconButton extends StatelessWidget {
             child: SizedBox(
               width: 40,
               height: 6,
-              child: LinearProgressIndicator(
-                value: (state.progress ?? 0) / 100,
-              ),
+              child: LinearProgressIndicator(value: (progress ?? 0) / 100),
             ),
           ),
         HelseLoader(

@@ -75,6 +75,10 @@ class _MetricGraphState extends State<MetricGraph> {
     );
     filteredMetrics = initGroup;
     groupedMetrics = initGroup;
+
+    if (initGroup.values.length == 1) {
+      _metric = initGroup.values.first;
+    }
   }
 
   @override
@@ -129,7 +133,6 @@ class _MetricGraphState extends State<MetricGraph> {
                 children: [
                   ...filteredMetrics.stats.map(
                     (e) => MetricStatisticsCard(stats: e, type: widget.type),
-
                   ),
                   MetricDataTable(
                     person: widget.person,
