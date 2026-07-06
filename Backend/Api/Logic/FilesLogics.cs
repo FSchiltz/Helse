@@ -19,7 +19,7 @@ internal static class FilesLogics
         .Produces((int)HttpStatusCode.Unauthorized);
 
         files.MapGet("/data/{id}", GetDataAsync)
-        .Produces<Models.Files.File>((int)HttpStatusCode.OK)
+        .Produces<FileData>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
         files.MapGet("/", GetFilesAsync)

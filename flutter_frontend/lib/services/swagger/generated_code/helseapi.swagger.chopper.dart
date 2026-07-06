@@ -576,7 +576,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<File>> _apiFilesDataIdGet({
+  Future<Response<FileData>> _apiFilesDataIdGet({
     required int? id,
     int? personId,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -601,7 +601,7 @@ final class _$Helseapi extends Helseapi {
       parameters: $params,
       tag: swaggerMetaData,
     );
-    return client.send<File, File>($request);
+    return client.send<FileData, FileData>($request);
   }
 
   @override

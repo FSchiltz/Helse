@@ -6,8 +6,6 @@ namespace Helse.Api.Data;
 
 internal interface IFilesContext : IContext
 {
-    public record FileData(string Type, byte[] Data);
-
     Task<long> CreateAsync(CreateFile file, long personId);
 
     Task DeleteAsync(long id, long personId);

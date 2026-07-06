@@ -1,6 +1,7 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/common/inputs/file_list_widget.dart';
+import 'package:helse/ui/common/notification.dart';
 import 'package:http/http.dart';
 
 class FileHelper {
@@ -51,5 +52,14 @@ class FileHelper {
       // we don't delete file, only unlink them
       await unlink(file);
     }
+  }
+
+  static Future<void> download(int? id, int? person) async {
+    if (id == null) {
+      return;
+    }
+
+    final file = await Dependencies.services.files.getData(id, person);
+    Notify.show("Got mime type ${file?.type}");
   }
 }

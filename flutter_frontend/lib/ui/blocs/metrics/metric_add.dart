@@ -128,6 +128,8 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
                         onAdd: (_, x) => setState(() {
                           files = x;
                         }),
+                        onDownload: (x) =>
+                            FileHelper.download(x.id, widget.person),
                         onDelete: (deleted, x) {
                           if (deleted.id != null &&
                               !_toDelete.contains(deleted.id)) {

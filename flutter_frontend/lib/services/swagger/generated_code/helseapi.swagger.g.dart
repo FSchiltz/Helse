@@ -336,6 +336,14 @@ Map<String, dynamic> _$FileToJson(File instance) => <String, dynamic>{
   'description': instance.description,
 };
 
+FileData _$FileDataFromJson(Map<String, dynamic> json) =>
+    FileData(type: json['type'] as String, data: json['data'] as String);
+
+Map<String, dynamic> _$FileDataToJson(FileData instance) => <String, dynamic>{
+  'type': instance.type,
+  'data': instance.data,
+};
+
 Gotify _$GotifyFromJson(Map<String, dynamic> json) => Gotify(
   enabled: json['enabled'] as bool?,
   url: json['url'] as String?,

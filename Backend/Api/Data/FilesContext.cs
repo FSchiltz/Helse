@@ -84,11 +84,11 @@ internal class FilesContext(DataConnection db, SlowQueryLogInterceptor intercept
             .FirstAsync();
     }
 
-    public Task<IFilesContext.FileData> GetDataAsync(long id, long personId)
+    public Task<FileData> GetDataAsync(long id, long personId)
     {
         return Db.GetTable<Files>()
             .Where(x => x.Id == id && x.PersonId == personId && x.Valid)
-            .Select(x => new IFilesContext.FileData(x.DataType, x.Data))
+            .Select(x => new FileData(x.DataType, x.Data))
             .FirstAsync();
     }
 

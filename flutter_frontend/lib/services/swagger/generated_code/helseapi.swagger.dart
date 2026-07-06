@@ -620,11 +620,11 @@ abstract class Helseapi extends ChopperService {
   ///
   ///@param id
   ///@param personId
-  Future<chopper.Response<File>> apiFilesDataIdGet({
+  Future<chopper.Response<FileData>> apiFilesDataIdGet({
     required int? id,
     int? personId,
   }) {
-    generatedMapping.putIfAbsent(File, () => File.fromJsonFactory);
+    generatedMapping.putIfAbsent(FileData, () => FileData.fromJsonFactory);
 
     return _apiFilesDataIdGet(id: id, personId: personId);
   }
@@ -633,7 +633,7 @@ abstract class Helseapi extends ChopperService {
   ///@param id
   ///@param personId
   @GET(path: '/api/files/data/{id}')
-  Future<chopper.Response<File>> _apiFilesDataIdGet({
+  Future<chopper.Response<FileData>> _apiFilesDataIdGet({
     @Path('id') required int? id,
     @Query('personId') int? personId,
     @chopper.Tag()
@@ -4038,6 +4038,55 @@ extension $FileExtension on File {
       stop: (stop != null ? stop.value : this.stop),
       name: (name != null ? name.value : this.name),
       description: (description != null ? description.value : this.description),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class FileData {
+  const FileData({required this.type, required this.data});
+
+  factory FileData.fromJson(Map<String, dynamic> json) =>
+      _$FileDataFromJson(json);
+
+  static const toJsonFactory = _$FileDataToJson;
+  Map<String, dynamic> toJson() => _$FileDataToJson(this);
+
+  @JsonKey(name: 'type')
+  final String type;
+  @JsonKey(name: 'data')
+  final String data;
+  static const fromJsonFactory = _$FileDataFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is FileData &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.data, data) ||
+                const DeepCollectionEquality().equals(other.data, data)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(data) ^
+      runtimeType.hashCode;
+}
+
+extension $FileDataExtension on FileData {
+  FileData copyWith({String? type, String? data}) {
+    return FileData(type: type ?? this.type, data: data ?? this.data);
+  }
+
+  FileData copyWithWrapped({Wrapped<String>? type, Wrapped<String>? data}) {
+    return FileData(
+      type: (type != null ? type.value : this.type),
+      data: (data != null ? data.value : this.data),
     );
   }
 }

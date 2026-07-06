@@ -74,4 +74,9 @@ class FileService extends ApiService {
       ),
     );
   }
+
+  Future<FileData?> getData(int id, int? person) async {
+    var api = await getService();
+    return await call(() => api.apiFilesDataIdGet(id: id, personId: person));
+  }
 }
