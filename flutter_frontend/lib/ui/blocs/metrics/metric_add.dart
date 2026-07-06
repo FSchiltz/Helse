@@ -130,7 +130,7 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
                         }),
                         deleteCallback: (deleted, x) {
                           if (deleted.id != null &&
-                              _toDelete.contains(deleted.id)) {
+                              !_toDelete.contains(deleted.id)) {
                             _toDelete.add(deleted.id!);
                           }
 

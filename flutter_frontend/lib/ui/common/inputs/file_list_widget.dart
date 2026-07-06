@@ -32,9 +32,13 @@ class FileListWidget extends StatelessWidget {
       children: [
         FileInput(
           (value) {
-            final file = UIFile(value, value.name, null, '');
-            files.add(file);
-            addCallback(file, files);
+            // first check that the file is not already added
+            final exists = files.any((e) => e.file?.path == value.path);
+            if (!exists) {
+              final file = UIFile(value, value.name, null, '');
+              files.add(file);
+              addCallback(file, files);
+            }
           },
           label,
           Icons.upload_file_sharp,
