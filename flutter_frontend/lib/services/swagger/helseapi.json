@@ -807,10 +807,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/File"
-                  }
+                  "$ref": "#/components/schemas/PaginatedOfFile"
                 }
               }
             }
@@ -4306,6 +4303,28 @@
               "string"
             ],
             "format": "int64"
+          }
+        }
+      },
+      "PaginatedOfFile": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "count": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/File"
+            }
           }
         }
       },

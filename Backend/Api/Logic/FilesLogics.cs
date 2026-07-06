@@ -23,7 +23,7 @@ internal static class FilesLogics
         .Produces((int)HttpStatusCode.Unauthorized);
 
         files.MapGet("/", GetFilesAsync)
-        .Produces<List<Models.Files.File>>((int)HttpStatusCode.OK)
+        .Produces<Paginated<Models.Files.File>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
         files.MapPut("/", UpdateAsync)

@@ -80,11 +80,10 @@ class FileService extends ApiService {
     return await call(() => api.apiFilesDataIdGet(id: id, personId: person));
   }
 
-  Future<List<File>> getFiles(int? person) async {
+  Future<PaginatedOfFile?> getFiles(int? person) async {
     var api = await getService();
     return await call(
-          () => api.apiFilesGet(personId: person, page: 0, pageSize: 100),
-        ) ??
-        [];
+      () => api.apiFilesGet(personId: person, page: 0, pageSize: 100),
+    );
   }
 }

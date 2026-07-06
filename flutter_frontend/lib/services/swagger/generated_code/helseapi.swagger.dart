@@ -686,12 +686,15 @@ abstract class Helseapi extends ChopperService {
   ///@param personId
   ///@param Page
   ///@param PageSize
-  Future<chopper.Response<List<File>>> apiFilesGet({
+  Future<chopper.Response<PaginatedOfFile>> apiFilesGet({
     int? personId,
     required int? page,
     required int? pageSize,
   }) {
-    generatedMapping.putIfAbsent(File, () => File.fromJsonFactory);
+    generatedMapping.putIfAbsent(
+      PaginatedOfFile,
+      () => PaginatedOfFile.fromJsonFactory,
+    );
 
     return _apiFilesGet(personId: personId, page: page, pageSize: pageSize);
   }
@@ -701,7 +704,7 @@ abstract class Helseapi extends ChopperService {
   ///@param Page
   ///@param PageSize
   @GET(path: '/api/files')
-  Future<chopper.Response<List<File>>> _apiFilesGet({
+  Future<chopper.Response<PaginatedOfFile>> _apiFilesGet({
     @Query('personId') int? personId,
     @Query('Page') required int? page,
     @Query('PageSize') required int? pageSize,
@@ -5750,6 +5753,61 @@ extension $OrderedItemExtension on OrderedItem {
       detailGraph: (detailGraph != null ? detailGraph.value : this.detailGraph),
       parent: (parent != null ? parent.value : this.parent),
       color: (color != null ? color.value : this.color),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class PaginatedOfFile {
+  const PaginatedOfFile({this.count, required this.items});
+
+  factory PaginatedOfFile.fromJson(Map<String, dynamic> json) =>
+      _$PaginatedOfFileFromJson(json);
+
+  static const toJsonFactory = _$PaginatedOfFileToJson;
+  Map<String, dynamic> toJson() => _$PaginatedOfFileToJson(this);
+
+  @JsonKey(name: 'count')
+  final int? count;
+  @JsonKey(name: 'items', defaultValue: <File>[])
+  final List<File> items;
+  static const fromJsonFactory = _$PaginatedOfFileFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is PaginatedOfFile &&
+            (identical(other.count, count) ||
+                const DeepCollectionEquality().equals(other.count, count)) &&
+            (identical(other.items, items) ||
+                const DeepCollectionEquality().equals(other.items, items)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(count) ^
+      const DeepCollectionEquality().hash(items) ^
+      runtimeType.hashCode;
+}
+
+extension $PaginatedOfFileExtension on PaginatedOfFile {
+  PaginatedOfFile copyWith({int? count, List<File>? items}) {
+    return PaginatedOfFile(
+      count: count ?? this.count,
+      items: items ?? this.items,
+    );
+  }
+
+  PaginatedOfFile copyWithWrapped({
+    Wrapped<int?>? count,
+    Wrapped<List<File>>? items,
+  }) {
+    return PaginatedOfFile(
+      count: (count != null ? count.value : this.count),
+      items: (items != null ? items.value : this.items),
     );
   }
 }

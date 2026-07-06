@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
-import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/inputs/files/file_list_widget.dart';
 import 'package:helse/ui/common/loader.dart';
 import 'package:helse/ui/common/ui_constants.dart';

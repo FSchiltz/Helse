@@ -665,6 +665,22 @@ Map<String, dynamic> _$OrderedItemToJson(OrderedItem instance) =>
       'color': instance.color,
     };
 
+PaginatedOfFile _$PaginatedOfFileFromJson(Map<String, dynamic> json) =>
+    PaginatedOfFile(
+      count: (json['count'] as num?)?.toInt(),
+      items:
+          (json['items'] as List<dynamic>?)
+              ?.map((e) => File.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$PaginatedOfFileToJson(PaginatedOfFile instance) =>
+    <String, dynamic>{
+      'count': instance.count,
+      'items': instance.items.map((e) => e.toJson()).toList(),
+    };
+
 PatchEvent _$PatchEventFromJson(Map<String, dynamic> json) => PatchEvent(
   updateDescription: json['updateDescription'] as bool?,
   updateStop: json['updateStop'] as bool?,

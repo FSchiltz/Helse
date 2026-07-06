@@ -640,7 +640,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<List<File>>> _apiFilesGet({
+  Future<Response<PaginatedOfFile>> _apiFilesGet({
     int? personId,
     required int? page,
     required int? pageSize,
@@ -668,7 +668,7 @@ final class _$Helseapi extends Helseapi {
       parameters: $params,
       tag: swaggerMetaData,
     );
-    return client.send<List<File>, File>($request);
+    return client.send<PaginatedOfFile, PaginatedOfFile>($request);
   }
 
   @override

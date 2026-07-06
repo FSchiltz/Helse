@@ -22,7 +22,7 @@ class _FileListPickerState extends State<FileListPicker> {
   Future<void> _getFileList() async {
     final result = await Dependencies.services.files.getFiles(widget.person);
 
-    final xfiles = result
+    final xfiles = result?.items
         .map((e) => UIFile(null, e.name, e.id, e.description))
         .toList();
 
