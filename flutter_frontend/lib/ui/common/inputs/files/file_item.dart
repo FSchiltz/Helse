@@ -19,6 +19,7 @@ class FileItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       selected: selected,
+      selectedTileColor: Theme.of(context).colorScheme.primaryContainer,
       dense: true,
       leading: const Icon(Icons.insert_drive_file),
       title: Text(file.name),

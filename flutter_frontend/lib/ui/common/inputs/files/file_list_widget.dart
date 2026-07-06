@@ -5,7 +5,6 @@ import 'package:helse/ui/common/inputs/files/file_input.dart';
 import 'package:helse/ui/common/inputs/files/file_item.dart';
 import 'package:helse/ui/common/inputs/files/file_list_picker.dart';
 import 'package:helse/ui/common/square_button.dart';
-import 'package:helse/ui/common/ui_constants.dart';
 
 class UIFile {
   XFile? file;

@@ -53,7 +53,9 @@ class _FileListPickerState extends State<FileListPicker> {
                       selected: entry.id == _selected?.id,
                       file: entry,
                       onDelete: null,
-                      onTap: () => _selected = entry,
+                      onTap: () => setState(() {
+                        _selected = entry;
+                      }),
                     ),
                   )
                   .toList(),
