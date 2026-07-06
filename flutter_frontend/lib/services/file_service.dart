@@ -86,4 +86,26 @@ class FileService extends ApiService {
       () => api.apiFilesGet(personId: person, page: 0, pageSize: 100),
     );
   }
+
+  Future<void> linkEvent(int fileId, int eventId, int? person) async {
+    var api = await getService();
+    await call(
+      () => api.apiFilesEventsEventidFileidPost(
+        eventid: eventId,
+        fileid: fileId,
+        personId: person,
+      ),
+    );
+  }
+
+  Future<void> unlinkEvent(int fileId, int eventId, int? person) async {
+    var api = await getService();
+    await call(
+      () => api.apiFilesEventsEventidFileidDelete(
+        eventid: eventId,
+        fileid: fileId,
+        personId: person,
+      ),
+    );
+  }
 }

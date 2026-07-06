@@ -37,7 +37,7 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
   List<TextEditingController> _values = [];
   final TextEditingController _tag = TextEditingController();
   List<UIFile> _files = [];
-  List<UIFile>? _oldFiles = null;
+  List<UIFile>? _oldFiles;
 
   @override
   void initState() {
