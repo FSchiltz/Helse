@@ -7,16 +7,14 @@ import 'package:helse/ui/common/ui_constants.dart';
 class MetricFileList extends StatefulWidget {
   final int? person;
   final int? metric;
-  final void Function(Set<int>)? onDelete;
-  final void Function(List<UIFile>)? onAdd;
+  final void Function(List<UIFile>)? onChange;
   final bool readonly;
 
   const MetricFileList({
     super.key,
     this.person,
     this.metric,
-    this.onDelete,
-    this.onAdd,
+    this.onChange,
     this.readonly = false,
   });
 
@@ -26,7 +24,6 @@ class MetricFileList extends StatefulWidget {
 
 class _MetricFileListState extends State<MetricFileList> {
   List<UIFile>? _files;
-  final Set<int> _toDelete = {};
 
   Future<void> _getFileList() async {
     final edit = widget.metric;
@@ -48,6 +45,8 @@ class _MetricFileListState extends State<MetricFileList> {
         _files = [];
       });
     }
+
+    widget.onChange?.call(_files!);
   }
 
   @override
@@ -77,7 +76,7 @@ class _MetricFileListState extends State<MetricFileList> {
                 setState(() {
                   _files = x;
                 });
-                widget.onAdd?.call(_files!);
+                widget.onChange?.call(_files!);
               },
               person: widget.person,
               onTap: (x) {
@@ -90,15 +89,11 @@ class _MetricFileListState extends State<MetricFileList> {
                 }
               },
               onDelete: (deleted, x) {
-                if (deleted.id != null && !_toDelete.contains(deleted.id)) {
-                  _toDelete.add(deleted.id!);
-                }
-
                 setState(() {
                   _files = x;
                 });
 
-                widget.onDelete?.call(_toDelete);
+                widget.onChange?.call(_files!);
               },
             ),
     );

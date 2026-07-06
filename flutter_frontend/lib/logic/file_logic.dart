@@ -18,7 +18,7 @@ class FileLogic {
 
   Future<void> syncFiles(
     Iterable<UIFile> fileToAdd,
-    Set<int> toDelete,
+    Iterable<int> toDelete,
     int? person,
     Future<void> Function(int fileId) link,
     Future<void> Function(int fileId) unlink,

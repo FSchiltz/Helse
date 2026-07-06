@@ -37,7 +37,7 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
   List<TextEditingController> _values = [];
   final TextEditingController _tag = TextEditingController();
   List<UIFile> _files = [];
-  Set<int> _toDelete = {};
+  List<UIFile>? _oldFiles = null;
 
   @override
   void initState() {
@@ -101,8 +101,10 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
                 MetricFileList(
                   metric: widget.edit?.id,
                   person: widget.person,
-                  onAdd: (x) => _files = x,
-                  onDelete: (x) => _toDelete = x,
+                  onChange: (x) {
+                    _oldFiles ??= x.toList();
+                    _files = x;
+                  },
                 ),
               ],
             ),
@@ -114,10 +116,6 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
 
   Future<void> _submit() async {
     final value = MetricHelper().joinValue(_values.map((e) => e.text));
-    // find the files to add
-    final fileToAdd = _files.where(
-      (e) => e.id == null || e.id == 0 || e.file != null,
-    );
 
     int? metricId;
     if (widget.edit?.id != null) {
@@ -150,9 +148,35 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
     }
 
     if (metricId != null) {
+      // find the files to add
+      List<UIFile> fileToAdd = [];
+      List<UIFile> fileToDelete = [];
+
+      if (widget.edit == null) {
+        fileToAdd = _files;
+      } else {
+        final newId = _files
+            .where((e) => e.id != null)
+            .map((e) => e.id)
+            .toSet();
+
+        final oldId = _oldFiles?.map((e) => e.id).toSet() ?? {};
+
+        fileToAdd = _files
+            .where(
+              (e) =>
+                  (e.id == null || e.id == 0 && e.file != null) ||
+                  !oldId.contains(e.id),
+            )
+            .toList();
+
+        fileToDelete =
+            _oldFiles?.where((e) => !newId.contains(e.id)).toList() ?? [];
+      }
+
       await Dependencies.logics.files.syncFiles(
         fileToAdd,
-        _toDelete,
+        fileToDelete.map((e) => e.id ?? 0),
         widget.person,
         (int fileId) => Dependencies.services.files.linkMetric(
           fileId,
