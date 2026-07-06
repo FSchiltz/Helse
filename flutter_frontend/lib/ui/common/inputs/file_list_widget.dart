@@ -14,13 +14,15 @@ class UIFile {
 
 class FileListWidget extends StatelessWidget {
   final List<UIFile> files;
-  final void Function(List<UIFile>) callback;
+  final void Function(UIFile, List<UIFile>) addCallback;
+  final void Function(UIFile, List<UIFile>) deleteCallback;
   final String label;
 
   const FileListWidget({
     super.key,
     required this.files,
-    required this.callback,
+    required this.addCallback,
+    required this.deleteCallback,
     required this.label,
   });
 
@@ -30,8 +32,9 @@ class FileListWidget extends StatelessWidget {
       children: [
         FileInput(
           (value) {
-            files.add(UIFile(value, value.name, null, ''));
-            callback(files);
+            final file = UIFile(value, value.name, null, '');
+            files.add(file);
+            addCallback(file, files);
           },
           label,
           Icons.upload_file_sharp,
@@ -51,8 +54,9 @@ class FileListWidget extends StatelessWidget {
               trailing: IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: () {
+                  final deleted = files[index];
                   files.removeAt(index);
-                  callback(files);
+                  deleteCallback(deleted, files);
                 },
               ),
             );

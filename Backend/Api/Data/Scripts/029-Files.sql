@@ -23,7 +23,8 @@ CREATE TABLE file.Files (
     Description VARCHAR NOT NULL,
     Start TIMESTAMP NOT NULL,
     Stop TIMESTAMP NULL,
-    PersonId BIGINT NOT NULL REFERENCES person.Person (Id)
+    PersonId BIGINT NOT NULL REFERENCES person.Person (Id),
+    Valid boolean NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE health.MetricFiles (

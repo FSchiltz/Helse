@@ -34,4 +34,7 @@ internal class Files
 
     [Column]
     public required string Description { get; set; }
+
+    [Column]
+    public bool Valid { get; set; }
 }

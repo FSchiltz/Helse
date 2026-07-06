@@ -37,6 +37,7 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
   List<TextEditingController> _values = [];
   final TextEditingController _tag = TextEditingController();
   List<UIFile>? files;
+  final Set<int> _toDelete = {};
 
   @override
   void initState() {
@@ -123,9 +124,19 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
                     ? HelseLoader()
                     : FileListWidget(
                         files: files!,
-                        callback: (x) => setState(() {
+                        addCallback: (_, x) => setState(() {
                           files = x;
                         }),
+                        deleteCallback: (deleted, x) {
+                          if (deleted.id != null &&
+                              _toDelete.contains(deleted.id)) {
+                            _toDelete.add(deleted.id!);
+                          }
+
+                          setState(() {
+                            files = x;
+                          });
+                        },
                         label: locale.file,
                       ),
               ],

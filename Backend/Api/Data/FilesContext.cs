@@ -23,6 +23,7 @@ internal class FilesContext(DataConnection db, SlowQueryLogInterceptor intercept
             Start = file.Start,
             Stop = file.Stop,
             Type = (int)file.Type,
+            Valid = false,
         });
     }
 
@@ -86,7 +87,7 @@ internal class FilesContext(DataConnection db, SlowQueryLogInterceptor intercept
     public Task<IFilesContext.FileData> GetDataAsync(long id, long personId)
     {
         return Db.GetTable<Files>()
-            .Where(x => x.Id == id && x.PersonId == personId)
+            .Where(x => x.Id == id && x.PersonId == personId && x.Valid)
             .Select(x => new IFilesContext.FileData(x.DataType, x.Data))
             .FirstAsync();
     }
@@ -94,7 +95,7 @@ internal class FilesContext(DataConnection db, SlowQueryLogInterceptor intercept
     public Task<Helse.Models.Files.File[]> GetFilesByEventAsync(long eventId, long personId)
     {
         return Db.GetTable<EventFiles>()
-            .Where(x => x.EventId == eventId && x.File.PersonId == personId)
+            .Where(x => x.EventId == eventId && x.File.PersonId == personId && x.File.Valid)
             .Select(x => new Helse.Models.Files.File
             {
                 Description = x.File.Description,
@@ -111,7 +112,7 @@ internal class FilesContext(DataConnection db, SlowQueryLogInterceptor intercept
     public Task<Helse.Models.Files.File[]> GetFilesByMetricAsync(long metricId, long personId)
     {
         return Db.GetTable<MetricFiles>()
-            .Where(x => x.MetricId == metricId && x.File.PersonId == personId)
+            .Where(x => x.MetricId == metricId && x.File.PersonId == personId && x.File.Valid)
             .Select(x => new Helse.Models.Files.File
             {
                 Description = x.File.Description,
@@ -150,6 +151,7 @@ internal class FilesContext(DataConnection db, SlowQueryLogInterceptor intercept
         return Db.GetTable<Files>()
             .Where(x => x.Id == id && x.PersonId == personId)
             .Set(x => x.Data, data)
+            .Set(x => x.Valid, true)
             .UpdateAsync();
     }
 
