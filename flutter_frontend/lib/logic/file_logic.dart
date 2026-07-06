@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
@@ -70,7 +71,7 @@ class FileLogic {
       return;
     }
 
-    final Uint8List fileData = Uint8List.fromList(file.data.codeUnits);
+    final Uint8List fileData = Uint8List.fromList(base64.decode(file.data));
     final XFile textFile = XFile.fromData(
       fileData,
       mimeType: file.type,

@@ -78,10 +78,7 @@ internal static class FilesLogics
         if (error is not null)
             return error;
 
-        var stream = file.OpenReadStream();
-        using var reader = new StreamReader(stream);
-        var data = reader.ReadToEndAsync();
-
+        await using var stream = file.OpenReadStream();
         await using MemoryStream ms = new();
         await stream.CopyToAsync(ms);
         ms.Position = 0;
