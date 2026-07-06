@@ -71,6 +71,7 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
         child: Form(
           child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               spacing: UIConstants.formPad,
               children: [
                 ..._values.expand(

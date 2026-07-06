@@ -5,9 +5,8 @@ import 'package:helse/ui/common/square_button.dart';
 class FileInput extends StatelessWidget {
   final void Function(XFile value) callback;
   final String label;
-  final IconData icone;
 
-  const FileInput(this.callback, this.label, this.icone, {super.key});
+  const FileInput(this.callback, this.label, {super.key});
 
   Future<void> _pickFile() async {
     final XFile? file = await openFile();
@@ -18,6 +17,6 @@ class FileInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SquareButton(label, _pickFile, icon: icone);
+    return SquareButton(label, _pickFile, icon: Icons.upload_file_sharp);
   }
 }

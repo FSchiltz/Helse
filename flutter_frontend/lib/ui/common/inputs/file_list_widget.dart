@@ -1,6 +1,8 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/inputs/file_input.dart';
+import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 class UIFile {
@@ -17,7 +19,6 @@ class FileListWidget extends StatelessWidget {
   final void Function(UIFile, List<UIFile>) onAdd;
   final void Function(UIFile, List<UIFile>) onDelete;
   final void Function(UIFile) onTap;
-  final String label;
   final bool readonly;
 
   const FileListWidget({
@@ -25,28 +26,32 @@ class FileListWidget extends StatelessWidget {
     required this.files,
     required this.onAdd,
     required this.onDelete,
-    required this.label,
     required this.onTap,
     this.readonly = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final locale = Translation.of(context);
     return Column(
       children: [
         if (!readonly)
-          FileInput(
-            (value) {
-              // first check that the file is not already added
-              final exists = files.any((e) => e.file?.path == value.path);
-              if (!exists) {
-                final file = UIFile(value, value.name, null, '');
-                files.add(file);
-                onAdd(file, files);
-              }
-            },
-            label,
-            Icons.upload_file_sharp,
+          Row(
+            children: [
+              Flexible(
+                child: FileInput((value) {
+                  // first check that the file is not already added
+                  final exists = files.any((e) => e.file?.path == value.path);
+                  if (!exists) {
+                    final file = UIFile(value, value.name, null, '');
+                    files.add(file);
+                    onAdd(file, files);
+                  }
+                }, locale.upload),
+              ),
+
+              Flexible(child: SquareButton(locale.fromExisting, null)),
+            ],
           ),
 
         if (files.isNotEmpty) ...[

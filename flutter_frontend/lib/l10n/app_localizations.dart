@@ -745,6 +745,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'File'**
   String get file;
+
+  /// No description provided for @upload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get upload;
+
+  /// No description provided for @fromExisting.
+  ///
+  /// In en, this message translates to:
+  /// **'From existing'**
+  String get fromExisting;
 }
 
 class _AppLocalizationsDelegate

@@ -62,15 +62,11 @@ class _FileImportState extends PopupSubmitState<FileImport> {
               label: locale.type,
             ),
             const SizedBox(height: UIConstants.formPad),
-            FileInput(
-              (value) {
-                setState(() {
-                  file = value;
-                });
-              },
-              locale.file,
-              Icons.upload_file_sharp,
-            ),
+            FileInput((value) {
+              setState(() {
+                file = value;
+              });
+            }, locale.file),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(file?.name ?? ""),
