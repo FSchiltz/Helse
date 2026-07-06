@@ -16,7 +16,7 @@ class FileListWidget extends StatelessWidget {
   final List<UIFile> files;
   final void Function(UIFile, List<UIFile>) onAdd;
   final void Function(UIFile, List<UIFile>) onDelete;
-  final void Function(UIFile) onDownload;
+  final void Function(UIFile) onTap;
   final String label;
   final bool readonly;
 
@@ -26,7 +26,7 @@ class FileListWidget extends StatelessWidget {
     required this.onAdd,
     required this.onDelete,
     required this.label,
-    required this.onDownload,
+    required this.onTap,
     this.readonly = false,
   });
 
@@ -61,7 +61,7 @@ class FileListWidget extends StatelessWidget {
                       files.removeAt(entry.key);
                       onDelete(deleted, files);
                     },
-              onDownload: () => onDownload(entry.value),
+              onTap: () => onTap(entry.value),
             ),
           ),
         ],
@@ -75,12 +75,12 @@ class FileItem extends StatelessWidget {
     super.key,
     required this.file,
     required this.onDelete,
-    required this.onDownload,
+    required this.onTap,
   });
 
   final UIFile file;
   final void Function()? onDelete;
-  final void Function() onDownload;
+  final void Function() onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +88,7 @@ class FileItem extends StatelessWidget {
       dense: true,
       leading: const Icon(Icons.insert_drive_file),
       title: Text(file.name),
-      onTap: (file.id == null) ? null : () => onDownload(),
+      onTap: (file.id == null) ? null : () => onTap(),
       trailing: (onDelete == null)
           ? null
           : IconButton(icon: const Icon(Icons.close), onPressed: onDelete),

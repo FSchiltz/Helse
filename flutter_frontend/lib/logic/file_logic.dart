@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:file_selector/file_selector.dart';
 import 'package:helse/services/file_service.dart';
 import 'package:helse/ui/common/inputs/file_list_widget.dart';
@@ -35,11 +37,7 @@ class FileLogic {
       }
 
       if (file.file != null) {
-        await files.postFileData(
-          fileId,
-          file.file!,
-          person,
-        );
+        await files.postFileData(fileId, file.file!, person);
 
         file.file = null;
       }
@@ -57,12 +55,28 @@ class FileLogic {
     }
   }
 
-  Future<void> download(int? id, int? person) async {
-    if (id == null) {
+  Future<void> download(int id, String fileName, int? person) async {
+    final file = await files.getData(id, person);
+    if (file == null) {
       return;
     }
 
-    final file = await files.getData(id, person);
-    Notify.show("Got mime type ${file?.type}");
+    final FileSaveLocation? result = await getSaveLocation(
+      suggestedName: fileName,
+    );
+
+    if (result == null) {
+      // Operation was canceled by the user.
+      return;
+    }
+
+    final Uint8List fileData = Uint8List.fromList(file.data.codeUnits);
+    final XFile textFile = XFile.fromData(
+      fileData,
+      mimeType: file.type,
+      name: fileName,
+    );
+    await textFile.saveTo(result.path);
+    Notify.showIcon(NotificationKind.success);
   }
 }
