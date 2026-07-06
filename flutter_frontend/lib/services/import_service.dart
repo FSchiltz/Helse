@@ -1,5 +1,5 @@
 import 'package:file_selector/file_selector.dart';
-import 'package:helse/helpers/file_helper.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/api_service.dart';
 
 import 'swagger/generated_code/helseapi.swagger.dart';
@@ -15,7 +15,7 @@ class ImportService extends ApiService {
   Future<JobId?> import(XFile file, int type, int? patient) async {
     var api = await getService();
 
-    var part = await FileHelper.extract(file);
+    var part = await Dependencies.logics.files.extract(file);
     return await call(
       () => api.apiImportTypePost(file: part, type: type, patient: patient),
     );

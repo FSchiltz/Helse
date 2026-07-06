@@ -1,16 +1,19 @@
 import 'package:file_selector/file_selector.dart';
-import 'package:helse/di/dependencies.dart';
+import 'package:helse/services/file_service.dart';
 import 'package:helse/ui/common/inputs/file_list_widget.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:http/http.dart';
 
-class FileHelper {
-  static Future<MultipartFile> extract(XFile file) async {
+class FileLogic {
+  final FileService files;
+  FileLogic(this.files);
+
+  Future<MultipartFile> extract(XFile file) async {
     var content = await file.readAsBytes();
     return MultipartFile.fromBytes("file", content, filename: 'upload');
   }
 
-  static Future<void> syncFiles(
+  Future<void> syncFiles(
     Iterable<UIFile> fileToAdd,
     Set<int> toDelete,
     int? person,
@@ -26,13 +29,13 @@ class FileHelper {
       var fileId = file.id;
 
       if (fileId == null) {
-        fileId = await Dependencies.services.files.postFile(file, person) ?? 0;
+        fileId = await files.postFile(file, person) ?? 0;
 
         file.id = fileId;
       }
 
       if (file.file != null) {
-        await Dependencies.services.files.postFileData(
+        await files.postFileData(
           fileId,
           file.file!,
           person,
@@ -54,12 +57,12 @@ class FileHelper {
     }
   }
 
-  static Future<void> download(int? id, int? person) async {
+  Future<void> download(int? id, int? person) async {
     if (id == null) {
       return;
     }
 
-    final file = await Dependencies.services.files.getData(id, person);
+    final file = await files.getData(id, person);
     Notify.show("Got mime type ${file?.type}");
   }
 }

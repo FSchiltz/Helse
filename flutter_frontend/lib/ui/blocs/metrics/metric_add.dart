@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:helse/helpers/file_helper.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/ui/common/inputs/file_list_widget.dart';
 import 'package:helse/ui/common/loader.dart';
@@ -128,8 +127,10 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
                         onAdd: (_, x) => setState(() {
                           files = x;
                         }),
-                        onDownload: (x) =>
-                            FileHelper.download(x.id, widget.person),
+                        onDownload: (x) => Dependencies.logics.files.download(
+                          x.id,
+                          widget.person,
+                        ),
                         onDelete: (deleted, x) {
                           if (deleted.id != null &&
                               !_toDelete.contains(deleted.id)) {
@@ -187,7 +188,7 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
     }
 
     if (metricId != null) {
-      await FileHelper.syncFiles(
+      await Dependencies.logics.files.syncFiles(
         fileToAdd,
         _toDelete,
         widget.person,
