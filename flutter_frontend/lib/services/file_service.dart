@@ -2,7 +2,7 @@ import 'package:file_selector/file_selector.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/api_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/common/inputs/file_list_widget.dart';
+import 'package:helse/ui/common/inputs/files/file_list_widget.dart';
 
 class FileService extends ApiService {
   FileService(super.account);
@@ -78,5 +78,13 @@ class FileService extends ApiService {
   Future<FileData?> getData(int id, int? person) async {
     var api = await getService();
     return await call(() => api.apiFilesDataIdGet(id: id, personId: person));
+  }
+
+  Future<List<File>> getFiles(int? person) async {
+    var api = await getService();
+    return await call(
+          () => api.apiFilesGet(personId: person, page: 0, pageSize: 100),
+        ) ??
+        [];
   }
 }

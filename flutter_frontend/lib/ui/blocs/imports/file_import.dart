@@ -8,7 +8,7 @@ import 'package:helse/ui/common/inputs/values_input.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../../common/inputs/file_input.dart';
+import '../../common/inputs/files/file_input.dart';
 
 class FileImport extends StatefulWidget {
   final int? patient;

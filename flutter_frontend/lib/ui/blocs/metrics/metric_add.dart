@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/ui/blocs/metrics/metric_file_list.dart';
-import 'package:helse/ui/common/inputs/file_list_widget.dart';
+import 'package:helse/ui/common/inputs/files/file_list_widget.dart';
 import 'package:helse/ui/common/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/ui_constants.dart';

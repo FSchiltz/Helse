@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/ui/common/inputs/file_list_widget.dart';
+import 'package:helse/ui/common/inputs/files/file_list_widget.dart';
 import 'package:helse/ui/common/loader.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
@@ -59,8 +59,6 @@ class _MetricFileListState extends State<MetricFileList> {
 
   @override
   Widget build(BuildContext context) {
-    final locale = Translation.of(context);
-
     return Container(
       padding: EdgeInsets.only(left: UIConstants.formPad),
       decoration: BoxDecoration(
@@ -82,6 +80,7 @@ class _MetricFileListState extends State<MetricFileList> {
                 });
                 widget.onAdd?.call(_files!);
               },
+              person: widget.person,
               onTap: (x) {
                 if (x.id != null) {
                   Dependencies.logics.files.download(

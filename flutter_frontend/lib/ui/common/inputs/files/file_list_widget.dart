@@ -1,7 +1,9 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/ui/common/inputs/file_input.dart';
+import 'package:helse/ui/common/inputs/files/file_input.dart';
+import 'package:helse/ui/common/inputs/files/file_item.dart';
+import 'package:helse/ui/common/inputs/files/file_list_picker.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
@@ -20,6 +22,7 @@ class FileListWidget extends StatelessWidget {
   final void Function(UIFile, List<UIFile>) onDelete;
   final void Function(UIFile) onTap;
   final bool readonly;
+  final int? person;
 
   const FileListWidget({
     super.key,
@@ -28,6 +31,7 @@ class FileListWidget extends StatelessWidget {
     required this.onDelete,
     required this.onTap,
     this.readonly = false,
+    this.person,
   });
 
   @override
@@ -50,12 +54,28 @@ class FileListWidget extends StatelessWidget {
                 }, locale.upload),
               ),
 
-              Flexible(child: SquareButton(locale.fromExisting, null)),
+              Flexible(
+                child: SquareButton(locale.fromExisting, () async {
+                  final file = await showDialog<UIFile?>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return FileListPicker(person);
+                    },
+                  );
+
+                  if (file != null) {
+                    final exists = files.any((e) => e.id == file.id);
+                    if (!exists) {
+                      files.add(file);
+                      onAdd(file, files);
+                    }
+                  }
+                }),
+              ),
             ],
           ),
 
-        if (files.isNotEmpty) ...[
-          const SizedBox(height: UIConstants.formPad),
+        if (files.isNotEmpty)
           ...files.asMap().entries.map(
             (entry) => FileItem(
               file: entry.value,
@@ -69,34 +89,7 @@ class FileListWidget extends StatelessWidget {
               onTap: () => onTap(entry.value),
             ),
           ),
-        ],
       ],
-    );
-  }
-}
-
-class FileItem extends StatelessWidget {
-  const FileItem({
-    super.key,
-    required this.file,
-    required this.onDelete,
-    required this.onTap,
-  });
-
-  final UIFile file;
-  final void Function()? onDelete;
-  final void Function() onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      dense: true,
-      leading: const Icon(Icons.insert_drive_file),
-      title: Text(file.name),
-      onTap: (file.id == null) ? null : () => onTap(),
-      trailing: (onDelete == null)
-          ? null
-          : IconButton(icon: const Icon(Icons.close), onPressed: onDelete),
     );
   }
 }

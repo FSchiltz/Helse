@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:helse/services/file_service.dart';
-import 'package:helse/ui/common/inputs/file_list_widget.dart';
+import 'package:helse/ui/common/inputs/files/file_list_widget.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:http/http.dart';
 
