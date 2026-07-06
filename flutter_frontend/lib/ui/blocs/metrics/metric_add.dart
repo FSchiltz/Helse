@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';
+import 'package:helse/ui/blocs/metrics/metric_file_list.dart';
 import 'package:helse/ui/common/inputs/file_list_widget.dart';
-import 'package:helse/ui/common/loader.dart';
 import 'package:helse/ui/common/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/ui_constants.dart';
@@ -36,13 +36,12 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
   DateTime _date = DateTime.now();
   List<TextEditingController> _values = [];
   final TextEditingController _tag = TextEditingController();
-  List<UIFile>? files;
-  final Set<int> _toDelete = {};
+  List<UIFile> _files = [];
+  Set<int> _toDelete = {};
 
   @override
   void initState() {
     super.initState();
-    _getFileList();
     final edit = widget.edit;
     if (edit != null) {
       _date = edit.date.toLocal();
@@ -57,28 +56,6 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
         max(widget.type.valueCount ?? 1, 1),
         (e) => TextEditingController(),
       );
-    }
-  }
-
-  Future<void> _getFileList() async {
-    final edit = widget.edit;
-    if (edit != null) {
-      final result = await Dependencies.services.files.getMetricFiles(
-        edit.id,
-        widget.person,
-      );
-
-      final xfiles = result
-          .map((e) => UIFile(null, e.name, e.id, e.description))
-          .toList();
-
-      setState(() {
-        files = xfiles;
-      });
-    } else {
-      setState(() {
-        files = [];
-      });
     }
   }
 
@@ -120,34 +97,12 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
                     _date = value ?? DateTime.now();
                   }),
                 ),
-                (files == null)
-                    ? HelseLoader()
-                    : FileListWidget(
-                        files: files!,
-                        onAdd: (_, x) => setState(() {
-                          files = x;
-                        }),
-                        onTap: (x) {
-                          if (x.id != null) {
-                            Dependencies.logics.files.download(
-                              x.id!,
-                              x.name,
-                              widget.person,
-                            );
-                          }
-                        },
-                        onDelete: (deleted, x) {
-                          if (deleted.id != null &&
-                              !_toDelete.contains(deleted.id)) {
-                            _toDelete.add(deleted.id!);
-                          }
-
-                          setState(() {
-                            files = x;
-                          });
-                        },
-                        label: locale.file,
-                      ),
+                MetricFileList(
+                  metric: widget.edit?.id,
+                  person: widget.person,
+                  onAdd: (x) => _files = x,
+                  onDelete: (x) => _toDelete = x,
+                ),
               ],
             ),
           ),
@@ -159,8 +114,9 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
   Future<void> _submit() async {
     final value = MetricHelper().joinValue(_values.map((e) => e.text));
     // find the files to add
-    final fileToAdd =
-        files?.where((e) => e.id == null || e.id == 0 || e.file != null) ?? [];
+    final fileToAdd = _files.where(
+      (e) => e.id == null || e.id == 0 || e.file != null,
+    );
 
     int? metricId;
     if (widget.edit?.id != null) {
