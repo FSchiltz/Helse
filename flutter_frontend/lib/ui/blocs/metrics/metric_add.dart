@@ -125,10 +125,10 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
                     ? HelseLoader()
                     : FileListWidget(
                         files: files!,
-                        addCallback: (_, x) => setState(() {
+                        onAdd: (_, x) => setState(() {
                           files = x;
                         }),
-                        deleteCallback: (deleted, x) {
+                        onDelete: (deleted, x) {
                           if (deleted.id != null &&
                               !_toDelete.contains(deleted.id)) {
                             _toDelete.add(deleted.id!);
