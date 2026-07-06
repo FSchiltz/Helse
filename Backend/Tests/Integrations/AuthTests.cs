@@ -20,7 +20,6 @@ public class AuthTests(WebApplicationFactory<Program> factory, DatabaseFixture f
     [InlineData("/api/events/type")]
     [InlineData("/api/metrics/")]
     [InlineData("/api/metrics/type")]
-    [InlineData("/api/treatment/")]
     [InlineData("/api/import/types")]
     [InlineData("/api/patients")]
     public async Task Get_NoPassword(string url)

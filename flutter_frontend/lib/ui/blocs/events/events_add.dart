@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:helse/ui/blocs/events/detail/event_file_list.dart';
+import 'package:helse/ui/common/inputs/files/file_list_widget.dart';
 import 'package:helse/ui/common/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/inputs/custom_switch.dart';
@@ -29,8 +31,11 @@ class _EventAddState extends PopupSubmitState<EventAdd> {
   final TextEditingController _description = TextEditingController();
   final TextEditingController _tag = TextEditingController();
   bool _notify = false;
+  List<UIFile> _files = [];
+  List<UIFile>? _oldFiles;
 
   Future<void> _submit() async {
+    int? eventId;
     if (widget.edit != null) {
       var event = UpdateEvent(
         start: _start.toUtc(),
@@ -44,6 +49,7 @@ class _EventAddState extends PopupSubmitState<EventAdd> {
         tag: _tag.text,
       );
       await Dependencies.services.event.updateEvent(event);
+      eventId = widget.edit?.id;
     } else {
       var event = CreateEvent(
         start: _start.toUtc(),
@@ -51,12 +57,63 @@ class _EventAddState extends PopupSubmitState<EventAdd> {
         type: widget.type.id,
         description: _description.text,
         notificationTime: _notify ? _notification?.toUtc() : null,
-        source: FileTypes.none,
+        source: ImportTypes.none,
         sourceId: '',
         tag: _tag.text,
       );
-      await Dependencies.services.event.addEvent(event, person: widget.person);
+      eventId = await Dependencies.services.event.addEvent(
+        event,
+        person: widget.person,
+      );
     }
+
+    if (eventId != null) {
+      // find the files to add
+      List<UIFile> fileToAdd = [];
+      List<UIFile> fileToDelete = [];
+      if (widget.edit == null) {
+        fileToAdd = _files;
+      } else {
+        final newId = _files
+            .where((e) => e.id != null)
+            .map((e) => e.id)
+            .toSet();
+
+        final oldId = _oldFiles?.map((e) => e.id).toSet() ?? {};
+
+        fileToAdd = _files
+            .where(
+              (e) =>
+                  (e.id == null || e.id == 0 && e.file != null) ||
+                  !oldId.contains(e.id),
+            )
+            .toList();
+
+        fileToDelete =
+            _oldFiles?.where((e) => !newId.contains(e.id)).toList() ?? [];
+      }
+
+      await Dependencies.logics.files.syncFiles(
+        fileToAdd,
+        fileToDelete.map((e) => e.id ?? 0),
+        widget.person,
+        (int fileId) => Dependencies.services.files.linkEvent(
+          fileId,
+          eventId!,
+          widget.person,
+        ),
+        (int fileId) => Dependencies.services.files.unlinkEvent(
+          fileId,
+          eventId!,
+          widget.person,
+        ),
+        (double progress, String status) => setState(() {
+          progress = progress;
+          stateInfo = status;
+        }),
+      );
+    }
+
     widget.callback.call();
   }
 
@@ -85,19 +142,18 @@ class _EventAddState extends PopupSubmitState<EventAdd> {
       content: Form(
         child: SingleChildScrollView(
           child: Column(
+            spacing: UIConstants.formPad,
             children: [
               SquareTextField(
                 icon: Icons.description_sharp,
                 label: locale.description,
                 controller: _description,
               ),
-              const SizedBox(height: UIConstants.formPad),
               SquareTextField(
                 icon: Icons.tag_sharp,
                 label: locale.tag,
                 controller: _tag,
               ),
-              const SizedBox(height: UIConstants.formPad),
               DateInput(
                 locale.start,
                 _start,
@@ -106,7 +162,6 @@ class _EventAddState extends PopupSubmitState<EventAdd> {
                   _stop = _stop.isBefore(_start) ? _start : _stop;
                 }),
               ),
-              const SizedBox(height: UIConstants.formPad),
               DateInput(
                 locale.end,
                 _stop,
@@ -115,7 +170,6 @@ class _EventAddState extends PopupSubmitState<EventAdd> {
                   _start = _start.isAfter(_stop) ? _stop : _start;
                 }),
               ),
-              const SizedBox(height: UIConstants.formPad),
               HelseSwitch(
                 "Notify: ",
                 _notify,
@@ -123,8 +177,6 @@ class _EventAddState extends PopupSubmitState<EventAdd> {
                   _notify = value;
                 }),
               ),
-
-              if (_notify) const SizedBox(height: UIConstants.formPad),
               if (_notify)
                 DateInput(
                   locale.notificationTime,
@@ -133,6 +185,14 @@ class _EventAddState extends PopupSubmitState<EventAdd> {
                     _notification = date;
                   }),
                 ),
+              EventFileList(
+                event: widget.edit?.id,
+                person: widget.person,
+                onChange: (x) {
+                  _oldFiles ??= x.toList();
+                  _files = x;
+                },
+              ),
             ],
           ),
         ),

@@ -1,6 +1,5 @@
-import 'dart:typed_data';
-
 import 'package:collection/collection.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/event.dart';
 import 'package:helse/logic/task_bloc.dart';
@@ -65,7 +64,7 @@ class ImportLogic {
     );
   }
 
-  Future<void> import(Uint8List content, int type, int? patient) async {
+  Future<void> import(XFile content, int type, int? patient) async {
     var id = await Dependencies.services.import.import(content, type, patient);
     if (id == null) {
       throw StateError("Incorrect job id");

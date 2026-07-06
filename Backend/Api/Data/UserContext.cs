@@ -174,16 +174,7 @@ internal class UserContext(DataConnection db, SlowQueryLogInterceptor intercepto
 
     public Task InsertRights(IEnumerable<Models.Persons.Right> dbRights) => Db.GetTable<Models.Persons.Right>().BulkCopyAsync(dbRights);
 
-    public Task<long> InsertTreatment(long person, TreatmentType type)
-    {
-        return Db.GetTable<Models.Health.Treatment>().InsertWithInt64IdentityAsync(() => new()
-        {
-            PersonId = person,
-            Type = (int)type,
-        });
-    }
-
-    public Task InsertEvent(CreateEvent e, long person, long user, long? treatment)
+    public Task InsertEvent(CreateEvent e, long person, long user)
     {
         return Db.GetTable<Models.Health.Event>().InsertAsync(() => new()
         {
@@ -193,7 +184,6 @@ internal class UserContext(DataConnection db, SlowQueryLogInterceptor intercepto
             Description = e.Description,
             Stop = e.Stop,
             Start = e.Start,
-            TreatmentId = treatment,
             SourceId = e.SourceId,
         });
     }

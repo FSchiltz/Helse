@@ -1,6 +1,7 @@
 using System.Reflection;
 using DbUp;
 using DbUp.Engine;
+using LinqToDB;
 using Microsoft.Extensions.Options;
 
 namespace Helse.Api.Data;

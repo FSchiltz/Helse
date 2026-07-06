@@ -47,4 +47,24 @@ internal static class RightsHelper
 
         return (null, user);
     }
+
+    /// <summary>
+    /// Validate that the user has the correct right
+    /// </summary>
+    /// <param name="db"></param>
+    /// <param name="personId"></param>
+    /// <param name="right"></param>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public static async Task<(IResult?, long person)> ValidateUserOrCaregiver(this IUserContext db, long? personId, RightType right, ClaimsPrincipal context)
+    {
+        var (error, user) = await db.GetUser(context);
+        if (error is not null)
+            return (error, 0);
+
+        if (personId is not null && !await db.ValidateCaregiverAsync(user, personId.Value, right))
+            return (TypedResults.Forbid(), 0);
+
+        return (null, personId ?? user.PersonId);
+    }
 }

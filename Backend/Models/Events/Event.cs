@@ -4,8 +4,6 @@ public class Event : BaseEvent
 {
     public long User { get; set; }
 
-    public long? File { get; set; }
-
     public long? Treatment { get; set; }
 
     public required long Id { get; set; }

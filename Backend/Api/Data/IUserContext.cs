@@ -35,9 +35,7 @@ internal interface IUserContext : IContext
 
     Task InsertRights(IEnumerable<Models.Persons.Right> dbRights);
 
-    Task<long> InsertTreatment(long v, TreatmentType care);
-
-    Task InsertEvent(CreateEvent e, long person, long user, long? treatment);
+    Task InsertEvent(CreateEvent e, long person, long user);
 
     Task DeletePersonAsync(long personId);
 

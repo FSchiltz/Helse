@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text;
 using Helse.Api.Data;
 using Helse.Api.Data.Models.Persons;
@@ -15,6 +16,38 @@ namespace Helse.Api.Logic;
 /// </summary>
 internal static class AuthLogic
 {
+    public static RouteGroupBuilder MapAuth(this RouteGroupBuilder api)
+    {
+        /* User endpoints */
+        api.MapPost("/auth", AuthAsync)
+        .AllowAnonymous()
+        .WithDescription("Get a connection token")
+        .Produces<ConnectionResponse>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        api.MapGet("/refresh", RefreshAsync)
+        .RequireAuthorization()
+        .Produces<ConnectionResponse>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        api.MapGet("/status", StatusAsync)
+        .AllowAnonymous()
+        .WithDescription("Check if the server install is ready")
+        .Produces<Status>((int)HttpStatusCode.OK);
+
+        api.MapGet("/logout", LogoutAsync)
+        .RequireAuthorization()
+        .Produces((int)HttpStatusCode.NoContent)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        api.MapGet("/sessions", GetSessions)
+        .RequireAuthorization()
+        .Produces<Session[]>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
+        return api;
+    }
+
     public static async Task<IResult> LogoutAsync(IUserContext users, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger(nameof(AuthLogic));

@@ -296,5 +296,9 @@
     "importLabel": "Import external metric",
     "@importLabel": {},
     "file": "File",
-    "@file": {}
+    "@file": {},
+    "upload": "Upload",
+    "@upload": {},
+    "fromExisting": "From existing",
+    "@fromExisting": {}
 }

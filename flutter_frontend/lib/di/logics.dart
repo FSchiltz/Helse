@@ -1,4 +1,5 @@
 import 'package:helse/di/services.dart';
+import 'package:helse/logic/file_logic.dart';
 import 'package:helse/logic/account/authentication_logic.dart';
 import 'package:helse/logic/fit/fit_logic.dart';
 import 'package:helse/logic/import_logic.dart';
@@ -12,12 +13,14 @@ class Logics {
   HealthConnectLogic health;
   SettingsLogic settings;
   PatientsSettingsLogic patientsSettings;
+  FileLogic files;
 
   Logics.build(
     this.authentication,
     this.settings,
     this.health,
     this.patientsSettings,
+    this.files
   );
 
   factory Logics(Account account, Services service) {
@@ -27,6 +30,7 @@ class Logics {
       settings,
       HealthConnectLogic(settings, service.import),
       PatientsSettingsLogic(account, service.settings),
+      FileLogic(service.files)
     );
   }
 }

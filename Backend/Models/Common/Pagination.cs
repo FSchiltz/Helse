@@ -6,3 +6,10 @@ public class Pagination
 
     public int PageSize { get; set; }
 }
+
+public class Paginated<T>
+{
+    public int Count { get; set; }
+
+    public required T[] Items { get; set; }
+}

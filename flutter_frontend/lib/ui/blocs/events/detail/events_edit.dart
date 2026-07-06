@@ -47,7 +47,7 @@ class _EventsEditState extends PopupSubmitState<EventsEdit> {
       updateDescription: _updateDescription,
       tag: _tag.text,
       updateTag: _updateTag,
-      source: FileTypes.none,
+      source: ImportTypes.none,
       ids: widget.edit.map((e) => e.id).toList(),
     );
 

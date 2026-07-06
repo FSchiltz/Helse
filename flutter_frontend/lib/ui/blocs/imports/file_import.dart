@@ -8,7 +8,7 @@ import 'package:helse/ui/common/inputs/values_input.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../../common/inputs/file_input.dart';
+import '../../common/inputs/files/file_input.dart';
 
 class FileImport extends StatefulWidget {
   final int? patient;
@@ -19,7 +19,7 @@ class FileImport extends StatefulWidget {
 }
 
 class _FileImportState extends PopupSubmitState<FileImport> {
-  List<FileType> types = [];
+  List<ImportType> types = [];
   XFile? file;
   int? selected;
 
@@ -54,7 +54,7 @@ class _FileImportState extends PopupSubmitState<FileImport> {
             ),
             ValuesInput(
               types
-                  .map((type) => DropdownItem(type.type, type.name ?? ""))
+                  .map((type) => DropdownItem(type.type, type.name ?? ''))
                   .toList(),
               (value) => setState(() {
                 selected = value;
@@ -62,15 +62,11 @@ class _FileImportState extends PopupSubmitState<FileImport> {
               label: locale.type,
             ),
             const SizedBox(height: UIConstants.formPad),
-            FileInput(
-              (value) {
-                setState(() {
-                  file = value;
-                });
-              },
-              locale.file,
-              Icons.upload_file_sharp,
-            ),
+            FileInput((value) {
+              setState(() {
+                file = value;
+              });
+            }, locale.file),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(file?.name ?? ""),
@@ -82,15 +78,8 @@ class _FileImportState extends PopupSubmitState<FileImport> {
   }
 
   Future<void> _submit() async {
-    if (selected != null) {
-      var content = await file?.readAsBytes();
-      if (content == null) return;
-
-      await Dependencies.logics.import.import(
-        content,
-        selected!,
-        widget.patient,
-      );
+    if (selected != null && file != null) {
+      await Dependencies.logics.import.import(file!, selected!, widget.patient);
     }
   }
 }

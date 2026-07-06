@@ -1,22 +1,21 @@
-import 'dart:typed_data';
-
+import 'package:file_selector/file_selector.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/api_service.dart';
-import 'package:http/http.dart';
 
 import 'swagger/generated_code/helseapi.swagger.dart';
 
 class ImportService extends ApiService {
   ImportService(super.account);
 
-  Future<List<FileType>?> fileTypes() async {
+  Future<List<ImportType>?> fileTypes() async {
     var api = await getService();
     return await call(api.apiImportTypesGet);
   }
 
-  Future<JobId?> import(Uint8List file, int type, int? patient) async {
+  Future<JobId?> import(XFile file, int type, int? patient) async {
     var api = await getService();
 
-    var part = MultipartFile.fromBytes("file", file, filename: 'upload');
+    var part = await Dependencies.logics.files.extract(file);
     return await call(
       () => api.apiImportTypePost(file: part, type: type, patient: patient),
     );
@@ -30,7 +29,7 @@ class ImportService extends ApiService {
 
   Future<ImportsResult?> importData(ImportData file) async {
     var api = await getService();
-    return await call(() => api.apiImportPost(body: file));
+    return await call(() => api.apiImportResultsPost(body: file));
   }
 
   Future<List<JobResultInfo>> getJobs() async {

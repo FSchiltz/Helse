@@ -17,7 +17,7 @@ namespace Helse.Api.Logic;
 /// </summary>
 internal static class MetricsLogic
 {
-    public static void MapMetrics(this RouteGroupBuilder api)
+    public static RouteGroupBuilder MapMetrics(this RouteGroupBuilder api)
     {
         /* Metrics endpoints*/
         var metrics = api.MapGroup("/metrics").RequireAuthorization();
@@ -30,7 +30,7 @@ internal static class MetricsLogic
         .Produces((int)HttpStatusCode.Unauthorized);
 
         metrics.MapPost("/", CreateAsync)
-        .Produces((int)HttpStatusCode.NoContent)
+        .Produces<long>((int)HttpStatusCode.Created)
         .Produces((int)HttpStatusCode.Unauthorized);
 
         metrics.MapPut("/", UpdateAsync)
@@ -90,6 +90,8 @@ internal static class MetricsLogic
         metricsGroup.MapGet("/", GetGroupsAsync)
         .Produces<List<Group>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
+
+        return api;
     }
 
     public async static Task<IResult> GetAsync(int type, DateTime start, DateTime end, long? personId, IUserContext users, IMetricContext db, HttpContext context)
@@ -143,7 +145,7 @@ internal static class MetricsLogic
             Type = x.Type,
             Tag = x.Tag,
             User = x.UserId,
-            Source = (FileTypes)x.Source,
+            Source = (ImportTypes)x.Source,
             SourceId = x.SourceId,
         }));
     }
@@ -168,9 +170,9 @@ internal static class MetricsLogic
 
         Validate(metric, unit, type);
 
-        await db.Insert(metric, personId ?? user.PersonId, user.Id);
+        var id = await db.Insert(metric, personId ?? user.PersonId, user.Id);
 
-        return TypedResults.NoContent();
+        return TypedResults.Created(default(Uri), id);
     }
 
     private static void Validate(CreateMetric metric, Units? unit, Data.Models.Health.MetricType? type)
@@ -231,24 +233,17 @@ internal static class MetricsLogic
         return TypedResults.NoContent();
     }
 
-    public async static Task<IResult> DeleteAsync(long id, IUserContext users, IMetricContext db, HttpContext context)
+    public async static Task<IResult> DeleteAsync(long id, long? personId, IUserContext users, IMetricContext db, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
             return error;
 
-        await using var transaction = await db.BeginTransactionAsync();
-
-        var existing = await db.GetMetric(id);
-        if (existing is null)
-            return TypedResults.NoContent();
-
-        if (user.PersonId != existing.PersonId && !await users.ValidateCaregiverAsync(user, existing.PersonId, RightType.Edit))
+        if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.Edit))
             return TypedResults.Forbid();
 
-        await db.DeleteMetric(id);
+        await db.DeleteMetric(id, personId ?? user.PersonId);
 
-        await transaction.CommitAsync();
 
         return TypedResults.NoContent();
     }

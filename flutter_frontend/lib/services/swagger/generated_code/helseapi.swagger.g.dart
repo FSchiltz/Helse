@@ -63,7 +63,7 @@ CreateEvent _$CreateEventFromJson(Map<String, dynamic> json) => CreateEvent(
   notificationTime: json['notificationTime'] == null
       ? null
       : DateTime.parse(json['notificationTime'] as String),
-  source: fileTypesNullableFromJson(json['source']),
+  source: importTypesNullableFromJson(json['source']),
   sourceId: json['sourceId'] as String?,
 );
 
@@ -75,7 +75,7 @@ Map<String, dynamic> _$CreateEventToJson(CreateEvent instance) =>
       'stop': instance.stop.toIso8601String(),
       'tag': instance.tag,
       'notificationTime': instance.notificationTime?.toIso8601String(),
-      'source': fileTypesNullableToJson(instance.source),
+      'source': importTypesNullableToJson(instance.source),
       'sourceId': instance.sourceId,
     };
 
@@ -99,6 +99,25 @@ Map<String, dynamic> _$CreateEventTypeToJson(CreateEventType instance) =>
       'groupId': instance.groupId,
     };
 
+CreateFile _$CreateFileFromJson(Map<String, dynamic> json) => CreateFile(
+  dataType: json['dataType'] as String,
+  type: fileTypeNullableFromJson(json['type']),
+  start: json['start'] == null ? null : DateTime.parse(json['start'] as String),
+  stop: json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
+  name: json['name'] as String,
+  description: json['description'] as String,
+);
+
+Map<String, dynamic> _$CreateFileToJson(CreateFile instance) =>
+    <String, dynamic>{
+      'dataType': instance.dataType,
+      'type': fileTypeNullableToJson(instance.type),
+      'start': instance.start?.toIso8601String(),
+      'stop': instance.stop?.toIso8601String(),
+      'name': instance.name,
+      'description': instance.description,
+    };
+
 CreateGroup _$CreateGroupFromJson(Map<String, dynamic> json) => CreateGroup(
   name: json['name'] as String,
   description: json['description'] as String,
@@ -120,7 +139,7 @@ CreateMetric _$CreateMetricFromJson(Map<String, dynamic> json) => CreateMetric(
   value: json['value'] as String,
   tag: json['tag'] as String?,
   type: (json['type'] as num).toInt(),
-  source: fileTypesNullableFromJson(json['source']),
+  source: importTypesNullableFromJson(json['source']),
   sourceId: json['sourceId'] as String,
 );
 
@@ -131,7 +150,7 @@ Map<String, dynamic> _$CreateMetricToJson(CreateMetric instance) =>
       'value': instance.value,
       'tag': instance.tag,
       'type': instance.type,
-      'source': fileTypesNullableToJson(instance.source),
+      'source': importTypesNullableToJson(instance.source),
       'sourceId': instance.sourceId,
     };
 
@@ -163,25 +182,8 @@ Map<String, dynamic> _$CreateMetricTypeToJson(CreateMetricType instance) =>
       'timeDifference': instance.timeDifference,
     };
 
-CreateTreatment _$CreateTreatmentFromJson(Map<String, dynamic> json) =>
-    CreateTreatment(
-      events:
-          (json['events'] as List<dynamic>?)
-              ?.map((e) => CreateEvent.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
-      personId: (json['personId'] as num?)?.toInt(),
-    );
-
-Map<String, dynamic> _$CreateTreatmentToJson(CreateTreatment instance) =>
-    <String, dynamic>{
-      'events': instance.events?.map((e) => e.toJson()).toList(),
-      'personId': instance.personId,
-    };
-
 Event _$EventFromJson(Map<String, dynamic> json) => Event(
   user: (json['user'] as num?)?.toInt(),
-  file: (json['file'] as num?)?.toInt(),
   treatment: (json['treatment'] as num?)?.toInt(),
   id: (json['id'] as num).toInt(),
   person: (json['person'] as num?)?.toInt(),
@@ -195,13 +197,12 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
   notificationTime: json['notificationTime'] == null
       ? null
       : DateTime.parse(json['notificationTime'] as String),
-  source: fileTypesNullableFromJson(json['source']),
+  source: importTypesNullableFromJson(json['source']),
   sourceId: json['sourceId'] as String?,
 );
 
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
   'user': instance.user,
-  'file': instance.file,
   'treatment': instance.treatment,
   'id': instance.id,
   'person': instance.person,
@@ -213,7 +214,7 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
   'stop': instance.stop.toIso8601String(),
   'tag': instance.tag,
   'notificationTime': instance.notificationTime?.toIso8601String(),
-  'source': fileTypesNullableToJson(instance.source),
+  'source': importTypesNullableToJson(instance.source),
   'sourceId': instance.sourceId,
 };
 
@@ -313,14 +314,34 @@ Map<String, dynamic> _$EventTypeToJson(EventType instance) => <String, dynamic>{
   'groupId': instance.groupId,
 };
 
-FileType _$FileTypeFromJson(Map<String, dynamic> json) => FileType(
-  type: (json['type'] as num).toInt(),
-  name: json['name'] as String?,
+File _$FileFromJson(Map<String, dynamic> json) => File(
+  id: (json['id'] as num?)?.toInt(),
+  created: json['created'] == null
+      ? null
+      : DateTime.parse(json['created'] as String),
+  type: fileTypeNullableFromJson(json['type']),
+  start: json['start'] == null ? null : DateTime.parse(json['start'] as String),
+  stop: json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
+  name: json['name'] as String,
+  description: json['description'] as String,
 );
 
-Map<String, dynamic> _$FileTypeToJson(FileType instance) => <String, dynamic>{
-  'type': instance.type,
+Map<String, dynamic> _$FileToJson(File instance) => <String, dynamic>{
+  'id': instance.id,
+  'created': instance.created?.toIso8601String(),
+  'type': fileTypeNullableToJson(instance.type),
+  'start': instance.start?.toIso8601String(),
+  'stop': instance.stop?.toIso8601String(),
   'name': instance.name,
+  'description': instance.description,
+};
+
+FileData _$FileDataFromJson(Map<String, dynamic> json) =>
+    FileData(type: json['type'] as String, data: json['data'] as String);
+
+Map<String, dynamic> _$FileDataToJson(FileData instance) => <String, dynamic>{
+  'type': instance.type,
+  'data': instance.data,
 };
 
 Gotify _$GotifyFromJson(Map<String, dynamic> json) => Gotify(
@@ -395,6 +416,14 @@ Map<String, dynamic> _$ImportsResultToJson(ImportsResult instance) =>
       'events': instance.events.toJson(),
     };
 
+ImportType _$ImportTypeFromJson(Map<String, dynamic> json) => ImportType(
+  type: (json['type'] as num).toInt(),
+  name: json['name'] as String?,
+);
+
+Map<String, dynamic> _$ImportTypeToJson(ImportType instance) =>
+    <String, dynamic>{'type': instance.type, 'name': instance.name};
+
 Interval _$IntervalFromJson(Map<String, dynamic> json) => Interval(
   start: DateTime.parse(json['start'] as String),
   stop: DateTime.parse(json['stop'] as String),
@@ -454,7 +483,7 @@ Metric _$MetricFromJson(Map<String, dynamic> json) => Metric(
   value: json['value'] as String,
   tag: json['tag'] as String?,
   type: (json['type'] as num).toInt(),
-  source: fileTypesNullableFromJson(json['source']),
+  source: importTypesNullableFromJson(json['source']),
   sourceId: json['sourceId'] as String,
 );
 
@@ -467,7 +496,7 @@ Map<String, dynamic> _$MetricToJson(Metric instance) => <String, dynamic>{
   'value': instance.value,
   'tag': instance.tag,
   'type': instance.type,
-  'source': fileTypesNullableToJson(instance.source),
+  'source': importTypesNullableToJson(instance.source),
   'sourceId': instance.sourceId,
 };
 
@@ -636,6 +665,22 @@ Map<String, dynamic> _$OrderedItemToJson(OrderedItem instance) =>
       'color': instance.color,
     };
 
+PaginatedOfFile _$PaginatedOfFileFromJson(Map<String, dynamic> json) =>
+    PaginatedOfFile(
+      count: (json['count'] as num?)?.toInt(),
+      items:
+          (json['items'] as List<dynamic>?)
+              ?.map((e) => File.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$PaginatedOfFileToJson(PaginatedOfFile instance) =>
+    <String, dynamic>{
+      'count': instance.count,
+      'items': instance.items.map((e) => e.toJson()).toList(),
+    };
+
 PatchEvent _$PatchEventFromJson(Map<String, dynamic> json) => PatchEvent(
   updateDescription: json['updateDescription'] as bool?,
   updateStop: json['updateStop'] as bool?,
@@ -654,7 +699,7 @@ PatchEvent _$PatchEventFromJson(Map<String, dynamic> json) => PatchEvent(
   notificationTime: json['notificationTime'] == null
       ? null
       : DateTime.parse(json['notificationTime'] as String),
-  source: fileTypesNullableFromJson(json['source']),
+  source: importTypesNullableFromJson(json['source']),
   sourceId: json['sourceId'] as String?,
 );
 
@@ -671,7 +716,7 @@ Map<String, dynamic> _$PatchEventToJson(PatchEvent instance) =>
       'stop': instance.stop.toIso8601String(),
       'tag': instance.tag,
       'notificationTime': instance.notificationTime?.toIso8601String(),
-      'source': fileTypesNullableToJson(instance.source),
+      'source': importTypesNullableToJson(instance.source),
       'sourceId': instance.sourceId,
     };
 
@@ -689,7 +734,7 @@ PatchMetric _$PatchMetricFromJson(Map<String, dynamic> json) => PatchMetric(
   value: json['value'] as String,
   tag: json['tag'] as String?,
   type: (json['type'] as num).toInt(),
-  source: fileTypesNullableFromJson(json['source']),
+  source: importTypesNullableFromJson(json['source']),
   sourceId: json['sourceId'] as String,
 );
 
@@ -704,7 +749,7 @@ Map<String, dynamic> _$PatchMetricToJson(PatchMetric instance) =>
       'value': instance.value,
       'tag': instance.tag,
       'type': instance.type,
-      'source': fileTypesNullableToJson(instance.source),
+      'source': importTypesNullableToJson(instance.source),
       'sourceId': instance.sourceId,
     };
 
@@ -874,7 +919,7 @@ SearchEvent _$SearchEventFromJson(Map<String, dynamic> json) => SearchEvent(
   value: json['value'] as String?,
   from: json['from'] == null ? null : DateTime.parse(json['from'] as String),
   to: json['to'] == null ? null : DateTime.parse(json['to'] as String),
-  source: fileTypesNullableFromJson(json['source']),
+  source: importTypesNullableFromJson(json['source']),
   filterSource: json['filterSource'] as bool?,
 );
 
@@ -884,7 +929,7 @@ Map<String, dynamic> _$SearchEventToJson(SearchEvent instance) =>
       'value': instance.value,
       'from': instance.from?.toIso8601String(),
       'to': instance.to?.toIso8601String(),
-      'source': fileTypesNullableToJson(instance.source),
+      'source': importTypesNullableToJson(instance.source),
       'filterSource': instance.filterSource,
     };
 
@@ -895,7 +940,7 @@ SearchMetric _$SearchMetricFromJson(Map<String, dynamic> json) => SearchMetric(
   to: json['to'] == null ? null : DateTime.parse(json['to'] as String),
   minValue: (json['minValue'] as num?)?.toInt(),
   maxValue: (json['maxValue'] as num?)?.toInt(),
-  source: fileTypesNullableFromJson(json['source']),
+  source: importTypesNullableFromJson(json['source']),
   isTrue: json['isTrue'] as bool?,
   filterSource: json['filterSource'] as bool?,
 );
@@ -908,7 +953,7 @@ Map<String, dynamic> _$SearchMetricToJson(SearchMetric instance) =>
       'to': instance.to?.toIso8601String(),
       'minValue': instance.minValue,
       'maxValue': instance.maxValue,
-      'source': fileTypesNullableToJson(instance.source),
+      'source': importTypesNullableToJson(instance.source),
       'isTrue': instance.isTrue,
       'filterSource': instance.filterSource,
     };
@@ -995,7 +1040,7 @@ UpdateEvent _$UpdateEventFromJson(Map<String, dynamic> json) => UpdateEvent(
   notificationTime: json['notificationTime'] == null
       ? null
       : DateTime.parse(json['notificationTime'] as String),
-  source: fileTypesNullableFromJson(json['source']),
+  source: importTypesNullableFromJson(json['source']),
   sourceId: json['sourceId'] as String?,
 );
 
@@ -1008,7 +1053,7 @@ Map<String, dynamic> _$UpdateEventToJson(UpdateEvent instance) =>
       'stop': instance.stop.toIso8601String(),
       'tag': instance.tag,
       'notificationTime': instance.notificationTime?.toIso8601String(),
-      'source': fileTypesNullableToJson(instance.source),
+      'source': importTypesNullableToJson(instance.source),
       'sourceId': instance.sourceId,
     };
 
@@ -1032,6 +1077,27 @@ Map<String, dynamic> _$UpdateEventTypeToJson(UpdateEventType instance) =>
       'visible': instance.visible,
       'timeDifference': instance.timeDifference,
       'groupId': instance.groupId,
+    };
+
+UpdateFile _$UpdateFileFromJson(Map<String, dynamic> json) => UpdateFile(
+  id: (json['id'] as num?)?.toInt(),
+  dataType: json['dataType'] as String,
+  type: fileTypeNullableFromJson(json['type']),
+  start: json['start'] == null ? null : DateTime.parse(json['start'] as String),
+  stop: json['stop'] == null ? null : DateTime.parse(json['stop'] as String),
+  name: json['name'] as String,
+  description: json['description'] as String,
+);
+
+Map<String, dynamic> _$UpdateFileToJson(UpdateFile instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'dataType': instance.dataType,
+      'type': fileTypeNullableToJson(instance.type),
+      'start': instance.start?.toIso8601String(),
+      'stop': instance.stop?.toIso8601String(),
+      'name': instance.name,
+      'description': instance.description,
     };
 
 UpdateGroup _$UpdateGroupFromJson(Map<String, dynamic> json) => UpdateGroup(
@@ -1058,7 +1124,7 @@ UpdateMetric _$UpdateMetricFromJson(Map<String, dynamic> json) => UpdateMetric(
   value: json['value'] as String,
   tag: json['tag'] as String?,
   type: (json['type'] as num).toInt(),
-  source: fileTypesNullableFromJson(json['source']),
+  source: importTypesNullableFromJson(json['source']),
   sourceId: json['sourceId'] as String,
 );
 
@@ -1070,7 +1136,7 @@ Map<String, dynamic> _$UpdateMetricToJson(UpdateMetric instance) =>
       'value': instance.value,
       'tag': instance.tag,
       'type': instance.type,
-      'source': fileTypesNullableToJson(instance.source),
+      'source': importTypesNullableToJson(instance.source),
       'sourceId': instance.sourceId,
     };
 
@@ -1217,6 +1283,14 @@ Map<String, dynamic> _$UserSettingsToJson(UserSettings instance) =>
       'metricSettings': instance.metricSettings?.toJson(),
       'groups': instance.groups?.toJson(),
     };
+
+ApiFilesDataIdPost$RequestBody _$ApiFilesDataIdPost$RequestBodyFromJson(
+  Map<String, dynamic> json,
+) => ApiFilesDataIdPost$RequestBody(file: json['file'] as String);
+
+Map<String, dynamic> _$ApiFilesDataIdPost$RequestBodyToJson(
+  ApiFilesDataIdPost$RequestBody instance,
+) => <String, dynamic>{'file': instance.file};
 
 ApiImportTypePost$RequestBody _$ApiImportTypePost$RequestBodyFromJson(
   Map<String, dynamic> json,

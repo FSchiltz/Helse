@@ -28,24 +28,22 @@ enum DatePreset {
   const DatePreset(this.value);
 }
 
-enum FileTypes {
+enum FileType {
   @JsonValue(null)
   swaggerGeneratedUnknown(null),
 
   @JsonValue('None')
   none('None'),
-  @JsonValue('RedmiWatch')
-  redmiwatch('RedmiWatch'),
-  @JsonValue('GoogleHealthConnect')
-  googlehealthconnect('GoogleHealthConnect'),
-  @JsonValue('Clue')
-  clue('Clue'),
-  @JsonValue('BabyTracker')
-  babytracker('BabyTracker');
+  @JsonValue('Image')
+  image('Image'),
+  @JsonValue('Prescription')
+  prescription('Prescription'),
+  @JsonValue('Results')
+  results('Results');
 
   final String? value;
 
-  const FileTypes(this.value);
+  const FileType(this.value);
 }
 
 enum GraphKind {
@@ -62,6 +60,26 @@ enum GraphKind {
   final String? value;
 
   const GraphKind(this.value);
+}
+
+enum ImportTypes {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue('None')
+  none('None'),
+  @JsonValue('RedmiWatch')
+  redmiwatch('RedmiWatch'),
+  @JsonValue('GoogleHealthConnect')
+  googlehealthconnect('GoogleHealthConnect'),
+  @JsonValue('Clue')
+  clue('Clue'),
+  @JsonValue('BabyTracker')
+  babytracker('BabyTracker');
+
+  final String? value;
+
+  const ImportTypes(this.value);
 }
 
 enum InterfaceTheme {

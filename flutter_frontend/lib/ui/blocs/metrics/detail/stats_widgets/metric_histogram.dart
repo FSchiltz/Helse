@@ -19,9 +19,11 @@ class MetricHistogram extends StatelessWidget {
     );
     final Map<int, double> steps = {};
     final double step = (stats.max - stats.min) / 100;
-    for (final value in stats.values) {
-      final index = ((value.$2 - stats.min) / step).toInt();
-      steps[index] = (steps[index] ?? 0) + 1;
+    if (step > 0) {
+      for (final value in stats.values) {
+        final index = ((value.$2 - stats.min) / step).toInt();
+        steps[index] = (steps[index] ?? 0) + 1;
+      }
     }
 
     final List<BarChartGroupData> bars = [];

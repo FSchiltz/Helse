@@ -17,7 +17,7 @@ class MetricHelper {
     String tag = '';
 
     if (metric.tag != null) tag += ': ${metric.tag}';
-    if (metric.source != null && metric.source != FileTypes.none) {
+    if (metric.source != null && metric.source != ImportTypes.none) {
       tag += '(${metric.source?.name})';
     }
     return tag;

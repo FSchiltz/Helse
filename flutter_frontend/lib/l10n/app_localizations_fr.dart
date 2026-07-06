@@ -356,4 +356,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get file => 'File';
+
+  @override
+  String get upload => 'Upload';
+
+  @override
+  String get fromExisting => 'From existing';
 }

@@ -28,7 +28,7 @@ class _MetricSearchState extends State<MetricSearch> {
   DateTime? _to;
   int _count = 0;
   late SearchMetric _search;
-  FileTypes? _source;
+  ImportTypes? _source;
 
   @override
   void initState() {
@@ -61,11 +61,11 @@ class _MetricSearchState extends State<MetricSearch> {
                       width: 240,
                       child: ValuesInput(
                         value: _source,
-                        FileTypes.values
+                        ImportTypes.values
                             .map(
                               (x) => DropdownItem(
                                 x,
-                                (x == FileTypes.swaggerGeneratedUnknown)
+                                (x == ImportTypes.swaggerGeneratedUnknown)
                                     ? "All"
                                     : x.name,
                               ),
@@ -116,9 +116,9 @@ class _MetricSearchState extends State<MetricSearch> {
       final max = _max.text.isEmpty ? null : int.parse(_max.text);
       final min = _min.text.isEmpty ? null : int.parse(_min.text);
       final text = (_value.text.isEmpty) ? null : _value.text;
-      FileTypes source = _source ?? FileTypes.none;
-      if (_source == FileTypes.swaggerGeneratedUnknown) {
-        source = FileTypes.none;
+      ImportTypes source = _source ?? ImportTypes.none;
+      if (_source == ImportTypes.swaggerGeneratedUnknown) {
+        source = ImportTypes.none;
       }
 
       final search = SearchMetric(
@@ -130,7 +130,7 @@ class _MetricSearchState extends State<MetricSearch> {
         to: _to,
         source: source,
         filterSource:
-            _source != null && _source != FileTypes.swaggerGeneratedUnknown,
+            _source != null && _source != ImportTypes.swaggerGeneratedUnknown,
       );
       var events = await Dependencies.services.metric.countMetrics(
         widget.person,

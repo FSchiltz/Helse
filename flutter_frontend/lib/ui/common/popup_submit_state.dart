@@ -3,17 +3,22 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/event.dart';
-import 'package:helse/ui/common/loader.dart';
 import 'package:helse/ui/common/notification.dart';
+import 'package:helse/ui/common/progress_icon_button.dart';
 import 'package:helse/ui/common/square_button.dart';
 
 abstract class PopupSubmitState<T extends StatefulWidget> extends State<T> {
   SubmissionStatus status = SubmissionStatus.initial;
+  double? progress;
+  String? stateInfo;
   final GlobalKey<FormState> formKey = GlobalKey();
 
   Widget submitButton(String label, Future<void> Function()? callback) {
     return status == SubmissionStatus.inProgress
-        ? const HelseLoader()
+        ? ProgressIconButton(
+            state: SubmissionStatus.inProgress,
+            progress: progress,
+          )
         : SquareButton(label, () => submit(callback));
   }
 

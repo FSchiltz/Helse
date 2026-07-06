@@ -286,7 +286,7 @@
     "/api/person/settings": {
       "get": {
         "tags": [
-          "SettingsLogic"
+          "PersonLogic"
         ],
         "responses": {
           "200": {
@@ -306,7 +306,7 @@
       },
       "post": {
         "tags": [
-          "SettingsLogic"
+          "PersonLogic"
         ],
         "requestBody": {
           "content": {
@@ -518,7 +518,7 @@
     "/api/patients/settings": {
       "get": {
         "tags": [
-          "SettingsLogic"
+          "PatientsLogic"
         ],
         "responses": {
           "200": {
@@ -538,7 +538,7 @@
       },
       "post": {
         "tags": [
-          "SettingsLogic"
+          "PatientsLogic"
         ],
         "requestBody": {
           "content": {
@@ -550,6 +550,670 @@
           },
           "required": true
         },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/files/{id}": {
+      "get": {
+        "tags": [
+          "FilesLogics"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          },
+          {
+            "name": "personId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/File"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FilesLogics"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          },
+          {
+            "name": "personId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/files/data/{id}": {
+      "get": {
+        "tags": [
+          "FilesLogics"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          },
+          {
+            "name": "personId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileData"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "FilesLogics"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          },
+          {
+            "name": "personId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "$ref": "#/components/schemas/IFormFile"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/files": {
+      "get": {
+        "tags": [
+          "FilesLogics"
+        ],
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedOfFile"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "FilesLogics"
+        ],
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFile"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "FilesLogics"
+        ],
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFile"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int64"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/files/metrics/{metricid}": {
+      "get": {
+        "tags": [
+          "FilesLogics"
+        ],
+        "parameters": [
+          {
+            "name": "metricid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          },
+          {
+            "name": "personId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/File"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/files/metrics/{metricid}/{fileid}": {
+      "post": {
+        "tags": [
+          "FilesLogics"
+        ],
+        "parameters": [
+          {
+            "name": "metricid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          },
+          {
+            "name": "fileid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          },
+          {
+            "name": "personId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FilesLogics"
+        ],
+        "parameters": [
+          {
+            "name": "metricid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          },
+          {
+            "name": "fileid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          },
+          {
+            "name": "personId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/files/events/{eventid}": {
+      "get": {
+        "tags": [
+          "FilesLogics"
+        ],
+        "parameters": [
+          {
+            "name": "eventid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          },
+          {
+            "name": "personId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/File"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/files/events/{eventid}/{fileid}": {
+      "post": {
+        "tags": [
+          "FilesLogics"
+        ],
+        "parameters": [
+          {
+            "name": "eventid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          },
+          {
+            "name": "fileid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          },
+          {
+            "name": "personId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FilesLogics"
+        ],
+        "parameters": [
+          {
+            "name": "eventid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          },
+          {
+            "name": "fileid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          },
+          {
+            "name": "personId",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          }
+        ],
         "responses": {
           "204": {
             "description": "No Content"
@@ -741,8 +1405,20 @@
           "required": true
         },
         "responses": {
-          "204": {
-            "description": "No Content"
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int64"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -783,6 +1459,18 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int64"
+            }
+          },
+          {
+            "name": "personId",
+            "in": "query",
             "schema": {
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "type": [
@@ -1403,8 +2091,20 @@
           "required": true
         },
         "responses": {
-          "204": {
-            "description": "No Content"
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int64"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -1787,115 +2487,10 @@
         }
       }
     },
-    "/api/treatment": {
-      "post": {
-        "tags": [
-          "TreatmentLogic"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateTreatment"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "TreatmentLogic"
-        ],
-        "parameters": [
-          {
-            "name": "start",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "end",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "personId",
-            "in": "query",
-            "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Event"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/api/treatment/type": {
-      "get": {
-        "tags": [
-          "TreatmentLogic"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/EventType"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
     "/api/admin/settings/oauth": {
       "post": {
         "tags": [
-          "SettingsLogic"
+          "AdminLogic"
         ],
         "requestBody": {
           "content": {
@@ -1918,7 +2513,7 @@
       },
       "get": {
         "tags": [
-          "SettingsLogic"
+          "AdminLogic"
         ],
         "responses": {
           "200": {
@@ -1940,7 +2535,7 @@
     "/api/admin/settings/proxy": {
       "post": {
         "tags": [
-          "SettingsLogic"
+          "AdminLogic"
         ],
         "requestBody": {
           "content": {
@@ -1963,7 +2558,7 @@
       },
       "get": {
         "tags": [
-          "SettingsLogic"
+          "AdminLogic"
         ],
         "responses": {
           "200": {
@@ -1985,7 +2580,7 @@
     "/api/admin/settings/smtp": {
       "post": {
         "tags": [
-          "SettingsLogic"
+          "AdminLogic"
         ],
         "requestBody": {
           "content": {
@@ -2008,7 +2603,7 @@
       },
       "get": {
         "tags": [
-          "SettingsLogic"
+          "AdminLogic"
         ],
         "responses": {
           "200": {
@@ -2030,7 +2625,7 @@
     "/api/admin/settings/gotify": {
       "get": {
         "tags": [
-          "SettingsLogic"
+          "AdminLogic"
         ],
         "responses": {
           "200": {
@@ -2050,7 +2645,7 @@
       },
       "post": {
         "tags": [
-          "SettingsLogic"
+          "AdminLogic"
         ],
         "requestBody": {
           "content": {
@@ -2065,31 +2660,6 @@
         "responses": {
           "204": {
             "description": "No Content"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/api/admin/settings/jobs": {
-      "get": {
-        "tags": [
-          "ImportLogic"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/JobResult"
-                  }
-                }
-              }
-            }
           },
           "401": {
             "description": "Unauthorized"
@@ -2216,7 +2786,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/FileType"
+                    "$ref": "#/components/schemas/ImportType"
                   }
                 }
               }
@@ -2381,7 +2951,7 @@
         }
       }
     },
-    "/api/import": {
+    "/api/import/results": {
       "post": {
         "tags": [
           "ImportLogic"
@@ -2569,7 +3139,7 @@
             "format": "date-time"
           },
           "source": {
-            "$ref": "#/components/schemas/FileTypes"
+            "$ref": "#/components/schemas/ImportTypes"
           },
           "sourceId": {
             "type": "string"
@@ -2612,6 +3182,39 @@
               "string"
             ],
             "format": "int64"
+          }
+        }
+      },
+      "CreateFile": {
+        "required": [
+          "dataType",
+          "name",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "dataType": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/FileType"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "stop": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
           }
         }
       },
@@ -2676,7 +3279,7 @@
             "format": "int64"
           },
           "source": {
-            "$ref": "#/components/schemas/FileTypes"
+            "$ref": "#/components/schemas/ImportTypes"
           },
           "sourceId": {
             "type": "string"
@@ -2746,26 +3349,6 @@
           }
         }
       },
-      "CreateTreatment": {
-        "type": "object",
-        "properties": {
-          "events": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CreateEvent"
-            }
-          },
-          "personId": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "null",
-              "integer",
-              "string"
-            ],
-            "format": "int64"
-          }
-        }
-      },
       "DatePreset": {
         "enum": [
           "Today",
@@ -2789,15 +3372,6 @@
           "user": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int64"
-          },
-          "file": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "null",
               "integer",
               "string"
             ],
@@ -2876,7 +3450,7 @@
             "format": "date-time"
           },
           "source": {
-            "$ref": "#/components/schemas/FileTypes"
+            "$ref": "#/components/schemas/ImportTypes"
           },
           "sourceId": {
             "type": "string"
@@ -3024,36 +3598,69 @@
           }
         }
       },
-      "FileType": {
+      "File": {
         "required": [
-          "type",
-          "name"
+          "name",
+          "description"
         ],
         "type": "object",
         "properties": {
-          "type": {
+          "id": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "integer",
               "string"
             ],
-            "format": "int32"
+            "format": "int64"
           },
-          "name": {
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "$ref": "#/components/schemas/FileType"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "stop": {
             "type": [
               "null",
               "string"
-            ]
+            ],
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
           }
         }
       },
-      "FileTypes": {
+      "FileData": {
+        "required": [
+          "type",
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "data": {
+            "type": "string",
+            "format": "byte"
+          }
+        }
+      },
+      "FileType": {
         "enum": [
           "None",
-          "RedmiWatch",
-          "GoogleHealthConnect",
-          "Clue",
-          "BabyTracker"
+          "Image",
+          "Prescription",
+          "Results"
         ]
       },
       "Gotify": {
@@ -3181,6 +3788,38 @@
             "$ref": "#/components/schemas/ImportResult"
           }
         }
+      },
+      "ImportType": {
+        "required": [
+          "type",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ImportTypes": {
+        "enum": [
+          "None",
+          "RedmiWatch",
+          "GoogleHealthConnect",
+          "Clue",
+          "BabyTracker"
+        ]
       },
       "InterfaceTheme": {
         "enum": [
@@ -3370,7 +4009,7 @@
             "format": "int64"
           },
           "source": {
-            "$ref": "#/components/schemas/FileTypes"
+            "$ref": "#/components/schemas/ImportTypes"
           },
           "sourceId": {
             "type": "string"
@@ -3667,6 +4306,28 @@
           }
         }
       },
+      "PaginatedOfFile": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "count": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/File"
+            }
+          }
+        }
+      },
       "PatchEvent": {
         "required": [
           "type",
@@ -3734,7 +4395,7 @@
             "format": "date-time"
           },
           "source": {
-            "$ref": "#/components/schemas/FileTypes"
+            "$ref": "#/components/schemas/ImportTypes"
           },
           "sourceId": {
             "type": "string"
@@ -3801,7 +4462,7 @@
             "format": "int64"
           },
           "source": {
-            "$ref": "#/components/schemas/FileTypes"
+            "$ref": "#/components/schemas/ImportTypes"
           },
           "sourceId": {
             "type": "string"
@@ -4129,7 +4790,7 @@
             "format": "date-time"
           },
           "source": {
-            "$ref": "#/components/schemas/FileTypes"
+            "$ref": "#/components/schemas/ImportTypes"
           },
           "filterSource": {
             "type": "boolean"
@@ -4189,7 +4850,7 @@
             "format": "int32"
           },
           "source": {
-            "$ref": "#/components/schemas/FileTypes"
+            "$ref": "#/components/schemas/ImportTypes"
           },
           "isTrue": {
             "type": [
@@ -4408,7 +5069,7 @@
             "format": "date-time"
           },
           "source": {
-            "$ref": "#/components/schemas/FileTypes"
+            "$ref": "#/components/schemas/ImportTypes"
           },
           "sourceId": {
             "type": "string"
@@ -4460,6 +5121,47 @@
               "string"
             ],
             "format": "int64"
+          }
+        }
+      },
+      "UpdateFile": {
+        "required": [
+          "dataType",
+          "name",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "dataType": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/FileType"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "stop": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
           }
         }
       },
@@ -4540,7 +5242,7 @@
             "format": "int64"
           },
           "source": {
-            "$ref": "#/components/schemas/FileTypes"
+            "$ref": "#/components/schemas/ImportTypes"
           },
           "sourceId": {
             "type": "string"
@@ -4837,10 +5539,10 @@
       "name": "PersonLogic"
     },
     {
-      "name": "SettingsLogic"
+      "name": "PatientsLogic"
     },
     {
-      "name": "PatientsLogic"
+      "name": "FilesLogics"
     },
     {
       "name": "MetricsLogic"
@@ -4849,13 +5551,10 @@
       "name": "EventsLogic"
     },
     {
-      "name": "TreatmentLogic"
+      "name": "AdminLogic"
     },
     {
       "name": "ImportLogic"
-    },
-    {
-      "name": "AdminLogic"
     }
   ]
 }

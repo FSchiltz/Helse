@@ -66,9 +66,9 @@ class EventService extends ApiService {
     );
   }
 
-  Future<void> addEvent(CreateEvent event, {int? person}) async {
+  Future<int?> addEvent(CreateEvent event, {int? person}) async {
     var api = await getService();
-    await call(() => api.apiEventsPost(body: event, personId: person));
+    return await call(() => api.apiEventsPost(body: event, personId: person));
   }
 
   Future<void> updateEvent(UpdateEvent event) async {
@@ -108,7 +108,10 @@ class EventService extends ApiService {
   Future<void> deleteEvents(List<Event> events, {int? person}) async {
     var api = await getService();
     await call(
-      () => api.apiEventsDeletePost(body: events.map((e) => e.id).toList(), person: person),
+      () => api.apiEventsDeletePost(
+        body: events.map((e) => e.id).toList(),
+        person: person,
+      ),
     );
   }
 

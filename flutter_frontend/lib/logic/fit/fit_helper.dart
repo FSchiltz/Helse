@@ -162,7 +162,7 @@ class FitHelper {
         var metric = CreateMetric(
           date: point.dateFrom.toUtc(),
           value: _convertValue(point.value) ?? point.value.toString(),
-          source: FileTypes.googlehealthconnect,
+          source: ImportTypes.googlehealthconnect,
           tag: point.recordingMethod.name,
           type: metricType,
           sourceId: '${point.uuid}_${point.dateFrom}',
@@ -175,7 +175,7 @@ class FitHelper {
           start: point.dateFrom.toUtc(),
           stop: point.dateTo.toUtc(),
           description: description ?? _convertValue(point.value) ?? point.typeString.split('_').toCamel(),
-          source: FileTypes.googlehealthconnect,
+          source: ImportTypes.googlehealthconnect,
           sourceId: '${point.uuid}_${point.type.name}_${point.dateFrom}',
           tag: point.recordingMethod.name,
           type: eventType,

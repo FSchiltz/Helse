@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using Helse.Api;
 using Helse.Api.Data;
 using Helse.Api.Helpers.Auth;
 using Helse.Api.Jobs;
@@ -57,10 +56,11 @@ builder.Services.AddSingleton<TokenService>()
     .AddTransient<IUserContext, UserContext>()
     .AddTransient<ISettingsContext, SettingsContext>()
     .AddTransient<IHealthContext, HealthContext>()
-    .AddTransient<IMetricContext, HealthContext>()
-    .AddTransient<IEventContext, HealthContext>()
+    .AddTransient<IMetricContext, MetricContext>()
+    .AddTransient<IEventContext, EventContext>()
     .AddTransient<IStatsContext, StatsContext>()
-    .AddTransient<ICommonContext, CommonContext>();
+    .AddTransient<ICommonContext, CommonContext>()
+    .AddTransient<IFilesContext, FilesContext>();
 
 builder.Services.AddAuthentication(options =>
   {
@@ -115,7 +115,16 @@ app.UseStaticFiles();
 
 app.UseHttpLogging();
 
-app.MapGroup("/api").MapEnpoints();
+app.MapGroup("/api")
+    .MapAuth()
+    .MapPerson()
+    .MapPatients()
+    .MapCommon()
+    .MapFiles()
+    .MapMetrics()
+    .MapEvents()
+    .MapAdmin()
+    .MapImports();
 
 app.Run();
 

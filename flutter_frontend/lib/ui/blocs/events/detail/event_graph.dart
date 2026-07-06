@@ -90,6 +90,10 @@ class _EventsGraphState extends State<EventsGraph> {
       StateType.events,
       context,
     );
+
+    if (widget.events.length == 1) {
+      _selected = widget.events.first;
+    }
   }
 
   @override

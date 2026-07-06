@@ -45,7 +45,7 @@ public abstract class MetricBase
 
     public required long Type { get; set; }
 
-    public FileTypes Source { get; set; }
+    public ImportTypes Source { get; set; }
 
     public required string SourceId { get; set; }
 }

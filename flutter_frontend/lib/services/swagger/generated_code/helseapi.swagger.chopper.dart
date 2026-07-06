@@ -290,7 +290,7 @@ final class _$Helseapi extends Helseapi {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["PersonLogic"],
       deprecated: false,
     ),
   }) {
@@ -314,7 +314,7 @@ final class _$Helseapi extends Helseapi {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["PersonLogic"],
       deprecated: false,
     ),
   }) {
@@ -477,7 +477,7 @@ final class _$Helseapi extends Helseapi {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["PatientsLogic"],
       deprecated: false,
     ),
   }) {
@@ -501,7 +501,7 @@ final class _$Helseapi extends Helseapi {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["PatientsLogic"],
       deprecated: false,
     ),
   }) {
@@ -512,6 +512,400 @@ final class _$Helseapi extends Helseapi {
       $url,
       client.baseUrl,
       body: $body,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<File>> _apiFilesIdGet({
+    required int? id,
+    int? personId,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/files/${id}');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<File, File>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiFilesIdDelete({
+    required int? id,
+    int? personId,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/files/${id}');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<FileData>> _apiFilesDataIdGet({
+    required int? id,
+    int? personId,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/files/data/${id}');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<FileData, FileData>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiFilesDataIdPost({
+    required int? id,
+    int? personId,
+    required dynamic file,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/files/data/${id}');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
+    final List<PartValue> $parts = <PartValue>[
+      PartValue<dynamic>('file', file),
+    ];
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      parts: $parts,
+      multipart: true,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<PaginatedOfFile>> _apiFilesGet({
+    int? personId,
+    required int? page,
+    required int? pageSize,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/files');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+      'Page': page,
+      'PageSize': pageSize,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<PaginatedOfFile, PaginatedOfFile>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiFilesPut({
+    int? personId,
+    required UpdateFile? body,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/files');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
+    final $body = body;
+    final Request $request = Request(
+      'PUT',
+      $url,
+      client.baseUrl,
+      body: $body,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<int>> _apiFilesPost({
+    int? personId,
+    required CreateFile? body,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/files');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<int, int>($request);
+  }
+
+  @override
+  Future<Response<List<File>>> _apiFilesMetricsMetricidGet({
+    required int? metricid,
+    int? personId,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/files/metrics/${metricid}');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<List<File>, File>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiFilesMetricsMetricidFileidPost({
+    required int? metricid,
+    required int? fileid,
+    int? personId,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/files/metrics/${metricid}/${fileid}');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiFilesMetricsMetricidFileidDelete({
+    required int? metricid,
+    required int? fileid,
+    int? personId,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/files/metrics/${metricid}/${fileid}');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<List<File>>> _apiFilesEventsEventidGet({
+    required int? eventid,
+    int? personId,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/files/events/${eventid}');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<List<File>, File>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiFilesEventsEventidFileidPost({
+    required int? eventid,
+    required int? fileid,
+    int? personId,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/files/events/${eventid}/${fileid}');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+      tag: swaggerMetaData,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiFilesEventsEventidFileidDelete({
+    required int? eventid,
+    required int? fileid,
+    int? personId,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["FilesLogics"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/files/events/${eventid}/${fileid}');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+      parameters: $params,
       tag: swaggerMetaData,
     );
     return client.send<dynamic, dynamic>($request);
@@ -588,7 +982,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<dynamic>> _apiMetricsPost({
+  Future<Response<int>> _apiMetricsPost({
     int? personId,
     required CreateMetric? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -615,7 +1009,7 @@ final class _$Helseapi extends Helseapi {
       parameters: $params,
       tag: swaggerMetaData,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<int, int>($request);
   }
 
   @override
@@ -647,6 +1041,7 @@ final class _$Helseapi extends Helseapi {
   @override
   Future<Response<dynamic>> _apiMetricsIdDelete({
     required int? id,
+    int? personId,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
       summary: '',
@@ -659,10 +1054,14 @@ final class _$Helseapi extends Helseapi {
     ),
   }) {
     final Uri $url = Uri.parse('/api/metrics/${id}');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'personId': personId,
+    };
     final Request $request = Request(
       'DELETE',
       $url,
       client.baseUrl,
+      parameters: $params,
       tag: swaggerMetaData,
     );
     return client.send<dynamic, dynamic>($request);
@@ -1068,7 +1467,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<dynamic>> _apiEventsPost({
+  Future<Response<int>> _apiEventsPost({
     int? personId,
     required CreateEvent? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -1095,7 +1494,7 @@ final class _$Helseapi extends Helseapi {
       parameters: $params,
       tag: swaggerMetaData,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<int, int>($request);
   }
 
   @override
@@ -1377,87 +1776,6 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<dynamic>> _apiTreatmentPost({
-    required CreateTreatment? body,
-    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
-      description: '',
-      summary: '',
-      operationId: '',
-      consumes: [],
-      produces: [],
-      security: [],
-      tags: ["TreatmentLogic"],
-      deprecated: false,
-    ),
-  }) {
-    final Uri $url = Uri.parse('/api/treatment');
-    final $body = body;
-    final Request $request = Request(
-      'POST',
-      $url,
-      client.baseUrl,
-      body: $body,
-      tag: swaggerMetaData,
-    );
-    return client.send<dynamic, dynamic>($request);
-  }
-
-  @override
-  Future<Response<List<Event>>> _apiTreatmentGet({
-    required DateTime? start,
-    required DateTime? end,
-    int? personId,
-    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
-      description: '',
-      summary: '',
-      operationId: '',
-      consumes: [],
-      produces: [],
-      security: [],
-      tags: ["TreatmentLogic"],
-      deprecated: false,
-    ),
-  }) {
-    final Uri $url = Uri.parse('/api/treatment');
-    final Map<String, dynamic> $params = <String, dynamic>{
-      'start': start,
-      'end': end,
-      'personId': personId,
-    };
-    final Request $request = Request(
-      'GET',
-      $url,
-      client.baseUrl,
-      parameters: $params,
-      tag: swaggerMetaData,
-    );
-    return client.send<List<Event>, Event>($request);
-  }
-
-  @override
-  Future<Response<List<EventType>>> _apiTreatmentTypeGet({
-    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
-      description: '',
-      summary: '',
-      operationId: '',
-      consumes: [],
-      produces: [],
-      security: [],
-      tags: ["TreatmentLogic"],
-      deprecated: false,
-    ),
-  }) {
-    final Uri $url = Uri.parse('/api/treatment/type');
-    final Request $request = Request(
-      'GET',
-      $url,
-      client.baseUrl,
-      tag: swaggerMetaData,
-    );
-    return client.send<List<EventType>, EventType>($request);
-  }
-
-  @override
   Future<Response<dynamic>> _apiAdminSettingsOauthPost({
     required Oauth? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -1467,7 +1785,7 @@ final class _$Helseapi extends Helseapi {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["AdminLogic"],
       deprecated: false,
     ),
   }) {
@@ -1492,7 +1810,7 @@ final class _$Helseapi extends Helseapi {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["AdminLogic"],
       deprecated: false,
     ),
   }) {
@@ -1516,7 +1834,7 @@ final class _$Helseapi extends Helseapi {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["AdminLogic"],
       deprecated: false,
     ),
   }) {
@@ -1541,7 +1859,7 @@ final class _$Helseapi extends Helseapi {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["AdminLogic"],
       deprecated: false,
     ),
   }) {
@@ -1565,7 +1883,7 @@ final class _$Helseapi extends Helseapi {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["AdminLogic"],
       deprecated: false,
     ),
   }) {
@@ -1590,7 +1908,7 @@ final class _$Helseapi extends Helseapi {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["AdminLogic"],
       deprecated: false,
     ),
   }) {
@@ -1613,7 +1931,7 @@ final class _$Helseapi extends Helseapi {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["AdminLogic"],
       deprecated: false,
     ),
   }) {
@@ -1637,7 +1955,7 @@ final class _$Helseapi extends Helseapi {
       consumes: [],
       produces: [],
       security: [],
-      tags: ["SettingsLogic"],
+      tags: ["AdminLogic"],
       deprecated: false,
     ),
   }) {
@@ -1651,29 +1969,6 @@ final class _$Helseapi extends Helseapi {
       tag: swaggerMetaData,
     );
     return client.send<dynamic, dynamic>($request);
-  }
-
-  @override
-  Future<Response<List<JobResult>>> _apiAdminSettingsJobsGet({
-    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
-      description: '',
-      summary: '',
-      operationId: '',
-      consumes: [],
-      produces: [],
-      security: [],
-      tags: ["ImportLogic"],
-      deprecated: false,
-    ),
-  }) {
-    final Uri $url = Uri.parse('/api/admin/settings/jobs');
-    final Request $request = Request(
-      'GET',
-      $url,
-      client.baseUrl,
-      tag: swaggerMetaData,
-    );
-    return client.send<List<JobResult>, JobResult>($request);
   }
 
   @override
@@ -1760,7 +2055,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<List<FileType>>> _apiImportTypesGet({
+  Future<Response<List<ImportType>>> _apiImportTypesGet({
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
       summary: '',
@@ -1779,7 +2074,7 @@ final class _$Helseapi extends Helseapi {
       client.baseUrl,
       tag: swaggerMetaData,
     );
-    return client.send<List<FileType>, FileType>($request);
+    return client.send<List<ImportType>, ImportType>($request);
   }
 
   @override
@@ -1886,7 +2181,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<ImportsResult>> _apiImportPost({
+  Future<Response<ImportsResult>> _apiImportResultsPost({
     int? patient,
     required ImportData? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -1900,7 +2195,7 @@ final class _$Helseapi extends Helseapi {
       deprecated: false,
     ),
   }) {
-    final Uri $url = Uri.parse('/api/import');
+    final Uri $url = Uri.parse('/api/import/results');
     final Map<String, dynamic> $params = <String, dynamic>{'patient': patient};
     final $body = body;
     final Request $request = Request(

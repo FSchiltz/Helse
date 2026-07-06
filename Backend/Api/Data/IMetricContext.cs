@@ -13,7 +13,7 @@ internal interface IMetricContext : IContext
 
     Task Insert(Helse.Models.Metrics.CreateMetricType metric);
 
-    Task DeleteMetric(long id);
+    Task DeleteMetric(long id, long personId);
 
     Task<Metric?> GetMetric(long id);
 
@@ -21,7 +21,7 @@ internal interface IMetricContext : IContext
 
     Task<Metric[]> GetSummaryMetrics(int tile, long id, int type, Helse.Models.Metrics.MetricSummary action, DateTime start, DateTime end);
 
-    Task Insert(Helse.Models.Metrics.CreateMetric metric, long person, long id);
+    Task<long> Insert(Helse.Models.Metrics.CreateMetric metric, long person, long id);
 
     Task Update(Helse.Models.Metrics.UpdateMetric metric);
 
@@ -57,6 +57,6 @@ internal interface IMetricContext : IContext
     Task<long> CountMetricsAsync(long person, Helse.Models.Metrics.SearchMetric search);
 
     Task DeleteMetrics(long[] ids, long person);
-    
+
     Task UpdateBulk(Helse.Models.Metrics.PatchMetric metric, long value);
 }

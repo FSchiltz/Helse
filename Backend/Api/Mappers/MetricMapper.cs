@@ -15,7 +15,7 @@ internal static class MetricMapper
             Person = x.PersonId,
             SourceId = x.SourceId,
             Type = x.Type,
-            Source = (FileTypes)x.Source,
+            Source = (ImportTypes)x.Source,
             Tag = x.Tag,
             Unit = x.UnitObject.ToUnit(),
         };
