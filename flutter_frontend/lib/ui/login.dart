@@ -419,19 +419,12 @@ class _LoginState extends State<LoginPage> {
       return;
     }
 
-    var user = _controllerUsername.text;
     var password = oAuth;
-
-    if (user.isEmpty) {
-      _reset(error: "Missing username");
-      return;
-    }
 
     try {
       await Dependencies.logics.authentication.startOauthLogin(
-        password: password,
+        token: password,
         url: url,
-        user: user,
       );
 
       _success();

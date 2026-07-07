@@ -152,8 +152,7 @@ class AuthenticationLogic {
 
   Future<void> startOauthLogin({
     required String url,
-    required String user,
-    required String password,
+    required String token,
   }) async {
     String? issuer;
     String? redirect;
@@ -165,9 +164,9 @@ class AuthenticationLogic {
     await logIn(
       url: url,
       connection: Connection(
-        user: user,
-        password: password,
+        password: token,
         issuer: issuer,
+        user: '',
         redirect: redirect,
       ),
     );
@@ -190,7 +189,7 @@ class AuthenticationLogic {
           var url = account.get(Account.url);
 
           set(AuthenticationStatus.unauthenticated);
-          await startOauthLogin(password: code, url: url ?? '', user: "");
+          await startOauthLogin(token: code, url: url ?? '');
         }
       }
     });
