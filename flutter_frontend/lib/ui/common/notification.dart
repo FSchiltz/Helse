@@ -25,7 +25,7 @@ class Notify {
 
     _localNotifications = FlutterLocalNotificationsPlugin();
     final initializationSettings = InitializationSettings(
-      android: AndroidInitializationSettings("ic_launcher"),
+      android: AndroidInitializationSettings("@mipmap/ic_launcher"),
       linux: LinuxInitializationSettings(defaultActionName: "open"),
     );
     enabled =
