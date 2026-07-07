@@ -7,7 +7,6 @@ import 'package:helse/logic/fit/fit_constants.dart';
 import 'package:helse/logic/fit/fit_helper.dart';
 import 'package:helse/logic/settings/health_settings.dart';
 import 'package:helse/ui/common/inputs/custom_switch.dart';
-import 'package:helse/ui/common/inputs/statefull_check.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/square_button.dart';
