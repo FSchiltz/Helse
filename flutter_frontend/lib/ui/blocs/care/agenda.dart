@@ -1,8 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/blocs/calendar/calendar_view.dart';
+import 'package:helse/ui/common/calendar_view.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Agenda extends StatelessWidget {
@@ -10,7 +11,7 @@ class Agenda extends StatelessWidget {
   final bool compact;
   const Agenda(this.data, {super.key, this.compact = false});
 
-  Future<List<CalendarGroup>> _getData(DateTime day) async {
+  Future<List<CalendarGroup<String>>> _getData(DateTime day) async {
     var start = DateTime(day.year, day.month, day.day);
     var end = DateTime(
       day.year,
@@ -43,6 +44,9 @@ class Agenda extends StatelessWidget {
       DateTimeRange<DateTime>(start: DateTime(1900), end: DateTime(3000)),
       format: CalendarFormat.week,
       compact: compact,
+      build: (x, item) => Text(
+        "${item.value} at ${DateHelper.formatTime(item.to, context: x)}",
+      ),
     );
   }
 }

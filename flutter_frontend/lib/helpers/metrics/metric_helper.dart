@@ -25,6 +25,7 @@ class MetricHelper {
 
   static List<double> getValue(String value, MetricDataType? type) {
     var split = value.split(';');
+
     if (type == MetricDataType.bool) {
       return [bool.parse(value) ? 1 : 0];
     }

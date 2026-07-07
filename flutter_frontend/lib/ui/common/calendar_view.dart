@@ -4,28 +4,29 @@ import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class CalendarEvent {
+class CalendarEvent<T> {
   final DateTime from;
   final DateTime to;
-  final String value;
+  final T value;
 
   CalendarEvent({required this.from, required this.to, required this.value});
 }
 
-class CalendarGroup {
+class CalendarGroup<T> {
   final String name;
-  final List<CalendarEvent> events;
+  final List<CalendarEvent<T>> events;
 
   CalendarGroup({required this.name, required this.events});
 }
 
-class CalendarView extends StatefulWidget {
+class CalendarView<T> extends StatefulWidget {
   final DateTimeRange date;
   final CalendarFormat format;
   final bool compact;
+  final Widget Function(BuildContext, CalendarEvent<T>) build;
 
-  final Future<List<CalendarGroup>> Function(DateTime) loadEvents;
-  final List<CalendarEvent> Function(DateTime)? getEvents;
+  final Future<List<CalendarGroup<T>>> Function(DateTime) loadEvents;
+  final List<CalendarEvent<T>> Function(DateTime)? getEvents;
 
   const CalendarView(
     this.loadEvents,
@@ -34,16 +35,17 @@ class CalendarView extends StatefulWidget {
     this.getEvents,
     this.format = CalendarFormat.month,
     this.compact = false,
+    required this.build,
   });
 
   @override
-  State<CalendarView> createState() => _CalendarViewState();
+  State<CalendarView<T>> createState() => _CalendarViewState<T>();
 }
 
-class _CalendarViewState extends State<CalendarView> {
+class _CalendarViewState<T> extends State<CalendarView<T>> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  List<CalendarGroup> _selectedEvents = [];
+  List<CalendarGroup<T>> _selectedEvents = [];
   CalendarFormat _calendarFormat = CalendarFormat.month;
 
   Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
@@ -83,7 +85,7 @@ class _CalendarViewState extends State<CalendarView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.date.duration.inHours > 24)
-          TableCalendar<CalendarEvent>(
+          TableCalendar<CalendarEvent<T>>(
             eventLoader: widget.getEvents,
             firstDay: widget.date.start,
             lastDay: widget.date.end,
@@ -135,13 +137,8 @@ class _CalendarViewState extends State<CalendarView> {
                     ListView.builder(
                       shrinkWrap: true,
                       itemCount: item.events.length,
-                      itemBuilder: (x, index) => Row(
-                        children: [
-                          Text(
-                            "${item.events[index].value} at ${DateHelper.formatTime(item.events[index].to, context: x)}",
-                          ),
-                        ],
-                      ),
+                      itemBuilder: (x, index) =>
+                          widget.build(x, item.events[index]),
                     ),
                     Divider(),
                   ],
