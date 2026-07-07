@@ -185,7 +185,7 @@ class _SyncSettingsState extends State<SyncSettings> {
                     cells: [
                       DataCell(Text(e.key)),
                       DataCell(
-                        StatefullCheck(e.value.sync, (v) => e.value.sync = v),
+                       CustomSwitch(e.value.sync, (v) => e.value.sync = v),
                       ),
                     ],
                   ),
