@@ -1,11 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart';
 import 'package:helse/services/file_service.dart';
 import 'package:helse/ui/common/inputs/files/file_list_widget.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:http/http.dart';
+import 'package:open_file/open_file.dart';
 
 class FileLogic {
   final FileService files;
@@ -62,11 +65,21 @@ class FileLogic {
       return;
     }
 
-    final FileSaveLocation? result = await getSaveLocation(
-      suggestedName: fileName,
-    );
+    bool open = false;
+    String? path;
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      //downloads folder - android only - API>30
+      path = '/storage/emulated/0/Download${Platform.pathSeparator}$fileName';
+      open = true;
+    } else {
+      final FileSaveLocation? result = await getSaveLocation(
+        suggestedName: fileName,
+      );
 
-    if (result == null) {
+      path = result?.path;
+    }
+
+    if (path == null) {
       // Operation was canceled by the user.
       return;
     }
@@ -77,7 +90,9 @@ class FileLogic {
       mimeType: file.type,
       name: fileName,
     );
-    await textFile.saveTo(result.path);
+    await textFile.saveTo(path);
     Notify.showIcon(NotificationKind.success);
+
+    if (open) await OpenFile.open(path);
   }
 }

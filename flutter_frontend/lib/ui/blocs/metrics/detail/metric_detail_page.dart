@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/date_helper.dart';
+import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/metrics/metric_add_button.dart';
 import 'package:helse/ui/blocs/metrics/metric_search_button.dart';
@@ -7,7 +9,7 @@ import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../di/dependencies.dart';
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
-import '../../calendar/calendar_view.dart';
+import '../../../common/calendar_view.dart';
 import 'metric_graph.dart';
 
 class MetricDetailPage extends StatefulWidget {
@@ -72,7 +74,9 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
       body: LoadingBuilder(
         _getData,
         builder: (ctx, data, reset) {
-          Future<List<CalendarGroup>> getEventsForDay(DateTime day) async {
+          Future<List<CalendarGroup<Metric>>> getEventsForDay(
+            DateTime day,
+          ) async {
             return [CalendarGroup(name: '', events: _map(data, day))];
           }
 
@@ -85,10 +89,11 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                 )
               : (widget.type.type == MetricDataType.text ||
                         widget.settings == GraphKind.text
-                    ? CalendarView(
+                    ? CalendarView<Metric>(
                         getEventsForDay,
                         widget.date,
                         getEvents: (day) => _map(data, day),
+                        build: _buildMetricDetail,
                       )
                     : MetricGraph(
                         data,
@@ -103,7 +108,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
     );
   }
 
-  List<CalendarEvent> _map(List<Metric> data, DateTime day) {
+  List<CalendarEvent<Metric>> _map(List<Metric> data, DateTime day) {
     return data
         .where(
           (e) =>
@@ -111,7 +116,31 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
               e.date.month == day.month &&
               e.date.day == day.day,
         )
-        .map((x) => CalendarEvent(from: x.date, to: x.date, value: x.value))
+        .map((x) => CalendarEvent(from: x.date, to: x.date, value: x))
         .toList();
+  }
+
+  Widget _buildMetricDetail(BuildContext context, CalendarEvent<Metric> e) {
+    final m = e.value;
+    final extended = !UIHelpers.isMobile(context);
+    return Row(
+      children: [
+        if (extended) Text((m.id).toString()),
+        Text('${m.value} ${widget.type.unit.code}'),
+        Text(DateHelper.format(m.date.toLocal(), context: context)),
+        if (extended) Text(m.tag.toString()),
+        if (extended) Text(m.source?.name ?? ''),
+
+        Row(
+          children: MetricHelper.getButtons(
+            m,
+            widget.type,
+            _resetMetric,
+            context: context,
+            person: widget.person,
+          ),
+        ),
+      ],
+    );
   }
 }
