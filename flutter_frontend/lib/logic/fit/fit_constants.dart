@@ -21,6 +21,10 @@ class FitConstants {
     HealthDataType.TOTAL_CALORIES_BURNED,
     HealthDataType.RESTING_HEART_RATE,
     HealthDataType.BASAL_ENERGY_BURNED,
+    HealthDataType.DISTANCE_WALKING_RUNNING,
+    HealthDataType.DISTANCE_SWIMMING,
+    HealthDataType.DISTANCE_CYCLING,
+    HealthDataType.DISTANCE_DELTA,
   ];
 
   static final List<HealthDataType> unsupported = [
@@ -31,10 +35,5 @@ class FitConstants {
     HealthDataType.SLEEP_IN_BED,
     HealthDataType.SLEEP_OUT_OF_BED,
     HealthDataType.SLEEP_AWAKE_IN_BED,
-    HealthDataType.DISTANCE_WALKING_RUNNING,
-    HealthDataType.DISTANCE_SWIMMING,
-    HealthDataType.DISTANCE_CYCLING,
-    HealthDataType.WORKOUT,
-    HealthDataType.DISTANCE_DELTA,
   ];
 }
