@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:helse/di/dependencies.dart';
@@ -25,7 +24,7 @@ void callbackDispatcher() {
 class WorkHelper {
   static const String jobName = "data_sync";
   static Future<void> init() async {
-    if (!kIsWeb && Platform.isAndroid) {
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
       Workmanager().initialize(callbackDispatcher);
       var already = await Workmanager().isScheduledByUniqueName(jobName);
       if (!already) {

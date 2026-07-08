@@ -67,9 +67,8 @@ class FileLogic {
 
     bool open = false;
     String? path;
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      //downloads folder - android only - API>30
-      path = '/storage/emulated/0/Download${Platform.pathSeparator}$fileName';
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      path = '/storage/emulated/0/Download${Platform.pathSeparator}$id-$fileName';
       open = true;
     } else {
       final FileSaveLocation? result = await getSaveLocation(
