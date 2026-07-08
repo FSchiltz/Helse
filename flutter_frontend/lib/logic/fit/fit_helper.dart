@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:health/health.dart';
 import 'package:helse/helpers/string_helper.dart';
@@ -8,7 +7,7 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class FitHelper {
   static bool isSupported() {
-    return !kIsWeb && Platform.isAndroid;
+    return !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
   }
 
   static ImportData convert(List<HealthDataPoint> healthData) {
@@ -154,7 +153,7 @@ class FitHelper {
         case HealthDataType.ELECTRODERMAL_ACTIVITY:
         case HealthDataType.ELECTROCARDIOGRAM:
         case HealthDataType.ACTIVITY_INTENSITY:
-                // do nothing for now
+        // do nothing for now
       }
 
       // the uuid is not unique because some events have subevents
@@ -174,7 +173,10 @@ class FitHelper {
         var event = CreateEvent(
           start: point.dateFrom.toUtc(),
           stop: point.dateTo.toUtc(),
-          description: description ?? _convertValue(point.value) ?? point.typeString.split('_').toCamel(),
+          description:
+              description ??
+              _convertValue(point.value) ??
+              point.typeString.split('_').toCamel(),
           source: ImportTypes.googlehealthconnect,
           sourceId: '${point.uuid}_${point.type.name}_${point.dateFrom}',
           tag: point.recordingMethod.name,
@@ -193,9 +195,9 @@ class FitHelper {
       case NutritionHealthValue nutrition:
         return nutrition.calories.toString();
       case WorkoutHealthValue workout:
-        return  workout.workoutActivityType.name.toCamel();
+        return workout.workoutActivityType.name.toCamel();
     }
-    
+
     return null;
   }
 }
