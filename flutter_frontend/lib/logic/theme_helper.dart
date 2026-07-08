@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 
-enum StateType { events, metric, eventValue, metricGroup }
+enum StateType { events, metric, eventValue, metricGroup, person }
 
 class ColorValue {
   final String key;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -82,6 +84,7 @@ class _CalendarViewState<T> extends State<CalendarView<T>> {
     var locale = Translation.of(context);
 
     return Column(
+      spacing: UIConstants.formPad,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.date.duration.inHours > 24)
@@ -114,34 +117,54 @@ class _CalendarViewState<T> extends State<CalendarView<T>> {
             ),
             onDaySelected: _onDaySelected,
           ),
-        SizedBox(height: UIConstants.formPad),
-        Center(
+        Container(
+          margin: EdgeInsets.only(left: UIConstants.headerPad),
           child: Text(
             "Showing events of ${DateHelper.formatDate(_selectedDay, context: context)}",
-            style: theme.titleMedium,
+            style: theme.titleLarge,
           ),
         ),
         if (_selectedEvents.isEmpty)
           Center(child: Text(locale.nodata, style: theme.titleSmall)),
         if (_selectedEvents.isNotEmpty)
           Flexible(
-            child: ListView.builder(
+            child: ListView.separated(
+              separatorBuilder: (context, index) => Divider(),
               itemCount: _selectedEvents.length,
               shrinkWrap: true,
               itemBuilder: (x, index) {
                 var item = _selectedEvents[index];
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(item.name, style: theme.headlineSmall),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: item.events.length,
-                      itemBuilder: (x, index) =>
-                          widget.build(x, item.events[index]),
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: UIConstants.formPad),
+                  padding: EdgeInsets.only(left: UIConstants.formPad),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      left: BorderSide(
+                        color: Dependencies.theme.stateColor(
+                          item.name,
+                          StateType.person,
+                          context,
+                        ),
+                        width: 4,
+                      ),
                     ),
-                    Divider(),
-                  ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (item.name.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: UIConstants.textPad),
+                          child: Text(item.name, style: theme.headlineSmall),
+                        ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: item.events.length,
+                        itemBuilder: (x, index) =>
+                            widget.build(x, item.events[index]),
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
