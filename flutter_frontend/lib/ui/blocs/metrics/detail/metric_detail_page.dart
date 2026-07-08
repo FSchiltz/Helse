@@ -124,12 +124,14 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
     final m = e.value;
     final extended = !UIHelpers.isMobile(context);
     return Row(
+      mainAxisSize: MainAxisSize.min,
+      spacing: UIConstants.textPad,
       children: [
-        if (extended) Text((m.id).toString()),
         Text('${m.value} ${widget.type.unit.code}'),
         Text(DateHelper.format(m.date.toLocal(), context: context)),
         if (extended) Text(m.tag.toString()),
-        if (extended) Text(m.source?.name ?? ''),
+        if (extended && m.source != ImportTypes.none)
+          Text(m.source?.name ?? ''),
 
         Row(
           children: MetricHelper.getButtons(

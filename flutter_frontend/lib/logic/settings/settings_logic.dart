@@ -167,6 +167,8 @@ class SettingsLogic extends BaseSettingsLogic {
               groups: settings.groups?.copyWith(displaySettings: list),
             );
           }
+        case StateType.person:
+          list = [];
       }
 
       for (var entry in group.value.entries) {
