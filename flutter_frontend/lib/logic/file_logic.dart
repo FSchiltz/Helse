@@ -65,11 +65,10 @@ class FileLogic {
       return;
     }
 
-    bool open = false;
+    bool open = !kIsWeb;
     String? path;
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
       path = '/storage/emulated/0/Download${Platform.pathSeparator}$id-$fileName';
-      open = true;
     } else {
       final FileSaveLocation? result = await getSaveLocation(
         suggestedName: fileName,
