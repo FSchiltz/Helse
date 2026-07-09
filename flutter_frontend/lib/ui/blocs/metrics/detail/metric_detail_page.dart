@@ -26,7 +26,7 @@ class MetricDetailPage extends StatefulWidget {
   final MetricType type;
   final GraphKind settings;
   final int? person;
-  final List<Metric> summary;
+  final MetricSummaries summary;
 
   @override
   State<MetricDetailPage> createState() => _MetricDetailPageState();
@@ -44,7 +44,6 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
       widget.date.start,
       widget.date.end,
       person: widget.person,
-      tile: null,
     );
   }
 

@@ -1293,10 +1293,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Metric"
-                  }
+                  "$ref": "#/components/schemas/MetricSummaries"
                 }
               }
             }
@@ -4080,6 +4077,28 @@
                 "$ref": "#/components/schemas/MetricGroupSettings"
               }
             ]
+          }
+        }
+      },
+      "MetricSummaries": {
+        "required": [
+          "metrics"
+        ],
+        "type": "object",
+        "properties": {
+          "metrics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Metric"
+            }
+          },
+          "count": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
           }
         }
       },

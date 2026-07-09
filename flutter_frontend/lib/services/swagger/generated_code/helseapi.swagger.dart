@@ -999,14 +999,17 @@ abstract class Helseapi extends ChopperService {
   ///@param start
   ///@param end
   ///@param personId
-  Future<chopper.Response<List<Metric>>> apiMetricsSummaryGet({
+  Future<chopper.Response<MetricSummaries>> apiMetricsSummaryGet({
     required int? tile,
     required int? type,
     required DateTime? start,
     required DateTime? end,
     int? personId,
   }) {
-    generatedMapping.putIfAbsent(Metric, () => Metric.fromJsonFactory);
+    generatedMapping.putIfAbsent(
+      MetricSummaries,
+      () => MetricSummaries.fromJsonFactory,
+    );
 
     return _apiMetricsSummaryGet(
       tile: tile,
@@ -1024,7 +1027,7 @@ abstract class Helseapi extends ChopperService {
   ///@param end
   ///@param personId
   @GET(path: '/api/metrics/summary')
-  Future<chopper.Response<List<Metric>>> _apiMetricsSummaryGet({
+  Future<chopper.Response<MetricSummaries>> _apiMetricsSummaryGet({
     @Query('tile') required int? tile,
     @Query('type') required int? type,
     @Query('start') required DateTime? start,
@@ -5104,6 +5107,64 @@ extension $MetricSettingsExtension on MetricSettings {
           ? displaySettings.value
           : this.displaySettings),
       groups: (groups != null ? groups.value : this.groups),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class MetricSummaries {
+  const MetricSummaries({required this.metrics, this.count});
+
+  factory MetricSummaries.fromJson(Map<String, dynamic> json) =>
+      _$MetricSummariesFromJson(json);
+
+  static const toJsonFactory = _$MetricSummariesToJson;
+  Map<String, dynamic> toJson() => _$MetricSummariesToJson(this);
+
+  @JsonKey(name: 'metrics', defaultValue: <Metric>[])
+  final List<Metric> metrics;
+  @JsonKey(name: 'count')
+  final int? count;
+  static const fromJsonFactory = _$MetricSummariesFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is MetricSummaries &&
+            (identical(other.metrics, metrics) ||
+                const DeepCollectionEquality().equals(
+                  other.metrics,
+                  metrics,
+                )) &&
+            (identical(other.count, count) ||
+                const DeepCollectionEquality().equals(other.count, count)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(metrics) ^
+      const DeepCollectionEquality().hash(count) ^
+      runtimeType.hashCode;
+}
+
+extension $MetricSummariesExtension on MetricSummaries {
+  MetricSummaries copyWith({List<Metric>? metrics, int? count}) {
+    return MetricSummaries(
+      metrics: metrics ?? this.metrics,
+      count: count ?? this.count,
+    );
+  }
+
+  MetricSummaries copyWithWrapped({
+    Wrapped<List<Metric>>? metrics,
+    Wrapped<int?>? count,
+  }) {
+    return MetricSummaries(
+      metrics: (metrics != null ? metrics.value : this.metrics),
+      count: (count != null ? count.value : this.count),
     );
   }
 }
