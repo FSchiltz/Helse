@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/metrics/widget/widget_graph.dart';
+import 'package:helse/ui/blocs/metrics/widget/widget_text.dart';
 
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 
 class MetricCondensed extends StatelessWidget {
-  final List<Metric> metrics;
+  final MetricSummaries metrics;
   final MetricType type;
   final DateTimeRange date;
   final OrderedItem settings;
@@ -23,7 +23,7 @@ class MetricCondensed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return metrics.isEmpty
+    return metrics.metrics.isEmpty
         ? Center(
             child: Text(
               Translation.of(context).nodata,
@@ -31,9 +31,9 @@ class MetricCondensed extends StatelessWidget {
             ),
           )
         : (type.type == MetricDataType.text || settings.graph == GraphKind.text
-              ? Center(child: MetricHelper.getTextInfo(metrics, type, context))
+              ? Center(child: WidgetText(metrics, date, type))
               : WidgetGraph(
-                  metrics,
+                  metrics.metrics,
                   date,
                   type,
                   settings.graph ?? GraphKind.text,

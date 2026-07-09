@@ -912,7 +912,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<List<Metric>>> _apiMetricsSummaryGet({
+  Future<Response<MetricSummaries>> _apiMetricsSummaryGet({
     required int? tile,
     required int? type,
     required DateTime? start,
@@ -944,7 +944,7 @@ final class _$Helseapi extends Helseapi {
       parameters: $params,
       tag: swaggerMetaData,
     );
-    return client.send<List<Metric>, Metric>($request);
+    return client.send<MetricSummaries, MetricSummaries>($request);
   }
 
   @override

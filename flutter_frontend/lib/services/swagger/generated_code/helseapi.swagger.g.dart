@@ -553,6 +553,22 @@ Map<String, dynamic> _$MetricSettingsToJson(
   'groups': instance.groups,
 };
 
+MetricSummaries _$MetricSummariesFromJson(Map<String, dynamic> json) =>
+    MetricSummaries(
+      metrics:
+          (json['metrics'] as List<dynamic>?)
+              ?.map((e) => Metric.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      count: (json['count'] as num?)?.toInt(),
+    );
+
+Map<String, dynamic> _$MetricSummariesToJson(MetricSummaries instance) =>
+    <String, dynamic>{
+      'metrics': instance.metrics.map((e) => e.toJson()).toList(),
+      'count': instance.count,
+    };
+
 MetricType _$MetricTypeFromJson(Map<String, dynamic> json) => MetricType(
   id: (json['id'] as num).toInt(),
   unit: Unit.fromJson(json['unit'] as Map<String, dynamic>),

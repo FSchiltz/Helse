@@ -68,32 +68,38 @@ class MetricService extends ApiService {
     DateTime? start,
     DateTime? end, {
     int? person,
+  }) async {
+    var api = await getService();
+    List<Metric>? metrics = await call(
+      () => api.apiMetricsGet(
+        type: type,
+        start: start?.toUtc(),
+        end: end?.toUtc(),
+        personId: person,
+      ),
+    );
+
+    return metrics ?? [];
+  }
+
+  Future<MetricSummaries> metricSummaries(
+    int? type,
+    DateTime? start,
+    DateTime? end, {
+    int? person,
     int? tile,
   }) async {
     var api = await getService();
-    List<Metric>? metrics;
-    if (tile != null) {
-      metrics = await call(
-        () => api.apiMetricsSummaryGet(
-          tile: tile,
-          type: type,
-          start: start?.toUtc(),
-          end: end?.toUtc(),
-          personId: person,
-        ),
-      );
-    } else {
-      metrics = await call(
-        () => api.apiMetricsGet(
-          type: type,
-          start: start?.toUtc(),
-          end: end?.toUtc(),
-          personId: person,
-        ),
-      );
-    }
-
-    return metrics ?? [];
+    return await call(
+          () => api.apiMetricsSummaryGet(
+            tile: tile,
+            type: type,
+            start: start?.toUtc(),
+            end: end?.toUtc(),
+            personId: person,
+          ),
+        ) ??
+        MetricSummaries(metrics: []);
   }
 
   Future<int?> addMetrics(CreateMetric metric, {int? person}) async {

@@ -38,8 +38,8 @@ class _MetricWidgetState extends State<MetricWidget> {
     super.initState();
   }
 
-  Future<List<Metric>> _getData(bool refresh) async {
-    return await Dependencies.services.metric.metrics(
+  Future<MetricSummaries> _getData(bool refresh) async {
+    return await Dependencies.services.metric.metricSummaries(
       widget.type.id,
       widget.date.start,
       widget.date.end,
@@ -99,13 +99,13 @@ class _MetricWidgetState extends State<MetricWidget> {
                       ],
                     ),
                   ),
-                  if (data.isNotEmpty &&
+                  if (data.metrics.isNotEmpty &&
                       widget.settings.graph != GraphKind.text)
                     Expanded(
                       child: Align(
                         alignment: AlignmentGeometry.topCenter,
                         child: MetricHelper.getTextInfo(
-                          data,
+                          data.metrics,
                           widget.type,
                           context,
                         ),

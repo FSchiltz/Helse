@@ -3,7 +3,7 @@ import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart';
 import 'package:helse/ui/common/inputs/date_range_picker.dart';
-import 'blocs/metrics/metrics_grid.dart';
+import 'blocs/home/widget_grid.dart';
 
 class PatientDashboard extends StatefulWidget {
   final int? person;
@@ -57,7 +57,7 @@ class _PatientDashboardState extends State<PatientDashboard>
               padding: const EdgeInsets.all(8.0),
               child: DateRangePicker(_setDate, date),
             ),
-            MetricsGrid(date: date, person: widget.person),
+            WidgetGrid(date: date, person: widget.person),
           ],
         ),
       ),

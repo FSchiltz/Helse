@@ -12,17 +12,17 @@ import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 import '../../common/loader.dart';
 import '../../common/notification.dart';
 
-class MetricsGrid extends StatefulWidget {
+class WidgetGrid extends StatefulWidget {
   final int? person;
-  const MetricsGrid({super.key, required this.date, this.person});
+  const WidgetGrid({super.key, required this.date, this.person});
 
   final DateTimeRange date;
 
   @override
-  State<MetricsGrid> createState() => _MetricsGridState();
+  State<WidgetGrid> createState() => _WidgetGridState();
 }
 
-class _MetricsGridState extends State<MetricsGrid> {
+class _WidgetGridState extends State<WidgetGrid> {
   List<Group>? _groups;
   Map<int, List<(MetricType, OrderedItem)>>? _metrics;
   Map<int, List<(EventType, OrderedItem)>>? _events;

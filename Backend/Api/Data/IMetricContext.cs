@@ -42,7 +42,7 @@ internal interface IMetricContext : IContext
     /// <param name="start"></param>
     /// <param name="end"></param>
     /// <returns></returns>
-    Task<Metric?> GetLastMetrics(long id, int type, DateTime start, DateTime end);
+    Task<Metric[]> GetLastMetrics(long id, int count, int type, DateTime start, DateTime end);
 
     Task<int> DeleteMetricGroup(long id);
 

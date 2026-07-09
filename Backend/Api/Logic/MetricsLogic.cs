@@ -22,7 +22,7 @@ internal static class MetricsLogic
         /* Metrics endpoints*/
         var metrics = api.MapGroup("/metrics").RequireAuthorization();
         metrics.MapGet("/summary", GetSummaryAsync)
-        .Produces<Metric[]>((int)HttpStatusCode.OK)
+        .Produces<MetricSummaries>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
         metrics.MapGet("/", GetAsync)
@@ -118,17 +118,21 @@ internal static class MetricsLogic
         if (personId is not null && !await users.ValidateCaregiverAsync(user, personId.Value, RightType.View))
             return TypedResults.Forbid();
 
+        long count = 0;
         var id = personId ?? user.PersonId;
         var metricType = await db.GetMetricType(type) ?? throw new InvalidDataException("Incorrect metric type: " + type);
 
         Data.Models.Health.Metric[] metrics;
         if (metricType.Type == (long)MetricDataType.Text)
         {
-            var last = await db.GetLastMetrics(id, type, start, end);
-            if (last is not null)
-                metrics = [last];
-            else
-                metrics = [];
+            count = await db.CountMetricsAsync(id, new SearchMetric
+            {
+                Type = type,
+                From = start,
+                To = end,
+            });
+
+            metrics = await db.GetLastMetrics(id, 3, type, start, end);
         }
         else
         {
@@ -136,18 +140,22 @@ internal static class MetricsLogic
             metrics = await db.GetSummaryMetrics(tile, id, type, (MetricSummary)metricType.SummaryType, start, end);
         }
 
-        return TypedResults.Ok(metrics.Select(x => new Metric
+        return TypedResults.Ok(new MetricSummaries
         {
-            Value = x.Value,
-            Date = x.Date,
-            Id = x.Id,
-            Person = user.PersonId,
-            Type = x.Type,
-            Tag = x.Tag,
-            User = x.UserId,
-            Source = (ImportTypes)x.Source,
-            SourceId = x.SourceId,
-        }));
+            Metrics = [.. metrics.Select(x => new Metric
+            {
+                Value = x.Value,
+                Date = x.Date,
+                Id = x.Id,
+                Person = user.PersonId,
+                Type = x.Type,
+                Tag = x.Tag,
+                User = x.UserId,
+                Source = (ImportTypes)x.Source,
+                SourceId = x.SourceId,
+            })],
+            Count = count,
+        });
     }
 
     public static async Task<IResult> CreateAsync(CreateMetric metric, long? personId, IUserContext users, IMetricContext db, ICommonContext commonDb, HttpContext context)

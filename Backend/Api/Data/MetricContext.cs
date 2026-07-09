@@ -144,14 +144,14 @@ internal class MetricContext(DataConnection db, SlowQueryLogInterceptor intercep
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task<Metric?> GetLastMetrics(long id, int type, DateTime start, DateTime end)
+    public Task<Metric[]> GetLastMetrics(long id, int count, int type, DateTime start, DateTime end)
     {
         return Db.GetTable<Metric>().Where(x => x.PersonId == id
                 && x.Type == type
                 && x.Date <= end && x.Date >= start)
                 .OrderByDescending(x => x.Date)
-                .Take(1)
-                .SingleOrDefaultAsync();
+                .Take(count)
+                .ToArrayAsync();
     }
 
     public Task Update(Helse.Models.Metrics.UpdateMetric metric)
@@ -210,8 +210,6 @@ internal class MetricContext(DataConnection db, SlowQueryLogInterceptor intercep
 
         return query.LongCountAsync();
     }
-
-
 
     /// <inheritdoc/>
     public Task DeleteMetric(long id, long personId) => Db.GetTable<Metric>().DeleteAsync(x => x.Id == id && x.PersonId == personId);
