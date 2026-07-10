@@ -30,12 +30,15 @@ class MetricTimelineGraph extends StatelessWidget {
     );
 
     return TimelineGraph(
-      metrics.map((e) => TimelineNode<Metric>(e.date, e.date, '', e)).toList(),
+      metrics
+          .map((e) => TimelineNode<Metric>(e.date, e.date, '', e, dot: true))
+          .toList(),
       date,
       onselect: onselect,
       widthCoef: widthCoef,
       getColor: (label) => color,
-      link: false
+      link: false,
+      rowHeight: 58,
     );
   }
 }

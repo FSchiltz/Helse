@@ -17,6 +17,8 @@ class TimelineGraph<T> extends StatefulWidget {
   final bool link;
   final double widthCoef;
 
+  final double rowHeight;
+
   const TimelineGraph(
     this.events,
     this.date, {
@@ -25,6 +27,7 @@ class TimelineGraph<T> extends StatefulWidget {
     this.widthCoef = 2,
     required this.getColor,
     this.link = true,
+    this.rowHeight = 18,
   });
 
   @override
@@ -35,7 +38,6 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
   static const int skippedWidth = 32;
   double boxWidth = 0;
   final double headerHeight = 50;
-  final double rowHeight = 18.0;
 
   final ScrollController _scrollController = ScrollController();
   final List<EventLayout<T>> _eventLayouts = [];
@@ -64,7 +66,7 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
             children: [
               Padding(
                 padding: EdgeInsets.only(top: headerHeight),
-                child: buildRowLabels(labels, rowHeight),
+                child: buildRowLabels(labels, widget.rowHeight),
               ),
               Expanded(
                 child: Scrollbar(
@@ -76,7 +78,7 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
                     child: buildChart(
                       widget.events,
                       rowCount,
-                      rowHeight,
+                      widget.rowHeight,
                       context,
                     ),
                   ),
