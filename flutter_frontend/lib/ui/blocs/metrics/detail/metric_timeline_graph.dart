@@ -11,7 +11,7 @@ class MetricTimelineGraph extends StatelessWidget {
   final DateTimeRange date;
   final void Function(Metric metric)? onselect;
   final double widthCoef;
-  
+
   const MetricTimelineGraph(
     this.metrics,
     this.date,
@@ -35,6 +35,7 @@ class MetricTimelineGraph extends StatelessWidget {
       onselect: onselect,
       widthCoef: widthCoef,
       getColor: (label) => color,
+      link: false
     );
   }
 }

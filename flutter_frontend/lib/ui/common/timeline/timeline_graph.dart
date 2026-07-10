@@ -14,7 +14,7 @@ class TimelineGraph<T> extends StatefulWidget {
   final DateTimeRange date;
   final void Function(T event)? onselect;
   final Color Function(String label) getColor;
-
+  final bool link;
   final double widthCoef;
 
   const TimelineGraph(
@@ -24,6 +24,7 @@ class TimelineGraph<T> extends StatefulWidget {
     this.onselect,
     this.widthCoef = 2,
     required this.getColor,
+    this.link = true,
   });
 
   @override
@@ -162,15 +163,18 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
             child: Row(children: timeline.header),
           ),
         ),
-        Positioned(
-          top: headerHeight,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: IgnorePointer(
-            child: CustomPaint(painter: EventTransitionPainter(_eventLayouts)),
+        if (widget.link)
+          Positioned(
+            top: headerHeight,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: IgnorePointer(
+              child: CustomPaint(
+                painter: EventTransitionPainter(_eventLayouts),
+              ),
+            ),
           ),
-        ),
         Container(
           margin: const EdgeInsets.only(top: 52.0),
           child: SizedBox(
