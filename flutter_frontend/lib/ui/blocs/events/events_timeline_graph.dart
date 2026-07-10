@@ -9,7 +9,7 @@ import '../../../services/swagger/generated_code/helseapi.swagger.dart';
 class EventsTimelineGraph extends StatelessWidget {
   final List<Event> events;
   final DateTimeRange date;
-  final void Function(Event event)? onselect;
+  final void Function(List<Event> event)? onselect;
 
   final double widthCoef;
   const EventsTimelineGraph(

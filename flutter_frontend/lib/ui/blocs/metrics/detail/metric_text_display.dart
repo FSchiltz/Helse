@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:helse/helpers/date_helper.dart';
-import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_timeline_graph.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
@@ -26,12 +25,12 @@ class MetricTextDisplay extends StatefulWidget {
 }
 
 class _MetricTextDisplayState extends State<MetricTextDisplay> {
-  Metric? selected;
+  List<Metric> selected = [];
 
   @override
   void initState() {
     if (widget.metrics.length == 1) {
-      selected = widget.metrics[0];
+      selected = widget.metrics;
     }
 
     super.initState();
@@ -39,7 +38,6 @@ class _MetricTextDisplayState extends State<MetricTextDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    final extended = !UIHelpers.isMobile(context);
     final s = selected;
     return Column(
       spacing: UIConstants.formPad,
@@ -56,25 +54,14 @@ class _MetricTextDisplayState extends State<MetricTextDisplay> {
             }),
           ),
         ),
-        if (s != null)
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            spacing: UIConstants.textPad,
-            children: [
-              Text('${s.value} ${widget.type.unit.code}'),
-              Text(DateHelper.format(s.date.toLocal(), context: context)),
-              if (extended) Text(s.tag.toString()),
-              if (extended && s.source != ImportTypes.none)
-                Text(s.source?.name ?? ''),
-
-              ...MetricHelper.getButtons(
-                s,
-                widget.type,
-                widget.reset,
-                context: context,
-                person: widget.person,
-              ),
-            ],
+        if (s.isNotEmpty)
+          MetricDataTable(
+            count: s.length,
+            type: widget.type,
+            reset: widget.reset,
+            callback: (page, count) async {
+              return s.skip(page * count).take(count).toList();
+            },
           ),
       ],
     );

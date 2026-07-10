@@ -12,7 +12,7 @@ import 'package:helse/ui/common/timeline/timeline_node.dart';
 class TimelineGraph<T> extends StatefulWidget {
   final List<TimelineNode<T>> events;
   final DateTimeRange date;
-  final void Function(T event)? onselect;
+  final void Function(List<T> event)? onselect;
   final Color Function(String label) getColor;
   final bool link;
   final double widthCoef;
@@ -75,7 +75,7 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
                   child: SingleChildScrollView(
                     controller: _scrollController,
                     scrollDirection: Axis.horizontal,
-                    child: buildChart(
+                    child: _buildChart(
                       widget.events,
                       rowCount,
                       widget.rowHeight,
@@ -102,13 +102,11 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
       var currentDate = tempDate;
       tempDate = tempDate.add(const Duration(hours: 1));
 
-      var existing = events
-          .where(
-            (x) => x.start.isBefore(tempDate) && x.stop.isAfter(currentDate),
-          )
-          .toList();
+      var existing = events.any(
+        (x) => x.start.isBefore(tempDate) && x.stop.isAfter(currentDate),
+      );
 
-      if (existing.isNotEmpty) {
+      if (existing) {
         if (skipping || currentDate.hour < 1) {
           timeline.headerDay.add(buildDayHeader(tempDate, context));
         } else {
@@ -143,14 +141,14 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
     return timeline;
   }
 
-  Widget buildChart(
+  Widget _buildChart(
     List<TimelineNode<T>> events,
     int rowCount,
     double rowHeight,
     BuildContext context,
   ) {
     final timeline = _group(events, rowHeight);
-    final layouts = buildChartBars(events, timeline, rowHeight);
+    final layouts = _buildChartBars(events, timeline, rowHeight);
 
     return Stack(
       fit: StackFit.loose,
@@ -277,7 +275,7 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
     );
   }
 
-  List<EventLayout<T>> buildChartBars(
+  List<EventLayout<T>> _buildChartBars(
     List<TimelineNode<T>> events,
     TimelineItems timeline,
     double rowHeight,
@@ -296,16 +294,16 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
       final rowTop = rowIndex * rowHeight;
       final color = widget.getColor.call(group.key);
 
-      for (final n in group.value) {
-        final start = n.start;
-        final end = n.stop;
+      for (final item in group.value) {
+        final start = item.start;
+        final end = item.stop;
 
         final width = _distanceInMinutes(start, end);
         final left = _distanceToLeftBorder(start, timeline.skipped);
 
         layouts.add(
           EventLayout(
-            event: n,
+            event: item,
             left: left,
             right: left + (width * widget.widthCoef),
             centerY: rowTop + (rowHeight / 2),
@@ -328,9 +326,9 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
             top: rowTop,
             child: Tooltip(
               message:
-                  "${n.label}: ${n.start.toLocal()} => ${n.stop.toLocal()}",
+                  "${item.label}: ${item.start.toLocal()} => ${item.stop.toLocal()}",
               child: callback != null
-                  ? InkWell(onTap: () => callback(n.item), child: bar)
+                  ? InkWell(onTap: () => callback([item.item]), child: bar)
                   : bar,
             ),
           ),

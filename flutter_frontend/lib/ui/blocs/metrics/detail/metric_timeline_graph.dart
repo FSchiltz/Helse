@@ -9,7 +9,7 @@ class MetricTimelineGraph extends StatelessWidget {
   final List<Metric> metrics;
   final MetricType type;
   final DateTimeRange date;
-  final void Function(Metric metric)? onselect;
+  final void Function(List<Metric> metric)? onselect;
   final double widthCoef;
 
   const MetricTimelineGraph(
@@ -30,9 +30,7 @@ class MetricTimelineGraph extends StatelessWidget {
     );
 
     return TimelineGraph(
-      metrics
-          .map((e) => TimelineNode<Metric>(e.date, e.date, '', e, dot: true))
-          .toList(),
+      metrics.map((e) => TimelineNode<Metric>(e.date, e.date, '', e)).toList(),
       date,
       onselect: onselect,
       widthCoef: widthCoef,

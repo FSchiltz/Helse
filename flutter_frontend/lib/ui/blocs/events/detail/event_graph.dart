@@ -45,7 +45,7 @@ class EventsGraph extends StatefulWidget {
 }
 
 class _EventsGraphState extends State<EventsGraph> {
-  Event? _selected;
+  List<Event> _selected = [];
   late List<Event> _filteredEvents;
   late DateTimeRange _subDate;
   late Color _color;
@@ -53,7 +53,7 @@ class _EventsGraphState extends State<EventsGraph> {
   late List<Interval> _sessions;
   late List<EventSummary> _groups;
 
-  void _selectionChanged(Event event) {
+  void _selectionChanged(List<Event> event) {
     setState(() {
       _selected = event;
     });
@@ -92,7 +92,7 @@ class _EventsGraphState extends State<EventsGraph> {
     );
 
     if (widget.events.length == 1) {
-      _selected = widget.events.first;
+      _selected = widget.events;
     }
   }
 
@@ -142,13 +142,13 @@ class _EventsGraphState extends State<EventsGraph> {
                   radius: radius,
                   stats: _stats,
                 ),
-                if (selected != null)
+                if (selected.isNotEmpty)
                   SelectionWidget(
                     selected: selected,
                     reset: () {
                       widget.reset();
                       setState(() {
-                        _selected = null;
+                        _selected = [];
                       });
                     },
                     person: widget.person,
