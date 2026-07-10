@@ -1,11 +1,11 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:helse/ui/blocs/events/events_timeline_graph.dart';
+import 'package:helse/ui/common/timeline/event_layout.dart';
 
-class SleepTransitionPainter extends CustomPainter {
-  final List<EventLayout> layouts;
+class EventTransitionPainter<T> extends CustomPainter {
+  final List<EventLayout<T>> layouts;
 
-  SleepTransitionPainter(this.layouts);
+  EventTransitionPainter(this.layouts);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -60,5 +60,5 @@ class SleepTransitionPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant SleepTransitionPainter oldDelegate) => true;
+  bool shouldRepaint(covariant EventTransitionPainter<T> oldDelegate) => true;
 }
