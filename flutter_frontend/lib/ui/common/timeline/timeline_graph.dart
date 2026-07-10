@@ -285,7 +285,7 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
   ) {
     _eventLayouts.clear();
 
-    final Map<String?, List<TimelineNode<T>>> orderedData = {};
+    final Map<String, List<TimelineNode<T>>> orderedData = {};
 
     for (final n in events) {
       orderedData.putIfAbsent(n.label, () => []).add(n);
@@ -295,7 +295,7 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
 
     for (final group in orderedData.entries) {
       final rowTop = rowIndex * rowHeight;
-      final color = widget.getColor.call(group.key ?? '');
+      final color = widget.getColor.call(group.key);
 
       for (final n in group.value) {
         final start = n.start.toLocal();
