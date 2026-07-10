@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/ui/blocs/metrics/detail/metric_timeline_graph.dart';
 import 'package:helse/ui/blocs/metrics/metric_add_button.dart';
 import 'package:helse/ui/blocs/metrics/metric_search_button.dart';
 import 'package:helse/ui/common/loading_builder.dart';
@@ -88,12 +89,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                 )
               : (widget.type.type == MetricDataType.text ||
                         widget.settings == GraphKind.text
-                    ? CalendarView<Metric>(
-                        getEventsForDay,
-                        widget.date,
-                        getEvents: (day) => _map(data, day),
-                        build: _buildMetricDetail,
-                      )
+                    ? MetricTimelineGraph(data, widget.date, widget.type)
                     : MetricGraph(
                         data,
                         widget.date,
