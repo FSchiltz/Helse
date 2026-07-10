@@ -89,7 +89,14 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                 )
               : (widget.type.type == MetricDataType.text ||
                         widget.settings == GraphKind.text
-                    ? MetricTimelineGraph(data, widget.date, widget.type)
+                    ? SizedBox(
+                        height: 100,
+                        child: MetricTimelineGraph(
+                          data,
+                          widget.date,
+                          widget.type,
+                        ),
+                      )
                     : MetricGraph(
                         data,
                         widget.date,
