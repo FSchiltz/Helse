@@ -6,8 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/timeline/event_layout.dart';
 import 'package:helse/ui/common/timeline/event_transition_painter.dart';
+import 'package:helse/ui/common/timeline/time_line_labels.dart';
+import 'package:helse/ui/common/timeline/timeline_day_header.dart';
+import 'package:helse/ui/common/timeline/timeline_filler.dart';
+import 'package:helse/ui/common/timeline/timeline_grid.dart';
+import 'package:helse/ui/common/timeline/timeline_header.dart';
 import 'package:helse/ui/common/timeline/timeline_items.dart';
 import 'package:helse/ui/common/timeline/timeline_node.dart';
+import 'package:helse/ui/common/timeline/timeline_skip.dart';
 
 class TimelineGraph<T> extends StatefulWidget {
   final List<TimelineNode<T>> events;
@@ -66,7 +72,7 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
             children: [
               Padding(
                 padding: EdgeInsets.only(top: headerHeight),
-                child: buildRowLabels(labels, widget.rowHeight),
+                child: TimelineLabels(labels: labels, height: widget.rowHeight),
               ),
               Expanded(
                 child: Scrollbar(
@@ -108,13 +114,15 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
 
       if (existing) {
         if (skipping || currentDate.hour < 1) {
-          timeline.headerDay.add(buildDayHeader(tempDate, context));
+          timeline.headerDay.add(TimelineDayHeader(boxWidth, tempDate));
         } else {
-          timeline.headerDay.add(_fillerWidget());
+          timeline.headerDay.add(TimelineFiller(boxWidth));
         }
 
-        timeline.header.add(buildHeader(currentDate, context));
-        timeline.grid.add(buildGrid());
+        timeline.header.add(
+          TimelineHeader(boxWidth: boxWidth, utc: currentDate),
+        );
+        timeline.grid.add(TimelineGrid(boxWidth: boxWidth));
 
         if (skipping) {
           skipping = false;
@@ -124,9 +132,9 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
         }
       } else {
         if (!skipping) {
-          timeline.header.add(_skipWidget(context));
-          timeline.grid.add(_skipWidget(context));
-          timeline.headerDay.add(_skipWidget(context));
+          timeline.header.add(TimelineSkip(skippedWidth, widget.widthCoef));
+          timeline.grid.add(TimelineSkip(skippedWidth, widget.widthCoef));
+          timeline.headerDay.add(TimelineSkip(skippedWidth, widget.widthCoef));
           skipping = true;
           startSkipping = currentDate;
         }
@@ -187,40 +195,6 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
     );
   }
 
-  Widget buildDayHeader(DateTime tempDate, BuildContext context) => Container(
-    color: Theme.of(context).colorScheme.surfaceContainerHighest,
-    alignment: Alignment.centerLeft,
-    width: boxWidth,
-    child: Text(
-      ' ${tempDate.day.toString().padLeft(2, '0')}/${tempDate.month.toString().padLeft(2, '0')}/${tempDate.year.toString().padLeft(4, '0')}',
-    ),
-  );
-
-  Widget buildHeader(DateTime utc, BuildContext context) {
-    var tempDate = utc.toLocal();
-    return Container(
-      color: Theme.of(context).colorScheme.surfaceContainerHigh,
-      alignment: Alignment.centerLeft,
-      width: boxWidth,
-      child: Tooltip(
-        message: '$tempDate',
-        child: Text(
-          '${tempDate.hour.toString().padLeft(2, '0')}:${tempDate.minute.toString().padLeft(2, '0')}',
-          style: const TextStyle(fontSize: 12.0),
-        ),
-      ),
-    );
-  }
-
-  Widget buildGrid() => Container(
-    decoration: BoxDecoration(
-      border: Border(
-        right: BorderSide(color: Colors.white.withAlpha(75), width: 0.5),
-      ),
-    ),
-    width: boxWidth,
-  );
-
   double _distanceToLeftBorder(
     DateTime projectStartedAt,
     List<DateTimeRange<DateTime>> skipped,
@@ -254,25 +228,6 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
       end = widget.date.end;
     }
     return max(1, end.difference(start).inMinutes);
-  }
-
-  Widget buildRowLabels(List<String> labels, double height) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: labels.map((label) {
-        return SizedBox(
-          height: height,
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 4),
-              child: Text(label, overflow: TextOverflow.ellipsis, maxLines: 1),
-            ),
-          ),
-        );
-      }).toList(),
-    );
   }
 
   List<EventLayout<T>> _buildChartBars(
@@ -340,28 +295,4 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
 
     return layouts;
   }
-
-  Widget _skipWidget(BuildContext context) {
-    final theme = Theme.of(context).colorScheme;
-
-    return SizedBox(
-      width: skippedWidth.toDouble() * widget.widthCoef,
-      child: Row(
-        children: [
-          Expanded(child: Divider(thickness: 1, color: theme.outlineVariant)),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Icon(
-              Icons.fast_forward_sharp,
-              size: 14,
-              color: theme.primary,
-            ),
-          ),
-          Expanded(child: Divider(thickness: 1, color: theme.outlineVariant)),
-        ],
-      ),
-    );
-  }
-
-  Widget _fillerWidget() => SizedBox(width: boxWidth);
 }
