@@ -95,7 +95,8 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
     bool skipping = false;
     DateTime startSkipping = widget.date.start;
 
-    var viewRange = _minutesBetween(widget.date.start, widget.date.end) / 60;
+    final viewRange =
+        widget.date.end.difference(widget.date.start).inMinutes / 60;
     for (int i = 0; i < viewRange; i++) {
       var currentDate = tempDate;
       tempDate = tempDate.add(const Duration(hours: 1));
@@ -223,9 +224,6 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
     width: boxWidth,
   );
 
-  int _minutesBetween(DateTime from, DateTime to) =>
-      to.difference(from).inMinutes;
-
   double _distanceToLeftBorder(
     DateTime projectStartedAt,
     List<DateTimeRange<DateTime>> skipped,
@@ -240,11 +238,13 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
         )
         .toList();
 
-    var widthToSkip =
+    final widthToSkip =
         skipping.map((a) => a.duration.inMinutes).sum -
         (skipping.length * skippedWidth);
 
-    var fullDistance = _minutesBetween(widget.date.start, projectStartedAt);
+    final fullDistance = projectStartedAt
+        .difference(widget.date.start)
+        .inMinutes;
 
     return (fullDistance - widthToSkip).toDouble() * widget.widthCoef;
   }
@@ -256,7 +256,7 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
     if (end.isAfter(widget.date.end.toLocal())) {
       end = widget.date.end.toLocal();
     }
-    return max(1, _minutesBetween(start, end));
+    return max(1, end.difference(start).inMinutes);
   }
 
   Widget buildRowLabels(List<String> labels, double height) {
@@ -314,7 +314,7 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
           ),
         );
 
-        var callback = widget.onselect;
+        final callback = widget.onselect;
         timeline.bars.add(
           Positioned(
             left: left,
