@@ -96,7 +96,9 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
     DateTime startSkipping = widget.date.start;
 
     final viewRange =
-        widget.date.end.difference(widget.date.start).inMinutes / 60;
+        (widget.date.end.difference(widget.date.start).inMinutes / 60).toInt();
+
+        
     for (int i = 0; i < viewRange; i++) {
       var currentDate = tempDate;
       tempDate = tempDate.add(const Duration(hours: 1));
