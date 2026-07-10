@@ -40,7 +40,7 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
   final double headerHeight = 50;
 
   final ScrollController _scrollController = ScrollController();
-  final List<EventLayout<T>> _eventLayouts = [];
+
   @override
   void initState() {
     super.initState();
@@ -98,7 +98,6 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
     final viewRange =
         (widget.date.end.difference(widget.date.start).inMinutes / 60).toInt();
 
-        
     for (int i = 0; i < viewRange; i++) {
       var currentDate = tempDate;
       tempDate = tempDate.add(const Duration(hours: 1));
@@ -140,7 +139,6 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
       timeline.skipped.add(DateTimeRange(start: startSkipping, end: tempDate));
     }
 
-    buildChartBars(events, timeline, rowHeight);
     logger.log('grouped in ${stopwatch.elapsed} with $viewRange bucket');
     return timeline;
   }
@@ -152,6 +150,7 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
     BuildContext context,
   ) {
     final timeline = _group(events, rowHeight);
+    final layouts = buildChartBars(events, timeline, rowHeight);
 
     return Stack(
       fit: StackFit.loose,
@@ -175,9 +174,7 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
             right: 0,
             bottom: 0,
             child: IgnorePointer(
-              child: CustomPaint(
-                painter: EventTransitionPainter(_eventLayouts),
-              ),
+              child: CustomPaint(painter: EventTransitionPainter(layouts)),
             ),
           ),
         Container(
@@ -252,11 +249,11 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
   }
 
   int _distanceInMinutes(DateTime start, DateTime end) {
-    if (start.isBefore(widget.date.start.toLocal())) {
-      start = widget.date.start.toLocal();
+    if (start.isBefore(widget.date.start)) {
+      start = widget.date.start;
     }
-    if (end.isAfter(widget.date.end.toLocal())) {
-      end = widget.date.end.toLocal();
+    if (end.isAfter(widget.date.end)) {
+      end = widget.date.end;
     }
     return max(1, end.difference(start).inMinutes);
   }
@@ -280,12 +277,12 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
     );
   }
 
-  void buildChartBars(
+  List<EventLayout<T>> buildChartBars(
     List<TimelineNode<T>> events,
     TimelineItems timeline,
     double rowHeight,
   ) {
-    _eventLayouts.clear();
+    List<EventLayout<T>> layouts = [];
 
     final Map<String, List<TimelineNode<T>>> orderedData = {};
 
@@ -300,13 +297,13 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
       final color = widget.getColor.call(group.key);
 
       for (final n in group.value) {
-        final start = n.start.toLocal();
-        final end = n.stop.toLocal();
+        final start = n.start;
+        final end = n.stop;
 
         final width = _distanceInMinutes(start, end);
         final left = _distanceToLeftBorder(start, timeline.skipped);
 
-        _eventLayouts.add(
+        layouts.add(
           EventLayout(
             event: n,
             left: left,
@@ -351,6 +348,8 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
 
       rowIndex++;
     }
+
+    return layouts;
   }
 
   Widget _skipWidget(BuildContext context) {
