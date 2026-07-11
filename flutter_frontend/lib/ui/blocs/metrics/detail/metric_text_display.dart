@@ -26,6 +26,7 @@ class MetricTextDisplay extends StatefulWidget {
 
 class _MetricTextDisplayState extends State<MetricTextDisplay> {
   List<Metric> selected = [];
+  int key = 0;
 
   @override
   void initState() {
@@ -38,7 +39,6 @@ class _MetricTextDisplayState extends State<MetricTextDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    final s = selected;
     return Column(
       spacing: UIConstants.formPad,
       children: [
@@ -51,16 +51,18 @@ class _MetricTextDisplayState extends State<MetricTextDisplay> {
             widget.type,
             onselect: (metric) => setState(() {
               selected = metric;
+              key++;
             }),
           ),
         ),
-        if (s.isNotEmpty)
+        if (selected.isNotEmpty)
           MetricDataTable(
-            count: s.length,
+            count: selected.length,
             type: widget.type,
             reset: widget.reset,
+            state: key,
             callback: (page, count) async {
-              return s.skip(page * count).take(count).toList();
+              return selected.skip(page * count).take(count).toList();
             },
           ),
       ],
