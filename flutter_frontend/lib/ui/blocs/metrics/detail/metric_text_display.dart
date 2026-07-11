@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:helse/helpers/metrics/metric_helper.dart';
+import 'package:helse/helpers/metrics/range_list.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_timeline_graph.dart';
+import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_histogram.dart';
 import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_information.dart';
+import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_text_histogram.dart';
 import 'package:helse/ui/common/key_value_list.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/ui_constants.dart';
@@ -62,6 +66,7 @@ class _MetricTextDisplayState extends State<MetricTextDisplay> {
         ),
         CommonCard(
           child: Column(
+            spacing: UIConstants.headerPad,
             children: [
               MetricInformation([
                 KeyValue(
@@ -70,7 +75,10 @@ class _MetricTextDisplayState extends State<MetricTextDisplay> {
                   icon: Icons.numbers_sharp,
                 ),
               ], type: widget.type),
-              //TODO add some stats about the spacing of metric
+              MetricTextHistogram(
+                MetricHelper.groupText(widget.metrics),
+                widget.type,
+              ),
             ],
           ),
         ),

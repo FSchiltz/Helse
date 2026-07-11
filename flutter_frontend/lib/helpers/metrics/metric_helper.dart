@@ -300,4 +300,44 @@ class MetricHelper {
       ),
     ];
   }
+
+  static TextStats groupText(List<Metric> metrics) {
+    Map<String, List<Metric>> values = {};
+
+    double totalMilliseconds = 0;
+
+    for (var i = 0; i < metrics.length; i++) {
+      final current = metrics[i];
+
+      if (i < metrics.length - 1) {
+        totalMilliseconds += metrics[i + 1].date
+            .difference(current.date)
+            .inMilliseconds;
+      }
+
+      final key = current.value.trim().toLowerCase();
+      final existing = values[key] ?? [];
+      existing.add(current);
+      values[key] = existing;
+    }
+
+    if (values.length > 5) {
+      // take the 5 bigger and group the rest
+      var ordered = values.entries.sorted(
+        (b, a) => a.value.length.compareTo(b.value.length),
+      );
+      values = ordered.take(5).groupFoldBy((e) => e.key, (x, e) => e.value);
+
+      final rest = ordered
+          .skip(5)
+          .fold(<Metric>[], (p, e) => p..addAll(e.value));
+      values["Other"] = rest;
+    }
+
+    final mean = Duration(
+      milliseconds: totalMilliseconds ~/ (metrics.length - 1),
+    );
+
+    return TextStats(metrics.length, mean, values);
+  }
 }
