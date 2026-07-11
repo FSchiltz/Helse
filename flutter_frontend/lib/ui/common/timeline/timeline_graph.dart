@@ -267,14 +267,7 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
         );
 
         final callback = widget.onselect;
-        final bar = Container(
-          width: width.toDouble() * widget.widthCoef,
-          height: rowHeight - 8,
-          decoration: BoxDecoration(
-            color: color.withAlpha(150),
-            borderRadius: BorderRadius.circular(3),
-          ),
-        );
+        final widgetWidth = width.toDouble() * widget.widthCoef;
         timeline.bars.add(
           Positioned(
             left: left,
@@ -282,12 +275,32 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
             child: Tooltip(
               message:
                   "${item.label}: ${item.start.toLocal()} => ${item.stop.toLocal()}",
-              child: callback != null
-                  ? InkWell(onTap: () => callback([item.item]), child: bar)
-                  : bar,
+              child: Container(
+                width: widgetWidth,
+                height: rowHeight - 8,
+                decoration: BoxDecoration(
+                  color: color.withAlpha(150),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
             ),
           ),
         );
+
+        if (callback != null) {
+          final double touchWidth = max(30, widgetWidth);
+
+          timeline.bars.add(
+            Positioned(
+              left: left + (widgetWidth / 2) - (touchWidth / 2),
+              top: rowTop,
+              child: InkWell(
+                onTap: () => callback([item.item]),
+                child: SizedBox(width: touchWidth, height: rowHeight - 8),
+              ),
+            ),
+          );
+        }
       }
 
       rowIndex++;
