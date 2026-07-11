@@ -12,10 +12,11 @@ class WidgetText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       spacing: UIConstants.textPad,
       children: [
         Text('${metrics.count} items'),
-        ...metrics.metrics.map((e) => Text('- ${e.value}')),
+        ...metrics.metrics.map((e) => Text('- ${e.value}', style: Theme.of(context).textTheme.bodySmall,)),
       ],
     );
   }
