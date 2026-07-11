@@ -5,6 +5,7 @@ import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_timeline_graph.dart';
 import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_information.dart';
 import 'package:helse/ui/common/key_value_list.dart';
+import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 class MetricTextDisplay extends StatefulWidget {
@@ -43,8 +44,7 @@ class _MetricTextDisplayState extends State<MetricTextDisplay> {
   @override
   Widget build(BuildContext context) {
     final locale = Translation.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Wrap(
       spacing: UIConstants.formPad,
       children: [
         SizedBox(height: UIConstants.headerPad),
@@ -60,19 +60,33 @@ class _MetricTextDisplayState extends State<MetricTextDisplay> {
             }),
           ),
         ),
-        MetricInformation([
-          KeyValue(locale.total, value: widget.metrics.length.toString()),
-        ], type: widget.type),
-        if (selected.isNotEmpty)
-          MetricDataTable(
-            count: selected.length,
-            type: widget.type,
-            reset: widget.reset,
-            state: key,
-            callback: (page, count) async {
-              return selected.skip(page * count).take(count).toList();
-            },
+        CommonCard(
+          child: Column(
+            children: [
+              MetricInformation([
+                KeyValue(
+                  locale.total,
+                  value: widget.metrics.length.toString(),
+                  icon: Icons.numbers_sharp,
+                ),
+              ], type: widget.type),
+              //TODO add some stats about the spacing of metric
+            ],
           ),
+        ),
+        CommonCard(
+          child: (selected.isEmpty)
+              ? SizedBox.shrink()
+              : MetricDataTable(
+                  count: selected.length,
+                  type: widget.type,
+                  reset: widget.reset,
+                  state: key,
+                  callback: (page, count) async {
+                    return selected.skip(page * count).take(count).toList();
+                  },
+                ),
+        ),
       ],
     );
   }

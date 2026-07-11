@@ -68,34 +68,39 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),
-      body: LoadingBuilder(
-        _getData,
-        builder: (ctx, data, reset) {
-          return data.isEmpty
-              ? Center(
-                  child: Text(
-                    Translation.of(context).nodata,
-                    style: Theme.of(context).textTheme.labelLarge,
-                  ),
-                )
-              : (widget.type.type == MetricDataType.text ||
-                        widget.settings == GraphKind.text
-                    ? MetricTextDisplay(
-                        data,
-                        widget.date,
-                        widget.type,
-                        person: widget.person,
-                        reset: reset,
-                      )
-                    : MetricGraph(
-                        data,
-                        widget.date,
-                        widget.settings,
-                        reset,
-                        person: widget.person,
-                        type: widget.type,
-                      ));
-        },
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: LoadingBuilder(
+            _getData,
+            builder: (ctx, data, reset) {
+              return data.isEmpty
+                  ? Center(
+                      child: Text(
+                        Translation.of(context).nodata,
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
+                    )
+                  : (widget.type.type == MetricDataType.text ||
+                            widget.settings == GraphKind.text
+                        ? MetricTextDisplay(
+                            data,
+                            widget.date,
+                            widget.type,
+                            person: widget.person,
+                            reset: reset,
+                          )
+                        : MetricGraph(
+                            data,
+                            widget.date,
+                            widget.settings,
+                            reset,
+                            person: widget.person,
+                            type: widget.type,
+                          ));
+            },
+          ),
+        ),
       ),
     );
   }

@@ -15,6 +15,7 @@ import 'package:helse/ui/blocs/metrics/widget/widget_graph.dart';
 import 'package:helse/ui/common/navigator_chart.dart';
 import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
 import 'package:helse/ui/common/inputs/date_range_picker.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../helpers/date_helper.dart';
 
@@ -85,70 +86,62 @@ class _MetricGraphState extends State<MetricGraph> {
   Widget build(BuildContext context) {
     final metric = _metric;
     return Column(
+      spacing: UIConstants.formPad,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: DateRangePicker(
-            _setDate,
-            subDate,
-            range: widget.date,
-            offset: widget.type.timeDifference,
-          ),
+        DateRangePicker(
+          _setDate,
+          subDate,
+          range: widget.date,
+          offset: widget.type.timeDifference,
         ),
-        Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: NavigatorChart(
+        NavigatorChart(
+          widget.date,
+          subDate,
+          _setDate,
+          graph: WidgetGraph(
+            widget.metrics
+                .map(
+                  (e) => Metric(
+                    id: 0,
+                    date: e.date,
+                    value: e.value.toString(),
+                    type: 0,
+                    sourceId: '',
+                    person: 0,
+                  ),
+                )
+                .toList(),
             widget.date,
-            subDate,
-            _setDate,
-            graph: WidgetGraph(
-              widget.metrics
-                  .map(
-                    (e) => Metric(
-                      id: 0,
-                      date: e.date,
-                      value: e.value.toString(),
-                      type: 0,
-                      sourceId: '',
-                      person: 0,
-                    ),
-                  )
-                  .toList(),
-              widget.date,
-              widget.type,
-              widget.settings,
-              tile: widget.metrics.length,
-              width: 1,
-            ),
+            widget.type,
+            widget.settings,
+            tile: widget.metrics.length,
+            width: 1,
           ),
         ),
         Expanded(
           child: _grapichChart(context, max(widget.type.valueCount ?? 1, 1)),
         ),
         Flexible(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SingleChildScrollView(
-              child: Wrap(
-                children: [
-                  ...filteredMetrics.stats.map(
-                    (e) => MetricStatisticsCard(stats: e, type: widget.type),
-                  ),
-                  MetricDataTable(
-                    person: widget.person,
-                    type: widget.type,
-                    reset: widget.reset,
-                    count: metric?.metrics.length ?? 0,
-                    callback: (page, count) async {
-                      return metric?.metrics
-                              .skip(page * count)
-                              .take(count)
-                              .toList() ??
-                          [];
-                    },
-                  ),
-                ],
-              ),
+          child: SingleChildScrollView(
+            child: Wrap(
+              children: [
+                ...filteredMetrics.stats.map(
+                  (e) => MetricStatisticsCard(stats: e, type: widget.type),
+                ),
+                MetricDataTable(
+                  person: widget.person,
+                  type: widget.type,
+                  reset: widget.reset,
+                  count: metric?.metrics.length ?? 0,
+                  callback: (page, count) async {
+                    return metric?.metrics
+                            .skip(page * count)
+                            .take(count)
+                            .toList() ??
+                        [];
+                  },
+                ),
+              ],
             ),
           ),
         ),
