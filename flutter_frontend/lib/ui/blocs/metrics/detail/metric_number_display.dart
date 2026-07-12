@@ -81,12 +81,6 @@ class _MetricGraphState extends MetricDetailsState<MetricNumberDisplay> {
     );
   }
 
-  void _selectionChanged(MetricGrouped metric) {
-    setState(() {
-      selected = metric;
-    });
-  }
-
   Widget _grapichChart(BuildContext context, int graphCount) {
     List<Mark<Shape>> marks;
     marks = [];
@@ -188,6 +182,6 @@ class _MetricGraphState extends MetricDetailsState<MetricNumberDisplay> {
     if (click == null) return;
 
     var metric = filteredMetrics.values[click.value.first];
-    _selectionChanged(metric);
+    selectionChanged(metric);
   }
 }

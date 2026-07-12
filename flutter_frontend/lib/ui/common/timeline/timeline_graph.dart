@@ -293,7 +293,7 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
                 message:
                     "${item.label}: ${item.start.toLocal()} => ${item.stop.toLocal()}",
                 child: InkWell(
-                  onTap: () => callback([item.item]),
+                  onTap: () => callback(item.items),
                   child: SizedBox(width: touchWidth, height: rowHeight - 8),
                 ),
               ),

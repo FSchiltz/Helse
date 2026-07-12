@@ -31,9 +31,16 @@ abstract class MetricDetails extends StatefulWidget {
 
 abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
   RangeList filteredMetrics = RangeList.empty();
-  RangeList groupedMetrics = RangeList.empty();
   DateTimeRange subDate = DateHelper.now();
   MetricGrouped? selected;
+  int key = 0;
+
+  void selectionChanged(MetricGrouped metric) {
+    setState(() {
+      selected = metric;
+      key++;
+    });
+  }
 
   @override
   void initState() {
@@ -47,7 +54,6 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
       widget.type,
     );
     filteredMetrics = initGroup;
-    groupedMetrics = initGroup;
 
     if (initGroup.values.length == 1) {
       selected = initGroup.values.first;

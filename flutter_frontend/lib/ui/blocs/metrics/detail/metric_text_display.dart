@@ -39,11 +39,11 @@ class _MetricTextDisplayState extends MetricDetailsState<MetricTextDisplay> {
         SizedBox(
           height: 120,
           child: MetricTimelineGraph(
-            widget.metrics,
+            filteredMetrics.values,
             widget.date,
             widget.type,
             onselect: (metrics) => setState(() {
-              selected = MetricGrouped(DateTime.now(), metrics);
+              selectionChanged(MetricGrouped(DateTime.now(), metrics));
             }),
           ),
         ),
@@ -67,7 +67,9 @@ class _MetricTextDisplayState extends MetricDetailsState<MetricTextDisplay> {
                         MetricHelper.groupText(widget.metrics),
                         widget.type,
                         onselect: (values) => setState(() {
-                          selected = MetricGrouped(DateTime.now(), values);
+                          selectionChanged(
+                            MetricGrouped(DateTime.now(), values),
+                          );
                         }),
                       ),
                     ],
@@ -80,6 +82,7 @@ class _MetricTextDisplayState extends MetricDetailsState<MetricTextDisplay> {
                           count: metric.metrics.length,
                           type: widget.type,
                           reset: widget.reset,
+                          state: key,
                           callback: (page, count) async {
                             return metric.metrics
                                 .skip(page * count)

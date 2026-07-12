@@ -25,7 +25,8 @@ class EventsTimelineGraph extends StatelessWidget {
     return TimelineGraph(
       events
           .map(
-            (e) => TimelineNode<Event>(e.start, e.stop, e.description ?? '', e),
+            (e) =>
+                TimelineNode<Event>(e.start, e.stop, e.description ?? '', [e]),
           )
           .toList(),
       date,

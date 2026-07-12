@@ -54,7 +54,7 @@ class MetricTextHistogram extends StatelessWidget {
             touchCallback: (onselect == null)
                 ? null
                 : (event, data) {
-                    if (event is FlTapUpEvent) {
+                    if (event is FlTapDownEvent || event is FlLongPressStart) {
                       final spot = data?.spot?.touchedBarGroupIndex;
                       if (spot != null) {
                         final selection = stats.histogram[spot];
