@@ -32,12 +32,12 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
   RangeList filteredMetrics = RangeList.empty();
   DateTimeRange subDate = DateHelper.now();
   List<Metric> selected = [];
-  int key = 0;
+  bool key = false;
 
   void selectionChanged(List<Metric> metric) {
     setState(() {
       selected = metric;
-      key++;
+      key = !key;
     });
   }
 

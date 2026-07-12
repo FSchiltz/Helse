@@ -8,7 +8,8 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 class MetricHistogram extends StatelessWidget {
   final RawStats stats;
   final MetricType type;
-  const MetricHistogram(this.stats, this.type, {super.key});
+  final void Function(List<Metric>)? onselect;
+  const MetricHistogram(this.stats, this.type, {super.key, this.onselect});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,7 @@ class MetricHistogram extends StatelessWidget {
             BarChartRodData(
               toY: step.value,
               color: color,
-              width: 2,
+              width: 12,
               borderRadius: BorderRadius.circular(0),
             ),
           ],

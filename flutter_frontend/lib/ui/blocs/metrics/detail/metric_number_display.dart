@@ -65,6 +65,7 @@ class _MetricGraphState extends MetricDetailsState<MetricNumberDisplay> {
                   type: widget.type,
                   reset: widget.reset,
                   count: metric.length,
+                  state: key,
                   callback: (page, count) async {
                     return metric.skip(page * count).take(count).toList();
                   },

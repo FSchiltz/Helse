@@ -144,7 +144,7 @@ class WidgetGraph extends StatelessWidget {
         StateType.metric,
         context,
       );
-      return BarChart(
+      return BarChart(        
         BarChartData(
           barTouchData: BarTouchData(enabled: false),
           titlesData: const FlTitlesData(
