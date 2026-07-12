@@ -33,7 +33,7 @@ class MetricHelper {
   }
 
   static List<double> getNumericValues(String value, MetricDataType type) {
-    if (type != MetricDataType.number || type != MetricDataType.numberrange) {
+    if (type != MetricDataType.number && type != MetricDataType.numberrange) {
       throw StateError("Invalid type");
     }
 

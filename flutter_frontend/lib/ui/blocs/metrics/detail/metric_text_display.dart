@@ -35,6 +35,7 @@ class _MetricTextDisplayState extends MetricDetailsState<MetricTextDisplay> {
     return Column(
       spacing: UIConstants.formPad,
       children: [
+        ...buildHeader(),
         SizedBox(
           height: 120,
           child: MetricTimelineGraph(
