@@ -86,9 +86,9 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                         ? MetricTextDisplay(
                             data,
                             widget.date,
-                            widget.type,
+                            reset,
+                            type: widget.type,
                             person: widget.person,
-                            reset: reset,
                           )
                         : MetricNumberDisplay(
                             data,

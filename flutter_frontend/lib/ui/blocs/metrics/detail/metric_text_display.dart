@@ -3,49 +3,35 @@ import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
+import 'package:helse/ui/blocs/metrics/detail/metric_details.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_timeline_graph.dart';
 import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_information.dart';
 import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_text_histogram.dart';
+import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
 import 'package:helse/ui/common/key_value_list.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
-class MetricTextDisplay extends StatefulWidget {
-  final List<Metric> metrics;
-  final DateTimeRange date;
-  final MetricType type;
-  final int? person;
-  final void Function() reset;
-
+class MetricTextDisplay extends MetricDetails {
   const MetricTextDisplay(
-    this.metrics,
-    this.date,
-    this.type, {
+    List<Metric> metrics,
+    DateTimeRange date,
+    void Function() reset, {
     super.key,
-    this.person,
-    required this.reset,
-  });
+    super.person,
+    required super.type,
+  }) : super(metrics, date, GraphKind.text, reset);
 
   @override
   State<MetricTextDisplay> createState() => _MetricTextDisplayState();
 }
 
-class _MetricTextDisplayState extends State<MetricTextDisplay> {
-  List<Metric> selected = [];
-  int key = 0;
-
-  @override
-  void initState() {
-    if (widget.metrics.length == 1) {
-      selected = widget.metrics;
-    }
-
-    super.initState();
-  }
-
+class _MetricTextDisplayState extends MetricDetailsState<MetricTextDisplay> {
   @override
   Widget build(BuildContext context) {
     final locale = Translation.of(context);
+    final metric = selected;
+
     return Column(
       spacing: UIConstants.formPad,
       children: [
@@ -55,9 +41,8 @@ class _MetricTextDisplayState extends State<MetricTextDisplay> {
             widget.metrics,
             widget.date,
             widget.type,
-            onselect: (metric) => setState(() {
-              selected = metric;
-              key++;
+            onselect: (metrics) => setState(() {
+              selected = MetricGrouped(DateTime.now(), metrics);
             }),
           ),
         ),
@@ -81,23 +66,21 @@ class _MetricTextDisplayState extends State<MetricTextDisplay> {
                         MetricHelper.groupText(widget.metrics),
                         widget.type,
                         onselect: (values) => setState(() {
-                          selected = values;
-                          key++;
+                          selected = MetricGrouped(DateTime.now(), values);
                         }),
                       ),
                     ],
                   ),
                 ),
                 CommonCard(
-                  child: (selected.isEmpty)
+                  child: (metric == null || metric.metrics.isNotEmpty)
                       ? SizedBox.shrink()
                       : MetricDataTable(
-                          count: selected.length,
+                          count: metric.metrics.length,
                           type: widget.type,
                           reset: widget.reset,
-                          state: key,
                           callback: (page, count) async {
-                            return selected
+                            return metric.metrics
                                 .skip(page * count)
                                 .take(count)
                                 .toList();

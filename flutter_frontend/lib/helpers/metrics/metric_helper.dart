@@ -23,14 +23,22 @@ class MetricHelper {
     return tag;
   }
 
-  static List<double> getValue(String value, MetricDataType? type) {
-    var split = value.split(';');
-
-    if (type == MetricDataType.bool) {
-      return [bool.parse(value) ? 1 : 0];
+  static List<String> getValue(String value, MetricDataType type) {
+    if (type == MetricDataType.text) {
+      return [value];
     }
 
-    return split.map((e) => double.parse(e)).toList();
+    var split = value.split(';');
+    return split;
+  }
+
+  static List<double> getNumericValues(String value, MetricDataType type) {
+    if (type != MetricDataType.number || type != MetricDataType.numberrange) {
+      throw StateError("Invalid type");
+    }
+
+    final values = getValue(value, type);
+    return values.map((e) => double.parse(e)).toList();
   }
 
   static RangeList group(
@@ -59,34 +67,44 @@ class MetricHelper {
         List<List<(int, double)>>.generate(graphCount, (index) => []);
 
     for (var metric in metrics) {
-      final values = getValue(metric.value, type.type);
-      for (var j = 0; j < graphCount; j++) {
-        allValues[j].add((metric.id, values[j]));
-      }
+      List<double> values;
+      if (type.type == MetricDataType.number ||
+          type.type == MetricDataType.numberrange) {
+        values = getNumericValues(
+          metric.value,
+          type.type ?? MetricDataType.text,
+        );
 
-      for (int j = 0; j < graphCount; j++) {
-        final value = values[j];
-        // add the value to the correct stats
-
-        mean[j] = mean[j] + value;
-
-        if (value > maximum[j]) {
-          maximum[j] = value;
+        for (var j = 0; j < graphCount; j++) {
+          allValues[j].add((metric.id, values[j]));
         }
 
-        if (value < minimum[j]) {
-          minimum[j] = value;
-        }
+        for (int j = 0; j < graphCount; j++) {
+          final value = values[j];
+          // add the value to the correct stats
 
-        // find the max value possible to set the Y axis of the graph
-        if (value > maxY) {
-          maxY = value;
+          mean[j] = mean[j] + value;
+
+          if (value > maximum[j]) {
+            maximum[j] = value;
+          }
+
+          if (value < minimum[j]) {
+            minimum[j] = value;
+          }
+
+          // find the max value possible to set the Y axis of the graph
+          if (value > maxY) {
+            maxY = value;
+          }
         }
+      } else {
+        values = [];
       }
 
       // find the bucket
       if (skipGroup) {
-        groups[i] = MetricGrouped(metric.date, values, [metric]);
+        groups[i] = MetricGrouped(metric.date, [metric], value: values);
       } else {
         final duration = metric.date.difference(range.start);
         final index = (duration.inMilliseconds / bucketLength).toInt();
@@ -98,12 +116,13 @@ class MetricHelper {
           );
           groups[index] = MetricGrouped(
             start.add(Duration(milliseconds: (bucketLength / 2).toInt())),
-            values,
             [metric],
+            value: values,
           );
         } else {
           for (int i = 0; i < graphCount; i++) {
-            bucket.value[i] = (bucket.value[i] + values[i]) / 2;
+            bucket.value ??= [];
+            bucket.value![i] = (bucket.value![i] + values[i]) / 2;
           }
           bucket.metrics.add(metric);
         }

@@ -16,7 +16,6 @@ import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../helpers/date_helper.dart';
 
-
 class MetricNumberDisplay extends MetricDetails {
   static const int valueCount = 24;
 
@@ -147,7 +146,7 @@ class _MetricGraphState extends MetricDetailsState<MetricNumberDisplay> {
       final index = i;
       variables['value$i'] = Variable(
         accessor: (MetricGrouped datumn) {
-          return datumn.value[index];
+          return datumn.value?[index] ?? 0;
         },
         scale: LinearScale(min: 0, max: filteredMetrics.maxY),
       );
