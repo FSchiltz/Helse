@@ -45,15 +45,14 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
     final edit = widget.edit;
     if (edit != null) {
       _date = edit.date.toLocal();
-      if (widget.type.type == MetricDataType.text) {
-        _values = [TextEditingController(text: edit.value)];
-      } else {
-        final values = MetricHelper.getValue(edit.value, widget.type.type);
+      final values = MetricHelper.getValue(
+        edit.value,
+        widget.type.type ?? MetricDataType.text,
+      );
+      _values = values
+          .map((e) => TextEditingController(text: e.toString()))
+          .toList();
 
-        _values = values
-            .map((e) => TextEditingController(text: e.toString()))
-            .toList();
-      }
       _tag.text = edit.tag ?? '';
     } else {
       _values = List<TextEditingController>.generate(

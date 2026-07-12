@@ -1,4 +1,20 @@
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
+
+class HistogramBar {
+  final List<Metric> metrics;
+  final String label;
+
+  HistogramBar(this.metrics, this.label);
+}
+
+class TextStats {
+  final int count;
+  final Duration meanInterval;
+  final List<HistogramBar> histogram;
+
+  TextStats(this.count, this.meanInterval, this.histogram);
+}
 
 class RawStats {
   final double min;

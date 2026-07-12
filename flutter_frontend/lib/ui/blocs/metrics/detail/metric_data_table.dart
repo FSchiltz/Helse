@@ -17,6 +17,7 @@ class MetricDataTable extends AsyncDataTable<Metric> {
     required this.type,
     required super.reset,
     required super.callback,
+    super.state = 0,
   });
   final MetricType type;
   final int? person;

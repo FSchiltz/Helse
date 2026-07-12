@@ -9,8 +9,11 @@ abstract class AsyncDataTable<T> extends StatefulWidget {
     required this.count,
     required this.reset,
     required this.callback,
+    this.dummy = 0,
+    this.state = 0,
   });
-
+  final int state; // key to allow refresh even when the count does not change
+  final int dummy;
   final void Function() reset;
   final int count;
   final Future<List<T>> Function(int page, int i) callback;
@@ -33,7 +36,7 @@ abstract class AsyncDataTableState<U, T extends AsyncDataTable<U>>
   @override
   void didUpdateWidget(covariant T oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.count != oldWidget.count) {
+    if (widget.count != oldWidget.count || widget.state != oldWidget.state) {
       _page = 0;
       _items = [];
       search();

@@ -58,7 +58,7 @@ class WidgetGraph extends StatelessWidget {
       var x = item.date.millisecondsSinceEpoch.toDouble();
 
       for (int i = 0; i < graphCount; i++) {
-        var y = item.value[i];
+        var y = item.value?[i] ?? 0;
 
         if (settings == GraphKind.bar) {
           // graph bar are simpler, no need to split them so we put everything in the same range

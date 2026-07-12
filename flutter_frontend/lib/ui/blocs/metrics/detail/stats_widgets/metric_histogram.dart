@@ -30,7 +30,7 @@ class MetricHistogram extends StatelessWidget {
     for (final step in steps.entries) {
       bars.add(
         BarChartGroupData(
-          x: step.key.toInt(),
+          x: step.key,
           barRods: [
             BarChartRodData(
               toY: step.value,
