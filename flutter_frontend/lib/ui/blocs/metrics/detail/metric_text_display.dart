@@ -76,6 +76,10 @@ class _MetricTextDisplayState extends State<MetricTextDisplay> {
               MetricTextHistogram(
                 MetricHelper.groupText(widget.metrics),
                 widget.type,
+                onselect: (values) => setState(() {
+                  selected = values;
+                  key++;
+                }),
               ),
             ],
           ),

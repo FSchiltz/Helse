@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
@@ -11,7 +9,8 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 class MetricTextHistogram extends StatelessWidget {
   final TextStats stats;
   final MetricType type;
-  const MetricTextHistogram(this.stats, this.type, {super.key});
+  final void Function(List<Metric>)? onselect;
+  const MetricTextHistogram(this.stats, this.type, {super.key, this.onselect});
 
   @override
   Widget build(BuildContext context) {
@@ -22,15 +21,17 @@ class MetricTextHistogram extends StatelessWidget {
     );
 
     final List<BarChartGroupData> bars = [];
-    int i = 0;
-    for (final step in stats.histogram.entries) {
+    for (final step in stats.histogram.indexed) {
       bars.add(
         BarChartGroupData(
-          x: i,
+          x: step.$1,
           barRods: [
             BarChartRodData(
-              label: BarChartRodLabel(text: step.key.wrap(count: 10), style: Theme.of(context).textTheme.labelSmall),
-              toY: step.value.length.toDouble(),
+              label: BarChartRodLabel(
+                text: step.$2.label.wrap(count: 10),
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
+              toY: step.$2.metrics.length.toDouble(),
               color: color,
               width: 12,
               borderRadius: BorderRadius.circular(0),
@@ -38,8 +39,6 @@ class MetricTextHistogram extends StatelessWidget {
           ],
         ),
       );
-
-      i++;
     }
 
     return SizedBox(
@@ -50,6 +49,27 @@ class MetricTextHistogram extends StatelessWidget {
           barGroups: bars,
           gridData: const FlGridData(show: true),
           borderData: FlBorderData(show: true),
+          barTouchData: BarTouchData(
+            enabled: true,
+            touchCallback: (onselect == null)
+                ? null
+                : (event, data) {
+                    if (event is FlTapUpEvent) {
+                      final spot = data?.spot?.touchedBarGroupIndex;
+                      if (spot != null) {
+                        final selection = stats.histogram[spot];
+                        onselect?.call(selection.metrics);
+                      }
+                    }
+                  },
+            touchTooltipData: BarTouchTooltipData(
+              getTooltipItem: (group, groupIndex, rod, rodIndex) =>
+                  BarTooltipItem(
+                    stats.histogram[groupIndex].label,
+                    Theme.of(context).textTheme.bodyMedium!,
+                  ),
+            ),
+          ),
           titlesData: FlTitlesData(
             leftTitles: AxisTitles(
               sideTitles: SideTitles(showTitles: true, reservedSize: 36),

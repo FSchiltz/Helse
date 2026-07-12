@@ -321,23 +321,32 @@ class MetricHelper {
       values[key] = existing;
     }
 
-    if (values.length > 5) {
-      // take the 5 bigger and group the rest
-      var ordered = values.entries.sorted(
-        (b, a) => a.value.length.compareTo(b.value.length),
-      );
-      values = ordered.take(5).groupFoldBy((e) => e.key, (x, e) => e.value);
+    List<HistogramBar> indexedValues = [];
+    var ordered = values.entries.sorted(
+      (b, a) => a.value.length.compareTo(b.value.length),
+    );
 
+    indexedValues = ordered
+        .take(5)
+        .map((e) => HistogramBar(e.value, e.key))
+        .toList();
+
+    if (values.length > 6) {
       final rest = ordered
           .skip(5)
-          .fold(<Metric>[], (p, e) => p..addAll(e.value));
-      values["Other"] = rest;
+          .fold(<Metric>[], (p, e) => p..addAll(e.value))
+          .toList();
+
+      indexedValues.add(HistogramBar(rest, "Other"));
+    } else if (values.length == 5) {
+      final last = ordered[5];
+      indexedValues.add(HistogramBar(last.value, last.key));
     }
 
     final mean = Duration(
       milliseconds: totalMilliseconds ~/ (metrics.length - 1),
     );
 
-    return TextStats(metrics.length, mean, values);
+    return TextStats(metrics.length, mean, indexedValues);
   }
 }
