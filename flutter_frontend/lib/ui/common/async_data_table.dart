@@ -9,11 +9,9 @@ abstract class AsyncDataTable<T> extends StatefulWidget {
     required this.count,
     required this.reset,
     required this.callback,
-    this.dummy = 0,
-    this.state = 0,
+    this.state = false,
   });
-  final int state; // key to allow refresh even when the count does not change
-  final int dummy;
+  final bool state; // key to allow refresh even when the count does not change
   final void Function() reset;
   final int count;
   final Future<List<T>> Function(int page, int i) callback;

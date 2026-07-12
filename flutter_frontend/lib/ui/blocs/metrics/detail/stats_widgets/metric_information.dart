@@ -3,6 +3,7 @@ import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/key_value_list.dart';
+import 'package:helse/ui/common/ui_constants.dart';
 
 class MetricInformation extends StatelessWidget {
   const MetricInformation(this.stats, {super.key, required this.type});
@@ -20,7 +21,7 @@ class MetricInformation extends StatelessWidget {
     );
     return Wrap(
       runSpacing: 1,
-      spacing: 8,
+      spacing: UIConstants.textPad,
       children: stats
           .map(
             (e) => Row(

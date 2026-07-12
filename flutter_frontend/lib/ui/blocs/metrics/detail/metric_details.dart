@@ -5,7 +5,6 @@ import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/helpers/metrics/range_list.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
 import 'package:helse/ui/blocs/metrics/widget/widget_graph.dart';
 import 'package:helse/ui/common/inputs/date_range_picker.dart';
 import 'package:helse/ui/common/navigator_chart.dart';
@@ -31,9 +30,16 @@ abstract class MetricDetails extends StatefulWidget {
 
 abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
   RangeList filteredMetrics = RangeList.empty();
-  RangeList groupedMetrics = RangeList.empty();
   DateTimeRange subDate = DateHelper.now();
-  MetricGrouped? selected;
+  List<Metric> selected = [];
+  bool key = false;
+
+  void selectionChanged(List<Metric> metric) {
+    setState(() {
+      selected = metric;
+      key = !key;
+    });
+  }
 
   @override
   void initState() {
@@ -47,10 +53,9 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
       widget.type,
     );
     filteredMetrics = initGroup;
-    groupedMetrics = initGroup;
 
     if (initGroup.values.length == 1) {
-      selected = initGroup.values.first;
+      selected = initGroup.values.first.metrics;
     }
   }
 

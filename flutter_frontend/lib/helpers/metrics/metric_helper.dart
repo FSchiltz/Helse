@@ -100,6 +100,7 @@ class MetricHelper {
         }
       } else {
         values = [1];
+        maxY = 1;
       }
 
       // find the bucket
@@ -363,7 +364,7 @@ class MetricHelper {
     }
 
     final mean = Duration(
-      milliseconds: totalMilliseconds ~/ (metrics.length - 1),
+      milliseconds: totalMilliseconds ~/ metrics.length,
     );
 
     return TextStats(metrics.length, mean, indexedValues);
