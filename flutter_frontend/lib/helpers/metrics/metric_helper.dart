@@ -99,7 +99,7 @@ class MetricHelper {
           }
         }
       } else {
-        values = [];
+        values = [1];
       }
 
       // find the bucket
