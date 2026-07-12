@@ -6,118 +6,51 @@ import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';
-import 'package:helse/helpers/metrics/range_list.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
+import 'package:helse/ui/blocs/metrics/detail/metric_details.dart';
 import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_statistics_card.dart';
-import 'package:helse/ui/blocs/metrics/widget/widget_graph.dart';
-import 'package:helse/ui/common/navigator_chart.dart';
 import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
-import 'package:helse/ui/common/inputs/date_range_picker.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../helpers/date_helper.dart';
 
-class MetricGraph extends StatefulWidget {
-  final List<Metric> metrics;
-  final DateTimeRange date;
-  final GraphKind settings;
-  static const int valueCount = 24;
-  final void Function() reset;
-  final int? person;
-  final MetricType type;
 
-  const MetricGraph(
-    this.metrics,
-    this.date,
-    this.settings,
-    this.reset, {
+class MetricNumberDisplay extends MetricDetails {
+  static const int valueCount = 24;
+
+  const MetricNumberDisplay(
+    super.metrics,
+    super.date,
+    super.settings,
+    super.reset, {
     super.key,
-    this.person,
-    required this.type,
+    super.person,
+    required super.type,
   });
 
   @override
-  State<MetricGraph> createState() => _MetricGraphState();
+  State<MetricNumberDisplay> createState() => _MetricGraphState();
 }
 
-class _MetricGraphState extends State<MetricGraph> {
-  MetricGrouped? _metric;
-  RangeList filteredMetrics = RangeList.empty();
-  RangeList groupedMetrics = RangeList.empty();
-
+class _MetricGraphState extends MetricDetailsState<MetricNumberDisplay> {
   final StreamController<Map<String, Set<int>>?> _selection =
       StreamController.broadcast();
-
-  DateTimeRange subDate = DateHelper.now();
-
-  void _setDate(DateTimeRange value) {
-    logger.log('set date with $value', name: "Metrics");
-    var filter = _filter(widget.metrics, value);
-    var grouped = MetricHelper.group(filter, value, 500, widget.type);
-    setState(() {
-      subDate = value;
-      filteredMetrics = grouped;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    subDate = widget.date;
     _selection.stream.listen(_onData);
-
-    var initGroup = MetricHelper.group(
-      widget.metrics,
-      subDate,
-      500,
-      widget.type,
-    );
-    filteredMetrics = initGroup;
-    groupedMetrics = initGroup;
-
-    if (initGroup.values.length == 1) {
-      _metric = initGroup.values.first;
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final metric = _metric;
+    final metric = selected;
     return Column(
       spacing: UIConstants.formPad,
       children: [
-        DateRangePicker(
-          _setDate,
-          subDate,
-          range: widget.date,
-          offset: widget.type.timeDifference,
-        ),
-        NavigatorChart(
-          widget.date,
-          subDate,
-          _setDate,
-          graph: WidgetGraph(
-            widget.metrics
-                .map(
-                  (e) => Metric(
-                    id: 0,
-                    date: e.date,
-                    value: e.value.toString(),
-                    type: 0,
-                    sourceId: '',
-                    person: 0,
-                  ),
-                )
-                .toList(),
-            widget.date,
-            widget.type,
-            widget.settings,
-            tile: widget.metrics.length,
-            width: 1,
-          ),
-        ),
+        ...buildHeader(),
         Expanded(
           child: _grapichChart(context, max(widget.type.valueCount ?? 1, 1)),
         ),
@@ -151,7 +84,7 @@ class _MetricGraphState extends State<MetricGraph> {
 
   void _selectionChanged(MetricGrouped metric) {
     setState(() {
-      _metric = metric;
+      selected = metric;
     });
   }
 
@@ -257,18 +190,5 @@ class _MetricGraphState extends State<MetricGraph> {
 
     var metric = filteredMetrics.values[click.value.first];
     _selectionChanged(metric);
-  }
-
-  List<Metric> _filter(List<Metric> metrics, DateTimeRange<DateTime> value) {
-    final stopwatch = Stopwatch()..start();
-    logger.log('Filter for $value');
-    var metrics = widget.metrics
-        .where((x) => x.date.isAfter(value.start) && x.date.isBefore(value.end))
-        .toList();
-    logger.log(
-      '_filter() executed in ${stopwatch.elapsed} with ${metrics.length} items',
-      name: "Metrics",
-    );
-    return metrics;
   }
 }

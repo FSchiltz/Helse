@@ -46,10 +46,9 @@ class _MetricTextDisplayState extends State<MetricTextDisplay> {
   @override
   Widget build(BuildContext context) {
     final locale = Translation.of(context);
-    return Wrap(
+    return Column(
       spacing: UIConstants.formPad,
       children: [
-        SizedBox(height: UIConstants.headerPad),
         SizedBox(
           height: 120,
           child: MetricTimelineGraph(
@@ -62,40 +61,52 @@ class _MetricTextDisplayState extends State<MetricTextDisplay> {
             }),
           ),
         ),
-        CommonCard(
-          child: Column(
-            spacing: UIConstants.headerPad,
-            children: [
-              MetricInformation([
-                KeyValue(
-                  locale.total,
-                  value: widget.metrics.length.toString(),
-                  icon: Icons.numbers_sharp,
+        Flexible(
+          child: SingleChildScrollView(
+            child: Wrap(
+              spacing: UIConstants.formPad,
+              children: [
+                CommonCard(
+                  child: Column(
+                    spacing: UIConstants.headerPad,
+                    children: [
+                      MetricInformation([
+                        KeyValue(
+                          locale.total,
+                          value: widget.metrics.length.toString(),
+                          icon: Icons.numbers_sharp,
+                        ),
+                      ], type: widget.type),
+                      MetricTextHistogram(
+                        MetricHelper.groupText(widget.metrics),
+                        widget.type,
+                        onselect: (values) => setState(() {
+                          selected = values;
+                          key++;
+                        }),
+                      ),
+                    ],
+                  ),
                 ),
-              ], type: widget.type),
-              MetricTextHistogram(
-                MetricHelper.groupText(widget.metrics),
-                widget.type,
-                onselect: (values) => setState(() {
-                  selected = values;
-                  key++;
-                }),
-              ),
-            ],
+                CommonCard(
+                  child: (selected.isEmpty)
+                      ? SizedBox.shrink()
+                      : MetricDataTable(
+                          count: selected.length,
+                          type: widget.type,
+                          reset: widget.reset,
+                          state: key,
+                          callback: (page, count) async {
+                            return selected
+                                .skip(page * count)
+                                .take(count)
+                                .toList();
+                          },
+                        ),
+                ),
+              ],
+            ),
           ),
-        ),
-        CommonCard(
-          child: (selected.isEmpty)
-              ? SizedBox.shrink()
-              : MetricDataTable(
-                  count: selected.length,
-                  type: widget.type,
-                  reset: widget.reset,
-                  state: key,
-                  callback: (page, count) async {
-                    return selected.skip(page * count).take(count).toList();
-                  },
-                ),
         ),
       ],
     );

@@ -63,11 +63,13 @@ class MetricTextHistogram extends StatelessWidget {
                     }
                   },
             touchTooltipData: BarTouchTooltipData(
-              getTooltipItem: (group, groupIndex, rod, rodIndex) =>
-                  BarTooltipItem(
-                    stats.histogram[groupIndex].label,
-                    Theme.of(context).textTheme.bodyMedium!,
-                  ),
+              getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                final item = stats.histogram[groupIndex];
+                return BarTooltipItem(
+                  '${item.metrics.length} ${item.label}',
+                  Theme.of(context).textTheme.bodyMedium!,
+                );
+              },
             ),
           ),
           titlesData: FlTitlesData(

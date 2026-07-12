@@ -8,7 +8,7 @@ import 'package:helse/ui/common/ui_constants.dart';
 
 import '../../../../di/dependencies.dart';
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
-import 'metric_graph.dart';
+import 'metric_number_display.dart';
 
 class MetricDetailPage extends StatefulWidget {
   const MetricDetailPage({
@@ -90,7 +90,7 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
                             person: widget.person,
                             reset: reset,
                           )
-                        : MetricGraph(
+                        : MetricNumberDisplay(
                             data,
                             widget.date,
                             widget.settings,
