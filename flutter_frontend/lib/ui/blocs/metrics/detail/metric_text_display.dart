@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';
-import 'package:helse/helpers/metrics/range_list.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_timeline_graph.dart';
-import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_histogram.dart';
 import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_information.dart';
 import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_text_histogram.dart';
 import 'package:helse/ui/common/key_value_list.dart';
