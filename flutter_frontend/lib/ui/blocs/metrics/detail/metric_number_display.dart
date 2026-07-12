@@ -64,13 +64,9 @@ class _MetricGraphState extends MetricDetailsState<MetricNumberDisplay> {
                   person: widget.person,
                   type: widget.type,
                   reset: widget.reset,
-                  count: metric?.metrics.length ?? 0,
+                  count: metric.length,
                   callback: (page, count) async {
-                    return metric?.metrics
-                            .skip(page * count)
-                            .take(count)
-                            .toList() ??
-                        [];
+                    return metric.skip(page * count).take(count).toList();
                   },
                 ),
               ],
@@ -182,6 +178,6 @@ class _MetricGraphState extends MetricDetailsState<MetricNumberDisplay> {
     if (click == null) return;
 
     var metric = filteredMetrics.values[click.value.first];
-    selectionChanged(metric);
+    selectionChanged(metric.metrics);
   }
 }

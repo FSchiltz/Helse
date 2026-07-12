@@ -7,7 +7,6 @@ import 'package:helse/ui/blocs/metrics/detail/metric_details.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_timeline_graph.dart';
 import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_information.dart';
 import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_text_histogram.dart';
-import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
 import 'package:helse/ui/common/key_value_list.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/ui_constants.dart';
@@ -43,7 +42,7 @@ class _MetricTextDisplayState extends MetricDetailsState<MetricTextDisplay> {
             widget.date,
             widget.type,
             onselect: (metrics) => setState(() {
-              selectionChanged(MetricGrouped(DateTime.now(), metrics));
+              selectionChanged(metrics);
             }),
           ),
         ),
@@ -67,24 +66,22 @@ class _MetricTextDisplayState extends MetricDetailsState<MetricTextDisplay> {
                         MetricHelper.groupText(widget.metrics),
                         widget.type,
                         onselect: (values) => setState(() {
-                          selectionChanged(
-                            MetricGrouped(DateTime.now(), values),
-                          );
+                          selectionChanged(values);
                         }),
                       ),
                     ],
                   ),
                 ),
                 CommonCard(
-                  child: (metric == null || metric.metrics.isNotEmpty)
+                  child: (metric.isEmpty)
                       ? SizedBox.shrink()
                       : MetricDataTable(
-                          count: metric.metrics.length,
+                          count: metric.length,
                           type: widget.type,
                           reset: widget.reset,
                           state: key,
                           callback: (page, count) async {
-                            return metric.metrics
+                            return metric
                                 .skip(page * count)
                                 .take(count)
                                 .toList();
