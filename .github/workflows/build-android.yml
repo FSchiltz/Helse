@@ -55,9 +55,9 @@ jobs:
 
     - name: Rename APK Artifacts
       run: |
-          mv build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk timety-v${{ github.event.inputs.version }}-armeabi-v7a.apk
-          mv build/app/outputs/flutter-apk/app-arm64-v8a-release.apk timety-v${{ github.event.inputs.version }}-arm64-v8a.apk
-          mv build/app/outputs/flutter-apk/app-x86_64-release.apk timety-v${{ github.event.inputs.version }}-x86_64.apk
+          mv flutter_frontend/build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk flutter_frontend/build/app/outputs/flutter-apk/helse-v${{ github.event.inputs.version }}-armeabi-v7a.apk
+          mv flutter_frontend/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk flutter_frontend/build/app/outputs/flutter-apk/helse-v${{ github.event.inputs.version }}-arm64-v8a.apk
+          mv flutter_frontend/build/app/outputs/flutter-apk/app-x86_64-release.apk flutter_frontend/build/app/outputs/flutter-apk/helse-v${{ github.event.inputs.version }}-x86_64.apk
 
     - name: Finding binaries files
       if: ${{ inputs.push }}
