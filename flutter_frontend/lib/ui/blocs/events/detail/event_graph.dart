@@ -4,6 +4,7 @@ import 'package:flutter/material.dart' hide Interval;
 import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/event_helper.dart';
+import 'package:helse/helpers/selection_controller.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/events/detail/stats_widgets/selection_widget.dart';
@@ -45,19 +46,13 @@ class EventsGraph extends StatefulWidget {
 }
 
 class _EventsGraphState extends State<EventsGraph> {
-  List<Event> _selected = [];
+  final _selection = SelectionController<Event>();
   late List<Event> _filteredEvents;
   late DateTimeRange _subDate;
   late Color _color;
   late GroupStats _stats;
   late List<Interval> _sessions;
   late List<EventSummary> _groups;
-
-  void _selectionChanged(List<Event> event) {
-    setState(() {
-      _selected = event;
-    });
-  }
 
   void _setDate(DateTimeRange value) {
     var filter = widget.events
@@ -92,14 +87,12 @@ class _EventsGraphState extends State<EventsGraph> {
     );
 
     if (widget.events.length == 1) {
-      _selected = widget.events;
+      _selection.select(widget.events);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    var selected = _selected;
-
     final radius = 40.0;
     final graphHeight = 4 * radius;
     final height = graphHeight + UIConstants.formPad * 2 + 10;
@@ -127,7 +120,7 @@ class _EventsGraphState extends State<EventsGraph> {
               ? EventsTimelineGraph(
                   _filteredEvents,
                   _subDate,
-                  onselect: _selectionChanged,
+                  onselect: _selection.select,
                 )
               : EventsSummary(_stats.groups, _subDate),
         ),
@@ -142,14 +135,12 @@ class _EventsGraphState extends State<EventsGraph> {
                   radius: radius,
                   stats: _stats,
                 ),
-                if (selected.isNotEmpty)
+                if (_selection.selected.isNotEmpty)
                   SelectionWidget(
-                    selected: selected,
+                    selection: _selection,
                     reset: () {
                       widget.reset();
-                      setState(() {
-                        _selected = [];
-                      });
+                      _selection.clear();
                     },
                     person: widget.person,
                     type: widget.type,

@@ -32,7 +32,7 @@ abstract class MetricDetails extends StatefulWidget {
 abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
   RangeList filteredMetrics = RangeList.empty();
   DateTimeRange subDate = DateHelper.now();
-  SelectionController<Metric> selection = SelectionController();
+  final SelectionController<Metric> selection = SelectionController();
   late double maxY;
 
   @override
