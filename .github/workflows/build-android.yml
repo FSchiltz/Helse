@@ -34,25 +34,33 @@ jobs:
     
     - name: Install Flutter
       uses: subosito/flutter-action@v2.14.0
+      id: flutter-action
       with:
         channel: stable
         cache: true
-
-    - name: Create certificat
-      if: ${{ inputs.sign }}
-      run: |
-        echo keyPassword=${{ secrets.KEY_STORE }} > ${{env.PROPERTIES_PATH}}
-        echo storePassword=${{ secrets.KEY_PASSWORD }} >> ${{env.PROPERTIES_PATH}}
-        echo keyAlias=${{ vars.KEY_ALIAS }} >> ${{env.PROPERTIES_PATH}}
-        echo storeFile=key.jks >> ${{env.PROPERTIES_PATH}}
+        flutter-version: '3.44.4'
         
     - name: Decoding base64 key into a file
       if: ${{ inputs.sign }}
       run: echo ${{ secrets.KEY_FILE }} | base64 --decode > flutter_frontend/android/app/key.jks
     
+    - name: Remove build id
+      run: sed -i -e 's/-Wl,/-Wl,--build-id=none,/' ${{ steps.flutter-action.outputs.PUB-CACHE-PATH }}/hosted/pub.dev/jni-*/src/CMakeLists.txt
+
     - name: Build release app bundle
-      run: flutter build apk --${{inputs.mode}} --split-per-abi
+      env:
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_STORE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEYSTORE_PATH: key.jks
+      run: flutter build apk --${{inputs.mode}} --split-per-abi --split-debug-info=build/symbols
       working-directory: 'flutter_frontend'   
+
+    - name: Rename APK Artifacts
+      run: |
+          mv build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk timety-v${{ github.event.inputs.version }}-armeabi-v7a.apk
+          mv build/app/outputs/flutter-apk/app-arm64-v8a-release.apk timety-v${{ github.event.inputs.version }}-arm64-v8a.apk
+          mv build/app/outputs/flutter-apk/app-x86_64-release.apk timety-v${{ github.event.inputs.version }}-x86_64.apk
 
     - name: Finding binaries files
       if: ${{ inputs.push }}
