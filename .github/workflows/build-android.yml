@@ -54,14 +54,12 @@ jobs:
       working-directory: 'flutter_frontend'   
 
     - name: Rename APK Artifacts
-      run: |
-        {
+      run: |        
           cd flutter_frontend/build/app/outputs/flutter-apk          
           find . -name '*-release.apk' -print 
           mv app-armeabi-v7a-release.apk helse-v${{ github.event.inputs.version }}-armeabi-v7a.apk
           mv app-arm64-v8a-release.apk helse-v${{ github.event.inputs.version }}-arm64-v8a.apk
-          mv app-x86_64-release.apk helse-v${{ github.event.inputs.version }}-x86_64.apk
-        }
+          mv app-x86_64-release.apk helse-v${{ github.event.inputs.version }}-x86_64.apk        
 
     - name: Finding binaries files
       if: ${{ inputs.push }}
