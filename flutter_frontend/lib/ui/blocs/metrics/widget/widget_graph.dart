@@ -107,38 +107,24 @@ class WidgetGraph extends StatelessWidget {
     return spots.expand((e) => e.spots).toList();
   }
 
-  List<BarChartGroupData> _getBar(
-    List<Metric> raw,
-    Color color,
-    MetricType type,
-  ) {
-    var spots = _getSpot(raw, type);
+  List<CandlestickSpot> _getBar(List<Range<FlSpot>> spots) {
+    List<CandlestickSpot> bar = [];
 
-    // now we have the min and max Y and X value, we can build the spots
-    List<BarChartGroupData> bar = [];
-
-    for (final item in spots[0].value) {
-      bar.add(
-        BarChartGroupData(
-          x: item.x.toInt(),
-          barRods: [
-            BarChartRodData(toY: item.y, color: color, width: width ?? 2),
-          ],
-        ),
-      );
+    for (final spot in spots) {
+      for (final item in spot.value) {
+        bar.add(
+          CandlestickSpot(x: item.x, low: 0, high: item.y, close: 0, open: 0),
+        );
+      }
     }
-
     return bar;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: (settings == GraphKind.line)
-          ? _getLineGraph(context)
-          : _getBarGraph(context),
-    );
+    return (settings == GraphKind.line)
+        ? _getLineGraph(context)
+        : _getBarGraph(context);
   }
 
   Widget _getBarGraph(BuildContext context) {
@@ -148,14 +134,29 @@ class WidgetGraph extends StatelessWidget {
       context,
     );
 
-    return BarChart(
-      BarChartData(
-        barTouchData: BarTouchData(enabled: false),
+    var spots = _getSpot(metrics, type);
+
+    return CandlestickChart(
+      CandlestickChartData(
+        candlestickTouchData: CandlestickTouchData(enabled: false),
         titlesData: const FlTitlesData(show: false),
         borderData: FlBorderData(show: false),
         gridData: const FlGridData(show: false),
-        barGroups: _getBar(metrics, color, type),
+        candlestickSpots: _getBar(spots),
+        candlestickPainter: DefaultCandlestickPainter(
+          candlestickStyleProvider: (spot, index) => CandlestickStyle(
+            lineColor: color,
+            lineWidth: 2,
+            bodyStrokeColor: color,
+            bodyStrokeWidth: 0,
+            bodyFillColor: color,
+            bodyWidth: 2,
+            bodyRadius: 0,
+          ),
+        ),
         maxY: maxY,
+        minX: range.start.millisecondsSinceEpoch.toDouble(),
+        maxX: range.end.millisecondsSinceEpoch.toDouble(),
       ),
     );
   }
