@@ -321,16 +321,17 @@ class MetricHelper {
     ];
   }
 
-  static TextStats groupText(List<Metric> metrics) {
+  static TextStats groupText(List<MetricGrouped> metrics) {
     Map<String, List<Metric>> values = {};
 
     double totalMilliseconds = 0;
 
-    for (var i = 0; i < metrics.length; i++) {
-      final current = metrics[i];
+    final expanded = metrics.expand((e) => e.metrics).toList();
+    for (var i = 0; i < expanded.length; i++) {
+      final current = expanded[i];
 
-      if (i < metrics.length - 1) {
-        totalMilliseconds += metrics[i + 1].date
+      if (i < expanded.length - 1) {
+        totalMilliseconds += expanded[i + 1].date
             .difference(current.date)
             .inMilliseconds;
       }
@@ -363,9 +364,7 @@ class MetricHelper {
       indexedValues.add(HistogramBar(last.value, last.key));
     }
 
-    final mean = Duration(
-      milliseconds: totalMilliseconds ~/ metrics.length,
-    );
+    final mean = Duration(milliseconds: totalMilliseconds ~/ metrics.length);
 
     return TextStats(metrics.length, mean, indexedValues);
   }

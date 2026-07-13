@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/helpers/metrics/range_list.dart';
+import 'package:helse/helpers/selection_controller.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/widget/widget_graph.dart';
 import 'package:helse/ui/common/inputs/date_range_picker.dart';
@@ -31,16 +32,8 @@ abstract class MetricDetails extends StatefulWidget {
 abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
   RangeList filteredMetrics = RangeList.empty();
   DateTimeRange subDate = DateHelper.now();
-  List<Metric> selected = [];
-  bool key = false;
+  SelectionController<Metric> selection = SelectionController();
   late double maxY;
-
-  void selectionChanged(List<Metric> metric) {
-    setState(() {
-      selected = metric;
-      key = !key;
-    });
-  }
 
   @override
   void initState() {
@@ -57,7 +50,7 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
     filteredMetrics = initGroup;
 
     if (initGroup.values.length == 1) {
-      selected = initGroup.values.first.metrics;
+      selection.select(initGroup.values.first.metrics);
     }
   }
 
@@ -114,7 +107,7 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
           widget.settings,
           tile: widget.metrics.length,
           width: 1,
-          maxY: maxY
+          maxY: maxY,
         ),
       ),
     ];

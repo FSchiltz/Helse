@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';
+import 'package:helse/helpers/selection_controller.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_details.dart';
+import 'package:helse/ui/blocs/metrics/detail/metric_selected.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_timeline_graph.dart';
 import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_information.dart';
 import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_text_histogram.dart';
@@ -29,7 +31,6 @@ class _MetricTextDisplayState extends MetricDetailsState<MetricTextDisplay> {
   @override
   Widget build(BuildContext context) {
     final locale = Translation.of(context);
-    final metric = selected;
 
     return Column(
       spacing: UIConstants.formPad,
@@ -42,9 +43,7 @@ class _MetricTextDisplayState extends MetricDetailsState<MetricTextDisplay> {
             filteredMetrics.values,
             widget.date,
             widget.type,
-            onselect: (metrics) => setState(() {
-              selectionChanged(metrics);
-            }),
+            selection: selection,
           ),
         ),
         Flexible(
@@ -61,35 +60,22 @@ class _MetricTextDisplayState extends MetricDetailsState<MetricTextDisplay> {
                       MetricInformation([
                         KeyValue(
                           locale.total,
-                          value: widget.metrics.length.toString(),
+                          value: filteredMetrics.values.length.toString(),
                           icon: Icons.numbers_sharp,
                         ),
                       ], type: widget.type),
                       MetricTextHistogram(
-                        MetricHelper.groupText(widget.metrics),
+                        MetricHelper.groupText(filteredMetrics.values),
                         widget.type,
-                        onselect: (values) => setState(() {
-                          selectionChanged(values);
-                        }),
+                        onselect: selection.select,
                       ),
                     ],
                   ),
                 ),
-                CommonCard(
-                  child: (metric.isEmpty)
-                      ? SizedBox.shrink()
-                      : MetricDataTable(
-                          count: metric.length,
-                          type: widget.type,
-                          reset: widget.reset,
-                          state: key,
-                          callback: (page, count) async {
-                            return metric
-                                .skip(page * count)
-                                .take(count)
-                                .toList();
-                          },
-                        ),
+                MetricSelected(
+                  selection: selection,
+                  type: widget.type,
+                  reset: widget.reset,
                 ),
               ],
             ),

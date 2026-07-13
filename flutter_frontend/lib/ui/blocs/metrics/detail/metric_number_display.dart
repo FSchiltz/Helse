@@ -10,6 +10,7 @@ import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_data_table.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_details.dart';
+import 'package:helse/ui/blocs/metrics/detail/metric_selected.dart';
 import 'package:helse/ui/blocs/metrics/detail/stats_widgets/metric_statistics_card.dart';
 import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
 import 'package:helse/ui/common/ui_constants.dart';
@@ -45,7 +46,6 @@ class _MetricGraphState extends MetricDetailsState<MetricNumberDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    final metric = selected;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: UIConstants.formPad,
@@ -62,15 +62,10 @@ class _MetricGraphState extends MetricDetailsState<MetricNumberDisplay> {
                 ...filteredMetrics.stats.map(
                   (e) => MetricStatisticsCard(stats: e, type: widget.type),
                 ),
-                MetricDataTable(
-                  person: widget.person,
+                MetricSelected(
+                  selection: selection,
                   type: widget.type,
                   reset: widget.reset,
-                  count: metric.length,
-                  state: key,
-                  callback: (page, count) async {
-                    return metric.skip(page * count).take(count).toList();
-                  },
                 ),
               ],
             ),
@@ -181,6 +176,6 @@ class _MetricGraphState extends MetricDetailsState<MetricNumberDisplay> {
     if (click == null) return;
 
     var metric = filteredMetrics.values[click.value.first];
-    selectionChanged(metric.metrics);
+    selection.select(metric.metrics);
   }
 }
