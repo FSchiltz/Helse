@@ -1,96 +1,49 @@
-plugins{
-    id "com.android.application"
-    id "kotlin-android"
-    id "dev.flutter.flutter-gradle-plugin"
-}
-
-def localProperties = new Properties()
-def localPropertiesFile = rootProject.file('local.properties')
-if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader('UTF-8') { reader ->
-        localProperties.load(reader)
-    }
-}
-
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-if (flutterVersionCode == null) {
-    flutterVersionCode = '1'
-}
-
-def flutterVersionName = localProperties.getProperty('flutter.versionName')
-if (flutterVersionName == null) {
-    flutterVersionName = '1.0'
-}
-
-def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file('key.properties')
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+plugins {
+    id("com.android.application")
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id("dev.flutter.flutter-gradle-plugin")
 }
 
 android {
-    namespace("com.fschiltz.helse")
-    compileSdk(flutter.compileSdkVersion)
-    ndkVersion = "28.2.13676358"
+    namespace = "com.fschiltz.helse"
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        coreLibraryDesugaringEnabled =true
-        sourceCompatibility= JavaVersion.VERSION_17
-        targetCompatibility =JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions{
-        jvmTarget = '17'
-    }
-
-    sourceSets{
-        main.java.srcDirs += 'src/main/kotlin'
-    }
-
-    defaultConfig{
+    defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.fschiltz.helse"
+        applicationId = "com.fschiltz.helse"
         // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 28
-        targetSdkVersion flutter.targetSdkVersion
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
-    }
-
-
-    signingConfigs{
-         if (System.getenv("CI") == "true") {
-            create("release") {
-                keyAlias = System.getenv("KEY_ALIAS")
-                keyPassword = System.getenv("KEY_PASSWORD")
-                storeFile = System.getenv("KEYSTORE_PATH")?.let { file(it) }
-                storePassword = System.getenv("KEYSTORE_PASSWORD")
-            }
-        }
+        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        minSdk = flutter.minSdkVersion
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
     }
 
     buildTypes {
-       release {
-            signingConfig = (System.getenv("CI") == "true")? signingConfigs.getByName("release"): signingConfigs.getByName("debug")
-            
-
-            // Enable code shrinking to reduce APK size
-            isMinifyEnabled = true
-            isShrinkResources = true
+        release {
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
+}
 
-    dependenciesInfo {
-        includeInApk = false
-        includeInBundle = false
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
 }
 
 flutter {
-    source('../..')
+    source = "../.."
 }
 
 dependencies {
-    coreLibraryDesugaring('com.android.tools:desugar_jdk_libs:2.1.4')
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
