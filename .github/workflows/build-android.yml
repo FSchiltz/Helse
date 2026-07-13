@@ -44,9 +44,6 @@ jobs:
       if: ${{ inputs.sign }}
       run: echo ${{ secrets.KEY_FILE }} | base64 --decode > flutter_frontend/android/app/key.jks
     
-    - name: Remove build id
-      run: sed -i -e 's/-Wl,/-Wl,--build-id=none,/' ${{ steps.flutter-action.outputs.PUB-CACHE-PATH }}/hosted/pub.dev/jni-*/src/CMakeLists.txt
-
     - name: Build release app bundle
       env:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
