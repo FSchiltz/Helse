@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/selection_controller.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/metric_grouped.dart';
@@ -10,7 +11,7 @@ class MetricTimelineGraph extends StatelessWidget {
   final List<MetricGrouped> metrics;
   final MetricType type;
   final DateTimeRange date;
-  final void Function(List<Metric> metric)? onselect;
+  final SelectionController<Metric> selection;
   final double widthCoef;
 
   const MetricTimelineGraph(
@@ -18,7 +19,7 @@ class MetricTimelineGraph extends StatelessWidget {
     this.date,
     this.type, {
     super.key,
-    this.onselect,
+    required this.selection,
     this.widthCoef = 2,
   });
 
@@ -35,7 +36,7 @@ class MetricTimelineGraph extends StatelessWidget {
           .map((e) => TimelineNode<Metric>(e.date, e.date, '', e.metrics))
           .toList(),
       date,
-      onselect: onselect,
+      onselect: selection.select,
       widthCoef: widthCoef,
       getColor: (label) => color,
       link: false,

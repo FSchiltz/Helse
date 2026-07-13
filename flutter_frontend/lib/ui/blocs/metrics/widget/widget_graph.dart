@@ -27,6 +27,7 @@ class WidgetGraph extends StatelessWidget {
   final MetricType type;
   final int tile;
   final double? width;
+  final double? maxY;
 
   const WidgetGraph(
     this.metrics,
@@ -36,6 +37,7 @@ class WidgetGraph extends StatelessWidget {
     super.key,
     required this.tile,
     this.width,
+    this.maxY,
   });
 
   List<Range<FlSpot>> _getSpot(List<Metric> raw, MetricType type) {
@@ -105,101 +107,96 @@ class WidgetGraph extends StatelessWidget {
     return spots.expand((e) => e.spots).toList();
   }
 
-  List<BarChartGroupData> _getBar(
-    List<Metric> raw,
-    Color color,
-    MetricType type,
-  ) {
-    var spots = _getSpot(raw, type);
+  List<CandlestickSpot> _getBar(List<Range<FlSpot>> spots) {
+    List<CandlestickSpot> bar = [];
 
-    // now we have the min and max Y and X value, we can build the spots
-    List<BarChartGroupData> bar = [];
-
-    for (final item in spots[0].value) {
-      bar.add(
-        BarChartGroupData(
-          x: item.x.toInt(),
-          barRods: [
-            BarChartRodData(toY: item.y, color: color, width: width ?? 2),
-          ],
-        ),
-      );
+    for (final spot in spots) {
+      for (final item in spot.value) {
+        bar.add(
+          CandlestickSpot(x: item.x, low: 0, high: item.y, close: 0, open: 0),
+        );
+      }
     }
-
     return bar;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: _getGraph(context),
+    return (settings == GraphKind.line)
+        ? _getLineGraph(context)
+        : _getBarGraph(context);
+  }
+
+  Widget _getBarGraph(BuildContext context) {
+    var color = Dependencies.theme.stateColor(
+      MetricHelper.getStateKey(type, 0),
+      StateType.metric,
+      context,
+    );
+
+    var spots = _getSpot(metrics, type);
+
+    return CandlestickChart(
+      CandlestickChartData(
+        candlestickTouchData: CandlestickTouchData(enabled: false),
+        titlesData: const FlTitlesData(show: false),
+        borderData: FlBorderData(show: false),
+        gridData: const FlGridData(show: false),
+        candlestickSpots: _getBar(spots),
+        candlestickPainter: DefaultCandlestickPainter(
+          candlestickStyleProvider: (spot, index) => CandlestickStyle(
+            lineColor: color,
+            lineWidth: 2,
+            bodyStrokeColor: color,
+            bodyStrokeWidth: 0,
+            bodyFillColor: color,
+            bodyWidth: 2,
+            bodyRadius: 0,
+          ),
+        ),
+        maxY: maxY,
+        minX: range.start.millisecondsSinceEpoch.toDouble(),
+        maxX: range.end.millisecondsSinceEpoch.toDouble(),
+      ),
     );
   }
 
-  Widget _getGraph(BuildContext context) {
-    if (settings == GraphKind.bar) {
+  Widget _getLineGraph(BuildContext context) {
+    final spots = _getSpot(metrics, type).map((metric) {
       var color = Dependencies.theme.stateColor(
-        MetricHelper.getStateKey(type, 0),
+        MetricHelper.getStateKey(type, metric.index),
         StateType.metric,
         context,
       );
-      return BarChart(        
-        BarChartData(
-          barTouchData: BarTouchData(enabled: false),
-          titlesData: const FlTitlesData(
-            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      return LineChartBarData(
+        barWidth: width ?? 3,
+        color: color,
+        spots: metric.value,
+        isCurved: true,
+        curveSmoothness: 0.02,
+        dotData: FlDotData(
+          show: true,
+          getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
+            color: color,
+            strokeColor: color,
+            radius: barData.spots.length > 1 ? 0 : 1,
+            strokeWidth: 0,
           ),
-          borderData: FlBorderData(show: false),
-          gridData: const FlGridData(show: false),
-          barGroups: _getBar(metrics, color, type),
         ),
       );
-    } else {
-      final spots = _getSpot(metrics, type).map((metric) {
-        var color = Dependencies.theme.stateColor(
-          MetricHelper.getStateKey(type, metric.index),
-          StateType.metric,
-          context,
-        );
-        return LineChartBarData(
-          barWidth: width ?? 3,
-          color: color,
-          spots: metric.value,
-          isCurved: true,
-          curveSmoothness: 0.02,
-          dotData: FlDotData(
-            show: true,
-            getDotPainter: (spot, percent, barData, index) =>
-                FlDotCirclePainter(
-                  color: color,
-                  strokeColor: color,
-                  radius: barData.spots.length > 1 ? 0 : 1,
-                  strokeWidth: 0,
-                ),
-          ),
-        );
-      });
+    });
 
-      return LineChart(
-        LineChartData(
-          minX: range.start.millisecondsSinceEpoch.toDouble(),
-          maxX: range.end.millisecondsSinceEpoch.toDouble(),
-          lineTouchData: const LineTouchData(enabled: false),
-          titlesData: const FlTitlesData(
-            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          ),
-          borderData: FlBorderData(show: false),
-          gridData: const FlGridData(show: false),
-          lineBarsData: spots.toList(),
-        ),
-      );
-    }
+    return LineChart(
+      LineChartData(
+        minX: range.start.millisecondsSinceEpoch.toDouble(),
+        maxX: range.end.millisecondsSinceEpoch.toDouble(),
+        maxY: maxY,
+        lineTouchData: const LineTouchData(enabled: false),
+        titlesData: const FlTitlesData(show: false),
+        borderData: FlBorderData(show: false),
+        gridData: const FlGridData(show: false),
+        lineBarsData: spots.toList(),
+      ),
+    );
   }
 }
