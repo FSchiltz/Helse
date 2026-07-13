@@ -11,10 +11,6 @@ on:
       upload:
         required: true
         type: boolean
-      mode:
-        required: false
-        type: string
-        default: release
       
 env:
   REGISTRY: ghcr.io
@@ -50,7 +46,7 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_STORE }}
           KEYSTORE_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEYSTORE_PATH: key.jks
-      run: flutter build apk --${{inputs.mode}} --split-per-abi --split-debug-info=build/symbols
+      run: flutter build apk --release --split-per-abi --split-debug-info=build/symbols
       working-directory: 'flutter_frontend'   
 
     - name: Rename APK Artifacts
