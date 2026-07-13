@@ -33,6 +33,7 @@ class _MetricTextDisplayState extends MetricDetailsState<MetricTextDisplay> {
 
     return Column(
       spacing: UIConstants.formPad,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ...buildHeader(),
         SizedBox(
@@ -49,7 +50,9 @@ class _MetricTextDisplayState extends MetricDetailsState<MetricTextDisplay> {
         Flexible(
           child: SingleChildScrollView(
             child: Wrap(
+              crossAxisAlignment: WrapCrossAlignment.start,
               spacing: UIConstants.formPad,
+              alignment: WrapAlignment.start,
               children: [
                 CommonCard(
                   child: Column(

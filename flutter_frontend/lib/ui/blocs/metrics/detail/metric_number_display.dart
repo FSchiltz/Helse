@@ -47,6 +47,7 @@ class _MetricGraphState extends MetricDetailsState<MetricNumberDisplay> {
   Widget build(BuildContext context) {
     final metric = selected;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       spacing: UIConstants.formPad,
       children: [
         ...buildHeader(),
@@ -56,6 +57,7 @@ class _MetricGraphState extends MetricDetailsState<MetricNumberDisplay> {
         Flexible(
           child: SingleChildScrollView(
             child: Wrap(
+              alignment: WrapAlignment.start,
               children: [
                 ...filteredMetrics.stats.map(
                   (e) => MetricStatisticsCard(stats: e, type: widget.type),
