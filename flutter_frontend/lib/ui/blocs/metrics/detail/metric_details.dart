@@ -33,6 +33,7 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
   DateTimeRange subDate = DateHelper.now();
   List<Metric> selected = [];
   bool key = false;
+  late double maxY;
 
   void selectionChanged(List<Metric> metric) {
     setState(() {
@@ -52,6 +53,7 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
       500,
       widget.type,
     );
+    maxY = initGroup.maxY;
     filteredMetrics = initGroup;
 
     if (initGroup.values.length == 1) {
@@ -112,6 +114,7 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
           widget.settings,
           tile: widget.metrics.length,
           width: 1,
+          maxY: maxY
         ),
       ),
     ];

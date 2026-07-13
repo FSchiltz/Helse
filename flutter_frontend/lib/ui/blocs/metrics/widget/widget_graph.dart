@@ -27,6 +27,7 @@ class WidgetGraph extends StatelessWidget {
   final MetricType type;
   final int tile;
   final double? width;
+  final double? maxY;
 
   const WidgetGraph(
     this.metrics,
@@ -36,6 +37,7 @@ class WidgetGraph extends StatelessWidget {
     super.key,
     required this.tile,
     this.width,
+    this.maxY,
   });
 
   List<Range<FlSpot>> _getSpot(List<Metric> raw, MetricType type) {
@@ -138,27 +140,7 @@ class WidgetGraph extends StatelessWidget {
   }
 
   Widget _getGraph(BuildContext context) {
-    if (settings == GraphKind.bar) {
-      var color = Dependencies.theme.stateColor(
-        MetricHelper.getStateKey(type, 0),
-        StateType.metric,
-        context,
-      );
-      return BarChart(        
-        BarChartData(
-          barTouchData: BarTouchData(enabled: false),
-          titlesData: const FlTitlesData(
-            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          ),
-          borderData: FlBorderData(show: false),
-          gridData: const FlGridData(show: false),
-          barGroups: _getBar(metrics, color, type),
-        ),
-      );
-    } else {
+    if (settings == GraphKind.line) {
       final spots = _getSpot(metrics, type).map((metric) {
         var color = Dependencies.theme.stateColor(
           MetricHelper.getStateKey(type, metric.index),
@@ -188,6 +170,7 @@ class WidgetGraph extends StatelessWidget {
         LineChartData(
           minX: range.start.millisecondsSinceEpoch.toDouble(),
           maxX: range.end.millisecondsSinceEpoch.toDouble(),
+          maxY: maxY,
           lineTouchData: const LineTouchData(enabled: false),
           titlesData: const FlTitlesData(
             leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -198,6 +181,27 @@ class WidgetGraph extends StatelessWidget {
           borderData: FlBorderData(show: false),
           gridData: const FlGridData(show: false),
           lineBarsData: spots.toList(),
+        ),
+      );
+    } else {
+      var color = Dependencies.theme.stateColor(
+        MetricHelper.getStateKey(type, 0),
+        StateType.metric,
+        context,
+      );
+      return BarChart(
+        BarChartData(
+          barTouchData: BarTouchData(enabled: false),
+          titlesData: const FlTitlesData(
+            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          ),
+          borderData: FlBorderData(show: false),
+          gridData: const FlGridData(show: false),
+          barGroups: _getBar(metrics, color, type),
+          maxY: maxY,
         ),
       );
     }
