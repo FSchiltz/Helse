@@ -15,7 +15,6 @@ jobs:
     uses: ./.github/workflows/build-android.yml
     with:
       push: false
-      sign: false
       upload: false
     secrets: inherit
 
