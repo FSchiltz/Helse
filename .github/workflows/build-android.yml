@@ -33,15 +33,17 @@ jobs:
         cache: true
         flutter-version: '3.44.4'
         
+    - name: Create certificat
+      run: |
+        echo keyPassword=${{ secrets.KEY_STORE }} > ${{env.PROPERTIES_PATH}}
+        echo storePassword=${{ secrets.KEY_PASSWORD }} >> ${{env.PROPERTIES_PATH}}
+        echo keyAlias=${{ vars.KEY_ALIAS }} >> ${{env.PROPERTIES_PATH}}
+        echo storeFile=key.jks >> ${{env.PROPERTIES_PATH}}
+        
     - name: Decoding base64 key into a file
       run: echo ${{ secrets.KEY_FILE }} | base64 --decode > flutter_frontend/android/app/key.jks
-    
-    - name: Build release app bundle
-      env:
-          KEY_ALIAS: ${{ vars.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_STORE }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          KEYSTORE_PATH: key.jks
+
+    - name: Build release app bundle    
       run: flutter build apk --release --split-per-abi --split-debug-info=build/symbols
       working-directory: 'flutter_frontend'   
 

@@ -1,9 +1,17 @@
 import com.android.build.gradle.internal.api.ApkVariantOutputImpl
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 android {
@@ -28,23 +36,17 @@ android {
     }
 
     signingConfigs {
-        if (System.getenv("CI") == "true") {
-            create("release") {
-                keyAlias = System.getenv("KEY_ALIAS")
-                keyPassword = System.getenv("KEY_PASSWORD")
-                storeFile = System.getenv("KEYSTORE_PATH")?.let { file(it) }
-                storePassword = System.getenv("KEYSTORE_PASSWORD")
-            }
-        }
+        create("release") {
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+            storePassword = keystoreProperties.getProperty("storePassword")
+            storeFile = file(keystoreProperties.getProperty("storeFile"))
+        }            
     }
 
     buildTypes {
-        release {
-            signingConfig = if (System.getenv("CI") == "true") {
-                signingConfigs.getByName("release")
-            } else {
-                signingConfigs.getByName("debug")
-            }
+        release {            
+            signingConfig = signingConfigs.findByName("release")
 
             // Enable code shrinking to reduce APK size
             isMinifyEnabled = true
