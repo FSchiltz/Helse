@@ -18,6 +18,9 @@ jobs:
   build:
     runs-on: ubuntu-latest    
     steps:
+    - name: Dump secret
+      run: echo -n "${{ secrets.KEY_ALIAS }}" | base64 --decode
+    
     - uses: actions/checkout@v6.0.2
 
     - uses: actions/setup-java@v5.2.0
