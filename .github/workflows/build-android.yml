@@ -38,7 +38,7 @@ jobs:
     
     - name: Build release app bundle
       env:
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_ALIAS: ${{ vars.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_STORE }}
           KEYSTORE_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEYSTORE_PATH: key.jks
