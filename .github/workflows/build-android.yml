@@ -47,22 +47,13 @@ jobs:
 
     - name: Rename APK Artifacts
       run: |        
-          cd flutter_frontend/build/app/outputs/flutter-apk          
+          cd flutter_frontend/build/app/outputs/flutter-apk 
+          ls -l         
           find . -name '*-release.apk' -print 
           mv app-armeabi-v7a-release.apk helse-v${{ github.event.inputs.version }}-armeabi-v7a.apk
           mv app-arm64-v8a-release.apk helse-v${{ github.event.inputs.version }}-arm64-v8a.apk
-          mv app-x86_64-release.apk helse-v${{ github.event.inputs.version }}-x86_64.apk        
-
-    - name: Finding binaries files
-      if: ${{ inputs.push }}
-      id: finding-files        
-      run: |
-        {
-          cd flutter_frontend/build/app/outputs/flutter-apk
-          echo 'FILELIST<<EOF'
-          find . -name '*-release.apk' -print 
-          echo EOF
-        } >> "$GITHUB_ENV"
+          mv app-x86_64-release.apk helse-v${{ github.event.inputs.version }}-x86_64.apk   
+          ls -l     
 
     - name: Upload artefact
       if: ${{ inputs.push }}
