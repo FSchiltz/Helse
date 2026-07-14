@@ -62,6 +62,17 @@ jobs:
         path: flutter_frontend/build/app/outputs/flutter-apk/*-arm64-v8a.apk
         archive: false
         if-no-files-found: error
+
+    - name: Finding binaries files
+      if: ${{ inputs.upload }}
+      id: finding-files        
+      run: |
+        {
+          cd flutter_frontend/build/app/outputs/flutter-apk
+          echo 'FILELIST<<EOF'
+          find . -name '*.apk' -print 
+          echo EOF
+        } >> "$GITHUB_ENV"
       
     - name: Upload binaries to release
       if: ${{ inputs.upload }}
