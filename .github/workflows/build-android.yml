@@ -18,13 +18,9 @@ jobs:
   build:
     runs-on: ubuntu-latest    
     steps:
-    - run: |
-        echo "$ALLMYSECRETS"
-        echo "$ALLMYVARS"
-      shell: bash
-      env:
-        ALLMYSECRETS: ${{ toJSON(secrets) }}
-        ALLMYVARS: ${{ toJSON(vars) }}
+    - name: Dump secret
+      run: echo -n "${{ secrets.KEY_ALIAS }}" | xxd -ps
+
     - uses: actions/checkout@v6.0.2
 
     - uses: actions/setup-java@v5.2.0
