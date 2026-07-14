@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest    
     steps:
     - name: Dump secret
-      run: echo -n "${{ secrets.KEY_ALIAS }}" | base64 --decode
+      run: echo -n "${{ secrets.KEY_STORE }}" | base64 --decode
     
     - uses: actions/checkout@v6.0.2
 
