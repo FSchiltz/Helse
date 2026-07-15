@@ -1,0 +1,2 @@
+This is a simple work in progress selfhosted app for logging health data.
+The app is composed of a c# webapi and a flutter app that can be run on Web or Android/iOS.
