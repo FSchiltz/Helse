@@ -1,0 +1,3 @@
+Une application en cours de development pour synchroniser et manager ses données de santée.
+L'app est composé d'une API en C# et d'une application qui tourne sur le web ou Android/IOS.
+Il est necessaire de selfhost l'API pour que l'application fonctionne, le mode hors ligne n'est pas encore implementé.
