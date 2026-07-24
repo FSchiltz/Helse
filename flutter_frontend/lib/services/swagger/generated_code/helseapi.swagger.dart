@@ -2414,6 +2414,7 @@ extension $ConnectionExtension on Connection {
 @JsonSerializable(explicitToJson: true)
 class ConnectionResponse {
   const ConnectionResponse({
+    required this.id,
     required this.accessToken,
     this.refreshToken,
     required this.roles,
@@ -2425,6 +2426,8 @@ class ConnectionResponse {
   static const toJsonFactory = _$ConnectionResponseToJson;
   Map<String, dynamic> toJson() => _$ConnectionResponseToJson(this);
 
+  @JsonKey(name: 'id')
+  final String id;
   @JsonKey(name: 'accessToken')
   final String accessToken;
   @JsonKey(name: 'refreshToken')
@@ -2441,6 +2444,8 @@ class ConnectionResponse {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is ConnectionResponse &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
             (identical(other.accessToken, accessToken) ||
                 const DeepCollectionEquality().equals(
                   other.accessToken,
@@ -2460,6 +2465,7 @@ class ConnectionResponse {
 
   @override
   int get hashCode =>
+      const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(accessToken) ^
       const DeepCollectionEquality().hash(refreshToken) ^
       const DeepCollectionEquality().hash(roles) ^
@@ -2468,11 +2474,13 @@ class ConnectionResponse {
 
 extension $ConnectionResponseExtension on ConnectionResponse {
   ConnectionResponse copyWith({
+    String? id,
     String? accessToken,
     String? refreshToken,
     List<enums.UserType>? roles,
   }) {
     return ConnectionResponse(
+      id: id ?? this.id,
       accessToken: accessToken ?? this.accessToken,
       refreshToken: refreshToken ?? this.refreshToken,
       roles: roles ?? this.roles,
@@ -2480,11 +2488,13 @@ extension $ConnectionResponseExtension on ConnectionResponse {
   }
 
   ConnectionResponse copyWithWrapped({
+    Wrapped<String>? id,
     Wrapped<String>? accessToken,
     Wrapped<String?>? refreshToken,
     Wrapped<List<enums.UserType>>? roles,
   }) {
     return ConnectionResponse(
+      id: (id != null ? id.value : this.id),
       accessToken: (accessToken != null ? accessToken.value : this.accessToken),
       refreshToken: (refreshToken != null
           ? refreshToken.value

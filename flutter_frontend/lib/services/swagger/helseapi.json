@@ -3028,12 +3028,16 @@
       },
       "ConnectionResponse": {
         "required": [
+          "id",
           "accessToken",
           "refreshToken",
           "roles"
         ],
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string"
+          },
           "accessToken": {
             "type": "string"
           },

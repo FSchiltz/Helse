@@ -23,6 +23,7 @@ Map<String, dynamic> _$ConnectionToJson(Connection instance) =>
 
 ConnectionResponse _$ConnectionResponseFromJson(Map<String, dynamic> json) =>
     ConnectionResponse(
+      id: json['id'] as String,
       accessToken: json['accessToken'] as String,
       refreshToken: json['refreshToken'] as String?,
       roles: userTypeListFromJson(json['roles'] as List?),
@@ -30,6 +31,7 @@ ConnectionResponse _$ConnectionResponseFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$ConnectionResponseToJson(ConnectionResponse instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'accessToken': instance.accessToken,
       'refreshToken': instance.refreshToken,
       'roles': userTypeListToJson(instance.roles),

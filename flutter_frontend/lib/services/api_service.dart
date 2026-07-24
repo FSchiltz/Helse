@@ -79,6 +79,7 @@ abstract class ApiService {
     var connection = response.body;
     if (connection != null) {
       var token = ConnectionResponse(
+        id: connection.id,
         accessToken: connection.accessToken,
         roles: connection.roles,
         refreshToken: settings?.refreshToken,

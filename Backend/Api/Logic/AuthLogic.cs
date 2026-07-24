@@ -179,7 +179,7 @@ internal static class AuthLogic
 
                     log.LogInformation("Refreshed access for user {User}", user);
 
-                    return TypedResults.Ok(new ConnectionResponse(accessToken, null, roles));
+                    return TypedResults.Ok(new ConnectionResponse(fromDb.Identifier, accessToken, null, roles));
                 }
             }
         }
@@ -249,7 +249,7 @@ internal static class AuthLogic
         await users.DeleteSession(fromDb.Id, DateTime.UtcNow.AddDays(-30));
         await users.AddSession(userSession);
 
-        return TypedResults.Ok(new ConnectionResponse(accessToken, refreshToken, roles));
+        return TypedResults.Ok(new ConnectionResponse(fromDb.Identifier, accessToken, refreshToken, roles));
     }
 
     private static Helse.Models.Persons.UserType[] GetRoles(int type)
