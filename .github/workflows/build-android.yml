@@ -31,7 +31,7 @@ jobs:
       with:
         channel: stable
         cache: true
-        flutter-version: '3.44.4'
+        flutter-version: '3.44.8'
         
     - name: Create certificat
       run: |
