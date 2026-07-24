@@ -57,7 +57,13 @@ class AuthenticationLogic {
 
     if (token != null && token.refreshToken != null) {
       await account.setToken(token);
-      await account.remove(Account.grant);
+      if (token.id != account.get(Account.id)) {
+        // if the user is different than the last one clear the settings
+        await account.clear();
+        await account.set(Account.id, token.id);
+      } else {
+        await account.remove(Account.grant);
+      }
 
       // todo add a bloc for the settings and load async
       await _load();
@@ -111,12 +117,6 @@ class AuthenticationLogic {
     await account.clear();
     Dependencies.logics.settings.init = false;
     _controller.add(AuthenticationStatus.unauthenticated);
-  }
-
-  Future<void> clean() async {
-    await account.remove(Account.redirect);
-    await account.remove(Account.grant);
-    await account.remove(Account.clientid);
   }
 
   void dispose() => _controller.close();

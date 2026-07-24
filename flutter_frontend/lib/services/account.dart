@@ -29,6 +29,7 @@ class Account {
   static const redirect = "redirect";
   static const clientid = "clientid";
   static const refresh = "refresh";
+  static const id = "id";
 
   String? get(String name) {
     var store = storage;
