@@ -46,6 +46,14 @@ class Account {
 
   Future<void> clean() async {
     var s = storage;
+    await s.remove(grant);
+    await s.remove(redirect);
+    await s.remove(clientid);
+    await s.remove(refresh);
+  }
+
+  Future<void> clear() async {
+    var s = storage;
     var oldUrl = s.getString(url);
     await s.clear();
     if (oldUrl != null) s.setString(url, oldUrl);

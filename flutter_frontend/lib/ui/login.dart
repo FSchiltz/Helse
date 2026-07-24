@@ -367,7 +367,7 @@ class _LoginState extends State<LoginPage> {
     } catch (ex) {
       log('error of login: $ex');
       // clear any info about the login
-      await Dependencies.logics.authentication.logOutLocal();
+      await Dependencies.logics.authentication.clean();
 
       // we start the login process again
       _reset(error: "Login failed");
@@ -401,7 +401,7 @@ class _LoginState extends State<LoginPage> {
     } catch (ex) {
       log('error of login: $ex');
       // clear any info about the login
-      await Dependencies.logics.authentication.logOutLocal();
+      await Dependencies.logics.authentication.clean();
 
       _reset(error: "Login failed");
     }
@@ -431,7 +431,7 @@ class _LoginState extends State<LoginPage> {
     } catch (ex) {
       log('error of login: $ex');
       // clear any info about the login
-      await Dependencies.logics.authentication.logOutLocal();
+      await Dependencies.logics.authentication.clean();
 
       _reset(error: "Login failed");
     }
