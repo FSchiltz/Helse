@@ -6,7 +6,7 @@ class HelperService extends ApiService {
   HelperService(super.account);
 
   Future<Status?> isInit(Uri url) async {
-    var api = await getService(override: url);
+    var api = getApi(url, null);
     var response = await api.apiStatusGet();
 
     if (!response.isSuccessful) return null;

@@ -19,8 +19,8 @@ class SettingsMigration {
 
     bool isJson = token.startsWith("{");
     if (!isJson) {
-      var accessName = "access";
-      var access = account.get(accessName);
+      var access = account.get("access");
+      var user = account.get("user");
       List<UserType> roles = [];
       if (access != null) {
         Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
@@ -37,12 +37,13 @@ class SettingsMigration {
         }
       }
       var connection = ConnectionResponse(
+        id: user ?? '',
         accessToken: access ?? '',
         roles: roles,
         refreshToken: token,
       );
       await account.setToken(connection);
-      await account.remove(accessName);
+      await account.remove("access");
     }
   }
 }

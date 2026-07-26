@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
+import 'package:helse/logic/account/server_state.dart';
 import 'package:helse/ui/common/inputs/password_input.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
 import 'package:helse/ui/common/square_button.dart';
@@ -36,8 +37,7 @@ class _LoginState extends State<LoginPage> {
   final _controllerPassword = TextEditingController();
   final _controllerConFirmPassword = TextEditingController();
 
-  SubmissionStatus _status = SubmissionStatus.waiting;
-  Status? _initStatus;
+  SubmissionStatus _status = SubmissionStatus.unkown;
   String? _url;
   String? _urlError;
   String? _loginError;
@@ -64,111 +64,116 @@ class _LoginState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     var locale = Translation.of(context);
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      body: SafeArea(
-        top: true,
-        child: SingleChildScrollView(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                constraints: const BoxConstraints(maxWidth: 500),
-                child: Column(
-                  children: [
-                    const SizedBox(height: UIConstants.formPad),
-                    Text(
-                      locale.welcome,
-                      style: Theme.of(context).textTheme.headlineLarge,
-                    ),
-                    const SizedBox(height: UIConstants.headerPad),
-                    SquareTextField(
-                      label: locale.serverurl,
-                      controller: _urlController,
-                      icon: Icons.home_sharp,
-                      type: TextInputType.url,
-                      onChanged: (v) => _urlTextChanged(v, locale),
-                      key: const Key('loginForm_urlInput_textField'),
-                      errorText: _urlError,
-                    ),
-                    const SizedBox(height: UIConstants.headerPad),
-                    (_status == SubmissionStatus.waiting)
-                        ? const HelseLoader()
-                        : Column(
-                            children: [
-                              (_initStatus?.init == true)
-                                  ? Column(
-                                      children: [
-                                        UserNameInput(
-                                          controller: _controllerUsername,
-                                          validate: validateUserName,
+    return BlocBuilder<ServerState, Status?>(
+      bloc: Dependencies.blocs.server,
+      builder: (context, status) => Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        body: SafeArea(
+          top: true,
+          child: SingleChildScrollView(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: UIConstants.formPad),
+                      Text(
+                        locale.welcome,
+                        style: Theme.of(context).textTheme.headlineLarge,
+                      ),
+                      const SizedBox(height: UIConstants.headerPad),
+                      SquareTextField(
+                        label: locale.serverurl,
+                        controller: _urlController,
+                        icon: Icons.home_sharp,
+                        type: TextInputType.url,
+                        onChanged: (v) => _urlTextChanged(v, locale),
+                        key: const Key('loginForm_urlInput_textField'),
+                        errorText: _urlError,
+                      ),
+                      const SizedBox(height: UIConstants.headerPad),
+                      if (_status != SubmissionStatus.unkown)
+                        (_status == SubmissionStatus.waiting)
+                            ? const HelseLoader()
+                            : Column(
+                                children: [
+                                  (status?.init == true)
+                                      ? Column(
+                                          children: [
+                                            UserNameInput(
+                                              controller: _controllerUsername,
+                                              validate: validateUserName,
+                                            ),
+                                            const SizedBox(
+                                              height: UIConstants.formPad,
+                                            ),
+                                            PasswordInput(
+                                              controller: _controllerPassword,
+                                              error: _loginError,
+                                            ),
+                                          ],
+                                        )
+                                      : Column(
+                                          children: [
+                                            Text(
+                                              locale.createAccount,
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.headlineLarge,
+                                            ),
+                                            Text(
+                                              locale.adminDescription,
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.bodyLarge,
+                                            ),
+                                            const SizedBox(
+                                              height: UIConstants.headerPad,
+                                            ),
+                                            UserForm(
+                                              [UserType.admin],
+                                              controllerUsername:
+                                                  _controllerUsername,
+                                              controllerEmail: _controllerEmail,
+                                              controllerPassword:
+                                                  _controllerPassword,
+                                              controllerConFirmPassword:
+                                                  _controllerConFirmPassword,
+                                              controllerName: _controllerName,
+                                              controllerSurname:
+                                                  _controllerSurname,
+                                            ),
+                                          ],
                                         ),
-                                        const SizedBox(
-                                          height: UIConstants.formPad,
+                                  const SizedBox(height: UIConstants.headerPad),
+                                  _status == SubmissionStatus.inProgress
+                                      ? const HelseLoader()
+                                      : Column(
+                                          children: [
+                                            SquareButton(
+                                              status?.init == true
+                                                  ? locale.login
+                                                  : locale.create,
+                                              status?.init == true
+                                                  ? _login
+                                                  : _create,
+                                            ),
+                                            const SizedBox(
+                                              height: UIConstants.headerPad,
+                                            ),
+                                            ..._providers(
+                                              status?.oauths,
+                                              Theme.of(context).textTheme,
+                                              locale,
+                                            ),
+                                          ],
                                         ),
-                                        PasswordInput(
-                                          controller: _controllerPassword,
-                                          error: _loginError,
-                                        ),
-                                      ],
-                                    )
-                                  : Column(
-                                      children: [
-                                        Text(
-                                          locale.createAccount,
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.headlineLarge,
-                                        ),
-                                        Text(
-                                          locale.adminDescription,
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.bodyLarge,
-                                        ),
-                                        const SizedBox(
-                                          height: UIConstants.headerPad,
-                                        ),
-                                        UserForm(
-                                          [UserType.admin],
-                                          controllerUsername:
-                                              _controllerUsername,
-                                          controllerEmail: _controllerEmail,
-                                          controllerPassword:
-                                              _controllerPassword,
-                                          controllerConFirmPassword:
-                                              _controllerConFirmPassword,
-                                          controllerName: _controllerName,
-                                          controllerSurname: _controllerSurname,
-                                        ),
-                                      ],
-                                    ),
-                              const SizedBox(height: UIConstants.headerPad),
-                              _status == SubmissionStatus.inProgress
-                                  ? const HelseLoader()
-                                  : Column(
-                                      children: [
-                                        SquareButton(
-                                          _initStatus?.init == true
-                                              ? locale.login
-                                              : locale.create,
-                                          _initStatus?.init == true
-                                              ? _login
-                                              : _create,
-                                        ),
-                                        const SizedBox(
-                                          height: UIConstants.headerPad,
-                                        ),
-                                        ..._providers(
-                                          _initStatus?.oauths,
-                                          Theme.of(context).textTheme,
-                                          locale,
-                                        ),
-                                      ],
-                                    ),
-                            ],
-                          ),
-                  ],
+                                ],
+                              ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -200,12 +205,16 @@ class _LoginState extends State<LoginPage> {
       _url = url;
       _urlError = null;
       _loginError = null;
-      _status = SubmissionStatus.waiting;
+      _status = SubmissionStatus.unkown;
     });
 
     if (url.isNotEmpty) {
       // Launch the urlchanged handler with a delay
       // To only call when the user has finished typing and allows giving feedback
+      setState(() {
+        _status = SubmissionStatus.waiting;
+      });
+
       _operation = Timer(Duration(seconds: 1), () async {
         await _urlChanged(url);
       });
@@ -219,43 +228,22 @@ class _LoginState extends State<LoginPage> {
     }
 
     try {
-      var isInit = await Dependencies.services.helper.isInit(uri);
+      var isInit = await Dependencies.logics.authentication.checkUrl(uri);
 
-      if (mounted) {
-        setState(() {
-          _initStatus = isInit;
-        });
+      if (!mounted) {
+        return;
       }
 
-      // If the server is init or not
-      // Todo use the loaded stream
-      var needsLogging = await Dependencies.logics.authentication
-          .checkIfNeedsLogging();
-      if (isInit != null && isInit.init == true && mounted && needsLogging) {
-        if (isInit.oauths.isNotEmpty) {
-          // Start the oauth login procedure
-          var autologin = isInit.oauths.firstWhereOrNull((x) => x.autoLogin);
-          if (autologin != null) {
-            await _submitOauth(autologin);
-          }
-        } else if (isInit.externalAuth == true) {
-          // directly start the login procedure
-          await _submit('Header');
-        }
-      }
-
-      if (mounted) {
-        setState(() {
-          _status = ((isInit?.init == null)
-              ? SubmissionStatus.waiting
-              : SubmissionStatus.initial);
-        });
-      }
+      setState(() {
+        _status = ((isInit?.init == null)
+            ? SubmissionStatus.unkown
+            : SubmissionStatus.initial);
+      });
     } catch (ex) {
       if (mounted) {
         final locale = Translation.of(context);
         setState(() {
-          _status = SubmissionStatus.waiting;
+          _status = SubmissionStatus.unkown;
           _urlError = locale.invalid(locale.url);
         });
       }
@@ -264,6 +252,7 @@ class _LoginState extends State<LoginPage> {
 
   /// Prefill the url from storage or other
   Future<void> _initUrl() async {
+    log('Init url');
     // We first try to get it from storage
     var url = Dependencies.logics.authentication.getUrl();
 
@@ -284,21 +273,20 @@ class _LoginState extends State<LoginPage> {
 
   Future<void> _submitOauth(OauthConnection oauth) async {
     final locale = Translation.of(context);
-    var init = _initStatus;
+    var init = Dependencies.blocs.server.state;
     var url = _url;
     if (init != null && url != null) {
       _start();
       try {
-        var grant = await Dependencies.services.authService.getGrant(
-          url,
-          oauth,
-        );
-        if (grant != null) {
-          await _submit(grant);
-        }
-
-        return;
+        await Dependencies.logics.authentication.submitOauth(url, oauth, init);
+        _success();
       } catch (ex) {
+        log('error of login: $ex');
+        // clear any info about the login
+        await Dependencies.logics.authentication.clean();
+        Dependencies.logics.authentication.setNoAuth();
+
+        _reset(error: "Login failed");
         Notify.show(
           locale.error(ex.toString()),
           context: mounted ? context : null,
@@ -327,6 +315,7 @@ class _LoginState extends State<LoginPage> {
   }
 
   void _success() {
+    log('Login successful');
     setState(() {
       _status = SubmissionStatus.success;
     });
@@ -367,7 +356,8 @@ class _LoginState extends State<LoginPage> {
     } catch (ex) {
       log('error of login: $ex');
       // clear any info about the login
-      await Dependencies.logics.authentication.logOutLocal();
+      await Dependencies.logics.authentication.clean();
+      Dependencies.logics.authentication.setNoAuth();
 
       // we start the login process again
       _reset(error: "Login failed");
@@ -401,37 +391,8 @@ class _LoginState extends State<LoginPage> {
     } catch (ex) {
       log('error of login: $ex');
       // clear any info about the login
-      await Dependencies.logics.authentication.logOutLocal();
-
-      _reset(error: "Login failed");
-    }
-  }
-
-  Future<void> _submit(String oAuth) async {
-    _start();
-
-    log("Oauth in progress");
-
-    var init = _initStatus?.init;
-    var url = _url;
-    if (init == null || url == null) {
-      _reset();
-      return;
-    }
-
-    var password = oAuth;
-
-    try {
-      await Dependencies.logics.authentication.startOauthLogin(
-        token: password,
-        url: url,
-      );
-
-      _success();
-    } catch (ex) {
-      log('error of login: $ex');
-      // clear any info about the login
-      await Dependencies.logics.authentication.logOutLocal();
+      await Dependencies.logics.authentication.clean();
+      Dependencies.logics.authentication.setNoAuth();
 
       _reset(error: "Login failed");
     }

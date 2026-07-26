@@ -50,6 +50,7 @@ class TaskStatusDialog extends StatelessWidget {
         icon = Icons.hourglass_top_sharp;
       case SubmissionStatus.waiting:
       case SubmissionStatus.skipped:
+      case SubmissionStatus.unkown:
         icon = Icons.hourglass_disabled_sharp;
     }
 

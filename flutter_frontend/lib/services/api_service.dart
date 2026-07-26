@@ -50,7 +50,7 @@ abstract class ApiService {
       switch (response.statusCode) {
         case 401:
           // no auth, we remove the token and return null;
-          Dependencies.logics.authentication.logOut(false);
+          Dependencies.logics.authentication.logOutLocal();
           result = null;
           break;
         default:
@@ -79,6 +79,7 @@ abstract class ApiService {
     var connection = response.body;
     if (connection != null) {
       var token = ConnectionResponse(
+        id: connection.id,
         accessToken: connection.accessToken,
         roles: connection.roles,
         refreshToken: settings?.refreshToken,
@@ -87,6 +88,19 @@ abstract class ApiService {
       return token.accessToken;
     }
     return null;
+  }
+
+  Helseapi getApi(Uri url, String? token) {
+    if (token == null) {
+      return Helseapi.create(baseUrl: url);
+    }
+
+    return Helseapi.create(
+      baseUrl: url,
+      interceptors: [
+        HeadersInterceptor({'Authorization': 'Bearer $token'}),
+      ],
+    );
   }
 
   Future<Helseapi> getService({Uri? override, bool sendRefresh = false}) async {
@@ -104,12 +118,8 @@ abstract class ApiService {
         token = await _refreshToken(settings, url);
       }
     }
-    return Helseapi.create(
-      baseUrl: url,
-      interceptors: [
-        HeadersInterceptor({'Authorization': 'Bearer $token'}),
-      ],
-    );
+
+    return getApi(url, token);
   }
 
   bool _isExpired(String token) {

@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/settings/base_settings_logic.dart';
 import 'package:helse/logic/settings/health_settings.dart';
@@ -27,9 +28,7 @@ class SettingsLogic extends BaseSettingsLogic {
   static const fitRun = "fitLastRun";
   static const health = 'health';
 
-  final SettingsBloc<InterfaceTheme> themebloc = SettingsBloc(
-    InterfaceTheme.system,
-  );
+  final SettingsBloc<ThemeMode> themebloc = SettingsBloc(ThemeMode.system);
   final SettingsBloc<bool> events = SettingsBloc(false);
   final SettingsBloc<bool> metrics = SettingsBloc(false);
   bool init = false;
@@ -56,7 +55,7 @@ class SettingsLogic extends BaseSettingsLogic {
   Future<void> saveTheme(InterfaceTheme theme) async {
     var settings = userSettings();
     await saveSettings(settings.copyWith(theme: theme), true);
-    themebloc.changed(theme);
+    themebloc.changed(ThemeHelper.toSystem(theme));
   }
 
   Future<void> saveSettings(UserSettings settings, bool toServer) async {
@@ -75,7 +74,9 @@ class SettingsLogic extends BaseSettingsLogic {
     Dependencies.theme.loadColors(getColors());
     metrics.changed(true);
     events.changed(true);
-    themebloc.changed(serverSettings.theme ?? InterfaceTheme.system);
+    themebloc.changed(
+      ThemeHelper.toSystem(serverSettings.theme ?? InterfaceTheme.system),
+    );
   }
 
   UserSettings userSettings() {
