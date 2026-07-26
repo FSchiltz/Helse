@@ -109,10 +109,6 @@ internal static class AuthLogic
     /// If false, some steps are missing:
     ///     - Missing first user
     /// </summary>
-    /// <param name="settings"></param>
-    /// <param name="context"></param>
-    /// <param name="logger"></param>
-    /// <returns></returns>
     public static async Task<IResult> StatusAsync(ISettingsContext settings, IUserContext users, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger(nameof(AuthLogic));
@@ -152,10 +148,10 @@ internal static class AuthLogic
     {
         if (longLife)
         {
-            return DateTime.UtcNow.AddDays(30);
+            return DateTime.UtcNow.AddSeconds(30);
         }
 
-        return DateTime.UtcNow.AddMinutes(10);
+        return DateTime.UtcNow.AddSeconds(10);
     }
 
     public static async Task<IResult> RefreshAsync(IUserContext users, TokenService token, HttpContext context, ILoggerFactory logger)

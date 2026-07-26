@@ -3036,7 +3036,10 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "accessToken": {
             "type": "string"

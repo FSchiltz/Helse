@@ -2414,7 +2414,7 @@ extension $ConnectionExtension on Connection {
 @JsonSerializable(explicitToJson: true)
 class ConnectionResponse {
   const ConnectionResponse({
-    required this.id,
+    this.id,
     required this.accessToken,
     this.refreshToken,
     required this.roles,
@@ -2427,7 +2427,7 @@ class ConnectionResponse {
   Map<String, dynamic> toJson() => _$ConnectionResponseToJson(this);
 
   @JsonKey(name: 'id')
-  final String id;
+  final String? id;
   @JsonKey(name: 'accessToken')
   final String accessToken;
   @JsonKey(name: 'refreshToken')
@@ -2488,7 +2488,7 @@ extension $ConnectionResponseExtension on ConnectionResponse {
   }
 
   ConnectionResponse copyWithWrapped({
-    Wrapped<String>? id,
+    Wrapped<String?>? id,
     Wrapped<String>? accessToken,
     Wrapped<String?>? refreshToken,
     Wrapped<List<enums.UserType>>? roles,

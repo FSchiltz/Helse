@@ -60,7 +60,7 @@ class AuthenticationLogic {
       if (token.id != account.get(Account.id)) {
         // if the user is different than the last one clear the settings
         await account.clear();
-        await account.set(Account.id, token.id);
+        await account.set(Account.id, token.id ?? '');
       } else {
         await account.remove(Account.grant);
       }

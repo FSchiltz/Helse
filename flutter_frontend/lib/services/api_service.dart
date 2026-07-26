@@ -90,6 +90,19 @@ abstract class ApiService {
     return null;
   }
 
+  Helseapi getApi(Uri url, String? token) {
+    if (token == null) {
+      return Helseapi.create(baseUrl: url);
+    }
+
+    return Helseapi.create(
+      baseUrl: url,
+      interceptors: [
+        HeadersInterceptor({'Authorization': 'Bearer $token'}),
+      ],
+    );
+  }
+
   Future<Helseapi> getService({Uri? override, bool sendRefresh = false}) async {
     var url = override ?? Uri.parse(account.get(Account.url) ?? '');
 
@@ -105,12 +118,8 @@ abstract class ApiService {
         token = await _refreshToken(settings, url);
       }
     }
-    return Helseapi.create(
-      baseUrl: url,
-      interceptors: [
-        HeadersInterceptor({'Authorization': 'Bearer $token'}),
-      ],
-    );
+
+    return getApi(url, token);
   }
 
   bool _isExpired(String token) {
