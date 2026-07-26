@@ -2,12 +2,12 @@ import 'dart:developer';
 import 'dart:math' as math show min, max;
 
 import 'package:health/health.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/event.dart';
 import 'package:helse/logic/fit/fit_constants.dart';
 import 'package:helse/logic/fit/fit_helper.dart';
 import 'package:helse/logic/task_bloc.dart';
 import 'package:helse/logic/settings/settings_logic.dart';
-import 'package:helse/services/import_service.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -15,9 +15,8 @@ import '../../services/swagger/generated_code/helseapi.swagger.dart';
 
 class HealthConnectLogic {
   final SettingsLogic settingsLogic;
-  final ImportService importService;
 
-  HealthConnectLogic(this.settingsLogic, this.importService);
+  HealthConnectLogic(this.settingsLogic);
 
   Future<void> requestPermissions() async {
     var health = Health();
@@ -176,7 +175,7 @@ class HealthConnectLogic {
           ? events.sublist(start, math.min(start + chunkSize, events.length))
           : <CreateEvent>[];
 
-      final result = await importService.importData(
+      final result = await Dependencies.services.import.importData(
         ImportData(metrics: metricChunk, events: eventChunk),
       );
 

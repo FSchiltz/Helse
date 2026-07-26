@@ -1,5 +1,14 @@
 import 'package:helse/services/account.dart';
 import 'package:helse/services/admin_service.dart';
+import 'package:helse/services/api/api_admin_service.dart';
+import 'package:helse/services/api/api_common_service.dart';
+import 'package:helse/services/api/api_event_service.dart';
+import 'package:helse/services/api/api_file_service.dart';
+import 'package:helse/services/api/api_helper_service.dart';
+import 'package:helse/services/api/api_import_service.dart';
+import 'package:helse/services/api/api_metric_service.dart';
+import 'package:helse/services/api/api_oauth_service.dart';
+import 'package:helse/services/api/api_setting_service.dart';
 import 'package:helse/services/common_service.dart';
 import 'package:helse/services/event_service.dart';
 import 'package:helse/services/file_service.dart';
@@ -7,7 +16,8 @@ import 'package:helse/services/helper_service.dart';
 import 'package:helse/services/import_service.dart';
 import 'package:helse/services/metric_service.dart';
 import 'package:helse/services/oauth_service.dart';
-import 'package:helse/services/setting_service.dart';
+import 'package:helse/services/settings_services.dart';
+import 'package:helse/services/api/api_user_service.dart';
 import 'package:helse/services/user_service.dart';
 
 class Services {
@@ -35,18 +45,33 @@ class Services {
     this.files,
   );
 
-  factory Services(Account account) {
+  factory Services.online(Account account) {
     return Services.build(
-      OauthService(account),
-      MetricService(account),
-      HelperService(account),
-      EventService(account),
-      UserService(account),
-      AdminService(account),
-      ImportService(account),
-      SettingService(account),
-      CommonService(account),
-      FileService(account),
+      ApiOauthService(account),
+      ApiMetricService(account),
+      ApiHelperService(account),
+      ApiEventService(account),
+      ApiUserService(account),
+      ApiAdminService(account),
+      ApiImportService(account),
+      ApiSettingService(account),
+      ApiCommonService(account),
+      ApiFileService(account),
+    );
+  }
+
+  factory Services.offline(Account account) {
+    return Services.build(
+      LocalOauthService(account),
+      LocalMetricService(account),
+      LocalHelperService(account),
+      LocalEventService(account),
+      LocalUserService(account),
+      LocalAdminService(account),
+      LocalImportService(account),
+      LocalSettingService(account),
+      LocalCommonService(account),
+      LocalFileService(account),
     );
   }
 }

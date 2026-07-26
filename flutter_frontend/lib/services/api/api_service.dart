@@ -3,8 +3,8 @@ import 'dart:developer';
 import 'package:chopper/chopper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import '../di/dependencies.dart';
-import 'account.dart';
+import '../../di/dependencies.dart';
+import '../account.dart';
 
 class ServiceError {
   final String message;

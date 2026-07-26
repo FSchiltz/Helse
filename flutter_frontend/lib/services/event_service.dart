@@ -1,122 +1,61 @@
-import 'package:helse/services/api_service.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
-import 'swagger/generated_code/helseapi.swagger.dart';
+abstract interface class EventService {
+  Future<List<EventType>?> eventsType(bool all);
 
-class EventService extends ApiService {
-  EventService(super.account);
+  Future<void> addEventsType(CreateEventType event);
 
-  Future<List<EventType>?> eventsType(bool all) async {
-    var api = await getService();
-    return await call(() => api.apiEventsTypeGet(all: all));
-  }
+  Future<void> updateEventsType(UpdateEventType event);
 
-  Future<void> addEventsType(CreateEventType event) async {
-    var api = await getService();
-    await call(() => api.apiEventsTypePost(body: event));
-  }
-
-  Future<void> updateEventsType(UpdateEventType event) async {
-    var api = await getService();
-    await call(() => api.apiEventsTypePut(body: event));
-  }
-
-  Future<void> deleteEventsType(int event) async {
-    var api = await getService();
-    await call(() => api.apiEventsTypeIdDelete(id: event));
-  }
+  Future<void> deleteEventsType(int event);
 
   Future<List<Event>?> events(
     int? type,
     DateTime? start,
     DateTime? end, {
     int? person,
-  }) async {
-    var api = await getService();
-    return await call(
-      () => api.apiEventsGet(
-        type: type,
-        start: start?.toUtc(),
-        end: end?.toUtc(),
-        personId: person,
-      ),
-    );
-  }
+  });
 
   Future<EventStats?> eventsSummary(
     int? type,
     DateTime? start,
     DateTime? end, {
     int? person,
-  }) async {
-    var api = await getService();
-    return await call(
-      () => api.apiEventsSummaryGet(
-        type: type,
-        start: start?.toUtc(),
-        end: end?.toUtc(),
-        personId: person,
-      ),
-    );
-  }
+  });
 
-  Future<List<Event>?> agenda(DateTime? start, DateTime? end) async {
-    var api = await getService();
-    return await call(
-      () => api.apiPatientsAgendaGet(start: start?.toUtc(), end: end?.toUtc()),
-    );
-  }
+  Future<List<Event>?> agenda(
+    DateTime? start,
+    DateTime? end,
+  );
 
-  Future<int?> addEvent(CreateEvent event, {int? person}) async {
-    var api = await getService();
-    return await call(() => api.apiEventsPost(body: event, personId: person));
-  }
+  Future<int?> addEvent(
+    CreateEvent event, {
+    int? person,
+  });
 
-  Future<void> updateEvent(UpdateEvent event) async {
-    var api = await getService();
-    await call(() => api.apiEventsPut(body: event));
-  }
+  Future<void> updateEvent(UpdateEvent event);
 
-  Future<void> deleteEvent(int event) async {
-    var api = await getService();
-    await call(() => api.apiEventsIdDelete(id: event));
-  }
+  Future<void> deleteEvent(int event);
 
   Future<List<Event>?> searchEvents(
     int? person,
     SearchEvent search,
     int page,
     int pageSize,
-  ) async {
-    var api = await getService();
-    return await call(
-      () => api.apiEventsSearchPost(
-        body: search,
-        personId: person,
-        page: page,
-        pageSize: pageSize,
-      ),
-    );
-  }
+  );
 
-  Future<int?> countEvents(int? person, SearchEvent search) async {
-    var api = await getService();
-    return await call(
-      () => api.apiEventsCountPost(body: search, personId: person),
-    );
-  }
+  Future<int?> countEvents(
+    int? person,
+    SearchEvent search,
+  );
 
-  Future<void> deleteEvents(List<Event> events, {int? person}) async {
-    var api = await getService();
-    await call(
-      () => api.apiEventsDeletePost(
-        body: events.map((e) => e.id).toList(),
-        person: person,
-      ),
-    );
-  }
+  Future<void> deleteEvents(
+    List<Event> events, {
+    int? person,
+  });
 
-  Future<void> updateEvents(PatchEvent patch, {int? person}) async {
-    var api = await getService();
-    await call(() => api.apiEventsUpdatePut(body: patch, personId: person));
-  }
+  Future<void> updateEvents(
+    PatchEvent patch, {
+    int? person,
+  });
 }

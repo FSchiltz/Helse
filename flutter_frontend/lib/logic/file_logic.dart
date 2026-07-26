@@ -3,15 +3,14 @@ import 'dart:io';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
-import 'package:helse/services/file_service.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/common/inputs/files/file_list_widget.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:http/http.dart';
 import 'package:open_file/open_file.dart';
 
 class FileLogic {
-  final FileService files;
-  FileLogic(this.files);
+  FileLogic();
 
   Future<MultipartFile> extract(XFile file) async {
     var content = await file.readAsBytes();
@@ -34,13 +33,17 @@ class FileLogic {
       var fileId = file.id;
 
       if (fileId == null) {
-        fileId = await files.postFile(file, person) ?? 0;
+        fileId = await Dependencies.services.files.postFile(file, person) ?? 0;
 
         file.id = fileId;
       }
 
       if (file.file != null) {
-        await files.postFileData(fileId, file.file!, person);
+        await Dependencies.services.files.postFileData(
+          fileId,
+          file.file!,
+          person,
+        );
 
         file.file = null;
       }
@@ -59,7 +62,7 @@ class FileLogic {
   }
 
   Future<void> download(int id, String fileName, int? person) async {
-    final file = await files.getData(id, person);
+    final file = await Dependencies.services.files.getData(id, person);
     if (file == null) {
       return;
     }
@@ -67,7 +70,8 @@ class FileLogic {
     bool open = !kIsWeb;
     String? path;
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-      path = '/storage/emulated/0/Download${Platform.pathSeparator}$id-$fileName';
+      path =
+          '/storage/emulated/0/Download${Platform.pathSeparator}$id-$fileName';
     } else {
       final FileSaveLocation? result = await getSaveLocation(
         suggestedName: fileName,

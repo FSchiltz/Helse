@@ -48,7 +48,7 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
       _eventTypeCounts = events.eventCounts;
     }
 
-    var metrics = await Dependencies.services.admin.getmetricStats(start, end);
+    var metrics = await Dependencies.services.admin.getMetricStats(start, end);
     if (metrics != null) {
       _metricSummaries = metrics.events;
       _metricTypeCounts = metrics.eventCounts;

@@ -18,7 +18,7 @@ void main() {
     importService = MockImportService();
     settingsLogic = MockSettingsLogic();
 
-    fitLogic = HealthConnectLogic(settingsLogic, importService);
+    fitLogic = HealthConnectLogic(settingsLogic);
   });
 
   setUpAll(() {

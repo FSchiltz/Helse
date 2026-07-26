@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:collection/collection.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/settings/base_settings_logic.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
@@ -9,7 +10,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
   static const patientsName = 'patients';
   bool init = false;
 
-  PatientsSettingsLogic(super.account, super.service);
+  PatientsSettingsLogic(super.account);
 
   Future<void> savePatientsSettings(
     PatientSettings settings,
@@ -29,7 +30,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
     }
 
     if (toServer) {
-      await service.savePatientsSettings(full);
+      await Dependencies.services.settings.savePatientsSettings(full);
     }
 
     await save(patientsName, full.toJson());
@@ -108,7 +109,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
   }
 
   Future<void> loadSettings() async {
-    var serverSettings = await service.getPatientsSettings();
+    var serverSettings = await Dependencies.services.settings.getPatientsSettings();
     log("Patients settings loaded from server", name: "Settings");
 
     await save(patientsName, serverSettings.toJson());

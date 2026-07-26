@@ -24,13 +24,13 @@ class Logics {
   );
 
   factory Logics(Account account, Services service) {
-    final settings = SettingsLogic(account, service.settings);
+    final settings = SettingsLogic(account);
     return Logics.build(
       AuthenticationLogic(account),
       settings,
-      HealthConnectLogic(settings, service.import),
-      PatientsSettingsLogic(account, service.settings),
-      FileLogic(service.files)
+      HealthConnectLogic(settings),
+      PatientsSettingsLogic(account),
+      FileLogic()
     );
   }
 }

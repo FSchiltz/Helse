@@ -42,7 +42,7 @@ class Dependencies {
     var account = Account();
 
     await Account.setup();
-    _services = Services(account);
+    _services = Services.online(account);
     _logics = Logics(account, services);
     _blocs = Blocs(logics);
     

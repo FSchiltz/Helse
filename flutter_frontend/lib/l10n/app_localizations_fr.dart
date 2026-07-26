@@ -362,4 +362,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get fromExisting => 'From existing';
+
+  @override
+  String get offline => 'Use the app offline';
 }

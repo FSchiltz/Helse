@@ -4,9 +4,8 @@ import 'package:app_links/app_links.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:helse/logic/account/settings_migration.dart';
-import 'package:helse/services/login_service.dart';
+import 'package:helse/services/api/api_login_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:helse/services/user_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:helse/helpers/url_dummy.dart'
     if (dart.library.html) 'package:helse/helpers/url.dart';
@@ -24,8 +23,6 @@ class AuthenticationLogic {
   AuthenticationLogic(this.account);
 
   Stream<AuthenticationStatus> get status => _controller.stream;
-
-  UserService _api() => UserService(account);
 
   /// Check if the user is logged in
   Future<bool> checkLogin() async {
@@ -96,7 +93,7 @@ class AuthenticationLogic {
     required PersonCreation person,
   }) async {
     await account.set(Account.url, url);
-    await _api().addPerson(person);
+    await Dependencies.services.user.addPerson(person);
 
     // after a succes, we auto login
     await logIn(
@@ -271,5 +268,10 @@ class AuthenticationLogic {
 
   void resetAuth() {
     _controller.add(AuthenticationStatus.unknown);
+  }
+
+  void useOffline() {
+    Dependencies.blocs.server.setOffline();
+    setAuth();
   }
 }

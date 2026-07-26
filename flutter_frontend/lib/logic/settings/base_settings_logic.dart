@@ -1,14 +1,12 @@
 import 'dart:convert';
 import 'package:helse/services/account.dart';
-import 'package:helse/services/setting_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class BaseSettingsLogic {
   final Account account;
-  final SettingService service;
   final int settingsVersion = 2;
 
-  BaseSettingsLogic(this.account, this.service);
+  BaseSettingsLogic(this.account);
 
   Future<void> save(String key, Map<String, dynamic> data) async {
     await Account.storage.setString(key, json.encode(data));

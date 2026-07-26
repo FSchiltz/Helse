@@ -1,86 +1,31 @@
-import 'api_service.dart';
-import 'swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
-class MetricService extends ApiService {
-  MetricService(super.account);
+abstract interface class MetricService {
+  Future<List<MetricType>?> metricsType(
+    bool all,
+    int? group,
+  );
 
-  Future<List<MetricType>?> metricsType(bool all, int? group) async {
-    var api = await getService();
-    return await call(() => api.apiMetricsTypeGet(all: all, group: group));
-  }
+  Future<void> addMetricsType(CreateMetricType metric);
 
-  Future<void> deleteMetric(int id) async {
-    var api = await getService();
-    await call(() => api.apiMetricsIdDelete(id: id));
-  }
+  Future<void> updateMetricsType(UpdateMetricType metric);
 
-  Future<void> deleteMetrics(List<Metric> events, {int? person}) async {
-    var api = await getService();
-    await call(
-      () => api.apiMetricsDeletePost(
-        body: events.map((e) => e.id).toList(),
-        person: person,
-      ),
-    );
-  }
+  Future<void> deleteMetricsType(int metric);
 
-  Future<void> addMetricsType(CreateMetricType metric) async {
-    var api = await getService();
-    await call(() => api.apiMetricsTypePost(body: metric));
-  }
+  Future<List<Group>?> metricsGroup();
 
-  Future<void> updateMetricsType(UpdateMetricType metric) async {
-    var api = await getService();
-    await call(() => api.apiMetricsTypePut(body: metric));
-  }
+  Future<void> addGroup(CreateGroup metric);
 
-  Future<void> deleteMetricsType(int metric) async {
-    var api = await getService();
-    await call(() => api.apiMetricsTypeIdDelete(id: metric));
-  }
+  Future<void> updateGroup(UpdateGroup metric);
 
-  Future<List<Metric>?> searchMetrics(
-    int? person,
-    SearchMetric search,
-    int page,
-    int pageSize,
-  ) async {
-    var api = await getService();
-    return await call(
-      () => api.apiMetricsSearchPost(
-        body: search,
-        personId: person,
-        page: page,
-        pageSize: pageSize,
-      ),
-    );
-  }
-
-  Future<int?> countMetrics(int? person, SearchMetric search) async {
-    var api = await getService();
-    return await call(
-      () => api.apiMetricsCountPost(body: search, personId: person),
-    );
-  }
+  Future<void> deleteMetricsGroup(int metric);
 
   Future<List<Metric>> metrics(
     int? type,
     DateTime? start,
     DateTime? end, {
     int? person,
-  }) async {
-    var api = await getService();
-    List<Metric>? metrics = await call(
-      () => api.apiMetricsGet(
-        type: type,
-        start: start?.toUtc(),
-        end: end?.toUtc(),
-        personId: person,
-      ),
-    );
-
-    return metrics ?? [];
-  }
+  });
 
   Future<MetricSummaries> metricSummaries(
     int? type,
@@ -88,52 +33,36 @@ class MetricService extends ApiService {
     DateTime? end, {
     int? person,
     int? tile,
-  }) async {
-    var api = await getService();
-    return await call(
-          () => api.apiMetricsSummaryGet(
-            tile: tile,
-            type: type,
-            start: start?.toUtc(),
-            end: end?.toUtc(),
-            personId: person,
-          ),
-        ) ??
-        MetricSummaries(metrics: []);
-  }
+  });
 
-  Future<int?> addMetrics(CreateMetric metric, {int? person}) async {
-    var api = await getService();
-    return await call(() => api.apiMetricsPost(body: metric, personId: person));
-  }
+  Future<int?> addMetrics(
+    CreateMetric metric, {
+    int? person,
+  });
 
-  Future<void> updateMetric(UpdateMetric metric) async {
-    var api = await getService();
-    await call(() => api.apiMetricsPut(body: metric));
-  }
+  Future<void> updateMetric(UpdateMetric metric);
 
-  Future<void> updateMetrics(PatchMetric patch, {int? person}) async {
-    var api = await getService();
-    await call(() => api.apiMetricsUpdatePut(body: patch, personId: person));
-  }
+  Future<void> deleteMetric(int id);
 
-  Future<void> addGroup(CreateGroup metric) async {
-    var api = await getService();
-    await call(() => api.apiMetricsGroupsPost(body: metric));
-  }
+  Future<void> deleteMetrics(
+    List<Metric> metrics, {
+    int? person,
+  });
 
-  Future<void> updateGroup(UpdateGroup metric) async {
-    var api = await getService();
-    await call(() => api.apiMetricsGroupsPut(body: metric));
-  }
+  Future<List<Metric>?> searchMetrics(
+    int? person,
+    SearchMetric search,
+    int page,
+    int pageSize,
+  );
 
-  Future<void> deleteMetricsGroup(int metric) async {
-    var api = await getService();
-    await call(() => api.apiMetricsGroupsIdDelete(id: metric));
-  }
+  Future<int?> countMetrics(
+    int? person,
+    SearchMetric search,
+  );
 
-  Future<List<Group>?> metricsGroup() async {
-    var api = await getService();
-    return await call(() => api.apiMetricsGroupsGet());
-  }
+  Future<void> updateMetrics(
+    PatchMetric patch, {
+    int? person,
+  });
 }

@@ -84,6 +84,12 @@ class _LoginState extends State<LoginPage> {
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
                       const SizedBox(height: UIConstants.headerPad),
+                      SquareButton(
+                        locale.offline,
+                        _useOffline,
+                        icon: Icons.location_off_outlined,
+                      ),
+                      const SizedBox(height: UIConstants.headerPad),
                       SquareTextField(
                         label: locale.serverurl,
                         controller: _urlController,
@@ -93,82 +99,8 @@ class _LoginState extends State<LoginPage> {
                         key: const Key('loginForm_urlInput_textField'),
                         errorText: _urlError,
                       ),
-                      const SizedBox(height: UIConstants.headerPad),
                       if (_status != SubmissionStatus.unkown)
-                        (_status == SubmissionStatus.waiting)
-                            ? const HelseLoader()
-                            : Column(
-                                children: [
-                                  (status.state?.init == true)
-                                      ? Column(
-                                          children: [
-                                            UserNameInput(
-                                              controller: _controllerUsername,
-                                              validate: validateUserName,
-                                            ),
-                                            PasswordInput(
-                                              controller: _controllerPassword,
-                                              error: _loginError,
-                                            ),
-                                          ],
-                                        )
-                                      : Column(
-                                          children: [
-                                            Text(
-                                              locale.createAccount,
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.headlineLarge,
-                                            ),
-                                            Text(
-                                              locale.adminDescription,
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.bodyLarge,
-                                            ),
-                                            const SizedBox(
-                                              height: UIConstants.headerPad,
-                                            ),
-                                            UserForm(
-                                              [UserType.admin],
-                                              controllerUsername:
-                                                  _controllerUsername,
-                                              controllerEmail: _controllerEmail,
-                                              controllerPassword:
-                                                  _controllerPassword,
-                                              controllerConFirmPassword:
-                                                  _controllerConFirmPassword,
-                                              controllerName: _controllerName,
-                                              controllerSurname:
-                                                  _controllerSurname,
-                                            ),
-                                          ],
-                                        ),
-                                  const SizedBox(height: UIConstants.headerPad),
-                                  _status == SubmissionStatus.inProgress
-                                      ? const HelseLoader()
-                                      : Column(
-                                          children: [
-                                            SquareButton(
-                                              status.state?.init == true
-                                                  ? locale.login
-                                                  : locale.create,
-                                              status.state?.init == true
-                                                  ? _login
-                                                  : _create,
-                                            ),
-                                            const SizedBox(
-                                              height: UIConstants.headerPad,
-                                            ),
-                                            ..._providers(
-                                              status.state?.oauths,
-                                              Theme.of(context).textTheme,
-                                              locale,
-                                            ),
-                                          ],
-                                        ),
-                                ],
-                              ),
+                        ..._getLoginForm(locale, status.state),
                     ],
                   ),
                 ),
@@ -410,5 +342,63 @@ class _LoginState extends State<LoginPage> {
           (o) => SquareButton(locale.loginwith(o.name), () => _submitOauth(o)),
         )
         .toList();
+  }
+
+  void _useOffline() {
+    Dependencies.logics.authentication.useOffline();
+  }
+
+  List<Widget> _getLoginForm(AppLocalizations locale, Status? state) {
+    if (_status == SubmissionStatus.waiting) return [const HelseLoader()];
+
+    final List<Widget> widgets;
+
+    if (state?.init == true) {
+      widgets = [
+        UserNameInput(
+          controller: _controllerUsername,
+          validate: validateUserName,
+        ),
+        PasswordInput(controller: _controllerPassword, error: _loginError),
+      ];
+    } else {
+      widgets = [
+        Text(
+          locale.createAccount,
+          style: Theme.of(context).textTheme.headlineLarge,
+        ),
+        Text(
+          locale.adminDescription,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+        const SizedBox(height: UIConstants.headerPad),
+        UserForm(
+          [UserType.admin],
+          controllerUsername: _controllerUsername,
+          controllerEmail: _controllerEmail,
+          controllerPassword: _controllerPassword,
+          controllerConFirmPassword: _controllerConFirmPassword,
+          controllerName: _controllerName,
+          controllerSurname: _controllerSurname,
+        ),
+      ];
+    }
+
+    if (_status == SubmissionStatus.inProgress) {
+      widgets.add(const HelseLoader());
+    } else {
+      widgets.add(
+        SquareButton(
+          state?.init == true ? locale.login : locale.create,
+          state?.init == true ? _login : _create,
+        ),
+      );
+    }
+
+    widgets.addAll(
+      _providers(state?.oauths, Theme.of(context).textTheme, locale),
+    );
+
+    return widgets;
   }
 }
