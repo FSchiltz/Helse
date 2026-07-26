@@ -16,9 +16,10 @@ class Dependencies {
     return a;
   }
 
-  static Services? _services;
+  static Services? _online;
+  static Services? _offline;
   static Services get services {
-    var a = _services;
+    var a = blocs.server.isOffline ? _offline : _online;
     if (a == null) {
       throw Exception("Invalid access");
     }
@@ -42,10 +43,11 @@ class Dependencies {
     var account = Account();
 
     await Account.setup();
-    _services = Services.online(account);
+    _online = Services.online(account);
+    _offline = Services.offline(account);
     _logics = Logics(account, services);
     _blocs = Blocs(logics);
-    
+
     await Notify.init();
   }
 }

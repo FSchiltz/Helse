@@ -11,6 +11,8 @@ class ServerStatus {
 class ServerState extends Cubit<ServerStatus> {
   ServerState() : super(ServerStatus(null, false));
 
+  bool get isOffline => state.offline;
+
   void setStatus(Status? state) {
     emit(ServerStatus(state, false));
   }
