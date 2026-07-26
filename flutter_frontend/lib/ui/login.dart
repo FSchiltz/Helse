@@ -77,8 +77,8 @@ class _LoginState extends State<LoginPage> {
                 child: Container(
                   constraints: const BoxConstraints(maxWidth: 500),
                   child: Column(
+                    spacing: UIConstants.formPad,
                     children: [
-                      const SizedBox(height: UIConstants.formPad),
                       Text(
                         locale.welcome,
                         style: Theme.of(context).textTheme.headlineLarge,
@@ -105,9 +105,6 @@ class _LoginState extends State<LoginPage> {
                                             UserNameInput(
                                               controller: _controllerUsername,
                                               validate: validateUserName,
-                                            ),
-                                            const SizedBox(
-                                              height: UIConstants.formPad,
                                             ),
                                             PasswordInput(
                                               controller: _controllerPassword,
