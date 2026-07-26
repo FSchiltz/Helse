@@ -284,6 +284,7 @@ class _LoginState extends State<LoginPage> {
         log('error of login: $ex');
         // clear any info about the login
         await Dependencies.logics.authentication.clean();
+        Dependencies.logics.authentication.setNoAuth();
 
         _reset(error: "Login failed");
         Notify.show(
@@ -356,6 +357,7 @@ class _LoginState extends State<LoginPage> {
       log('error of login: $ex');
       // clear any info about the login
       await Dependencies.logics.authentication.clean();
+      Dependencies.logics.authentication.setNoAuth();
 
       // we start the login process again
       _reset(error: "Login failed");
@@ -390,6 +392,7 @@ class _LoginState extends State<LoginPage> {
       log('error of login: $ex');
       // clear any info about the login
       await Dependencies.logics.authentication.clean();
+      Dependencies.logics.authentication.setNoAuth();
 
       _reset(error: "Login failed");
     }

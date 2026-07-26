@@ -62,8 +62,10 @@ class AuthenticationLogic {
     var token = await LoginService(account).login(connection);
 
     if (token != null && token.refreshToken != null) {
-      if (token.id != account.get(Account.id)) {
+      final oldUser = account.get(Account.id);
+      if (token.id != oldUser) {
         // if the user is different than the last one clear the settings
+        log('Clear old user settings');
         await account.clear();
         await account.set(Account.id, token.id ?? '');
       } else {
@@ -110,14 +112,15 @@ class AuthenticationLogic {
 
   /// Call the logout service
   Future<void> logOut(bool all) async {
+    log('Log out');
     await Dependencies.services.user.logout(all);
     await logOutLocal();
   }
 
   Future<void> clean() async {
+    log('Cleaned the settings');
     await account.clean();
     Dependencies.logics.settings.init = false;
-    setNoAuth();
   }
 
   Future<void> logOutLocal() async {

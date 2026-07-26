@@ -148,7 +148,7 @@ internal static class AuthLogic
     {
         if (longLife)
         {
-            return DateTime.UtcNow.AddMinutes(30);
+            return DateTime.UtcNow.AddHours(4);
         }
 
         return DateTime.UtcNow.AddMinutes(10);
