@@ -18,22 +18,13 @@ class LocalSettingService extends LocalService implements SettingService {
   }
 
   @override
-  Future<Gotify> gotify() {
-    // TODO: implement gotify
-    throw UnimplementedError();
-  }
+  Future<Gotify> gotify() async => Gotify();
 
   @override
-  Future<Oauth> oauth() {
-    // TODO: implement oauth
-    throw UnimplementedError();
-  }
+  Future<Oauth> oauth() async => Oauth();
 
   @override
-  Future<Proxy> proxy() {
-    // TODO: implement proxy
-    throw UnimplementedError();
-  }
+  Future<Proxy> proxy() async => Proxy();
 
   @override
   Future<void> savePatientsSettings(PatientsSettings settings) {
@@ -48,33 +39,17 @@ class LocalSettingService extends LocalService implements SettingService {
   }
 
   @override
-  Future<Smtp> smtp() {
-    // TODO: implement smtp
-    throw UnimplementedError();
-  }
+  Future<Smtp> smtp() async => Smtp();
 
   @override
-  Future<void> updateGotify(Gotify settings) {
-    // TODO: implement updateGotify
-    throw UnimplementedError();
-  }
+  Future<void> updateGotify(Gotify settings) async {}
 
   @override
-  Future<void> updateOauth(Oauth settings) {
-    // TODO: implement updateOauth
-    throw UnimplementedError();
-  }
+  Future<void> updateOauth(Oauth settings) async {}
 
   @override
-  Future<void> updateProxy(Proxy settings) {
-    // TODO: implement updateProxy
-    throw UnimplementedError();
-  }
+  Future<void> updateProxy(Proxy settings) async {}
 
   @override
-  Future<void> updateSmtp(Smtp settings) {
-    // TODO: implement updateSmtp
-    throw UnimplementedError();
-  }
-
+  Future<void> updateSmtp(Smtp settings) async {}
 }

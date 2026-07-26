@@ -6,18 +6,15 @@ class LocalOauthService extends LocalService implements OauthService {
   LocalOauthService(super.account);
 
   @override
-  Future<String?> getCode(Map<String, String> uri) {
-    // TODO: implement getCode
-    throw UnimplementedError();
+  Future<String?> getCode(Map<String, String> uri) async {
+    return '';
   }
 
   @override
-  Future<String?> getGrant(String url, OauthConnection oauth) {
-    // TODO: implement getGrant
-    throw UnimplementedError();
+  Future<String?> getGrant(String url, OauthConnection oauth) async {
+    return '';
   }
 
   @override
-  // TODO: implement redirectUrl
-  Uri get redirectUrl => throw UnimplementedError();
+  Uri get redirectUrl => Uri.base;
 }

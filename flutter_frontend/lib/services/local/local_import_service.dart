@@ -1,4 +1,4 @@
-import 'package:cross_file/src/types/interface.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:helse/services/import_service.dart';
 import 'package:helse/services/local/local_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';

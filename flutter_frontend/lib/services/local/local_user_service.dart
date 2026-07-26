@@ -24,16 +24,12 @@ class LocalUserService extends LocalService implements UserService {
   }
 
   @override
-  Future<List<Session>> getSessions() {
-    // TODO: implement getSessions
-    throw UnimplementedError();
+  Future<List<Session>> getSessions() async {
+    return [];
   }
 
   @override
-  Future<void> logout(bool all) {
-    // TODO: implement logout
-    throw UnimplementedError();
-  }
+  Future<void> logout(bool all) async {}
 
   @override
   Future<List<Person>?> patients() {
@@ -48,10 +44,11 @@ class LocalUserService extends LocalService implements UserService {
   }
 
   @override
-  Future<void> sharePatient({required int patient, required int caregiver, required bool edit}) {
-    // TODO: implement sharePatient
-    throw UnimplementedError();
-  }
+  Future<void> sharePatient({
+    required int patient,
+    required int caregiver,
+    required bool edit,
+  }) async {}
 
   @override
   Future<void> updatePatient(UpdatePatient update) {
