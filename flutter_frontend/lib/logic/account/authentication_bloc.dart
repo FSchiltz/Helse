@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import '../../di/dependencies.dart';
@@ -18,6 +19,7 @@ class AuthenticationBloc extends Cubit<AuthenticationStatus> {
   }
 
   Future<void> _onAuthenticationStatusChanged(AuthenticationStatus status) async {
+    log('Status changed to ${status.name}');
     emit(status);
   }
 }

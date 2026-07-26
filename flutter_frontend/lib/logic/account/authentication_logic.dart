@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:app_links/app_links.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:helse/logic/account/settings_migration.dart';
 import 'package:helse/services/login_service.dart';
@@ -22,20 +23,21 @@ class AuthenticationLogic {
 
   AuthenticationLogic(this.account);
 
-  Stream<AuthenticationStatus> get status async* {
-    yield AuthenticationStatus.unauthenticated;
-    yield* _controller.stream;
-  }
+  Stream<AuthenticationStatus> get status => _controller.stream;
 
   UserService _api() => UserService(account);
 
   /// Check if the user is logged in
   Future<bool> checkLogin() async {
+    if (getGrant() != null) {
+      return false;
+    }
+
     await SettingsMigration(account).migrate();
     var token = account.getToken()?.refreshToken;
     if (token != null && token.isNotEmpty && !JwtDecoder.isExpired(token)) {
       await _load();
-      _controller.add(AuthenticationStatus.authenticated);
+      setAuth();
 
       return true;
     }
@@ -43,8 +45,12 @@ class AuthenticationLogic {
     return false;
   }
 
-  void set(AuthenticationStatus status) {
-    _controller.add(status);
+  void setAuth() {
+    _controller.add(AuthenticationStatus.authenticated);
+  }
+
+  void setNoAuth() {
+    _controller.add(AuthenticationStatus.unauthenticated);
   }
 
   /// Call the login service
@@ -56,7 +62,6 @@ class AuthenticationLogic {
     var token = await LoginService(account).login(connection);
 
     if (token != null && token.refreshToken != null) {
-      await account.setToken(token);
       if (token.id != account.get(Account.id)) {
         // if the user is different than the last one clear the settings
         await account.clear();
@@ -65,12 +70,14 @@ class AuthenticationLogic {
         await account.remove(Account.grant);
       }
 
+      await account.setToken(token);
+
       // todo add a bloc for the settings and load async
       await _load();
-      _controller.add(AuthenticationStatus.authenticated);
+      setAuth();
     } else {
       log('Auth failed');
-      _controller.add(AuthenticationStatus.unauthenticated);
+      setNoAuth();
       throw StateError('Auth failed');
     }
   }
@@ -110,13 +117,13 @@ class AuthenticationLogic {
   Future<void> clean() async {
     await account.clean();
     Dependencies.logics.settings.init = false;
-    _controller.add(AuthenticationStatus.unauthenticated);
+    setNoAuth();
   }
 
   Future<void> logOutLocal() async {
     await account.clear();
     Dependencies.logics.settings.init = false;
-    _controller.add(AuthenticationStatus.unauthenticated);
+    setNoAuth();
   }
 
   void dispose() => _controller.close();
@@ -194,22 +201,72 @@ class AuthenticationLogic {
 
           var url = account.get(Account.url);
 
-          set(AuthenticationStatus.unauthenticated);
+          setNoAuth();
           await startOauthLogin(token: code, url: url ?? '');
         }
       }
     });
   }
 
-  Future<bool> checkIfNeedsLogging() async {
-    var grant = getGrant();
-    var isLogged = await checkLogin();
-    return grant == null && !isLogged;
-  }
-
   Future<void> _load() async {
     // do here any loading that needs to occur when a user loads but before rendering
     await Dependencies.logics.settings.loadSettings();
     await Dependencies.logics.patientsSettings.loadSettings();
+  }
+
+  // Check that the given url is valid and already logged into
+  Future<Status?> checkUrl(Uri uri) async {
+    var isInit = await Dependencies.services.helper.isInit(uri);
+    Dependencies.blocs.server.setStatus(isInit);
+
+    setNoAuth();
+    var isConnected = await checkLogin();
+    if (isInit != null && isInit.init == true && !isConnected) {
+      if (isInit.oauths.isNotEmpty) {
+        // Start the oauth login procedure
+        var autologin = isInit.oauths.firstWhereOrNull((x) => x.autoLogin);
+        if (autologin != null) {
+          await submitOauth(uri.toString(), autologin, isInit);
+        }
+      } else if (isInit.externalAuth == true) {
+        // directly start the login procedure
+        await submit(uri.toString(), 'Header');
+      }
+    }
+
+    return isInit;
+  }
+
+  Future<void> submit(String url, String oAuth) async {
+    log("Oauth in progress");
+    await Dependencies.logics.authentication.startOauthLogin(
+      token: oAuth,
+      url: url,
+    );
+  }
+
+  Future<void> submitOauth(
+    String url,
+    OauthConnection oauth,
+    Status isInit,
+  ) async {
+    var grant = await Dependencies.services.authService.getGrant(url, oauth);
+    if (grant != null) {
+      await submit(url, grant);
+    }
+  }
+
+  Future<void> init() async {
+    final url = account.get(Account.url);
+    if (url != null) {
+      var uri = Uri.tryParse(url);
+      if (uri != null) {
+        await checkUrl(uri);
+      }
+    }
+  }
+
+  void resetAuth() {
+    _controller.add(AuthenticationStatus.unknown);
   }
 }

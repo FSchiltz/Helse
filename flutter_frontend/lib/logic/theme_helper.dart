@@ -21,13 +21,13 @@ class ThemeHelper {
   Timer? _saveTimer;
 
   bool isDark(BuildContext context) {
-    final InterfaceTheme theme = Dependencies.logics.settings.themebloc.state;
-    if (theme == InterfaceTheme.system) {
+    final theme = Dependencies.logics.settings.themebloc.state;
+    if (theme == ThemeMode.system) {
       var brightness = MediaQuery.of(context).platformBrightness;
       return brightness == Brightness.dark;
     }
 
-    return theme == InterfaceTheme.dark;
+    return theme == ThemeMode.dark;
   }
 
   static Color randomColor() {
@@ -78,5 +78,16 @@ class ThemeHelper {
       Duration(milliseconds: 100),
       () => Dependencies.logics.settings.setColors(colors, toServer: false),
     );
+  }
+
+  static ThemeMode toSystem(InterfaceTheme theme) {
+    switch (theme) {
+      case InterfaceTheme.light:
+        return ThemeMode.light;
+      case InterfaceTheme.dark:
+        return ThemeMode.dark;
+      default:
+        return ThemeMode.system;
+    }
   }
 }

@@ -69,7 +69,7 @@ class OauthService extends ApiService {
   }
 
   Future<void> _redirect(String authUrl) async {
-    Dependencies.logics.authentication.set(AuthenticationStatus.unknown);
+    Dependencies.logics.authentication.resetAuth();
     var uri = Uri.parse(authUrl);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);

@@ -1,14 +1,18 @@
 import 'dart:developer';
 
 import 'package:helse/di/logics.dart';
+import 'package:helse/logic/account/authentication_bloc.dart';
+import 'package:helse/logic/account/server_state.dart';
 import 'package:helse/logic/fit/fit_helper.dart';
 import 'package:helse/logic/task_bloc.dart';
 
 class Blocs {
   TaskBloc fit;
   TaskBloc jobs;
+  AuthenticationBloc auth;
+  ServerState server;
 
-  Blocs.build(this.fit, this.jobs);
+  Blocs.build(this.fit, this.jobs, this.auth, this.server);
 
   factory Blocs(Logics logic) {
     return Blocs.build(
@@ -31,6 +35,8 @@ class Blocs {
         const Duration(seconds: 3),
         logic.import.isEnabled,
       ),
+      AuthenticationBloc(),
+      ServerState()
     );
   }
 }

@@ -148,10 +148,10 @@ internal static class AuthLogic
     {
         if (longLife)
         {
-            return DateTime.UtcNow.AddSeconds(30);
+            return DateTime.UtcNow.AddMinutes(30);
         }
 
-        return DateTime.UtcNow.AddSeconds(10);
+        return DateTime.UtcNow.AddMinutes(10);
     }
 
     public static async Task<IResult> RefreshAsync(IUserContext users, TokenService token, HttpContext context, ILoggerFactory logger)
