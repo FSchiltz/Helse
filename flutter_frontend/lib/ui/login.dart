@@ -64,7 +64,7 @@ class _LoginState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     var locale = Translation.of(context);
-    return BlocBuilder<ServerState, Status?>(
+    return BlocBuilder<ServerState, ServerStatus>(
       bloc: Dependencies.blocs.server,
       builder: (context, status) => Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
@@ -99,7 +99,7 @@ class _LoginState extends State<LoginPage> {
                             ? const HelseLoader()
                             : Column(
                                 children: [
-                                  (status?.init == true)
+                                  (status.state?.init == true)
                                       ? Column(
                                           children: [
                                             UserNameInput(
@@ -153,10 +153,10 @@ class _LoginState extends State<LoginPage> {
                                       : Column(
                                           children: [
                                             SquareButton(
-                                              status?.init == true
+                                              status.state?.init == true
                                                   ? locale.login
                                                   : locale.create,
-                                              status?.init == true
+                                              status.state?.init == true
                                                   ? _login
                                                   : _create,
                                             ),
@@ -164,7 +164,7 @@ class _LoginState extends State<LoginPage> {
                                               height: UIConstants.headerPad,
                                             ),
                                             ..._providers(
-                                              status?.oauths,
+                                              status.state?.oauths,
                                               Theme.of(context).textTheme,
                                               locale,
                                             ),
@@ -275,10 +275,11 @@ class _LoginState extends State<LoginPage> {
     final locale = Translation.of(context);
     var init = Dependencies.blocs.server.state;
     var url = _url;
-    if (init != null && url != null) {
+    final state = init.state;
+    if (state != null && url != null) {
       _start();
       try {
-        await Dependencies.logics.authentication.submitOauth(url, oauth, init);
+        await Dependencies.logics.authentication.submitOauth(url, oauth, state);
         _success();
       } catch (ex) {
         log('error of login: $ex');
