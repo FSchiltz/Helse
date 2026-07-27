@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/di/dependencies.dart';
@@ -53,19 +55,18 @@ class App extends StatelessWidget {
           return BlocListener<AuthenticationBloc, AuthenticationStatus>(
             bloc: Dependencies.blocs.auth,
             listener: (context, state) {
+              log('State changed');
               switch (state) {
                 case AuthenticationStatus.authenticated:
                   navigatorKey.currentState!.pushAndRemoveUntil<void>(
                     Home.route(),
                     (route) => false,
                   );
-                case AuthenticationStatus.unauthenticated:
+                default:
                   navigatorKey.currentState!.pushAndRemoveUntil<void>(
                     LoginPage.route(),
                     (route) => false,
                   );
-                case AuthenticationStatus.unknown:
-                  break;
               }
             },
             child: child,

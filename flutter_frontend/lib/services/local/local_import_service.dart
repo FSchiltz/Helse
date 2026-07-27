@@ -13,9 +13,8 @@ class LocalImportService extends LocalService implements ImportService {
   }
 
   @override
-  Future<List<JobResultInfo>> getJobs() {
-    // TODO: implement getJobs
-    throw UnimplementedError();
+  Future<List<JobResultInfo>> getJobs() async {
+    return [];
   }
 
   @override

@@ -18,6 +18,8 @@ class ServerState extends Cubit<ServerStatus> {
   }
 
   void setOffline() {
-    emit(ServerStatus(null, true));
+    emit(
+      ServerStatus(Status(init: true, externalAuth: false, oauths: []), true),
+    );
   }
 }

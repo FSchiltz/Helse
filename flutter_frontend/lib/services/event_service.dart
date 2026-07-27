@@ -23,15 +23,9 @@ abstract interface class EventService {
     int? person,
   });
 
-  Future<List<Event>?> agenda(
-    DateTime? start,
-    DateTime? end,
-  );
+  Future<List<Event>?> agenda(DateTime? start, DateTime? end);
 
-  Future<int?> addEvent(
-    CreateEvent event, {
-    int? person,
-  });
+  Future<int?> addEvent(CreateEvent event, {int? person});
 
   Future<void> updateEvent(UpdateEvent event);
 
@@ -44,18 +38,9 @@ abstract interface class EventService {
     int pageSize,
   );
 
-  Future<int?> countEvents(
-    int? person,
-    SearchEvent search,
-  );
+  Future<int?> countEvents(int? person, SearchEvent search);
 
-  Future<void> deleteEvents(
-    List<Event> events, {
-    int? person,
-  });
+  Future<void> deleteEvents(List<Event> events, {int? person});
 
-  Future<void> updateEvents(
-    PatchEvent patch, {
-    int? person,
-  });
+  Future<void> updateEvents(PatchEvent patch, {int? person});
 }

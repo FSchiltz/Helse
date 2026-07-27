@@ -182,22 +182,22 @@ class _LoginState extends State<LoginPage> {
   /// Prefill the url from storage or other
   Future<void> _initUrl() async {
     log('Init url');
-    // We first try to get it from storage
-    var url = Dependencies.logics.authentication.getUrl();
+      // We first try to get it from storage
+      var url = Dependencies.logics.authentication.getUrl();
 
-    if (url != null && url.isNotEmpty) {
-      _urlController.text = url;
+      if (url != null && url.isNotEmpty) {
+        _urlController.text = url;
 
-      if (mounted) {
-        setState(() {
-          _status = SubmissionStatus.waiting;
-          _loginError = null;
-          _urlError = null;
-          _url = url;
-        });
-        await _urlChanged(url);
+        if (mounted) {
+          setState(() {
+            _status = SubmissionStatus.waiting;
+            _loginError = null;
+            _urlError = null;
+            _url = url;
+          });
+          await _urlChanged(url);
+        }
       }
-    }
   }
 
   Future<void> _submitOauth(OauthConnection oauth) async {
@@ -344,8 +344,12 @@ class _LoginState extends State<LoginPage> {
         .toList();
   }
 
-  void _useOffline() {
-    Dependencies.logics.authentication.useOffline();
+  Future<void> _useOffline() async {
+    await Dependencies.logics.authentication.useOffline();
+    await Dependencies.logics.authentication.logIn(
+      url: '',
+      connection: Connection(user: '', password: ''),
+    );
   }
 
   List<Widget> _getLoginForm(AppLocalizations locale, Status? state) {

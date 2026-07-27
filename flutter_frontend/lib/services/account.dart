@@ -37,15 +37,18 @@ class Account {
   static const clientid = "clientid";
   static const refresh = "refresh";
   static const id = "id";
+  static const offline = "offline";
 
-  String? get(String name) {
-    var store = storage;
-    var url = store.getString(name);
-    return url;
-  }
+  String? get(String name) => storage.getString(name);
+
+  bool isEnabled(String name) => storage.getBool(name) ?? false;
 
   Future<void> set(String name, String value) async {
     await (storage).setString(name, value);
+  }
+
+  Future<void> setBool(String name, bool value) async {
+    await (storage).setBool(name, value);
   }
 
   Future<void> remove(String name) async {

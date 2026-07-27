@@ -4,7 +4,6 @@ import 'package:app_links/app_links.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:helse/logic/account/settings_migration.dart';
-import 'package:helse/services/api/api_login_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:helse/helpers/url_dummy.dart'
@@ -13,16 +12,13 @@ import 'package:helse/helpers/url_dummy.dart'
 import '../../services/account.dart';
 import '../../di/dependencies.dart';
 
-enum AuthenticationStatus { unknown, authenticated, unauthenticated }
+enum AuthenticationStatus { unknown,unset,authenticated, unauthenticated }
 
 /// Authentication logic
 class AuthenticationLogic {
-  final _controller = StreamController<AuthenticationStatus>.broadcast();
   final Account account;
 
   AuthenticationLogic(this.account);
-
-  Stream<AuthenticationStatus> get status => _controller.stream;
 
   /// Check if the user is logged in
   Future<bool> checkLogin() async {
@@ -43,11 +39,15 @@ class AuthenticationLogic {
   }
 
   void setAuth() {
-    _controller.add(AuthenticationStatus.authenticated);
+    Dependencies.blocs.auth.add(AuthenticationStatus.authenticated);
   }
 
   void setNoAuth() {
-    _controller.add(AuthenticationStatus.unauthenticated);
+    Dependencies.blocs.auth.add(AuthenticationStatus.unauthenticated);
+  }
+
+  void resetAuth() {
+    Dependencies.blocs.auth.add(AuthenticationStatus.unknown);
   }
 
   /// Call the login service
@@ -56,7 +56,7 @@ class AuthenticationLogic {
     required Connection connection,
   }) async {
     await account.set(Account.url, url);
-    var token = await LoginService(account).login(connection);
+    var token = await Dependencies.services.login.login(connection);
 
     if (token != null && token.refreshToken != null) {
       final oldUser = account.get(Account.id);
@@ -126,8 +126,6 @@ class AuthenticationLogic {
     setNoAuth();
   }
 
-  void dispose() => _controller.close();
-
   String? getGrant() {
     return account.get(Account.grant);
   }
@@ -187,10 +185,10 @@ class AuthenticationLogic {
 
   void listen() async {
     var links = AppLinks();
-    var redirect = Dependencies.services.authService.redirectUrl.toString();
+    var redirect = Dependencies.services.login.redirectUrl.toString();
     links.uriLinkStream.listen((uri) async {
       if (uri.toString().startsWith(redirect)) {
-        var code = await Dependencies.services.authService.getCode(
+        var code = await Dependencies.services.login.getCode(
           uri.queryParameters,
         );
         if (code != null) {
@@ -216,7 +214,7 @@ class AuthenticationLogic {
 
   // Check that the given url is valid and already logged into
   Future<Status?> checkUrl(Uri uri) async {
-    var isInit = await Dependencies.services.helper.isInit(uri);
+    var isInit = await Dependencies.services.login.isInit(uri);
     Dependencies.blocs.server.setStatus(isInit);
 
     setNoAuth();
@@ -250,28 +248,38 @@ class AuthenticationLogic {
     OauthConnection oauth,
     Status isInit,
   ) async {
-    var grant = await Dependencies.services.authService.getGrant(url, oauth);
+    var grant = await Dependencies.services.login.getGrant(url, oauth);
     if (grant != null) {
       await submit(url, grant);
     }
   }
 
   Future<void> init() async {
-    final url = account.get(Account.url);
-    if (url != null) {
-      var uri = Uri.tryParse(url);
-      if (uri != null) {
-        await checkUrl(uri);
+    resetAuth();
+    final offline = await isOffline();
+    if (offline) {
+      await useOffline();
+      await logIn(
+        url: '',
+        connection: Connection(user: '', password: ''),
+      );
+    } else {
+      final url = account.get(Account.url);
+      if (url != null && url.isNotEmpty) {
+        var uri = Uri.tryParse(url);
+        if (uri != null) {
+          await checkUrl(uri);
+        }
       }
     }
   }
 
-  void resetAuth() {
-    _controller.add(AuthenticationStatus.unknown);
+  Future<void> useOffline() async {
+    Dependencies.blocs.server.setOffline();
+    await account.setBool(Account.offline, true);
   }
 
-  void useOffline() {
-    Dependencies.blocs.server.setOffline();
-    setAuth();
+  Future<bool> isOffline() async {
+    return account.isEnabled(Account.offline);
   }
 }
