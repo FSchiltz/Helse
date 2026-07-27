@@ -3,6 +3,570 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
+class $GroupTable extends Group with TableInfo<$GroupTable, GroupData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $GroupTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
+  @override
+  late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
+    'synced',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("synced" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _syncTimeMeta = const VerificationMeta(
+    'syncTime',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncTime = GeneratedColumn<DateTime>(
+    'sync_time',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _serverIdMeta = const VerificationMeta(
+    'serverId',
+  );
+  @override
+  late final GeneratedColumn<int> serverId = GeneratedColumn<int>(
+    'server_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdMeta = const VerificationMeta(
+    'created',
+  );
+  @override
+  late final GeneratedColumn<DateTime> created = GeneratedColumn<DateTime>(
+    'created',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _showOnDashboardMeta = const VerificationMeta(
+    'showOnDashboard',
+  );
+  @override
+  late final GeneratedColumn<bool> showOnDashboard = GeneratedColumn<bool>(
+    'show_on_dashboard',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("show_on_dashboard" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _showTitleMeta = const VerificationMeta(
+    'showTitle',
+  );
+  @override
+  late final GeneratedColumn<bool> showTitle = GeneratedColumn<bool>(
+    'show_title',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("show_title" IN (0, 1))',
+    ),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    synced,
+    syncTime,
+    serverId,
+    created,
+    name,
+    description,
+    showOnDashboard,
+    showTitle,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'group';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<GroupData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('synced')) {
+      context.handle(
+        _syncedMeta,
+        synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta),
+      );
+    }
+    if (data.containsKey('sync_time')) {
+      context.handle(
+        _syncTimeMeta,
+        syncTime.isAcceptableOrUnknown(data['sync_time']!, _syncTimeMeta),
+      );
+    }
+    if (data.containsKey('server_id')) {
+      context.handle(
+        _serverIdMeta,
+        serverId.isAcceptableOrUnknown(data['server_id']!, _serverIdMeta),
+      );
+    }
+    if (data.containsKey('created')) {
+      context.handle(
+        _createdMeta,
+        created.isAcceptableOrUnknown(data['created']!, _createdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_descriptionMeta);
+    }
+    if (data.containsKey('show_on_dashboard')) {
+      context.handle(
+        _showOnDashboardMeta,
+        showOnDashboard.isAcceptableOrUnknown(
+          data['show_on_dashboard']!,
+          _showOnDashboardMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_showOnDashboardMeta);
+    }
+    if (data.containsKey('show_title')) {
+      context.handle(
+        _showTitleMeta,
+        showTitle.isAcceptableOrUnknown(data['show_title']!, _showTitleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_showTitleMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  GroupData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return GroupData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      synced: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}synced'],
+      )!,
+      syncTime: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}sync_time'],
+      ),
+      serverId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}server_id'],
+      ),
+      created: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      )!,
+      showOnDashboard: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}show_on_dashboard'],
+      )!,
+      showTitle: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}show_title'],
+      )!,
+    );
+  }
+
+  @override
+  $GroupTable createAlias(String alias) {
+    return $GroupTable(attachedDatabase, alias);
+  }
+}
+
+class GroupData extends DataClass implements Insertable<GroupData> {
+  final int id;
+  final bool synced;
+  final DateTime? syncTime;
+  final int? serverId;
+  final DateTime created;
+  final String name;
+  final String description;
+  final bool showOnDashboard;
+  final bool showTitle;
+  const GroupData({
+    required this.id,
+    required this.synced,
+    this.syncTime,
+    this.serverId,
+    required this.created,
+    required this.name,
+    required this.description,
+    required this.showOnDashboard,
+    required this.showTitle,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['synced'] = Variable<bool>(synced);
+    if (!nullToAbsent || syncTime != null) {
+      map['sync_time'] = Variable<DateTime>(syncTime);
+    }
+    if (!nullToAbsent || serverId != null) {
+      map['server_id'] = Variable<int>(serverId);
+    }
+    map['created'] = Variable<DateTime>(created);
+    map['name'] = Variable<String>(name);
+    map['description'] = Variable<String>(description);
+    map['show_on_dashboard'] = Variable<bool>(showOnDashboard);
+    map['show_title'] = Variable<bool>(showTitle);
+    return map;
+  }
+
+  GroupCompanion toCompanion(bool nullToAbsent) {
+    return GroupCompanion(
+      id: Value(id),
+      synced: Value(synced),
+      syncTime: syncTime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncTime),
+      serverId: serverId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(serverId),
+      created: Value(created),
+      name: Value(name),
+      description: Value(description),
+      showOnDashboard: Value(showOnDashboard),
+      showTitle: Value(showTitle),
+    );
+  }
+
+  factory GroupData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return GroupData(
+      id: serializer.fromJson<int>(json['id']),
+      synced: serializer.fromJson<bool>(json['synced']),
+      syncTime: serializer.fromJson<DateTime?>(json['syncTime']),
+      serverId: serializer.fromJson<int?>(json['serverId']),
+      created: serializer.fromJson<DateTime>(json['created']),
+      name: serializer.fromJson<String>(json['name']),
+      description: serializer.fromJson<String>(json['description']),
+      showOnDashboard: serializer.fromJson<bool>(json['showOnDashboard']),
+      showTitle: serializer.fromJson<bool>(json['showTitle']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'synced': serializer.toJson<bool>(synced),
+      'syncTime': serializer.toJson<DateTime?>(syncTime),
+      'serverId': serializer.toJson<int?>(serverId),
+      'created': serializer.toJson<DateTime>(created),
+      'name': serializer.toJson<String>(name),
+      'description': serializer.toJson<String>(description),
+      'showOnDashboard': serializer.toJson<bool>(showOnDashboard),
+      'showTitle': serializer.toJson<bool>(showTitle),
+    };
+  }
+
+  GroupData copyWith({
+    int? id,
+    bool? synced,
+    Value<DateTime?> syncTime = const Value.absent(),
+    Value<int?> serverId = const Value.absent(),
+    DateTime? created,
+    String? name,
+    String? description,
+    bool? showOnDashboard,
+    bool? showTitle,
+  }) => GroupData(
+    id: id ?? this.id,
+    synced: synced ?? this.synced,
+    syncTime: syncTime.present ? syncTime.value : this.syncTime,
+    serverId: serverId.present ? serverId.value : this.serverId,
+    created: created ?? this.created,
+    name: name ?? this.name,
+    description: description ?? this.description,
+    showOnDashboard: showOnDashboard ?? this.showOnDashboard,
+    showTitle: showTitle ?? this.showTitle,
+  );
+  GroupData copyWithCompanion(GroupCompanion data) {
+    return GroupData(
+      id: data.id.present ? data.id.value : this.id,
+      synced: data.synced.present ? data.synced.value : this.synced,
+      syncTime: data.syncTime.present ? data.syncTime.value : this.syncTime,
+      serverId: data.serverId.present ? data.serverId.value : this.serverId,
+      created: data.created.present ? data.created.value : this.created,
+      name: data.name.present ? data.name.value : this.name,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      showOnDashboard: data.showOnDashboard.present
+          ? data.showOnDashboard.value
+          : this.showOnDashboard,
+      showTitle: data.showTitle.present ? data.showTitle.value : this.showTitle,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GroupData(')
+          ..write('id: $id, ')
+          ..write('synced: $synced, ')
+          ..write('syncTime: $syncTime, ')
+          ..write('serverId: $serverId, ')
+          ..write('created: $created, ')
+          ..write('name: $name, ')
+          ..write('description: $description, ')
+          ..write('showOnDashboard: $showOnDashboard, ')
+          ..write('showTitle: $showTitle')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    synced,
+    syncTime,
+    serverId,
+    created,
+    name,
+    description,
+    showOnDashboard,
+    showTitle,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is GroupData &&
+          other.id == this.id &&
+          other.synced == this.synced &&
+          other.syncTime == this.syncTime &&
+          other.serverId == this.serverId &&
+          other.created == this.created &&
+          other.name == this.name &&
+          other.description == this.description &&
+          other.showOnDashboard == this.showOnDashboard &&
+          other.showTitle == this.showTitle);
+}
+
+class GroupCompanion extends UpdateCompanion<GroupData> {
+  final Value<int> id;
+  final Value<bool> synced;
+  final Value<DateTime?> syncTime;
+  final Value<int?> serverId;
+  final Value<DateTime> created;
+  final Value<String> name;
+  final Value<String> description;
+  final Value<bool> showOnDashboard;
+  final Value<bool> showTitle;
+  const GroupCompanion({
+    this.id = const Value.absent(),
+    this.synced = const Value.absent(),
+    this.syncTime = const Value.absent(),
+    this.serverId = const Value.absent(),
+    this.created = const Value.absent(),
+    this.name = const Value.absent(),
+    this.description = const Value.absent(),
+    this.showOnDashboard = const Value.absent(),
+    this.showTitle = const Value.absent(),
+  });
+  GroupCompanion.insert({
+    this.id = const Value.absent(),
+    this.synced = const Value.absent(),
+    this.syncTime = const Value.absent(),
+    this.serverId = const Value.absent(),
+    required DateTime created,
+    required String name,
+    required String description,
+    required bool showOnDashboard,
+    required bool showTitle,
+  }) : created = Value(created),
+       name = Value(name),
+       description = Value(description),
+       showOnDashboard = Value(showOnDashboard),
+       showTitle = Value(showTitle);
+  static Insertable<GroupData> custom({
+    Expression<int>? id,
+    Expression<bool>? synced,
+    Expression<DateTime>? syncTime,
+    Expression<int>? serverId,
+    Expression<DateTime>? created,
+    Expression<String>? name,
+    Expression<String>? description,
+    Expression<bool>? showOnDashboard,
+    Expression<bool>? showTitle,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (synced != null) 'synced': synced,
+      if (syncTime != null) 'sync_time': syncTime,
+      if (serverId != null) 'server_id': serverId,
+      if (created != null) 'created': created,
+      if (name != null) 'name': name,
+      if (description != null) 'description': description,
+      if (showOnDashboard != null) 'show_on_dashboard': showOnDashboard,
+      if (showTitle != null) 'show_title': showTitle,
+    });
+  }
+
+  GroupCompanion copyWith({
+    Value<int>? id,
+    Value<bool>? synced,
+    Value<DateTime?>? syncTime,
+    Value<int?>? serverId,
+    Value<DateTime>? created,
+    Value<String>? name,
+    Value<String>? description,
+    Value<bool>? showOnDashboard,
+    Value<bool>? showTitle,
+  }) {
+    return GroupCompanion(
+      id: id ?? this.id,
+      synced: synced ?? this.synced,
+      syncTime: syncTime ?? this.syncTime,
+      serverId: serverId ?? this.serverId,
+      created: created ?? this.created,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      showOnDashboard: showOnDashboard ?? this.showOnDashboard,
+      showTitle: showTitle ?? this.showTitle,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (synced.present) {
+      map['synced'] = Variable<bool>(synced.value);
+    }
+    if (syncTime.present) {
+      map['sync_time'] = Variable<DateTime>(syncTime.value);
+    }
+    if (serverId.present) {
+      map['server_id'] = Variable<int>(serverId.value);
+    }
+    if (created.present) {
+      map['created'] = Variable<DateTime>(created.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (showOnDashboard.present) {
+      map['show_on_dashboard'] = Variable<bool>(showOnDashboard.value);
+    }
+    if (showTitle.present) {
+      map['show_title'] = Variable<bool>(showTitle.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GroupCompanion(')
+          ..write('id: $id, ')
+          ..write('synced: $synced, ')
+          ..write('syncTime: $syncTime, ')
+          ..write('serverId: $serverId, ')
+          ..write('created: $created, ')
+          ..write('name: $name, ')
+          ..write('description: $description, ')
+          ..write('showOnDashboard: $showOnDashboard, ')
+          ..write('showTitle: $showTitle')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $MetricTypeTable extends MetricType
     with TableInfo<$MetricTypeTable, MetricTypeData> {
   @override
@@ -68,6 +632,40 @@ class $MetricTypeTable extends MetricType
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _groupIdMeta = const VerificationMeta(
+    'groupId',
+  );
+  @override
+  late final GeneratedColumn<int> groupId = GeneratedColumn<int>(
+    'group_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES "group" (id)',
+    ),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -75,6 +673,9 @@ class $MetricTypeTable extends MetricType
     syncTime,
     serverId,
     created,
+    name,
+    description,
+    groupId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -117,6 +718,31 @@ class $MetricTypeTable extends MetricType
     } else if (isInserting) {
       context.missing(_createdMeta);
     }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('group_id')) {
+      context.handle(
+        _groupIdMeta,
+        groupId.isAcceptableOrUnknown(data['group_id']!, _groupIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_groupIdMeta);
+    }
     return context;
   }
 
@@ -146,6 +772,18 @@ class $MetricTypeTable extends MetricType
         DriftSqlType.dateTime,
         data['${effectivePrefix}created'],
       )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      ),
+      groupId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}group_id'],
+      )!,
     );
   }
 
@@ -161,12 +799,18 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
   final DateTime? syncTime;
   final int? serverId;
   final DateTime created;
+  final String name;
+  final String? description;
+  final int groupId;
   const MetricTypeData({
     required this.id,
     required this.synced,
     this.syncTime,
     this.serverId,
     required this.created,
+    required this.name,
+    this.description,
+    required this.groupId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -180,6 +824,11 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
       map['server_id'] = Variable<int>(serverId);
     }
     map['created'] = Variable<DateTime>(created);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
+    map['group_id'] = Variable<int>(groupId);
     return map;
   }
 
@@ -194,6 +843,11 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
           ? const Value.absent()
           : Value(serverId),
       created: Value(created),
+      name: Value(name),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+      groupId: Value(groupId),
     );
   }
 
@@ -208,6 +862,9 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
       syncTime: serializer.fromJson<DateTime?>(json['syncTime']),
       serverId: serializer.fromJson<int?>(json['serverId']),
       created: serializer.fromJson<DateTime>(json['created']),
+      name: serializer.fromJson<String>(json['name']),
+      description: serializer.fromJson<String?>(json['description']),
+      groupId: serializer.fromJson<int>(json['groupId']),
     );
   }
   @override
@@ -219,6 +876,9 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
       'syncTime': serializer.toJson<DateTime?>(syncTime),
       'serverId': serializer.toJson<int?>(serverId),
       'created': serializer.toJson<DateTime>(created),
+      'name': serializer.toJson<String>(name),
+      'description': serializer.toJson<String?>(description),
+      'groupId': serializer.toJson<int>(groupId),
     };
   }
 
@@ -228,12 +888,18 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
     Value<DateTime?> syncTime = const Value.absent(),
     Value<int?> serverId = const Value.absent(),
     DateTime? created,
+    String? name,
+    Value<String?> description = const Value.absent(),
+    int? groupId,
   }) => MetricTypeData(
     id: id ?? this.id,
     synced: synced ?? this.synced,
     syncTime: syncTime.present ? syncTime.value : this.syncTime,
     serverId: serverId.present ? serverId.value : this.serverId,
     created: created ?? this.created,
+    name: name ?? this.name,
+    description: description.present ? description.value : this.description,
+    groupId: groupId ?? this.groupId,
   );
   MetricTypeData copyWithCompanion(MetricTypeCompanion data) {
     return MetricTypeData(
@@ -242,6 +908,11 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
       syncTime: data.syncTime.present ? data.syncTime.value : this.syncTime,
       serverId: data.serverId.present ? data.serverId.value : this.serverId,
       created: data.created.present ? data.created.value : this.created,
+      name: data.name.present ? data.name.value : this.name,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      groupId: data.groupId.present ? data.groupId.value : this.groupId,
     );
   }
 
@@ -252,13 +923,25 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
           ..write('synced: $synced, ')
           ..write('syncTime: $syncTime, ')
           ..write('serverId: $serverId, ')
-          ..write('created: $created')
+          ..write('created: $created, ')
+          ..write('name: $name, ')
+          ..write('description: $description, ')
+          ..write('groupId: $groupId')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, synced, syncTime, serverId, created);
+  int get hashCode => Object.hash(
+    id,
+    synced,
+    syncTime,
+    serverId,
+    created,
+    name,
+    description,
+    groupId,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -267,7 +950,10 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
           other.synced == this.synced &&
           other.syncTime == this.syncTime &&
           other.serverId == this.serverId &&
-          other.created == this.created);
+          other.created == this.created &&
+          other.name == this.name &&
+          other.description == this.description &&
+          other.groupId == this.groupId);
 }
 
 class MetricTypeCompanion extends UpdateCompanion<MetricTypeData> {
@@ -276,12 +962,18 @@ class MetricTypeCompanion extends UpdateCompanion<MetricTypeData> {
   final Value<DateTime?> syncTime;
   final Value<int?> serverId;
   final Value<DateTime> created;
+  final Value<String> name;
+  final Value<String?> description;
+  final Value<int> groupId;
   const MetricTypeCompanion({
     this.id = const Value.absent(),
     this.synced = const Value.absent(),
     this.syncTime = const Value.absent(),
     this.serverId = const Value.absent(),
     this.created = const Value.absent(),
+    this.name = const Value.absent(),
+    this.description = const Value.absent(),
+    this.groupId = const Value.absent(),
   });
   MetricTypeCompanion.insert({
     this.id = const Value.absent(),
@@ -289,13 +981,21 @@ class MetricTypeCompanion extends UpdateCompanion<MetricTypeData> {
     this.syncTime = const Value.absent(),
     this.serverId = const Value.absent(),
     required DateTime created,
-  }) : created = Value(created);
+    required String name,
+    this.description = const Value.absent(),
+    required int groupId,
+  }) : created = Value(created),
+       name = Value(name),
+       groupId = Value(groupId);
   static Insertable<MetricTypeData> custom({
     Expression<int>? id,
     Expression<bool>? synced,
     Expression<DateTime>? syncTime,
     Expression<int>? serverId,
     Expression<DateTime>? created,
+    Expression<String>? name,
+    Expression<String>? description,
+    Expression<int>? groupId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -303,6 +1003,9 @@ class MetricTypeCompanion extends UpdateCompanion<MetricTypeData> {
       if (syncTime != null) 'sync_time': syncTime,
       if (serverId != null) 'server_id': serverId,
       if (created != null) 'created': created,
+      if (name != null) 'name': name,
+      if (description != null) 'description': description,
+      if (groupId != null) 'group_id': groupId,
     });
   }
 
@@ -312,6 +1015,9 @@ class MetricTypeCompanion extends UpdateCompanion<MetricTypeData> {
     Value<DateTime?>? syncTime,
     Value<int?>? serverId,
     Value<DateTime>? created,
+    Value<String>? name,
+    Value<String?>? description,
+    Value<int>? groupId,
   }) {
     return MetricTypeCompanion(
       id: id ?? this.id,
@@ -319,6 +1025,9 @@ class MetricTypeCompanion extends UpdateCompanion<MetricTypeData> {
       syncTime: syncTime ?? this.syncTime,
       serverId: serverId ?? this.serverId,
       created: created ?? this.created,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      groupId: groupId ?? this.groupId,
     );
   }
 
@@ -340,6 +1049,15 @@ class MetricTypeCompanion extends UpdateCompanion<MetricTypeData> {
     if (created.present) {
       map['created'] = Variable<DateTime>(created.value);
     }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (groupId.present) {
+      map['group_id'] = Variable<int>(groupId.value);
+    }
     return map;
   }
 
@@ -350,7 +1068,10 @@ class MetricTypeCompanion extends UpdateCompanion<MetricTypeData> {
           ..write('synced: $synced, ')
           ..write('syncTime: $syncTime, ')
           ..write('serverId: $serverId, ')
-          ..write('created: $created')
+          ..write('created: $created, ')
+          ..write('name: $name, ')
+          ..write('description: $description, ')
+          ..write('groupId: $groupId')
           ..write(')'))
         .toString();
   }
@@ -438,6 +1159,15 @@ class $MetricTable extends Metric with TableInfo<$MetricTable, MetricData> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _personMeta = const VerificationMeta('person');
+  @override
+  late final GeneratedColumn<int> person = GeneratedColumn<int>(
+    'person',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _typeMeta = const VerificationMeta('type');
   @override
   late final GeneratedColumn<int> type = GeneratedColumn<int>(
@@ -459,6 +1189,7 @@ class $MetricTable extends Metric with TableInfo<$MetricTable, MetricData> {
     created,
     value,
     date,
+    person,
     type,
   ];
   @override
@@ -518,6 +1249,12 @@ class $MetricTable extends Metric with TableInfo<$MetricTable, MetricData> {
     } else if (isInserting) {
       context.missing(_dateMeta);
     }
+    if (data.containsKey('person')) {
+      context.handle(
+        _personMeta,
+        person.isAcceptableOrUnknown(data['person']!, _personMeta),
+      );
+    }
     if (data.containsKey('type')) {
       context.handle(
         _typeMeta,
@@ -563,6 +1300,10 @@ class $MetricTable extends Metric with TableInfo<$MetricTable, MetricData> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}date'],
       )!,
+      person: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}person'],
+      ),
       type: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}type'],
@@ -584,6 +1325,7 @@ class MetricData extends DataClass implements Insertable<MetricData> {
   final DateTime created;
   final String value;
   final DateTime date;
+  final int? person;
   final int type;
   const MetricData({
     required this.id,
@@ -593,6 +1335,7 @@ class MetricData extends DataClass implements Insertable<MetricData> {
     required this.created,
     required this.value,
     required this.date,
+    this.person,
     required this.type,
   });
   @override
@@ -609,6 +1352,9 @@ class MetricData extends DataClass implements Insertable<MetricData> {
     map['created'] = Variable<DateTime>(created);
     map['value'] = Variable<String>(value);
     map['date'] = Variable<DateTime>(date);
+    if (!nullToAbsent || person != null) {
+      map['person'] = Variable<int>(person);
+    }
     map['type'] = Variable<int>(type);
     return map;
   }
@@ -626,6 +1372,9 @@ class MetricData extends DataClass implements Insertable<MetricData> {
       created: Value(created),
       value: Value(value),
       date: Value(date),
+      person: person == null && nullToAbsent
+          ? const Value.absent()
+          : Value(person),
       type: Value(type),
     );
   }
@@ -643,6 +1392,7 @@ class MetricData extends DataClass implements Insertable<MetricData> {
       created: serializer.fromJson<DateTime>(json['created']),
       value: serializer.fromJson<String>(json['value']),
       date: serializer.fromJson<DateTime>(json['date']),
+      person: serializer.fromJson<int?>(json['person']),
       type: serializer.fromJson<int>(json['type']),
     );
   }
@@ -657,6 +1407,7 @@ class MetricData extends DataClass implements Insertable<MetricData> {
       'created': serializer.toJson<DateTime>(created),
       'value': serializer.toJson<String>(value),
       'date': serializer.toJson<DateTime>(date),
+      'person': serializer.toJson<int?>(person),
       'type': serializer.toJson<int>(type),
     };
   }
@@ -669,6 +1420,7 @@ class MetricData extends DataClass implements Insertable<MetricData> {
     DateTime? created,
     String? value,
     DateTime? date,
+    Value<int?> person = const Value.absent(),
     int? type,
   }) => MetricData(
     id: id ?? this.id,
@@ -678,6 +1430,7 @@ class MetricData extends DataClass implements Insertable<MetricData> {
     created: created ?? this.created,
     value: value ?? this.value,
     date: date ?? this.date,
+    person: person.present ? person.value : this.person,
     type: type ?? this.type,
   );
   MetricData copyWithCompanion(MetricCompanion data) {
@@ -689,6 +1442,7 @@ class MetricData extends DataClass implements Insertable<MetricData> {
       created: data.created.present ? data.created.value : this.created,
       value: data.value.present ? data.value.value : this.value,
       date: data.date.present ? data.date.value : this.date,
+      person: data.person.present ? data.person.value : this.person,
       type: data.type.present ? data.type.value : this.type,
     );
   }
@@ -703,14 +1457,24 @@ class MetricData extends DataClass implements Insertable<MetricData> {
           ..write('created: $created, ')
           ..write('value: $value, ')
           ..write('date: $date, ')
+          ..write('person: $person, ')
           ..write('type: $type')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, synced, syncTime, serverId, created, value, date, type);
+  int get hashCode => Object.hash(
+    id,
+    synced,
+    syncTime,
+    serverId,
+    created,
+    value,
+    date,
+    person,
+    type,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -722,6 +1486,7 @@ class MetricData extends DataClass implements Insertable<MetricData> {
           other.created == this.created &&
           other.value == this.value &&
           other.date == this.date &&
+          other.person == this.person &&
           other.type == this.type);
 }
 
@@ -733,6 +1498,7 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
   final Value<DateTime> created;
   final Value<String> value;
   final Value<DateTime> date;
+  final Value<int?> person;
   final Value<int> type;
   const MetricCompanion({
     this.id = const Value.absent(),
@@ -742,6 +1508,7 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
     this.created = const Value.absent(),
     this.value = const Value.absent(),
     this.date = const Value.absent(),
+    this.person = const Value.absent(),
     this.type = const Value.absent(),
   });
   MetricCompanion.insert({
@@ -752,6 +1519,7 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
     required DateTime created,
     required String value,
     required DateTime date,
+    this.person = const Value.absent(),
     required int type,
   }) : created = Value(created),
        value = Value(value),
@@ -765,6 +1533,7 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
     Expression<DateTime>? created,
     Expression<String>? value,
     Expression<DateTime>? date,
+    Expression<int>? person,
     Expression<int>? type,
   }) {
     return RawValuesInsertable({
@@ -775,6 +1544,7 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
       if (created != null) 'created': created,
       if (value != null) 'value': value,
       if (date != null) 'date': date,
+      if (person != null) 'person': person,
       if (type != null) 'type': type,
     });
   }
@@ -787,6 +1557,7 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
     Value<DateTime>? created,
     Value<String>? value,
     Value<DateTime>? date,
+    Value<int?>? person,
     Value<int>? type,
   }) {
     return MetricCompanion(
@@ -797,6 +1568,7 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
       created: created ?? this.created,
       value: value ?? this.value,
       date: date ?? this.date,
+      person: person ?? this.person,
       type: type ?? this.type,
     );
   }
@@ -825,6 +1597,9 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
     if (date.present) {
       map['date'] = Variable<DateTime>(date.value);
     }
+    if (person.present) {
+      map['person'] = Variable<int>(person.value);
+    }
     if (type.present) {
       map['type'] = Variable<int>(type.value);
     }
@@ -841,6 +1616,7 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
           ..write('created: $created, ')
           ..write('value: $value, ')
           ..write('date: $date, ')
+          ..write('person: $person, ')
           ..write('type: $type')
           ..write(')'))
         .toString();
@@ -912,6 +1688,79 @@ class $EventTypeTable extends EventType
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _standAloneMeta = const VerificationMeta(
+    'standAlone',
+  );
+  @override
+  late final GeneratedColumn<bool> standAlone = GeneratedColumn<bool>(
+    'stand_alone',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("stand_alone" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _visibleMeta = const VerificationMeta(
+    'visible',
+  );
+  @override
+  late final GeneratedColumn<bool> visible = GeneratedColumn<bool>(
+    'visible',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("visible" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _timeDifferenceMeta = const VerificationMeta(
+    'timeDifference',
+  );
+  @override
+  late final GeneratedColumn<String> timeDifference = GeneratedColumn<String>(
+    'time_difference',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _groupIdMeta = const VerificationMeta(
+    'groupId',
+  );
+  @override
+  late final GeneratedColumn<int> groupId = GeneratedColumn<int>(
+    'group_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES "group" (id)',
+    ),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -919,6 +1768,12 @@ class $EventTypeTable extends EventType
     syncTime,
     serverId,
     created,
+    name,
+    description,
+    standAlone,
+    visible,
+    timeDifference,
+    groupId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -961,6 +1816,56 @@ class $EventTypeTable extends EventType
     } else if (isInserting) {
       context.missing(_createdMeta);
     }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('stand_alone')) {
+      context.handle(
+        _standAloneMeta,
+        standAlone.isAcceptableOrUnknown(data['stand_alone']!, _standAloneMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_standAloneMeta);
+    }
+    if (data.containsKey('visible')) {
+      context.handle(
+        _visibleMeta,
+        visible.isAcceptableOrUnknown(data['visible']!, _visibleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_visibleMeta);
+    }
+    if (data.containsKey('time_difference')) {
+      context.handle(
+        _timeDifferenceMeta,
+        timeDifference.isAcceptableOrUnknown(
+          data['time_difference']!,
+          _timeDifferenceMeta,
+        ),
+      );
+    }
+    if (data.containsKey('group_id')) {
+      context.handle(
+        _groupIdMeta,
+        groupId.isAcceptableOrUnknown(data['group_id']!, _groupIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_groupIdMeta);
+    }
     return context;
   }
 
@@ -990,6 +1895,30 @@ class $EventTypeTable extends EventType
         DriftSqlType.dateTime,
         data['${effectivePrefix}created'],
       )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      ),
+      standAlone: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}stand_alone'],
+      )!,
+      visible: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}visible'],
+      )!,
+      timeDifference: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}time_difference'],
+      ),
+      groupId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}group_id'],
+      )!,
     );
   }
 
@@ -1005,12 +1934,24 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
   final DateTime? syncTime;
   final int? serverId;
   final DateTime created;
+  final String name;
+  final String? description;
+  final bool standAlone;
+  final bool visible;
+  final String? timeDifference;
+  final int groupId;
   const EventTypeData({
     required this.id,
     required this.synced,
     this.syncTime,
     this.serverId,
     required this.created,
+    required this.name,
+    this.description,
+    required this.standAlone,
+    required this.visible,
+    this.timeDifference,
+    required this.groupId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1024,6 +1965,16 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
       map['server_id'] = Variable<int>(serverId);
     }
     map['created'] = Variable<DateTime>(created);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
+    map['stand_alone'] = Variable<bool>(standAlone);
+    map['visible'] = Variable<bool>(visible);
+    if (!nullToAbsent || timeDifference != null) {
+      map['time_difference'] = Variable<String>(timeDifference);
+    }
+    map['group_id'] = Variable<int>(groupId);
     return map;
   }
 
@@ -1038,6 +1989,16 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
           ? const Value.absent()
           : Value(serverId),
       created: Value(created),
+      name: Value(name),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+      standAlone: Value(standAlone),
+      visible: Value(visible),
+      timeDifference: timeDifference == null && nullToAbsent
+          ? const Value.absent()
+          : Value(timeDifference),
+      groupId: Value(groupId),
     );
   }
 
@@ -1052,6 +2013,12 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
       syncTime: serializer.fromJson<DateTime?>(json['syncTime']),
       serverId: serializer.fromJson<int?>(json['serverId']),
       created: serializer.fromJson<DateTime>(json['created']),
+      name: serializer.fromJson<String>(json['name']),
+      description: serializer.fromJson<String?>(json['description']),
+      standAlone: serializer.fromJson<bool>(json['standAlone']),
+      visible: serializer.fromJson<bool>(json['visible']),
+      timeDifference: serializer.fromJson<String?>(json['timeDifference']),
+      groupId: serializer.fromJson<int>(json['groupId']),
     );
   }
   @override
@@ -1063,6 +2030,12 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
       'syncTime': serializer.toJson<DateTime?>(syncTime),
       'serverId': serializer.toJson<int?>(serverId),
       'created': serializer.toJson<DateTime>(created),
+      'name': serializer.toJson<String>(name),
+      'description': serializer.toJson<String?>(description),
+      'standAlone': serializer.toJson<bool>(standAlone),
+      'visible': serializer.toJson<bool>(visible),
+      'timeDifference': serializer.toJson<String?>(timeDifference),
+      'groupId': serializer.toJson<int>(groupId),
     };
   }
 
@@ -1072,12 +2045,26 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
     Value<DateTime?> syncTime = const Value.absent(),
     Value<int?> serverId = const Value.absent(),
     DateTime? created,
+    String? name,
+    Value<String?> description = const Value.absent(),
+    bool? standAlone,
+    bool? visible,
+    Value<String?> timeDifference = const Value.absent(),
+    int? groupId,
   }) => EventTypeData(
     id: id ?? this.id,
     synced: synced ?? this.synced,
     syncTime: syncTime.present ? syncTime.value : this.syncTime,
     serverId: serverId.present ? serverId.value : this.serverId,
     created: created ?? this.created,
+    name: name ?? this.name,
+    description: description.present ? description.value : this.description,
+    standAlone: standAlone ?? this.standAlone,
+    visible: visible ?? this.visible,
+    timeDifference: timeDifference.present
+        ? timeDifference.value
+        : this.timeDifference,
+    groupId: groupId ?? this.groupId,
   );
   EventTypeData copyWithCompanion(EventTypeCompanion data) {
     return EventTypeData(
@@ -1086,6 +2073,18 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
       syncTime: data.syncTime.present ? data.syncTime.value : this.syncTime,
       serverId: data.serverId.present ? data.serverId.value : this.serverId,
       created: data.created.present ? data.created.value : this.created,
+      name: data.name.present ? data.name.value : this.name,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      standAlone: data.standAlone.present
+          ? data.standAlone.value
+          : this.standAlone,
+      visible: data.visible.present ? data.visible.value : this.visible,
+      timeDifference: data.timeDifference.present
+          ? data.timeDifference.value
+          : this.timeDifference,
+      groupId: data.groupId.present ? data.groupId.value : this.groupId,
     );
   }
 
@@ -1096,13 +2095,31 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
           ..write('synced: $synced, ')
           ..write('syncTime: $syncTime, ')
           ..write('serverId: $serverId, ')
-          ..write('created: $created')
+          ..write('created: $created, ')
+          ..write('name: $name, ')
+          ..write('description: $description, ')
+          ..write('standAlone: $standAlone, ')
+          ..write('visible: $visible, ')
+          ..write('timeDifference: $timeDifference, ')
+          ..write('groupId: $groupId')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, synced, syncTime, serverId, created);
+  int get hashCode => Object.hash(
+    id,
+    synced,
+    syncTime,
+    serverId,
+    created,
+    name,
+    description,
+    standAlone,
+    visible,
+    timeDifference,
+    groupId,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1111,7 +2128,13 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
           other.synced == this.synced &&
           other.syncTime == this.syncTime &&
           other.serverId == this.serverId &&
-          other.created == this.created);
+          other.created == this.created &&
+          other.name == this.name &&
+          other.description == this.description &&
+          other.standAlone == this.standAlone &&
+          other.visible == this.visible &&
+          other.timeDifference == this.timeDifference &&
+          other.groupId == this.groupId);
 }
 
 class EventTypeCompanion extends UpdateCompanion<EventTypeData> {
@@ -1120,12 +2143,24 @@ class EventTypeCompanion extends UpdateCompanion<EventTypeData> {
   final Value<DateTime?> syncTime;
   final Value<int?> serverId;
   final Value<DateTime> created;
+  final Value<String> name;
+  final Value<String?> description;
+  final Value<bool> standAlone;
+  final Value<bool> visible;
+  final Value<String?> timeDifference;
+  final Value<int> groupId;
   const EventTypeCompanion({
     this.id = const Value.absent(),
     this.synced = const Value.absent(),
     this.syncTime = const Value.absent(),
     this.serverId = const Value.absent(),
     this.created = const Value.absent(),
+    this.name = const Value.absent(),
+    this.description = const Value.absent(),
+    this.standAlone = const Value.absent(),
+    this.visible = const Value.absent(),
+    this.timeDifference = const Value.absent(),
+    this.groupId = const Value.absent(),
   });
   EventTypeCompanion.insert({
     this.id = const Value.absent(),
@@ -1133,13 +2168,29 @@ class EventTypeCompanion extends UpdateCompanion<EventTypeData> {
     this.syncTime = const Value.absent(),
     this.serverId = const Value.absent(),
     required DateTime created,
-  }) : created = Value(created);
+    required String name,
+    this.description = const Value.absent(),
+    required bool standAlone,
+    required bool visible,
+    this.timeDifference = const Value.absent(),
+    required int groupId,
+  }) : created = Value(created),
+       name = Value(name),
+       standAlone = Value(standAlone),
+       visible = Value(visible),
+       groupId = Value(groupId);
   static Insertable<EventTypeData> custom({
     Expression<int>? id,
     Expression<bool>? synced,
     Expression<DateTime>? syncTime,
     Expression<int>? serverId,
     Expression<DateTime>? created,
+    Expression<String>? name,
+    Expression<String>? description,
+    Expression<bool>? standAlone,
+    Expression<bool>? visible,
+    Expression<String>? timeDifference,
+    Expression<int>? groupId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1147,6 +2198,12 @@ class EventTypeCompanion extends UpdateCompanion<EventTypeData> {
       if (syncTime != null) 'sync_time': syncTime,
       if (serverId != null) 'server_id': serverId,
       if (created != null) 'created': created,
+      if (name != null) 'name': name,
+      if (description != null) 'description': description,
+      if (standAlone != null) 'stand_alone': standAlone,
+      if (visible != null) 'visible': visible,
+      if (timeDifference != null) 'time_difference': timeDifference,
+      if (groupId != null) 'group_id': groupId,
     });
   }
 
@@ -1156,6 +2213,12 @@ class EventTypeCompanion extends UpdateCompanion<EventTypeData> {
     Value<DateTime?>? syncTime,
     Value<int?>? serverId,
     Value<DateTime>? created,
+    Value<String>? name,
+    Value<String?>? description,
+    Value<bool>? standAlone,
+    Value<bool>? visible,
+    Value<String?>? timeDifference,
+    Value<int>? groupId,
   }) {
     return EventTypeCompanion(
       id: id ?? this.id,
@@ -1163,6 +2226,12 @@ class EventTypeCompanion extends UpdateCompanion<EventTypeData> {
       syncTime: syncTime ?? this.syncTime,
       serverId: serverId ?? this.serverId,
       created: created ?? this.created,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      standAlone: standAlone ?? this.standAlone,
+      visible: visible ?? this.visible,
+      timeDifference: timeDifference ?? this.timeDifference,
+      groupId: groupId ?? this.groupId,
     );
   }
 
@@ -1184,6 +2253,24 @@ class EventTypeCompanion extends UpdateCompanion<EventTypeData> {
     if (created.present) {
       map['created'] = Variable<DateTime>(created.value);
     }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (standAlone.present) {
+      map['stand_alone'] = Variable<bool>(standAlone.value);
+    }
+    if (visible.present) {
+      map['visible'] = Variable<bool>(visible.value);
+    }
+    if (timeDifference.present) {
+      map['time_difference'] = Variable<String>(timeDifference.value);
+    }
+    if (groupId.present) {
+      map['group_id'] = Variable<int>(groupId.value);
+    }
     return map;
   }
 
@@ -1194,7 +2281,13 @@ class EventTypeCompanion extends UpdateCompanion<EventTypeData> {
           ..write('synced: $synced, ')
           ..write('syncTime: $syncTime, ')
           ..write('serverId: $serverId, ')
-          ..write('created: $created')
+          ..write('created: $created, ')
+          ..write('name: $name, ')
+          ..write('description: $description, ')
+          ..write('standAlone: $standAlone, ')
+          ..write('visible: $visible, ')
+          ..write('timeDifference: $timeDifference, ')
+          ..write('groupId: $groupId')
           ..write(')'))
         .toString();
   }
@@ -1293,6 +2386,15 @@ class $EventTable extends Event with TableInfo<$EventTable, EventData> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _personMeta = const VerificationMeta('person');
+  @override
+  late final GeneratedColumn<int> person = GeneratedColumn<int>(
+    'person',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _typeMeta = const VerificationMeta('type');
   @override
   late final GeneratedColumn<int> type = GeneratedColumn<int>(
@@ -1315,6 +2417,7 @@ class $EventTable extends Event with TableInfo<$EventTable, EventData> {
     description,
     start,
     end,
+    person,
     type,
   ];
   @override
@@ -1385,6 +2488,12 @@ class $EventTable extends Event with TableInfo<$EventTable, EventData> {
     } else if (isInserting) {
       context.missing(_endMeta);
     }
+    if (data.containsKey('person')) {
+      context.handle(
+        _personMeta,
+        person.isAcceptableOrUnknown(data['person']!, _personMeta),
+      );
+    }
     if (data.containsKey('type')) {
       context.handle(
         _typeMeta,
@@ -1434,6 +2543,10 @@ class $EventTable extends Event with TableInfo<$EventTable, EventData> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}end'],
       )!,
+      person: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}person'],
+      ),
       type: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}type'],
@@ -1456,6 +2569,7 @@ class EventData extends DataClass implements Insertable<EventData> {
   final String description;
   final DateTime start;
   final DateTime end;
+  final int? person;
   final int type;
   const EventData({
     required this.id,
@@ -1466,6 +2580,7 @@ class EventData extends DataClass implements Insertable<EventData> {
     required this.description,
     required this.start,
     required this.end,
+    this.person,
     required this.type,
   });
   @override
@@ -1483,6 +2598,9 @@ class EventData extends DataClass implements Insertable<EventData> {
     map['description'] = Variable<String>(description);
     map['start'] = Variable<DateTime>(start);
     map['end'] = Variable<DateTime>(end);
+    if (!nullToAbsent || person != null) {
+      map['person'] = Variable<int>(person);
+    }
     map['type'] = Variable<int>(type);
     return map;
   }
@@ -1501,6 +2619,9 @@ class EventData extends DataClass implements Insertable<EventData> {
       description: Value(description),
       start: Value(start),
       end: Value(end),
+      person: person == null && nullToAbsent
+          ? const Value.absent()
+          : Value(person),
       type: Value(type),
     );
   }
@@ -1519,6 +2640,7 @@ class EventData extends DataClass implements Insertable<EventData> {
       description: serializer.fromJson<String>(json['description']),
       start: serializer.fromJson<DateTime>(json['start']),
       end: serializer.fromJson<DateTime>(json['end']),
+      person: serializer.fromJson<int?>(json['person']),
       type: serializer.fromJson<int>(json['type']),
     );
   }
@@ -1534,6 +2656,7 @@ class EventData extends DataClass implements Insertable<EventData> {
       'description': serializer.toJson<String>(description),
       'start': serializer.toJson<DateTime>(start),
       'end': serializer.toJson<DateTime>(end),
+      'person': serializer.toJson<int?>(person),
       'type': serializer.toJson<int>(type),
     };
   }
@@ -1547,6 +2670,7 @@ class EventData extends DataClass implements Insertable<EventData> {
     String? description,
     DateTime? start,
     DateTime? end,
+    Value<int?> person = const Value.absent(),
     int? type,
   }) => EventData(
     id: id ?? this.id,
@@ -1557,6 +2681,7 @@ class EventData extends DataClass implements Insertable<EventData> {
     description: description ?? this.description,
     start: start ?? this.start,
     end: end ?? this.end,
+    person: person.present ? person.value : this.person,
     type: type ?? this.type,
   );
   EventData copyWithCompanion(EventCompanion data) {
@@ -1571,6 +2696,7 @@ class EventData extends DataClass implements Insertable<EventData> {
           : this.description,
       start: data.start.present ? data.start.value : this.start,
       end: data.end.present ? data.end.value : this.end,
+      person: data.person.present ? data.person.value : this.person,
       type: data.type.present ? data.type.value : this.type,
     );
   }
@@ -1586,6 +2712,7 @@ class EventData extends DataClass implements Insertable<EventData> {
           ..write('description: $description, ')
           ..write('start: $start, ')
           ..write('end: $end, ')
+          ..write('person: $person, ')
           ..write('type: $type')
           ..write(')'))
         .toString();
@@ -1601,6 +2728,7 @@ class EventData extends DataClass implements Insertable<EventData> {
     description,
     start,
     end,
+    person,
     type,
   );
   @override
@@ -1615,6 +2743,7 @@ class EventData extends DataClass implements Insertable<EventData> {
           other.description == this.description &&
           other.start == this.start &&
           other.end == this.end &&
+          other.person == this.person &&
           other.type == this.type);
 }
 
@@ -1627,6 +2756,7 @@ class EventCompanion extends UpdateCompanion<EventData> {
   final Value<String> description;
   final Value<DateTime> start;
   final Value<DateTime> end;
+  final Value<int?> person;
   final Value<int> type;
   const EventCompanion({
     this.id = const Value.absent(),
@@ -1637,6 +2767,7 @@ class EventCompanion extends UpdateCompanion<EventData> {
     this.description = const Value.absent(),
     this.start = const Value.absent(),
     this.end = const Value.absent(),
+    this.person = const Value.absent(),
     this.type = const Value.absent(),
   });
   EventCompanion.insert({
@@ -1648,6 +2779,7 @@ class EventCompanion extends UpdateCompanion<EventData> {
     required String description,
     required DateTime start,
     required DateTime end,
+    this.person = const Value.absent(),
     required int type,
   }) : created = Value(created),
        description = Value(description),
@@ -1663,6 +2795,7 @@ class EventCompanion extends UpdateCompanion<EventData> {
     Expression<String>? description,
     Expression<DateTime>? start,
     Expression<DateTime>? end,
+    Expression<int>? person,
     Expression<int>? type,
   }) {
     return RawValuesInsertable({
@@ -1674,6 +2807,7 @@ class EventCompanion extends UpdateCompanion<EventData> {
       if (description != null) 'description': description,
       if (start != null) 'start': start,
       if (end != null) 'end': end,
+      if (person != null) 'person': person,
       if (type != null) 'type': type,
     });
   }
@@ -1687,6 +2821,7 @@ class EventCompanion extends UpdateCompanion<EventData> {
     Value<String>? description,
     Value<DateTime>? start,
     Value<DateTime>? end,
+    Value<int?>? person,
     Value<int>? type,
   }) {
     return EventCompanion(
@@ -1698,6 +2833,7 @@ class EventCompanion extends UpdateCompanion<EventData> {
       description: description ?? this.description,
       start: start ?? this.start,
       end: end ?? this.end,
+      person: person ?? this.person,
       type: type ?? this.type,
     );
   }
@@ -1729,6 +2865,9 @@ class EventCompanion extends UpdateCompanion<EventData> {
     if (end.present) {
       map['end'] = Variable<DateTime>(end.value);
     }
+    if (person.present) {
+      map['person'] = Variable<int>(person.value);
+    }
     if (type.present) {
       map['type'] = Variable<int>(type.value);
     }
@@ -1746,6 +2885,7 @@ class EventCompanion extends UpdateCompanion<EventData> {
           ..write('description: $description, ')
           ..write('start: $start, ')
           ..write('end: $end, ')
+          ..write('person: $person, ')
           ..write('type: $type')
           ..write(')'))
         .toString();
@@ -3297,6 +4437,7 @@ class PersonCompanion extends UpdateCompanion<PersonData> {
 abstract class _$Database extends GeneratedDatabase {
   _$Database(QueryExecutor e) : super(e);
   $DatabaseManager get managers => $DatabaseManager(this);
+  late final $GroupTable group = $GroupTable(this);
   late final $MetricTypeTable metricType = $MetricTypeTable(this);
   late final $MetricTable metric = $MetricTable(this);
   late final $EventTypeTable eventType = $EventTypeTable(this);
@@ -3309,6 +4450,7 @@ abstract class _$Database extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
+    group,
     metricType,
     metric,
     eventType,
@@ -3319,6 +4461,471 @@ abstract class _$Database extends GeneratedDatabase {
   ];
 }
 
+typedef $$GroupTableCreateCompanionBuilder =
+    GroupCompanion Function({
+      Value<int> id,
+      Value<bool> synced,
+      Value<DateTime?> syncTime,
+      Value<int?> serverId,
+      required DateTime created,
+      required String name,
+      required String description,
+      required bool showOnDashboard,
+      required bool showTitle,
+    });
+typedef $$GroupTableUpdateCompanionBuilder =
+    GroupCompanion Function({
+      Value<int> id,
+      Value<bool> synced,
+      Value<DateTime?> syncTime,
+      Value<int?> serverId,
+      Value<DateTime> created,
+      Value<String> name,
+      Value<String> description,
+      Value<bool> showOnDashboard,
+      Value<bool> showTitle,
+    });
+
+final class $$GroupTableReferences
+    extends BaseReferences<_$Database, $GroupTable, GroupData> {
+  $$GroupTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$MetricTypeTable, List<MetricTypeData>>
+  _metricTypeRefsTable(_$Database db) => MultiTypedResultKey.fromTable(
+    db.metricType,
+    aliasName: 'group__id__metric_type__group_id',
+  );
+
+  $$MetricTypeTableProcessedTableManager get metricTypeRefs {
+    final manager = $$MetricTypeTableTableManager(
+      $_db,
+      $_db.metricType,
+    ).filter((f) => f.groupId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_metricTypeRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$EventTypeTable, List<EventTypeData>>
+  _eventTypeRefsTable(_$Database db) => MultiTypedResultKey.fromTable(
+    db.eventType,
+    aliasName: 'group__id__event_type__group_id',
+  );
+
+  $$EventTypeTableProcessedTableManager get eventTypeRefs {
+    final manager = $$EventTypeTableTableManager(
+      $_db,
+      $_db.eventType,
+    ).filter((f) => f.groupId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_eventTypeRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$GroupTableFilterComposer extends Composer<_$Database, $GroupTable> {
+  $$GroupTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncTime => $composableBuilder(
+    column: $table.syncTime,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get serverId => $composableBuilder(
+    column: $table.serverId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get created => $composableBuilder(
+    column: $table.created,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get showOnDashboard => $composableBuilder(
+    column: $table.showOnDashboard,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get showTitle => $composableBuilder(
+    column: $table.showTitle,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> metricTypeRefs(
+    Expression<bool> Function($$MetricTypeTableFilterComposer f) f,
+  ) {
+    final $$MetricTypeTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.metricType,
+      getReferencedColumn: (t) => t.groupId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MetricTypeTableFilterComposer(
+            $db: $db,
+            $table: $db.metricType,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> eventTypeRefs(
+    Expression<bool> Function($$EventTypeTableFilterComposer f) f,
+  ) {
+    final $$EventTypeTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.eventType,
+      getReferencedColumn: (t) => t.groupId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventTypeTableFilterComposer(
+            $db: $db,
+            $table: $db.eventType,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$GroupTableOrderingComposer extends Composer<_$Database, $GroupTable> {
+  $$GroupTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncTime => $composableBuilder(
+    column: $table.syncTime,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get serverId => $composableBuilder(
+    column: $table.serverId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get created => $composableBuilder(
+    column: $table.created,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get showOnDashboard => $composableBuilder(
+    column: $table.showOnDashboard,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get showTitle => $composableBuilder(
+    column: $table.showTitle,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$GroupTableAnnotationComposer extends Composer<_$Database, $GroupTable> {
+  $$GroupTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<bool> get synced =>
+      $composableBuilder(column: $table.synced, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncTime =>
+      $composableBuilder(column: $table.syncTime, builder: (column) => column);
+
+  GeneratedColumn<int> get serverId =>
+      $composableBuilder(column: $table.serverId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get created =>
+      $composableBuilder(column: $table.created, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get showOnDashboard => $composableBuilder(
+    column: $table.showOnDashboard,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get showTitle =>
+      $composableBuilder(column: $table.showTitle, builder: (column) => column);
+
+  Expression<T> metricTypeRefs<T extends Object>(
+    Expression<T> Function($$MetricTypeTableAnnotationComposer a) f,
+  ) {
+    final $$MetricTypeTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.metricType,
+      getReferencedColumn: (t) => t.groupId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MetricTypeTableAnnotationComposer(
+            $db: $db,
+            $table: $db.metricType,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> eventTypeRefs<T extends Object>(
+    Expression<T> Function($$EventTypeTableAnnotationComposer a) f,
+  ) {
+    final $$EventTypeTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.eventType,
+      getReferencedColumn: (t) => t.groupId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EventTypeTableAnnotationComposer(
+            $db: $db,
+            $table: $db.eventType,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$GroupTableTableManager
+    extends
+        RootTableManager<
+          _$Database,
+          $GroupTable,
+          GroupData,
+          $$GroupTableFilterComposer,
+          $$GroupTableOrderingComposer,
+          $$GroupTableAnnotationComposer,
+          $$GroupTableCreateCompanionBuilder,
+          $$GroupTableUpdateCompanionBuilder,
+          (GroupData, $$GroupTableReferences),
+          GroupData,
+          PrefetchHooks Function({bool metricTypeRefs, bool eventTypeRefs})
+        > {
+  $$GroupTableTableManager(_$Database db, $GroupTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$GroupTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$GroupTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$GroupTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
+                Value<DateTime?> syncTime = const Value.absent(),
+                Value<int?> serverId = const Value.absent(),
+                Value<DateTime> created = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> description = const Value.absent(),
+                Value<bool> showOnDashboard = const Value.absent(),
+                Value<bool> showTitle = const Value.absent(),
+              }) => GroupCompanion(
+                id: id,
+                synced: synced,
+                syncTime: syncTime,
+                serverId: serverId,
+                created: created,
+                name: name,
+                description: description,
+                showOnDashboard: showOnDashboard,
+                showTitle: showTitle,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
+                Value<DateTime?> syncTime = const Value.absent(),
+                Value<int?> serverId = const Value.absent(),
+                required DateTime created,
+                required String name,
+                required String description,
+                required bool showOnDashboard,
+                required bool showTitle,
+              }) => GroupCompanion.insert(
+                id: id,
+                synced: synced,
+                syncTime: syncTime,
+                serverId: serverId,
+                created: created,
+                name: name,
+                description: description,
+                showOnDashboard: showOnDashboard,
+                showTitle: showTitle,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) =>
+                    (e.readTable(table), $$GroupTableReferences(db, table, e)),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({metricTypeRefs = false, eventTypeRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (metricTypeRefs) db.metricType,
+                    if (eventTypeRefs) db.eventType,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (metricTypeRefs)
+                        await $_getPrefetchedData<
+                          GroupData,
+                          $GroupTable,
+                          MetricTypeData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$GroupTableReferences
+                              ._metricTypeRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$GroupTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).metricTypeRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.groupId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (eventTypeRefs)
+                        await $_getPrefetchedData<
+                          GroupData,
+                          $GroupTable,
+                          EventTypeData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$GroupTableReferences
+                              ._eventTypeRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$GroupTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).eventTypeRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.groupId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$GroupTableProcessedTableManager =
+    ProcessedTableManager<
+      _$Database,
+      $GroupTable,
+      GroupData,
+      $$GroupTableFilterComposer,
+      $$GroupTableOrderingComposer,
+      $$GroupTableAnnotationComposer,
+      $$GroupTableCreateCompanionBuilder,
+      $$GroupTableUpdateCompanionBuilder,
+      (GroupData, $$GroupTableReferences),
+      GroupData,
+      PrefetchHooks Function({bool metricTypeRefs, bool eventTypeRefs})
+    >;
 typedef $$MetricTypeTableCreateCompanionBuilder =
     MetricTypeCompanion Function({
       Value<int> id,
@@ -3326,6 +4933,9 @@ typedef $$MetricTypeTableCreateCompanionBuilder =
       Value<DateTime?> syncTime,
       Value<int?> serverId,
       required DateTime created,
+      required String name,
+      Value<String?> description,
+      required int groupId,
     });
 typedef $$MetricTypeTableUpdateCompanionBuilder =
     MetricTypeCompanion Function({
@@ -3334,11 +4944,31 @@ typedef $$MetricTypeTableUpdateCompanionBuilder =
       Value<DateTime?> syncTime,
       Value<int?> serverId,
       Value<DateTime> created,
+      Value<String> name,
+      Value<String?> description,
+      Value<int> groupId,
     });
 
 final class $$MetricTypeTableReferences
     extends BaseReferences<_$Database, $MetricTypeTable, MetricTypeData> {
   $$MetricTypeTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $GroupTable _groupIdTable(_$Database db) =>
+      db.group.createAlias('metric_type__group_id__group__id');
+
+  $$GroupTableProcessedTableManager get groupId {
+    final $_column = $_itemColumn<int>('group_id')!;
+
+    final manager = $$GroupTableTableManager(
+      $_db,
+      $_db.group,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_groupIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
 
   static MultiTypedResultKey<$MetricTable, List<MetricData>> _metricRefsTable(
     _$Database db,
@@ -3393,6 +5023,39 @@ class $$MetricTypeTableFilterComposer
     column: $table.created,
     builder: (column) => ColumnFilters(column),
   );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$GroupTableFilterComposer get groupId {
+    final $$GroupTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.groupId,
+      referencedTable: $db.group,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GroupTableFilterComposer(
+            $db: $db,
+            $table: $db.group,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   Expression<bool> metricRefs(
     Expression<bool> Function($$MetricTableFilterComposer f) f,
@@ -3453,6 +5116,39 @@ class $$MetricTypeTableOrderingComposer
     column: $table.created,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$GroupTableOrderingComposer get groupId {
+    final $$GroupTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.groupId,
+      referencedTable: $db.group,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GroupTableOrderingComposer(
+            $db: $db,
+            $table: $db.group,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$MetricTypeTableAnnotationComposer
@@ -3478,6 +5174,37 @@ class $$MetricTypeTableAnnotationComposer
 
   GeneratedColumn<DateTime> get created =>
       $composableBuilder(column: $table.created, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
+
+  $$GroupTableAnnotationComposer get groupId {
+    final $$GroupTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.groupId,
+      referencedTable: $db.group,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GroupTableAnnotationComposer(
+            $db: $db,
+            $table: $db.group,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   Expression<T> metricRefs<T extends Object>(
     Expression<T> Function($$MetricTableAnnotationComposer a) f,
@@ -3518,7 +5245,7 @@ class $$MetricTypeTableTableManager
           $$MetricTypeTableUpdateCompanionBuilder,
           (MetricTypeData, $$MetricTypeTableReferences),
           MetricTypeData,
-          PrefetchHooks Function({bool metricRefs})
+          PrefetchHooks Function({bool groupId, bool metricRefs})
         > {
   $$MetricTypeTableTableManager(_$Database db, $MetricTypeTable table)
     : super(
@@ -3538,12 +5265,18 @@ class $$MetricTypeTableTableManager
                 Value<DateTime?> syncTime = const Value.absent(),
                 Value<int?> serverId = const Value.absent(),
                 Value<DateTime> created = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String?> description = const Value.absent(),
+                Value<int> groupId = const Value.absent(),
               }) => MetricTypeCompanion(
                 id: id,
                 synced: synced,
                 syncTime: syncTime,
                 serverId: serverId,
                 created: created,
+                name: name,
+                description: description,
+                groupId: groupId,
               ),
           createCompanionCallback:
               ({
@@ -3552,12 +5285,18 @@ class $$MetricTypeTableTableManager
                 Value<DateTime?> syncTime = const Value.absent(),
                 Value<int?> serverId = const Value.absent(),
                 required DateTime created,
+                required String name,
+                Value<String?> description = const Value.absent(),
+                required int groupId,
               }) => MetricTypeCompanion.insert(
                 id: id,
                 synced: synced,
                 syncTime: syncTime,
                 serverId: serverId,
                 created: created,
+                name: name,
+                description: description,
+                groupId: groupId,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -3567,11 +5306,42 @@ class $$MetricTypeTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({metricRefs = false}) {
+          prefetchHooksCallback: ({groupId = false, metricRefs = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [if (metricRefs) db.metric],
-              addJoins: null,
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (groupId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.groupId,
+                                referencedTable: $$MetricTypeTableReferences
+                                    ._groupIdTable(db),
+                                referencedColumn: $$MetricTypeTableReferences
+                                    ._groupIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (metricRefs)
@@ -3609,7 +5379,7 @@ typedef $$MetricTypeTableProcessedTableManager =
       $$MetricTypeTableUpdateCompanionBuilder,
       (MetricTypeData, $$MetricTypeTableReferences),
       MetricTypeData,
-      PrefetchHooks Function({bool metricRefs})
+      PrefetchHooks Function({bool groupId, bool metricRefs})
     >;
 typedef $$MetricTableCreateCompanionBuilder =
     MetricCompanion Function({
@@ -3620,6 +5390,7 @@ typedef $$MetricTableCreateCompanionBuilder =
       required DateTime created,
       required String value,
       required DateTime date,
+      Value<int?> person,
       required int type,
     });
 typedef $$MetricTableUpdateCompanionBuilder =
@@ -3631,6 +5402,7 @@ typedef $$MetricTableUpdateCompanionBuilder =
       Value<DateTime> created,
       Value<String> value,
       Value<DateTime> date,
+      Value<int?> person,
       Value<int> type,
     });
 
@@ -3696,6 +5468,11 @@ class $$MetricTableFilterComposer extends Composer<_$Database, $MetricTable> {
 
   ColumnFilters<DateTime> get date => $composableBuilder(
     column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get person => $composableBuilder(
+    column: $table.person,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3766,6 +5543,11 @@ class $$MetricTableOrderingComposer extends Composer<_$Database, $MetricTable> {
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get person => $composableBuilder(
+    column: $table.person,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$MetricTypeTableOrderingComposer get type {
     final $$MetricTypeTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -3819,6 +5601,9 @@ class $$MetricTableAnnotationComposer
 
   GeneratedColumn<DateTime> get date =>
       $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<int> get person =>
+      $composableBuilder(column: $table.person, builder: (column) => column);
 
   $$MetricTypeTableAnnotationComposer get type {
     final $$MetricTypeTableAnnotationComposer composer = $composerBuilder(
@@ -3879,6 +5664,7 @@ class $$MetricTableTableManager
                 Value<DateTime> created = const Value.absent(),
                 Value<String> value = const Value.absent(),
                 Value<DateTime> date = const Value.absent(),
+                Value<int?> person = const Value.absent(),
                 Value<int> type = const Value.absent(),
               }) => MetricCompanion(
                 id: id,
@@ -3888,6 +5674,7 @@ class $$MetricTableTableManager
                 created: created,
                 value: value,
                 date: date,
+                person: person,
                 type: type,
               ),
           createCompanionCallback:
@@ -3899,6 +5686,7 @@ class $$MetricTableTableManager
                 required DateTime created,
                 required String value,
                 required DateTime date,
+                Value<int?> person = const Value.absent(),
                 required int type,
               }) => MetricCompanion.insert(
                 id: id,
@@ -3908,6 +5696,7 @@ class $$MetricTableTableManager
                 created: created,
                 value: value,
                 date: date,
+                person: person,
                 type: type,
               ),
           withReferenceMapper: (p0) => p0
@@ -3982,6 +5771,12 @@ typedef $$EventTypeTableCreateCompanionBuilder =
       Value<DateTime?> syncTime,
       Value<int?> serverId,
       required DateTime created,
+      required String name,
+      Value<String?> description,
+      required bool standAlone,
+      required bool visible,
+      Value<String?> timeDifference,
+      required int groupId,
     });
 typedef $$EventTypeTableUpdateCompanionBuilder =
     EventTypeCompanion Function({
@@ -3990,11 +5785,34 @@ typedef $$EventTypeTableUpdateCompanionBuilder =
       Value<DateTime?> syncTime,
       Value<int?> serverId,
       Value<DateTime> created,
+      Value<String> name,
+      Value<String?> description,
+      Value<bool> standAlone,
+      Value<bool> visible,
+      Value<String?> timeDifference,
+      Value<int> groupId,
     });
 
 final class $$EventTypeTableReferences
     extends BaseReferences<_$Database, $EventTypeTable, EventTypeData> {
   $$EventTypeTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $GroupTable _groupIdTable(_$Database db) =>
+      db.group.createAlias('event_type__group_id__group__id');
+
+  $$GroupTableProcessedTableManager get groupId {
+    final $_column = $_itemColumn<int>('group_id')!;
+
+    final manager = $$GroupTableTableManager(
+      $_db,
+      $_db.group,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_groupIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
 
   static MultiTypedResultKey<$EventTable, List<EventData>> _eventRefsTable(
     _$Database db,
@@ -4049,6 +5867,54 @@ class $$EventTypeTableFilterComposer
     column: $table.created,
     builder: (column) => ColumnFilters(column),
   );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get standAlone => $composableBuilder(
+    column: $table.standAlone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get visible => $composableBuilder(
+    column: $table.visible,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get timeDifference => $composableBuilder(
+    column: $table.timeDifference,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$GroupTableFilterComposer get groupId {
+    final $$GroupTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.groupId,
+      referencedTable: $db.group,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GroupTableFilterComposer(
+            $db: $db,
+            $table: $db.group,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   Expression<bool> eventRefs(
     Expression<bool> Function($$EventTableFilterComposer f) f,
@@ -4109,6 +5975,54 @@ class $$EventTypeTableOrderingComposer
     column: $table.created,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get standAlone => $composableBuilder(
+    column: $table.standAlone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get visible => $composableBuilder(
+    column: $table.visible,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get timeDifference => $composableBuilder(
+    column: $table.timeDifference,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$GroupTableOrderingComposer get groupId {
+    final $$GroupTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.groupId,
+      referencedTable: $db.group,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GroupTableOrderingComposer(
+            $db: $db,
+            $table: $db.group,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$EventTypeTableAnnotationComposer
@@ -4134,6 +6048,50 @@ class $$EventTypeTableAnnotationComposer
 
   GeneratedColumn<DateTime> get created =>
       $composableBuilder(column: $table.created, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get standAlone => $composableBuilder(
+    column: $table.standAlone,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get visible =>
+      $composableBuilder(column: $table.visible, builder: (column) => column);
+
+  GeneratedColumn<String> get timeDifference => $composableBuilder(
+    column: $table.timeDifference,
+    builder: (column) => column,
+  );
+
+  $$GroupTableAnnotationComposer get groupId {
+    final $$GroupTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.groupId,
+      referencedTable: $db.group,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GroupTableAnnotationComposer(
+            $db: $db,
+            $table: $db.group,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   Expression<T> eventRefs<T extends Object>(
     Expression<T> Function($$EventTableAnnotationComposer a) f,
@@ -4174,7 +6132,7 @@ class $$EventTypeTableTableManager
           $$EventTypeTableUpdateCompanionBuilder,
           (EventTypeData, $$EventTypeTableReferences),
           EventTypeData,
-          PrefetchHooks Function({bool eventRefs})
+          PrefetchHooks Function({bool groupId, bool eventRefs})
         > {
   $$EventTypeTableTableManager(_$Database db, $EventTypeTable table)
     : super(
@@ -4194,12 +6152,24 @@ class $$EventTypeTableTableManager
                 Value<DateTime?> syncTime = const Value.absent(),
                 Value<int?> serverId = const Value.absent(),
                 Value<DateTime> created = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String?> description = const Value.absent(),
+                Value<bool> standAlone = const Value.absent(),
+                Value<bool> visible = const Value.absent(),
+                Value<String?> timeDifference = const Value.absent(),
+                Value<int> groupId = const Value.absent(),
               }) => EventTypeCompanion(
                 id: id,
                 synced: synced,
                 syncTime: syncTime,
                 serverId: serverId,
                 created: created,
+                name: name,
+                description: description,
+                standAlone: standAlone,
+                visible: visible,
+                timeDifference: timeDifference,
+                groupId: groupId,
               ),
           createCompanionCallback:
               ({
@@ -4208,12 +6178,24 @@ class $$EventTypeTableTableManager
                 Value<DateTime?> syncTime = const Value.absent(),
                 Value<int?> serverId = const Value.absent(),
                 required DateTime created,
+                required String name,
+                Value<String?> description = const Value.absent(),
+                required bool standAlone,
+                required bool visible,
+                Value<String?> timeDifference = const Value.absent(),
+                required int groupId,
               }) => EventTypeCompanion.insert(
                 id: id,
                 synced: synced,
                 syncTime: syncTime,
                 serverId: serverId,
                 created: created,
+                name: name,
+                description: description,
+                standAlone: standAlone,
+                visible: visible,
+                timeDifference: timeDifference,
+                groupId: groupId,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -4223,11 +6205,42 @@ class $$EventTypeTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({eventRefs = false}) {
+          prefetchHooksCallback: ({groupId = false, eventRefs = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [if (eventRefs) db.event],
-              addJoins: null,
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (groupId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.groupId,
+                                referencedTable: $$EventTypeTableReferences
+                                    ._groupIdTable(db),
+                                referencedColumn: $$EventTypeTableReferences
+                                    ._groupIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (eventRefs)
@@ -4265,7 +6278,7 @@ typedef $$EventTypeTableProcessedTableManager =
       $$EventTypeTableUpdateCompanionBuilder,
       (EventTypeData, $$EventTypeTableReferences),
       EventTypeData,
-      PrefetchHooks Function({bool eventRefs})
+      PrefetchHooks Function({bool groupId, bool eventRefs})
     >;
 typedef $$EventTableCreateCompanionBuilder =
     EventCompanion Function({
@@ -4277,6 +6290,7 @@ typedef $$EventTableCreateCompanionBuilder =
       required String description,
       required DateTime start,
       required DateTime end,
+      Value<int?> person,
       required int type,
     });
 typedef $$EventTableUpdateCompanionBuilder =
@@ -4289,6 +6303,7 @@ typedef $$EventTableUpdateCompanionBuilder =
       Value<String> description,
       Value<DateTime> start,
       Value<DateTime> end,
+      Value<int?> person,
       Value<int> type,
     });
 
@@ -4359,6 +6374,11 @@ class $$EventTableFilterComposer extends Composer<_$Database, $EventTable> {
 
   ColumnFilters<DateTime> get end => $composableBuilder(
     column: $table.end,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get person => $composableBuilder(
+    column: $table.person,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4434,6 +6454,11 @@ class $$EventTableOrderingComposer extends Composer<_$Database, $EventTable> {
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get person => $composableBuilder(
+    column: $table.person,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$EventTypeTableOrderingComposer get type {
     final $$EventTypeTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -4491,6 +6516,9 @@ class $$EventTableAnnotationComposer extends Composer<_$Database, $EventTable> {
 
   GeneratedColumn<DateTime> get end =>
       $composableBuilder(column: $table.end, builder: (column) => column);
+
+  GeneratedColumn<int> get person =>
+      $composableBuilder(column: $table.person, builder: (column) => column);
 
   $$EventTypeTableAnnotationComposer get type {
     final $$EventTypeTableAnnotationComposer composer = $composerBuilder(
@@ -4552,6 +6580,7 @@ class $$EventTableTableManager
                 Value<String> description = const Value.absent(),
                 Value<DateTime> start = const Value.absent(),
                 Value<DateTime> end = const Value.absent(),
+                Value<int?> person = const Value.absent(),
                 Value<int> type = const Value.absent(),
               }) => EventCompanion(
                 id: id,
@@ -4562,6 +6591,7 @@ class $$EventTableTableManager
                 description: description,
                 start: start,
                 end: end,
+                person: person,
                 type: type,
               ),
           createCompanionCallback:
@@ -4574,6 +6604,7 @@ class $$EventTableTableManager
                 required String description,
                 required DateTime start,
                 required DateTime end,
+                Value<int?> person = const Value.absent(),
                 required int type,
               }) => EventCompanion.insert(
                 id: id,
@@ -4584,6 +6615,7 @@ class $$EventTableTableManager
                 description: description,
                 start: start,
                 end: end,
+                person: person,
                 type: type,
               ),
           withReferenceMapper: (p0) => p0
@@ -5405,6 +7437,8 @@ typedef $$PersonTableProcessedTableManager =
 class $DatabaseManager {
   final _$Database _db;
   $DatabaseManager(this._db);
+  $$GroupTableTableManager get group =>
+      $$GroupTableTableManager(_db, _db.group);
   $$MetricTypeTableTableManager get metricType =>
       $$MetricTypeTableTableManager(_db, _db.metricType);
   $$MetricTableTableManager get metric =>

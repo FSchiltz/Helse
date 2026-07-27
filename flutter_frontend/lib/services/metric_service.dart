@@ -14,11 +14,11 @@ abstract interface class MetricService {
 
   Future<List<Group>?> metricsGroup();
 
-  Future<void> addGroup(CreateGroup metric);
+  Future<void> addGroup(CreateGroup group);
 
-  Future<void> updateGroup(UpdateGroup metric);
+  Future<void> updateGroup(UpdateGroup group);
 
-  Future<void> deleteMetricsGroup(int metric);
+  Future<void> deleteMetricsGroup(int group);
 
   Future<List<Metric>> metrics(
     int? type,

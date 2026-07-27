@@ -1,3 +1,5 @@
+import 'package:drift/drift.dart';
+import 'package:helse/services/local/database/database.dart';
 import 'package:helse/services/local/local_service.dart';
 import 'package:helse/services/metric_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
@@ -6,21 +8,49 @@ class LocalMetricService extends LocalService implements MetricService {
   LocalMetricService(super.account);
 
   @override
-  Future<void> addGroup(CreateGroup metric) {
-    // TODO: implement addGroup
-    throw UnimplementedError();
+  Future<void> addGroup(CreateGroup group) async {
+    await account.database
+        .into(account.database.group)
+        .insert(
+          GroupCompanion.insert(
+            description: group.description,
+            name: group.name,
+            showOnDashboard: group.showOnDashboard ?? false,
+            showTitle: group.showTitle ?? false,
+            created: DateTime.now().toUtc(),
+          ),
+        );
   }
 
   @override
-  Future<int?> addMetrics(CreateMetric metric, {int? person}) {
-    // TODO: implement addMetrics
-    throw UnimplementedError();
+  Future<int?> addMetrics(CreateMetric metric, {int? person}) async {
+    final newRow = await account.database
+        .into(account.database.metric)
+        .insertReturning(
+          MetricCompanion.insert(
+            date: metric.date,
+            type: metric.type,
+            value: metric.value,
+            person: Value(person),
+            created: DateTime.now().toUtc(),
+          ),
+        );
+
+    return newRow.id;
   }
 
   @override
-  Future<void> addMetricsType(CreateMetricType metric) {
-    // TODO: implement addMetricsType
-    throw UnimplementedError();
+  Future<void> addMetricsType(CreateMetricType metric) async {
+    await account.database
+        .into(account.database.metricType)
+        .insert(
+          MetricTypeCompanion.insert(
+            groupId: metric.groupId,
+            name: metric.name,
+            description: Value(metric.description),
+            created: DateTime.now().toUtc(),
+          ),
+        );
   }
 
   @override
@@ -54,21 +84,41 @@ class LocalMetricService extends LocalService implements MetricService {
   }
 
   @override
-  Future<MetricSummaries> metricSummaries(int? type, DateTime? start, DateTime? end, {int? person, int? tile}) {
+  Future<MetricSummaries> metricSummaries(
+    int? type,
+    DateTime? start,
+    DateTime? end, {
+    int? person,
+    int? tile,
+  }) {
     // TODO: implement metricSummaries
     throw UnimplementedError();
   }
 
   @override
-  Future<List<Metric>> metrics(int? type, DateTime? start, DateTime? end, {int? person}) {
+  Future<List<Metric>> metrics(
+    int? type,
+    DateTime? start,
+    DateTime? end, {
+    int? person,
+  }) {
     // TODO: implement metrics
     throw UnimplementedError();
   }
 
   @override
-  Future<List<Group>?> metricsGroup() {
-    // TODO: implement metricsGroup
-    throw UnimplementedError();
+  Future<List<Group>?> metricsGroup() async {
+    final result = await account.database.select(account.database.group).get();
+    return result
+        .map(
+          (e) => Group(
+            name: e.name,
+            description: e.description,
+            showOnDashboard: e.showOnDashboard,
+            showTitle: e.showTitle,
+          ),
+        )
+        .toList();
   }
 
   @override
@@ -78,7 +128,12 @@ class LocalMetricService extends LocalService implements MetricService {
   }
 
   @override
-  Future<List<Metric>?> searchMetrics(int? person, SearchMetric search, int page, int pageSize) {
+  Future<List<Metric>?> searchMetrics(
+    int? person,
+    SearchMetric search,
+    int page,
+    int pageSize,
+  ) {
     // TODO: implement searchMetrics
     throw UnimplementedError();
   }

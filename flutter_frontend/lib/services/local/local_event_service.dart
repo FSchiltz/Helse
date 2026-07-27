@@ -1,4 +1,6 @@
+import 'package:drift/drift.dart';
 import 'package:helse/services/event_service.dart';
+import 'package:helse/services/local/database/database.dart';
 import 'package:helse/services/local/local_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
@@ -6,15 +8,38 @@ class LocalEventService extends LocalService implements EventService {
   LocalEventService(super.account);
 
   @override
-  Future<int?> addEvent(CreateEvent event, {int? person}) {
-    // TODO: implement addEvent
-    throw UnimplementedError();
+  Future<int?> addEvent(CreateEvent event, {int? person}) async {
+    final newRow = await account.database
+        .into(account.database.event)
+        .insertReturning(
+          EventCompanion.insert(
+            description: event.description ?? '',
+            end: event.stop,
+            start: event.start,
+            type: event.type,
+            person: Value(person),
+            created: DateTime.now().toUtc(),
+          ),
+        );
+
+    return newRow.id;
   }
 
   @override
-  Future<void> addEventsType(CreateEventType event) {
-    // TODO: implement addEventsType
-    throw UnimplementedError();
+  Future<void> addEventsType(CreateEventType event) async {
+    await account.database
+        .into(account.database.eventType)
+        .insert(
+          EventTypeCompanion.insert(
+            groupId: event.groupId,
+            name: event.name,
+            standAlone: event.standAlone ?? false,
+            visible: event.visible ?? false,
+            description: Value(event.description),
+            timeDifference: Value(event.timeDifference),
+            created: DateTime.now().toUtc(),
+          ),
+        );
   }
 
   @override
@@ -48,13 +73,23 @@ class LocalEventService extends LocalService implements EventService {
   }
 
   @override
-  Future<List<Event>?> events(int? type, DateTime? start, DateTime? end, {int? person}) {
+  Future<List<Event>?> events(
+    int? type,
+    DateTime? start,
+    DateTime? end, {
+    int? person,
+  }) {
     // TODO: implement events
     throw UnimplementedError();
   }
 
   @override
-  Future<EventStats?> eventsSummary(int? type, DateTime? start, DateTime? end, {int? person}) {
+  Future<EventStats?> eventsSummary(
+    int? type,
+    DateTime? start,
+    DateTime? end, {
+    int? person,
+  }) {
     // TODO: implement eventsSummary
     throw UnimplementedError();
   }
@@ -66,7 +101,12 @@ class LocalEventService extends LocalService implements EventService {
   }
 
   @override
-  Future<List<Event>?> searchEvents(int? person, SearchEvent search, int page, int pageSize) {
+  Future<List<Event>?> searchEvents(
+    int? person,
+    SearchEvent search,
+    int page,
+    int pageSize,
+  ) {
     // TODO: implement searchEvents
     throw UnimplementedError();
   }
