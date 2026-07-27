@@ -6,7 +6,6 @@ import 'package:helse/di/dependencies.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/logic/settings/settings_logic.dart';
 import 'package:helse/worker.dart';
-import 'logic/account/authentication_logic.dart';
 import 'logic/account/authentication_bloc.dart';
 import 'ui/home.dart';
 import 'ui/login.dart';
@@ -51,28 +50,21 @@ class App extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         navigatorKey: navigatorKey,
         scaffoldMessengerKey: snackbarKey,
-        builder: (context, child) {
-          return BlocListener<AuthenticationBloc, AuthenticationStatus>(
-            bloc: Dependencies.blocs.auth,
-            listener: (context, state) {
-              log('State changed');
-              switch (state) {
-                case AuthenticationStatus.authenticated:
-                  navigatorKey.currentState!.pushAndRemoveUntil<void>(
-                    Home.route(),
-                    (route) => false,
-                  );
-                default:
-                  navigatorKey.currentState!.pushAndRemoveUntil<void>(
-                    LoginPage.route(),
-                    (route) => false,
-                  );
-              }
-            },
-            child: child,
-          );
-        },
-        onGenerateRoute: (RouteSettings routeSettings) => SplashPage.route(),
+        home: BlocBuilder<AuthenticationBloc, AuthenticationStatus>(
+          bloc: Dependencies.blocs.auth,
+          builder: (context, state) {
+            switch (state) {
+              case AuthenticationStatus.authenticated:
+                return const Home();
+
+              case AuthenticationStatus.unauthenticated:
+                return const LoginPage();
+
+              default:
+                return const SplashPage();
+            }
+          },
+        ),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
       ),

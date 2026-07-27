@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:app_links/app_links.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:helse/logic/account/authentication_bloc.dart';
 import 'package:helse/logic/account/settings_migration.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -11,8 +12,6 @@ import 'package:helse/helpers/url_dummy.dart'
 
 import '../../services/account.dart';
 import '../../di/dependencies.dart';
-
-enum AuthenticationStatus { unknown,unset,authenticated, unauthenticated }
 
 /// Authentication logic
 class AuthenticationLogic {
@@ -270,6 +269,8 @@ class AuthenticationLogic {
         if (uri != null) {
           await checkUrl(uri);
         }
+      } else {
+        setNoAuth();
       }
     }
   }
