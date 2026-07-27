@@ -1,3 +1,4 @@
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/local/local_service.dart';
 import 'package:helse/services/settings_services.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
@@ -6,15 +7,13 @@ class LocalSettingService extends LocalService implements SettingService {
   LocalSettingService(super.account);
 
   @override
-  Future<PatientsSettings> getPatientsSettings() {
-    // TODO: implement getPatientsSettings
-    throw UnimplementedError();
+  Future<PatientsSettings> getPatientsSettings() async {
+    return Dependencies.logics.patientsSettings.patientsSettings();
   }
 
   @override
-  Future<UserSettings> getPersonSettings() {
-    // TODO: implement getPersonSettings
-    throw UnimplementedError();
+  Future<UserSettings> getPersonSettings() async {
+    return Dependencies.logics.settings.userSettings();
   }
 
   @override
@@ -27,16 +26,10 @@ class LocalSettingService extends LocalService implements SettingService {
   Future<Proxy> proxy() async => Proxy();
 
   @override
-  Future<void> savePatientsSettings(PatientsSettings settings) {
-    // TODO: implement savePatientsSettings
-    throw UnimplementedError();
-  }
+  Future<void> savePatientsSettings(PatientsSettings settings) async {}
 
   @override
-  Future<void> savePersonSettings(UserSettings settings) {
-    // TODO: implement savePersonSettings
-    throw UnimplementedError();
-  }
+  Future<void> savePersonSettings(UserSettings settings) async {}
 
   @override
   Future<Smtp> smtp() async => Smtp();
