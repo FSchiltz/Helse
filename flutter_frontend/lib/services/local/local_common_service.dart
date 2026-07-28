@@ -8,10 +8,11 @@ class LocalCommonService extends LocalService implements CommonService {
   @override
   Future<List<Unit>> getUnits() async {
     final result = await account.database.select(account.database.unit).get();
+    final unitmap = UnitType.values.asNameMap();
     return result
         .map(
           (e) => Unit(
-            type: UnitType.values.asNameMap()[e.code]!,
+            type: unitmap[e.type]!,
             id: e.id,
             code: e.code,
           ),

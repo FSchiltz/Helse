@@ -2612,7 +2612,7 @@ class CreateEvent {
     this.tag,
     this.notificationTime,
     this.source,
-    this.sourceId,
+    required this.sourceId,
   });
 
   factory CreateEvent.fromJson(Map<String, dynamic> json) =>
@@ -2640,7 +2640,7 @@ class CreateEvent {
   )
   final enums.ImportTypes? source;
   @JsonKey(name: 'sourceId')
-  final String? sourceId;
+  final String sourceId;
   static const fromJsonFactory = _$CreateEventFromJson;
 
   @override
@@ -2721,7 +2721,7 @@ extension $CreateEventExtension on CreateEvent {
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
     Wrapped<enums.ImportTypes?>? source,
-    Wrapped<String?>? sourceId,
+    Wrapped<String>? sourceId,
   }) {
     return CreateEvent(
       type: (type != null ? type.value : this.type),
@@ -3364,7 +3364,7 @@ class Event {
     this.tag,
     this.notificationTime,
     this.source,
-    this.sourceId,
+    required this.sourceId,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
@@ -3403,7 +3403,7 @@ class Event {
   )
   final enums.ImportTypes? source;
   @JsonKey(name: 'sourceId')
-  final String? sourceId;
+  final String sourceId;
   static const fromJsonFactory = _$EventFromJson;
 
   @override
@@ -3526,7 +3526,7 @@ extension $EventExtension on Event {
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
     Wrapped<enums.ImportTypes?>? source,
-    Wrapped<String?>? sourceId,
+    Wrapped<String>? sourceId,
   }) {
     return Event(
       user: (user != null ? user.value : this.user),
@@ -5898,7 +5898,7 @@ class PatchEvent {
     this.tag,
     this.notificationTime,
     this.source,
-    this.sourceId,
+    required this.sourceId,
   });
 
   factory PatchEvent.fromJson(Map<String, dynamic> json) =>
@@ -5936,7 +5936,7 @@ class PatchEvent {
   )
   final enums.ImportTypes? source;
   @JsonKey(name: 'sourceId')
-  final String? sourceId;
+  final String sourceId;
   static const fromJsonFactory = _$PatchEventFromJson;
 
   @override
@@ -6059,7 +6059,7 @@ extension $PatchEventExtension on PatchEvent {
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
     Wrapped<enums.ImportTypes?>? source,
-    Wrapped<String?>? sourceId,
+    Wrapped<String>? sourceId,
   }) {
     return PatchEvent(
       updateDescription: (updateDescription != null
@@ -7695,7 +7695,7 @@ class UpdateEvent {
     this.tag,
     this.notificationTime,
     this.source,
-    this.sourceId,
+    required this.sourceId,
   });
 
   factory UpdateEvent.fromJson(Map<String, dynamic> json) =>
@@ -7725,7 +7725,7 @@ class UpdateEvent {
   )
   final enums.ImportTypes? source;
   @JsonKey(name: 'sourceId')
-  final String? sourceId;
+  final String sourceId;
   static const fromJsonFactory = _$UpdateEventFromJson;
 
   @override
@@ -7812,7 +7812,7 @@ extension $UpdateEventExtension on UpdateEvent {
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
     Wrapped<enums.ImportTypes?>? source,
-    Wrapped<String?>? sourceId,
+    Wrapped<String>? sourceId,
   }) {
     return UpdateEvent(
       id: (id != null ? id.value : this.id),

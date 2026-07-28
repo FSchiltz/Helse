@@ -32,17 +32,17 @@ class ApiEventService extends ApiService implements EventService{
 
   @override
   Future<List<Event>?> events(
-    int? type,
-    DateTime? start,
-    DateTime? end, {
+    int type,
+    DateTime start,
+    DateTime end, {
     int? person,
   }) async {
     final api = await getService();
     return await call(
       () => api.apiEventsGet(
         type: type,
-        start: start?.toUtc(),
-        end: end?.toUtc(),
+        start: start.toUtc(),
+        end: end.toUtc(),
         personId: person,
       ),
     );
@@ -50,17 +50,17 @@ class ApiEventService extends ApiService implements EventService{
 
   @override
   Future<EventStats?> eventsSummary(
-    int? type,
-    DateTime? start,
-    DateTime? end, {
+    int type,
+    DateTime start,
+    DateTime end, {
     int? person,
   }) async {
     final api = await getService();
     return await call(
       () => api.apiEventsSummaryGet(
         type: type,
-        start: start?.toUtc(),
-        end: end?.toUtc(),
+        start: start.toUtc(),
+        end: end.toUtc(),
         personId: person,
       ),
     );

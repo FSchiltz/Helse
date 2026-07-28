@@ -51,7 +51,7 @@ void main() {
         events: List.generate(
           1500,
           (i) =>
-              CreateEvent(type: 2, start: DateTime.now(), stop: DateTime.now()),
+              CreateEvent(type: 2, start: DateTime.now(), stop: DateTime.now(), sourceId: ''),
         ),
       ),
     );

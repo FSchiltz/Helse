@@ -7,9 +7,15 @@ class LocalLoginService extends LocalService implements LoginService {
 
   @override
   Future<ConnectionResponse?> login(Connection connection) async {
+    // TODO sync the correct user type from the server to allow for full sync
     return ConnectionResponse(
       accessToken: '',
-      roles: [UserType.patient, UserType.caregiver, UserType.user],
+      roles: [
+        UserType.patient,
+        UserType.caregiver,
+        UserType.user,
+        UserType.admin,
+      ],
       refreshToken: '',
     );
   }

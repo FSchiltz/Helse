@@ -640,6 +640,17 @@ class $UnitTable extends Unit with TableInfo<$UnitTable, UnitData> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _typeMeta = const VerificationMeta('type');
   @override
   late final GeneratedColumn<String> type = GeneratedColumn<String>(
@@ -657,6 +668,7 @@ class $UnitTable extends Unit with TableInfo<$UnitTable, UnitData> {
     serverId,
     created,
     code,
+    description,
     type,
   ];
   @override
@@ -708,6 +720,15 @@ class $UnitTable extends Unit with TableInfo<$UnitTable, UnitData> {
     } else if (isInserting) {
       context.missing(_codeMeta);
     }
+    if (data.containsKey('description')) {
+      context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
+        ),
+      );
+    }
     if (data.containsKey('type')) {
       context.handle(
         _typeMeta,
@@ -749,6 +770,10 @@ class $UnitTable extends Unit with TableInfo<$UnitTable, UnitData> {
         DriftSqlType.string,
         data['${effectivePrefix}code'],
       )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      ),
       type: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}type'],
@@ -769,6 +794,7 @@ class UnitData extends DataClass implements Insertable<UnitData> {
   final int? serverId;
   final DateTime created;
   final String code;
+  final String? description;
   final String type;
   const UnitData({
     required this.id,
@@ -777,6 +803,7 @@ class UnitData extends DataClass implements Insertable<UnitData> {
     this.serverId,
     required this.created,
     required this.code,
+    this.description,
     required this.type,
   });
   @override
@@ -792,6 +819,9 @@ class UnitData extends DataClass implements Insertable<UnitData> {
     }
     map['created'] = Variable<DateTime>(created);
     map['code'] = Variable<String>(code);
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
     map['type'] = Variable<String>(type);
     return map;
   }
@@ -808,6 +838,9 @@ class UnitData extends DataClass implements Insertable<UnitData> {
           : Value(serverId),
       created: Value(created),
       code: Value(code),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
       type: Value(type),
     );
   }
@@ -824,6 +857,7 @@ class UnitData extends DataClass implements Insertable<UnitData> {
       serverId: serializer.fromJson<int?>(json['serverId']),
       created: serializer.fromJson<DateTime>(json['created']),
       code: serializer.fromJson<String>(json['code']),
+      description: serializer.fromJson<String?>(json['description']),
       type: serializer.fromJson<String>(json['type']),
     );
   }
@@ -837,6 +871,7 @@ class UnitData extends DataClass implements Insertable<UnitData> {
       'serverId': serializer.toJson<int?>(serverId),
       'created': serializer.toJson<DateTime>(created),
       'code': serializer.toJson<String>(code),
+      'description': serializer.toJson<String?>(description),
       'type': serializer.toJson<String>(type),
     };
   }
@@ -848,6 +883,7 @@ class UnitData extends DataClass implements Insertable<UnitData> {
     Value<int?> serverId = const Value.absent(),
     DateTime? created,
     String? code,
+    Value<String?> description = const Value.absent(),
     String? type,
   }) => UnitData(
     id: id ?? this.id,
@@ -856,6 +892,7 @@ class UnitData extends DataClass implements Insertable<UnitData> {
     serverId: serverId.present ? serverId.value : this.serverId,
     created: created ?? this.created,
     code: code ?? this.code,
+    description: description.present ? description.value : this.description,
     type: type ?? this.type,
   );
   UnitData copyWithCompanion(UnitCompanion data) {
@@ -866,6 +903,9 @@ class UnitData extends DataClass implements Insertable<UnitData> {
       serverId: data.serverId.present ? data.serverId.value : this.serverId,
       created: data.created.present ? data.created.value : this.created,
       code: data.code.present ? data.code.value : this.code,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
       type: data.type.present ? data.type.value : this.type,
     );
   }
@@ -879,14 +919,23 @@ class UnitData extends DataClass implements Insertable<UnitData> {
           ..write('serverId: $serverId, ')
           ..write('created: $created, ')
           ..write('code: $code, ')
+          ..write('description: $description, ')
           ..write('type: $type')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, synced, syncTime, serverId, created, code, type);
+  int get hashCode => Object.hash(
+    id,
+    synced,
+    syncTime,
+    serverId,
+    created,
+    code,
+    description,
+    type,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -897,6 +946,7 @@ class UnitData extends DataClass implements Insertable<UnitData> {
           other.serverId == this.serverId &&
           other.created == this.created &&
           other.code == this.code &&
+          other.description == this.description &&
           other.type == this.type);
 }
 
@@ -907,6 +957,7 @@ class UnitCompanion extends UpdateCompanion<UnitData> {
   final Value<int?> serverId;
   final Value<DateTime> created;
   final Value<String> code;
+  final Value<String?> description;
   final Value<String> type;
   const UnitCompanion({
     this.id = const Value.absent(),
@@ -915,6 +966,7 @@ class UnitCompanion extends UpdateCompanion<UnitData> {
     this.serverId = const Value.absent(),
     this.created = const Value.absent(),
     this.code = const Value.absent(),
+    this.description = const Value.absent(),
     this.type = const Value.absent(),
   });
   UnitCompanion.insert({
@@ -924,6 +976,7 @@ class UnitCompanion extends UpdateCompanion<UnitData> {
     this.serverId = const Value.absent(),
     required DateTime created,
     required String code,
+    this.description = const Value.absent(),
     required String type,
   }) : created = Value(created),
        code = Value(code),
@@ -935,6 +988,7 @@ class UnitCompanion extends UpdateCompanion<UnitData> {
     Expression<int>? serverId,
     Expression<DateTime>? created,
     Expression<String>? code,
+    Expression<String>? description,
     Expression<String>? type,
   }) {
     return RawValuesInsertable({
@@ -944,6 +998,7 @@ class UnitCompanion extends UpdateCompanion<UnitData> {
       if (serverId != null) 'server_id': serverId,
       if (created != null) 'created': created,
       if (code != null) 'code': code,
+      if (description != null) 'description': description,
       if (type != null) 'type': type,
     });
   }
@@ -955,6 +1010,7 @@ class UnitCompanion extends UpdateCompanion<UnitData> {
     Value<int?>? serverId,
     Value<DateTime>? created,
     Value<String>? code,
+    Value<String?>? description,
     Value<String>? type,
   }) {
     return UnitCompanion(
@@ -964,6 +1020,7 @@ class UnitCompanion extends UpdateCompanion<UnitData> {
       serverId: serverId ?? this.serverId,
       created: created ?? this.created,
       code: code ?? this.code,
+      description: description ?? this.description,
       type: type ?? this.type,
     );
   }
@@ -989,6 +1046,9 @@ class UnitCompanion extends UpdateCompanion<UnitData> {
     if (code.present) {
       map['code'] = Variable<String>(code.value);
     }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
     if (type.present) {
       map['type'] = Variable<String>(type.value);
     }
@@ -1004,6 +1064,7 @@ class UnitCompanion extends UpdateCompanion<UnitData> {
           ..write('serverId: $serverId, ')
           ..write('created: $created, ')
           ..write('code: $code, ')
+          ..write('description: $description, ')
           ..write('type: $type')
           ..write(')'))
         .toString();
@@ -2029,6 +2090,26 @@ class $MetricTable extends Metric with TableInfo<$MetricTable, MetricData> {
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _sourceIdMeta = const VerificationMeta(
+    'sourceId',
+  );
+  @override
+  late final GeneratedColumn<String> sourceId = GeneratedColumn<String>(
+    'source_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
+  @override
+  late final GeneratedColumn<String> source = GeneratedColumn<String>(
+    'source',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _typeMeta = const VerificationMeta('type');
   @override
   late final GeneratedColumn<int> type = GeneratedColumn<int>(
@@ -2051,6 +2132,8 @@ class $MetricTable extends Metric with TableInfo<$MetricTable, MetricData> {
     value,
     date,
     person,
+    sourceId,
+    source,
     type,
   ];
   @override
@@ -2116,6 +2199,22 @@ class $MetricTable extends Metric with TableInfo<$MetricTable, MetricData> {
         person.isAcceptableOrUnknown(data['person']!, _personMeta),
       );
     }
+    if (data.containsKey('source_id')) {
+      context.handle(
+        _sourceIdMeta,
+        sourceId.isAcceptableOrUnknown(data['source_id']!, _sourceIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceIdMeta);
+    }
+    if (data.containsKey('source')) {
+      context.handle(
+        _sourceMeta,
+        source.isAcceptableOrUnknown(data['source']!, _sourceMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceMeta);
+    }
     if (data.containsKey('type')) {
       context.handle(
         _typeMeta,
@@ -2165,6 +2264,14 @@ class $MetricTable extends Metric with TableInfo<$MetricTable, MetricData> {
         DriftSqlType.int,
         data['${effectivePrefix}person'],
       ),
+      sourceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_id'],
+      )!,
+      source: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source'],
+      )!,
       type: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}type'],
@@ -2187,6 +2294,8 @@ class MetricData extends DataClass implements Insertable<MetricData> {
   final String value;
   final DateTime date;
   final int? person;
+  final String sourceId;
+  final String source;
   final int type;
   const MetricData({
     required this.id,
@@ -2197,6 +2306,8 @@ class MetricData extends DataClass implements Insertable<MetricData> {
     required this.value,
     required this.date,
     this.person,
+    required this.sourceId,
+    required this.source,
     required this.type,
   });
   @override
@@ -2216,6 +2327,8 @@ class MetricData extends DataClass implements Insertable<MetricData> {
     if (!nullToAbsent || person != null) {
       map['person'] = Variable<int>(person);
     }
+    map['source_id'] = Variable<String>(sourceId);
+    map['source'] = Variable<String>(source);
     map['type'] = Variable<int>(type);
     return map;
   }
@@ -2236,6 +2349,8 @@ class MetricData extends DataClass implements Insertable<MetricData> {
       person: person == null && nullToAbsent
           ? const Value.absent()
           : Value(person),
+      sourceId: Value(sourceId),
+      source: Value(source),
       type: Value(type),
     );
   }
@@ -2254,6 +2369,8 @@ class MetricData extends DataClass implements Insertable<MetricData> {
       value: serializer.fromJson<String>(json['value']),
       date: serializer.fromJson<DateTime>(json['date']),
       person: serializer.fromJson<int?>(json['person']),
+      sourceId: serializer.fromJson<String>(json['sourceId']),
+      source: serializer.fromJson<String>(json['source']),
       type: serializer.fromJson<int>(json['type']),
     );
   }
@@ -2269,6 +2386,8 @@ class MetricData extends DataClass implements Insertable<MetricData> {
       'value': serializer.toJson<String>(value),
       'date': serializer.toJson<DateTime>(date),
       'person': serializer.toJson<int?>(person),
+      'sourceId': serializer.toJson<String>(sourceId),
+      'source': serializer.toJson<String>(source),
       'type': serializer.toJson<int>(type),
     };
   }
@@ -2282,6 +2401,8 @@ class MetricData extends DataClass implements Insertable<MetricData> {
     String? value,
     DateTime? date,
     Value<int?> person = const Value.absent(),
+    String? sourceId,
+    String? source,
     int? type,
   }) => MetricData(
     id: id ?? this.id,
@@ -2292,6 +2413,8 @@ class MetricData extends DataClass implements Insertable<MetricData> {
     value: value ?? this.value,
     date: date ?? this.date,
     person: person.present ? person.value : this.person,
+    sourceId: sourceId ?? this.sourceId,
+    source: source ?? this.source,
     type: type ?? this.type,
   );
   MetricData copyWithCompanion(MetricCompanion data) {
@@ -2304,6 +2427,8 @@ class MetricData extends DataClass implements Insertable<MetricData> {
       value: data.value.present ? data.value.value : this.value,
       date: data.date.present ? data.date.value : this.date,
       person: data.person.present ? data.person.value : this.person,
+      sourceId: data.sourceId.present ? data.sourceId.value : this.sourceId,
+      source: data.source.present ? data.source.value : this.source,
       type: data.type.present ? data.type.value : this.type,
     );
   }
@@ -2319,6 +2444,8 @@ class MetricData extends DataClass implements Insertable<MetricData> {
           ..write('value: $value, ')
           ..write('date: $date, ')
           ..write('person: $person, ')
+          ..write('sourceId: $sourceId, ')
+          ..write('source: $source, ')
           ..write('type: $type')
           ..write(')'))
         .toString();
@@ -2334,6 +2461,8 @@ class MetricData extends DataClass implements Insertable<MetricData> {
     value,
     date,
     person,
+    sourceId,
+    source,
     type,
   );
   @override
@@ -2348,6 +2477,8 @@ class MetricData extends DataClass implements Insertable<MetricData> {
           other.value == this.value &&
           other.date == this.date &&
           other.person == this.person &&
+          other.sourceId == this.sourceId &&
+          other.source == this.source &&
           other.type == this.type);
 }
 
@@ -2360,6 +2491,8 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
   final Value<String> value;
   final Value<DateTime> date;
   final Value<int?> person;
+  final Value<String> sourceId;
+  final Value<String> source;
   final Value<int> type;
   const MetricCompanion({
     this.id = const Value.absent(),
@@ -2370,6 +2503,8 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
     this.value = const Value.absent(),
     this.date = const Value.absent(),
     this.person = const Value.absent(),
+    this.sourceId = const Value.absent(),
+    this.source = const Value.absent(),
     this.type = const Value.absent(),
   });
   MetricCompanion.insert({
@@ -2381,10 +2516,14 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
     required String value,
     required DateTime date,
     this.person = const Value.absent(),
+    required String sourceId,
+    required String source,
     required int type,
   }) : created = Value(created),
        value = Value(value),
        date = Value(date),
+       sourceId = Value(sourceId),
+       source = Value(source),
        type = Value(type);
   static Insertable<MetricData> custom({
     Expression<int>? id,
@@ -2395,6 +2534,8 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
     Expression<String>? value,
     Expression<DateTime>? date,
     Expression<int>? person,
+    Expression<String>? sourceId,
+    Expression<String>? source,
     Expression<int>? type,
   }) {
     return RawValuesInsertable({
@@ -2406,6 +2547,8 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
       if (value != null) 'value': value,
       if (date != null) 'date': date,
       if (person != null) 'person': person,
+      if (sourceId != null) 'source_id': sourceId,
+      if (source != null) 'source': source,
       if (type != null) 'type': type,
     });
   }
@@ -2419,6 +2562,8 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
     Value<String>? value,
     Value<DateTime>? date,
     Value<int?>? person,
+    Value<String>? sourceId,
+    Value<String>? source,
     Value<int>? type,
   }) {
     return MetricCompanion(
@@ -2430,6 +2575,8 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
       value: value ?? this.value,
       date: date ?? this.date,
       person: person ?? this.person,
+      sourceId: sourceId ?? this.sourceId,
+      source: source ?? this.source,
       type: type ?? this.type,
     );
   }
@@ -2461,6 +2608,12 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
     if (person.present) {
       map['person'] = Variable<int>(person.value);
     }
+    if (sourceId.present) {
+      map['source_id'] = Variable<String>(sourceId.value);
+    }
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
+    }
     if (type.present) {
       map['type'] = Variable<int>(type.value);
     }
@@ -2478,6 +2631,8 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
           ..write('value: $value, ')
           ..write('date: $date, ')
           ..write('person: $person, ')
+          ..write('sourceId: $sourceId, ')
+          ..write('source: $source, ')
           ..write('type: $type')
           ..write(')'))
         .toString();
@@ -3312,6 +3467,35 @@ class $EventTable extends Event with TableInfo<$EventTable, EventData> {
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _sourceIdMeta = const VerificationMeta(
+    'sourceId',
+  );
+  @override
+  late final GeneratedColumn<String> sourceId = GeneratedColumn<String>(
+    'source_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
+  @override
+  late final GeneratedColumn<String> source = GeneratedColumn<String>(
+    'source',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tagMeta = const VerificationMeta('tag');
+  @override
+  late final GeneratedColumn<String> tag = GeneratedColumn<String>(
+    'tag',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _typeMeta = const VerificationMeta('type');
   @override
   late final GeneratedColumn<int> type = GeneratedColumn<int>(
@@ -3335,6 +3519,9 @@ class $EventTable extends Event with TableInfo<$EventTable, EventData> {
     start,
     end,
     person,
+    sourceId,
+    source,
+    tag,
     type,
   ];
   @override
@@ -3411,6 +3598,28 @@ class $EventTable extends Event with TableInfo<$EventTable, EventData> {
         person.isAcceptableOrUnknown(data['person']!, _personMeta),
       );
     }
+    if (data.containsKey('source_id')) {
+      context.handle(
+        _sourceIdMeta,
+        sourceId.isAcceptableOrUnknown(data['source_id']!, _sourceIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceIdMeta);
+    }
+    if (data.containsKey('source')) {
+      context.handle(
+        _sourceMeta,
+        source.isAcceptableOrUnknown(data['source']!, _sourceMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceMeta);
+    }
+    if (data.containsKey('tag')) {
+      context.handle(
+        _tagMeta,
+        tag.isAcceptableOrUnknown(data['tag']!, _tagMeta),
+      );
+    }
     if (data.containsKey('type')) {
       context.handle(
         _typeMeta,
@@ -3464,6 +3673,18 @@ class $EventTable extends Event with TableInfo<$EventTable, EventData> {
         DriftSqlType.int,
         data['${effectivePrefix}person'],
       ),
+      sourceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_id'],
+      )!,
+      source: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source'],
+      )!,
+      tag: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tag'],
+      ),
       type: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}type'],
@@ -3487,6 +3708,9 @@ class EventData extends DataClass implements Insertable<EventData> {
   final DateTime start;
   final DateTime end;
   final int? person;
+  final String sourceId;
+  final String source;
+  final String? tag;
   final int type;
   const EventData({
     required this.id,
@@ -3498,6 +3722,9 @@ class EventData extends DataClass implements Insertable<EventData> {
     required this.start,
     required this.end,
     this.person,
+    required this.sourceId,
+    required this.source,
+    this.tag,
     required this.type,
   });
   @override
@@ -3517,6 +3744,11 @@ class EventData extends DataClass implements Insertable<EventData> {
     map['end'] = Variable<DateTime>(end);
     if (!nullToAbsent || person != null) {
       map['person'] = Variable<int>(person);
+    }
+    map['source_id'] = Variable<String>(sourceId);
+    map['source'] = Variable<String>(source);
+    if (!nullToAbsent || tag != null) {
+      map['tag'] = Variable<String>(tag);
     }
     map['type'] = Variable<int>(type);
     return map;
@@ -3539,6 +3771,9 @@ class EventData extends DataClass implements Insertable<EventData> {
       person: person == null && nullToAbsent
           ? const Value.absent()
           : Value(person),
+      sourceId: Value(sourceId),
+      source: Value(source),
+      tag: tag == null && nullToAbsent ? const Value.absent() : Value(tag),
       type: Value(type),
     );
   }
@@ -3558,6 +3793,9 @@ class EventData extends DataClass implements Insertable<EventData> {
       start: serializer.fromJson<DateTime>(json['start']),
       end: serializer.fromJson<DateTime>(json['end']),
       person: serializer.fromJson<int?>(json['person']),
+      sourceId: serializer.fromJson<String>(json['sourceId']),
+      source: serializer.fromJson<String>(json['source']),
+      tag: serializer.fromJson<String?>(json['tag']),
       type: serializer.fromJson<int>(json['type']),
     );
   }
@@ -3574,6 +3812,9 @@ class EventData extends DataClass implements Insertable<EventData> {
       'start': serializer.toJson<DateTime>(start),
       'end': serializer.toJson<DateTime>(end),
       'person': serializer.toJson<int?>(person),
+      'sourceId': serializer.toJson<String>(sourceId),
+      'source': serializer.toJson<String>(source),
+      'tag': serializer.toJson<String?>(tag),
       'type': serializer.toJson<int>(type),
     };
   }
@@ -3588,6 +3829,9 @@ class EventData extends DataClass implements Insertable<EventData> {
     DateTime? start,
     DateTime? end,
     Value<int?> person = const Value.absent(),
+    String? sourceId,
+    String? source,
+    Value<String?> tag = const Value.absent(),
     int? type,
   }) => EventData(
     id: id ?? this.id,
@@ -3599,6 +3843,9 @@ class EventData extends DataClass implements Insertable<EventData> {
     start: start ?? this.start,
     end: end ?? this.end,
     person: person.present ? person.value : this.person,
+    sourceId: sourceId ?? this.sourceId,
+    source: source ?? this.source,
+    tag: tag.present ? tag.value : this.tag,
     type: type ?? this.type,
   );
   EventData copyWithCompanion(EventCompanion data) {
@@ -3614,6 +3861,9 @@ class EventData extends DataClass implements Insertable<EventData> {
       start: data.start.present ? data.start.value : this.start,
       end: data.end.present ? data.end.value : this.end,
       person: data.person.present ? data.person.value : this.person,
+      sourceId: data.sourceId.present ? data.sourceId.value : this.sourceId,
+      source: data.source.present ? data.source.value : this.source,
+      tag: data.tag.present ? data.tag.value : this.tag,
       type: data.type.present ? data.type.value : this.type,
     );
   }
@@ -3630,6 +3880,9 @@ class EventData extends DataClass implements Insertable<EventData> {
           ..write('start: $start, ')
           ..write('end: $end, ')
           ..write('person: $person, ')
+          ..write('sourceId: $sourceId, ')
+          ..write('source: $source, ')
+          ..write('tag: $tag, ')
           ..write('type: $type')
           ..write(')'))
         .toString();
@@ -3646,6 +3899,9 @@ class EventData extends DataClass implements Insertable<EventData> {
     start,
     end,
     person,
+    sourceId,
+    source,
+    tag,
     type,
   );
   @override
@@ -3661,6 +3917,9 @@ class EventData extends DataClass implements Insertable<EventData> {
           other.start == this.start &&
           other.end == this.end &&
           other.person == this.person &&
+          other.sourceId == this.sourceId &&
+          other.source == this.source &&
+          other.tag == this.tag &&
           other.type == this.type);
 }
 
@@ -3674,6 +3933,9 @@ class EventCompanion extends UpdateCompanion<EventData> {
   final Value<DateTime> start;
   final Value<DateTime> end;
   final Value<int?> person;
+  final Value<String> sourceId;
+  final Value<String> source;
+  final Value<String?> tag;
   final Value<int> type;
   const EventCompanion({
     this.id = const Value.absent(),
@@ -3685,6 +3947,9 @@ class EventCompanion extends UpdateCompanion<EventData> {
     this.start = const Value.absent(),
     this.end = const Value.absent(),
     this.person = const Value.absent(),
+    this.sourceId = const Value.absent(),
+    this.source = const Value.absent(),
+    this.tag = const Value.absent(),
     this.type = const Value.absent(),
   });
   EventCompanion.insert({
@@ -3697,11 +3962,16 @@ class EventCompanion extends UpdateCompanion<EventData> {
     required DateTime start,
     required DateTime end,
     this.person = const Value.absent(),
+    required String sourceId,
+    required String source,
+    this.tag = const Value.absent(),
     required int type,
   }) : created = Value(created),
        description = Value(description),
        start = Value(start),
        end = Value(end),
+       sourceId = Value(sourceId),
+       source = Value(source),
        type = Value(type);
   static Insertable<EventData> custom({
     Expression<int>? id,
@@ -3713,6 +3983,9 @@ class EventCompanion extends UpdateCompanion<EventData> {
     Expression<DateTime>? start,
     Expression<DateTime>? end,
     Expression<int>? person,
+    Expression<String>? sourceId,
+    Expression<String>? source,
+    Expression<String>? tag,
     Expression<int>? type,
   }) {
     return RawValuesInsertable({
@@ -3725,6 +3998,9 @@ class EventCompanion extends UpdateCompanion<EventData> {
       if (start != null) 'start': start,
       if (end != null) 'end': end,
       if (person != null) 'person': person,
+      if (sourceId != null) 'source_id': sourceId,
+      if (source != null) 'source': source,
+      if (tag != null) 'tag': tag,
       if (type != null) 'type': type,
     });
   }
@@ -3739,6 +4015,9 @@ class EventCompanion extends UpdateCompanion<EventData> {
     Value<DateTime>? start,
     Value<DateTime>? end,
     Value<int?>? person,
+    Value<String>? sourceId,
+    Value<String>? source,
+    Value<String?>? tag,
     Value<int>? type,
   }) {
     return EventCompanion(
@@ -3751,6 +4030,9 @@ class EventCompanion extends UpdateCompanion<EventData> {
       start: start ?? this.start,
       end: end ?? this.end,
       person: person ?? this.person,
+      sourceId: sourceId ?? this.sourceId,
+      source: source ?? this.source,
+      tag: tag ?? this.tag,
       type: type ?? this.type,
     );
   }
@@ -3785,6 +4067,15 @@ class EventCompanion extends UpdateCompanion<EventData> {
     if (person.present) {
       map['person'] = Variable<int>(person.value);
     }
+    if (sourceId.present) {
+      map['source_id'] = Variable<String>(sourceId.value);
+    }
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
+    }
+    if (tag.present) {
+      map['tag'] = Variable<String>(tag.value);
+    }
     if (type.present) {
       map['type'] = Variable<int>(type.value);
     }
@@ -3803,6 +4094,9 @@ class EventCompanion extends UpdateCompanion<EventData> {
           ..write('start: $start, ')
           ..write('end: $end, ')
           ..write('person: $person, ')
+          ..write('sourceId: $sourceId, ')
+          ..write('source: $source, ')
+          ..write('tag: $tag, ')
           ..write('type: $type')
           ..write(')'))
         .toString();
@@ -5408,6 +5702,7 @@ typedef $$UnitTableCreateCompanionBuilder =
       Value<int?> serverId,
       required DateTime created,
       required String code,
+      Value<String?> description,
       required String type,
     });
 typedef $$UnitTableUpdateCompanionBuilder =
@@ -5418,6 +5713,7 @@ typedef $$UnitTableUpdateCompanionBuilder =
       Value<int?> serverId,
       Value<DateTime> created,
       Value<String> code,
+      Value<String?> description,
       Value<String> type,
     });
 
@@ -5479,6 +5775,11 @@ class $$UnitTableFilterComposer extends Composer<_$Database, $UnitTable> {
 
   ColumnFilters<String> get code => $composableBuilder(
     column: $table.code,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5551,6 +5852,11 @@ class $$UnitTableOrderingComposer extends Composer<_$Database, $UnitTable> {
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get type => $composableBuilder(
     column: $table.type,
     builder: (column) => ColumnOrderings(column),
@@ -5582,6 +5888,11 @@ class $$UnitTableAnnotationComposer extends Composer<_$Database, $UnitTable> {
 
   GeneratedColumn<String> get code =>
       $composableBuilder(column: $table.code, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
@@ -5646,6 +5957,7 @@ class $$UnitTableTableManager
                 Value<int?> serverId = const Value.absent(),
                 Value<DateTime> created = const Value.absent(),
                 Value<String> code = const Value.absent(),
+                Value<String?> description = const Value.absent(),
                 Value<String> type = const Value.absent(),
               }) => UnitCompanion(
                 id: id,
@@ -5654,6 +5966,7 @@ class $$UnitTableTableManager
                 serverId: serverId,
                 created: created,
                 code: code,
+                description: description,
                 type: type,
               ),
           createCompanionCallback:
@@ -5664,6 +5977,7 @@ class $$UnitTableTableManager
                 Value<int?> serverId = const Value.absent(),
                 required DateTime created,
                 required String code,
+                Value<String?> description = const Value.absent(),
                 required String type,
               }) => UnitCompanion.insert(
                 id: id,
@@ -5672,6 +5986,7 @@ class $$UnitTableTableManager
                 serverId: serverId,
                 created: created,
                 code: code,
+                description: description,
                 type: type,
               ),
           withReferenceMapper: (p0) => p0
@@ -6446,6 +6761,8 @@ typedef $$MetricTableCreateCompanionBuilder =
       required String value,
       required DateTime date,
       Value<int?> person,
+      required String sourceId,
+      required String source,
       required int type,
     });
 typedef $$MetricTableUpdateCompanionBuilder =
@@ -6458,6 +6775,8 @@ typedef $$MetricTableUpdateCompanionBuilder =
       Value<String> value,
       Value<DateTime> date,
       Value<int?> person,
+      Value<String> sourceId,
+      Value<String> source,
       Value<int> type,
     });
 
@@ -6528,6 +6847,16 @@ class $$MetricTableFilterComposer extends Composer<_$Database, $MetricTable> {
 
   ColumnFilters<int> get person => $composableBuilder(
     column: $table.person,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sourceId => $composableBuilder(
+    column: $table.sourceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get source => $composableBuilder(
+    column: $table.source,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6603,6 +6932,16 @@ class $$MetricTableOrderingComposer extends Composer<_$Database, $MetricTable> {
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get sourceId => $composableBuilder(
+    column: $table.sourceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$MetricTypeTableOrderingComposer get type {
     final $$MetricTypeTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -6659,6 +6998,12 @@ class $$MetricTableAnnotationComposer
 
   GeneratedColumn<int> get person =>
       $composableBuilder(column: $table.person, builder: (column) => column);
+
+  GeneratedColumn<String> get sourceId =>
+      $composableBuilder(column: $table.sourceId, builder: (column) => column);
+
+  GeneratedColumn<String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
 
   $$MetricTypeTableAnnotationComposer get type {
     final $$MetricTypeTableAnnotationComposer composer = $composerBuilder(
@@ -6720,6 +7065,8 @@ class $$MetricTableTableManager
                 Value<String> value = const Value.absent(),
                 Value<DateTime> date = const Value.absent(),
                 Value<int?> person = const Value.absent(),
+                Value<String> sourceId = const Value.absent(),
+                Value<String> source = const Value.absent(),
                 Value<int> type = const Value.absent(),
               }) => MetricCompanion(
                 id: id,
@@ -6730,6 +7077,8 @@ class $$MetricTableTableManager
                 value: value,
                 date: date,
                 person: person,
+                sourceId: sourceId,
+                source: source,
                 type: type,
               ),
           createCompanionCallback:
@@ -6742,6 +7091,8 @@ class $$MetricTableTableManager
                 required String value,
                 required DateTime date,
                 Value<int?> person = const Value.absent(),
+                required String sourceId,
+                required String source,
                 required int type,
               }) => MetricCompanion.insert(
                 id: id,
@@ -6752,6 +7103,8 @@ class $$MetricTableTableManager
                 value: value,
                 date: date,
                 person: person,
+                sourceId: sourceId,
+                source: source,
                 type: type,
               ),
           withReferenceMapper: (p0) => p0
@@ -7367,6 +7720,9 @@ typedef $$EventTableCreateCompanionBuilder =
       required DateTime start,
       required DateTime end,
       Value<int?> person,
+      required String sourceId,
+      required String source,
+      Value<String?> tag,
       required int type,
     });
 typedef $$EventTableUpdateCompanionBuilder =
@@ -7380,6 +7736,9 @@ typedef $$EventTableUpdateCompanionBuilder =
       Value<DateTime> start,
       Value<DateTime> end,
       Value<int?> person,
+      Value<String> sourceId,
+      Value<String> source,
+      Value<String?> tag,
       Value<int> type,
     });
 
@@ -7455,6 +7814,21 @@ class $$EventTableFilterComposer extends Composer<_$Database, $EventTable> {
 
   ColumnFilters<int> get person => $composableBuilder(
     column: $table.person,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sourceId => $composableBuilder(
+    column: $table.sourceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tag => $composableBuilder(
+    column: $table.tag,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -7535,6 +7909,21 @@ class $$EventTableOrderingComposer extends Composer<_$Database, $EventTable> {
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get sourceId => $composableBuilder(
+    column: $table.sourceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tag => $composableBuilder(
+    column: $table.tag,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$EventTypeTableOrderingComposer get type {
     final $$EventTypeTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -7595,6 +7984,15 @@ class $$EventTableAnnotationComposer extends Composer<_$Database, $EventTable> {
 
   GeneratedColumn<int> get person =>
       $composableBuilder(column: $table.person, builder: (column) => column);
+
+  GeneratedColumn<String> get sourceId =>
+      $composableBuilder(column: $table.sourceId, builder: (column) => column);
+
+  GeneratedColumn<String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<String> get tag =>
+      $composableBuilder(column: $table.tag, builder: (column) => column);
 
   $$EventTypeTableAnnotationComposer get type {
     final $$EventTypeTableAnnotationComposer composer = $composerBuilder(
@@ -7657,6 +8055,9 @@ class $$EventTableTableManager
                 Value<DateTime> start = const Value.absent(),
                 Value<DateTime> end = const Value.absent(),
                 Value<int?> person = const Value.absent(),
+                Value<String> sourceId = const Value.absent(),
+                Value<String> source = const Value.absent(),
+                Value<String?> tag = const Value.absent(),
                 Value<int> type = const Value.absent(),
               }) => EventCompanion(
                 id: id,
@@ -7668,6 +8069,9 @@ class $$EventTableTableManager
                 start: start,
                 end: end,
                 person: person,
+                sourceId: sourceId,
+                source: source,
+                tag: tag,
                 type: type,
               ),
           createCompanionCallback:
@@ -7681,6 +8085,9 @@ class $$EventTableTableManager
                 required DateTime start,
                 required DateTime end,
                 Value<int?> person = const Value.absent(),
+                required String sourceId,
+                required String source,
+                Value<String?> tag = const Value.absent(),
                 required int type,
               }) => EventCompanion.insert(
                 id: id,
@@ -7692,6 +8099,9 @@ class $$EventTableTableManager
                 start: start,
                 end: end,
                 person: person,
+                sourceId: sourceId,
+                source: source,
+                tag: tag,
                 type: type,
               ),
           withReferenceMapper: (p0) => p0

@@ -33,6 +33,8 @@ class LocalMetricService extends LocalService implements MetricService {
             value: metric.value,
             person: Value(person),
             created: DateTime.now().toUtc(),
+            source: metric.source!.name,
+            sourceId: metric.sourceId,
           ),
         );
 
@@ -62,9 +64,41 @@ class LocalMetricService extends LocalService implements MetricService {
   }
 
   @override
-  Future<int?> countMetrics(int? person, SearchMetric search) {
-    // TODO: implement countMetrics
-    throw UnimplementedError();
+  Future<int?> countMetrics(int? person, SearchMetric search) async {
+    var countExp = account.database.metric.id.count();
+
+    final query = account.database.selectOnly(account.database.metric)
+      ..addColumns([countExp]);
+
+    query.where(account.database.metric.type.equals(search.type));
+
+    if (person == null) {
+      query.where(account.database.metric.person.isNull());
+    } else {
+      query.where(account.database.metric.person.equals(person));
+    }
+
+    if (search.from != null) {
+      query.where(
+        account.database.metric.date.isBiggerOrEqualValue(search.from!),
+      );
+    }
+
+    if (search.to != null) {
+      query.where(
+        account.database.metric.date.isSmallerOrEqualValue(search.to!),
+      );
+    }
+
+    if (search.value != null) {
+      query.where(account.database.metric.value.equals(search.value!));
+    }
+
+    if (search.filterSource != null) {
+      query.where(account.database.metric.source.equals(search.source!.name));
+    }
+
+    return await query.map((row) => row.read(countExp)).getSingle();
   }
 
   @override
@@ -93,25 +127,36 @@ class LocalMetricService extends LocalService implements MetricService {
 
   @override
   Future<MetricSummaries> metricSummaries(
-    int? type,
-    DateTime? start,
-    DateTime? end, {
+    int type,
+    DateTime start,
+    DateTime end, {
     int? person,
     int? tile,
-  }) {
-    // TODO: implement metricSummaries
-    throw UnimplementedError();
+  }) async {
+    final result = await metrics(type, start, end, person: person);
+    return MetricSummaries(metrics: result);
   }
 
   @override
   Future<List<Metric>> metrics(
-    int? type,
-    DateTime? start,
-    DateTime? end, {
+    int type,
+    DateTime start,
+    DateTime end, {
     int? person,
-  }) {
-    // TODO: implement metrics
-    throw UnimplementedError();
+  }) async {
+    final query = account.database.metric.select()
+      ..where((x) => x.type.equals(type))
+      ..where((x) => x.date.isBiggerOrEqualValue(start))
+      ..where((x) => x.date.isSmallerOrEqualValue(end));
+
+    if (person == null) {
+      query.where((x) => x.person.isNull());
+    } else {
+      query.where((x) => x.person.equals(person));
+    }
+
+    final result = await query.get();
+    return result.map(_mapMetric).toList();
   }
 
   @override
@@ -150,7 +195,7 @@ class LocalMetricService extends LocalService implements MetricService {
 
       return MetricType(
         id: e.id,
-        unit: Unit(type: unitmap[u.type]!, id: u.id, code: u.code),
+        unit: Unit(type: unitmap[u.type]!, id: u.id, code: u.code, description: u.description),
         userEditable: e.userEditable,
         name: e.name,
         groupId: e.groupId,
@@ -171,9 +216,36 @@ class LocalMetricService extends LocalService implements MetricService {
     SearchMetric search,
     int page,
     int pageSize,
-  ) {
-    // TODO: implement searchMetrics
-    throw UnimplementedError();
+  ) async {
+    final query = account.database.metric.select();
+
+    query.where((x) => x.type.equals(search.type));
+
+    if (person == null) {
+      query.where((x) => x.person.isNull());
+    } else {
+      query.where((x) => x.person.equals(person));
+    }
+
+    if (search.from != null) {
+      query.where((x) => x.date.isBiggerOrEqualValue(search.from!));
+    }
+
+    if (search.to != null) {
+      query.where((x) => x.date.isSmallerOrEqualValue(search.to!));
+    }
+
+    if (search.value != null) {
+      query.where((x) => x.value.equals(search.value ?? ''));
+    }
+
+    if (search.filterSource != null) {
+      query.where((x) => x.source.equals(search.source!.name));
+    }
+
+    query.limit(pageSize, offset: pageSize * page);
+    final result = await query.get();
+    return result.map(_mapMetric).toList();
   }
 
   @override
@@ -198,5 +270,16 @@ class LocalMetricService extends LocalService implements MetricService {
   Future<void> updateMetricsType(UpdateMetricType metric) {
     // TODO: implement updateMetricsType
     throw UnimplementedError();
+  }
+
+  Metric _mapMetric(MetricData e) {
+    return Metric(
+      id: e.id,
+      person: e.person ?? 0,
+      date: e.date,
+      value: e.value,
+      type: e.type,
+      sourceId: e.sourceId,
+    );
   }
 }

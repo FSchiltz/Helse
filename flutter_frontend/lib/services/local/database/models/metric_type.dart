@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
+import 'package:helse/services/local/database/models/group.dart';
 import 'package:helse/services/local/database/models/helse_table.dart';
-import 'package:helse/services/local/database/models/metric.dart';
 import 'package:helse/services/local/database/models/unit.dart';
 
 class MetricType extends HelseTable {

@@ -75,17 +75,17 @@ class ApiMetricService extends ApiService implements MetricService{
 
   @override
   Future<List<Metric>> metrics(
-    int? type,
-    DateTime? start,
-    DateTime? end, {
+    int type,
+    DateTime start,
+    DateTime end, {
     int? person,
   }) async {
     final api = await getService();
     List<Metric>? metrics = await call(
       () => api.apiMetricsGet(
         type: type,
-        start: start?.toUtc(),
-        end: end?.toUtc(),
+        start: start.toUtc(),
+        end: end.toUtc(),
         personId: person,
       ),
     );
@@ -95,9 +95,9 @@ class ApiMetricService extends ApiService implements MetricService{
 
   @override
   Future<MetricSummaries> metricSummaries(
-    int? type,
-    DateTime? start,
-    DateTime? end, {
+    int type,
+    DateTime start,
+    DateTime end, {
     int? person,
     int? tile,
   }) async {
@@ -106,8 +106,8 @@ class ApiMetricService extends ApiService implements MetricService{
           () => api.apiMetricsSummaryGet(
             tile: tile,
             type: type,
-            start: start?.toUtc(),
-            end: end?.toUtc(),
+            start: start.toUtc(),
+            end: end.toUtc(),
             personId: person,
           ),
         ) ??

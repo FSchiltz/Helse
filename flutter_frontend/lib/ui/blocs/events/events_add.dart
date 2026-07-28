@@ -45,7 +45,7 @@ class _EventAddState extends PopupSubmitState<EventAdd> {
         id: widget.edit?.id,
         notificationTime: _notify ? _notification?.toUtc() : null,
         source: widget.edit?.source,
-        sourceId: widget.edit?.sourceId,
+        sourceId: widget.edit?.sourceId ?? '',
         tag: _tag.text,
       );
       await Dependencies.services.event.updateEvent(event);

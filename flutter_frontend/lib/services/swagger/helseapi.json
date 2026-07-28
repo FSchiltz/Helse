@@ -3103,7 +3103,8 @@
         "required": [
           "type",
           "start",
-          "stop"
+          "stop",
+          "sourceId"
         ],
         "type": "object",
         "properties": {
@@ -3369,7 +3370,8 @@
           "id",
           "type",
           "start",
-          "stop"
+          "stop",
+          "sourceId"
         ],
         "type": "object",
         "properties": {
@@ -4358,7 +4360,8 @@
         "required": [
           "type",
           "start",
-          "stop"
+          "stop",
+          "sourceId"
         ],
         "type": "object",
         "properties": {
@@ -5047,7 +5050,8 @@
         "required": [
           "type",
           "start",
-          "stop"
+          "stop",
+          "sourceId"
         ],
         "type": "object",
         "properties": {

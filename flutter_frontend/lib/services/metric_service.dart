@@ -21,16 +21,16 @@ abstract interface class MetricService {
   Future<void> deleteMetricsGroup(int group);
 
   Future<List<Metric>> metrics(
-    int? type,
-    DateTime? start,
-    DateTime? end, {
+    int type,
+    DateTime start,
+    DateTime end, {
     int? person,
   });
 
   Future<MetricSummaries> metricSummaries(
-    int? type,
-    DateTime? start,
-    DateTime? end, {
+    int type,
+    DateTime start,
+    DateTime end, {
     int? person,
     int? tile,
   });

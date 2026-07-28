@@ -3,6 +3,6 @@ import 'package:helse/services/local/database/models/helse_table.dart';
 
 class Unit extends HelseTable {
   TextColumn get code => text()();
-
+  TextColumn get description => text().nullable()();
   TextColumn get type => text()();
 }

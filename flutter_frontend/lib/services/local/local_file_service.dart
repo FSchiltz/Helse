@@ -1,16 +1,20 @@
+import 'dart:io';
+
 import 'package:file_selector/file_selector.dart';
 import 'package:helse/services/file_service.dart';
 import 'package:helse/services/local/local_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/inputs/files/file_list_widget.dart';
+import 'package:path_provider/path_provider.dart';
 
-class LocalFileService extends LocalService implements FileService{
+class LocalFileService extends LocalService implements FileService {
   LocalFileService(super.account);
+  static String path = 'files';
 
   @override
   Future<FileData?> getData(int id, int? person) {
     // TODO: implement getData
-    throw UnimplementedError();
+    throw UnimplementedError(); 
   }
 
   @override
@@ -50,9 +54,10 @@ class LocalFileService extends LocalService implements FileService{
   }
 
   @override
-  Future<void> postFileData(int fileId, XFile file, int? person) {
-    // TODO: implement postFileData
-    throw UnimplementedError();
+  Future<void> postFileData(int fileId, XFile file, int? person) async {
+    final dir = await getApplicationSupportDirectory();
+    final fileDir = await Directory('${dir.path}/$path').create();
+    await file.saveTo('${fileDir.path}/$fileId');
   }
 
   @override

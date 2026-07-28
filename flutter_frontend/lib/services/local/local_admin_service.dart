@@ -6,26 +6,28 @@ class LocalAdminService extends LocalService implements AdminService {
   LocalAdminService(super.account);
 
   @override
-  Future<EventCreationStats?> getEventStats(DateTime? start, DateTime? end) {
-    // TODO: implement getEventStats
-    throw UnimplementedError();
+  Future<EventCreationStats?> getEventStats(
+    DateTime? start,
+    DateTime? end,
+  ) async {
+    return null;
   }
 
   @override
-  Future<List<JobResultInfo>> getJobs() {
-    // TODO: implement getJobs
-    throw UnimplementedError();
+  Future<List<JobResultInfo>> getJobs() async {
+    return [];
   }
 
   @override
-  Future<MetricCreationStats?> getMetricStats(DateTime? start, DateTime? end) {
-    // TODO: implement getMetricStats
-    throw UnimplementedError();
+  Future<MetricCreationStats?> getMetricStats(
+    DateTime? start,
+    DateTime? end,
+  ) async {
+    return null;
   }
 
   @override
-  Future<UserCreationStats?> getUserStats() {
-    // TODO: implement getUserStats
-    throw UnimplementedError();
+  Future<UserCreationStats?> getUserStats() async {
+    return null;
   }
 }

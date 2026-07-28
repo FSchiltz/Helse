@@ -19,6 +19,9 @@ class LocalEventService extends LocalService implements EventService {
             type: event.type,
             person: Value(person),
             created: DateTime.now().toUtc(),
+            sourceId: event.sourceId,
+            source: event.source!.name,
+            tag: Value(event.tag),
           ),
         );
 
@@ -49,9 +52,39 @@ class LocalEventService extends LocalService implements EventService {
   }
 
   @override
-  Future<int?> countEvents(int? person, SearchEvent search) {
-    // TODO: implement countEvents
-    throw UnimplementedError();
+  Future<int?> countEvents(int? person, SearchEvent search) async {
+    var countExp = account.database.event.id.count();
+
+    final query = account.database.selectOnly(account.database.event)
+      ..addColumns([countExp]);
+
+    query.where(account.database.event.type.equals(search.type));
+
+    if (person == null) {
+      query.where(account.database.event.person.isNull());
+    } else {
+      query.where(account.database.event.person.equals(person));
+    }
+
+    if (search.from != null) {
+      query.where(
+        account.database.event.start.isBiggerOrEqualValue(search.from!),
+      );
+    }
+
+    if (search.to != null) {
+      query.where(account.database.event.end.isSmallerOrEqualValue(search.to!));
+    }
+
+    if (search.value != null) {
+      query.where(account.database.event.description.like('${search.value}%'));
+    }
+
+    if (search.filterSource != null) {
+      query.where(account.database.event.source.equals(search.source!.name));
+    }
+
+    return await query.map((row) => row.read(countExp)).getSingle();
   }
 
   @override
@@ -74,20 +107,31 @@ class LocalEventService extends LocalService implements EventService {
 
   @override
   Future<List<Event>?> events(
-    int? type,
-    DateTime? start,
-    DateTime? end, {
+    int type,
+    DateTime start,
+    DateTime end, {
     int? person,
-  }) {
-    // TODO: implement events
-    throw UnimplementedError();
+  }) async {
+    final query = account.database.select(account.database.event)
+      ..where((x) => x.type.equals(type))
+      ..where((x) => x.start.isBiggerOrEqualValue(start))
+      ..where((x) => x.end.isSmallerOrEqualValue(end));
+
+    if (person == null) {
+      query.where((x) => x.person.isNull());
+    } else {
+      query.where((x) => x.person.equals(person));
+    }
+
+    final result = await query.get();
+    return result.map(_mapEvent).toList();
   }
 
   @override
   Future<EventStats?> eventsSummary(
-    int? type,
-    DateTime? start,
-    DateTime? end, {
+    int type,
+    DateTime start,
+    DateTime end, {
     int? person,
   }) {
     // TODO: implement eventsSummary
@@ -121,9 +165,36 @@ class LocalEventService extends LocalService implements EventService {
     SearchEvent search,
     int page,
     int pageSize,
-  ) {
-    // TODO: implement searchEvents
-    throw UnimplementedError();
+  ) async {
+    final query = account.database.select(account.database.event);
+
+    query.where((x) => x.type.equals(search.type));
+
+    if (person == null) {
+      query.where((x) => x.person.isNull());
+    } else {
+      query.where((x) => x.person.equals(person));
+    }
+
+    if (search.from != null) {
+      query.where((x) => x.start.isBiggerOrEqualValue(search.from!));
+    }
+
+    if (search.to != null) {
+      query.where((x) => x.end.isSmallerOrEqualValue(search.to!));
+    }
+
+    if (search.value != null) {
+      query.where((x) => x.description.like('${search.value}%'));
+    }
+
+    if (search.filterSource != null) {
+      query.where((x) => x.source.equals(search.source!.name));
+    }
+
+    query.limit(pageSize, offset: pageSize * page);
+    final result = await query.get();
+    return result.map(_mapEvent).toList();
   }
 
   @override
@@ -142,5 +213,19 @@ class LocalEventService extends LocalService implements EventService {
   Future<void> updateEventsType(UpdateEventType event) {
     // TODO: implement updateEventsType
     throw UnimplementedError();
+  }
+
+  Event _mapEvent(EventData e) {
+    return Event(
+      id: e.id,
+      type: e.type,
+      start: e.start,
+      stop: e.end,
+      description: e.description,
+      person: e.person,
+      tag: e.tag,
+      source: ImportTypes.values.asNameMap()[e.source],
+      sourceId: e.sourceId,
+    );
   }
 }

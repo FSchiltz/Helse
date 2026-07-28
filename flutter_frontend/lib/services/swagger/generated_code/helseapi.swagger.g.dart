@@ -66,7 +66,7 @@ CreateEvent _$CreateEventFromJson(Map<String, dynamic> json) => CreateEvent(
       ? null
       : DateTime.parse(json['notificationTime'] as String),
   source: importTypesNullableFromJson(json['source']),
-  sourceId: json['sourceId'] as String?,
+  sourceId: json['sourceId'] as String,
 );
 
 Map<String, dynamic> _$CreateEventToJson(CreateEvent instance) =>
@@ -200,7 +200,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       ? null
       : DateTime.parse(json['notificationTime'] as String),
   source: importTypesNullableFromJson(json['source']),
-  sourceId: json['sourceId'] as String?,
+  sourceId: json['sourceId'] as String,
 );
 
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
@@ -718,7 +718,7 @@ PatchEvent _$PatchEventFromJson(Map<String, dynamic> json) => PatchEvent(
       ? null
       : DateTime.parse(json['notificationTime'] as String),
   source: importTypesNullableFromJson(json['source']),
-  sourceId: json['sourceId'] as String?,
+  sourceId: json['sourceId'] as String,
 );
 
 Map<String, dynamic> _$PatchEventToJson(PatchEvent instance) =>
@@ -1059,7 +1059,7 @@ UpdateEvent _$UpdateEventFromJson(Map<String, dynamic> json) => UpdateEvent(
       ? null
       : DateTime.parse(json['notificationTime'] as String),
   source: importTypesNullableFromJson(json['source']),
-  sourceId: json['sourceId'] as String?,
+  sourceId: json['sourceId'] as String,
 );
 
 Map<String, dynamic> _$UpdateEventToJson(UpdateEvent instance) =>

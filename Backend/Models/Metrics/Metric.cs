@@ -6,10 +6,12 @@ namespace Helse.Models.Metrics;
 public class PatchMetric : CreateMetric
 {
     public bool UpdateValue { get; set; }
-    
+
     public bool UpdateDate { get; set; }
 
     public bool UpdateTag { get; set; }
+
+    public bool UpdateSourceId { get; set; }
 
     public long[] Ids { get; set; } = [];
 }

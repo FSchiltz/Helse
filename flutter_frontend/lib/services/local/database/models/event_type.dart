@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
+import 'package:helse/services/local/database/models/group.dart';
 import 'package:helse/services/local/database/models/helse_table.dart';
-import 'package:helse/services/local/database/models/metric.dart';
 
 class EventType extends HelseTable {
   TextColumn get name => text()();

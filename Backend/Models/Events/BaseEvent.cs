@@ -18,5 +18,5 @@ public abstract class BaseEvent
 
     public ImportTypes Source { get; set; }
 
-    public string SourceId { get; set; } = string.Empty;
+    public required string SourceId { get; set; }
 }

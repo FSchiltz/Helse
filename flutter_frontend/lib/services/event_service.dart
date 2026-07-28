@@ -10,16 +10,16 @@ abstract interface class EventService {
   Future<void> deleteEventsType(int event);
 
   Future<List<Event>?> events(
-    int? type,
-    DateTime? start,
-    DateTime? end, {
+    int type,
+    DateTime start,
+    DateTime end, {
     int? person,
   });
 
   Future<EventStats?> eventsSummary(
-    int? type,
-    DateTime? start,
-    DateTime? end, {
+    int type,
+    DateTime start,
+    DateTime end, {
     int? person,
   });
 

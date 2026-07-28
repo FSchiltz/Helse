@@ -37,7 +37,7 @@ internal static class PatientsLogic
        .Produces((int)HttpStatusCode.NoContent)
        .Produces((int)HttpStatusCode.Unauthorized);
 
-       return api;
+        return api;
     }
 
 
@@ -136,7 +136,8 @@ internal static class PatientsLogic
             Start = x.Start,
             Valid = x.Valid,
             Person = x.PersonId,
-            Tag = x.Tag
+            Tag = x.Tag,
+            SourceId = string.Empty,
         }));
     }
 
