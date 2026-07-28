@@ -8,5 +8,6 @@ class EventType extends HelseTable {
   BoolColumn get standAlone => boolean()();
   BoolColumn get visible => boolean()();
   TextColumn get timeDifference => text().nullable()();
+  BoolColumn get userEditable => boolean()();
   late final groupId = integer().references(Group, #id)();
 }

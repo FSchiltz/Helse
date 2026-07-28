@@ -38,14 +38,14 @@ class LocalEventService extends LocalService implements EventService {
             description: Value(event.description),
             timeDifference: Value(event.timeDifference),
             created: DateTime.now().toUtc(),
+            userEditable: false,
           ),
         );
   }
 
   @override
-  Future<List<Event>?> agenda(DateTime? start, DateTime? end) {
-    // TODO: implement agenda
-    throw UnimplementedError();
+  Future<List<Event>?> agenda(DateTime? start, DateTime? end) async {
+    return [];
   }
 
   @override
@@ -95,9 +95,24 @@ class LocalEventService extends LocalService implements EventService {
   }
 
   @override
-  Future<List<EventType>?> eventsType(bool all) {
-    // TODO: implement eventsType
-    throw UnimplementedError();
+  Future<List<EventType>?> eventsType(bool all) async {
+    final result = await account.database
+        .select(account.database.eventType)
+        .get();
+    return result
+        .map(
+          (e) => EventType(
+            id: e.id,
+            userEditable: e.userEditable,
+            name: e.name,
+            groupId: e.groupId,
+            description: e.description,
+            standAlone: e.standAlone,
+            timeDifference: e.timeDifference,
+            visible: e.visible,
+          ),
+        )
+        .toList();
   }
 
   @override

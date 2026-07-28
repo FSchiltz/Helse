@@ -49,6 +49,14 @@ class LocalMetricService extends LocalService implements MetricService {
             name: metric.name,
             description: Value(metric.description),
             created: DateTime.now().toUtc(),
+            showOnDashboard: metric.showOnDashboard ?? false,
+            summaryType: metric.summaryType?.name ?? '',
+            timeDifference: Value(metric.timeDifference),
+            type: metric.type?.name ?? '',
+            unit: metric.unit,
+            userEditable: false,
+            visible: metric.visible ?? false,
+            valueCount: Value(metric.valueCount),
           ),
         );
   }
@@ -122,9 +130,39 @@ class LocalMetricService extends LocalService implements MetricService {
   }
 
   @override
-  Future<List<MetricType>?> metricsType(bool all, int? group) {
-    // TODO: implement metricsType
-    throw UnimplementedError();
+  Future<List<MetricType>?> metricsType(bool all, int? group) async {
+    final result =
+        await account.database.select(account.database.metricType).join([
+          innerJoin(
+            account.database.unit,
+            account.database.unit.id.equalsExp(
+              account.database.metricType.unit,
+            ),
+          ),
+        ]).get();
+
+    final summarymap = MetricSummary.values.asNameMap();
+    final datamap = MetricDataType.values.asNameMap();
+    final unitmap = UnitType.values.asNameMap();
+    return result.map((j) {
+      final e = j.readTable(account.database.metricType);
+      final u = j.readTable(account.database.unit);
+
+      return MetricType(
+        id: e.id,
+        unit: Unit(type: unitmap[u.type]!, id: u.id, code: u.code),
+        userEditable: e.userEditable,
+        name: e.name,
+        groupId: e.groupId,
+        description: e.description,
+        showOnDashboard: e.showOnDashboard,
+        summaryType: summarymap[e.summaryType],
+        timeDifference: e.timeDifference,
+        valueCount: e.valueCount,
+        visible: e.visible,
+        type: datamap[e.type],
+      );
+    }).toList();
   }
 
   @override

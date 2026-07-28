@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:helse/services/local/database/models/event_type.dart';
 import 'package:helse/services/local/database/models/helse_table.dart';
+import 'package:helse/services/local/database/models/metric_type.dart';
 
 class Metric extends HelseTable {
   TextColumn get value => text()();
@@ -15,12 +16,6 @@ class Event extends HelseTable {
   DateTimeColumn get end => dateTime()();
   IntColumn get person => integer().nullable()();
   late final type = integer().references(EventType, #id)();
-}
-
-class MetricType extends HelseTable {
-  TextColumn get name => text()();
-  TextColumn get description => text().nullable()();
-  late final groupId = integer().references(Group, #id)();
 }
 
 class Group extends HelseTable {

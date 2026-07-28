@@ -567,6 +567,449 @@ class GroupCompanion extends UpdateCompanion<GroupData> {
   }
 }
 
+class $UnitTable extends Unit with TableInfo<$UnitTable, UnitData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $UnitTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
+  @override
+  late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
+    'synced',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("synced" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _syncTimeMeta = const VerificationMeta(
+    'syncTime',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncTime = GeneratedColumn<DateTime>(
+    'sync_time',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _serverIdMeta = const VerificationMeta(
+    'serverId',
+  );
+  @override
+  late final GeneratedColumn<int> serverId = GeneratedColumn<int>(
+    'server_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdMeta = const VerificationMeta(
+    'created',
+  );
+  @override
+  late final GeneratedColumn<DateTime> created = GeneratedColumn<DateTime>(
+    'created',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _codeMeta = const VerificationMeta('code');
+  @override
+  late final GeneratedColumn<String> code = GeneratedColumn<String>(
+    'code',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    synced,
+    syncTime,
+    serverId,
+    created,
+    code,
+    type,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'unit';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<UnitData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('synced')) {
+      context.handle(
+        _syncedMeta,
+        synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta),
+      );
+    }
+    if (data.containsKey('sync_time')) {
+      context.handle(
+        _syncTimeMeta,
+        syncTime.isAcceptableOrUnknown(data['sync_time']!, _syncTimeMeta),
+      );
+    }
+    if (data.containsKey('server_id')) {
+      context.handle(
+        _serverIdMeta,
+        serverId.isAcceptableOrUnknown(data['server_id']!, _serverIdMeta),
+      );
+    }
+    if (data.containsKey('created')) {
+      context.handle(
+        _createdMeta,
+        created.isAcceptableOrUnknown(data['created']!, _createdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdMeta);
+    }
+    if (data.containsKey('code')) {
+      context.handle(
+        _codeMeta,
+        code.isAcceptableOrUnknown(data['code']!, _codeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_codeMeta);
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+        _typeMeta,
+        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  UnitData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return UnitData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      synced: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}synced'],
+      )!,
+      syncTime: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}sync_time'],
+      ),
+      serverId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}server_id'],
+      ),
+      created: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created'],
+      )!,
+      code: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}code'],
+      )!,
+      type: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type'],
+      )!,
+    );
+  }
+
+  @override
+  $UnitTable createAlias(String alias) {
+    return $UnitTable(attachedDatabase, alias);
+  }
+}
+
+class UnitData extends DataClass implements Insertable<UnitData> {
+  final int id;
+  final bool synced;
+  final DateTime? syncTime;
+  final int? serverId;
+  final DateTime created;
+  final String code;
+  final String type;
+  const UnitData({
+    required this.id,
+    required this.synced,
+    this.syncTime,
+    this.serverId,
+    required this.created,
+    required this.code,
+    required this.type,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['synced'] = Variable<bool>(synced);
+    if (!nullToAbsent || syncTime != null) {
+      map['sync_time'] = Variable<DateTime>(syncTime);
+    }
+    if (!nullToAbsent || serverId != null) {
+      map['server_id'] = Variable<int>(serverId);
+    }
+    map['created'] = Variable<DateTime>(created);
+    map['code'] = Variable<String>(code);
+    map['type'] = Variable<String>(type);
+    return map;
+  }
+
+  UnitCompanion toCompanion(bool nullToAbsent) {
+    return UnitCompanion(
+      id: Value(id),
+      synced: Value(synced),
+      syncTime: syncTime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncTime),
+      serverId: serverId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(serverId),
+      created: Value(created),
+      code: Value(code),
+      type: Value(type),
+    );
+  }
+
+  factory UnitData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return UnitData(
+      id: serializer.fromJson<int>(json['id']),
+      synced: serializer.fromJson<bool>(json['synced']),
+      syncTime: serializer.fromJson<DateTime?>(json['syncTime']),
+      serverId: serializer.fromJson<int?>(json['serverId']),
+      created: serializer.fromJson<DateTime>(json['created']),
+      code: serializer.fromJson<String>(json['code']),
+      type: serializer.fromJson<String>(json['type']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'synced': serializer.toJson<bool>(synced),
+      'syncTime': serializer.toJson<DateTime?>(syncTime),
+      'serverId': serializer.toJson<int?>(serverId),
+      'created': serializer.toJson<DateTime>(created),
+      'code': serializer.toJson<String>(code),
+      'type': serializer.toJson<String>(type),
+    };
+  }
+
+  UnitData copyWith({
+    int? id,
+    bool? synced,
+    Value<DateTime?> syncTime = const Value.absent(),
+    Value<int?> serverId = const Value.absent(),
+    DateTime? created,
+    String? code,
+    String? type,
+  }) => UnitData(
+    id: id ?? this.id,
+    synced: synced ?? this.synced,
+    syncTime: syncTime.present ? syncTime.value : this.syncTime,
+    serverId: serverId.present ? serverId.value : this.serverId,
+    created: created ?? this.created,
+    code: code ?? this.code,
+    type: type ?? this.type,
+  );
+  UnitData copyWithCompanion(UnitCompanion data) {
+    return UnitData(
+      id: data.id.present ? data.id.value : this.id,
+      synced: data.synced.present ? data.synced.value : this.synced,
+      syncTime: data.syncTime.present ? data.syncTime.value : this.syncTime,
+      serverId: data.serverId.present ? data.serverId.value : this.serverId,
+      created: data.created.present ? data.created.value : this.created,
+      code: data.code.present ? data.code.value : this.code,
+      type: data.type.present ? data.type.value : this.type,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UnitData(')
+          ..write('id: $id, ')
+          ..write('synced: $synced, ')
+          ..write('syncTime: $syncTime, ')
+          ..write('serverId: $serverId, ')
+          ..write('created: $created, ')
+          ..write('code: $code, ')
+          ..write('type: $type')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, synced, syncTime, serverId, created, code, type);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is UnitData &&
+          other.id == this.id &&
+          other.synced == this.synced &&
+          other.syncTime == this.syncTime &&
+          other.serverId == this.serverId &&
+          other.created == this.created &&
+          other.code == this.code &&
+          other.type == this.type);
+}
+
+class UnitCompanion extends UpdateCompanion<UnitData> {
+  final Value<int> id;
+  final Value<bool> synced;
+  final Value<DateTime?> syncTime;
+  final Value<int?> serverId;
+  final Value<DateTime> created;
+  final Value<String> code;
+  final Value<String> type;
+  const UnitCompanion({
+    this.id = const Value.absent(),
+    this.synced = const Value.absent(),
+    this.syncTime = const Value.absent(),
+    this.serverId = const Value.absent(),
+    this.created = const Value.absent(),
+    this.code = const Value.absent(),
+    this.type = const Value.absent(),
+  });
+  UnitCompanion.insert({
+    this.id = const Value.absent(),
+    this.synced = const Value.absent(),
+    this.syncTime = const Value.absent(),
+    this.serverId = const Value.absent(),
+    required DateTime created,
+    required String code,
+    required String type,
+  }) : created = Value(created),
+       code = Value(code),
+       type = Value(type);
+  static Insertable<UnitData> custom({
+    Expression<int>? id,
+    Expression<bool>? synced,
+    Expression<DateTime>? syncTime,
+    Expression<int>? serverId,
+    Expression<DateTime>? created,
+    Expression<String>? code,
+    Expression<String>? type,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (synced != null) 'synced': synced,
+      if (syncTime != null) 'sync_time': syncTime,
+      if (serverId != null) 'server_id': serverId,
+      if (created != null) 'created': created,
+      if (code != null) 'code': code,
+      if (type != null) 'type': type,
+    });
+  }
+
+  UnitCompanion copyWith({
+    Value<int>? id,
+    Value<bool>? synced,
+    Value<DateTime?>? syncTime,
+    Value<int?>? serverId,
+    Value<DateTime>? created,
+    Value<String>? code,
+    Value<String>? type,
+  }) {
+    return UnitCompanion(
+      id: id ?? this.id,
+      synced: synced ?? this.synced,
+      syncTime: syncTime ?? this.syncTime,
+      serverId: serverId ?? this.serverId,
+      created: created ?? this.created,
+      code: code ?? this.code,
+      type: type ?? this.type,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (synced.present) {
+      map['synced'] = Variable<bool>(synced.value);
+    }
+    if (syncTime.present) {
+      map['sync_time'] = Variable<DateTime>(syncTime.value);
+    }
+    if (serverId.present) {
+      map['server_id'] = Variable<int>(serverId.value);
+    }
+    if (created.present) {
+      map['created'] = Variable<DateTime>(created.value);
+    }
+    if (code.present) {
+      map['code'] = Variable<String>(code.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UnitCompanion(')
+          ..write('id: $id, ')
+          ..write('synced: $synced, ')
+          ..write('syncTime: $syncTime, ')
+          ..write('serverId: $serverId, ')
+          ..write('created: $created, ')
+          ..write('code: $code, ')
+          ..write('type: $type')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $MetricTypeTable extends MetricType
     with TableInfo<$MetricTypeTable, MetricTypeData> {
   @override
@@ -666,6 +1109,102 @@ class $MetricTypeTable extends MetricType
       'REFERENCES "group" (id)',
     ),
   );
+  static const VerificationMeta _timeDifferenceMeta = const VerificationMeta(
+    'timeDifference',
+  );
+  @override
+  late final GeneratedColumn<String> timeDifference = GeneratedColumn<String>(
+    'time_difference',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _visibleMeta = const VerificationMeta(
+    'visible',
+  );
+  @override
+  late final GeneratedColumn<bool> visible = GeneratedColumn<bool>(
+    'visible',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("visible" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _valueCountMeta = const VerificationMeta(
+    'valueCount',
+  );
+  @override
+  late final GeneratedColumn<int> valueCount = GeneratedColumn<int>(
+    'value_count',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _showOnDashboardMeta = const VerificationMeta(
+    'showOnDashboard',
+  );
+  @override
+  late final GeneratedColumn<bool> showOnDashboard = GeneratedColumn<bool>(
+    'show_on_dashboard',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("show_on_dashboard" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _userEditableMeta = const VerificationMeta(
+    'userEditable',
+  );
+  @override
+  late final GeneratedColumn<bool> userEditable = GeneratedColumn<bool>(
+    'user_editable',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("user_editable" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _summaryTypeMeta = const VerificationMeta(
+    'summaryType',
+  );
+  @override
+  late final GeneratedColumn<String> summaryType = GeneratedColumn<String>(
+    'summary_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _unitMeta = const VerificationMeta('unit');
+  @override
+  late final GeneratedColumn<int> unit = GeneratedColumn<int>(
+    'unit',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES unit (id)',
+    ),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -676,6 +1215,14 @@ class $MetricTypeTable extends MetricType
     name,
     description,
     groupId,
+    timeDifference,
+    visible,
+    valueCount,
+    showOnDashboard,
+    userEditable,
+    summaryType,
+    type,
+    unit,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -743,6 +1290,78 @@ class $MetricTypeTable extends MetricType
     } else if (isInserting) {
       context.missing(_groupIdMeta);
     }
+    if (data.containsKey('time_difference')) {
+      context.handle(
+        _timeDifferenceMeta,
+        timeDifference.isAcceptableOrUnknown(
+          data['time_difference']!,
+          _timeDifferenceMeta,
+        ),
+      );
+    }
+    if (data.containsKey('visible')) {
+      context.handle(
+        _visibleMeta,
+        visible.isAcceptableOrUnknown(data['visible']!, _visibleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_visibleMeta);
+    }
+    if (data.containsKey('value_count')) {
+      context.handle(
+        _valueCountMeta,
+        valueCount.isAcceptableOrUnknown(data['value_count']!, _valueCountMeta),
+      );
+    }
+    if (data.containsKey('show_on_dashboard')) {
+      context.handle(
+        _showOnDashboardMeta,
+        showOnDashboard.isAcceptableOrUnknown(
+          data['show_on_dashboard']!,
+          _showOnDashboardMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_showOnDashboardMeta);
+    }
+    if (data.containsKey('user_editable')) {
+      context.handle(
+        _userEditableMeta,
+        userEditable.isAcceptableOrUnknown(
+          data['user_editable']!,
+          _userEditableMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_userEditableMeta);
+    }
+    if (data.containsKey('summary_type')) {
+      context.handle(
+        _summaryTypeMeta,
+        summaryType.isAcceptableOrUnknown(
+          data['summary_type']!,
+          _summaryTypeMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_summaryTypeMeta);
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+        _typeMeta,
+        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    if (data.containsKey('unit')) {
+      context.handle(
+        _unitMeta,
+        unit.isAcceptableOrUnknown(data['unit']!, _unitMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_unitMeta);
+    }
     return context;
   }
 
@@ -784,6 +1403,38 @@ class $MetricTypeTable extends MetricType
         DriftSqlType.int,
         data['${effectivePrefix}group_id'],
       )!,
+      timeDifference: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}time_difference'],
+      ),
+      visible: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}visible'],
+      )!,
+      valueCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}value_count'],
+      ),
+      showOnDashboard: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}show_on_dashboard'],
+      )!,
+      userEditable: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}user_editable'],
+      )!,
+      summaryType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}summary_type'],
+      )!,
+      type: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type'],
+      )!,
+      unit: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}unit'],
+      )!,
     );
   }
 
@@ -802,6 +1453,14 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
   final String name;
   final String? description;
   final int groupId;
+  final String? timeDifference;
+  final bool visible;
+  final int? valueCount;
+  final bool showOnDashboard;
+  final bool userEditable;
+  final String summaryType;
+  final String type;
+  final int unit;
   const MetricTypeData({
     required this.id,
     required this.synced,
@@ -811,6 +1470,14 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
     required this.name,
     this.description,
     required this.groupId,
+    this.timeDifference,
+    required this.visible,
+    this.valueCount,
+    required this.showOnDashboard,
+    required this.userEditable,
+    required this.summaryType,
+    required this.type,
+    required this.unit,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -829,6 +1496,18 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
       map['description'] = Variable<String>(description);
     }
     map['group_id'] = Variable<int>(groupId);
+    if (!nullToAbsent || timeDifference != null) {
+      map['time_difference'] = Variable<String>(timeDifference);
+    }
+    map['visible'] = Variable<bool>(visible);
+    if (!nullToAbsent || valueCount != null) {
+      map['value_count'] = Variable<int>(valueCount);
+    }
+    map['show_on_dashboard'] = Variable<bool>(showOnDashboard);
+    map['user_editable'] = Variable<bool>(userEditable);
+    map['summary_type'] = Variable<String>(summaryType);
+    map['type'] = Variable<String>(type);
+    map['unit'] = Variable<int>(unit);
     return map;
   }
 
@@ -848,6 +1527,18 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
           ? const Value.absent()
           : Value(description),
       groupId: Value(groupId),
+      timeDifference: timeDifference == null && nullToAbsent
+          ? const Value.absent()
+          : Value(timeDifference),
+      visible: Value(visible),
+      valueCount: valueCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(valueCount),
+      showOnDashboard: Value(showOnDashboard),
+      userEditable: Value(userEditable),
+      summaryType: Value(summaryType),
+      type: Value(type),
+      unit: Value(unit),
     );
   }
 
@@ -865,6 +1556,14 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String?>(json['description']),
       groupId: serializer.fromJson<int>(json['groupId']),
+      timeDifference: serializer.fromJson<String?>(json['timeDifference']),
+      visible: serializer.fromJson<bool>(json['visible']),
+      valueCount: serializer.fromJson<int?>(json['valueCount']),
+      showOnDashboard: serializer.fromJson<bool>(json['showOnDashboard']),
+      userEditable: serializer.fromJson<bool>(json['userEditable']),
+      summaryType: serializer.fromJson<String>(json['summaryType']),
+      type: serializer.fromJson<String>(json['type']),
+      unit: serializer.fromJson<int>(json['unit']),
     );
   }
   @override
@@ -879,6 +1578,14 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String?>(description),
       'groupId': serializer.toJson<int>(groupId),
+      'timeDifference': serializer.toJson<String?>(timeDifference),
+      'visible': serializer.toJson<bool>(visible),
+      'valueCount': serializer.toJson<int?>(valueCount),
+      'showOnDashboard': serializer.toJson<bool>(showOnDashboard),
+      'userEditable': serializer.toJson<bool>(userEditable),
+      'summaryType': serializer.toJson<String>(summaryType),
+      'type': serializer.toJson<String>(type),
+      'unit': serializer.toJson<int>(unit),
     };
   }
 
@@ -891,6 +1598,14 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
     String? name,
     Value<String?> description = const Value.absent(),
     int? groupId,
+    Value<String?> timeDifference = const Value.absent(),
+    bool? visible,
+    Value<int?> valueCount = const Value.absent(),
+    bool? showOnDashboard,
+    bool? userEditable,
+    String? summaryType,
+    String? type,
+    int? unit,
   }) => MetricTypeData(
     id: id ?? this.id,
     synced: synced ?? this.synced,
@@ -900,6 +1615,16 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
     name: name ?? this.name,
     description: description.present ? description.value : this.description,
     groupId: groupId ?? this.groupId,
+    timeDifference: timeDifference.present
+        ? timeDifference.value
+        : this.timeDifference,
+    visible: visible ?? this.visible,
+    valueCount: valueCount.present ? valueCount.value : this.valueCount,
+    showOnDashboard: showOnDashboard ?? this.showOnDashboard,
+    userEditable: userEditable ?? this.userEditable,
+    summaryType: summaryType ?? this.summaryType,
+    type: type ?? this.type,
+    unit: unit ?? this.unit,
   );
   MetricTypeData copyWithCompanion(MetricTypeCompanion data) {
     return MetricTypeData(
@@ -913,6 +1638,24 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
           ? data.description.value
           : this.description,
       groupId: data.groupId.present ? data.groupId.value : this.groupId,
+      timeDifference: data.timeDifference.present
+          ? data.timeDifference.value
+          : this.timeDifference,
+      visible: data.visible.present ? data.visible.value : this.visible,
+      valueCount: data.valueCount.present
+          ? data.valueCount.value
+          : this.valueCount,
+      showOnDashboard: data.showOnDashboard.present
+          ? data.showOnDashboard.value
+          : this.showOnDashboard,
+      userEditable: data.userEditable.present
+          ? data.userEditable.value
+          : this.userEditable,
+      summaryType: data.summaryType.present
+          ? data.summaryType.value
+          : this.summaryType,
+      type: data.type.present ? data.type.value : this.type,
+      unit: data.unit.present ? data.unit.value : this.unit,
     );
   }
 
@@ -926,7 +1669,15 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
           ..write('created: $created, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
-          ..write('groupId: $groupId')
+          ..write('groupId: $groupId, ')
+          ..write('timeDifference: $timeDifference, ')
+          ..write('visible: $visible, ')
+          ..write('valueCount: $valueCount, ')
+          ..write('showOnDashboard: $showOnDashboard, ')
+          ..write('userEditable: $userEditable, ')
+          ..write('summaryType: $summaryType, ')
+          ..write('type: $type, ')
+          ..write('unit: $unit')
           ..write(')'))
         .toString();
   }
@@ -941,6 +1692,14 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
     name,
     description,
     groupId,
+    timeDifference,
+    visible,
+    valueCount,
+    showOnDashboard,
+    userEditable,
+    summaryType,
+    type,
+    unit,
   );
   @override
   bool operator ==(Object other) =>
@@ -953,7 +1712,15 @@ class MetricTypeData extends DataClass implements Insertable<MetricTypeData> {
           other.created == this.created &&
           other.name == this.name &&
           other.description == this.description &&
-          other.groupId == this.groupId);
+          other.groupId == this.groupId &&
+          other.timeDifference == this.timeDifference &&
+          other.visible == this.visible &&
+          other.valueCount == this.valueCount &&
+          other.showOnDashboard == this.showOnDashboard &&
+          other.userEditable == this.userEditable &&
+          other.summaryType == this.summaryType &&
+          other.type == this.type &&
+          other.unit == this.unit);
 }
 
 class MetricTypeCompanion extends UpdateCompanion<MetricTypeData> {
@@ -965,6 +1732,14 @@ class MetricTypeCompanion extends UpdateCompanion<MetricTypeData> {
   final Value<String> name;
   final Value<String?> description;
   final Value<int> groupId;
+  final Value<String?> timeDifference;
+  final Value<bool> visible;
+  final Value<int?> valueCount;
+  final Value<bool> showOnDashboard;
+  final Value<bool> userEditable;
+  final Value<String> summaryType;
+  final Value<String> type;
+  final Value<int> unit;
   const MetricTypeCompanion({
     this.id = const Value.absent(),
     this.synced = const Value.absent(),
@@ -974,6 +1749,14 @@ class MetricTypeCompanion extends UpdateCompanion<MetricTypeData> {
     this.name = const Value.absent(),
     this.description = const Value.absent(),
     this.groupId = const Value.absent(),
+    this.timeDifference = const Value.absent(),
+    this.visible = const Value.absent(),
+    this.valueCount = const Value.absent(),
+    this.showOnDashboard = const Value.absent(),
+    this.userEditable = const Value.absent(),
+    this.summaryType = const Value.absent(),
+    this.type = const Value.absent(),
+    this.unit = const Value.absent(),
   });
   MetricTypeCompanion.insert({
     this.id = const Value.absent(),
@@ -984,9 +1767,23 @@ class MetricTypeCompanion extends UpdateCompanion<MetricTypeData> {
     required String name,
     this.description = const Value.absent(),
     required int groupId,
+    this.timeDifference = const Value.absent(),
+    required bool visible,
+    this.valueCount = const Value.absent(),
+    required bool showOnDashboard,
+    required bool userEditable,
+    required String summaryType,
+    required String type,
+    required int unit,
   }) : created = Value(created),
        name = Value(name),
-       groupId = Value(groupId);
+       groupId = Value(groupId),
+       visible = Value(visible),
+       showOnDashboard = Value(showOnDashboard),
+       userEditable = Value(userEditable),
+       summaryType = Value(summaryType),
+       type = Value(type),
+       unit = Value(unit);
   static Insertable<MetricTypeData> custom({
     Expression<int>? id,
     Expression<bool>? synced,
@@ -996,6 +1793,14 @@ class MetricTypeCompanion extends UpdateCompanion<MetricTypeData> {
     Expression<String>? name,
     Expression<String>? description,
     Expression<int>? groupId,
+    Expression<String>? timeDifference,
+    Expression<bool>? visible,
+    Expression<int>? valueCount,
+    Expression<bool>? showOnDashboard,
+    Expression<bool>? userEditable,
+    Expression<String>? summaryType,
+    Expression<String>? type,
+    Expression<int>? unit,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1006,6 +1811,14 @@ class MetricTypeCompanion extends UpdateCompanion<MetricTypeData> {
       if (name != null) 'name': name,
       if (description != null) 'description': description,
       if (groupId != null) 'group_id': groupId,
+      if (timeDifference != null) 'time_difference': timeDifference,
+      if (visible != null) 'visible': visible,
+      if (valueCount != null) 'value_count': valueCount,
+      if (showOnDashboard != null) 'show_on_dashboard': showOnDashboard,
+      if (userEditable != null) 'user_editable': userEditable,
+      if (summaryType != null) 'summary_type': summaryType,
+      if (type != null) 'type': type,
+      if (unit != null) 'unit': unit,
     });
   }
 
@@ -1018,6 +1831,14 @@ class MetricTypeCompanion extends UpdateCompanion<MetricTypeData> {
     Value<String>? name,
     Value<String?>? description,
     Value<int>? groupId,
+    Value<String?>? timeDifference,
+    Value<bool>? visible,
+    Value<int?>? valueCount,
+    Value<bool>? showOnDashboard,
+    Value<bool>? userEditable,
+    Value<String>? summaryType,
+    Value<String>? type,
+    Value<int>? unit,
   }) {
     return MetricTypeCompanion(
       id: id ?? this.id,
@@ -1028,6 +1849,14 @@ class MetricTypeCompanion extends UpdateCompanion<MetricTypeData> {
       name: name ?? this.name,
       description: description ?? this.description,
       groupId: groupId ?? this.groupId,
+      timeDifference: timeDifference ?? this.timeDifference,
+      visible: visible ?? this.visible,
+      valueCount: valueCount ?? this.valueCount,
+      showOnDashboard: showOnDashboard ?? this.showOnDashboard,
+      userEditable: userEditable ?? this.userEditable,
+      summaryType: summaryType ?? this.summaryType,
+      type: type ?? this.type,
+      unit: unit ?? this.unit,
     );
   }
 
@@ -1058,6 +1887,30 @@ class MetricTypeCompanion extends UpdateCompanion<MetricTypeData> {
     if (groupId.present) {
       map['group_id'] = Variable<int>(groupId.value);
     }
+    if (timeDifference.present) {
+      map['time_difference'] = Variable<String>(timeDifference.value);
+    }
+    if (visible.present) {
+      map['visible'] = Variable<bool>(visible.value);
+    }
+    if (valueCount.present) {
+      map['value_count'] = Variable<int>(valueCount.value);
+    }
+    if (showOnDashboard.present) {
+      map['show_on_dashboard'] = Variable<bool>(showOnDashboard.value);
+    }
+    if (userEditable.present) {
+      map['user_editable'] = Variable<bool>(userEditable.value);
+    }
+    if (summaryType.present) {
+      map['summary_type'] = Variable<String>(summaryType.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    if (unit.present) {
+      map['unit'] = Variable<int>(unit.value);
+    }
     return map;
   }
 
@@ -1071,7 +1924,15 @@ class MetricTypeCompanion extends UpdateCompanion<MetricTypeData> {
           ..write('created: $created, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
-          ..write('groupId: $groupId')
+          ..write('groupId: $groupId, ')
+          ..write('timeDifference: $timeDifference, ')
+          ..write('visible: $visible, ')
+          ..write('valueCount: $valueCount, ')
+          ..write('showOnDashboard: $showOnDashboard, ')
+          ..write('userEditable: $userEditable, ')
+          ..write('summaryType: $summaryType, ')
+          ..write('type: $type, ')
+          ..write('unit: $unit')
           ..write(')'))
         .toString();
   }
@@ -1747,6 +2608,20 @@ class $EventTypeTable extends EventType
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _userEditableMeta = const VerificationMeta(
+    'userEditable',
+  );
+  @override
+  late final GeneratedColumn<bool> userEditable = GeneratedColumn<bool>(
+    'user_editable',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("user_editable" IN (0, 1))',
+    ),
+  );
   static const VerificationMeta _groupIdMeta = const VerificationMeta(
     'groupId',
   );
@@ -1773,6 +2648,7 @@ class $EventTypeTable extends EventType
     standAlone,
     visible,
     timeDifference,
+    userEditable,
     groupId,
   ];
   @override
@@ -1858,6 +2734,17 @@ class $EventTypeTable extends EventType
         ),
       );
     }
+    if (data.containsKey('user_editable')) {
+      context.handle(
+        _userEditableMeta,
+        userEditable.isAcceptableOrUnknown(
+          data['user_editable']!,
+          _userEditableMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_userEditableMeta);
+    }
     if (data.containsKey('group_id')) {
       context.handle(
         _groupIdMeta,
@@ -1915,6 +2802,10 @@ class $EventTypeTable extends EventType
         DriftSqlType.string,
         data['${effectivePrefix}time_difference'],
       ),
+      userEditable: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}user_editable'],
+      )!,
       groupId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}group_id'],
@@ -1939,6 +2830,7 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
   final bool standAlone;
   final bool visible;
   final String? timeDifference;
+  final bool userEditable;
   final int groupId;
   const EventTypeData({
     required this.id,
@@ -1951,6 +2843,7 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
     required this.standAlone,
     required this.visible,
     this.timeDifference,
+    required this.userEditable,
     required this.groupId,
   });
   @override
@@ -1974,6 +2867,7 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
     if (!nullToAbsent || timeDifference != null) {
       map['time_difference'] = Variable<String>(timeDifference);
     }
+    map['user_editable'] = Variable<bool>(userEditable);
     map['group_id'] = Variable<int>(groupId);
     return map;
   }
@@ -1998,6 +2892,7 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
       timeDifference: timeDifference == null && nullToAbsent
           ? const Value.absent()
           : Value(timeDifference),
+      userEditable: Value(userEditable),
       groupId: Value(groupId),
     );
   }
@@ -2018,6 +2913,7 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
       standAlone: serializer.fromJson<bool>(json['standAlone']),
       visible: serializer.fromJson<bool>(json['visible']),
       timeDifference: serializer.fromJson<String?>(json['timeDifference']),
+      userEditable: serializer.fromJson<bool>(json['userEditable']),
       groupId: serializer.fromJson<int>(json['groupId']),
     );
   }
@@ -2035,6 +2931,7 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
       'standAlone': serializer.toJson<bool>(standAlone),
       'visible': serializer.toJson<bool>(visible),
       'timeDifference': serializer.toJson<String?>(timeDifference),
+      'userEditable': serializer.toJson<bool>(userEditable),
       'groupId': serializer.toJson<int>(groupId),
     };
   }
@@ -2050,6 +2947,7 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
     bool? standAlone,
     bool? visible,
     Value<String?> timeDifference = const Value.absent(),
+    bool? userEditable,
     int? groupId,
   }) => EventTypeData(
     id: id ?? this.id,
@@ -2064,6 +2962,7 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
     timeDifference: timeDifference.present
         ? timeDifference.value
         : this.timeDifference,
+    userEditable: userEditable ?? this.userEditable,
     groupId: groupId ?? this.groupId,
   );
   EventTypeData copyWithCompanion(EventTypeCompanion data) {
@@ -2084,6 +2983,9 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
       timeDifference: data.timeDifference.present
           ? data.timeDifference.value
           : this.timeDifference,
+      userEditable: data.userEditable.present
+          ? data.userEditable.value
+          : this.userEditable,
       groupId: data.groupId.present ? data.groupId.value : this.groupId,
     );
   }
@@ -2101,6 +3003,7 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
           ..write('standAlone: $standAlone, ')
           ..write('visible: $visible, ')
           ..write('timeDifference: $timeDifference, ')
+          ..write('userEditable: $userEditable, ')
           ..write('groupId: $groupId')
           ..write(')'))
         .toString();
@@ -2118,6 +3021,7 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
     standAlone,
     visible,
     timeDifference,
+    userEditable,
     groupId,
   );
   @override
@@ -2134,6 +3038,7 @@ class EventTypeData extends DataClass implements Insertable<EventTypeData> {
           other.standAlone == this.standAlone &&
           other.visible == this.visible &&
           other.timeDifference == this.timeDifference &&
+          other.userEditable == this.userEditable &&
           other.groupId == this.groupId);
 }
 
@@ -2148,6 +3053,7 @@ class EventTypeCompanion extends UpdateCompanion<EventTypeData> {
   final Value<bool> standAlone;
   final Value<bool> visible;
   final Value<String?> timeDifference;
+  final Value<bool> userEditable;
   final Value<int> groupId;
   const EventTypeCompanion({
     this.id = const Value.absent(),
@@ -2160,6 +3066,7 @@ class EventTypeCompanion extends UpdateCompanion<EventTypeData> {
     this.standAlone = const Value.absent(),
     this.visible = const Value.absent(),
     this.timeDifference = const Value.absent(),
+    this.userEditable = const Value.absent(),
     this.groupId = const Value.absent(),
   });
   EventTypeCompanion.insert({
@@ -2173,11 +3080,13 @@ class EventTypeCompanion extends UpdateCompanion<EventTypeData> {
     required bool standAlone,
     required bool visible,
     this.timeDifference = const Value.absent(),
+    required bool userEditable,
     required int groupId,
   }) : created = Value(created),
        name = Value(name),
        standAlone = Value(standAlone),
        visible = Value(visible),
+       userEditable = Value(userEditable),
        groupId = Value(groupId);
   static Insertable<EventTypeData> custom({
     Expression<int>? id,
@@ -2190,6 +3099,7 @@ class EventTypeCompanion extends UpdateCompanion<EventTypeData> {
     Expression<bool>? standAlone,
     Expression<bool>? visible,
     Expression<String>? timeDifference,
+    Expression<bool>? userEditable,
     Expression<int>? groupId,
   }) {
     return RawValuesInsertable({
@@ -2203,6 +3113,7 @@ class EventTypeCompanion extends UpdateCompanion<EventTypeData> {
       if (standAlone != null) 'stand_alone': standAlone,
       if (visible != null) 'visible': visible,
       if (timeDifference != null) 'time_difference': timeDifference,
+      if (userEditable != null) 'user_editable': userEditable,
       if (groupId != null) 'group_id': groupId,
     });
   }
@@ -2218,6 +3129,7 @@ class EventTypeCompanion extends UpdateCompanion<EventTypeData> {
     Value<bool>? standAlone,
     Value<bool>? visible,
     Value<String?>? timeDifference,
+    Value<bool>? userEditable,
     Value<int>? groupId,
   }) {
     return EventTypeCompanion(
@@ -2231,6 +3143,7 @@ class EventTypeCompanion extends UpdateCompanion<EventTypeData> {
       standAlone: standAlone ?? this.standAlone,
       visible: visible ?? this.visible,
       timeDifference: timeDifference ?? this.timeDifference,
+      userEditable: userEditable ?? this.userEditable,
       groupId: groupId ?? this.groupId,
     );
   }
@@ -2268,6 +3181,9 @@ class EventTypeCompanion extends UpdateCompanion<EventTypeData> {
     if (timeDifference.present) {
       map['time_difference'] = Variable<String>(timeDifference.value);
     }
+    if (userEditable.present) {
+      map['user_editable'] = Variable<bool>(userEditable.value);
+    }
     if (groupId.present) {
       map['group_id'] = Variable<int>(groupId.value);
     }
@@ -2287,6 +3203,7 @@ class EventTypeCompanion extends UpdateCompanion<EventTypeData> {
           ..write('standAlone: $standAlone, ')
           ..write('visible: $visible, ')
           ..write('timeDifference: $timeDifference, ')
+          ..write('userEditable: $userEditable, ')
           ..write('groupId: $groupId')
           ..write(')'))
         .toString();
@@ -3244,449 +4161,6 @@ class JobCompanion extends UpdateCompanion<JobData> {
   }
 }
 
-class $UnitTable extends Unit with TableInfo<$UnitTable, UnitData> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $UnitTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-    'id',
-    aliasedName,
-    false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
-  );
-  static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
-  @override
-  late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
-    'synced',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("synced" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
-  static const VerificationMeta _syncTimeMeta = const VerificationMeta(
-    'syncTime',
-  );
-  @override
-  late final GeneratedColumn<DateTime> syncTime = GeneratedColumn<DateTime>(
-    'sync_time',
-    aliasedName,
-    true,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _serverIdMeta = const VerificationMeta(
-    'serverId',
-  );
-  @override
-  late final GeneratedColumn<int> serverId = GeneratedColumn<int>(
-    'server_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _createdMeta = const VerificationMeta(
-    'created',
-  );
-  @override
-  late final GeneratedColumn<DateTime> created = GeneratedColumn<DateTime>(
-    'created',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _codeMeta = const VerificationMeta('code');
-  @override
-  late final GeneratedColumn<String> code = GeneratedColumn<String>(
-    'code',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _typeMeta = const VerificationMeta('type');
-  @override
-  late final GeneratedColumn<String> type = GeneratedColumn<String>(
-    'type',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    synced,
-    syncTime,
-    serverId,
-    created,
-    code,
-    type,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'unit';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<UnitData> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('synced')) {
-      context.handle(
-        _syncedMeta,
-        synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta),
-      );
-    }
-    if (data.containsKey('sync_time')) {
-      context.handle(
-        _syncTimeMeta,
-        syncTime.isAcceptableOrUnknown(data['sync_time']!, _syncTimeMeta),
-      );
-    }
-    if (data.containsKey('server_id')) {
-      context.handle(
-        _serverIdMeta,
-        serverId.isAcceptableOrUnknown(data['server_id']!, _serverIdMeta),
-      );
-    }
-    if (data.containsKey('created')) {
-      context.handle(
-        _createdMeta,
-        created.isAcceptableOrUnknown(data['created']!, _createdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_createdMeta);
-    }
-    if (data.containsKey('code')) {
-      context.handle(
-        _codeMeta,
-        code.isAcceptableOrUnknown(data['code']!, _codeMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_codeMeta);
-    }
-    if (data.containsKey('type')) {
-      context.handle(
-        _typeMeta,
-        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_typeMeta);
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  UnitData map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return UnitData(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}id'],
-      )!,
-      synced: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}synced'],
-      )!,
-      syncTime: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}sync_time'],
-      ),
-      serverId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}server_id'],
-      ),
-      created: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}created'],
-      )!,
-      code: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}code'],
-      )!,
-      type: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}type'],
-      )!,
-    );
-  }
-
-  @override
-  $UnitTable createAlias(String alias) {
-    return $UnitTable(attachedDatabase, alias);
-  }
-}
-
-class UnitData extends DataClass implements Insertable<UnitData> {
-  final int id;
-  final bool synced;
-  final DateTime? syncTime;
-  final int? serverId;
-  final DateTime created;
-  final String code;
-  final String type;
-  const UnitData({
-    required this.id,
-    required this.synced,
-    this.syncTime,
-    this.serverId,
-    required this.created,
-    required this.code,
-    required this.type,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['synced'] = Variable<bool>(synced);
-    if (!nullToAbsent || syncTime != null) {
-      map['sync_time'] = Variable<DateTime>(syncTime);
-    }
-    if (!nullToAbsent || serverId != null) {
-      map['server_id'] = Variable<int>(serverId);
-    }
-    map['created'] = Variable<DateTime>(created);
-    map['code'] = Variable<String>(code);
-    map['type'] = Variable<String>(type);
-    return map;
-  }
-
-  UnitCompanion toCompanion(bool nullToAbsent) {
-    return UnitCompanion(
-      id: Value(id),
-      synced: Value(synced),
-      syncTime: syncTime == null && nullToAbsent
-          ? const Value.absent()
-          : Value(syncTime),
-      serverId: serverId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(serverId),
-      created: Value(created),
-      code: Value(code),
-      type: Value(type),
-    );
-  }
-
-  factory UnitData.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return UnitData(
-      id: serializer.fromJson<int>(json['id']),
-      synced: serializer.fromJson<bool>(json['synced']),
-      syncTime: serializer.fromJson<DateTime?>(json['syncTime']),
-      serverId: serializer.fromJson<int?>(json['serverId']),
-      created: serializer.fromJson<DateTime>(json['created']),
-      code: serializer.fromJson<String>(json['code']),
-      type: serializer.fromJson<String>(json['type']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'synced': serializer.toJson<bool>(synced),
-      'syncTime': serializer.toJson<DateTime?>(syncTime),
-      'serverId': serializer.toJson<int?>(serverId),
-      'created': serializer.toJson<DateTime>(created),
-      'code': serializer.toJson<String>(code),
-      'type': serializer.toJson<String>(type),
-    };
-  }
-
-  UnitData copyWith({
-    int? id,
-    bool? synced,
-    Value<DateTime?> syncTime = const Value.absent(),
-    Value<int?> serverId = const Value.absent(),
-    DateTime? created,
-    String? code,
-    String? type,
-  }) => UnitData(
-    id: id ?? this.id,
-    synced: synced ?? this.synced,
-    syncTime: syncTime.present ? syncTime.value : this.syncTime,
-    serverId: serverId.present ? serverId.value : this.serverId,
-    created: created ?? this.created,
-    code: code ?? this.code,
-    type: type ?? this.type,
-  );
-  UnitData copyWithCompanion(UnitCompanion data) {
-    return UnitData(
-      id: data.id.present ? data.id.value : this.id,
-      synced: data.synced.present ? data.synced.value : this.synced,
-      syncTime: data.syncTime.present ? data.syncTime.value : this.syncTime,
-      serverId: data.serverId.present ? data.serverId.value : this.serverId,
-      created: data.created.present ? data.created.value : this.created,
-      code: data.code.present ? data.code.value : this.code,
-      type: data.type.present ? data.type.value : this.type,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('UnitData(')
-          ..write('id: $id, ')
-          ..write('synced: $synced, ')
-          ..write('syncTime: $syncTime, ')
-          ..write('serverId: $serverId, ')
-          ..write('created: $created, ')
-          ..write('code: $code, ')
-          ..write('type: $type')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(id, synced, syncTime, serverId, created, code, type);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is UnitData &&
-          other.id == this.id &&
-          other.synced == this.synced &&
-          other.syncTime == this.syncTime &&
-          other.serverId == this.serverId &&
-          other.created == this.created &&
-          other.code == this.code &&
-          other.type == this.type);
-}
-
-class UnitCompanion extends UpdateCompanion<UnitData> {
-  final Value<int> id;
-  final Value<bool> synced;
-  final Value<DateTime?> syncTime;
-  final Value<int?> serverId;
-  final Value<DateTime> created;
-  final Value<String> code;
-  final Value<String> type;
-  const UnitCompanion({
-    this.id = const Value.absent(),
-    this.synced = const Value.absent(),
-    this.syncTime = const Value.absent(),
-    this.serverId = const Value.absent(),
-    this.created = const Value.absent(),
-    this.code = const Value.absent(),
-    this.type = const Value.absent(),
-  });
-  UnitCompanion.insert({
-    this.id = const Value.absent(),
-    this.synced = const Value.absent(),
-    this.syncTime = const Value.absent(),
-    this.serverId = const Value.absent(),
-    required DateTime created,
-    required String code,
-    required String type,
-  }) : created = Value(created),
-       code = Value(code),
-       type = Value(type);
-  static Insertable<UnitData> custom({
-    Expression<int>? id,
-    Expression<bool>? synced,
-    Expression<DateTime>? syncTime,
-    Expression<int>? serverId,
-    Expression<DateTime>? created,
-    Expression<String>? code,
-    Expression<String>? type,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (synced != null) 'synced': synced,
-      if (syncTime != null) 'sync_time': syncTime,
-      if (serverId != null) 'server_id': serverId,
-      if (created != null) 'created': created,
-      if (code != null) 'code': code,
-      if (type != null) 'type': type,
-    });
-  }
-
-  UnitCompanion copyWith({
-    Value<int>? id,
-    Value<bool>? synced,
-    Value<DateTime?>? syncTime,
-    Value<int?>? serverId,
-    Value<DateTime>? created,
-    Value<String>? code,
-    Value<String>? type,
-  }) {
-    return UnitCompanion(
-      id: id ?? this.id,
-      synced: synced ?? this.synced,
-      syncTime: syncTime ?? this.syncTime,
-      serverId: serverId ?? this.serverId,
-      created: created ?? this.created,
-      code: code ?? this.code,
-      type: type ?? this.type,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
-    if (synced.present) {
-      map['synced'] = Variable<bool>(synced.value);
-    }
-    if (syncTime.present) {
-      map['sync_time'] = Variable<DateTime>(syncTime.value);
-    }
-    if (serverId.present) {
-      map['server_id'] = Variable<int>(serverId.value);
-    }
-    if (created.present) {
-      map['created'] = Variable<DateTime>(created.value);
-    }
-    if (code.present) {
-      map['code'] = Variable<String>(code.value);
-    }
-    if (type.present) {
-      map['type'] = Variable<String>(type.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('UnitCompanion(')
-          ..write('id: $id, ')
-          ..write('synced: $synced, ')
-          ..write('syncTime: $syncTime, ')
-          ..write('serverId: $serverId, ')
-          ..write('created: $created, ')
-          ..write('code: $code, ')
-          ..write('type: $type')
-          ..write(')'))
-        .toString();
-  }
-}
-
 class $PersonTable extends Person with TableInfo<$PersonTable, PersonData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -4438,12 +4912,12 @@ abstract class _$Database extends GeneratedDatabase {
   _$Database(QueryExecutor e) : super(e);
   $DatabaseManager get managers => $DatabaseManager(this);
   late final $GroupTable group = $GroupTable(this);
+  late final $UnitTable unit = $UnitTable(this);
   late final $MetricTypeTable metricType = $MetricTypeTable(this);
   late final $MetricTable metric = $MetricTable(this);
   late final $EventTypeTable eventType = $EventTypeTable(this);
   late final $EventTable event = $EventTable(this);
   late final $JobTable job = $JobTable(this);
-  late final $UnitTable unit = $UnitTable(this);
   late final $PersonTable person = $PersonTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
@@ -4451,12 +4925,12 @@ abstract class _$Database extends GeneratedDatabase {
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     group,
+    unit,
     metricType,
     metric,
     eventType,
     event,
     job,
-    unit,
     person,
   ];
 }
@@ -4926,6 +5400,330 @@ typedef $$GroupTableProcessedTableManager =
       GroupData,
       PrefetchHooks Function({bool metricTypeRefs, bool eventTypeRefs})
     >;
+typedef $$UnitTableCreateCompanionBuilder =
+    UnitCompanion Function({
+      Value<int> id,
+      Value<bool> synced,
+      Value<DateTime?> syncTime,
+      Value<int?> serverId,
+      required DateTime created,
+      required String code,
+      required String type,
+    });
+typedef $$UnitTableUpdateCompanionBuilder =
+    UnitCompanion Function({
+      Value<int> id,
+      Value<bool> synced,
+      Value<DateTime?> syncTime,
+      Value<int?> serverId,
+      Value<DateTime> created,
+      Value<String> code,
+      Value<String> type,
+    });
+
+final class $$UnitTableReferences
+    extends BaseReferences<_$Database, $UnitTable, UnitData> {
+  $$UnitTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$MetricTypeTable, List<MetricTypeData>>
+  _metricTypeRefsTable(_$Database db) => MultiTypedResultKey.fromTable(
+    db.metricType,
+    aliasName: 'unit__id__metric_type__unit',
+  );
+
+  $$MetricTypeTableProcessedTableManager get metricTypeRefs {
+    final manager = $$MetricTypeTableTableManager(
+      $_db,
+      $_db.metricType,
+    ).filter((f) => f.unit.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_metricTypeRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$UnitTableFilterComposer extends Composer<_$Database, $UnitTable> {
+  $$UnitTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncTime => $composableBuilder(
+    column: $table.syncTime,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get serverId => $composableBuilder(
+    column: $table.serverId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get created => $composableBuilder(
+    column: $table.created,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get code => $composableBuilder(
+    column: $table.code,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> metricTypeRefs(
+    Expression<bool> Function($$MetricTypeTableFilterComposer f) f,
+  ) {
+    final $$MetricTypeTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.metricType,
+      getReferencedColumn: (t) => t.unit,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MetricTypeTableFilterComposer(
+            $db: $db,
+            $table: $db.metricType,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$UnitTableOrderingComposer extends Composer<_$Database, $UnitTable> {
+  $$UnitTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncTime => $composableBuilder(
+    column: $table.syncTime,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get serverId => $composableBuilder(
+    column: $table.serverId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get created => $composableBuilder(
+    column: $table.created,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get code => $composableBuilder(
+    column: $table.code,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$UnitTableAnnotationComposer extends Composer<_$Database, $UnitTable> {
+  $$UnitTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<bool> get synced =>
+      $composableBuilder(column: $table.synced, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncTime =>
+      $composableBuilder(column: $table.syncTime, builder: (column) => column);
+
+  GeneratedColumn<int> get serverId =>
+      $composableBuilder(column: $table.serverId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get created =>
+      $composableBuilder(column: $table.created, builder: (column) => column);
+
+  GeneratedColumn<String> get code =>
+      $composableBuilder(column: $table.code, builder: (column) => column);
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  Expression<T> metricTypeRefs<T extends Object>(
+    Expression<T> Function($$MetricTypeTableAnnotationComposer a) f,
+  ) {
+    final $$MetricTypeTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.metricType,
+      getReferencedColumn: (t) => t.unit,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MetricTypeTableAnnotationComposer(
+            $db: $db,
+            $table: $db.metricType,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$UnitTableTableManager
+    extends
+        RootTableManager<
+          _$Database,
+          $UnitTable,
+          UnitData,
+          $$UnitTableFilterComposer,
+          $$UnitTableOrderingComposer,
+          $$UnitTableAnnotationComposer,
+          $$UnitTableCreateCompanionBuilder,
+          $$UnitTableUpdateCompanionBuilder,
+          (UnitData, $$UnitTableReferences),
+          UnitData,
+          PrefetchHooks Function({bool metricTypeRefs})
+        > {
+  $$UnitTableTableManager(_$Database db, $UnitTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$UnitTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$UnitTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$UnitTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
+                Value<DateTime?> syncTime = const Value.absent(),
+                Value<int?> serverId = const Value.absent(),
+                Value<DateTime> created = const Value.absent(),
+                Value<String> code = const Value.absent(),
+                Value<String> type = const Value.absent(),
+              }) => UnitCompanion(
+                id: id,
+                synced: synced,
+                syncTime: syncTime,
+                serverId: serverId,
+                created: created,
+                code: code,
+                type: type,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
+                Value<DateTime?> syncTime = const Value.absent(),
+                Value<int?> serverId = const Value.absent(),
+                required DateTime created,
+                required String code,
+                required String type,
+              }) => UnitCompanion.insert(
+                id: id,
+                synced: synced,
+                syncTime: syncTime,
+                serverId: serverId,
+                created: created,
+                code: code,
+                type: type,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) =>
+                    (e.readTable(table), $$UnitTableReferences(db, table, e)),
+              )
+              .toList(),
+          prefetchHooksCallback: ({metricTypeRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (metricTypeRefs) db.metricType],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (metricTypeRefs)
+                    await $_getPrefetchedData<
+                      UnitData,
+                      $UnitTable,
+                      MetricTypeData
+                    >(
+                      currentTable: table,
+                      referencedTable: $$UnitTableReferences
+                          ._metricTypeRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$UnitTableReferences(db, table, p0).metricTypeRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.unit == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$UnitTableProcessedTableManager =
+    ProcessedTableManager<
+      _$Database,
+      $UnitTable,
+      UnitData,
+      $$UnitTableFilterComposer,
+      $$UnitTableOrderingComposer,
+      $$UnitTableAnnotationComposer,
+      $$UnitTableCreateCompanionBuilder,
+      $$UnitTableUpdateCompanionBuilder,
+      (UnitData, $$UnitTableReferences),
+      UnitData,
+      PrefetchHooks Function({bool metricTypeRefs})
+    >;
 typedef $$MetricTypeTableCreateCompanionBuilder =
     MetricTypeCompanion Function({
       Value<int> id,
@@ -4936,6 +5734,14 @@ typedef $$MetricTypeTableCreateCompanionBuilder =
       required String name,
       Value<String?> description,
       required int groupId,
+      Value<String?> timeDifference,
+      required bool visible,
+      Value<int?> valueCount,
+      required bool showOnDashboard,
+      required bool userEditable,
+      required String summaryType,
+      required String type,
+      required int unit,
     });
 typedef $$MetricTypeTableUpdateCompanionBuilder =
     MetricTypeCompanion Function({
@@ -4947,6 +5753,14 @@ typedef $$MetricTypeTableUpdateCompanionBuilder =
       Value<String> name,
       Value<String?> description,
       Value<int> groupId,
+      Value<String?> timeDifference,
+      Value<bool> visible,
+      Value<int?> valueCount,
+      Value<bool> showOnDashboard,
+      Value<bool> userEditable,
+      Value<String> summaryType,
+      Value<String> type,
+      Value<int> unit,
     });
 
 final class $$MetricTypeTableReferences
@@ -4964,6 +5778,23 @@ final class $$MetricTypeTableReferences
       $_db.group,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_groupIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $UnitTable _unitTable(_$Database db) =>
+      db.unit.createAlias('metric_type__unit__unit__id');
+
+  $$UnitTableProcessedTableManager get unit {
+    final $_column = $_itemColumn<int>('unit')!;
+
+    final manager = $$UnitTableTableManager(
+      $_db,
+      $_db.unit,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_unitTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -5034,6 +5865,41 @@ class $$MetricTypeTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get timeDifference => $composableBuilder(
+    column: $table.timeDifference,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get visible => $composableBuilder(
+    column: $table.visible,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get valueCount => $composableBuilder(
+    column: $table.valueCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get showOnDashboard => $composableBuilder(
+    column: $table.showOnDashboard,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get userEditable => $composableBuilder(
+    column: $table.userEditable,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get summaryType => $composableBuilder(
+    column: $table.summaryType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$GroupTableFilterComposer get groupId {
     final $$GroupTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -5048,6 +5914,29 @@ class $$MetricTypeTableFilterComposer
           }) => $$GroupTableFilterComposer(
             $db: $db,
             $table: $db.group,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$UnitTableFilterComposer get unit {
+    final $$UnitTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.unit,
+      referencedTable: $db.unit,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitTableFilterComposer(
+            $db: $db,
+            $table: $db.unit,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -5127,6 +6016,41 @@ class $$MetricTypeTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get timeDifference => $composableBuilder(
+    column: $table.timeDifference,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get visible => $composableBuilder(
+    column: $table.visible,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get valueCount => $composableBuilder(
+    column: $table.valueCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get showOnDashboard => $composableBuilder(
+    column: $table.showOnDashboard,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get userEditable => $composableBuilder(
+    column: $table.userEditable,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get summaryType => $composableBuilder(
+    column: $table.summaryType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$GroupTableOrderingComposer get groupId {
     final $$GroupTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -5141,6 +6065,29 @@ class $$MetricTypeTableOrderingComposer
           }) => $$GroupTableOrderingComposer(
             $db: $db,
             $table: $db.group,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$UnitTableOrderingComposer get unit {
+    final $$UnitTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.unit,
+      referencedTable: $db.unit,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitTableOrderingComposer(
+            $db: $db,
+            $table: $db.unit,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -5183,6 +6130,37 @@ class $$MetricTypeTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get timeDifference => $composableBuilder(
+    column: $table.timeDifference,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get visible =>
+      $composableBuilder(column: $table.visible, builder: (column) => column);
+
+  GeneratedColumn<int> get valueCount => $composableBuilder(
+    column: $table.valueCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get showOnDashboard => $composableBuilder(
+    column: $table.showOnDashboard,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get userEditable => $composableBuilder(
+    column: $table.userEditable,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get summaryType => $composableBuilder(
+    column: $table.summaryType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
   $$GroupTableAnnotationComposer get groupId {
     final $$GroupTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -5197,6 +6175,29 @@ class $$MetricTypeTableAnnotationComposer
           }) => $$GroupTableAnnotationComposer(
             $db: $db,
             $table: $db.group,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$UnitTableAnnotationComposer get unit {
+    final $$UnitTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.unit,
+      referencedTable: $db.unit,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitTableAnnotationComposer(
+            $db: $db,
+            $table: $db.unit,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -5245,7 +6246,7 @@ class $$MetricTypeTableTableManager
           $$MetricTypeTableUpdateCompanionBuilder,
           (MetricTypeData, $$MetricTypeTableReferences),
           MetricTypeData,
-          PrefetchHooks Function({bool groupId, bool metricRefs})
+          PrefetchHooks Function({bool groupId, bool unit, bool metricRefs})
         > {
   $$MetricTypeTableTableManager(_$Database db, $MetricTypeTable table)
     : super(
@@ -5268,6 +6269,14 @@ class $$MetricTypeTableTableManager
                 Value<String> name = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<int> groupId = const Value.absent(),
+                Value<String?> timeDifference = const Value.absent(),
+                Value<bool> visible = const Value.absent(),
+                Value<int?> valueCount = const Value.absent(),
+                Value<bool> showOnDashboard = const Value.absent(),
+                Value<bool> userEditable = const Value.absent(),
+                Value<String> summaryType = const Value.absent(),
+                Value<String> type = const Value.absent(),
+                Value<int> unit = const Value.absent(),
               }) => MetricTypeCompanion(
                 id: id,
                 synced: synced,
@@ -5277,6 +6286,14 @@ class $$MetricTypeTableTableManager
                 name: name,
                 description: description,
                 groupId: groupId,
+                timeDifference: timeDifference,
+                visible: visible,
+                valueCount: valueCount,
+                showOnDashboard: showOnDashboard,
+                userEditable: userEditable,
+                summaryType: summaryType,
+                type: type,
+                unit: unit,
               ),
           createCompanionCallback:
               ({
@@ -5288,6 +6305,14 @@ class $$MetricTypeTableTableManager
                 required String name,
                 Value<String?> description = const Value.absent(),
                 required int groupId,
+                Value<String?> timeDifference = const Value.absent(),
+                required bool visible,
+                Value<int?> valueCount = const Value.absent(),
+                required bool showOnDashboard,
+                required bool userEditable,
+                required String summaryType,
+                required String type,
+                required int unit,
               }) => MetricTypeCompanion.insert(
                 id: id,
                 synced: synced,
@@ -5297,6 +6322,14 @@ class $$MetricTypeTableTableManager
                 name: name,
                 description: description,
                 groupId: groupId,
+                timeDifference: timeDifference,
+                visible: visible,
+                valueCount: valueCount,
+                showOnDashboard: showOnDashboard,
+                userEditable: userEditable,
+                summaryType: summaryType,
+                type: type,
+                unit: unit,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -5306,63 +6339,85 @@ class $$MetricTypeTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({groupId = false, metricRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (metricRefs) db.metric],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (groupId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.groupId,
-                                referencedTable: $$MetricTypeTableReferences
-                                    ._groupIdTable(db),
-                                referencedColumn: $$MetricTypeTableReferences
-                                    ._groupIdTable(db)
-                                    .id,
-                              )
-                              as T;
-                    }
+          prefetchHooksCallback:
+              ({groupId = false, unit = false, metricRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [if (metricRefs) db.metric],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (groupId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.groupId,
+                                    referencedTable: $$MetricTypeTableReferences
+                                        ._groupIdTable(db),
+                                    referencedColumn:
+                                        $$MetricTypeTableReferences
+                                            ._groupIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (unit) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.unit,
+                                    referencedTable: $$MetricTypeTableReferences
+                                        ._unitTable(db),
+                                    referencedColumn:
+                                        $$MetricTypeTableReferences
+                                            ._unitTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
 
-                    return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (metricRefs)
+                        await $_getPrefetchedData<
+                          MetricTypeData,
+                          $MetricTypeTable,
+                          MetricData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MetricTypeTableReferences
+                              ._metricRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MetricTypeTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).metricRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.type == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
                   },
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (metricRefs)
-                    await $_getPrefetchedData<
-                      MetricTypeData,
-                      $MetricTypeTable,
-                      MetricData
-                    >(
-                      currentTable: table,
-                      referencedTable: $$MetricTypeTableReferences
-                          ._metricRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$MetricTypeTableReferences(db, table, p0).metricRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.type == item.id),
-                      typedResults: items,
-                    ),
-                ];
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -5379,7 +6434,7 @@ typedef $$MetricTypeTableProcessedTableManager =
       $$MetricTypeTableUpdateCompanionBuilder,
       (MetricTypeData, $$MetricTypeTableReferences),
       MetricTypeData,
-      PrefetchHooks Function({bool groupId, bool metricRefs})
+      PrefetchHooks Function({bool groupId, bool unit, bool metricRefs})
     >;
 typedef $$MetricTableCreateCompanionBuilder =
     MetricCompanion Function({
@@ -5776,6 +6831,7 @@ typedef $$EventTypeTableCreateCompanionBuilder =
       required bool standAlone,
       required bool visible,
       Value<String?> timeDifference,
+      required bool userEditable,
       required int groupId,
     });
 typedef $$EventTypeTableUpdateCompanionBuilder =
@@ -5790,6 +6846,7 @@ typedef $$EventTypeTableUpdateCompanionBuilder =
       Value<bool> standAlone,
       Value<bool> visible,
       Value<String?> timeDifference,
+      Value<bool> userEditable,
       Value<int> groupId,
     });
 
@@ -5890,6 +6947,11 @@ class $$EventTypeTableFilterComposer
 
   ColumnFilters<String> get timeDifference => $composableBuilder(
     column: $table.timeDifference,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get userEditable => $composableBuilder(
+    column: $table.userEditable,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6001,6 +7063,11 @@ class $$EventTypeTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get userEditable => $composableBuilder(
+    column: $table.userEditable,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$GroupTableOrderingComposer get groupId {
     final $$GroupTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -6067,6 +7134,11 @@ class $$EventTypeTableAnnotationComposer
 
   GeneratedColumn<String> get timeDifference => $composableBuilder(
     column: $table.timeDifference,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get userEditable => $composableBuilder(
+    column: $table.userEditable,
     builder: (column) => column,
   );
 
@@ -6157,6 +7229,7 @@ class $$EventTypeTableTableManager
                 Value<bool> standAlone = const Value.absent(),
                 Value<bool> visible = const Value.absent(),
                 Value<String?> timeDifference = const Value.absent(),
+                Value<bool> userEditable = const Value.absent(),
                 Value<int> groupId = const Value.absent(),
               }) => EventTypeCompanion(
                 id: id,
@@ -6169,6 +7242,7 @@ class $$EventTypeTableTableManager
                 standAlone: standAlone,
                 visible: visible,
                 timeDifference: timeDifference,
+                userEditable: userEditable,
                 groupId: groupId,
               ),
           createCompanionCallback:
@@ -6183,6 +7257,7 @@ class $$EventTypeTableTableManager
                 required bool standAlone,
                 required bool visible,
                 Value<String?> timeDifference = const Value.absent(),
+                required bool userEditable,
                 required int groupId,
               }) => EventTypeCompanion.insert(
                 id: id,
@@ -6195,6 +7270,7 @@ class $$EventTypeTableTableManager
                 standAlone: standAlone,
                 visible: visible,
                 timeDifference: timeDifference,
+                userEditable: userEditable,
                 groupId: groupId,
               ),
           withReferenceMapper: (p0) => p0
@@ -6868,229 +7944,6 @@ typedef $$JobTableProcessedTableManager =
       JobData,
       PrefetchHooks Function()
     >;
-typedef $$UnitTableCreateCompanionBuilder =
-    UnitCompanion Function({
-      Value<int> id,
-      Value<bool> synced,
-      Value<DateTime?> syncTime,
-      Value<int?> serverId,
-      required DateTime created,
-      required String code,
-      required String type,
-    });
-typedef $$UnitTableUpdateCompanionBuilder =
-    UnitCompanion Function({
-      Value<int> id,
-      Value<bool> synced,
-      Value<DateTime?> syncTime,
-      Value<int?> serverId,
-      Value<DateTime> created,
-      Value<String> code,
-      Value<String> type,
-    });
-
-class $$UnitTableFilterComposer extends Composer<_$Database, $UnitTable> {
-  $$UnitTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get synced => $composableBuilder(
-    column: $table.synced,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get syncTime => $composableBuilder(
-    column: $table.syncTime,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get serverId => $composableBuilder(
-    column: $table.serverId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get created => $composableBuilder(
-    column: $table.created,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get code => $composableBuilder(
-    column: $table.code,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get type => $composableBuilder(
-    column: $table.type,
-    builder: (column) => ColumnFilters(column),
-  );
-}
-
-class $$UnitTableOrderingComposer extends Composer<_$Database, $UnitTable> {
-  $$UnitTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get synced => $composableBuilder(
-    column: $table.synced,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get syncTime => $composableBuilder(
-    column: $table.syncTime,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get serverId => $composableBuilder(
-    column: $table.serverId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get created => $composableBuilder(
-    column: $table.created,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get code => $composableBuilder(
-    column: $table.code,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get type => $composableBuilder(
-    column: $table.type,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $$UnitTableAnnotationComposer extends Composer<_$Database, $UnitTable> {
-  $$UnitTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<bool> get synced =>
-      $composableBuilder(column: $table.synced, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get syncTime =>
-      $composableBuilder(column: $table.syncTime, builder: (column) => column);
-
-  GeneratedColumn<int> get serverId =>
-      $composableBuilder(column: $table.serverId, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get created =>
-      $composableBuilder(column: $table.created, builder: (column) => column);
-
-  GeneratedColumn<String> get code =>
-      $composableBuilder(column: $table.code, builder: (column) => column);
-
-  GeneratedColumn<String> get type =>
-      $composableBuilder(column: $table.type, builder: (column) => column);
-}
-
-class $$UnitTableTableManager
-    extends
-        RootTableManager<
-          _$Database,
-          $UnitTable,
-          UnitData,
-          $$UnitTableFilterComposer,
-          $$UnitTableOrderingComposer,
-          $$UnitTableAnnotationComposer,
-          $$UnitTableCreateCompanionBuilder,
-          $$UnitTableUpdateCompanionBuilder,
-          (UnitData, BaseReferences<_$Database, $UnitTable, UnitData>),
-          UnitData,
-          PrefetchHooks Function()
-        > {
-  $$UnitTableTableManager(_$Database db, $UnitTable table)
-    : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$UnitTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$UnitTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$UnitTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                Value<bool> synced = const Value.absent(),
-                Value<DateTime?> syncTime = const Value.absent(),
-                Value<int?> serverId = const Value.absent(),
-                Value<DateTime> created = const Value.absent(),
-                Value<String> code = const Value.absent(),
-                Value<String> type = const Value.absent(),
-              }) => UnitCompanion(
-                id: id,
-                synced: synced,
-                syncTime: syncTime,
-                serverId: serverId,
-                created: created,
-                code: code,
-                type: type,
-              ),
-          createCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                Value<bool> synced = const Value.absent(),
-                Value<DateTime?> syncTime = const Value.absent(),
-                Value<int?> serverId = const Value.absent(),
-                required DateTime created,
-                required String code,
-                required String type,
-              }) => UnitCompanion.insert(
-                id: id,
-                synced: synced,
-                syncTime: syncTime,
-                serverId: serverId,
-                created: created,
-                code: code,
-                type: type,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback: null,
-        ),
-      );
-}
-
-typedef $$UnitTableProcessedTableManager =
-    ProcessedTableManager<
-      _$Database,
-      $UnitTable,
-      UnitData,
-      $$UnitTableFilterComposer,
-      $$UnitTableOrderingComposer,
-      $$UnitTableAnnotationComposer,
-      $$UnitTableCreateCompanionBuilder,
-      $$UnitTableUpdateCompanionBuilder,
-      (UnitData, BaseReferences<_$Database, $UnitTable, UnitData>),
-      UnitData,
-      PrefetchHooks Function()
-    >;
 typedef $$PersonTableCreateCompanionBuilder =
     PersonCompanion Function({
       Value<int> id,
@@ -7439,6 +8292,7 @@ class $DatabaseManager {
   $DatabaseManager(this._db);
   $$GroupTableTableManager get group =>
       $$GroupTableTableManager(_db, _db.group);
+  $$UnitTableTableManager get unit => $$UnitTableTableManager(_db, _db.unit);
   $$MetricTypeTableTableManager get metricType =>
       $$MetricTypeTableTableManager(_db, _db.metricType);
   $$MetricTableTableManager get metric =>
@@ -7448,7 +8302,6 @@ class $DatabaseManager {
   $$EventTableTableManager get event =>
       $$EventTableTableManager(_db, _db.event);
   $$JobTableTableManager get job => $$JobTableTableManager(_db, _db.job);
-  $$UnitTableTableManager get unit => $$UnitTableTableManager(_db, _db.unit);
   $$PersonTableTableManager get person =>
       $$PersonTableTableManager(_db, _db.person);
 }

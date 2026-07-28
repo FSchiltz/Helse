@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:helse/services/local/database/models/event_type.dart';
 import 'package:helse/services/local/database/models/job.dart';
 import 'package:helse/services/local/database/models/metric.dart';
+import 'package:helse/services/local/database/models/metric_type.dart';
 import 'package:helse/services/local/database/models/person.dart';
 import 'package:helse/services/local/database/models/unit.dart';
 import 'package:path_provider/path_provider.dart';
@@ -25,7 +28,7 @@ class Database extends _$Database {
     return driftDatabase(
       name: 'helse',
       native: const DriftNativeOptions(
-        databaseDirectory: getApplicationSupportDirectory,
+        databaseDirectory: getApplicationSupportDirectory,        
       ),
     );
   }
