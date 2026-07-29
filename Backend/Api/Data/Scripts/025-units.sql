@@ -32,8 +32,7 @@ VALUES
     (8, 'bpm', 'BPM', 3, null, null),
     (9, 'C', 'Celsius', 4, null, null),
     (10, 'kcal', 'Calories', 5, null, null),
-    (11, '%', 'Percent', 6, null, null)
-;
+    (11, '%', 'Percent', 6, null, null);
 
 ALTER TABLE
     Health.Metric

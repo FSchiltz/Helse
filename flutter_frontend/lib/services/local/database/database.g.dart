@@ -647,9 +647,9 @@ class $UnitTable extends Unit with TableInfo<$UnitTable, UnitData> {
   late final GeneratedColumn<String> description = GeneratedColumn<String>(
     'description',
     aliasedName,
-    true,
+    false,
     type: DriftSqlType.string,
-    requiredDuringInsert: false,
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _typeMeta = const VerificationMeta('type');
   @override
@@ -659,6 +659,31 @@ class $UnitTable extends Unit with TableInfo<$UnitTable, UnitData> {
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _conversionFactorMeta = const VerificationMeta(
+    'conversionFactor',
+  );
+  @override
+  late final GeneratedColumn<double> conversionFactor = GeneratedColumn<double>(
+    'conversion_factor',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _baseUnitMeta = const VerificationMeta(
+    'baseUnit',
+  );
+  @override
+  late final GeneratedColumn<int> baseUnit = GeneratedColumn<int>(
+    'base_unit',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES unit (id)',
+    ),
   );
   @override
   List<GeneratedColumn> get $columns => [
@@ -670,6 +695,8 @@ class $UnitTable extends Unit with TableInfo<$UnitTable, UnitData> {
     code,
     description,
     type,
+    conversionFactor,
+    baseUnit,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -728,6 +755,8 @@ class $UnitTable extends Unit with TableInfo<$UnitTable, UnitData> {
           _descriptionMeta,
         ),
       );
+    } else if (isInserting) {
+      context.missing(_descriptionMeta);
     }
     if (data.containsKey('type')) {
       context.handle(
@@ -736,6 +765,21 @@ class $UnitTable extends Unit with TableInfo<$UnitTable, UnitData> {
       );
     } else if (isInserting) {
       context.missing(_typeMeta);
+    }
+    if (data.containsKey('conversion_factor')) {
+      context.handle(
+        _conversionFactorMeta,
+        conversionFactor.isAcceptableOrUnknown(
+          data['conversion_factor']!,
+          _conversionFactorMeta,
+        ),
+      );
+    }
+    if (data.containsKey('base_unit')) {
+      context.handle(
+        _baseUnitMeta,
+        baseUnit.isAcceptableOrUnknown(data['base_unit']!, _baseUnitMeta),
+      );
     }
     return context;
   }
@@ -773,11 +817,19 @@ class $UnitTable extends Unit with TableInfo<$UnitTable, UnitData> {
       description: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}description'],
-      ),
+      )!,
       type: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}type'],
       )!,
+      conversionFactor: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}conversion_factor'],
+      ),
+      baseUnit: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}base_unit'],
+      ),
     );
   }
 
@@ -794,8 +846,10 @@ class UnitData extends DataClass implements Insertable<UnitData> {
   final int? serverId;
   final DateTime created;
   final String code;
-  final String? description;
+  final String description;
   final String type;
+  final double? conversionFactor;
+  final int? baseUnit;
   const UnitData({
     required this.id,
     required this.synced,
@@ -803,8 +857,10 @@ class UnitData extends DataClass implements Insertable<UnitData> {
     this.serverId,
     required this.created,
     required this.code,
-    this.description,
+    required this.description,
     required this.type,
+    this.conversionFactor,
+    this.baseUnit,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -819,10 +875,14 @@ class UnitData extends DataClass implements Insertable<UnitData> {
     }
     map['created'] = Variable<DateTime>(created);
     map['code'] = Variable<String>(code);
-    if (!nullToAbsent || description != null) {
-      map['description'] = Variable<String>(description);
-    }
+    map['description'] = Variable<String>(description);
     map['type'] = Variable<String>(type);
+    if (!nullToAbsent || conversionFactor != null) {
+      map['conversion_factor'] = Variable<double>(conversionFactor);
+    }
+    if (!nullToAbsent || baseUnit != null) {
+      map['base_unit'] = Variable<int>(baseUnit);
+    }
     return map;
   }
 
@@ -838,10 +898,14 @@ class UnitData extends DataClass implements Insertable<UnitData> {
           : Value(serverId),
       created: Value(created),
       code: Value(code),
-      description: description == null && nullToAbsent
-          ? const Value.absent()
-          : Value(description),
+      description: Value(description),
       type: Value(type),
+      conversionFactor: conversionFactor == null && nullToAbsent
+          ? const Value.absent()
+          : Value(conversionFactor),
+      baseUnit: baseUnit == null && nullToAbsent
+          ? const Value.absent()
+          : Value(baseUnit),
     );
   }
 
@@ -857,8 +921,10 @@ class UnitData extends DataClass implements Insertable<UnitData> {
       serverId: serializer.fromJson<int?>(json['serverId']),
       created: serializer.fromJson<DateTime>(json['created']),
       code: serializer.fromJson<String>(json['code']),
-      description: serializer.fromJson<String?>(json['description']),
+      description: serializer.fromJson<String>(json['description']),
       type: serializer.fromJson<String>(json['type']),
+      conversionFactor: serializer.fromJson<double?>(json['conversionFactor']),
+      baseUnit: serializer.fromJson<int?>(json['baseUnit']),
     );
   }
   @override
@@ -871,8 +937,10 @@ class UnitData extends DataClass implements Insertable<UnitData> {
       'serverId': serializer.toJson<int?>(serverId),
       'created': serializer.toJson<DateTime>(created),
       'code': serializer.toJson<String>(code),
-      'description': serializer.toJson<String?>(description),
+      'description': serializer.toJson<String>(description),
       'type': serializer.toJson<String>(type),
+      'conversionFactor': serializer.toJson<double?>(conversionFactor),
+      'baseUnit': serializer.toJson<int?>(baseUnit),
     };
   }
 
@@ -883,8 +951,10 @@ class UnitData extends DataClass implements Insertable<UnitData> {
     Value<int?> serverId = const Value.absent(),
     DateTime? created,
     String? code,
-    Value<String?> description = const Value.absent(),
+    String? description,
     String? type,
+    Value<double?> conversionFactor = const Value.absent(),
+    Value<int?> baseUnit = const Value.absent(),
   }) => UnitData(
     id: id ?? this.id,
     synced: synced ?? this.synced,
@@ -892,8 +962,12 @@ class UnitData extends DataClass implements Insertable<UnitData> {
     serverId: serverId.present ? serverId.value : this.serverId,
     created: created ?? this.created,
     code: code ?? this.code,
-    description: description.present ? description.value : this.description,
+    description: description ?? this.description,
     type: type ?? this.type,
+    conversionFactor: conversionFactor.present
+        ? conversionFactor.value
+        : this.conversionFactor,
+    baseUnit: baseUnit.present ? baseUnit.value : this.baseUnit,
   );
   UnitData copyWithCompanion(UnitCompanion data) {
     return UnitData(
@@ -907,6 +981,10 @@ class UnitData extends DataClass implements Insertable<UnitData> {
           ? data.description.value
           : this.description,
       type: data.type.present ? data.type.value : this.type,
+      conversionFactor: data.conversionFactor.present
+          ? data.conversionFactor.value
+          : this.conversionFactor,
+      baseUnit: data.baseUnit.present ? data.baseUnit.value : this.baseUnit,
     );
   }
 
@@ -920,7 +998,9 @@ class UnitData extends DataClass implements Insertable<UnitData> {
           ..write('created: $created, ')
           ..write('code: $code, ')
           ..write('description: $description, ')
-          ..write('type: $type')
+          ..write('type: $type, ')
+          ..write('conversionFactor: $conversionFactor, ')
+          ..write('baseUnit: $baseUnit')
           ..write(')'))
         .toString();
   }
@@ -935,6 +1015,8 @@ class UnitData extends DataClass implements Insertable<UnitData> {
     code,
     description,
     type,
+    conversionFactor,
+    baseUnit,
   );
   @override
   bool operator ==(Object other) =>
@@ -947,7 +1029,9 @@ class UnitData extends DataClass implements Insertable<UnitData> {
           other.created == this.created &&
           other.code == this.code &&
           other.description == this.description &&
-          other.type == this.type);
+          other.type == this.type &&
+          other.conversionFactor == this.conversionFactor &&
+          other.baseUnit == this.baseUnit);
 }
 
 class UnitCompanion extends UpdateCompanion<UnitData> {
@@ -957,8 +1041,10 @@ class UnitCompanion extends UpdateCompanion<UnitData> {
   final Value<int?> serverId;
   final Value<DateTime> created;
   final Value<String> code;
-  final Value<String?> description;
+  final Value<String> description;
   final Value<String> type;
+  final Value<double?> conversionFactor;
+  final Value<int?> baseUnit;
   const UnitCompanion({
     this.id = const Value.absent(),
     this.synced = const Value.absent(),
@@ -968,6 +1054,8 @@ class UnitCompanion extends UpdateCompanion<UnitData> {
     this.code = const Value.absent(),
     this.description = const Value.absent(),
     this.type = const Value.absent(),
+    this.conversionFactor = const Value.absent(),
+    this.baseUnit = const Value.absent(),
   });
   UnitCompanion.insert({
     this.id = const Value.absent(),
@@ -976,10 +1064,13 @@ class UnitCompanion extends UpdateCompanion<UnitData> {
     this.serverId = const Value.absent(),
     required DateTime created,
     required String code,
-    this.description = const Value.absent(),
+    required String description,
     required String type,
+    this.conversionFactor = const Value.absent(),
+    this.baseUnit = const Value.absent(),
   }) : created = Value(created),
        code = Value(code),
+       description = Value(description),
        type = Value(type);
   static Insertable<UnitData> custom({
     Expression<int>? id,
@@ -990,6 +1081,8 @@ class UnitCompanion extends UpdateCompanion<UnitData> {
     Expression<String>? code,
     Expression<String>? description,
     Expression<String>? type,
+    Expression<double>? conversionFactor,
+    Expression<int>? baseUnit,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1000,6 +1093,8 @@ class UnitCompanion extends UpdateCompanion<UnitData> {
       if (code != null) 'code': code,
       if (description != null) 'description': description,
       if (type != null) 'type': type,
+      if (conversionFactor != null) 'conversion_factor': conversionFactor,
+      if (baseUnit != null) 'base_unit': baseUnit,
     });
   }
 
@@ -1010,8 +1105,10 @@ class UnitCompanion extends UpdateCompanion<UnitData> {
     Value<int?>? serverId,
     Value<DateTime>? created,
     Value<String>? code,
-    Value<String?>? description,
+    Value<String>? description,
     Value<String>? type,
+    Value<double?>? conversionFactor,
+    Value<int?>? baseUnit,
   }) {
     return UnitCompanion(
       id: id ?? this.id,
@@ -1022,6 +1119,8 @@ class UnitCompanion extends UpdateCompanion<UnitData> {
       code: code ?? this.code,
       description: description ?? this.description,
       type: type ?? this.type,
+      conversionFactor: conversionFactor ?? this.conversionFactor,
+      baseUnit: baseUnit ?? this.baseUnit,
     );
   }
 
@@ -1052,6 +1151,12 @@ class UnitCompanion extends UpdateCompanion<UnitData> {
     if (type.present) {
       map['type'] = Variable<String>(type.value);
     }
+    if (conversionFactor.present) {
+      map['conversion_factor'] = Variable<double>(conversionFactor.value);
+    }
+    if (baseUnit.present) {
+      map['base_unit'] = Variable<int>(baseUnit.value);
+    }
     return map;
   }
 
@@ -1065,7 +1170,9 @@ class UnitCompanion extends UpdateCompanion<UnitData> {
           ..write('created: $created, ')
           ..write('code: $code, ')
           ..write('description: $description, ')
-          ..write('type: $type')
+          ..write('type: $type, ')
+          ..write('conversionFactor: $conversionFactor, ')
+          ..write('baseUnit: $baseUnit')
           ..write(')'))
         .toString();
   }
@@ -5702,8 +5809,10 @@ typedef $$UnitTableCreateCompanionBuilder =
       Value<int?> serverId,
       required DateTime created,
       required String code,
-      Value<String?> description,
+      required String description,
       required String type,
+      Value<double?> conversionFactor,
+      Value<int?> baseUnit,
     });
 typedef $$UnitTableUpdateCompanionBuilder =
     UnitCompanion Function({
@@ -5713,13 +5822,32 @@ typedef $$UnitTableUpdateCompanionBuilder =
       Value<int?> serverId,
       Value<DateTime> created,
       Value<String> code,
-      Value<String?> description,
+      Value<String> description,
       Value<String> type,
+      Value<double?> conversionFactor,
+      Value<int?> baseUnit,
     });
 
 final class $$UnitTableReferences
     extends BaseReferences<_$Database, $UnitTable, UnitData> {
   $$UnitTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $UnitTable _baseUnitTable(_$Database db) =>
+      db.unit.createAlias('unit__base_unit__unit__id');
+
+  $$UnitTableProcessedTableManager? get baseUnit {
+    final $_column = $_itemColumn<int>('base_unit');
+    if ($_column == null) return null;
+    final manager = $$UnitTableTableManager(
+      $_db,
+      $_db.unit,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_baseUnitTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
 
   static MultiTypedResultKey<$MetricTypeTable, List<MetricTypeData>>
   _metricTypeRefsTable(_$Database db) => MultiTypedResultKey.fromTable(
@@ -5787,6 +5915,34 @@ class $$UnitTableFilterComposer extends Composer<_$Database, $UnitTable> {
     column: $table.type,
     builder: (column) => ColumnFilters(column),
   );
+
+  ColumnFilters<double> get conversionFactor => $composableBuilder(
+    column: $table.conversionFactor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$UnitTableFilterComposer get baseUnit {
+    final $$UnitTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.baseUnit,
+      referencedTable: $db.unit,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitTableFilterComposer(
+            $db: $db,
+            $table: $db.unit,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   Expression<bool> metricTypeRefs(
     Expression<bool> Function($$MetricTypeTableFilterComposer f) f,
@@ -5861,6 +6017,34 @@ class $$UnitTableOrderingComposer extends Composer<_$Database, $UnitTable> {
     column: $table.type,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<double> get conversionFactor => $composableBuilder(
+    column: $table.conversionFactor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$UnitTableOrderingComposer get baseUnit {
+    final $$UnitTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.baseUnit,
+      referencedTable: $db.unit,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitTableOrderingComposer(
+            $db: $db,
+            $table: $db.unit,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$UnitTableAnnotationComposer extends Composer<_$Database, $UnitTable> {
@@ -5896,6 +6080,34 @@ class $$UnitTableAnnotationComposer extends Composer<_$Database, $UnitTable> {
 
   GeneratedColumn<String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<double> get conversionFactor => $composableBuilder(
+    column: $table.conversionFactor,
+    builder: (column) => column,
+  );
+
+  $$UnitTableAnnotationComposer get baseUnit {
+    final $$UnitTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.baseUnit,
+      referencedTable: $db.unit,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitTableAnnotationComposer(
+            $db: $db,
+            $table: $db.unit,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   Expression<T> metricTypeRefs<T extends Object>(
     Expression<T> Function($$MetricTypeTableAnnotationComposer a) f,
@@ -5936,7 +6148,7 @@ class $$UnitTableTableManager
           $$UnitTableUpdateCompanionBuilder,
           (UnitData, $$UnitTableReferences),
           UnitData,
-          PrefetchHooks Function({bool metricTypeRefs})
+          PrefetchHooks Function({bool baseUnit, bool metricTypeRefs})
         > {
   $$UnitTableTableManager(_$Database db, $UnitTable table)
     : super(
@@ -5957,8 +6169,10 @@ class $$UnitTableTableManager
                 Value<int?> serverId = const Value.absent(),
                 Value<DateTime> created = const Value.absent(),
                 Value<String> code = const Value.absent(),
-                Value<String?> description = const Value.absent(),
+                Value<String> description = const Value.absent(),
                 Value<String> type = const Value.absent(),
+                Value<double?> conversionFactor = const Value.absent(),
+                Value<int?> baseUnit = const Value.absent(),
               }) => UnitCompanion(
                 id: id,
                 synced: synced,
@@ -5968,6 +6182,8 @@ class $$UnitTableTableManager
                 code: code,
                 description: description,
                 type: type,
+                conversionFactor: conversionFactor,
+                baseUnit: baseUnit,
               ),
           createCompanionCallback:
               ({
@@ -5977,8 +6193,10 @@ class $$UnitTableTableManager
                 Value<int?> serverId = const Value.absent(),
                 required DateTime created,
                 required String code,
-                Value<String?> description = const Value.absent(),
+                required String description,
                 required String type,
+                Value<double?> conversionFactor = const Value.absent(),
+                Value<int?> baseUnit = const Value.absent(),
               }) => UnitCompanion.insert(
                 id: id,
                 synced: synced,
@@ -5988,6 +6206,8 @@ class $$UnitTableTableManager
                 code: code,
                 description: description,
                 type: type,
+                conversionFactor: conversionFactor,
+                baseUnit: baseUnit,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -5995,11 +6215,42 @@ class $$UnitTableTableManager
                     (e.readTable(table), $$UnitTableReferences(db, table, e)),
               )
               .toList(),
-          prefetchHooksCallback: ({metricTypeRefs = false}) {
+          prefetchHooksCallback: ({baseUnit = false, metricTypeRefs = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [if (metricTypeRefs) db.metricType],
-              addJoins: null,
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (baseUnit) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.baseUnit,
+                                referencedTable: $$UnitTableReferences
+                                    ._baseUnitTable(db),
+                                referencedColumn: $$UnitTableReferences
+                                    ._baseUnitTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (metricTypeRefs)
@@ -6037,7 +6288,7 @@ typedef $$UnitTableProcessedTableManager =
       $$UnitTableUpdateCompanionBuilder,
       (UnitData, $$UnitTableReferences),
       UnitData,
-      PrefetchHooks Function({bool metricTypeRefs})
+      PrefetchHooks Function({bool baseUnit, bool metricTypeRefs})
     >;
 typedef $$MetricTypeTableCreateCompanionBuilder =
     MetricTypeCompanion Function({
