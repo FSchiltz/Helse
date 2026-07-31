@@ -71,12 +71,7 @@ class LocalMetricService extends LocalService implements MetricService {
       ..addColumns([countExp]);
 
     query.where(account.database.metric.type.equals(search.type));
-
-    if (person == null) {
-      query.where(account.database.metric.person.isNull());
-    } else {
-      query.where(account.database.metric.person.equals(person));
-    }
+    query.where(account.database.metric.person.equals(person ?? 0));
 
     if (search.from != null) {
       query.where(
@@ -102,9 +97,9 @@ class LocalMetricService extends LocalService implements MetricService {
   }
 
   @override
-  Future<void> deleteMetric(int id) {
-    // TODO: implement deleteMetric
-    throw UnimplementedError();
+  Future<void> deleteMetric(int id) async {
+    await (account.database.metric.delete()..where((tbl) => tbl.id.equals(id)))
+        .go();
   }
 
   @override
@@ -114,15 +109,17 @@ class LocalMetricService extends LocalService implements MetricService {
   }
 
   @override
-  Future<void> deleteMetricsGroup(int metric) {
-    // TODO: implement deleteMetricsGroup
-    throw UnimplementedError();
+  Future<void> deleteMetricsGroup(int metric) async {
+    await (account.database.group.delete()
+          ..where((tbl) => tbl.id.equals(metric)))
+        .go();
   }
 
   @override
-  Future<void> deleteMetricsType(int metric) {
-    // TODO: implement deleteMetricsType
-    throw UnimplementedError();
+  Future<void> deleteMetricsType(int metric) async {
+    await (account.database.metricType.delete()
+          ..where((tbl) => tbl.id.equals(metric)))
+        .go();
   }
 
   @override
@@ -149,11 +146,7 @@ class LocalMetricService extends LocalService implements MetricService {
       ..where((x) => x.date.isBiggerOrEqualValue(start))
       ..where((x) => x.date.isSmallerOrEqualValue(end));
 
-    if (person == null) {
-      query.where((x) => x.person.isNull());
-    } else {
-      query.where((x) => x.person.equals(person));
-    }
+    query.where((x) => x.person.equals(person ?? 0));
 
     final result = await query.get();
     return result.map(_mapMetric).toList();
@@ -196,7 +189,12 @@ class LocalMetricService extends LocalService implements MetricService {
 
       return MetricType(
         id: e.id,
-        unit: Unit(type: unitmap[u.type]!, id: u.id, code: u.code, description: u.description),
+        unit: Unit(
+          type: unitmap[u.type]!,
+          id: u.id,
+          code: u.code,
+          description: u.description,
+        ),
         userEditable: e.userEditable,
         name: e.name,
         groupId: e.groupId,
@@ -221,12 +219,7 @@ class LocalMetricService extends LocalService implements MetricService {
     final query = account.database.metric.select();
 
     query.where((x) => x.type.equals(search.type));
-
-    if (person == null) {
-      query.where((x) => x.person.isNull());
-    } else {
-      query.where((x) => x.person.equals(person));
-    }
+    query.where((x) => x.person.equals(person ?? 0));
 
     if (search.from != null) {
       query.where((x) => x.date.isBiggerOrEqualValue(search.from!));

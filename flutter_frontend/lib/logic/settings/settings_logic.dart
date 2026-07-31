@@ -269,7 +269,7 @@ class SettingsLogic extends BaseSettingsLogic {
   OrderedItem getDefaultEventType(EventType type) {
     return OrderedItem(
       name: type.name,
-      id: type.id!,
+      id: type.id,
       showOnDashboard: type.visible,
       visible: type.visible,
       detailGraph: GraphKind.text,

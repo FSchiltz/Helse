@@ -59,12 +59,7 @@ class LocalEventService extends LocalService implements EventService {
       ..addColumns([countExp]);
 
     query.where(account.database.event.type.equals(search.type));
-
-    if (person == null) {
-      query.where(account.database.event.person.isNull());
-    } else {
-      query.where(account.database.event.person.equals(person));
-    }
+    query.where(account.database.event.person.equals(person ?? 0));
 
     if (search.from != null) {
       query.where(
@@ -88,9 +83,10 @@ class LocalEventService extends LocalService implements EventService {
   }
 
   @override
-  Future<void> deleteEvent(int event) {
-    // TODO: implement deleteEvent
-    throw UnimplementedError();
+  Future<void> deleteEvent(int event) async {
+    await (account.database.event.delete()
+          ..where((tbl) => tbl.id.equals(event)))
+        .go();
   }
 
   @override
@@ -100,9 +96,10 @@ class LocalEventService extends LocalService implements EventService {
   }
 
   @override
-  Future<void> deleteEventsType(int event) {
-    // TODO: implement deleteEventsType
-    throw UnimplementedError();
+  Future<void> deleteEventsType(int event) async {
+    await (account.database.eventType.delete()
+          ..where((tbl) => tbl.id.equals(event)))
+        .go();
   }
 
   @override
@@ -170,12 +167,7 @@ class LocalEventService extends LocalService implements EventService {
     final query = account.database.select(account.database.event);
 
     query.where((x) => x.type.equals(search.type));
-
-    if (person == null) {
-      query.where((x) => x.person.isNull());
-    } else {
-      query.where((x) => x.person.equals(person));
-    }
+    query.where((x) => x.person.equals(person ?? 0));
 
     if (search.from != null) {
       query.where((x) => x.start.isBiggerOrEqualValue(search.from!));
