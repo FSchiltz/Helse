@@ -265,4 +265,26 @@ class SettingsLogic extends BaseSettingsLogic {
   void setFitStatus(String text) {
     account.set(fitStatus, text);
   }
+
+  OrderedItem getDefaultEventType(EventType type) {
+    return OrderedItem(
+      name: type.name,
+      id: type.id!,
+      showOnDashboard: type.visible,
+      visible: type.visible,
+      detailGraph: GraphKind.text,
+      graph: GraphKind.text,
+    );
+  }
+
+  OrderedItem getDefaultGroupType(Group item) {
+    return OrderedItem(
+      name: item.name,
+      id: item.id ?? 0,
+      showOnDashboard: item.showOnDashboard,
+      visible: true,
+      detailGraph: GraphKind.text,
+      graph: GraphKind.text,
+    );
+  }
 }

@@ -32,7 +32,7 @@ class BaseSettingsLogic {
     await account.storage.remove(key);
   }
 
-    OrderedItem getDefault(MetricType item) {
+    OrderedItem getDefaultMetricType(MetricType item) {
     if (item.type == MetricDataType.number) {
       return OrderedItem(
         id: item.id,

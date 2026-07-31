@@ -77,7 +77,12 @@ class _WidgetGridState extends State<WidgetGrid> {
             (element) => element.id == item.id,
           );
 
-          if (setting?.visible == true) filtered.add(item);
+          if (setting == null) {
+            setting = Dependencies.logics.settings.getDefaultGroupType(item);
+            groupSettings.displaySettings.add(setting);
+          }
+
+          if (setting.visible == true) filtered.add(item);
         }
       }
 
@@ -86,11 +91,13 @@ class _WidgetGridState extends State<WidgetGrid> {
             // find the settings
             e ??= [];
 
-            OrderedItem? setting =
-                eventSettings.displaySettings.firstWhereOrNull(
-                  (element) => element.id == type.id,
-                ) ??
-                OrderedItem(name: type.name, id: type.id);
+            OrderedItem? setting = eventSettings.displaySettings
+                .firstWhereOrNull((element) => element.id == type.id);
+
+            if (setting == null) {
+              setting = Dependencies.logics.settings.getDefaultEventType(type);
+              eventSettings.displaySettings.add(setting);
+            }
 
             e.add((type, setting));
             return e;
@@ -104,11 +111,13 @@ class _WidgetGridState extends State<WidgetGrid> {
               return e;
             }
 
-            OrderedItem setting =
-                metricSettings.displaySettings.firstWhereOrNull(
-                  (element) => element.id == type.id,
-                ) ??
-                Dependencies.logics.settings.getDefault(type);
+            OrderedItem? setting = metricSettings.displaySettings
+                .firstWhereOrNull((element) => element.id == type.id);
+
+            if (setting == null) {
+              setting = Dependencies.logics.settings.getDefaultMetricType(type);
+              eventSettings.displaySettings.add(setting);
+            }
 
             e.add((type, setting));
             return e;
@@ -159,7 +168,6 @@ class _WidgetGridState extends State<WidgetGrid> {
               .map(
                 (type) => WidgetGroups(
                   date: widget.date,
-                  key: Key(type.id?.toString() ?? ""),
                   person: widget.person,
                   group: type,
                   metrics: _metrics?[type.id] ?? [],
