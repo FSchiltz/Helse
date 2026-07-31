@@ -73,14 +73,11 @@ class _WidgetGridState extends State<WidgetGrid> {
       } else {
         // filter the group to only show what the user wants
         for (var item in model) {
-          OrderedItem? setting = groupSettings.displaySettings.firstWhereOrNull(
-            (element) => element.id == item.id,
-          );
-
-          if (setting == null) {
-            setting = Dependencies.logics.settings.getDefaultGroupType(item);
-            groupSettings.displaySettings.add(setting);
-          }
+          OrderedItem setting =
+              groupSettings.displaySettings.firstWhereOrNull(
+                (element) => element.id == item.id,
+              ) ??
+              Dependencies.logics.settings.getDefaultGroupType(item);
 
           if (setting.visible == true) filtered.add(item);
         }
@@ -91,13 +88,11 @@ class _WidgetGridState extends State<WidgetGrid> {
             // find the settings
             e ??= [];
 
-            OrderedItem? setting = eventSettings.displaySettings
-                .firstWhereOrNull((element) => element.id == type.id);
-
-            if (setting == null) {
-              setting = Dependencies.logics.settings.getDefaultEventType(type);
-              eventSettings.displaySettings.add(setting);
-            }
+            OrderedItem setting =
+                eventSettings.displaySettings.firstWhereOrNull(
+                  (element) => element.id == type.id,
+                ) ??
+                Dependencies.logics.settings.getDefaultEventType(type);
 
             e.add((type, setting));
             return e;
@@ -111,13 +106,11 @@ class _WidgetGridState extends State<WidgetGrid> {
               return e;
             }
 
-            OrderedItem? setting = metricSettings.displaySettings
-                .firstWhereOrNull((element) => element.id == type.id);
-
-            if (setting == null) {
-              setting = Dependencies.logics.settings.getDefaultMetricType(type);
-              eventSettings.displaySettings.add(setting);
-            }
+            OrderedItem setting =
+                metricSettings.displaySettings.firstWhereOrNull(
+                  (element) => element.id == type.id,
+                ) ??
+                Dependencies.logics.settings.getDefaultMetricType(type);
 
             e.add((type, setting));
             return e;

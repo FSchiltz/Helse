@@ -166,6 +166,7 @@ class LocalMetricService extends LocalService implements MetricService {
         .map(
           (e) => Group(
             name: e.name,
+            id: e.id,
             description: e.description,
             showOnDashboard: e.showOnDashboard,
             showTitle: e.showTitle,
