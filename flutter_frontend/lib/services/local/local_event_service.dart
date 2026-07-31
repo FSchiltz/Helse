@@ -133,9 +133,10 @@ class LocalEventService extends LocalService implements EventService {
     DateTime start,
     DateTime end, {
     int? person,
-  }) {
-    // TODO: implement eventsSummary
-    throw UnimplementedError();
+  }) async {
+    final data = await events(type, start, end, person: person) ?? [];
+
+    return EventStats(summaries: [], durations: [], events: data);
   }
 
   @override
