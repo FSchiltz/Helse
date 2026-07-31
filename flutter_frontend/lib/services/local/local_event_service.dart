@@ -17,7 +17,7 @@ class LocalEventService extends LocalService implements EventService {
             end: event.stop,
             start: event.start,
             type: event.type,
-            person: Value(person),
+            person: Value(person ?? 0),
             created: DateTime.now().toUtc(),
             sourceId: event.sourceId,
             source: event.source!.name,

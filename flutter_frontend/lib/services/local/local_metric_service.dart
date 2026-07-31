@@ -31,7 +31,7 @@ class LocalMetricService extends LocalService implements MetricService {
             date: metric.date,
             type: metric.type,
             value: metric.value,
-            person: Value(person),
+            person: Value(person ?? 0),
             created: DateTime.now().toUtc(),
             source: metric.source!.name,
             sourceId: metric.sourceId,
