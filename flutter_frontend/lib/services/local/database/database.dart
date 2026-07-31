@@ -46,6 +46,14 @@ class Database extends _$Database {
     await m.createAll();
 
     await batch((batch) {
+      batch.insert(
+        person,
+        PersonCompanion.insert(
+          created: DateTime.now().toUtc(),
+          identifier: "Main",
+          id: Value(0),
+        ),
+      );
       batch.insertAll(unit, [
         UnitCompanion.insert(
           id: Value(0),
@@ -156,9 +164,7 @@ class Database extends _$Database {
           created: DateTime.now().toUtc(),
         ),
       ]);
-    });
 
-    await batch((batch) {
       batch.insertAll(group, [
         GroupCompanion.insert(
           id: Value(1),
@@ -209,10 +215,7 @@ class Database extends _$Database {
           created: DateTime.now().toUtc(),
         ),
       ]);
-    });
 
-    // Metric types
-    await batch((batch) {
       batch.insertAll(metricType, [
         MetricTypeCompanion.insert(
           id: Value(1),
