@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:io' as io;
 
 import 'package:file_selector/file_selector.dart';
 import 'package:helse/services/file_service.dart';
@@ -12,9 +12,14 @@ class LocalFileService extends LocalService implements FileService {
   static String path = 'files';
 
   @override
-  Future<FileData?> getData(int id, int? person) {
-    // TODO: implement getData
-    throw UnimplementedError(); 
+  Future<FileData?> getData(int id, int? person) async {
+    final dir = await getApplicationSupportDirectory();
+    final fileDir = await io.Directory('${dir.path}/$path').create();
+
+    final file = io.File('${fileDir.path}/$id');
+    var data = await file.readAsString();
+
+    return FileData(type: '', data: data);
   }
 
   @override
@@ -56,7 +61,7 @@ class LocalFileService extends LocalService implements FileService {
   @override
   Future<void> postFileData(int fileId, XFile file, int? person) async {
     final dir = await getApplicationSupportDirectory();
-    final fileDir = await Directory('${dir.path}/$path').create();
+    final fileDir = await io.Directory('${dir.path}/$path').create();
     await file.saveTo('${fileDir.path}/$fileId');
   }
 

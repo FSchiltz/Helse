@@ -90,7 +90,7 @@ class LocalEventService extends LocalService implements EventService {
   }
 
   @override
-  Future<void> deleteEvents(List<Event> events, {int? person}) {
+  Future<void> deleteEvents(List<Event> events, {int? person}) async {
     // TODO: implement deleteEvents
     throw UnimplementedError();
   }

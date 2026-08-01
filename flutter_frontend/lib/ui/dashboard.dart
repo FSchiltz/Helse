@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/admin_dashboard.dart';
 
 import '../services/swagger/generated_code/helseapi.swagger.dart';
@@ -24,7 +25,8 @@ class Dashboard extends StatelessWidget {
       tabs.add(CareDashBoard());
     }
 
-    if (types.contains(UserType.admin)) {
+    if (types.contains(UserType.admin) &&
+        !Dependencies.blocs.server.isOffline) {
       icons.add(Icons.admin_panel_settings_sharp);
       tabs.add(AdminDashBoard());
     }
