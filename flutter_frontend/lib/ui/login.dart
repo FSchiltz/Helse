@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/di/dependencies.dart';
@@ -84,12 +85,14 @@ class _LoginState extends State<LoginPage> {
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
                       const SizedBox(height: UIConstants.headerPad),
-                      SquareButton(
-                        locale.offline,
-                        _useOffline,
-                        icon: Icons.location_off_outlined,
-                      ),
-                      const SizedBox(height: UIConstants.headerPad),
+                      if (!kIsWeb)
+                        SquareButton(
+                          locale.offline,
+                          _useOffline,
+                          icon: Icons.location_off_outlined,
+                        ),
+                      if (!kIsWeb)
+                        const SizedBox(height: UIConstants.headerPad),
                       SquareTextField(
                         label: locale.serverurl,
                         controller: _urlController,
@@ -182,22 +185,22 @@ class _LoginState extends State<LoginPage> {
   /// Prefill the url from storage or other
   Future<void> _initUrl() async {
     log('Init url');
-      // We first try to get it from storage
-      var url = Dependencies.logics.authentication.getUrl();
+    // We first try to get it from storage
+    var url = Dependencies.logics.authentication.getUrl();
 
-      if (url != null && url.isNotEmpty) {
-        _urlController.text = url;
+    if (url != null && url.isNotEmpty) {
+      _urlController.text = url;
 
-        if (mounted) {
-          setState(() {
-            _status = SubmissionStatus.waiting;
-            _loginError = null;
-            _urlError = null;
-            _url = url;
-          });
-          await _urlChanged(url);
-        }
+      if (mounted) {
+        setState(() {
+          _status = SubmissionStatus.waiting;
+          _loginError = null;
+          _urlError = null;
+          _url = url;
+        });
+        await _urlChanged(url);
       }
+    }
   }
 
   Future<void> _submitOauth(OauthConnection oauth) async {
