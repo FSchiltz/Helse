@@ -134,13 +134,14 @@ class _HomeState extends State<Home> {
                 itemBuilder: (context) {
                   var locale = Translation.of(context);
                   return [
-                    PopupMenuItem<int>(
-                      value: 0,
-                      child: ListTile(
-                        leading: Icon(Icons.upload_file_sharp),
-                        title: Text(locale.import),
+                    if (!Dependencies.blocs.server.isOffline)
+                      PopupMenuItem<int>(
+                        value: 0,
+                        child: ListTile(
+                          leading: Icon(Icons.upload_file_sharp),
+                          title: Text(locale.import),
+                        ),
                       ),
-                    ),
                     PopupMenuItem<int>(
                       value: 1,
                       child: ListTile(
