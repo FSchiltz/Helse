@@ -89,6 +89,7 @@ class _LoginState extends State<LoginPage> {
                         SquareButton(
                           locale.offline,
                           _useOffline,
+                          height: 55,
                           icon: Icons.location_off_outlined,
                         ),
                       if (!kIsWeb)
@@ -398,6 +399,7 @@ class _LoginState extends State<LoginPage> {
         SquareButton(
           state?.init == true ? locale.login : locale.create,
           state?.init == true ? _login : _create,
+          height: 55,
         ),
       );
     }
