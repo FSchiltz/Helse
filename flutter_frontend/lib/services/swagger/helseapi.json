@@ -3368,6 +3368,7 @@
       "Event": {
         "required": [
           "id",
+          "person",
           "type",
           "start",
           "stop",
@@ -4449,6 +4450,9 @@
           "updateTag": {
             "type": "boolean"
           },
+          "updateSourceId": {
+            "type": "boolean"
+          },
           "ids": {
             "type": "array",
             "items": {
@@ -5048,6 +5052,7 @@
       },
       "UpdateEvent": {
         "required": [
+          "id",
           "type",
           "start",
           "stop",
@@ -5226,6 +5231,7 @@
       },
       "UpdateMetric": {
         "required": [
+          "id",
           "date",
           "value",
           "type",

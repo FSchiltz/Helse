@@ -42,7 +42,7 @@ class _EventAddState extends PopupSubmitState<EventAdd> {
         stop: _stop.toUtc(),
         type: widget.type.id,
         description: _description.text,
-        id: widget.edit?.id,
+        id: widget.edit!.id,
         notificationTime: _notify ? _notification?.toUtc() : null,
         source: widget.edit?.source,
         sourceId: widget.edit?.sourceId ?? '',

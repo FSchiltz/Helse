@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:drift/drift.dart';
@@ -19,9 +20,9 @@ class LocalFileService extends LocalService implements FileService {
     final fileDir = await io.Directory('${dir.path}/$path').create();
 
     final file = io.File('${fileDir.path}/$id');
-    var data = await file.readAsString();
+    var data = await file.readAsBytes();
 
-    return FileData(type: '', data: data);
+    return FileData(type: '', data: base64.encode(data));
   }
 
   @override
