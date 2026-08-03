@@ -2217,6 +2217,15 @@ class $MetricTable extends Metric with TableInfo<$MetricTable, MetricData> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _tagMeta = const VerificationMeta('tag');
+  @override
+  late final GeneratedColumn<String> tag = GeneratedColumn<String>(
+    'tag',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _typeMeta = const VerificationMeta('type');
   @override
   late final GeneratedColumn<int> type = GeneratedColumn<int>(
@@ -2227,6 +2236,18 @@ class $MetricTable extends Metric with TableInfo<$MetricTable, MetricData> {
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'REFERENCES metric_type (id)',
+    ),
+  );
+  static const VerificationMeta _unitMeta = const VerificationMeta('unit');
+  @override
+  late final GeneratedColumn<int> unit = GeneratedColumn<int>(
+    'unit',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES unit (id)',
     ),
   );
   @override
@@ -2241,7 +2262,9 @@ class $MetricTable extends Metric with TableInfo<$MetricTable, MetricData> {
     person,
     sourceId,
     source,
+    tag,
     type,
+    unit,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2322,6 +2345,12 @@ class $MetricTable extends Metric with TableInfo<$MetricTable, MetricData> {
     } else if (isInserting) {
       context.missing(_sourceMeta);
     }
+    if (data.containsKey('tag')) {
+      context.handle(
+        _tagMeta,
+        tag.isAcceptableOrUnknown(data['tag']!, _tagMeta),
+      );
+    }
     if (data.containsKey('type')) {
       context.handle(
         _typeMeta,
@@ -2329,6 +2358,12 @@ class $MetricTable extends Metric with TableInfo<$MetricTable, MetricData> {
       );
     } else if (isInserting) {
       context.missing(_typeMeta);
+    }
+    if (data.containsKey('unit')) {
+      context.handle(
+        _unitMeta,
+        unit.isAcceptableOrUnknown(data['unit']!, _unitMeta),
+      );
     }
     return context;
   }
@@ -2379,10 +2414,18 @@ class $MetricTable extends Metric with TableInfo<$MetricTable, MetricData> {
         DriftSqlType.string,
         data['${effectivePrefix}source'],
       )!,
+      tag: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tag'],
+      ),
       type: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}type'],
       )!,
+      unit: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}unit'],
+      ),
     );
   }
 
@@ -2403,7 +2446,9 @@ class MetricData extends DataClass implements Insertable<MetricData> {
   final int? person;
   final String sourceId;
   final String source;
+  final String? tag;
   final int type;
+  final int? unit;
   const MetricData({
     required this.id,
     required this.synced,
@@ -2415,7 +2460,9 @@ class MetricData extends DataClass implements Insertable<MetricData> {
     this.person,
     required this.sourceId,
     required this.source,
+    this.tag,
     required this.type,
+    this.unit,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2436,7 +2483,13 @@ class MetricData extends DataClass implements Insertable<MetricData> {
     }
     map['source_id'] = Variable<String>(sourceId);
     map['source'] = Variable<String>(source);
+    if (!nullToAbsent || tag != null) {
+      map['tag'] = Variable<String>(tag);
+    }
     map['type'] = Variable<int>(type);
+    if (!nullToAbsent || unit != null) {
+      map['unit'] = Variable<int>(unit);
+    }
     return map;
   }
 
@@ -2458,7 +2511,9 @@ class MetricData extends DataClass implements Insertable<MetricData> {
           : Value(person),
       sourceId: Value(sourceId),
       source: Value(source),
+      tag: tag == null && nullToAbsent ? const Value.absent() : Value(tag),
       type: Value(type),
+      unit: unit == null && nullToAbsent ? const Value.absent() : Value(unit),
     );
   }
 
@@ -2478,7 +2533,9 @@ class MetricData extends DataClass implements Insertable<MetricData> {
       person: serializer.fromJson<int?>(json['person']),
       sourceId: serializer.fromJson<String>(json['sourceId']),
       source: serializer.fromJson<String>(json['source']),
+      tag: serializer.fromJson<String?>(json['tag']),
       type: serializer.fromJson<int>(json['type']),
+      unit: serializer.fromJson<int?>(json['unit']),
     );
   }
   @override
@@ -2495,7 +2552,9 @@ class MetricData extends DataClass implements Insertable<MetricData> {
       'person': serializer.toJson<int?>(person),
       'sourceId': serializer.toJson<String>(sourceId),
       'source': serializer.toJson<String>(source),
+      'tag': serializer.toJson<String?>(tag),
       'type': serializer.toJson<int>(type),
+      'unit': serializer.toJson<int?>(unit),
     };
   }
 
@@ -2510,7 +2569,9 @@ class MetricData extends DataClass implements Insertable<MetricData> {
     Value<int?> person = const Value.absent(),
     String? sourceId,
     String? source,
+    Value<String?> tag = const Value.absent(),
     int? type,
+    Value<int?> unit = const Value.absent(),
   }) => MetricData(
     id: id ?? this.id,
     synced: synced ?? this.synced,
@@ -2522,7 +2583,9 @@ class MetricData extends DataClass implements Insertable<MetricData> {
     person: person.present ? person.value : this.person,
     sourceId: sourceId ?? this.sourceId,
     source: source ?? this.source,
+    tag: tag.present ? tag.value : this.tag,
     type: type ?? this.type,
+    unit: unit.present ? unit.value : this.unit,
   );
   MetricData copyWithCompanion(MetricCompanion data) {
     return MetricData(
@@ -2536,7 +2599,9 @@ class MetricData extends DataClass implements Insertable<MetricData> {
       person: data.person.present ? data.person.value : this.person,
       sourceId: data.sourceId.present ? data.sourceId.value : this.sourceId,
       source: data.source.present ? data.source.value : this.source,
+      tag: data.tag.present ? data.tag.value : this.tag,
       type: data.type.present ? data.type.value : this.type,
+      unit: data.unit.present ? data.unit.value : this.unit,
     );
   }
 
@@ -2553,7 +2618,9 @@ class MetricData extends DataClass implements Insertable<MetricData> {
           ..write('person: $person, ')
           ..write('sourceId: $sourceId, ')
           ..write('source: $source, ')
-          ..write('type: $type')
+          ..write('tag: $tag, ')
+          ..write('type: $type, ')
+          ..write('unit: $unit')
           ..write(')'))
         .toString();
   }
@@ -2570,7 +2637,9 @@ class MetricData extends DataClass implements Insertable<MetricData> {
     person,
     sourceId,
     source,
+    tag,
     type,
+    unit,
   );
   @override
   bool operator ==(Object other) =>
@@ -2586,7 +2655,9 @@ class MetricData extends DataClass implements Insertable<MetricData> {
           other.person == this.person &&
           other.sourceId == this.sourceId &&
           other.source == this.source &&
-          other.type == this.type);
+          other.tag == this.tag &&
+          other.type == this.type &&
+          other.unit == this.unit);
 }
 
 class MetricCompanion extends UpdateCompanion<MetricData> {
@@ -2600,7 +2671,9 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
   final Value<int?> person;
   final Value<String> sourceId;
   final Value<String> source;
+  final Value<String?> tag;
   final Value<int> type;
+  final Value<int?> unit;
   const MetricCompanion({
     this.id = const Value.absent(),
     this.synced = const Value.absent(),
@@ -2612,7 +2685,9 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
     this.person = const Value.absent(),
     this.sourceId = const Value.absent(),
     this.source = const Value.absent(),
+    this.tag = const Value.absent(),
     this.type = const Value.absent(),
+    this.unit = const Value.absent(),
   });
   MetricCompanion.insert({
     this.id = const Value.absent(),
@@ -2625,7 +2700,9 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
     this.person = const Value.absent(),
     required String sourceId,
     required String source,
+    this.tag = const Value.absent(),
     required int type,
+    this.unit = const Value.absent(),
   }) : created = Value(created),
        value = Value(value),
        date = Value(date),
@@ -2643,7 +2720,9 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
     Expression<int>? person,
     Expression<String>? sourceId,
     Expression<String>? source,
+    Expression<String>? tag,
     Expression<int>? type,
+    Expression<int>? unit,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2656,7 +2735,9 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
       if (person != null) 'person': person,
       if (sourceId != null) 'source_id': sourceId,
       if (source != null) 'source': source,
+      if (tag != null) 'tag': tag,
       if (type != null) 'type': type,
+      if (unit != null) 'unit': unit,
     });
   }
 
@@ -2671,7 +2752,9 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
     Value<int?>? person,
     Value<String>? sourceId,
     Value<String>? source,
+    Value<String?>? tag,
     Value<int>? type,
+    Value<int?>? unit,
   }) {
     return MetricCompanion(
       id: id ?? this.id,
@@ -2684,7 +2767,9 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
       person: person ?? this.person,
       sourceId: sourceId ?? this.sourceId,
       source: source ?? this.source,
+      tag: tag ?? this.tag,
       type: type ?? this.type,
+      unit: unit ?? this.unit,
     );
   }
 
@@ -2721,8 +2806,14 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
     if (source.present) {
       map['source'] = Variable<String>(source.value);
     }
+    if (tag.present) {
+      map['tag'] = Variable<String>(tag.value);
+    }
     if (type.present) {
       map['type'] = Variable<int>(type.value);
+    }
+    if (unit.present) {
+      map['unit'] = Variable<int>(unit.value);
     }
     return map;
   }
@@ -2740,7 +2831,9 @@ class MetricCompanion extends UpdateCompanion<MetricData> {
           ..write('person: $person, ')
           ..write('sourceId: $sourceId, ')
           ..write('source: $source, ')
-          ..write('type: $type')
+          ..write('tag: $tag, ')
+          ..write('type: $type, ')
+          ..write('unit: $unit')
           ..write(')'))
         .toString();
   }
@@ -5866,6 +5959,25 @@ final class $$UnitTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$MetricTable, List<MetricData>> _metricRefsTable(
+    _$Database db,
+  ) => MultiTypedResultKey.fromTable(
+    db.metric,
+    aliasName: 'unit__id__metric__unit',
+  );
+
+  $$MetricTableProcessedTableManager get metricRefs {
+    final manager = $$MetricTableTableManager(
+      $_db,
+      $_db.metric,
+    ).filter((f) => f.unit.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_metricRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$UnitTableFilterComposer extends Composer<_$Database, $UnitTable> {
@@ -5960,6 +6072,31 @@ class $$UnitTableFilterComposer extends Composer<_$Database, $UnitTable> {
           }) => $$MetricTypeTableFilterComposer(
             $db: $db,
             $table: $db.metricType,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> metricRefs(
+    Expression<bool> Function($$MetricTableFilterComposer f) f,
+  ) {
+    final $$MetricTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.metric,
+      getReferencedColumn: (t) => t.unit,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MetricTableFilterComposer(
+            $db: $db,
+            $table: $db.metric,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -6133,6 +6270,31 @@ class $$UnitTableAnnotationComposer extends Composer<_$Database, $UnitTable> {
     );
     return f(composer);
   }
+
+  Expression<T> metricRefs<T extends Object>(
+    Expression<T> Function($$MetricTableAnnotationComposer a) f,
+  ) {
+    final $$MetricTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.metric,
+      getReferencedColumn: (t) => t.unit,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MetricTableAnnotationComposer(
+            $db: $db,
+            $table: $db.metric,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$UnitTableTableManager
@@ -6148,7 +6310,11 @@ class $$UnitTableTableManager
           $$UnitTableUpdateCompanionBuilder,
           (UnitData, $$UnitTableReferences),
           UnitData,
-          PrefetchHooks Function({bool baseUnit, bool metricTypeRefs})
+          PrefetchHooks Function({
+            bool baseUnit,
+            bool metricTypeRefs,
+            bool metricRefs,
+          })
         > {
   $$UnitTableTableManager(_$Database db, $UnitTable table)
     : super(
@@ -6215,63 +6381,89 @@ class $$UnitTableTableManager
                     (e.readTable(table), $$UnitTableReferences(db, table, e)),
               )
               .toList(),
-          prefetchHooksCallback: ({baseUnit = false, metricTypeRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (metricTypeRefs) db.metricType],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (baseUnit) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.baseUnit,
-                                referencedTable: $$UnitTableReferences
-                                    ._baseUnitTable(db),
-                                referencedColumn: $$UnitTableReferences
-                                    ._baseUnitTable(db)
-                                    .id,
-                              )
-                              as T;
-                    }
+          prefetchHooksCallback:
+              ({baseUnit = false, metricTypeRefs = false, metricRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (metricTypeRefs) db.metricType,
+                    if (metricRefs) db.metric,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (baseUnit) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.baseUnit,
+                                    referencedTable: $$UnitTableReferences
+                                        ._baseUnitTable(db),
+                                    referencedColumn: $$UnitTableReferences
+                                        ._baseUnitTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
 
-                    return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (metricTypeRefs)
+                        await $_getPrefetchedData<
+                          UnitData,
+                          $UnitTable,
+                          MetricTypeData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$UnitTableReferences
+                              ._metricTypeRefsTable(db),
+                          managerFromTypedResult: (p0) => $$UnitTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).metricTypeRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.unit == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (metricRefs)
+                        await $_getPrefetchedData<
+                          UnitData,
+                          $UnitTable,
+                          MetricData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$UnitTableReferences
+                              ._metricRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$UnitTableReferences(db, table, p0).metricRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.unit == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
                   },
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (metricTypeRefs)
-                    await $_getPrefetchedData<
-                      UnitData,
-                      $UnitTable,
-                      MetricTypeData
-                    >(
-                      currentTable: table,
-                      referencedTable: $$UnitTableReferences
-                          ._metricTypeRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$UnitTableReferences(db, table, p0).metricTypeRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.unit == item.id),
-                      typedResults: items,
-                    ),
-                ];
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -6288,7 +6480,11 @@ typedef $$UnitTableProcessedTableManager =
       $$UnitTableUpdateCompanionBuilder,
       (UnitData, $$UnitTableReferences),
       UnitData,
-      PrefetchHooks Function({bool baseUnit, bool metricTypeRefs})
+      PrefetchHooks Function({
+        bool baseUnit,
+        bool metricTypeRefs,
+        bool metricRefs,
+      })
     >;
 typedef $$MetricTypeTableCreateCompanionBuilder =
     MetricTypeCompanion Function({
@@ -7014,7 +7210,9 @@ typedef $$MetricTableCreateCompanionBuilder =
       Value<int?> person,
       required String sourceId,
       required String source,
+      Value<String?> tag,
       required int type,
+      Value<int?> unit,
     });
 typedef $$MetricTableUpdateCompanionBuilder =
     MetricCompanion Function({
@@ -7028,7 +7226,9 @@ typedef $$MetricTableUpdateCompanionBuilder =
       Value<int?> person,
       Value<String> sourceId,
       Value<String> source,
+      Value<String?> tag,
       Value<int> type,
+      Value<int?> unit,
     });
 
 final class $$MetricTableReferences
@@ -7046,6 +7246,23 @@ final class $$MetricTableReferences
       $_db.metricType,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_typeTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $UnitTable _unitTable(_$Database db) =>
+      db.unit.createAlias('metric__unit__unit__id');
+
+  $$UnitTableProcessedTableManager? get unit {
+    final $_column = $_itemColumn<int>('unit');
+    if ($_column == null) return null;
+    final manager = $$UnitTableTableManager(
+      $_db,
+      $_db.unit,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_unitTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -7111,6 +7328,11 @@ class $$MetricTableFilterComposer extends Composer<_$Database, $MetricTable> {
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get tag => $composableBuilder(
+    column: $table.tag,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$MetricTypeTableFilterComposer get type {
     final $$MetricTypeTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -7125,6 +7347,29 @@ class $$MetricTableFilterComposer extends Composer<_$Database, $MetricTable> {
           }) => $$MetricTypeTableFilterComposer(
             $db: $db,
             $table: $db.metricType,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$UnitTableFilterComposer get unit {
+    final $$UnitTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.unit,
+      referencedTable: $db.unit,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitTableFilterComposer(
+            $db: $db,
+            $table: $db.unit,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -7193,6 +7438,11 @@ class $$MetricTableOrderingComposer extends Composer<_$Database, $MetricTable> {
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get tag => $composableBuilder(
+    column: $table.tag,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$MetricTypeTableOrderingComposer get type {
     final $$MetricTypeTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -7207,6 +7457,29 @@ class $$MetricTableOrderingComposer extends Composer<_$Database, $MetricTable> {
           }) => $$MetricTypeTableOrderingComposer(
             $db: $db,
             $table: $db.metricType,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$UnitTableOrderingComposer get unit {
+    final $$UnitTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.unit,
+      referencedTable: $db.unit,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitTableOrderingComposer(
+            $db: $db,
+            $table: $db.unit,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -7256,6 +7529,9 @@ class $$MetricTableAnnotationComposer
   GeneratedColumn<String> get source =>
       $composableBuilder(column: $table.source, builder: (column) => column);
 
+  GeneratedColumn<String> get tag =>
+      $composableBuilder(column: $table.tag, builder: (column) => column);
+
   $$MetricTypeTableAnnotationComposer get type {
     final $$MetricTypeTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -7270,6 +7546,29 @@ class $$MetricTableAnnotationComposer
           }) => $$MetricTypeTableAnnotationComposer(
             $db: $db,
             $table: $db.metricType,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$UnitTableAnnotationComposer get unit {
+    final $$UnitTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.unit,
+      referencedTable: $db.unit,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UnitTableAnnotationComposer(
+            $db: $db,
+            $table: $db.unit,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -7293,7 +7592,7 @@ class $$MetricTableTableManager
           $$MetricTableUpdateCompanionBuilder,
           (MetricData, $$MetricTableReferences),
           MetricData,
-          PrefetchHooks Function({bool type})
+          PrefetchHooks Function({bool type, bool unit})
         > {
   $$MetricTableTableManager(_$Database db, $MetricTable table)
     : super(
@@ -7318,7 +7617,9 @@ class $$MetricTableTableManager
                 Value<int?> person = const Value.absent(),
                 Value<String> sourceId = const Value.absent(),
                 Value<String> source = const Value.absent(),
+                Value<String?> tag = const Value.absent(),
                 Value<int> type = const Value.absent(),
+                Value<int?> unit = const Value.absent(),
               }) => MetricCompanion(
                 id: id,
                 synced: synced,
@@ -7330,7 +7631,9 @@ class $$MetricTableTableManager
                 person: person,
                 sourceId: sourceId,
                 source: source,
+                tag: tag,
                 type: type,
+                unit: unit,
               ),
           createCompanionCallback:
               ({
@@ -7344,7 +7647,9 @@ class $$MetricTableTableManager
                 Value<int?> person = const Value.absent(),
                 required String sourceId,
                 required String source,
+                Value<String?> tag = const Value.absent(),
                 required int type,
+                Value<int?> unit = const Value.absent(),
               }) => MetricCompanion.insert(
                 id: id,
                 synced: synced,
@@ -7356,7 +7661,9 @@ class $$MetricTableTableManager
                 person: person,
                 sourceId: sourceId,
                 source: source,
+                tag: tag,
                 type: type,
+                unit: unit,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -7364,7 +7671,7 @@ class $$MetricTableTableManager
                     (e.readTable(table), $$MetricTableReferences(db, table, e)),
               )
               .toList(),
-          prefetchHooksCallback: ({type = false}) {
+          prefetchHooksCallback: ({type = false, unit = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -7397,6 +7704,19 @@ class $$MetricTableTableManager
                               )
                               as T;
                     }
+                    if (unit) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.unit,
+                                referencedTable: $$MetricTableReferences
+                                    ._unitTable(db),
+                                referencedColumn: $$MetricTableReferences
+                                    ._unitTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
 
                     return state;
                   },
@@ -7421,7 +7741,7 @@ typedef $$MetricTableProcessedTableManager =
       $$MetricTableUpdateCompanionBuilder,
       (MetricData, $$MetricTableReferences),
       MetricData,
-      PrefetchHooks Function({bool type})
+      PrefetchHooks Function({bool type, bool unit})
     >;
 typedef $$EventTypeTableCreateCompanionBuilder =
     EventTypeCompanion Function({

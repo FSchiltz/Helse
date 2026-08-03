@@ -103,9 +103,15 @@ class LocalMetricService extends LocalService implements MetricService {
   }
 
   @override
-  Future<void> deleteMetrics(List<Metric> metrics, {int? person}) {
-    // TODO: implement deleteMetrics
-    throw UnimplementedError();
+  Future<void> deleteMetrics(List<Metric> metrics, {int? person}) async {
+    await account.database.batch((batch) {
+      for (var event in metrics) {
+        batch.deleteWhere(
+          account.database.metric,
+          (tbl) => tbl.person.equals(person ?? 0) & tbl.id.equals(event.id),
+        );
+      }
+    });
   }
 
   @override
@@ -243,15 +249,33 @@ class LocalMetricService extends LocalService implements MetricService {
   }
 
   @override
-  Future<void> updateGroup(UpdateGroup metric) {
-    // TODO: implement updateGroup
-    throw UnimplementedError();
+  Future<void> updateGroup(UpdateGroup metric) async {
+    await (account.database.group.update()
+          ..where((x) => x.id.equals(metric.id!)))
+        .write(
+          GroupCompanion(
+            name: Value(metric.name),
+            description: Value(metric.description),
+            showOnDashboard: Value(metric.showOnDashboard ?? false),
+            showTitle: Value(metric.showTitle ?? false),
+          ),
+        );
   }
 
   @override
-  Future<void> updateMetric(UpdateMetric metric) {
-    // TODO: implement updateMetric
-    throw UnimplementedError();
+  Future<void> updateMetric(UpdateMetric metric) async {
+    await (account.database.metric.update()
+          ..where((x) => x.id.equals(metric.id!)))
+        .write(
+          MetricCompanion(
+            date: Value(metric.date),
+            value: Value(metric.value),
+            tag: Value(metric.tag),
+            unit: Value(metric.unit),
+            
+
+          ),
+        );
   }
 
   @override

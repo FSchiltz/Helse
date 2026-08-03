@@ -91,8 +91,14 @@ class LocalEventService extends LocalService implements EventService {
 
   @override
   Future<void> deleteEvents(List<Event> events, {int? person}) async {
-    // TODO: implement deleteEvents
-    throw UnimplementedError();
+    await account.database.batch((batch) {
+      for (var event in events) {
+        batch.deleteWhere(
+          account.database.event,
+          (tbl) => tbl.person.equals(person ?? 0) & tbl.id.equals(event.id),
+        );
+      }
+    });
   }
 
   @override
