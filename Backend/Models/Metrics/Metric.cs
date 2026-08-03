@@ -18,7 +18,7 @@ public class PatchMetric : CreateMetric
 
 public class UpdateMetric : CreateMetric
 {
-    public long Id { get; set; }
+    public required long Id { get; set; }
 }
 
 public class Metric : MetricBase

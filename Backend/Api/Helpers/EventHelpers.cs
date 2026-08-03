@@ -26,6 +26,7 @@ internal static class EventHelpers
                 Stop = x.Stop,
                 Start = x.Start,
                 SourceId = string.Empty,
+                Person = x.PersonId,
             })]);
         }
         else

@@ -9,21 +9,20 @@ class LocalEventService extends LocalService implements EventService {
 
   @override
   Future<int?> addEvent(CreateEvent event, {int? person}) async {
-    final newRow = await account.database
-        .into(account.database.event)
-        .insertReturning(
-          EventCompanion.insert(
-            description: event.description ?? '',
-            end: event.stop,
-            start: event.start,
-            type: event.type,
-            person: Value(person ?? 0),
-            created: DateTime.now().toUtc(),
-            sourceId: event.sourceId,
-            source: event.source!.name,
-            tag: Value(event.tag),
-          ),
-        );
+    final newRow = await account.database.event.insertReturning(
+      EventCompanion.insert(
+        description: Value(event.description),
+        end: event.stop,
+        start: event.start,
+        type: event.type,
+        person: person ?? 0,
+        created: DateTime.now().toUtc(),
+        notificationTime: Value(event.notificationTime),
+        sourceId: event.sourceId,
+        source: event.source!.name,
+        tag: Value(event.tag),
+      ),
+    );
 
     return newRow.id;
   }
@@ -197,9 +196,20 @@ class LocalEventService extends LocalService implements EventService {
   }
 
   @override
-  Future<void> updateEvent(UpdateEvent event) {
-    // TODO: implement updateEvent
-    throw UnimplementedError();
+  Future<void> updateEvent(UpdateEvent event) async {
+    await (account.database.event.update()
+          ..where((x) => x.id.equals(event.id!)))
+        .write(
+          EventCompanion(
+            start: Value(event.start),
+            end: Value(event.stop),
+            description: Value(event.description),
+            tag: Value(event.tag),
+            notificationTime: Value(event.notificationTime),
+            source: Value(event.source?.name ?? ImportTypes.none.name),
+            sourceId: Value(event.sourceId),
+          ),
+        );
   }
 
   @override
@@ -209,9 +219,19 @@ class LocalEventService extends LocalService implements EventService {
   }
 
   @override
-  Future<void> updateEventsType(UpdateEventType event) {
-    // TODO: implement updateEventsType
-    throw UnimplementedError();
+  Future<void> updateEventsType(UpdateEventType event) async {
+    await (account.database.eventType.update()
+          ..where((x) => x.id.equals(event.id)))
+        .write(
+          EventTypeCompanion(
+            description: Value(event.description),
+            groupId: Value(event.groupId),
+            name: Value(event.name),
+            standAlone: Value(event.standAlone ?? false),
+            timeDifference: Value(event.timeDifference),
+            visible: Value(event.visible ?? false),
+          ),
+        );
   }
 
   Event _mapEvent(EventData e) {

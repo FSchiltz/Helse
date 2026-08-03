@@ -31,7 +31,7 @@ class LocalMetricService extends LocalService implements MetricService {
             date: metric.date,
             type: metric.type,
             value: metric.value,
-            person: Value(person ?? 0),
+            person: person ?? 0,
             created: DateTime.now().toUtc(),
             source: metric.source!.name,
             sourceId: metric.sourceId,
@@ -272,8 +272,8 @@ class LocalMetricService extends LocalService implements MetricService {
             value: Value(metric.value),
             tag: Value(metric.tag),
             unit: Value(metric.unit),
-            
-
+            source: Value(metric.source?.name ?? ImportTypes.none.name),
+            sourceId: Value(metric.sourceId),
           ),
         );
   }
@@ -285,15 +285,30 @@ class LocalMetricService extends LocalService implements MetricService {
   }
 
   @override
-  Future<void> updateMetricsType(UpdateMetricType metric) {
-    // TODO: implement updateMetricsType
-    throw UnimplementedError();
+  Future<void> updateMetricsType(UpdateMetricType metric) async {
+    await (account.database.metricType.update()
+          ..where((x) => x.id.equals(metric.id)))
+        .write(
+          MetricTypeCompanion(
+            description: Value(metric.description),
+            name: Value(metric.name),
+            unit: Value(metric.unit),
+            showOnDashboard: Value(metric.showOnDashboard ?? false),
+            groupId: Value(metric.groupId),
+            summaryType: Value(
+              metric.summaryType?.name ?? MetricSummary.latest.name,
+            ),
+            timeDifference: Value(metric.timeDifference),
+            valueCount: Value(metric.valueCount),
+            visible: Value(metric.visible ?? false),
+          ),
+        );
   }
 
   Metric _mapMetric(MetricData e) {
     return Metric(
       id: e.id,
-      person: e.person ?? 0,
+      person: e.person,
       date: e.date,
       value: e.value,
       type: e.type,

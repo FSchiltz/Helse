@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:helse/services/local/database/models/event.dart';
 import 'package:helse/services/local/database/models/event_type.dart';
+import 'package:helse/services/local/database/models/file.dart';
 import 'package:helse/services/local/database/models/group.dart';
 import 'package:helse/services/local/database/models/job.dart';
 import 'package:helse/services/local/database/models/metric.dart';
@@ -15,7 +16,19 @@ import 'package:path_provider/path_provider.dart';
 part 'database.g.dart';
 
 @DriftDatabase(
-  tables: [Metric, Event, MetricType, EventType, Job, Unit, Person, Group],
+  tables: [
+    Metric,
+    Event,
+    MetricType,
+    EventType,
+    Job,
+    Unit,
+    Person,
+    Group,
+    File,
+    MetricFiles,
+    EventFiles,
+  ],
 )
 class Database extends _$Database {
   Database([QueryExecutor? executor]) : super(executor ?? _openConnection());
