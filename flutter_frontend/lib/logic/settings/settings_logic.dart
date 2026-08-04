@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
@@ -33,7 +32,7 @@ class SettingsLogic extends BaseSettingsLogic {
   final SettingsBloc<bool> metrics = SettingsBloc(false);
   bool init = false;
 
-  SettingsLogic(super.account, super.service);
+  SettingsLogic(super.account);
 
   HealthSettings getHealth() {
     var encoded = getString(health);
@@ -60,13 +59,14 @@ class SettingsLogic extends BaseSettingsLogic {
 
   Future<void> saveSettings(UserSettings settings, bool toServer) async {
     if (toServer) {
-      await service.savePersonSettings(settings);
+      await Dependencies.services.settings.savePersonSettings(settings);
     }
     await save(settingsName, settings.toJson());
   }
 
   Future<void> loadSettings() async {
-    var serverSettings = await service.getPersonSettings();
+    var serverSettings = await Dependencies.services.settings
+        .getPersonSettings();
     log("Settings loaded from server", name: "Settings");
     await saveSettings(serverSettings, false);
 
@@ -264,5 +264,27 @@ class SettingsLogic extends BaseSettingsLogic {
 
   void setFitStatus(String text) {
     account.set(fitStatus, text);
+  }
+
+  OrderedItem getDefaultEventType(EventType type) {
+    return OrderedItem(
+      name: type.name,
+      id: type.id,
+      showOnDashboard: type.visible,
+      visible: type.visible,
+      detailGraph: GraphKind.text,
+      graph: GraphKind.text,
+    );
+  }
+
+  OrderedItem getDefaultGroupType(Group item) {
+    return OrderedItem(
+      name: item.name,
+      id: item.id ?? 0,
+      showOnDashboard: item.showOnDashboard,
+      visible: true,
+      detailGraph: GraphKind.text,
+      graph: GraphKind.text,
+    );
   }
 }

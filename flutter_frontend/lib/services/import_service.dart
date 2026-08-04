@@ -1,39 +1,18 @@
 import 'package:file_selector/file_selector.dart';
-import 'package:helse/di/dependencies.dart';
-import 'package:helse/services/api_service.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
-import 'swagger/generated_code/helseapi.swagger.dart';
+abstract interface class ImportService {
+  Future<List<ImportType>?> fileTypes();
 
-class ImportService extends ApiService {
-  ImportService(super.account);
+  Future<JobId?> import(
+    XFile file,
+    int type,
+    int? patient,
+  );
 
-  Future<List<ImportType>?> fileTypes() async {
-    var api = await getService();
-    return await call(api.apiImportTypesGet);
-  }
+  Future<JobResult?> status(String id);
 
-  Future<JobId?> import(XFile file, int type, int? patient) async {
-    var api = await getService();
+  Future<ImportsResult?> importData(ImportData file);
 
-    var part = await Dependencies.logics.files.extract(file);
-    return await call(
-      () => api.apiImportTypePost(file: part, type: type, patient: patient),
-    );
-  }
-
-  Future<JobResult?> status(String id) async {
-    var api = await getService();
-
-    return await call(() => api.apiImportIdGet(id: id));
-  }
-
-  Future<ImportsResult?> importData(ImportData file) async {
-    var api = await getService();
-    return await call(() => api.apiImportResultsPost(body: file));
-  }
-
-  Future<List<JobResultInfo>> getJobs() async {
-    var api = await getService();
-    return await call(() => api.apiImportJobsGet()) ?? [];
-  }
+  Future<List<JobResultInfo>> getJobs();
 }

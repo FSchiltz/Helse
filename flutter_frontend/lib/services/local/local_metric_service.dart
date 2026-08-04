@@ -1,0 +1,318 @@
+import 'package:drift/drift.dart';
+import 'package:helse/services/local/database/database.dart';
+import 'package:helse/services/local/local_service.dart';
+import 'package:helse/services/metric_service.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+
+class LocalMetricService extends LocalService implements MetricService {
+  LocalMetricService(super.account);
+
+  @override
+  Future<void> addGroup(CreateGroup group) async {
+    await account.database
+        .into(account.database.group)
+        .insert(
+          GroupCompanion.insert(
+            description: group.description,
+            name: group.name,
+            showOnDashboard: group.showOnDashboard ?? false,
+            showTitle: group.showTitle ?? false,
+            created: DateTime.now().toUtc(),
+          ),
+        );
+  }
+
+  @override
+  Future<int?> addMetrics(CreateMetric metric, {int? person}) async {
+    final newRow = await account.database
+        .into(account.database.metric)
+        .insertReturning(
+          MetricCompanion.insert(
+            date: metric.date,
+            type: metric.type,
+            value: metric.value,
+            person: person ?? 0,
+            created: DateTime.now().toUtc(),
+            source: metric.source!.name,
+            sourceId: metric.sourceId,
+          ),
+        );
+
+    return newRow.id;
+  }
+
+  @override
+  Future<void> addMetricsType(CreateMetricType metric) async {
+    await account.database
+        .into(account.database.metricType)
+        .insert(
+          MetricTypeCompanion.insert(
+            groupId: metric.groupId,
+            name: metric.name,
+            description: Value(metric.description),
+            created: DateTime.now().toUtc(),
+            showOnDashboard: metric.showOnDashboard ?? false,
+            summaryType: metric.summaryType?.name ?? '',
+            timeDifference: Value(metric.timeDifference),
+            type: metric.type?.name ?? '',
+            unit: metric.unit,
+            userEditable: false,
+            visible: metric.visible ?? false,
+            valueCount: Value(metric.valueCount),
+          ),
+        );
+  }
+
+  @override
+  Future<int?> countMetrics(int? person, SearchMetric search) async {
+    var countExp = account.database.metric.id.count();
+
+    final query = account.database.selectOnly(account.database.metric)
+      ..addColumns([countExp]);
+
+    query.where(account.database.metric.type.equals(search.type));
+    query.where(account.database.metric.person.equals(person ?? 0));
+
+    if (search.from != null) {
+      query.where(
+        account.database.metric.date.isBiggerOrEqualValue(search.from!),
+      );
+    }
+
+    if (search.to != null) {
+      query.where(
+        account.database.metric.date.isSmallerOrEqualValue(search.to!),
+      );
+    }
+
+    if (search.value != null) {
+      query.where(account.database.metric.value.equals(search.value!));
+    }
+
+    if (search.filterSource != null) {
+      query.where(account.database.metric.source.equals(search.source!.name));
+    }
+
+    return await query.map((row) => row.read(countExp)).getSingle();
+  }
+
+  @override
+  Future<void> deleteMetric(int id) async {
+    await (account.database.metric.delete()..where((tbl) => tbl.id.equals(id)))
+        .go();
+  }
+
+  @override
+  Future<void> deleteMetrics(List<Metric> metrics, {int? person}) async {
+    await account.database.batch((batch) {
+      for (var event in metrics) {
+        batch.deleteWhere(
+          account.database.metric,
+          (tbl) => tbl.person.equals(person ?? 0) & tbl.id.equals(event.id),
+        );
+      }
+    });
+  }
+
+  @override
+  Future<void> deleteMetricsGroup(int metric) async {
+    await (account.database.group.delete()
+          ..where((tbl) => tbl.id.equals(metric)))
+        .go();
+  }
+
+  @override
+  Future<void> deleteMetricsType(int metric) async {
+    await (account.database.metricType.delete()
+          ..where((tbl) => tbl.id.equals(metric)))
+        .go();
+  }
+
+  @override
+  Future<MetricSummaries> metricSummaries(
+    int type,
+    DateTime start,
+    DateTime end, {
+    int? person,
+    int? tile,
+  }) async {
+    final result = await metrics(type, start, end, person: person);
+    return MetricSummaries(metrics: result);
+  }
+
+  @override
+  Future<List<Metric>> metrics(
+    int type,
+    DateTime start,
+    DateTime end, {
+    int? person,
+  }) async {
+    final query = account.database.metric.select()
+      ..where((x) => x.type.equals(type))
+      ..where((x) => x.date.isBiggerOrEqualValue(start))
+      ..where((x) => x.date.isSmallerOrEqualValue(end));
+
+    query.where((x) => x.person.equals(person ?? 0));
+
+    final result = await query.get();
+    return result.map(_mapMetric).toList();
+  }
+
+  @override
+  Future<List<Group>?> metricsGroup() async {
+    final result = await account.database.select(account.database.group).get();
+    return result
+        .map(
+          (e) => Group(
+            name: e.name,
+            id: e.id,
+            description: e.description,
+            showOnDashboard: e.showOnDashboard,
+            showTitle: e.showTitle,
+          ),
+        )
+        .toList();
+  }
+
+  @override
+  Future<List<MetricType>?> metricsType(bool all, int? group) async {
+    final result =
+        await account.database.select(account.database.metricType).join([
+          innerJoin(
+            account.database.unit,
+            account.database.unit.id.equalsExp(
+              account.database.metricType.unit,
+            ),
+          ),
+        ]).get();
+
+    final summarymap = MetricSummary.values.asNameMap();
+    final datamap = MetricDataType.values.asNameMap();
+    final unitmap = UnitType.values.asNameMap();
+    return result.map((j) {
+      final e = j.readTable(account.database.metricType);
+      final u = j.readTable(account.database.unit);
+
+      return MetricType(
+        id: e.id,
+        unit: Unit(
+          type: unitmap[u.type]!,
+          id: u.id,
+          code: u.code,
+          description: u.description,
+        ),
+        userEditable: e.userEditable,
+        name: e.name,
+        groupId: e.groupId,
+        description: e.description,
+        showOnDashboard: e.showOnDashboard,
+        summaryType: summarymap[e.summaryType],
+        timeDifference: e.timeDifference,
+        valueCount: e.valueCount,
+        visible: e.visible,
+        type: datamap[e.type],
+      );
+    }).toList();
+  }
+
+  @override
+  Future<List<Metric>?> searchMetrics(
+    int? person,
+    SearchMetric search,
+    int page,
+    int pageSize,
+  ) async {
+    final query = account.database.metric.select();
+
+    query.where((x) => x.type.equals(search.type));
+    query.where((x) => x.person.equals(person ?? 0));
+
+    if (search.from != null) {
+      query.where((x) => x.date.isBiggerOrEqualValue(search.from!));
+    }
+
+    if (search.to != null) {
+      query.where((x) => x.date.isSmallerOrEqualValue(search.to!));
+    }
+
+    if (search.value != null) {
+      query.where((x) => x.value.equals(search.value ?? ''));
+    }
+
+    if (search.filterSource != null) {
+      query.where((x) => x.source.equals(search.source!.name));
+    }
+
+    query.limit(pageSize, offset: pageSize * page);
+    final result = await query.get();
+    return result.map(_mapMetric).toList();
+  }
+
+  @override
+  Future<void> updateGroup(UpdateGroup metric) async {
+    await (account.database.group.update()
+          ..where((x) => x.id.equals(metric.id!)))
+        .write(
+          GroupCompanion(
+            name: Value(metric.name),
+            description: Value(metric.description),
+            showOnDashboard: Value(metric.showOnDashboard ?? false),
+            showTitle: Value(metric.showTitle ?? false),
+          ),
+        );
+  }
+
+  @override
+  Future<void> updateMetric(UpdateMetric metric) async {
+    await (account.database.metric.update()
+          ..where((x) => x.id.equals(metric.id!)))
+        .write(
+          MetricCompanion(
+            date: Value(metric.date),
+            value: Value(metric.value),
+            tag: Value(metric.tag),
+            unit: Value(metric.unit),
+            source: Value(metric.source?.name ?? ImportTypes.none.name),
+            sourceId: Value(metric.sourceId),
+          ),
+        );
+  }
+
+  @override
+  Future<void> updateMetrics(PatchMetric patch, {int? person}) {
+    // TODO: implement updateMetrics
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateMetricsType(UpdateMetricType metric) async {
+    await (account.database.metricType.update()
+          ..where((x) => x.id.equals(metric.id)))
+        .write(
+          MetricTypeCompanion(
+            description: Value(metric.description),
+            name: Value(metric.name),
+            unit: Value(metric.unit),
+            showOnDashboard: Value(metric.showOnDashboard ?? false),
+            groupId: Value(metric.groupId),
+            summaryType: Value(
+              metric.summaryType?.name ?? MetricSummary.latest.name,
+            ),
+            timeDifference: Value(metric.timeDifference),
+            valueCount: Value(metric.valueCount),
+            visible: Value(metric.visible ?? false),
+          ),
+        );
+  }
+
+  Metric _mapMetric(MetricData e) {
+    return Metric(
+      id: e.id,
+      person: e.person,
+      date: e.date,
+      value: e.value,
+      type: e.type,
+      sourceId: e.sourceId,
+    );
+  }
+}

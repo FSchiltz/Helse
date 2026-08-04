@@ -2,24 +2,14 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import '../../di/dependencies.dart';
-import 'authentication_logic.dart';
+
+enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
 class AuthenticationBloc extends Cubit<AuthenticationStatus> {
-  AuthenticationBloc() : super(AuthenticationStatus.unknown) {
-    _authenticationStatusSubscription = Dependencies.logics.authentication.status.listen((status) => _onAuthenticationStatusChanged(status));
-  }
+  AuthenticationBloc() : super(AuthenticationStatus.unknown);
 
-  late StreamSubscription<AuthenticationStatus> _authenticationStatusSubscription;
-
-  @override
-  Future<void> close() {
-    _authenticationStatusSubscription.cancel();
-    return super.close();
-  }
-
-  Future<void> _onAuthenticationStatusChanged(AuthenticationStatus status) async {
+  Future<void> add(AuthenticationStatus status) async {
     log('Status changed to ${status.name}');
-    emit(status);
+    emit(status);    
   }
 }

@@ -1,17 +1,18 @@
 import 'dart:convert';
 
+import 'package:helse/services/local/database/database.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Token storage abstraction
 class Account {
-  static Future<SharedPreferencesWithCache> get _instance async =>
+  Future<SharedPreferencesWithCache> get _instance async =>
       _storage ??= await SharedPreferencesWithCache.create(
         cacheOptions: SharedPreferencesWithCacheOptions(),
       );
 
-  static SharedPreferencesWithCache? _storage;
-  static SharedPreferencesWithCache get storage {
+  SharedPreferencesWithCache? _storage;
+  SharedPreferencesWithCache get storage {
     if (_storage == null) {
       throw Error();
     }
@@ -19,9 +20,15 @@ class Account {
     return _storage!;
   }
 
+  Database? _database;
+  Database get database => (_database != null)
+      ? _database!
+      : throw StateError('Invalid database access');
+
   // call this method from iniState() function of mainApp().
-  static Future<void> setup() async {
+  Future<void> setup() async {
     _storage = await _instance;
+    _database = Database();
   }
 
   static const url = "urlPath";
@@ -30,15 +37,18 @@ class Account {
   static const clientid = "clientid";
   static const refresh = "refresh";
   static const id = "id";
+  static const offline = "offline";
 
-  String? get(String name) {
-    var store = storage;
-    var url = store.getString(name);
-    return url;
-  }
+  String? get(String name) => storage.getString(name);
+
+  bool isEnabled(String name) => storage.getBool(name) ?? false;
 
   Future<void> set(String name, String value) async {
     await (storage).setString(name, value);
+  }
+
+  Future<void> setBool(String name, bool value) async {
+    await (storage).setBool(name, value);
   }
 
   Future<void> remove(String name) async {

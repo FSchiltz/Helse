@@ -300,5 +300,7 @@
     "upload": "Upload",
     "@upload": {},
     "fromExisting": "From existing",
-    "@fromExisting": {}
+    "@fromExisting": {},
+    "offline": "Use the app offline",
+    "@offline": {}
 }

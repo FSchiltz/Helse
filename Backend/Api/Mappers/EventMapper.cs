@@ -27,6 +27,7 @@ internal static class EventMapper
             Id = x.Id,
             Type = x.Type,
             Description = x.Description,
+            Person = x.PersonId,
             Stop = x.Stop,
             Start = x.Start,
             Valid = x.Valid,

@@ -2,7 +2,7 @@ namespace Helse.Models.Events;
 
 public class UpdateEvent : CreateEvent
 {
-    public long Id { get; set; }
+    public required long Id { get; set; }
 }
 
 

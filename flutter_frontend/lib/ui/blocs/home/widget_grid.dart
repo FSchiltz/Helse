@@ -73,11 +73,13 @@ class _WidgetGridState extends State<WidgetGrid> {
       } else {
         // filter the group to only show what the user wants
         for (var item in model) {
-          OrderedItem? setting = groupSettings.displaySettings.firstWhereOrNull(
-            (element) => element.id == item.id,
-          );
+          OrderedItem setting =
+              groupSettings.displaySettings.firstWhereOrNull(
+                (element) => element.id == item.id,
+              ) ??
+              Dependencies.logics.settings.getDefaultGroupType(item);
 
-          if (setting?.visible == true) filtered.add(item);
+          if (setting.visible == true) filtered.add(item);
         }
       }
 
@@ -86,11 +88,11 @@ class _WidgetGridState extends State<WidgetGrid> {
             // find the settings
             e ??= [];
 
-            OrderedItem? setting =
+            OrderedItem setting =
                 eventSettings.displaySettings.firstWhereOrNull(
                   (element) => element.id == type.id,
                 ) ??
-                OrderedItem(name: type.name, id: type.id);
+                Dependencies.logics.settings.getDefaultEventType(type);
 
             e.add((type, setting));
             return e;
@@ -108,7 +110,7 @@ class _WidgetGridState extends State<WidgetGrid> {
                 metricSettings.displaySettings.firstWhereOrNull(
                   (element) => element.id == type.id,
                 ) ??
-                Dependencies.logics.settings.getDefault(type);
+                Dependencies.logics.settings.getDefaultMetricType(type);
 
             e.add((type, setting));
             return e;
@@ -159,7 +161,6 @@ class _WidgetGridState extends State<WidgetGrid> {
               .map(
                 (type) => WidgetGroups(
                   date: widget.date,
-                  key: Key(type.id?.toString() ?? ""),
                   person: widget.person,
                   group: type,
                   metrics: _metrics?[type.id] ?? [],

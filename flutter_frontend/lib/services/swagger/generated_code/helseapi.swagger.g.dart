@@ -66,7 +66,7 @@ CreateEvent _$CreateEventFromJson(Map<String, dynamic> json) => CreateEvent(
       ? null
       : DateTime.parse(json['notificationTime'] as String),
   source: importTypesNullableFromJson(json['source']),
-  sourceId: json['sourceId'] as String?,
+  sourceId: json['sourceId'] as String,
 );
 
 Map<String, dynamic> _$CreateEventToJson(CreateEvent instance) =>
@@ -188,7 +188,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
   user: (json['user'] as num?)?.toInt(),
   treatment: (json['treatment'] as num?)?.toInt(),
   id: (json['id'] as num).toInt(),
-  person: (json['person'] as num?)?.toInt(),
+  person: (json['person'] as num).toInt(),
   valid: json['valid'] as bool?,
   address: (json['address'] as num?)?.toInt(),
   type: (json['type'] as num).toInt(),
@@ -200,7 +200,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       ? null
       : DateTime.parse(json['notificationTime'] as String),
   source: importTypesNullableFromJson(json['source']),
-  sourceId: json['sourceId'] as String?,
+  sourceId: json['sourceId'] as String,
 );
 
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
@@ -718,7 +718,7 @@ PatchEvent _$PatchEventFromJson(Map<String, dynamic> json) => PatchEvent(
       ? null
       : DateTime.parse(json['notificationTime'] as String),
   source: importTypesNullableFromJson(json['source']),
-  sourceId: json['sourceId'] as String?,
+  sourceId: json['sourceId'] as String,
 );
 
 Map<String, dynamic> _$PatchEventToJson(PatchEvent instance) =>
@@ -742,6 +742,7 @@ PatchMetric _$PatchMetricFromJson(Map<String, dynamic> json) => PatchMetric(
   updateValue: json['updateValue'] as bool?,
   updateDate: json['updateDate'] as bool?,
   updateTag: json['updateTag'] as bool?,
+  updateSourceId: json['updateSourceId'] as bool?,
   ids:
       (json['ids'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
@@ -761,6 +762,7 @@ Map<String, dynamic> _$PatchMetricToJson(PatchMetric instance) =>
       'updateValue': instance.updateValue,
       'updateDate': instance.updateDate,
       'updateTag': instance.updateTag,
+      'updateSourceId': instance.updateSourceId,
       'ids': instance.ids,
       'unit': instance.unit,
       'date': instance.date.toIso8601String(),
@@ -1049,7 +1051,7 @@ Map<String, dynamic> _$UnitToJson(Unit instance) => <String, dynamic>{
 };
 
 UpdateEvent _$UpdateEventFromJson(Map<String, dynamic> json) => UpdateEvent(
-  id: (json['id'] as num?)?.toInt(),
+  id: (json['id'] as num).toInt(),
   type: (json['type'] as num).toInt(),
   description: json['description'] as String?,
   start: DateTime.parse(json['start'] as String),
@@ -1059,7 +1061,7 @@ UpdateEvent _$UpdateEventFromJson(Map<String, dynamic> json) => UpdateEvent(
       ? null
       : DateTime.parse(json['notificationTime'] as String),
   source: importTypesNullableFromJson(json['source']),
-  sourceId: json['sourceId'] as String?,
+  sourceId: json['sourceId'] as String,
 );
 
 Map<String, dynamic> _$UpdateEventToJson(UpdateEvent instance) =>
@@ -1136,7 +1138,7 @@ Map<String, dynamic> _$UpdateGroupToJson(UpdateGroup instance) =>
     };
 
 UpdateMetric _$UpdateMetricFromJson(Map<String, dynamic> json) => UpdateMetric(
-  id: (json['id'] as num?)?.toInt(),
+  id: (json['id'] as num).toInt(),
   unit: (json['unit'] as num?)?.toInt(),
   date: DateTime.parse(json['date'] as String),
   value: json['value'] as String,

@@ -1,4 +1,3 @@
-import 'package:helse/di/services.dart';
 import 'package:helse/logic/file_logic.dart';
 import 'package:helse/logic/account/authentication_logic.dart';
 import 'package:helse/logic/fit/fit_logic.dart';
@@ -23,14 +22,14 @@ class Logics {
     this.files
   );
 
-  factory Logics(Account account, Services service) {
-    final settings = SettingsLogic(account, service.settings);
+  factory Logics(Account account) {
+    final settings = SettingsLogic(account);
     return Logics.build(
       AuthenticationLogic(account),
       settings,
-      HealthConnectLogic(settings, service.import),
-      PatientsSettingsLogic(account, service.settings),
-      FileLogic(service.files)
+      HealthConnectLogic(settings),
+      PatientsSettingsLogic(account),
+      FileLogic()
     );
   }
 }

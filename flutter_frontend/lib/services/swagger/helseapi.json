@@ -3103,7 +3103,8 @@
         "required": [
           "type",
           "start",
-          "stop"
+          "stop",
+          "sourceId"
         ],
         "type": "object",
         "properties": {
@@ -3367,9 +3368,11 @@
       "Event": {
         "required": [
           "id",
+          "person",
           "type",
           "start",
-          "stop"
+          "stop",
+          "sourceId"
         ],
         "type": "object",
         "properties": {
@@ -4358,7 +4361,8 @@
         "required": [
           "type",
           "start",
-          "stop"
+          "stop",
+          "sourceId"
         ],
         "type": "object",
         "properties": {
@@ -4444,6 +4448,9 @@
             "type": "boolean"
           },
           "updateTag": {
+            "type": "boolean"
+          },
+          "updateSourceId": {
             "type": "boolean"
           },
           "ids": {
@@ -5045,9 +5052,11 @@
       },
       "UpdateEvent": {
         "required": [
+          "id",
           "type",
           "start",
-          "stop"
+          "stop",
+          "sourceId"
         ],
         "type": "object",
         "properties": {
@@ -5222,6 +5231,7 @@
       },
       "UpdateMetric": {
         "required": [
+          "id",
           "date",
           "value",
           "type",

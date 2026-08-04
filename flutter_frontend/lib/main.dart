@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/logic/settings/settings_logic.dart';
+import 'package:helse/ui/common/notification.dart';
 import 'package:helse/worker.dart';
-import 'logic/account/authentication_logic.dart';
 import 'logic/account/authentication_bloc.dart';
 import 'ui/home.dart';
 import 'ui/login.dart';
@@ -16,6 +16,7 @@ final navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Dependencies.init();
+  await Notify.init();
   WorkHelper.init();
   Dependencies.logics.authentication.init();
 
@@ -49,29 +50,21 @@ class App extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         navigatorKey: navigatorKey,
         scaffoldMessengerKey: snackbarKey,
-        builder: (context, child) {
-          return BlocListener<AuthenticationBloc, AuthenticationStatus>(
-            bloc: Dependencies.blocs.auth,
-            listener: (context, state) {
-              switch (state) {
-                case AuthenticationStatus.authenticated:
-                  navigatorKey.currentState!.pushAndRemoveUntil<void>(
-                    Home.route(),
-                    (route) => false,
-                  );
-                case AuthenticationStatus.unauthenticated:
-                  navigatorKey.currentState!.pushAndRemoveUntil<void>(
-                    LoginPage.route(),
-                    (route) => false,
-                  );
-                case AuthenticationStatus.unknown:
-                  break;
-              }
-            },
-            child: child,
-          );
-        },
-        onGenerateRoute: (RouteSettings routeSettings) => SplashPage.route(),
+        home: BlocBuilder<AuthenticationBloc, AuthenticationStatus>(
+          bloc: Dependencies.blocs.auth,
+          builder: (context, state) {
+            switch (state) {
+              case AuthenticationStatus.authenticated:
+                return const Home();
+
+              case AuthenticationStatus.unauthenticated:
+                return const LoginPage();
+
+              default:
+                return const SplashPage();
+            }
+          },
+        ),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
       ),

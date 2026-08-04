@@ -63,6 +63,9 @@ dependencies:
   flutter_colorpicker: ^1.1.0
   flutter_local_notifications: ^22.0.1
   open_file: ^4.0.0
+  drift: ^2.34.2
+  drift_flutter: ^0.3.1
+  path_provider: ^2.1.6
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -78,6 +81,7 @@ dev_dependencies:
   json_serializable: ^6.11.1
   swagger_dart_code_generator: ^4.1.1
   mocktail: ^1.0.5
+  drift_dev: ^2.34.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

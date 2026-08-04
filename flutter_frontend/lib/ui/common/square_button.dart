@@ -4,14 +4,21 @@ class SquareButton extends StatelessWidget {
   final String label;
   final void Function()? onPressed;
   final IconData? icon;
-  const SquareButton(this.label, this.onPressed, {super.key, this.icon});
+  final double? height;
+  const SquareButton(
+    this.label,
+    this.onPressed, {
+    super.key,
+    this.icon,
+    this.height,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         elevation: 1,
-        minimumSize: const Size.fromHeight(45),
+        minimumSize: Size.fromHeight(height ?? 45),
         shape: ContinuousRectangleBorder(
           side: BorderSide(
             color: Theme.of(context).colorScheme.onSurface,

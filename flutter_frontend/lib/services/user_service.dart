@@ -1,68 +1,37 @@
-import 'package:helse/services/api_service.dart';
+import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
-import 'swagger/generated_code/helseapi.swagger.dart';
+abstract interface class UserService {
+  Future<List<Person>?> persons();
 
-class UserService extends ApiService {
-  UserService(super.account);
+  Future<UserId?> addPerson(
+    PersonCreation person,
+  );
 
-  Future<List<Person>?> persons() async {
-    var api = await getService();
-    return await call(api.apiPersonGet);
-  }
+  Future<List<Person>?> patients();
 
-  Future<UserId?> addPerson(PersonCreation person) async {
-    var api = await getService();
+  Future<void> updatePerson(
+    UpdatePerson update,
+  );
 
-    return await call(() => api.apiPersonPost(body: person));
-  }
+  Future<void> deletePerson(
+    int id,
+  );
 
-  Future<List<Person>?> patients() async {
-    var api = await getService();
-    return await call(api.apiPatientsGet);
-  }
+  Future<List<Person>> caregiver();
 
-  Future<void> updatePerson(UpdatePerson update) async {
-    var api = await getService();
-    await call<void>(() => api.apiPersonPut(body: update));
-  }
-
-  Future<void> deletePerson(int id) async {
-    var api = await getService();
-    await call<void>(() => api.apiPersonUserIdDelete(userId: id));
-  }
-
-  Future<List<Person>> caregiver() async {
-    var api = await getService();
-    return await call<List<Person>>(api.apiPersonCaregiverGet) ?? [];
-  }
-
-  Future<void> updatePatient(UpdatePatient update) async {
-    var api = await getService();
-    await call<void>(() => api.apiPatientsPut(body: update));
-  }
+  Future<void> updatePatient(
+    UpdatePatient update,
+  );
 
   Future<void> sharePatient({
     required int patient,
     required int caregiver,
     required bool edit,
-  }) async {
-    var api = await getService();
-    return await call(
-      () => api.apiPatientsShareGet(
-        patient: patient,
-        caregiver: caregiver,
-        edit: edit,
-      ),
-    );
-  }
+  });
 
-  Future<List<Session>> getSessions() async {
-    var api = await getService();
-    return (await call(api.apiSessionsGet)) ?? [];
-  }
+  Future<List<Session>> getSessions();
 
-  Future<void> logout(bool all) async {
-    var api = await getService(sendRefresh: !all);
-    await call(api.apiLogoutGet);
-  }
+  Future<void> logout(
+    bool all,
+  );
 }

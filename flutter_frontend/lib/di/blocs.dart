@@ -36,7 +36,7 @@ class Blocs {
         logic.import.isEnabled,
       ),
       AuthenticationBloc(),
-      ServerState()
+      ServerState(),
     );
   }
 }

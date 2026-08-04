@@ -8,7 +8,7 @@ public class Event : BaseEvent
 
     public required long Id { get; set; }
 
-    public long Person { get; set; }
+    public required long Person { get; set; }
 
     public bool Valid { get; set; }
 

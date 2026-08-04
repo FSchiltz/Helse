@@ -1,40 +1,38 @@
 import 'dart:convert';
 import 'package:helse/services/account.dart';
-import 'package:helse/services/setting_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class BaseSettingsLogic {
   final Account account;
-  final SettingService service;
   final int settingsVersion = 2;
 
-  BaseSettingsLogic(this.account, this.service);
+  BaseSettingsLogic(this.account);
 
   Future<void> save(String key, Map<String, dynamic> data) async {
-    await Account.storage.setString(key, json.encode(data));
+    await account.storage.setString(key, json.encode(data));
   }
 
   String? getString(String key) {
-    return Account.storage.getString(key);
+    return account.storage.getString(key);
   }
 
   bool? getBool(String key) {
-    return Account.storage.getBool(key);
+    return account.storage.getBool(key);
   }
 
   Future<void> setBool(String key, bool value) async {
-    await Account.storage.setBool(key, value);
+    await account.storage.setBool(key, value);
   }
 
   Future<void> setString(String key, String value) async {
-    await Account.storage.setString(key, value);
+    await account.storage.setString(key, value);
   }
 
   Future<void> remove(String key) async {
-    await Account.storage.remove(key);
+    await account.storage.remove(key);
   }
 
-    OrderedItem getDefault(MetricType item) {
+    OrderedItem getDefaultMetricType(MetricType item) {
     if (item.type == MetricDataType.number) {
       return OrderedItem(
         id: item.id,

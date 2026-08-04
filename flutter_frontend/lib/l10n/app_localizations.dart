@@ -757,6 +757,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'From existing'**
   String get fromExisting;
+
+  /// No description provided for @offline.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the app offline'**
+  String get offline;
 }
 
 class _AppLocalizationsDelegate

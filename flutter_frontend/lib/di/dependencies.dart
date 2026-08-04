@@ -16,9 +16,10 @@ class Dependencies {
     return a;
   }
 
-  static Services? _services;
+  static Services? _online;
+  static Services? _offline;
   static Services get services {
-    var a = _services;
+    var a = blocs.server.isOffline ? _offline : _online;
     if (a == null) {
       throw Exception("Invalid access");
     }
@@ -38,14 +39,16 @@ class Dependencies {
 
   static ThemeHelper theme = ThemeHelper();
 
-  static Future<void> init() async {
-    var account = Account();
+  static Future<void> init({Account? account}) async {
+    if (account == null) {
+      account = Account();
 
-    await Account.setup();
-    _services = Services(account);
-    _logics = Logics(account, services);
+      await account.setup();
+    }
+
+    _online = Services.online(account);
+    _offline = Services.offline(account);
+    _logics = Logics(account);
     _blocs = Blocs(logics);
-    
-    await Notify.init();
   }
 }

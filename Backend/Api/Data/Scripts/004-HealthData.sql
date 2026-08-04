@@ -1,7 +1,7 @@
 INSERT INTO health.metrictype( description, name, unit, type, summaryType)
 	VALUES ( null, 'Heart', 'bpm', 1, 0),
     (null , 'Oxygen', '%', 1, 0),
-    (null , 'Wheight', 'Kg', 1, 0),
+    (null , 'Weight', 'Kg', 1, 0),
     (null , 'Height', 'm', 1, 0),
     (null , 'Temperature', 'C', 1, 0),    
     (null , 'Steps', '', 1, 1),

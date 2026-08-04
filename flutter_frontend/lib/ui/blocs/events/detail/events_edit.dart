@@ -49,6 +49,7 @@ class _EventsEditState extends PopupSubmitState<EventsEdit> {
       updateTag: _updateTag,
       source: ImportTypes.none,
       ids: widget.edit.map((e) => e.id).toList(),
+      sourceId: '',
     );
 
     await Dependencies.services.event.updateEvents(

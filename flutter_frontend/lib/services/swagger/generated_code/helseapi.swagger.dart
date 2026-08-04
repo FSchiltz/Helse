@@ -2612,7 +2612,7 @@ class CreateEvent {
     this.tag,
     this.notificationTime,
     this.source,
-    this.sourceId,
+    required this.sourceId,
   });
 
   factory CreateEvent.fromJson(Map<String, dynamic> json) =>
@@ -2640,7 +2640,7 @@ class CreateEvent {
   )
   final enums.ImportTypes? source;
   @JsonKey(name: 'sourceId')
-  final String? sourceId;
+  final String sourceId;
   static const fromJsonFactory = _$CreateEventFromJson;
 
   @override
@@ -2721,7 +2721,7 @@ extension $CreateEventExtension on CreateEvent {
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
     Wrapped<enums.ImportTypes?>? source,
-    Wrapped<String?>? sourceId,
+    Wrapped<String>? sourceId,
   }) {
     return CreateEvent(
       type: (type != null ? type.value : this.type),
@@ -3354,7 +3354,7 @@ class Event {
     this.user,
     this.treatment,
     required this.id,
-    this.person,
+    required this.person,
     this.valid,
     this.address,
     required this.type,
@@ -3364,7 +3364,7 @@ class Event {
     this.tag,
     this.notificationTime,
     this.source,
-    this.sourceId,
+    required this.sourceId,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
@@ -3379,7 +3379,7 @@ class Event {
   @JsonKey(name: 'id')
   final int id;
   @JsonKey(name: 'person')
-  final int? person;
+  final int person;
   @JsonKey(name: 'valid')
   final bool? valid;
   @JsonKey(name: 'address')
@@ -3403,7 +3403,7 @@ class Event {
   )
   final enums.ImportTypes? source;
   @JsonKey(name: 'sourceId')
-  final String? sourceId;
+  final String sourceId;
   static const fromJsonFactory = _$EventFromJson;
 
   @override
@@ -3516,7 +3516,7 @@ extension $EventExtension on Event {
     Wrapped<int?>? user,
     Wrapped<int?>? treatment,
     Wrapped<int>? id,
-    Wrapped<int?>? person,
+    Wrapped<int>? person,
     Wrapped<bool?>? valid,
     Wrapped<int?>? address,
     Wrapped<int>? type,
@@ -3526,7 +3526,7 @@ extension $EventExtension on Event {
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
     Wrapped<enums.ImportTypes?>? source,
-    Wrapped<String?>? sourceId,
+    Wrapped<String>? sourceId,
   }) {
     return Event(
       user: (user != null ? user.value : this.user),
@@ -5898,7 +5898,7 @@ class PatchEvent {
     this.tag,
     this.notificationTime,
     this.source,
-    this.sourceId,
+    required this.sourceId,
   });
 
   factory PatchEvent.fromJson(Map<String, dynamic> json) =>
@@ -5936,7 +5936,7 @@ class PatchEvent {
   )
   final enums.ImportTypes? source;
   @JsonKey(name: 'sourceId')
-  final String? sourceId;
+  final String sourceId;
   static const fromJsonFactory = _$PatchEventFromJson;
 
   @override
@@ -6059,7 +6059,7 @@ extension $PatchEventExtension on PatchEvent {
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
     Wrapped<enums.ImportTypes?>? source,
-    Wrapped<String?>? sourceId,
+    Wrapped<String>? sourceId,
   }) {
     return PatchEvent(
       updateDescription: (updateDescription != null
@@ -6089,6 +6089,7 @@ class PatchMetric {
     this.updateValue,
     this.updateDate,
     this.updateTag,
+    this.updateSourceId,
     this.ids,
     this.unit,
     required this.date,
@@ -6111,6 +6112,8 @@ class PatchMetric {
   final bool? updateDate;
   @JsonKey(name: 'updateTag')
   final bool? updateTag;
+  @JsonKey(name: 'updateSourceId')
+  final bool? updateSourceId;
   @JsonKey(name: 'ids', defaultValue: <int>[])
   final List<int>? ids;
   @JsonKey(name: 'unit')
@@ -6152,6 +6155,11 @@ class PatchMetric {
                   other.updateTag,
                   updateTag,
                 )) &&
+            (identical(other.updateSourceId, updateSourceId) ||
+                const DeepCollectionEquality().equals(
+                  other.updateSourceId,
+                  updateSourceId,
+                )) &&
             (identical(other.ids, ids) ||
                 const DeepCollectionEquality().equals(other.ids, ids)) &&
             (identical(other.unit, unit) ||
@@ -6181,6 +6189,7 @@ class PatchMetric {
       const DeepCollectionEquality().hash(updateValue) ^
       const DeepCollectionEquality().hash(updateDate) ^
       const DeepCollectionEquality().hash(updateTag) ^
+      const DeepCollectionEquality().hash(updateSourceId) ^
       const DeepCollectionEquality().hash(ids) ^
       const DeepCollectionEquality().hash(unit) ^
       const DeepCollectionEquality().hash(date) ^
@@ -6197,6 +6206,7 @@ extension $PatchMetricExtension on PatchMetric {
     bool? updateValue,
     bool? updateDate,
     bool? updateTag,
+    bool? updateSourceId,
     List<int>? ids,
     int? unit,
     DateTime? date,
@@ -6210,6 +6220,7 @@ extension $PatchMetricExtension on PatchMetric {
       updateValue: updateValue ?? this.updateValue,
       updateDate: updateDate ?? this.updateDate,
       updateTag: updateTag ?? this.updateTag,
+      updateSourceId: updateSourceId ?? this.updateSourceId,
       ids: ids ?? this.ids,
       unit: unit ?? this.unit,
       date: date ?? this.date,
@@ -6225,6 +6236,7 @@ extension $PatchMetricExtension on PatchMetric {
     Wrapped<bool?>? updateValue,
     Wrapped<bool?>? updateDate,
     Wrapped<bool?>? updateTag,
+    Wrapped<bool?>? updateSourceId,
     Wrapped<List<int>?>? ids,
     Wrapped<int?>? unit,
     Wrapped<DateTime>? date,
@@ -6238,6 +6250,9 @@ extension $PatchMetricExtension on PatchMetric {
       updateValue: (updateValue != null ? updateValue.value : this.updateValue),
       updateDate: (updateDate != null ? updateDate.value : this.updateDate),
       updateTag: (updateTag != null ? updateTag.value : this.updateTag),
+      updateSourceId: (updateSourceId != null
+          ? updateSourceId.value
+          : this.updateSourceId),
       ids: (ids != null ? ids.value : this.ids),
       unit: (unit != null ? unit.value : this.unit),
       date: (date != null ? date.value : this.date),
@@ -7687,7 +7702,7 @@ extension $UnitExtension on Unit {
 @JsonSerializable(explicitToJson: true)
 class UpdateEvent {
   const UpdateEvent({
-    this.id,
+    required this.id,
     required this.type,
     this.description,
     required this.start,
@@ -7695,7 +7710,7 @@ class UpdateEvent {
     this.tag,
     this.notificationTime,
     this.source,
-    this.sourceId,
+    required this.sourceId,
   });
 
   factory UpdateEvent.fromJson(Map<String, dynamic> json) =>
@@ -7705,7 +7720,7 @@ class UpdateEvent {
   Map<String, dynamic> toJson() => _$UpdateEventToJson(this);
 
   @JsonKey(name: 'id')
-  final int? id;
+  final int id;
   @JsonKey(name: 'type')
   final int type;
   @JsonKey(name: 'description')
@@ -7725,7 +7740,7 @@ class UpdateEvent {
   )
   final enums.ImportTypes? source;
   @JsonKey(name: 'sourceId')
-  final String? sourceId;
+  final String sourceId;
   static const fromJsonFactory = _$UpdateEventFromJson;
 
   @override
@@ -7804,7 +7819,7 @@ extension $UpdateEventExtension on UpdateEvent {
   }
 
   UpdateEvent copyWithWrapped({
-    Wrapped<int?>? id,
+    Wrapped<int>? id,
     Wrapped<int>? type,
     Wrapped<String?>? description,
     Wrapped<DateTime>? start,
@@ -7812,7 +7827,7 @@ extension $UpdateEventExtension on UpdateEvent {
     Wrapped<String?>? tag,
     Wrapped<DateTime?>? notificationTime,
     Wrapped<enums.ImportTypes?>? source,
-    Wrapped<String?>? sourceId,
+    Wrapped<String>? sourceId,
   }) {
     return UpdateEvent(
       id: (id != null ? id.value : this.id),
@@ -8181,7 +8196,7 @@ extension $UpdateGroupExtension on UpdateGroup {
 @JsonSerializable(explicitToJson: true)
 class UpdateMetric {
   const UpdateMetric({
-    this.id,
+    required this.id,
     this.unit,
     required this.date,
     required this.value,
@@ -8198,7 +8213,7 @@ class UpdateMetric {
   Map<String, dynamic> toJson() => _$UpdateMetricToJson(this);
 
   @JsonKey(name: 'id')
-  final int? id;
+  final int id;
   @JsonKey(name: 'unit')
   final int? unit;
   @JsonKey(name: 'date')
@@ -8284,7 +8299,7 @@ extension $UpdateMetricExtension on UpdateMetric {
   }
 
   UpdateMetric copyWithWrapped({
-    Wrapped<int?>? id,
+    Wrapped<int>? id,
     Wrapped<int?>? unit,
     Wrapped<DateTime>? date,
     Wrapped<String>? value,
