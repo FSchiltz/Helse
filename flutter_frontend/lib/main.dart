@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/logic/settings/settings_logic.dart';
+import 'package:helse/ui/common/notification.dart';
 import 'package:helse/worker.dart';
 import 'logic/account/authentication_bloc.dart';
 import 'ui/home.dart';
@@ -15,6 +16,7 @@ final navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Dependencies.init();
+  await Notify.init();
   WorkHelper.init();
   Dependencies.logics.authentication.init();
 

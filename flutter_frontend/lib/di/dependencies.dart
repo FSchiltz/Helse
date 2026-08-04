@@ -39,15 +39,16 @@ class Dependencies {
 
   static ThemeHelper theme = ThemeHelper();
 
-  static Future<void> init() async {
-    var account = Account();
+  static Future<void> init({Account? account}) async {
+    if (account == null) {
+      account = Account();
 
-    await account.setup();
+      await account.setup();
+    }
+
     _online = Services.online(account);
     _offline = Services.offline(account);
     _logics = Logics(account);
     _blocs = Blocs(logics);
-
-    await Notify.init();
   }
 }

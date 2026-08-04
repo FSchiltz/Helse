@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/fit/fit_logic.dart';
 import 'package:helse/logic/settings/settings_logic.dart';
+import 'package:helse/services/account.dart';
 import 'package:helse/services/import_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:mocktail/mocktail.dart';
@@ -17,6 +19,10 @@ void main() {
   setUp(() {
     importService = MockImportService();
     settingsLogic = MockSettingsLogic();
+
+    Dependencies.init(account: Account());
+    Dependencies.logics.settings = settingsLogic;
+    Dependencies.services.import = importService;
 
     fitLogic = HealthConnectLogic(settingsLogic);
   });
@@ -50,8 +56,12 @@ void main() {
         ),
         events: List.generate(
           1500,
-          (i) =>
-              CreateEvent(type: 2, start: DateTime.now(), stop: DateTime.now(), sourceId: ''),
+          (i) => CreateEvent(
+            type: 2,
+            start: DateTime.now(),
+            stop: DateTime.now(),
+            sourceId: '',
+          ),
         ),
       ),
     );
