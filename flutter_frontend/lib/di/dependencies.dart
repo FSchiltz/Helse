@@ -3,7 +3,6 @@ import 'package:helse/di/logics.dart';
 import 'package:helse/di/services.dart';
 import 'package:helse/services/account.dart';
 import 'package:health/health.dart';
-import 'package:helse/ui/common/notification.dart';
 import '../logic/theme_helper.dart';
 
 class Dependencies {

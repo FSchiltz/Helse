@@ -46,7 +46,8 @@
             "request": "launch",
             "program": "flutter_frontend/lib/main.dart",
             "args": [
-                "--web-port=8000"
+                "--web-port=8000",
+                "--release"
             ]
         }
     ],

@@ -265,7 +265,7 @@ class LocalMetricService extends LocalService implements MetricService {
   @override
   Future<void> updateMetric(UpdateMetric metric) async {
     await (account.database.metric.update()
-          ..where((x) => x.id.equals(metric.id!)))
+          ..where((x) => x.id.equals(metric.id)))
         .write(
           MetricCompanion(
             date: Value(metric.date),

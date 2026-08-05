@@ -161,6 +161,7 @@ class _LoginState extends State<LoginPage> {
     }
 
     try {
+      Dependencies.blocs.server.setStatus(null);
       var isInit = await Dependencies.logics.authentication.checkUrl(uri);
 
       if (!mounted) {

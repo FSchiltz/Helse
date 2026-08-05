@@ -198,7 +198,7 @@ class LocalEventService extends LocalService implements EventService {
   @override
   Future<void> updateEvent(UpdateEvent event) async {
     await (account.database.event.update()
-          ..where((x) => x.id.equals(event.id!)))
+          ..where((x) => x.id.equals(event.id)))
         .write(
           EventCompanion(
             start: Value(event.start),
