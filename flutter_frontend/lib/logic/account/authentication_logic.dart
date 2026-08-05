@@ -273,6 +273,8 @@ class AuthenticationLogic {
         setNoAuth();
       }
     }
+    
+    listen();
   }
 
   Future<void> useOffline() async {
