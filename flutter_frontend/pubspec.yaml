@@ -61,7 +61,7 @@ dependencies:
   workmanager: ^0.10.7
   simple_icons: ^16.23.0
   flutter_colorpicker: ^1.1.0
-  flutter_local_notifications: ^22.0.1
+  flutter_local_notifications: ^22.3.0
   open_file: ^4.0.0
   drift: ^2.34.3
   drift_flutter: ^0.3.1
