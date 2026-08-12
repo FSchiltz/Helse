@@ -5,12 +5,10 @@ import 'package:helse/services/metric_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class LocalMetricService extends LocalService implements MetricService {
-  LocalMetricService(super.account);
-
   @override
   Future<void> addGroup(CreateGroup group) async {
-    await account.database
-        .into(account.database.group)
+    await database
+        .into(database.group)
         .insert(
           GroupCompanion.insert(
             description: group.description,
@@ -24,8 +22,8 @@ class LocalMetricService extends LocalService implements MetricService {
 
   @override
   Future<int?> addMetrics(CreateMetric metric, {int? person}) async {
-    final newRow = await account.database
-        .into(account.database.metric)
+    final newRow = await database
+        .into(database.metric)
         .insertReturning(
           MetricCompanion.insert(
             date: metric.date,
@@ -43,8 +41,8 @@ class LocalMetricService extends LocalService implements MetricService {
 
   @override
   Future<void> addMetricsType(CreateMetricType metric) async {
-    await account.database
-        .into(account.database.metricType)
+    await database
+        .into(database.metricType)
         .insert(
           MetricTypeCompanion.insert(
             groupId: metric.groupId,
@@ -65,32 +63,32 @@ class LocalMetricService extends LocalService implements MetricService {
 
   @override
   Future<int?> countMetrics(int? person, SearchMetric search) async {
-    var countExp = account.database.metric.id.count();
+    var countExp = database.metric.id.count();
 
-    final query = account.database.selectOnly(account.database.metric)
+    final query = database.selectOnly(database.metric)
       ..addColumns([countExp]);
 
-    query.where(account.database.metric.type.equals(search.type));
-    query.where(account.database.metric.person.equals(person ?? 0));
+    query.where(database.metric.type.equals(search.type));
+    query.where(database.metric.person.equals(person ?? 0));
 
     if (search.from != null) {
       query.where(
-        account.database.metric.date.isBiggerOrEqualValue(search.from!),
+        database.metric.date.isBiggerOrEqualValue(search.from!),
       );
     }
 
     if (search.to != null) {
       query.where(
-        account.database.metric.date.isSmallerOrEqualValue(search.to!),
+        database.metric.date.isSmallerOrEqualValue(search.to!),
       );
     }
 
     if (search.value != null) {
-      query.where(account.database.metric.value.equals(search.value!));
+      query.where(database.metric.value.equals(search.value!));
     }
 
     if (search.filterSource != null) {
-      query.where(account.database.metric.source.equals(search.source!.name));
+      query.where(database.metric.source.equals(search.source!.name));
     }
 
     return await query.map((row) => row.read(countExp)).getSingle();
@@ -98,16 +96,16 @@ class LocalMetricService extends LocalService implements MetricService {
 
   @override
   Future<void> deleteMetric(int id) async {
-    await (account.database.metric.delete()..where((tbl) => tbl.id.equals(id)))
+    await (database.metric.delete()..where((tbl) => tbl.id.equals(id)))
         .go();
   }
 
   @override
   Future<void> deleteMetrics(List<Metric> metrics, {int? person}) async {
-    await account.database.batch((batch) {
+    await database.batch((batch) {
       for (var event in metrics) {
         batch.deleteWhere(
-          account.database.metric,
+          database.metric,
           (tbl) => tbl.person.equals(person ?? 0) & tbl.id.equals(event.id),
         );
       }
@@ -116,14 +114,14 @@ class LocalMetricService extends LocalService implements MetricService {
 
   @override
   Future<void> deleteMetricsGroup(int metric) async {
-    await (account.database.group.delete()
+    await (database.group.delete()
           ..where((tbl) => tbl.id.equals(metric)))
         .go();
   }
 
   @override
   Future<void> deleteMetricsType(int metric) async {
-    await (account.database.metricType.delete()
+    await (database.metricType.delete()
           ..where((tbl) => tbl.id.equals(metric)))
         .go();
   }
@@ -147,7 +145,7 @@ class LocalMetricService extends LocalService implements MetricService {
     DateTime end, {
     int? person,
   }) async {
-    final query = account.database.metric.select()
+    final query = database.metric.select()
       ..where((x) => x.type.equals(type))
       ..where((x) => x.date.isBiggerOrEqualValue(start))
       ..where((x) => x.date.isSmallerOrEqualValue(end));
@@ -160,7 +158,7 @@ class LocalMetricService extends LocalService implements MetricService {
 
   @override
   Future<List<Group>?> metricsGroup() async {
-    final result = await account.database.select(account.database.group).get();
+    final result = await database.select(database.group).get();
     return result
         .map(
           (e) => Group(
@@ -177,11 +175,11 @@ class LocalMetricService extends LocalService implements MetricService {
   @override
   Future<List<MetricType>?> metricsType(bool all, int? group) async {
     final result =
-        await account.database.select(account.database.metricType).join([
+        await database.select(database.metricType).join([
           innerJoin(
-            account.database.unit,
-            account.database.unit.id.equalsExp(
-              account.database.metricType.unit,
+            database.unit,
+            database.unit.id.equalsExp(
+              database.metricType.unit,
             ),
           ),
         ]).get();
@@ -190,8 +188,8 @@ class LocalMetricService extends LocalService implements MetricService {
     final datamap = MetricDataType.values.asNameMap();
     final unitmap = UnitType.values.asNameMap();
     return result.map((j) {
-      final e = j.readTable(account.database.metricType);
-      final u = j.readTable(account.database.unit);
+      final e = j.readTable(database.metricType);
+      final u = j.readTable(database.unit);
 
       return MetricType(
         id: e.id,
@@ -222,7 +220,7 @@ class LocalMetricService extends LocalService implements MetricService {
     int page,
     int pageSize,
   ) async {
-    final query = account.database.metric.select();
+    final query = database.metric.select();
 
     query.where((x) => x.type.equals(search.type));
     query.where((x) => x.person.equals(person ?? 0));
@@ -250,7 +248,7 @@ class LocalMetricService extends LocalService implements MetricService {
 
   @override
   Future<void> updateGroup(UpdateGroup metric) async {
-    await (account.database.group.update()
+    await (database.group.update()
           ..where((x) => x.id.equals(metric.id!)))
         .write(
           GroupCompanion(
@@ -264,8 +262,8 @@ class LocalMetricService extends LocalService implements MetricService {
 
   @override
   Future<void> updateMetric(UpdateMetric metric) async {
-    await (account.database.metric.update()
-          ..where((x) => x.id.equals(metric.id!)))
+    await (database.metric.update()
+          ..where((x) => x.id.equals(metric.id)))
         .write(
           MetricCompanion(
             date: Value(metric.date),
@@ -286,7 +284,7 @@ class LocalMetricService extends LocalService implements MetricService {
 
   @override
   Future<void> updateMetricsType(UpdateMetricType metric) async {
-    await (account.database.metricType.update()
+    await (database.metricType.update()
           ..where((x) => x.id.equals(metric.id)))
         .write(
           MetricTypeCompanion(

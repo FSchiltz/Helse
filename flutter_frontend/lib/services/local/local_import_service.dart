@@ -6,8 +6,6 @@ import 'package:helse/services/local/local_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class LocalImportService extends LocalService implements ImportService {
-  LocalImportService(super.account);
-
   @override
   Future<List<ImportType>?> fileTypes() async {
     return [];
@@ -27,7 +25,7 @@ class LocalImportService extends LocalService implements ImportService {
   Future<ImportsResult?> importData(ImportData file, {int? person}) async {
     for (final metric in file.metrics ?? <CreateMetric>[]) {
       final exists =
-          await (account.database.metric.select()..where(
+          await (database.metric.select()..where(
                 (x) =>
                     x.person.equals(person ?? 0) &
                     x.type.equals(metric.type) &
@@ -45,7 +43,7 @@ class LocalImportService extends LocalService implements ImportService {
 
     for (final event in file.events ?? <CreateEvent>[]) {
       final exists =
-          await (account.database.event.select()..where(
+          await (database.event.select()..where(
                 (x) =>
                     x.person.equals(person ?? 0) &
                     x.source.equals(

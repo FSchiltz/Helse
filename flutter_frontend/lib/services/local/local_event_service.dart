@@ -5,11 +5,9 @@ import 'package:helse/services/local/local_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class LocalEventService extends LocalService implements EventService {
-  LocalEventService(super.account);
-
   @override
   Future<int?> addEvent(CreateEvent event, {int? person}) async {
-    final newRow = await account.database.event.insertReturning(
+    final newRow = await database.event.insertReturning(
       EventCompanion.insert(
         description: Value(event.description),
         end: event.stop,
@@ -29,8 +27,8 @@ class LocalEventService extends LocalService implements EventService {
 
   @override
   Future<void> addEventsType(CreateEventType event) async {
-    await account.database
-        .into(account.database.eventType)
+    await database
+        .into(database.eventType)
         .insert(
           EventTypeCompanion.insert(
             groupId: event.groupId,
@@ -52,30 +50,30 @@ class LocalEventService extends LocalService implements EventService {
 
   @override
   Future<int?> countEvents(int? person, SearchEvent search) async {
-    var countExp = account.database.event.id.count();
+    var countExp = database.event.id.count();
 
-    final query = account.database.selectOnly(account.database.event)
+    final query = database.selectOnly(database.event)
       ..addColumns([countExp]);
 
-    query.where(account.database.event.type.equals(search.type));
-    query.where(account.database.event.person.equals(person ?? 0));
+    query.where(database.event.type.equals(search.type));
+    query.where(database.event.person.equals(person ?? 0));
 
     if (search.from != null) {
       query.where(
-        account.database.event.start.isBiggerOrEqualValue(search.from!),
+        database.event.start.isBiggerOrEqualValue(search.from!),
       );
     }
 
     if (search.to != null) {
-      query.where(account.database.event.end.isSmallerOrEqualValue(search.to!));
+      query.where(database.event.end.isSmallerOrEqualValue(search.to!));
     }
 
     if (search.value != null) {
-      query.where(account.database.event.description.like('${search.value}%'));
+      query.where(database.event.description.like('${search.value}%'));
     }
 
     if (search.filterSource != null) {
-      query.where(account.database.event.source.equals(search.source!.name));
+      query.where(database.event.source.equals(search.source!.name));
     }
 
     return await query.map((row) => row.read(countExp)).getSingle();
@@ -83,17 +81,17 @@ class LocalEventService extends LocalService implements EventService {
 
   @override
   Future<void> deleteEvent(int event) async {
-    await (account.database.event.delete()
+    await (database.event.delete()
           ..where((tbl) => tbl.id.equals(event)))
         .go();
   }
 
   @override
   Future<void> deleteEvents(List<Event> events, {int? person}) async {
-    await account.database.batch((batch) {
+    await database.batch((batch) {
       for (var event in events) {
         batch.deleteWhere(
-          account.database.event,
+          database.event,
           (tbl) => tbl.person.equals(person ?? 0) & tbl.id.equals(event.id),
         );
       }
@@ -102,7 +100,7 @@ class LocalEventService extends LocalService implements EventService {
 
   @override
   Future<void> deleteEventsType(int event) async {
-    await (account.database.eventType.delete()
+    await (database.eventType.delete()
           ..where((tbl) => tbl.id.equals(event)))
         .go();
   }
@@ -114,7 +112,7 @@ class LocalEventService extends LocalService implements EventService {
     DateTime end, {
     int? person,
   }) async {
-    final query = account.database.select(account.database.event)
+    final query = database.select(database.event)
       ..where((x) => x.type.equals(type))
       ..where((x) => x.start.isBiggerOrEqualValue(start))
       ..where((x) => x.end.isSmallerOrEqualValue(end));
@@ -143,8 +141,8 @@ class LocalEventService extends LocalService implements EventService {
 
   @override
   Future<List<EventType>?> eventsType(bool all) async {
-    final result = await account.database
-        .select(account.database.eventType)
+    final result = await database
+        .select(database.eventType)
         .get();
     return result
         .map(
@@ -169,7 +167,7 @@ class LocalEventService extends LocalService implements EventService {
     int page,
     int pageSize,
   ) async {
-    final query = account.database.select(account.database.event);
+    final query = database.select(database.event);
 
     query.where((x) => x.type.equals(search.type));
     query.where((x) => x.person.equals(person ?? 0));
@@ -197,8 +195,8 @@ class LocalEventService extends LocalService implements EventService {
 
   @override
   Future<void> updateEvent(UpdateEvent event) async {
-    await (account.database.event.update()
-          ..where((x) => x.id.equals(event.id!)))
+    await (database.event.update()
+          ..where((x) => x.id.equals(event.id)))
         .write(
           EventCompanion(
             start: Value(event.start),
@@ -220,7 +218,7 @@ class LocalEventService extends LocalService implements EventService {
 
   @override
   Future<void> updateEventsType(UpdateEventType event) async {
-    await (account.database.eventType.update()
+    await (database.eventType.update()
           ..where((x) => x.id.equals(event.id)))
         .write(
           EventTypeCompanion(

@@ -4,15 +4,13 @@ namespace Helse.Api.Data;
 
 internal abstract class BaseContext : IContext
 {
-    private readonly DataConnection db;
-
     protected BaseContext(DataConnection db, SlowQueryLogInterceptor interceptor)
     {
-        this.db = db;
+        Db = db;
         db.AddInterceptor(interceptor);
     }
 
-    protected DataConnection Db => db;
+    protected DataConnection Db { get; }
 
     /// <summary>
     /// <inheritdoc/>

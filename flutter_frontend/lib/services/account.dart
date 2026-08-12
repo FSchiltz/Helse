@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:helse/services/local/database/database.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,15 +18,9 @@ class Account {
     return _storage!;
   }
 
-  Database? _database;
-  Database get database => (_database != null)
-      ? _database!
-      : throw StateError('Invalid database access');
-
   // call this method from iniState() function of mainApp().
   Future<void> setup() async {
     _storage = await _instance;
-    _database = Database();
   }
 
   static const url = "urlPath";

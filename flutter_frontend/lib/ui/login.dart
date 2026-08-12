@@ -161,6 +161,7 @@ class _LoginState extends State<LoginPage> {
     }
 
     try {
+      Dependencies.blocs.server.setStatus(null);
       var isInit = await Dependencies.logics.authentication.checkUrl(uri);
 
       if (!mounted) {
@@ -228,8 +229,7 @@ class _LoginState extends State<LoginPage> {
         );
       }
     }
-
-    Dependencies.logics.authentication.logOut(false);
+    
     _reset();
   }
 
@@ -343,7 +343,11 @@ class _LoginState extends State<LoginPage> {
 
     return oauths
         .map(
-          (o) => SquareButton(locale.loginwith(o.name), () => _submitOauth(o)),
+          (o) => SquareButton(
+            locale.loginwith(o.name),
+            () => _submitOauth(o),
+            height: 55,
+          ),
         )
         .toList();
   }

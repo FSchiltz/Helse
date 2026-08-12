@@ -8,9 +8,6 @@ internal static class UserHelper
 {
     public static async Task<UserId> CreateUserAsync(this IUserContext users, PersonCreation newUser, long userId)
     {
-        // Open a transaction
-        await using var transaction = await users.BeginTransactionAsync();
-
         // create the person
         var id = await users.InsertPerson(newUser);
         long? newUserId = null;
@@ -35,8 +32,6 @@ internal static class UserHelper
             await users.AddRight(userId, id, RightType.Edit);
             await users.AddRight(userId, id, RightType.View);
         }
-
-        await transaction.CommitAsync();
 
         return new(id, newUserId);
     }

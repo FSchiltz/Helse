@@ -3,8 +3,6 @@ import 'package:helse/services/login_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class LocalLoginService extends LocalService implements LoginService {
-  LocalLoginService(super.account);
-
   @override
   Future<ConnectionResponse?> login(Connection connection) async {
     // TODO sync the correct user type from the server to allow for full sync

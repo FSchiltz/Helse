@@ -65,6 +65,7 @@ class App extends StatelessWidget {
             }
           },
         ),
+        onGenerateRoute: (RouteSettings routeSettings) => SplashPage.route(),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
       ),

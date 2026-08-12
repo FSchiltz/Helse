@@ -5,8 +5,6 @@ import 'package:helse/services/settings_services.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class LocalSettingService extends LocalService implements SettingService {
-  LocalSettingService(super.account);
-
   @override
   Future<PatientsSettings> getPatientsSettings() async {
     var settings = Dependencies.logics.patientsSettings.patientsSettings();
