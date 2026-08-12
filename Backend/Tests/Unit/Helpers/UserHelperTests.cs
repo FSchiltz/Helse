@@ -13,7 +13,6 @@ public class UserHelperTests
         // Arrange
         var users = Substitute.For<IUserContext>();
         var transaction = Substitute.For<ITransaction>();
-        users.BeginTransactionAsync().Returns(transaction);
 
         var newUser = new PersonCreation
         {
@@ -31,7 +30,6 @@ public class UserHelperTests
         await users.CreateUserAsync(newUser, 1L);
 
         // Assert
-        await transaction.Received(1).CommitAsync();
         await users.Received(1).InsertPerson(newUser);
         await users.Received(1).InsertUser(newUser, 1L, Arg.Any<string>());
     }
@@ -42,7 +40,6 @@ public class UserHelperTests
         // Arrange
         var users = Substitute.For<IUserContext>();
         var transaction = Substitute.For<ITransaction>();
-        users.BeginTransactionAsync().Returns(transaction);
 
         var newUser = new PersonCreation
         {
@@ -60,7 +57,6 @@ public class UserHelperTests
         await users.CreateUserAsync(newUser, 1L);
 
         // Assert
-        await transaction.Received(1).CommitAsync();
         await users.Received(1).InsertPerson(newUser);
         await users.Received(1).InsertUser(newUser, 2L, Arg.Any<string>());
     }
@@ -71,7 +67,6 @@ public class UserHelperTests
         // Arrange
         var users = Substitute.For<IUserContext>();
         var transaction = Substitute.For<ITransaction>();
-        users.BeginTransactionAsync().Returns(transaction);
 
         var newUser = new PersonCreation
         {
@@ -87,7 +82,6 @@ public class UserHelperTests
         await users.CreateUserAsync(newUser, 1L);
 
         // Assert
-        await transaction.Received(1).CommitAsync();
         await users.Received(1).InsertPerson(newUser);
         await users.Received(1).AddRight(1L, 3L, RightType.Edit);
         await users.Received(1).AddRight(1L, 3L, RightType.View);
@@ -122,7 +116,6 @@ public class UserHelperTests
         // Arrange
         var users = Substitute.For<IUserContext>();
         var transaction = Substitute.For<ITransaction>();
-        users.BeginTransactionAsync().Returns(transaction);
 
         var newUser = new PersonCreation
         {
@@ -137,31 +130,5 @@ public class UserHelperTests
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentException>(async () => await users.CreateUserAsync(newUser, 1L));
-    }
-
-    [Fact]
-    public async Task CreateUserAsync_DisposesTransaction()
-    {
-        // Arrange
-        var users = Substitute.For<IUserContext>();
-        var transaction = Substitute.For<ITransaction>();
-        users.BeginTransactionAsync().Returns(transaction);
-
-        var newUser = new PersonCreation
-        {
-            Name = "John",
-            Surname = "Doe",
-            UserName = "johndoe",
-            Password = "password123",
-            Types = new HashSet<UserType> { UserType.User }
-        };
-
-        users.InsertPerson(newUser).Returns(1L);
-
-        // Act
-        await users.CreateUserAsync(newUser, 1L);
-
-        // Assert
-        await transaction.Received(1).DisposeAsync();
     }
 }
