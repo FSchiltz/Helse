@@ -1,7 +1,6 @@
-import 'package:helse/services/account.dart';
+import 'package:helse/services/local/database/database.dart';
 
 class LocalService {
-  final Account account;
-
-  LocalService(this.account);  
+  static Database? _database;
+  Database get database => _database ??= Database();
 }

@@ -64,17 +64,17 @@ class Services {
     );
   }
 
-  factory Services.offline(Account account) {
+  factory Services.offline() {
     return Services.build(
-      LocalMetricService(account),
-      LocalEventService(account),
-      LocalUserService(account),
-      LocalAdminService(account),
-      LocalImportService(account),
-      LocalSettingService(account),
-      LocalCommonService(account),
-      LocalFileService(account),
-      LocalLoginService(account),
+      LocalMetricService(),
+      LocalEventService(),
+      LocalUserService(),
+      LocalAdminService(),
+      LocalImportService(),
+      LocalSettingService(),
+      LocalCommonService(),
+      LocalFileService(),
+      LocalLoginService(),
     );
   }
 }

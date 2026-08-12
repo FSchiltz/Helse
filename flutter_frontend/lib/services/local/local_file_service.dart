@@ -11,7 +11,6 @@ import 'package:helse/ui/common/inputs/files/file_list_widget.dart';
 import 'package:path_provider/path_provider.dart';
 
 class LocalFileService extends LocalService implements FileService {
-  LocalFileService(super.account);
   static String path = 'files';
 
   @override
@@ -28,14 +27,14 @@ class LocalFileService extends LocalService implements FileService {
   @override
   Future<List<File>> getEventFiles(int id, int? person) async {
     final result =
-        await (account.database.file.select()
+        await (database.file.select()
               ..join([
                 innerJoin(
-                  account.database.eventFiles,
-                  account.database.eventFiles.id.equalsExp(
-                        account.database.file.id,
+                  database.eventFiles,
+                  database.eventFiles.id.equalsExp(
+                        database.file.id,
                       ) &
-                      account.database.eventFiles.event.equals(id),
+                      database.eventFiles.event.equals(id),
                   useColumns: false,
                 ),
               ])
@@ -61,7 +60,7 @@ class LocalFileService extends LocalService implements FileService {
   @override
   Future<PaginatedOfFile?> getFiles(int? person) async {
     final result =
-        await (account.database.file.select()
+        await (database.file.select()
               ..where((x) => x.person.equals(person ?? 0)))
             .get();
 
@@ -87,14 +86,14 @@ class LocalFileService extends LocalService implements FileService {
   @override
   Future<List<File>> getMetricFiles(int id, int? person) async {
     final result =
-        await (account.database.file.select()
+        await (database.file.select()
               ..join([
                 innerJoin(
-                  account.database.metricFiles,
-                  account.database.metricFiles.id.equalsExp(
-                        account.database.file.id,
+                  database.metricFiles,
+                  database.metricFiles.id.equalsExp(
+                        database.file.id,
                       ) &
-                      account.database.metricFiles.metric.equals(id),
+                      database.metricFiles.metric.equals(id),
                   useColumns: false,
                 ),
               ])
@@ -119,7 +118,7 @@ class LocalFileService extends LocalService implements FileService {
 
   @override
   Future<void> linkEvent(int fileId, int eventId, int? person) async {
-    await account.database.eventFiles.insertOne(
+    await database.eventFiles.insertOne(
       db.EventFilesCompanion.insert(
         created: DateTime.now().toUtc(),
         file: fileId,
@@ -130,7 +129,7 @@ class LocalFileService extends LocalService implements FileService {
 
   @override
   Future<void> linkMetric(int fileId, int metricId, int? person) async {
-    await account.database.metricFiles.insertOne(
+    await database.metricFiles.insertOne(
       db.MetricFilesCompanion.insert(
         created: DateTime.now().toUtc(),
         file: fileId,
@@ -141,7 +140,7 @@ class LocalFileService extends LocalService implements FileService {
 
   @override
   Future<int?> postFile(UIFile file, int? person) async {
-    final data = await (account.database.file.insertReturningOrNull(
+    final data = await (database.file.insertReturningOrNull(
       db.FileCompanion.insert(
         created: DateTime.now().toUtc(),
         type: FileType.none.name,
@@ -166,14 +165,14 @@ class LocalFileService extends LocalService implements FileService {
 
   @override
   Future<void> unlinkEvent(int fileId, int eventId, int? person) async {
-    await account.database.eventFiles.deleteWhere(
+    await database.eventFiles.deleteWhere(
       (x) => x.file.equals(fileId) & x.event.equals(eventId),
     );
   }
 
   @override
   Future<void> unlinkMetric(int fileId, int metricId, int? person) async {
-    await account.database.metricFiles.deleteWhere(
+    await database.metricFiles.deleteWhere(
       (x) => x.file.equals(fileId) & x.metric.equals(metricId),
     );
   }

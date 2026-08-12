@@ -229,8 +229,7 @@ class _LoginState extends State<LoginPage> {
         );
       }
     }
-
-    Dependencies.logics.authentication.logOut(false);
+    
     _reset();
   }
 
@@ -344,7 +343,11 @@ class _LoginState extends State<LoginPage> {
 
     return oauths
         .map(
-          (o) => SquareButton(locale.loginwith(o.name), () => _submitOauth(o)),
+          (o) => SquareButton(
+            locale.loginwith(o.name),
+            () => _submitOauth(o),
+            height: 55,
+          ),
         )
         .toList();
   }

@@ -5,12 +5,10 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/services/user_service.dart';
 
 class LocalUserService extends LocalService implements UserService {
-  LocalUserService(super.account);
-
   @override
   Future<UserId?> addPerson(PersonCreation person) async {
-    final newRow = await account.database
-        .into(account.database.person)
+    final newRow = await database
+        .into(database.person)
         .insertReturning(
           PersonCompanion.insert(
             identifier: person.identifier ?? '',
@@ -32,8 +30,8 @@ class LocalUserService extends LocalService implements UserService {
 
   @override
   Future<void> deletePerson(int id) async {
-    await (account.database.delete(
-      account.database.person,
+    await (database.delete(
+      database.person,
     )..where((x) => x.id.equals(id))).go();
   }
 
@@ -47,8 +45,8 @@ class LocalUserService extends LocalService implements UserService {
 
   @override
   Future<List<Person>?> patients() async {
-    final result = await (account.database.select(
-      account.database.person,
+    final result = await (database.select(
+      database.person,
     )..where((e) => e.types.contains(UserType.patient.name))).get();
 
     return result.map(toModel).toList();
@@ -56,7 +54,7 @@ class LocalUserService extends LocalService implements UserService {
 
   @override
   Future<List<Person>?> persons() async {
-    final result = await account.database.select(account.database.person).get();
+    final result = await database.select(database.person).get();
 
     return result.map(toModel).toList();
   }
@@ -70,8 +68,8 @@ class LocalUserService extends LocalService implements UserService {
 
   @override
   Future<void> updatePatient(UpdatePatient update) async {
-    await account.database
-        .update(account.database.person)
+    await database
+        .update(database.person)
         .replace(
           PersonCompanion(
             id: Value(update.id!),
@@ -86,8 +84,8 @@ class LocalUserService extends LocalService implements UserService {
 
   @override
   Future<void> updatePerson(UpdatePerson update) async {
-    await account.database
-        .update(account.database.person)
+    await database
+        .update(database.person)
         .write(
           PersonCompanion(
             id: Value(update.id!),
