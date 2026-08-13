@@ -173,7 +173,7 @@ class LocalImportService extends LocalService implements ImportService {
       }
 
       var text =
-          "Synced $addedMetric/${input.file.metrics?.length} metrics and $addedEvent/${input.file.events?.length} events";
+          "Metrics: $addedMetric added - $skippedMetric skipped of ${input.file.metrics?.length} \n Events: $addedEvent added - $skippedEvent skipped of ${input.file.events?.length}";
       log(text);
 
       initial = initial.copyWith(

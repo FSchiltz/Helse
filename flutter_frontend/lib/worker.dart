@@ -45,6 +45,10 @@ class WorkHelper {
     try {
       log("Background sync started");
       await Dependencies.init();
+      if (await Dependencies.logics.authentication.isOffline()) {
+        Dependencies.blocs.server.setOffline();
+      }
+      
       if (Dependencies.logics.health.isEnabled()) {
         var settings = Dependencies.logics.settings.getHealth();
         if (settings.background) {

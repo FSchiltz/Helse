@@ -112,16 +112,12 @@ class LocalEventService extends LocalService implements EventService {
     DateTime end, {
     int? person,
   }) async {
-    final query = database.select(database.event)
+    final query = database.event.select()
       ..where((x) => x.type.equals(type))
-      ..where((x) => x.start.isBiggerOrEqualValue(start))
-      ..where((x) => x.end.isSmallerOrEqualValue(end));
-
-    if (person == null) {
-      query.where((x) => x.person.isNull());
-    } else {
-      query.where((x) => x.person.equals(person));
-    }
+      ..where((x) => x.end.isBiggerOrEqualValue(start))
+      ..where((x) => x.start.isSmallerOrEqualValue(end))
+      ..where((x) => x.person.equals(person ?? 0));
+    
 
     final result = await query.get();
     return result.map(_mapEvent).toList();
