@@ -1,6 +1,4 @@
 import 'dart:developer';
-import 'dart:math' as math show min, max;
-
 import 'package:health/health.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/event.dart';
@@ -122,70 +120,22 @@ class HealthConnectLogic {
     );
 
     // import to the server
-    ImportsResult? result;
-    if (converted.metrics?.isNotEmpty == true ||
-        converted.events?.isNotEmpty == true) {
-      result = await importInChunks(converted);
+    final result = await Dependencies.services.import.importData(converted);
+    if (result != null) {
+      Dependencies.logics.import.add(result.id);
     }
 
     settingsLogic.setFitRun(now.toString());
-    var metrics = result?.metrics.imported ?? 0;
-    var events = result?.events.imported ?? 0;
 
-    var text =
-        "Sync sucessful with $metrics metrics and $events events since $start";
-    log(text);
-    if (firstRun || metrics > 0 || events > 0) {
+    if (firstRun) {
       firstRun = false;
-      settingsLogic.setFitStatus(text);
     }
 
-    return Execution(
-      DateTime.now(),
-      (metrics > 0 || events > 0)
-          ? SubmissionStatus.success
-          : SubmissionStatus.skipped,
-      status: text,
-    );
+    return Execution(DateTime.now(), SubmissionStatus.initial);
   }
 
   bool isEnabled() {
     final settings = settingsLogic.getHealth();
     return settings.syncHealth;
-  }
-
-  Future<ImportsResult?> importInChunks(
-    ImportData data, {
-    int chunkSize = 1000,
-  }) async {
-    int importedMetrics = 0;
-    int importedEvents = 0;
-
-    final metrics = data.metrics ?? [];
-    final events = data.events ?? [];
-
-    final maxLength = math.max(metrics.length, events.length);
-
-    for (var start = 0; start < maxLength; start += chunkSize) {
-      final metricChunk = start < metrics.length
-          ? metrics.sublist(start, math.min(start + chunkSize, metrics.length))
-          : <CreateMetric>[];
-
-      final eventChunk = start < events.length
-          ? events.sublist(start, math.min(start + chunkSize, events.length))
-          : <CreateEvent>[];
-
-      final result = await Dependencies.services.import.importData(
-        ImportData(metrics: metricChunk, events: eventChunk),
-      );
-
-      importedMetrics += result?.metrics.imported ?? 0;
-      importedEvents += result?.events.imported ?? 0;
-    }
-
-    return ImportsResult(
-      metrics: ImportResult(imported: importedMetrics, skipped: 0, failed: 0),
-      events: ImportResult(imported: importedEvents, skipped: 0, failed: 0),
-    );
   }
 }

@@ -21,12 +21,13 @@ internal class ImporterService(IServiceProvider serviceProvider, IImportQueue qu
                 using var scope = serviceProvider.CreateScope();
                 var eventDb = scope.ServiceProvider.GetRequiredService<IEventContext>();
                 var metricDb = scope.ServiceProvider.GetRequiredService<IMetricContext>();
-                using FileImporter importer = job.Type switch
+                using Importer importer = job.Type switch
                 {
-                    ImportTypes.Clue => new ClueImporter(job.Input, eventDb, metricDb, job.UserId, job.Patient),
-                    ImportTypes.RedmiWatch => new RedmiWatchImporter(job.Input, eventDb, metricDb, job.UserId, job.Patient),
-                    ImportTypes.GoogleHealthConnect => new GoogleImporter(job.Input, eventDb, metricDb, job.UserId, job.Patient),
-                    ImportTypes.BabyTracker => new BabyTrackerImporter(job.Input, eventDb, metricDb, job.UserId, job.Patient),
+                    ImportTypes.Clue => new ClueImporter(job.Input.FromFile, eventDb, metricDb, job.UserId, job.Patient),
+                    ImportTypes.RedmiWatch => new RedmiWatchImporter(job.Input.FromFile, eventDb, metricDb, job.UserId, job.Patient),
+                    ImportTypes.GoogleHealthConnect => new GoogleImporter(job.Input.FromFile, eventDb, metricDb, job.UserId, job.Patient),
+                    ImportTypes.BabyTracker => new BabyTrackerImporter(job.Input.FromFile, eventDb, metricDb, job.UserId, job.Patient),
+                    ImportTypes.Raw => new ListImporter(job.Input.FromData, eventDb, metricDb, job.UserId, job.Patient),
                     _ => throw new NotSupportedException("Invalid file type"),
                 };
                 queue.Start(job.Id);
@@ -48,5 +49,12 @@ internal class ImporterService(IServiceProvider serviceProvider, IImportQueue qu
         }
     }
 
-    internal record Job(Guid Id, Stream Input, ImportTypes Type, long UserId, long Patient);
+    internal record Job(Guid Id, JobInput Input, ImportTypes Type, long UserId, long Patient);
+
+    internal record JobInput(Stream? File, ImportData? Data)
+    {
+        public Stream FromFile => File ?? throw new InvalidDataException();
+
+        public ImportData FromData => Data ?? throw new InvalidDataException();
+    }
 }

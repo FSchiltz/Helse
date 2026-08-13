@@ -32,9 +32,9 @@ class ApiImportService extends ApiService implements ImportService {
   }
 
   @override
-  Future<ImportsResult?> importData(ImportData file) async {
+  Future<JobId?> importData(ImportData file) async {
     final api = await getService();
-    return await call(() => api.apiImportResultsPost(body: file));
+    return await call(() => api.apiImportListPost(body: file));
   }
 
   @override

@@ -41,8 +41,8 @@ internal static class ImportLogic
             .Produces((int)HttpStatusCode.NotFound)
             .Produces((int)HttpStatusCode.Unauthorized);
 
-        import.MapPost("/results", PostListAsync)
-            .Produces<ImportsResult>((int)HttpStatusCode.OK)
+        import.MapPost("/list", PostListAsync)
+            .Produces<JobId>((int)HttpStatusCode.OK)
             .Produces((int)HttpStatusCode.Unauthorized);
 
         return api;
@@ -119,13 +119,13 @@ internal static class ImportLogic
         ms.Position = 0;
         var fileType = (ImportTypes)type;
 
-        queue.Enqueue(new ImporterService.Job(id, ms, fileType, user.Id, person), $"Import from {fileType}{(patient is not null ? $" for {patient}" : string.Empty)}");
+        queue.Enqueue(new ImporterService.Job(id, new ImporterService.JobInput(ms, null), fileType, user.Id, person), $"Import from {fileType}{(patient is not null ? $" for {patient}" : string.Empty)}");
 
         // return the jobid
         return TypedResults.Created(default(string), new JobId(id));
     }
 
-    public static async Task<IResult> PostListAsync([FromBody] ImportData file, [FromQuery] long? patient, IUserContext users, IMetricContext metricDb, IEventContext eventDb, HttpContext context)
+    public static async Task<IResult> PostListAsync([FromBody] ImportData file, [FromQuery] long? patient, IUserContext users, IMetricContext metricDb, IEventContext eventDb, IImportQueue queue, HttpContext context)
     {
         var (error, user) = await users.GetUser(context.User);
         if (error is not null)
@@ -146,9 +146,13 @@ internal static class ImportLogic
         }
 
         Importer importer = new ListImporter(file, eventDb, metricDb, user.Id, person);
-        var results = await importer.Import(new LocalQueue(), Guid.NewGuid());
 
-        // TODO return a asyncenumerable to stream the progress
-        return TypedResults.Ok(results);
+        // generate a task id
+        var id = Guid.NewGuid();
+
+        queue.Enqueue(new ImporterService.Job(id, new ImporterService.JobInput(null, file), ImportTypes.Raw, user.Id, person), $"Import raw {(patient is not null ? $" for {patient}" : string.Empty)}");
+
+        // return the jobid
+        return TypedResults.Created(default(string), new JobId(id));
     }
 }

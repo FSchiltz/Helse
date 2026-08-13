@@ -8,4 +8,6 @@ public class ImportData
     public List<CreateMetric> Metrics { get; set; } = [];
 
     public List<CreateEvent> Events { get; set; } = [];
+
+    public required ImportTypes Source {get;set;}
 }

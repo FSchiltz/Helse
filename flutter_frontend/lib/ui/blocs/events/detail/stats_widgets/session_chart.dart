@@ -92,7 +92,6 @@ class SessionChart extends StatelessWidget {
             color: Dependencies.theme.stateColor(
               entry.key,
               StateType.eventValue,
-              context,
             ),
             value: entry.value.toDouble(),
             title: entry.key,
@@ -114,7 +113,6 @@ class SessionChart extends StatelessWidget {
           color: Dependencies.theme.stateColor(
             "other",
             StateType.eventValue,
-            context,
           ),
           value: otherValue.toDouble(),
           title: "other",

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/logic/fit/fit_helper.dart';
 import 'package:helse/ui/common/progress_icon_button.dart';
 import 'package:helse/ui/blocs/imports/server_job_dialog.dart';
 import 'package:simple_icons/simple_icons.dart';
@@ -15,7 +14,6 @@ import 'blocs/imports/file_import.dart';
 import 'common/notification.dart';
 import 'dashboard.dart';
 import 'local_settings.dart';
-import 'task_status_dialog.dart';
 
 class DataModel {
   final String label;
@@ -112,20 +110,6 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ),
-              if (FitHelper.isSupported())
-                BlocProvider<TaskBloc>.value(
-                  value: Dependencies.blocs.fit,
-                  child: BlocBuilder<TaskBloc, Execution>(
-                    builder: (context, state) => ProgressIconButton(
-                      state: state.state,
-                      progress: state.progress,
-                      onOpen: () => showDialog<void>(
-                        context: context,
-                        builder: (context) => _showSynchroRuns(),
-                      ),
-                    ),
-                  ),
-                ),
               PopupMenuButton(
                 icon: Icon(
                   Icons.menu_sharp,
@@ -220,10 +204,5 @@ class _HomeState extends State<Home> {
     for (var job in existingJobs) {
       Dependencies.logics.import.jobs[job.id] = job.result;
     }
-  }
-
-  Widget _showSynchroRuns() {
-    var tasks = Dependencies.blocs.jobs.executions;
-    return TaskStatusDialog(tasks, Translation.of(context).syncHistory);
   }
 }

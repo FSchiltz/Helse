@@ -185,7 +185,7 @@ class FitHelper {
         events.add(event);
       }
     }
-    return ImportData(metrics: metrics, events: events);
+    return ImportData(metrics: metrics, events: events, source: ImportTypes.googlehealthconnect);
   }
 
   static String? _convertValue(HealthValue value) {

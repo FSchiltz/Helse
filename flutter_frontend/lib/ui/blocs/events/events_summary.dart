@@ -123,7 +123,6 @@ class EventTimeline extends StatelessWidget {
                 color: Dependencies.theme.stateColor(
                   entry.key,
                   StateType.eventValue,
-                  context,
                 ), 
               ),
               width: 12 * widthCoeff,

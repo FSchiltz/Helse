@@ -27,4 +27,7 @@ public enum ImportTypes
 
     [Description("Data from an .abt file from the Baby Tracker application")]
     BabyTracker,
+
+    [Description("List of metric and events directly")]
+    Raw,
 }

@@ -75,7 +75,9 @@ enum ImportTypes {
   @JsonValue('Clue')
   clue('Clue'),
   @JsonValue('BabyTracker')
-  babytracker('BabyTracker');
+  babytracker('BabyTracker'),
+  @JsonValue('Raw')
+  raw('Raw');
 
   final String? value;
 
