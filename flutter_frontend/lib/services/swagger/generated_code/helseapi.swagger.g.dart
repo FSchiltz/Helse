@@ -385,37 +385,14 @@ ImportData _$ImportDataFromJson(Map<String, dynamic> json) => ImportData(
           ?.map((e) => CreateEvent.fromJson(e as Map<String, dynamic>))
           .toList() ??
       [],
+  source: importTypesFromJson(json['source']),
 );
 
 Map<String, dynamic> _$ImportDataToJson(ImportData instance) =>
     <String, dynamic>{
       'metrics': instance.metrics?.map((e) => e.toJson()).toList(),
       'events': instance.events?.map((e) => e.toJson()).toList(),
-    };
-
-ImportResult _$ImportResultFromJson(Map<String, dynamic> json) => ImportResult(
-  imported: (json['imported'] as num).toInt(),
-  skipped: (json['skipped'] as num).toInt(),
-  failed: (json['failed'] as num).toInt(),
-);
-
-Map<String, dynamic> _$ImportResultToJson(ImportResult instance) =>
-    <String, dynamic>{
-      'imported': instance.imported,
-      'skipped': instance.skipped,
-      'failed': instance.failed,
-    };
-
-ImportsResult _$ImportsResultFromJson(Map<String, dynamic> json) =>
-    ImportsResult(
-      metrics: ImportResult.fromJson(json['metrics'] as Map<String, dynamic>),
-      events: ImportResult.fromJson(json['events'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$ImportsResultToJson(ImportsResult instance) =>
-    <String, dynamic>{
-      'metrics': instance.metrics.toJson(),
-      'events': instance.events.toJson(),
+      'source': importTypesToJson(instance.source),
     };
 
 ImportType _$ImportTypeFromJson(Map<String, dynamic> json) => ImportType(

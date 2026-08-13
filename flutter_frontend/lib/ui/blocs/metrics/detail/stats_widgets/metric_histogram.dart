@@ -16,7 +16,6 @@ class MetricHistogram extends StatelessWidget {
     var color = Dependencies.theme.stateColor(
       type.id.toString(),
       StateType.metric,
-      context,
     );
     final Map<int, double> steps = {};
     final double step = (stats.max - stats.min) / 100;

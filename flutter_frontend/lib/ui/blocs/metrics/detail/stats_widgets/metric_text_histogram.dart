@@ -17,7 +17,6 @@ class MetricTextHistogram extends StatelessWidget {
     var color = Dependencies.theme.stateColor(
       type.id.toString(),
       StateType.metric,
-      context,
     );
 
     final List<BarChartGroupData> bars = [];

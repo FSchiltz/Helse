@@ -82,7 +82,6 @@ class _MetricGraphState extends MetricDetailsState<MetricNumberDisplay> {
       var color = Dependencies.theme.stateColor(
         MetricHelper.getStateKey(widget.type, i),
         StateType.metric,
-        context,
       );
       if (widget.settings == GraphKind.line) {
         marks.add(

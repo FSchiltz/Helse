@@ -11,8 +11,16 @@ namespace Helse.Api.Logic.Import;
 /// </summary>
 /// <param name="user"></param>
 /// <param name="patient"></param>
-internal abstract class Importer(IEventContext eventDb, IMetricContext metricDb, long user, long patient)
+internal abstract class Importer(IEventContext eventDb, IMetricContext metricDb, long user, long patient) : IDisposable
 {
+    protected abstract void Dispose(bool disposing);
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
     public abstract Task<ImportsResult> Import(IImportQueue queue, Guid id);
 
     protected async Task<bool> ImportEvent(CreateEvent e)

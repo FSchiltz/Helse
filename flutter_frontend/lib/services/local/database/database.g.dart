@@ -7120,6 +7120,14 @@ abstract class _$Database extends GeneratedDatabase {
   late final $FileTable file = $FileTable(this);
   late final $MetricFilesTable metricFiles = $MetricFilesTable(this);
   late final $EventFilesTable eventFiles = $EventFilesTable(this);
+  late final Index importMetric = Index(
+    'import_metric',
+    'CREATE INDEX import_metric ON metric (id, person, source_id, source, type)',
+  );
+  late final Index importEvent = Index(
+    'import_event',
+    'CREATE INDEX import_event ON event (id, person, source_id, source, type)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -7136,6 +7144,8 @@ abstract class _$Database extends GeneratedDatabase {
     file,
     metricFiles,
     eventFiles,
+    importMetric,
+    importEvent,
   ];
 }
 

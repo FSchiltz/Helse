@@ -40,7 +40,6 @@ class EventInformation extends StatelessWidget {
     var color = Dependencies.theme.stateColor(
       type.id.toString(),
       StateType.events,
-      context,
     );
     return Wrap(
       runSpacing: 1,

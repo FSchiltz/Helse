@@ -31,7 +31,6 @@ class WidgetGroups extends StatelessWidget {
     var color = Dependencies.theme.stateColor(
       "${group.id}",
       StateType.metricGroup,
-      context,
     );
 
     return Container(

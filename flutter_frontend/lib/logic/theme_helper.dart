@@ -40,7 +40,7 @@ class ThemeHelper {
     );
   }
 
-  Color stateColor(String state, StateType type, BuildContext context) {
+  Color stateColor(String state, StateType type) {
     var group = colors[type];
     group ??= colors[type] = {};
 
@@ -52,15 +52,7 @@ class ThemeHelper {
       _save();
     }
 
-    if (isDark(context)) return color;
-
-    final double coeff = 1;
-    return Color.from(
-      red: (color.r * coeff).clamp(0, 1),
-      green: (color.g * coeff).clamp(0, 1),
-      blue: (color.b * coeff).clamp(0, 1),
-      alpha: 1,
-    );
+    return color;
   }
 
   void loadColors(Map<StateType, Map<String, Color>> map) {

@@ -2181,7 +2181,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<ImportsResult>> _apiImportResultsPost({
+  Future<Response<JobId>> _apiImportListPost({
     int? patient,
     required ImportData? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -2195,7 +2195,7 @@ final class _$Helseapi extends Helseapi {
       deprecated: false,
     ),
   }) {
-    final Uri $url = Uri.parse('/api/import/results');
+    final Uri $url = Uri.parse('/api/import/list');
     final Map<String, dynamic> $params = <String, dynamic>{'patient': patient};
     final $body = body;
     final Request $request = Request(
@@ -2206,6 +2206,6 @@ final class _$Helseapi extends Helseapi {
       parameters: $params,
       tag: swaggerMetaData,
     );
-    return client.send<ImportsResult, ImportsResult>($request);
+    return client.send<JobId, JobId>($request);
   }
 }

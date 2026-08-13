@@ -2948,7 +2948,7 @@
         }
       }
     },
-    "/api/import/results": {
+    "/api/import/list": {
       "post": {
         "tags": [
           "ImportLogic"
@@ -2983,7 +2983,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ImportsResult"
+                  "$ref": "#/components/schemas/JobId"
                 }
               }
             }
@@ -3731,6 +3731,9 @@
         "format": "binary"
       },
       "ImportData": {
+        "required": [
+          "source"
+        ],
         "type": "object",
         "properties": {
           "metrics": {
@@ -3744,55 +3747,9 @@
             "items": {
               "$ref": "#/components/schemas/CreateEvent"
             }
-          }
-        }
-      },
-      "ImportResult": {
-        "required": [
-          "imported",
-          "skipped",
-          "failed"
-        ],
-        "type": "object",
-        "properties": {
-          "imported": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int64"
           },
-          "skipped": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int64"
-          },
-          "failed": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int64"
-          }
-        }
-      },
-      "ImportsResult": {
-        "required": [
-          "metrics",
-          "events"
-        ],
-        "type": "object",
-        "properties": {
-          "metrics": {
-            "$ref": "#/components/schemas/ImportResult"
-          },
-          "events": {
-            "$ref": "#/components/schemas/ImportResult"
+          "source": {
+            "$ref": "#/components/schemas/ImportTypes"
           }
         }
       },
@@ -3825,7 +3782,8 @@
           "RedmiWatch",
           "GoogleHealthConnect",
           "Clue",
-          "BabyTracker"
+          "BabyTracker",
+          "Raw"
         ]
       },
       "InterfaceTheme": {

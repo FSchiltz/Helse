@@ -68,4 +68,8 @@ internal class ListImporter(ImportData file, IEventContext eventDb, IMetricConte
         queue.Stop(id);
         return new(metrics, events);
     }
+
+    protected override void Dispose(bool disposing)
+    {
+    }
 }

@@ -161,7 +161,6 @@ class MetricHelper {
     var color = Dependencies.theme.stateColor(
       getStateKey(type, 0),
       StateType.metric,
-      context,
     );
 
     List<Widget> widgets = [];

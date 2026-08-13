@@ -143,7 +143,6 @@ class _CalendarViewState<T> extends State<CalendarView<T>> {
                         color: Dependencies.theme.stateColor(
                           item.name,
                           StateType.person,
-                          context,
                         ),
                         width: 4,
                       ),
@@ -154,7 +153,9 @@ class _CalendarViewState<T> extends State<CalendarView<T>> {
                     children: [
                       if (item.name.isNotEmpty)
                         Padding(
-                          padding: const EdgeInsets.only(bottom: UIConstants.textPad),
+                          padding: const EdgeInsets.only(
+                            bottom: UIConstants.textPad,
+                          ),
                           child: Text(item.name, style: theme.headlineSmall),
                         ),
                       ListView.builder(

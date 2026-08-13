@@ -12,7 +12,7 @@ abstract interface class ImportService {
 
   Future<JobResult?> status(String id);
 
-  Future<ImportsResult?> importData(ImportData file);
+  Future<JobId?> importData(ImportData file);
 
   Future<List<JobResultInfo>> getJobs();
 }

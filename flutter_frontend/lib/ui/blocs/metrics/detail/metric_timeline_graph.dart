@@ -28,7 +28,6 @@ class MetricTimelineGraph extends StatelessWidget {
     final color = Dependencies.theme.stateColor(
       type.id.toString(),
       StateType.metric,
-      context,
     );
 
     return TimelineGraph(

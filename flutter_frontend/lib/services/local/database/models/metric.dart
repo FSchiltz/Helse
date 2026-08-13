@@ -4,6 +4,7 @@ import 'package:helse/services/local/database/models/metric_type.dart';
 import 'package:helse/services/local/database/models/person.dart';
 import 'package:helse/services/local/database/models/unit.dart';
 
+@TableIndex(name: 'import_metric', columns: {#id, #person, #sourceId, #source, #type})
 class Metric extends HelseTable {
   // TODO start the id at 100
   TextColumn get value => text()();

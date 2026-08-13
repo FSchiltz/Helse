@@ -83,7 +83,6 @@ class _EventsGraphState extends State<EventsGraph> {
     _color = Dependencies.theme.stateColor(
       widget.type.id.toString(),
       StateType.events,
-      context,
     );
 
     if (widget.events.length == 1) {

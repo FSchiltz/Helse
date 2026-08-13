@@ -17,7 +17,6 @@ class MetricInformation extends StatelessWidget {
     var color = Dependencies.theme.stateColor(
       type.id.toString(),
       StateType.metric,
-      context,
     );
     return Wrap(
       runSpacing: 1,

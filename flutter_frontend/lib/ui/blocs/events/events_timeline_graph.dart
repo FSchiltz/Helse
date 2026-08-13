@@ -36,7 +36,6 @@ class EventsTimelineGraph extends StatelessWidget {
         return Dependencies.theme.stateColor(
           label,
           StateType.eventValue,
-          context,
         );
       },
     );

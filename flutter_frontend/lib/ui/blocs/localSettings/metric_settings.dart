@@ -205,7 +205,6 @@ class _GroupCard extends StatelessWidget {
               color: Dependencies.theme.stateColor(
                 group.id.toString(),
                 StateType.metricGroup,
-                context,
               ),
               width: 8,
             ),

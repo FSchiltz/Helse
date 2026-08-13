@@ -3,6 +3,7 @@ import 'package:helse/services/local/database/models/event_type.dart';
 import 'package:helse/services/local/database/models/helse_table.dart';
 import 'package:helse/services/local/database/models/person.dart';
 
+@TableIndex(name: 'import_event', columns: {#id, #person, #sourceId, #source, #type})
 class Event extends HelseTable {
   TextColumn get description => text().nullable()();
   DateTimeColumn get start => dateTime()();

@@ -131,7 +131,6 @@ class WidgetGraph extends StatelessWidget {
     var color = Dependencies.theme.stateColor(
       MetricHelper.getStateKey(type, 0),
       StateType.metric,
-      context,
     );
 
     var spots = _getSpot(metrics, type);
@@ -166,8 +165,8 @@ class WidgetGraph extends StatelessWidget {
       var color = Dependencies.theme.stateColor(
         MetricHelper.getStateKey(type, metric.index),
         StateType.metric,
-        context,
       );
+
       return LineChartBarData(
         barWidth: width ?? 3,
         color: color,
