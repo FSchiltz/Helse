@@ -36,6 +36,12 @@ class Database extends _$Database {
   @override
   int get schemaVersion => 1;
 
+  static Future<String> databasePath() async {
+    var baseDir = await getApplicationSupportDirectory();
+
+    return "${baseDir.path}/helse.sqlite";
+  }
+
   static QueryExecutor _openConnection() {
     return driftDatabase(
       name: 'helse',

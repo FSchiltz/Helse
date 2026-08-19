@@ -180,7 +180,7 @@ class LocalImportService extends LocalService implements ImportService {
         progress: 100,
         status: JobStatus.done,
         stop: DateTime.now(),
-        result: text
+        result: text,
       );
       input.sendPort.send(initial);
     } catch (e) {
@@ -194,5 +194,10 @@ class LocalImportService extends LocalService implements ImportService {
     }
 
     input.sendPort.send('done');
+  }
+
+  @override
+  Future<String?> export() {
+    return Database.databasePath();
   }
 }

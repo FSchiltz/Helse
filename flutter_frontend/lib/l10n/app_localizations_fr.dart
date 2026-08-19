@@ -365,4 +365,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get offline => 'Use the app offline';
+
+  @override
+  String get export => 'Export';
 }

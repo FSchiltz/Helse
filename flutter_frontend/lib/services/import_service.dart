@@ -15,4 +15,6 @@ abstract interface class ImportService {
   Future<JobId?> importData(ImportData file);
 
   Future<List<JobResultInfo>> getJobs();
+
+  Future<String?> export();
 }

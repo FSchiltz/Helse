@@ -67,18 +67,7 @@ class FileLogic {
       return;
     }
 
-    bool open = !kIsWeb;
-    String? path;
-    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-      path =
-          '/storage/emulated/0/Download${Platform.pathSeparator}$id-$fileName';
-    } else {
-      final FileSaveLocation? result = await getSaveLocation(
-        suggestedName: fileName,
-      );
-
-      path = result?.path;
-    }
+    final path = await getSavePath(fileName, "$id-$fileName");
 
     if (path == null) {
       // Operation was canceled by the user.
@@ -94,6 +83,22 @@ class FileLogic {
     await textFile.saveTo(path);
     Notify.showIcon(NotificationKind.success);
 
+    bool open = !kIsWeb;
     if (open) await OpenFile.open(path);
+  }
+
+  Future<String?> getSavePath(String? fileName, String? sub) async {
+    String? path;
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      path = '/storage/emulated/0/Download${Platform.pathSeparator}$sub';
+    } else {
+      final FileSaveLocation? result = await getSaveLocation(
+        suggestedName: fileName,
+      );
+
+      path = result?.path;
+    }
+
+    return path;
   }
 }
