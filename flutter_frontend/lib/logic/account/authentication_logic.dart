@@ -160,10 +160,7 @@ class AuthenticationLogic {
     return url;
   }
 
-  Future<void> startOauthLogin({
-    required String url,
-    required String token,
-  }) async {
+  Future<void> _submit({required String url, required String token}) async {
     String? issuer;
     String? redirect;
 
@@ -199,7 +196,7 @@ class AuthenticationLogic {
           var url = account.get(Account.url);
 
           setNoAuth();
-          await startOauthLogin(token: code, url: url ?? '');
+          await _submit(url: url ?? '', token: code);
         }
       }
     });
@@ -227,19 +224,11 @@ class AuthenticationLogic {
         }
       } else if (isInit.externalAuth == true) {
         // directly start the login procedure
-        await submit(uri.toString(), 'Header');
+        await _submit(url: uri.toString(), token: 'Header');
       }
     }
 
     return isInit;
-  }
-
-  Future<void> submit(String url, String oAuth) async {
-    log("Oauth in progress");
-    await Dependencies.logics.authentication.startOauthLogin(
-      token: oAuth,
-      url: url,
-    );
   }
 
   Future<void> submitOauth(
@@ -249,7 +238,7 @@ class AuthenticationLogic {
   ) async {
     var grant = await Dependencies.services.login.getGrant(url, oauth);
     if (grant != null) {
-      await submit(url, grant);
+      await _submit(url: url, token: grant);
     }
   }
 
@@ -273,7 +262,7 @@ class AuthenticationLogic {
         setNoAuth();
       }
     }
-    
+
     listen();
   }
 

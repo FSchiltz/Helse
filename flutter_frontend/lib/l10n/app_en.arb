@@ -302,5 +302,7 @@
     "fromExisting": "From existing",
     "@fromExisting": {},
     "offline": "Use the app offline",
-    "@offline": {}
+    "@offline": {},
+    "export": "Export",
+    "@export": {}
 }

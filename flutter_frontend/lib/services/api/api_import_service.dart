@@ -42,4 +42,10 @@ class ApiImportService extends ApiService implements ImportService {
     final api = await getService();
     return await call(() => api.apiImportJobsGet()) ?? [];
   }
+
+  @override
+  Future<String?> export() {
+    // TODO: add an export endpoint on the server side to get all the user data 
+    throw UnimplementedError();
+  }
 }

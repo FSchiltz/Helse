@@ -133,6 +133,14 @@ class _HomeState extends State<Home> {
                         title: Text(locale.settings),
                       ),
                     ),
+                    if (Dependencies.blocs.server.isOffline)
+                      PopupMenuItem<int>(
+                        value: 4,
+                        child: ListTile(
+                          leading: Icon(Icons.download_for_offline_sharp),
+                          title: Text(locale.export),
+                        ),
+                      ),
                     if (types.contains(UserType.admin) == true)
                       PopupMenuItem<int>(
                         value: 2,
@@ -186,6 +194,9 @@ class _HomeState extends State<Home> {
                       break;
                     case 3:
                       Dependencies.logics.authentication.logOut(false);
+                      break;
+                      case 4:
+                      Dependencies.logics.import.export();
                       break;
                   }
                 },

@@ -1,10 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/event.dart';
 import 'package:helse/logic/task_bloc.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/notification.dart';
+import 'package:open_file/open_file.dart';
 
 class ImportLogic {
   final Map<String, JobResult> jobs = {};
@@ -28,14 +30,14 @@ class ImportLogic {
             Notify.showSystem(
               '${status.description} done',
               description: status.result,
-              channel: "Imports"
+              channel: "Imports",
             );
           } else if (status.status == JobStatus.inerror) {
             Notify.showSystem(
               '${status.description} failed',
               description: '${status.error}',
               kind: NotificationKind.error,
-              channel: "Imports"
+              channel: "Imports",
             );
           } else if (status.status == JobStatus.inprogress) {
             result = SubmissionStatus.inProgress;
@@ -102,5 +104,28 @@ class ImportLogic {
       case JobStatus.cancel:
         return SubmissionStatus.failure;
     }
+  }
+
+  Future<void> export() async {
+    // Only support local for now
+    // get the database path
+    // downoad the file so the user can have it somewhere
+    var path = await Dependencies.services.import.export();
+    if (path == null) {
+      return;
+    }
+    var dir = await Dependencies.logics.files.getSavePath("Helse", null);
+    if (dir == null) {
+      return;
+    }
+
+    final XFile textFile = XFile(path, mimeType: "application/vnd.sqlite3", name: "Helse.sqlite");
+    await textFile.saveTo(dir);
+    // TODO: Notify the user
+
+    Notify.showIcon(NotificationKind.success);
+
+    bool open = !kIsWeb;
+    if (open) await OpenFile.open(path);
   }
 }
