@@ -1,13 +1,10 @@
 using System.Text.Json.Serialization;
+using Helse.Api;
+using Helse.Api.Configuration;
 using Helse.Api.Data;
 using Helse.Api.Helpers.Auth;
 using Helse.Api.Jobs;
 using Helse.Api.Logic;
-using LinqToDB;
-using LinqToDB.Data;
-using LinqToDB.Extensions.DependencyInjection;
-using LinqToDB.Extensions.Logging;
-using LinqToDB.Mapping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpLogging;
@@ -24,22 +21,7 @@ builder.Services.AddOpenApi("helseapi");
 //services cors
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder => builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader()));
 
-builder.Services.AddLinqToDBContext<DataConnection>((provider, options) =>
-            {
-                var connection = builder.Configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("Database configuration missing");
-
-                var mapper = new MappingSchema();
-                mapper.SetConverter<DateTime, DateTime>(x => DateTime.SpecifyKind(x, DateTimeKind.Utc));
-                return options
-                           .UsePostgreSQL(connection, LinqToDB.DataProvider.PostgreSQL.PostgreSQLVersion.v15, (x) => new()
-                           {
-                               IdentifierQuoteMode = LinqToDB.DataProvider.PostgreSQL.PostgreSQLIdentifierQuoteMode.None
-                           })
-
-                           //default logging will log everything using the ILoggerFactory configured in the provider
-                           .UseDefaultLogging(provider)
-                           .UseMappingSchema(mapper);
-            });
+builder.AddDatabase();
 
 var config = builder.Configuration.GetRequiredSection("Jwt");
 var issuer = config["Issuer"] ?? throw new InvalidOperationException("Jwt issuer missing");
@@ -88,7 +70,7 @@ builder.Services.AddAuthorizationBuilder()
             .RequireClaim("token", ["access", "refresh"])
             .Build());
 
-builder.Services.Configure<MigrationSettings>(builder.Configuration.GetSection(MigrationSettings.Name));
+builder.Services.Configure<DatabaseConfig>(builder.Configuration.GetSection(DatabaseConfig.Name));
 builder.Services.AddHostedService<MigrationHelper>();
 builder.Services.AddHostedService<EventNotificationService>();
 builder.Services.AddHostedService<ImporterService>()
