@@ -53,17 +53,17 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   bloc: ^9.2.0
-  health: ^13.3.1
+  health: ^13.3.2
   permission_handler: ^13.0.0
-  table_calendar: ^3.1.2
+  table_calendar: ^3.2.1
   graphic: ^2.7.0
   web: ^1.1.1
-  workmanager: ^0.10.7
+  workmanager: ^0.10.9
   simple_icons: ^16.23.0
   flutter_colorpicker: ^1.1.0
-  flutter_local_notifications: ^22.0.1
+  flutter_local_notifications: ^22.3.0
   open_file: ^4.0.0
-  drift: ^2.34.3
+  drift: ^2.34.4
   drift_flutter: ^0.3.1
   path_provider: ^2.1.6
 dev_dependencies:
@@ -76,12 +76,12 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
-  build_runner: ^2.15.1
+  build_runner: ^2.16.1
   chopper_generator: ^8.6.1
   json_serializable: ^6.11.1
   swagger_dart_code_generator: ^4.1.1
   mocktail: ^1.0.5
-  drift_dev: ^2.34.5
+  drift_dev: ^2.34.6
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
