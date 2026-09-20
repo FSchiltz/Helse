@@ -1,31 +1,42 @@
 using System.Reflection;
 using DbUp;
 using DbUp.Engine;
-using LinqToDB;
+using Helse.Api.Configuration;
 using Microsoft.Extensions.Options;
 
 namespace Helse.Api.Data;
 
-internal class MigrationSettings
-{
-    public static string Name => "ConnectionStrings";
-
-    public required string Default { get; set; }
-}
-
-internal class MigrationHelper(IOptions<MigrationSettings> settings, ILogger<MigrationHelper> logger) : IHostedService
+internal class MigrationHelper(IOptions<DatabaseConfig> settings, ILogger<MigrationHelper> logger) : IHostedService
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        EnsureDatabase.For.PostgresqlDatabase(settings.Value.Default);
+        DatabaseUpgradeResult result;
+        if (settings.Value.Postgres is not null)
+        {
 
-        var result = DeployChanges.To.PostgresqlDatabase(settings.Value.Default)
-            .WithScriptNameComparer(new AssemblyInvariantComparer())
-            .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
-            .LogTo(logger)
-            .WithTransactionPerScript()
-            .Build()
-            .PerformUpgrade();
+            EnsureDatabase.For.PostgresqlDatabase(settings.Value.Postgres);
+
+            result = DeployChanges.To.PostgresqlDatabase(settings.Value.Postgres)
+           .WithScriptNameComparer(new AssemblyInvariantComparer())
+           .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
+           .LogTo(logger)
+           .WithTransactionPerScript()
+           .Build()
+           .PerformUpgrade();
+        }
+        else if (settings.Value.Sqlite is not null)
+        {
+            EnsureDatabase.For.SqlDatabase(settings.Value.Sqlite);
+
+            result = DeployChanges.To.SqliteDatabase(settings.Value.Sqlite)
+           .WithScriptNameComparer(new AssemblyInvariantComparer())
+           .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
+           .LogTo(logger)
+           .WithTransactionPerScript()
+           .Build()
+           .PerformUpgrade();
+        }
+        else { throw new InvalidDataException("Invalid database"); }
 
         if (result.Successful)
         {
