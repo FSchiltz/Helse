@@ -26,8 +26,6 @@ internal class MigrationHelper(IOptions<DatabaseConfig> settings, ILogger<Migrat
         }
         else if (settings.Value.Sqlite is not null)
         {
-            EnsureDatabase.For.SqlDatabase(settings.Value.Sqlite);
-
             result = DeployChanges.To.SqliteDatabase(settings.Value.Sqlite)
            .WithScriptNameComparer(new AssemblyInvariantComparer())
            .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
