@@ -96,6 +96,7 @@ abstract class AsyncDataTableState<U, T extends AsyncDataTable<U>>
         (_status == SubmissionStatus.inProgress)
             ? HelseLoader(color: Theme.of(context).colorScheme.primary)
             : DataTable(
+                dataRowMaxHeight: double.infinity,
                 showCheckboxColumn: true,
                 onSelectAll: (value) {
                   if (value == true) {

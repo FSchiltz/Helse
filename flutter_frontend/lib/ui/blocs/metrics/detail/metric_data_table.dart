@@ -102,7 +102,15 @@ class _MetricDataTableState
         cells: [
           if (extended) DataCell(Text((m.id).toString())),
           DataCell(Text('${m.value} ${widget.type.unit.code}')),
-          DataCell(Text(DateHelper.format(m.date.toLocal(), context: context))),
+          DataCell(
+            Text(
+              DateHelper.format(
+                m.date.toLocal(),
+                context: context,
+                short: true,
+              ),
+            ),
+          ),
           if (extended) DataCell(Text(m.tag.toString())),
           if (extended) DataCell(Text(m.source?.name ?? '')),
           DataCell(
