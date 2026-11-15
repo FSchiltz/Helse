@@ -122,6 +122,7 @@ class _EventsGraphState extends State<EventsGraph> {
               _setDate,
               _selectedDate,
               offset: widget.type.timeDifference,
+              initial: widget.range,
             ),
             SizedBox(
               child: NavigatorChart(

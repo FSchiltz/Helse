@@ -119,6 +119,7 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
         _setDate,
         selectedDate,
         offset: widget.type.timeDifference,
+        initial: widget.initialDate,
       ),
       NavigatorChart(
         selectedDate,
