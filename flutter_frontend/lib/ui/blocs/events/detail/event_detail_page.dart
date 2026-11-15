@@ -3,10 +3,8 @@ import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/events/event_add_button.dart';
 import 'package:helse/ui/blocs/events/detail/event_graph.dart';
 import 'package:helse/ui/blocs/events/event_search_button.dart';
-import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
-import '../../../../di/dependencies.dart';
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 
 class EventDetailPage extends StatefulWidget {
