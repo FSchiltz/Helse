@@ -22,7 +22,7 @@ internal class TokenService(TokenConfig config)
         return new PasswordHasher<User>().VerifyHashedPassword(User.Empty, hash, password);
     }
 
-    public string GetRefreshToken(User info, DateTime expires, Guid sessionId)
+    public string GetRefreshToken(User info, Guid sessionId)
     {
         var claims = new List<Claim>
             {
@@ -31,7 +31,7 @@ internal class TokenService(TokenConfig config)
                 new("session", sessionId.ToString()),
              };
 
-        return GetToken(claims, expires);
+        return GetToken(claims, null);
     }
 
     public string GetAccessToken(User info, DateTime expires)
@@ -45,7 +45,7 @@ internal class TokenService(TokenConfig config)
         return GetToken(claims, expires);
     }
 
-    private string GetToken(List<Claim> claims, DateTime expires)
+    private string GetToken(List<Claim> claims, DateTime? expires)
     {
         var tokenDescriptor = new SecurityTokenDescriptor
         {

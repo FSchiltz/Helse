@@ -70,17 +70,15 @@ public class TokenServiceTests
         var config = new TokenConfig("issuer", "audience", key);
         var service = new TokenService(config);
 
-        var hash = TokenService.Hash("pass");
         var tokenInfo = new Helse.Api.Data.Models.Persons.User()
         {
             Identifier = "id",
             Password = "pppp",
             Created = DateTime.Now,
         };
-        var expires = DateTime.UtcNow.AddHours(1);
 
         // Act
-        var token = service.GetRefreshToken(tokenInfo, expires, Guid.NewGuid());
+        var token = service.GetRefreshToken(tokenInfo, Guid.NewGuid());
 
         // Assert
         Assert.NotNull(token);
@@ -125,10 +123,9 @@ public class TokenServiceTests
             Password = "pppp",
             Created = DateTime.Now,
         };
-        var expires = DateTime.UtcNow.AddHours(1);
 
         // Act
-        var token = service.GetRefreshToken(tokenInfo, expires, Guid.NewGuid());
+        var token = service.GetRefreshToken(tokenInfo,  Guid.NewGuid());
 
         // Assert
         Assert.NotNull(token);
@@ -149,10 +146,9 @@ public class TokenServiceTests
             Password = "pppp",
             Created = DateTime.Now,
         };
-        var expires = DateTime.UtcNow.AddHours(1);
 
         // Act
-        var token = service.GetRefreshToken(tokenInfo, expires, Guid.NewGuid());
+        var token = service.GetRefreshToken(tokenInfo, Guid.NewGuid());
 
         // Assert
         Assert.NotNull(token);
