@@ -36,14 +36,16 @@ android {
     }
 
     signingConfigs {
-        create("release") {
-            keyAlias = keystoreProperties.getProperty("keyAlias")
-            keyPassword = keystoreProperties.getProperty("keyPassword")
-            storePassword = keystoreProperties.getProperty("storePassword")
-            storeFile = file(keystoreProperties.getProperty("storeFile"))
-            isV1SigningEnabled= true
-            isV2SigningEnabled= true
-        }            
+        if (System.getenv("SIGN") == "true") {
+            create("release") {
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+                storePassword = keystoreProperties.getProperty("storePassword")
+                storeFile = file(keystoreProperties.getProperty("storeFile"))
+                isV1SigningEnabled= true
+                isV2SigningEnabled= true
+            } 
+        }           
     }
 
     buildTypes {

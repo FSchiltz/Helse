@@ -16,6 +16,7 @@ jobs:
     with:
       push: true
       upload: false
+      sign: true
 
     secrets: inherit
 

@@ -7,7 +7,11 @@ on:
         type: boolean
       upload:
         required: true
+        type: boolean      
+      sign:
+        required: false
         type: boolean
+        default: false
       
 env:
   REGISTRY: ghcr.io
@@ -17,6 +21,8 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest    
+    env:
+      SIGN: ${{ inputs.sign }}
     steps:
     - uses: actions/checkout@v6.0.2
 
@@ -34,6 +40,7 @@ jobs:
         flutter-version: '3.44.8'
         
     - name: Create certificat
+      if: ${{ inputs.sign }}
       run: |
         echo keyPassword=${{ secrets.KEY_STORE }} > ${{env.PROPERTIES_PATH}}
         echo storePassword=${{ secrets.KEY_PASSWORD }} >> ${{env.PROPERTIES_PATH}}
@@ -41,6 +48,7 @@ jobs:
         echo storeFile=key.jks >> ${{env.PROPERTIES_PATH}}
         
     - name: Decoding base64 key into a file
+      if: ${{ inputs.sign }}
       run: echo ${{ secrets.KEY_FILE }} | base64 --decode > flutter_frontend/android/app/key.jks
 
     - name: Build release app bundle    
