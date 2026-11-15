@@ -11,6 +11,7 @@ Connection _$ConnectionFromJson(Map<String, dynamic> json) => Connection(
   password: json['password'] as String,
   issuer: json['issuer'] as String?,
   redirect: json['redirect'] as String?,
+  keepConnected: json['keepConnected'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$ConnectionToJson(Connection instance) =>
@@ -19,6 +20,7 @@ Map<String, dynamic> _$ConnectionToJson(Connection instance) =>
       'password': instance.password,
       'issuer': instance.issuer,
       'redirect': instance.redirect,
+      'keepConnected': instance.keepConnected,
     };
 
 ConnectionResponse _$ConnectionResponseFromJson(Map<String, dynamic> json) =>

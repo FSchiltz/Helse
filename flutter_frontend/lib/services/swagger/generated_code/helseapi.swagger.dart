@@ -2328,6 +2328,7 @@ class Connection {
     required this.password,
     this.issuer,
     this.redirect,
+    this.keepConnected,
   });
 
   factory Connection.fromJson(Map<String, dynamic> json) =>
@@ -2344,6 +2345,8 @@ class Connection {
   final String? issuer;
   @JsonKey(name: 'redirect')
   final String? redirect;
+  @JsonKey(name: 'keepConnected', defaultValue: false)
+  final bool? keepConnected;
   static const fromJsonFactory = _$ConnectionFromJson;
 
   @override
@@ -2363,6 +2366,11 @@ class Connection {
                 const DeepCollectionEquality().equals(
                   other.redirect,
                   redirect,
+                )) &&
+            (identical(other.keepConnected, keepConnected) ||
+                const DeepCollectionEquality().equals(
+                  other.keepConnected,
+                  keepConnected,
                 )));
   }
 
@@ -2375,6 +2383,7 @@ class Connection {
       const DeepCollectionEquality().hash(password) ^
       const DeepCollectionEquality().hash(issuer) ^
       const DeepCollectionEquality().hash(redirect) ^
+      const DeepCollectionEquality().hash(keepConnected) ^
       runtimeType.hashCode;
 }
 
@@ -2384,12 +2393,14 @@ extension $ConnectionExtension on Connection {
     String? password,
     String? issuer,
     String? redirect,
+    bool? keepConnected,
   }) {
     return Connection(
       user: user ?? this.user,
       password: password ?? this.password,
       issuer: issuer ?? this.issuer,
       redirect: redirect ?? this.redirect,
+      keepConnected: keepConnected ?? this.keepConnected,
     );
   }
 
@@ -2398,12 +2409,16 @@ extension $ConnectionExtension on Connection {
     Wrapped<String>? password,
     Wrapped<String?>? issuer,
     Wrapped<String?>? redirect,
+    Wrapped<bool?>? keepConnected,
   }) {
     return Connection(
       user: (user != null ? user.value : this.user),
       password: (password != null ? password.value : this.password),
       issuer: (issuer != null ? issuer.value : this.issuer),
       redirect: (redirect != null ? redirect.value : this.redirect),
+      keepConnected: (keepConnected != null
+          ? keepConnected.value
+          : this.keepConnected),
     );
   }
 }

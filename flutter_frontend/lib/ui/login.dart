@@ -8,6 +8,7 @@ import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/logic/account/server_state.dart';
+import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/inputs/password_input.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
 import 'package:helse/ui/common/square_button.dart';
@@ -43,6 +44,7 @@ class _LoginState extends State<LoginPage> {
   String? _urlError;
   String? _loginError;
   Timer? _operation;
+  bool _keepConnected = false;
 
   @override
   initState() {
@@ -52,6 +54,7 @@ class _LoginState extends State<LoginPage> {
 
   @override
   void dispose() {
+    _operation?.cancel();
     _urlController.dispose();
     _controllerUsername.dispose();
     _controllerName.dispose();
@@ -88,7 +91,7 @@ class _LoginState extends State<LoginPage> {
                       if (!kIsWeb)
                         SquareButton(
                           locale.offline,
-                          _useOffline,
+                          Dependencies.logics.authentication.useOffline,
                           height: 55,
                           icon: Icons.location_off_outlined,
                         ),
@@ -99,7 +102,7 @@ class _LoginState extends State<LoginPage> {
                         controller: _urlController,
                         icon: Icons.home_sharp,
                         type: TextInputType.url,
-                        onChanged: (v) => _urlTextChanged(v, locale),
+                        onChanged: _urlTextChanged,
                         key: const Key('loginForm_urlInput_textField'),
                         errorText: _urlError,
                       ),
@@ -124,47 +127,36 @@ class _LoginState extends State<LoginPage> {
     return null;
   }
 
-  void _urlTextChanged(String url, AppLocalizations locale) async {
-    // cancel the existing call
+  void _urlTextChanged(String value) {
     _operation?.cancel();
     _operation = null;
+    final url = Dependencies.logics.authentication.normalizeServerUrl(value);
 
-    if (!url.startsWith("http")) {
-      // if the user id not specify the scheme, use https by default
-      url = "https://$url";
+    if (url.isEmpty) {
+      setState(() {
+        _url = null;
+        _urlError = null;
+        _loginError = null;
+        _status = SubmissionStatus.unkown;
+      });
+      return;
     }
 
     setState(() {
       _url = url;
       _urlError = null;
       _loginError = null;
-      _status = SubmissionStatus.unkown;
+      _status = SubmissionStatus.waiting;
     });
 
-    if (url.isNotEmpty) {
-      // Launch the urlchanged handler with a delay
-      // To only call when the user has finished typing and allows giving feedback
-      setState(() {
-        _status = SubmissionStatus.waiting;
-      });
-
-      _operation = Timer(Duration(seconds: 1), () async {
-        await _urlChanged(url);
-      });
-    }
+    _operation = Timer(const Duration(seconds: 1), () => _urlChanged(url));
   }
 
   Future<void> _urlChanged(String url) async {
-    var uri = Uri.tryParse(url);
-    if (uri == null || !uri.isAbsolute) {
-      return;
-    }
-
     try {
-      Dependencies.blocs.server.setStatus(null);
-      var isInit = await Dependencies.logics.authentication.checkUrl(uri);
+      var isInit = await Dependencies.logics.authentication.checkUrl(url);
 
-      if (!mounted) {
+      if (!mounted || url != _url) {
         return;
       }
 
@@ -174,7 +166,7 @@ class _LoginState extends State<LoginPage> {
             : SubmissionStatus.initial);
       });
     } catch (ex) {
-      if (mounted) {
+      if (mounted && url == _url) {
         final locale = Translation.of(context);
         setState(() {
           _status = SubmissionStatus.unkown;
@@ -206,35 +198,26 @@ class _LoginState extends State<LoginPage> {
   }
 
   Future<void> _submitOauth(OauthConnection oauth) async {
-    final locale = Translation.of(context);
-    var init = Dependencies.blocs.server.state;
-    var url = _url;
-    final state = init.state;
-    if (state != null && url != null) {
-      _start();
-      try {
-        await Dependencies.logics.authentication.submitOauth(url, oauth, state);
-        _success();
-      } catch (ex) {
-        log('error of login: $ex');
-        // clear any info about the login
-        await Dependencies.logics.authentication.clean();
-        Dependencies.logics.authentication.setNoAuth();
-
-        _reset(error: "Login failed");
-        Notify.show(
-          locale.error(ex.toString()),
-          context: mounted ? context : null,
-          kind: NotificationKind.error,
-        );
-      }
+    final state = Dependencies.blocs.server.state.state;
+    final url = _url;
+    if (state == null || url == null) {
+      return;
     }
-    
-    _reset();
+
+    await _runLogin(
+      () => Dependencies.logics.authentication.submitOauth(
+        url,
+        oauth,
+        state,
+        _keepConnected,
+      ),
+      notifyOnError: true,
+    );
   }
 
   void _start() {
     log('Login started');
+    if (!mounted) return;
     setState(() {
       _loginError = null;
       _status = SubmissionStatus.inProgress;
@@ -242,6 +225,7 @@ class _LoginState extends State<LoginPage> {
   }
 
   void _reset({String? error}) {
+    if (!mounted) return;
     setState(() {
       _loginError = error;
       _status = SubmissionStatus.initial;
@@ -250,14 +234,13 @@ class _LoginState extends State<LoginPage> {
 
   void _success() {
     log('Login successful');
+    if (!mounted) return;
     setState(() {
       _status = SubmissionStatus.success;
     });
   }
 
   Future<void> _create() async {
-    _start();
-
     var user = _controllerUsername.text;
     var password = _controllerPassword.text;
     var name = _controllerName.text;
@@ -265,7 +248,6 @@ class _LoginState extends State<LoginPage> {
     var url = _url;
 
     if (url == null) {
-      _reset();
       return;
     }
 
@@ -273,40 +255,29 @@ class _LoginState extends State<LoginPage> {
       _reset(error: "Missing username");
       return;
     }
-    try {
-      var person = PersonCreation(
-        types: [UserType.admin],
-        userName: user,
-        password: password,
-        name: name,
-        surname: surname,
-      );
-      await Dependencies.logics.authentication.initAccount(
+
+    final person = PersonCreation(
+      types: [UserType.admin],
+      userName: user,
+      password: password,
+      name: name,
+      surname: surname,
+    );
+    await _runLogin(
+      () => Dependencies.logics.authentication.initAccount(
         url: url,
         person: person,
-      );
-
-      _success();
-    } catch (ex) {
-      log('error of login: $ex');
-      // clear any info about the login
-      await Dependencies.logics.authentication.clean();
-      Dependencies.logics.authentication.setNoAuth();
-
-      // we start the login process again
-      _reset(error: "Login failed");
-    }
+        keepOpen: _keepConnected,
+      ),
+    );
   }
 
   Future<void> _login() async {
-    _start();
-
     var user = _controllerUsername.text;
     var password = _controllerPassword.text;
     var url = _url;
 
     if (url == null) {
-      _reset();
       return;
     }
 
@@ -315,26 +286,53 @@ class _LoginState extends State<LoginPage> {
 
       return;
     }
-    try {
-      await Dependencies.logics.authentication.logIn(
+    await _runLogin(
+      () => Dependencies.logics.authentication.logIn(
         url: url,
-        connection: Connection(user: user, password: password),
-      );
+        connection: Connection(
+          user: user,
+          password: password,
+          keepConnected: _keepConnected,
+        ),
+      ),
+    );
+  }
 
+  Future<void> _runLogin(
+    Future<void> Function() action, {
+    bool notifyOnError = false,
+  }) async {
+    final locale = Translation.of(context);
+    _start();
+    try {
+      await action();
       _success();
-    } catch (ex) {
-      log('error of login: $ex');
-      // clear any info about the login
-      await Dependencies.logics.authentication.clean();
+    } catch (error, stackTrace) {
+      log('Login failed', error: error, stackTrace: stackTrace);
+      try {
+        await Dependencies.logics.authentication.clean();
+      } catch (cleanupError, cleanupStackTrace) {
+        log(
+          'Failed to clear authentication state',
+          error: cleanupError,
+          stackTrace: cleanupStackTrace,
+        );
+      }
       Dependencies.logics.authentication.setNoAuth();
+      _reset(error: 'Login failed');
 
-      _reset(error: "Login failed");
+      if (notifyOnError) {
+        Notify.show(
+          locale.error(error.toString()),
+          context: mounted ? context : null,
+          kind: NotificationKind.error,
+        );
+      }
     }
   }
 
   List<Widget> _providers(
     List<OauthConnection>? oauths,
-    TextTheme theme,
     AppLocalizations locale,
   ) {
     if (oauths == null) {
@@ -350,14 +348,6 @@ class _LoginState extends State<LoginPage> {
           ),
         )
         .toList();
-  }
-
-  Future<void> _useOffline() async {
-    await Dependencies.logics.authentication.useOffline();
-    await Dependencies.logics.authentication.logIn(
-      url: '',
-      connection: Connection(user: '', password: ''),
-    );
   }
 
   List<Widget> _getLoginForm(AppLocalizations locale, Status? state) {
@@ -406,11 +396,18 @@ class _LoginState extends State<LoginPage> {
           height: 55,
         ),
       );
+      widgets.add(
+        HelseSwitch(
+          locale.keepConnected,
+          _keepConnected,
+          (x) => setState(() {
+            _keepConnected = x;
+          }),
+        ),
+      );
     }
 
-    widgets.addAll(
-      _providers(state?.oauths, Theme.of(context).textTheme, locale),
-    );
+    widgets.addAll(_providers(state?.oauths, locale));
 
     return widgets;
   }

@@ -90,6 +90,7 @@ class AuthenticationLogic {
   Future<void> initAccount({
     required String url,
     required PersonCreation person,
+    required bool keepOpen
   }) async {
     await account.set(Account.url, url);
     await Dependencies.services.user.addPerson(person);
@@ -100,6 +101,7 @@ class AuthenticationLogic {
       connection: Connection(
         user: person.userName ?? '',
         password: person.password ?? '',
+        keepConnected: keepOpen,
       ),
     );
 
@@ -160,7 +162,7 @@ class AuthenticationLogic {
     return url;
   }
 
-  Future<void> _submit({required String url, required String token}) async {
+  Future<void> _submit({required String url, required String token, required bool keepOpen}) async {
     String? issuer;
     String? redirect;
 
@@ -175,6 +177,7 @@ class AuthenticationLogic {
         issuer: issuer,
         user: '',
         redirect: redirect,
+        keepConnected: keepOpen,
       ),
     );
   }
@@ -194,9 +197,10 @@ class AuthenticationLogic {
           }
 
           var url = account.get(Account.url);
+            var keepConnected = account.isEnabled(Account.keepConnected);
 
           setNoAuth();
-          await _submit(url: url ?? '', token: code);
+          await _submit(url: url ?? '', token: code, keepOpen: keepConnected);
         }
       }
     });
@@ -208,23 +212,44 @@ class AuthenticationLogic {
     await Dependencies.logics.patientsSettings.loadSettings();
   }
 
-  // Check that the given url is valid and already logged into
-  Future<Status?> checkUrl(Uri uri) async {
+  String normalizeServerUrl(String value) {
+    final input = value.trim();
+    if (input.isEmpty ||
+        input.startsWith('http://') ||
+        input.startsWith('https://')) {
+      return input;
+    }
+
+    return 'https://$input';
+  }
+
+  Future<Status?> checkUrl(String url) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null ||
+        !uri.isAbsolute ||
+        !uri.hasAuthority ||
+        uri.host.isEmpty ||
+        (uri.scheme != 'http' && uri.scheme != 'https')) {
+      throw FormatException('Invalid server URL', url);
+    }
+
+    Dependencies.blocs.server.setStatus(null);
     var isInit = await Dependencies.services.login.isInit(uri);
     Dependencies.blocs.server.setStatus(isInit);
 
     setNoAuth();
     var isConnected = await checkLogin();
     if (isInit != null && isInit.init == true && !isConnected) {
+      var keepConnected = account.isEnabled(Account.keepConnected);
       if (isInit.oauths.isNotEmpty) {
         // Start the oauth login procedure
         var autologin = isInit.oauths.firstWhereOrNull((x) => x.autoLogin);
         if (autologin != null) {
-          await submitOauth(uri.toString(), autologin, isInit);
+          await submitOauth(uri.toString(), autologin, isInit, keepConnected);
         }
       } else if (isInit.externalAuth == true) {
         // directly start the login procedure
-        await _submit(url: uri.toString(), token: 'Header');
+        await _submit(url: uri.toString(), token: 'Header', keepOpen: keepConnected);
       }
     }
 
@@ -235,10 +260,13 @@ class AuthenticationLogic {
     String url,
     OauthConnection oauth,
     Status isInit,
+    bool keepConnected
   ) async {
+    // Save the keep connected for the redirect
+    await account.setBool(Account.keepConnected, keepConnected);
     var grant = await Dependencies.services.login.getGrant(url, oauth);
     if (grant != null) {
-      await _submit(url: url, token: grant);
+      await _submit(url: url, token: grant, keepOpen: keepConnected);
     }
   }
 
@@ -247,16 +275,18 @@ class AuthenticationLogic {
     final offline = await isOffline();
     if (offline) {
       await useOffline();
-      await logIn(
-        url: '',
-        connection: Connection(user: '', password: ''),
-      );
     } else {
       final url = account.get(Account.url);
       if (url != null && url.isNotEmpty) {
-        var uri = Uri.tryParse(url);
-        if (uri != null) {
-          await checkUrl(uri);
+        try {
+          await checkUrl(url);
+        } catch (error, stackTrace) {
+          log(
+            'Failed to check saved server URL',
+            error: error,
+            stackTrace: stackTrace,
+          );
+          setNoAuth();
         }
       } else {
         setNoAuth();
@@ -269,6 +299,10 @@ class AuthenticationLogic {
   Future<void> useOffline() async {
     Dependencies.blocs.server.setOffline();
     await account.setBool(Account.offline, true);
+    await logIn(
+      url: '',
+      connection: Connection(user: '', password: ''),
+    );
   }
 
   Future<bool> isOffline() async {
