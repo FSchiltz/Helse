@@ -289,7 +289,11 @@ class _LoginState extends State<LoginPage> {
     await _runLogin(
       () => Dependencies.logics.authentication.logIn(
         url: url,
-        connection: Connection(user: user, password: password),
+        connection: Connection(
+          user: user,
+          password: password,
+          keepConnected: _keepConnected,
+        ),
       ),
     );
   }
