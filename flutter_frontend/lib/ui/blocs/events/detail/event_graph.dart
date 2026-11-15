@@ -51,6 +51,7 @@ class _EventsGraphState extends State<EventsGraph> {
   late GroupStats _stats;
   List<Interval> _sessions = [];
   List<Event> _events = [];
+  bool _withStats = true;
 
   void _setDate(DateTimeRange value) {
     setState(() {
@@ -87,9 +88,20 @@ class _EventsGraphState extends State<EventsGraph> {
         ) ??
         [];
 
+    if (events.length <= 10) {
+      _selection.selected.clear();
+      _selection.selected.addAll(events);
+      _withStats = false;
+      _sessions = [];
+      _stats = GroupStats([], {}, 0);
+    } else {
+      _withStats = true;
+      _stats = _group(events, _selectedDate);
+      _sessions = EventHelper.getSessions(events);
+    }
+
+    _filteredEvents = events;
     _events = events;
-    _stats = _group(events, _selectedDate);
-    _sessions = EventHelper.getSessions(events);
 
     return events;
   }
@@ -132,26 +144,20 @@ class _EventsGraphState extends State<EventsGraph> {
                 graph: EventsSummary(_stats.groups, _selectedDate),
               ),
             ),
-            Flexible(
-              child: (_filteredEvents.length < 200)
-                  ? EventsTimelineGraph(
-                      _filteredEvents,
-                      _selectedDate,
-                      onselect: _selection.select,
-                    )
-                  : EventsSummary(_stats.groups, _selectedDate),
-            ),
+            if (_withStats)
+              Flexible(
+                child: (_filteredEvents.length < 200)
+                    ? EventsTimelineGraph(
+                        _filteredEvents,
+                        _subDate,
+                        onselect: _selection.select,
+                      )
+                    : EventsSummary(_stats.groups, _subDate),
+              ),
             Expanded(
               child: SingleChildScrollView(
                 child: Wrap(
                   children: [
-                    SessionChart(
-                      sessions: _sessions,
-                      type: widget.type,
-                      graphHeight: graphHeight,
-                      radius: radius,
-                      stats: _stats,
-                    ),
                     if (_selection.selected.isNotEmpty)
                       SelectionWidget(
                         selection: _selection,
@@ -162,17 +168,27 @@ class _EventsGraphState extends State<EventsGraph> {
                         person: widget.person,
                         type: widget.type,
                       ),
-                    SessionList(
-                      height: height,
-                      color: _color,
-                      sessions: _sessions,
-                      type: widget.type,
-                    ),
-                    SessionsRange(
-                      height: height,
-                      color: _color,
-                      sessions: _sessions,
-                    ),
+                    if (_withStats)
+                      SessionChart(
+                        sessions: _sessions,
+                        type: widget.type,
+                        graphHeight: graphHeight,
+                        radius: radius,
+                        stats: _stats,
+                      ),
+                    if (_withStats)
+                      SessionList(
+                        height: height,
+                        color: _color,
+                        sessions: _sessions,
+                        type: widget.type,
+                      ),
+                    if (_withStats)
+                      SessionsRange(
+                        height: height,
+                        color: _color,
+                        sessions: _sessions,
+                      ),
                   ],
                 ),
               ),
