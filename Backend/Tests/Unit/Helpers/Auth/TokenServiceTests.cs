@@ -90,7 +90,10 @@ public class TokenServiceTests
     {
         // Arrange
         var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(new string('a', 256)));
-        var config = new TokenConfig("issuer", "audience", key);
+        var config = new TokenConfig("issuer", "audience", key)
+        {
+            Validity = 10,
+        };
         var service = new TokenService(config);
 
         var tokenInfo = new Helse.Api.Data.Models.Persons.User()
