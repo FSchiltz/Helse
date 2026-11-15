@@ -26,7 +26,7 @@ class EventDetailPage extends StatefulWidget {
 }
 
 class _EventDetailPageState extends State<EventDetailPage> {
-  
+  int _refreshVersion = 0;
 
   @override
   void initState() {
@@ -50,6 +50,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
       body: Padding(
         padding: const EdgeInsets.all(UIConstants.formPad),
         child: EventsGraph(
+          key: ValueKey(_refreshVersion),
           range: widget.date,
           person: widget.person,
           type: widget.type,
@@ -60,9 +61,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
 
   void _resetEvents() {
     setState(() {
-      _dummy = !_dummy;
+      _refreshVersion++;
     });
   }
-
-  bool _dummy = false;
 }
