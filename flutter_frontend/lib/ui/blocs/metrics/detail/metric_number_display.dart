@@ -48,17 +48,19 @@ class _MetricGraphState extends MetricDetailsState<MetricNumberDisplay> {
       spacing: UIConstants.formPad,
       children: [
         ...buildHeader(),
-        Expanded(
-          child: _grapichChart(context, max(widget.type.valueCount ?? 1, 1)),
-        ),
+        if (withStats)
+          Expanded(
+            child: _grapichChart(context, max(widget.type.valueCount ?? 1, 1)),
+          ),
         Flexible(
           child: SingleChildScrollView(
             child: Wrap(
               alignment: WrapAlignment.start,
               children: [
-                ...filteredMetrics.stats.map(
-                  (e) => MetricStatisticsCard(stats: e, type: widget.type),
-                ),
+                if (withStats)
+                  ...filteredMetrics.stats.map(
+                    (e) => MetricStatisticsCard(stats: e, type: widget.type),
+                  ),
                 MetricSelected(
                   selection: selection,
                   type: widget.type,

@@ -17,6 +17,7 @@ class EventDataTable extends AsyncDataTable<Event> {
     required this.type,
     required super.reset,
     required super.callback,
+    super.state = false,
   });
   final EventType type;
   final int? person;
