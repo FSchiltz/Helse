@@ -12,6 +12,7 @@ jobs:
     with:
         push: true
         upload: true
+        sign: true
     secrets: inherit
 
   build-docker:

@@ -9,8 +9,9 @@ on:
         required: true
         type: boolean      
       sign:
-        required: true
+        required: false
         type: boolean
+        default: false
       
 env:
   REGISTRY: ghcr.io
@@ -20,6 +21,8 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest    
+    env:
+      SIGN: ${{ inputs.sign }}
     steps:
     - uses: actions/checkout@v6.0.2
 

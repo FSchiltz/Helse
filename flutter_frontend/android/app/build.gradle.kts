@@ -36,7 +36,7 @@ android {
     }
 
     signingConfigs {
-        if (System.getenv("GITHUB_WORKFLOW") == "CI") {
+        if (System.getenv("SIGN") == "true") {
             create("release") {
                 keyAlias = keystoreProperties.getProperty("keyAlias")
                 keyPassword = keystoreProperties.getProperty("keyPassword")
