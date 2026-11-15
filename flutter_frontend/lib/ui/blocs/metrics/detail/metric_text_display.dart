@@ -33,15 +33,16 @@ class _MetricTextDisplayState extends MetricDetailsState<MetricTextDisplay> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ...buildHeader(),
-        SizedBox(
-          height: 120,
-          child: MetricTimelineGraph(
-            filteredMetrics.values,
-            widget.initialDate,
-            widget.type,
-            selection: selection,
+        if (withStats)
+          SizedBox(
+            height: 120,
+            child: MetricTimelineGraph(
+              filteredMetrics.values,
+              widget.initialDate,
+              widget.type,
+              selection: selection,
+            ),
           ),
-        ),
         Flexible(
           child: SingleChildScrollView(
             child: Wrap(
@@ -49,25 +50,26 @@ class _MetricTextDisplayState extends MetricDetailsState<MetricTextDisplay> {
               spacing: UIConstants.formPad,
               alignment: WrapAlignment.start,
               children: [
-                CommonCard(
-                  child: Column(
-                    spacing: UIConstants.headerPad,
-                    children: [
-                      MetricInformation([
-                        KeyValue(
-                          locale.total,
-                          value: filteredMetrics.values.length.toString(),
-                          icon: Icons.numbers_sharp,
+                if (withStats)
+                  CommonCard(
+                    child: Column(
+                      spacing: UIConstants.headerPad,
+                      children: [
+                        MetricInformation([
+                          KeyValue(
+                            locale.total,
+                            value: filteredMetrics.values.length.toString(),
+                            icon: Icons.numbers_sharp,
+                          ),
+                        ], type: widget.type),
+                        MetricTextHistogram(
+                          MetricHelper.groupText(filteredMetrics.values),
+                          widget.type,
+                          onselect: selection.select,
                         ),
-                      ], type: widget.type),
-                      MetricTextHistogram(
-                        MetricHelper.groupText(filteredMetrics.values),
-                        widget.type,
-                        onselect: selection.select,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
                 MetricSelected(
                   selection: selection,
                   type: widget.type,

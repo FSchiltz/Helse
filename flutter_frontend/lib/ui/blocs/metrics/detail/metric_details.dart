@@ -34,6 +34,7 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
   List<Metric> metrics = [];
   final SelectionController<Metric> selection = SelectionController();
   late double maxY;
+  bool withStats = true;
 
   @override
   void initState() {
@@ -72,6 +73,14 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
       selectedDate.end,
       person: widget.person,
     );
+
+    if(loadedMetrics.length <= 10){
+      selection.selected.clear();
+      selection.selected.addAll(loadedMetrics);
+      withStats = false;
+    } else {
+      withStats = true;
+    }
 
     final grouped = MetricHelper.group(
       loadedMetrics,
