@@ -48,7 +48,12 @@ var keyConfig = config["Key"] ?? throw new InvalidOperationException("Jwt key mi
 
 SymmetricSecurityKey key = AuthLogic.GenerateKey(keyConfig);
 
-builder.Services.AddSingleton((_) => new TokenConfig(issuer, audience, key));
+builder.Services.AddSingleton((_) => new TokenConfig(issuer, audience, key)
+{
+    Validity = config.GetValue<long>("Validity"),
+    RefreshValidity = config.GetValue<long>("RefreshValidity"),
+    KeepAliveRefreshValidity = config.GetValue<long>("KeepAliveRefreshValidity"),
+});
 
 builder.Services.AddTransient<SlowQueryLogInterceptor>();
 

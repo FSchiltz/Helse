@@ -99,10 +99,9 @@ public class TokenServiceTests
             Password = "pppp",
             Created = DateTime.Now,
         };
-        var expires = DateTime.UtcNow.AddHours(1);
 
         // Act
-        var token = service.GetAccessToken(tokenInfo, expires);
+        var token = service.GetAccessToken(tokenInfo);
 
         // Assert
         Assert.NotNull(token);

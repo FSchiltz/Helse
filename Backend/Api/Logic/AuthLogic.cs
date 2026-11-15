@@ -144,22 +144,6 @@ internal static class AuthLogic
         return TypedResults.Ok(new Status(true, isAuth, null, oauths));
     }
 
-    private static DateTime TokenValidity(bool longLife = false, bool keepConnected = false)
-    {
-        if (longLife)
-        {
-            var duration = 7;
-            if (keepConnected)
-            {
-                duration = 6 * 30;
-            }
-
-            return DateTime.UtcNow.AddDays(duration);
-        }
-
-        return DateTime.UtcNow.AddMinutes(10);
-    }
-
     public static async Task<IResult> RefreshAsync(bool keepConnected, IUserContext users, TokenService token, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger(nameof(AuthLogic));
@@ -237,9 +221,9 @@ internal static class AuthLogic
 
     private static async Task<(string Access, string Refresh)> GetToken(TokenService token, IUserContext users, HttpContext context, User fromDb, bool keepConnected)
     {
-        var accessToken = token.GetAccessToken(fromDb, TokenValidity());
+        var accessToken = token.GetAccessToken(fromDb);
         var sessionId = Guid.NewGuid();
-        var refreshValidity = TokenValidity(true, keepConnected);
+        var refreshValidity = token.TokenValidity(true, keepConnected);
         var refreshToken = token.GetRefreshToken(fromDb, sessionId);
 
         var userIp = context.Connection.RemoteIpAddress?.ToString();
@@ -255,6 +239,7 @@ internal static class AuthLogic
         };
 
         // clean up old sessions
+        // TODO, mark deleted if still valid so we can check for token reuse
         await users.DeleteSession(fromDb.Id, DateTime.UtcNow.AddDays(-30));
         await users.AddSession(userSession);
 
