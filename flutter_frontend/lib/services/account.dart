@@ -60,7 +60,7 @@ class Account {
     var s = storage;
     var oldUrl = s.getString(url);
     await s.clear();
-    if (oldUrl != null) s.setString(url, oldUrl);
+    if (oldUrl != null) await s.setString(url, oldUrl);
   }
 
   ConnectionResponse? getToken() {
