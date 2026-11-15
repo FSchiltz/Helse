@@ -8,6 +8,7 @@ import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/logic/account/server_state.dart';
+import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/inputs/password_input.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
 import 'package:helse/ui/common/square_button.dart';
@@ -43,6 +44,7 @@ class _LoginState extends State<LoginPage> {
   String? _urlError;
   String? _loginError;
   Timer? _operation;
+  bool _keepConnected = false;
 
   @override
   initState() {
@@ -213,7 +215,12 @@ class _LoginState extends State<LoginPage> {
     if (state != null && url != null) {
       _start();
       try {
-        await Dependencies.logics.authentication.submitOauth(url, oauth, state);
+        await Dependencies.logics.authentication.submitOauth(
+          url,
+          oauth,
+          state,
+          _keepConnected,
+        );
         _success();
       } catch (ex) {
         log('error of login: $ex');
@@ -229,7 +236,7 @@ class _LoginState extends State<LoginPage> {
         );
       }
     }
-    
+
     _reset();
   }
 
@@ -284,6 +291,7 @@ class _LoginState extends State<LoginPage> {
       await Dependencies.logics.authentication.initAccount(
         url: url,
         person: person,
+        keepOpen: _keepConnected,
       );
 
       _success();
@@ -404,6 +412,15 @@ class _LoginState extends State<LoginPage> {
           state?.init == true ? locale.login : locale.create,
           state?.init == true ? _login : _create,
           height: 55,
+        ),
+      );
+      widgets.add(
+        HelseSwitch(
+          locale.keepConnected,
+          _keepConnected,
+          (x) => setState(() {
+            _keepConnected = x;
+          }),
         ),
       );
     }

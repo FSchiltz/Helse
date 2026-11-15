@@ -5,4 +5,4 @@ namespace Helse.Models;
 /// </summary>
 /// <param name="User"></param>
 /// <param name="Password"></param>
-public record Connection(string User, string Password, string? Issuer, string? Redirect);
+public record Connection(string User, string Password, string? Issuer, string? Redirect, bool KeepConnected = false);

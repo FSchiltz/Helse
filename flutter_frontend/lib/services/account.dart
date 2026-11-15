@@ -30,6 +30,7 @@ class Account {
   static const refresh = "refresh";
   static const id = "id";
   static const offline = "offline";
+  static const keepConnected = "keepConnected";
 
   String? get(String name) => storage.getString(name);
 

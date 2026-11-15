@@ -144,11 +144,17 @@ internal static class AuthLogic
         return TypedResults.Ok(new Status(true, isAuth, null, oauths));
     }
 
-    private static DateTime TokenValidity(bool longLife)
+    private static DateTime TokenValidity(bool longLife = false, bool keepConnected = false)
     {
         if (longLife)
         {
-            return DateTime.UtcNow.AddHours(4);
+            var duration = 1;
+            if (keepConnected)
+            {
+                duration = 3*30;
+            }
+
+            return DateTime.UtcNow.AddDays(duration);
         }
 
         return DateTime.UtcNow.AddMinutes(10);
@@ -169,7 +175,7 @@ internal static class AuthLogic
 
                 if (session != null && session.Stop >= DateTime.UtcNow)
                 {
-                    var accessToken = token.GetAccessToken(fromDb, TokenValidity(false));
+                    var accessToken = token.GetAccessToken(fromDb, TokenValidity());
 
                     var roles = GetRoles(fromDb.Type);
 
@@ -225,9 +231,9 @@ internal static class AuthLogic
         log.LogDebug("Connexion validated");
         var roles = GetRoles(fromDb.Type);
 
-        var accessToken = token.GetAccessToken(fromDb, TokenValidity(false));
+        var accessToken = token.GetAccessToken(fromDb, TokenValidity());
         var sessionId = Guid.NewGuid();
-        var refreshValidity = TokenValidity(true);
+        var refreshValidity = TokenValidity(true, user.KeepConnected);
         var refreshToken = token.GetRefreshToken(fromDb, refreshValidity, sessionId);
         var userIp = context.Connection.RemoteIpAddress?.ToString();
         var userSession = new Sessions()

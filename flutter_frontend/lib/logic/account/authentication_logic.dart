@@ -90,6 +90,7 @@ class AuthenticationLogic {
   Future<void> initAccount({
     required String url,
     required PersonCreation person,
+    required bool keepOpen
   }) async {
     await account.set(Account.url, url);
     await Dependencies.services.user.addPerson(person);
@@ -100,6 +101,7 @@ class AuthenticationLogic {
       connection: Connection(
         user: person.userName ?? '',
         password: person.password ?? '',
+        keepConnected: keepOpen,
       ),
     );
 
@@ -160,7 +162,7 @@ class AuthenticationLogic {
     return url;
   }
 
-  Future<void> _submit({required String url, required String token}) async {
+  Future<void> _submit({required String url, required String token, required bool keepOpen}) async {
     String? issuer;
     String? redirect;
 
@@ -175,6 +177,7 @@ class AuthenticationLogic {
         issuer: issuer,
         user: '',
         redirect: redirect,
+        keepConnected: keepOpen,
       ),
     );
   }
@@ -194,9 +197,10 @@ class AuthenticationLogic {
           }
 
           var url = account.get(Account.url);
+          var keepConnected = account.isEnabled(Account.keepConnected);
 
           setNoAuth();
-          await _submit(url: url ?? '', token: code);
+          await _submit(url: url ?? '', token: code, keepOpen: keepConnected);
         }
       }
     });
@@ -216,15 +220,16 @@ class AuthenticationLogic {
     setNoAuth();
     var isConnected = await checkLogin();
     if (isInit != null && isInit.init == true && !isConnected) {
+        var keepConnected = account.isEnabled(Account.keepConnected);
       if (isInit.oauths.isNotEmpty) {
         // Start the oauth login procedure
         var autologin = isInit.oauths.firstWhereOrNull((x) => x.autoLogin);
         if (autologin != null) {
-          await submitOauth(uri.toString(), autologin, isInit);
+          await submitOauth(uri.toString(), autologin, isInit, keepConnected);
         }
       } else if (isInit.externalAuth == true) {
         // directly start the login procedure
-        await _submit(url: uri.toString(), token: 'Header');
+        await _submit(url: uri.toString(), token: 'Header', keepOpen: keepConnected);
       }
     }
 
@@ -235,10 +240,11 @@ class AuthenticationLogic {
     String url,
     OauthConnection oauth,
     Status isInit,
+    bool keepConnected
   ) async {
     var grant = await Dependencies.services.login.getGrant(url, oauth);
     if (grant != null) {
-      await _submit(url: url, token: grant);
+      await _submit(url: url, token: grant, keepOpen: keepConnected);
     }
   }
 
