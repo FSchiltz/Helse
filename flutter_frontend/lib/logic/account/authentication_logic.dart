@@ -242,6 +242,8 @@ class AuthenticationLogic {
     Status isInit,
     bool keepConnected
   ) async {
+    // Save the keep connected for the redirect
+    await account.setBool(Account.keepConnected, keepConnected);
     var grant = await Dependencies.services.login.getGrant(url, oauth);
     if (grant != null) {
       await _submit(url: url, token: grant, keepOpen: keepConnected);
