@@ -46,6 +46,7 @@ final class _$Helseapi extends Helseapi {
 
   @override
   Future<Response<ConnectionResponse>> _apiRefreshGet({
+    required bool? keepConnected,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
       summary: '',
@@ -58,10 +59,14 @@ final class _$Helseapi extends Helseapi {
     ),
   }) {
     final Uri $url = Uri.parse('/api/refresh');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'keepConnected': keepConnected,
+    };
     final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
+      parameters: $params,
       tag: swaggerMetaData,
     );
     return client.send<ConnectionResponse, ConnectionResponse>($request);

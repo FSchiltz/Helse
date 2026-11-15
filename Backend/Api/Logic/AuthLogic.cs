@@ -144,23 +144,7 @@ internal static class AuthLogic
         return TypedResults.Ok(new Status(true, isAuth, null, oauths));
     }
 
-    private static DateTime TokenValidity(bool longLife = false, bool keepConnected = false)
-    {
-        if (longLife)
-        {
-            var duration = 7;
-            if (keepConnected)
-            {
-                duration = 6 * 30;
-            }
-
-            return DateTime.UtcNow.AddDays(duration);
-        }
-
-        return DateTime.UtcNow.AddMinutes(10);
-    }
-
-    public static async Task<IResult> RefreshAsync(IUserContext users, TokenService token, HttpContext context, ILoggerFactory logger)
+    public static async Task<IResult> RefreshAsync(bool keepConnected, IUserContext users, TokenService token, HttpContext context, ILoggerFactory logger)
     {
         var log = logger.CreateLogger(nameof(AuthLogic));
         var user = context.User.GetUser(TokenHelper.Refresh);
@@ -175,13 +159,12 @@ internal static class AuthLogic
 
                 if (session != null && session.Stop >= DateTime.UtcNow)
                 {
-                    var accessToken = token.GetAccessToken(fromDb, TokenValidity());
-
                     var roles = GetRoles(fromDb.Type);
+                    var (access, refresh) = await GetToken(token, users, context, fromDb, keepConnected);
 
                     log.LogInformation("Refreshed access for user {User}", user);
 
-                    return TypedResults.Ok(new ConnectionResponse(fromDb.Identifier, accessToken, null, roles));
+                    return TypedResults.Ok(new ConnectionResponse(fromDb.Identifier, access, refresh, roles));
                 }
             }
         }
@@ -231,10 +214,18 @@ internal static class AuthLogic
         log.LogDebug("Connexion validated");
         var roles = GetRoles(fromDb.Type);
 
-        var accessToken = token.GetAccessToken(fromDb, TokenValidity());
+        var (access, refresh) = await GetToken(token, users, context, fromDb, user.KeepConnected);
+
+        return TypedResults.Ok(new ConnectionResponse(fromDb.Identifier, access, refresh, roles));
+    }
+
+    private static async Task<(string Access, string Refresh)> GetToken(TokenService token, IUserContext users, HttpContext context, User fromDb, bool keepConnected)
+    {
+        var accessToken = token.GetAccessToken(fromDb);
         var sessionId = Guid.NewGuid();
-        var refreshValidity = TokenValidity(true, user.KeepConnected);
-        var refreshToken = token.GetRefreshToken(fromDb, refreshValidity, sessionId);
+        var refreshValidity = token.TokenValidity(true, keepConnected);
+        var refreshToken = token.GetRefreshToken(fromDb, sessionId);
+
         var userIp = context.Connection.RemoteIpAddress?.ToString();
         var userSession = new Sessions()
         {
@@ -248,10 +239,11 @@ internal static class AuthLogic
         };
 
         // clean up old sessions
+        // TODO, mark deleted if still valid so we can check for token reuse
         await users.DeleteSession(fromDb.Id, DateTime.UtcNow.AddDays(-30));
         await users.AddSession(userSession);
 
-        return TypedResults.Ok(new ConnectionResponse(fromDb.Identifier, accessToken, refreshToken, roles));
+        return (accessToken, refreshToken);
     }
 
     private static Helse.Models.Persons.UserType[] GetRoles(int type)

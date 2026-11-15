@@ -82,18 +82,23 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response<ConnectionResponse>> apiRefreshGet() {
+  ///@param keepConnected
+  Future<chopper.Response<ConnectionResponse>> apiRefreshGet({
+    required bool? keepConnected,
+  }) {
     generatedMapping.putIfAbsent(
       ConnectionResponse,
       () => ConnectionResponse.fromJsonFactory,
     );
 
-    return _apiRefreshGet();
+    return _apiRefreshGet(keepConnected: keepConnected);
   }
 
   ///
+  ///@param keepConnected
   @GET(path: '/api/refresh')
   Future<chopper.Response<ConnectionResponse>> _apiRefreshGet({
+    @Query('keepConnected') required bool? keepConnected,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -2428,7 +2433,7 @@ class ConnectionResponse {
   const ConnectionResponse({
     this.id,
     required this.accessToken,
-    this.refreshToken,
+    required this.refreshToken,
     required this.roles,
   });
 
@@ -2443,7 +2448,7 @@ class ConnectionResponse {
   @JsonKey(name: 'accessToken')
   final String accessToken;
   @JsonKey(name: 'refreshToken')
-  final String? refreshToken;
+  final String refreshToken;
   @JsonKey(
     name: 'roles',
     toJson: userTypeListToJson,
@@ -2502,7 +2507,7 @@ extension $ConnectionResponseExtension on ConnectionResponse {
   ConnectionResponse copyWithWrapped({
     Wrapped<String?>? id,
     Wrapped<String>? accessToken,
-    Wrapped<String?>? refreshToken,
+    Wrapped<String>? refreshToken,
     Wrapped<List<enums.UserType>>? roles,
   }) {
     return ConnectionResponse(
