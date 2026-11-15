@@ -30,6 +30,7 @@ class Account {
   static const refresh = "refresh";
   static const id = "id";
   static const offline = "offline";
+  static const keepConnected = "keepConnected";
 
   String? get(String name) => storage.getString(name);
 
@@ -59,7 +60,7 @@ class Account {
     var s = storage;
     var oldUrl = s.getString(url);
     await s.clear();
-    if (oldUrl != null) s.setString(url, oldUrl);
+    if (oldUrl != null) await s.setString(url, oldUrl);
   }
 
   ConnectionResponse? getToken() {

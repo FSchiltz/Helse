@@ -28,7 +28,6 @@ class ApiLoginService extends ApiService implements LoginService {
     }
   }
 
-
   @override
   Uri get redirectUrl {
     if (kIsWeb) {
@@ -45,7 +44,10 @@ class ApiLoginService extends ApiService implements LoginService {
   }
 
   @override
-  Future<String?> getGrant(String url, OauthConnection oauth) async {
+  Future<String?> getGrant(
+    String url,
+    OauthConnection oauth,
+  ) async {
     await account.set(Account.url, url);
 
     final grant = account.get(Account.grant);
@@ -84,7 +86,6 @@ class ApiLoginService extends ApiService implements LoginService {
       await launchUrl(uri);
     }
   }
-
 
   @override
   Future<Status?> isInit(Uri url) async {

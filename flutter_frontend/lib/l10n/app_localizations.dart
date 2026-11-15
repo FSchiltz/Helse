@@ -769,6 +769,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Export'**
   String get export;
+
+  /// No description provided for @keepConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Connected'**
+  String get keepConnected;
 }
 
 class _AppLocalizationsDelegate

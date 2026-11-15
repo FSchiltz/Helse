@@ -304,5 +304,7 @@
     "offline": "Use the app offline",
     "@offline": {},
     "export": "Export",
-    "@export": {}
+    "@export": {},
+    "keepConnected" : "Keep Connected",
+    "@keepConnected": {}
 }

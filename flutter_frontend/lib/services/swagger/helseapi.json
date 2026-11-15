@@ -3023,6 +3023,10 @@
               "null",
               "string"
             ]
+          },
+          "keepConnected": {
+            "type": "boolean",
+            "default": false
           }
         }
       },
