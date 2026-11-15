@@ -57,7 +57,7 @@ class AuthenticationLogic {
     await account.set(Account.url, url);
     var token = await Dependencies.services.login.login(connection);
 
-    if (token != null && token.refreshToken != null) {
+    if (token != null) {
       final oldUser = account.get(Account.id);
       if (token.id != oldUser) {
         // if the user is different than the last one clear the settings

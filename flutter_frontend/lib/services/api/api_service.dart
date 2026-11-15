@@ -29,6 +29,8 @@ class ServiceError {
 }
 
 abstract class ApiService {
+  static Future<String?>? _refreshInProgress;
+
   final Account account;
 
   ApiService(this.account);
@@ -66,7 +68,32 @@ abstract class ApiService {
     return result;
   }
 
-  Future<String?> _refreshToken(ConnectionResponse? settings, Uri url) async {
+  Future<String?> _refreshToken(
+    ConnectionResponse? settings,
+    Uri url,
+    bool keepConnected,
+  ) async {
+    final pendingRefresh = _refreshInProgress;
+    if (pendingRefresh != null) {
+      return pendingRefresh;
+    }
+
+    final refresh = _requestTokenRefresh(settings, url, keepConnected);
+    _refreshInProgress = refresh;
+    try {
+      return await refresh;
+    } finally {
+      if (identical(_refreshInProgress, refresh)) {
+        _refreshInProgress = null;
+      }
+    }
+  }
+
+  Future<String?> _requestTokenRefresh(
+    ConnectionResponse? settings,
+    Uri url,
+    bool keepConnected,
+  ) async {
     var client = Helseapi.create(
       baseUrl: url,
       interceptors: [
@@ -75,14 +102,14 @@ abstract class ApiService {
         }),
       ],
     );
-    var response = await client.apiRefreshGet();
+    var response = await client.apiRefreshGet(keepConnected: keepConnected);
     var connection = response.body;
     if (connection != null) {
       var token = ConnectionResponse(
         id: connection.id,
         accessToken: connection.accessToken,
         roles: connection.roles,
-        refreshToken: settings?.refreshToken,
+        refreshToken: connection.refreshToken,
       );
       await account.setToken(token);
       return token.accessToken;
@@ -105,6 +132,7 @@ abstract class ApiService {
 
   Future<Helseapi> getService({Uri? override, bool sendRefresh = false}) async {
     var url = override ?? Uri.parse(account.get(Account.url) ?? '');
+    var keepConnected = account.isEnabled(Account.keepConnected);
 
     // first we try to get a new refresh token if needed
     String? token;
@@ -115,7 +143,7 @@ abstract class ApiService {
     } else {
       token = settings?.accessToken;
       if (token == null || token.isEmpty || _isExpired(token)) {
-        token = await _refreshToken(settings, url);
+        token = await _refreshToken(settings, url, keepConnected);
       }
     }
 

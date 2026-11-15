@@ -6,7 +6,14 @@ using System.Security.Claims;
 
 namespace Helse.Api.Helpers.Auth;
 
-internal record TokenConfig(string Issuer, string Audience, SymmetricSecurityKey Key);
+internal record TokenConfig(string Issuer, string Audience, SymmetricSecurityKey Key)
+{
+    public long Validity { get; init; }
+
+    public long RefreshValidity { get; init; }
+
+    public long KeepAliveRefreshValidity { get; init; }
+}
 
 internal record TokenInfo(long Id, string Role);
 
@@ -22,7 +29,23 @@ internal class TokenService(TokenConfig config)
         return new PasswordHasher<User>().VerifyHashedPassword(User.Empty, hash, password);
     }
 
-    public string GetRefreshToken(User info, DateTime expires, Guid sessionId)
+    public DateTime TokenValidity(bool longLife = false, bool keepConnected = false)
+    {
+        if (longLife)
+        {
+            var duration = config.RefreshValidity;
+            if (keepConnected)
+            {
+                duration = config.KeepAliveRefreshValidity;
+            }
+
+            return DateTime.UtcNow.AddMinutes(duration);
+        }
+
+        return DateTime.UtcNow.AddMinutes(config.Validity);
+    }
+
+    public string GetRefreshToken(User info, Guid sessionId)
     {
         var claims = new List<Claim>
             {
@@ -31,10 +54,10 @@ internal class TokenService(TokenConfig config)
                 new("session", sessionId.ToString()),
              };
 
-        return GetToken(claims, expires);
+        return GetToken(claims, null);
     }
 
-    public string GetAccessToken(User info, DateTime expires)
+    public string GetAccessToken(User info)
     {
         var claims = new List<Claim>
             {
@@ -42,10 +65,10 @@ internal class TokenService(TokenConfig config)
                 new ("token", "access"),
              };
 
-        return GetToken(claims, expires);
+        return GetToken(claims, TokenValidity());
     }
 
-    private string GetToken(List<Claim> claims, DateTime expires)
+    private string GetToken(List<Claim> claims, DateTime? expires)
     {
         var tokenDescriptor = new SecurityTokenDescriptor
         {

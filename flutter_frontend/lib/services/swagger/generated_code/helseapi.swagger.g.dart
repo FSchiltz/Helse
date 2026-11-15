@@ -27,7 +27,7 @@ ConnectionResponse _$ConnectionResponseFromJson(Map<String, dynamic> json) =>
     ConnectionResponse(
       id: json['id'] as String?,
       accessToken: json['accessToken'] as String,
-      refreshToken: json['refreshToken'] as String?,
+      refreshToken: json['refreshToken'] as String,
       roles: userTypeListFromJson(json['roles'] as List?),
     );
 

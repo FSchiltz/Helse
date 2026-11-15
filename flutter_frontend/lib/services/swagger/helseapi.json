@@ -48,6 +48,16 @@
         "tags": [
           "AuthLogic"
         ],
+        "parameters": [
+          {
+            "name": "keepConnected",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -3049,10 +3059,7 @@
             "type": "string"
           },
           "refreshToken": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string"
           },
           "roles": {
             "type": "array",
