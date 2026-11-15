@@ -29,6 +29,8 @@ class ServiceError {
 }
 
 abstract class ApiService {
+  static Future<String?>? _refreshInProgress;
+
   final Account account;
 
   ApiService(this.account);
@@ -67,6 +69,27 @@ abstract class ApiService {
   }
 
   Future<String?> _refreshToken(
+    ConnectionResponse? settings,
+    Uri url,
+    bool keepConnected,
+  ) async {
+    final pendingRefresh = _refreshInProgress;
+    if (pendingRefresh != null) {
+      return pendingRefresh;
+    }
+
+    final refresh = _requestTokenRefresh(settings, url, keepConnected);
+    _refreshInProgress = refresh;
+    try {
+      return await refresh;
+    } finally {
+      if (identical(_refreshInProgress, refresh)) {
+        _refreshInProgress = null;
+      }
+    }
+  }
+
+  Future<String?> _requestTokenRefresh(
     ConnectionResponse? settings,
     Uri url,
     bool keepConnected,
