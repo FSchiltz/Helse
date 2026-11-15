@@ -103,7 +103,6 @@ class _EventsGraphState extends State<EventsGraph> {
         DateRangePicker(
           _setDate,
           _subDate,
-          range: widget.range,
           offset: widget.type.timeDifference,
         ),
         SizedBox(

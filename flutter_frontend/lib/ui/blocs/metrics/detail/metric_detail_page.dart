@@ -3,10 +3,8 @@ import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/metrics/detail/metric_text_display.dart';
 import 'package:helse/ui/blocs/metrics/metric_add_button.dart';
 import 'package:helse/ui/blocs/metrics/metric_search_button.dart';
-import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
-import '../../../../di/dependencies.dart';
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 import 'metric_number_display.dart';
 
@@ -31,27 +29,18 @@ class MetricDetailPage extends StatefulWidget {
 }
 
 class _MetricDetailPageState extends State<MetricDetailPage> {
+  int _refreshVersion = 0;
+
+  void _resetMetric() {
+    setState(() {
+      _refreshVersion++;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
   }
-
-  Future<List<Metric>> _getData(bool refresh) async {
-    return await Dependencies.services.metric.metrics(
-      widget.type.id,
-      widget.date.start,
-      widget.date.end,
-      person: widget.person,
-    );
-  }
-
-  void _resetMetric() {
-    setState(() {
-      _dummy = !_dummy;
-    });
-  }
-
-  bool _dummy = false;
 
   @override
   Widget build(BuildContext context) {
@@ -71,35 +60,22 @@ class _MetricDetailPageState extends State<MetricDetailPage> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: LoadingBuilder(
-            _getData,
-            builder: (ctx, data, reset) {
-              return data.isEmpty
-                  ? Center(
-                      child: Text(
-                        Translation.of(context).nodata,
-                        style: Theme.of(context).textTheme.labelLarge,
-                      ),
-                    )
-                  : (widget.type.type == MetricDataType.text ||
-                            widget.settings == GraphKind.text
-                        ? MetricTextDisplay(
-                            data,
-                            widget.date,
-                            reset,
-                            type: widget.type,
-                            person: widget.person,
-                          )
-                        : MetricNumberDisplay(
-                            data,
-                            widget.date,
-                            widget.settings,
-                            reset,
-                            person: widget.person,
-                            type: widget.type,
-                          ));
-            },
-          ),
+          child:
+              (widget.type.type == MetricDataType.text ||
+                  widget.settings == GraphKind.text
+              ? MetricTextDisplay(
+                  widget.date,
+                  key: ValueKey(_refreshVersion),
+                  type: widget.type,
+                  person: widget.person,
+                )
+              : MetricNumberDisplay(
+                  widget.date,
+                  widget.settings,
+                  key: ValueKey(_refreshVersion),
+                  person: widget.person,
+                  type: widget.type,
+                )),
         ),
       ),
     );

@@ -20,10 +20,8 @@ class MetricNumberDisplay extends MetricDetails {
   static const int valueCount = 24;
 
   const MetricNumberDisplay(
-    super.metrics,
     super.date,
-    super.settings,
-    super.reset, {
+    super.settings, {
     super.key,
     super.person,
     required super.type,
@@ -44,7 +42,7 @@ class _MetricGraphState extends MetricDetailsState<MetricNumberDisplay> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildContent(BuildContext context, void Function() reset) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: UIConstants.formPad,
@@ -64,7 +62,7 @@ class _MetricGraphState extends MetricDetailsState<MetricNumberDisplay> {
                 MetricSelected(
                   selection: selection,
                   type: widget.type,
-                  reset: widget.reset,
+                  reset: reset,
                 ),
               ],
             ),
@@ -121,8 +119,8 @@ class _MetricGraphState extends MetricDetailsState<MetricNumberDisplay> {
       'date': Variable(
         accessor: (MetricGrouped datumn) => datumn.date.toLocal(),
         scale: TimeScale(
-          min: subDate.start,
-          max: subDate.end,
+          min: selectedDate.start,
+          max: selectedDate.end,
           formatter: (time) => DateHelper.format(time, context: context),
         ),
       ),
@@ -139,7 +137,7 @@ class _MetricGraphState extends MetricDetailsState<MetricNumberDisplay> {
     }
 
     logger.log(
-      'created graph for $subDate and ${filteredMetrics.values.length}',
+      'created graph for $selectedDate and ${filteredMetrics.values.length}',
       name: "Metrics",
     );
     return filteredMetrics.values.isEmpty
