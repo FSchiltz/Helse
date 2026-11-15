@@ -26,15 +26,7 @@ class EventDetailPage extends StatefulWidget {
 }
 
 class _EventDetailPageState extends State<EventDetailPage> {
-  Future<List<Event>> _getData(bool refresh) async {
-    return await Dependencies.services.event.events(
-          widget.type.id,
-          widget.date.start,
-          widget.date.end,
-          person: widget.person,
-        ) ??
-        [];
-  }
+  
 
   @override
   void initState() {
@@ -57,17 +49,10 @@ class _EventDetailPageState extends State<EventDetailPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(UIConstants.formPad),
-        child: LoadingBuilder(
-          _getData,
-          builder: (context, data, reset) {
-            return EventsGraph(
-              range: widget.date,
-              person: widget.person,
-              type: widget.type,
-              events: data,
-              reset: reset,
-            );
-          },
+        child: EventsGraph(
+          range: widget.date,
+          person: widget.person,
+          type: widget.type,
         ),
       ),
     );
