@@ -148,10 +148,10 @@ internal static class AuthLogic
     {
         if (longLife)
         {
-            var duration = 1;
+            var duration = 7;
             if (keepConnected)
             {
-                duration = 3*30;
+                duration = 6 * 30;
             }
 
             return DateTime.UtcNow.AddDays(duration);
