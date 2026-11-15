@@ -13,7 +13,6 @@ internal class MigrationHelper(IOptions<DatabaseConfig> settings, ILogger<Migrat
         DatabaseUpgradeResult result;
         if (settings.Value.Postgres is not null)
         {
-
             EnsureDatabase.For.PostgresqlDatabase(settings.Value.Postgres);
 
             result = DeployChanges.To.PostgresqlDatabase(settings.Value.Postgres)
