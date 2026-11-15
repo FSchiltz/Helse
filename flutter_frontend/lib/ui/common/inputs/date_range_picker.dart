@@ -8,14 +8,16 @@ import 'package:helse/ui/common/ui_constants.dart';
 
 class DateRangePicker extends StatelessWidget {
   final void Function(DateTimeRange value) setDate;
-  final DateTimeRange initial;
+  final DateTimeRange selected;
   final DateTimeRange? range;
+  final DateTimeRange? initial;
   final String? offset;
 
   const DateRangePicker(
     this.setDate,
-    this.initial, {
+    this.selected, {
     this.range,
+    this.initial,
     super.key,
     this.offset,
   });
@@ -39,7 +41,7 @@ class DateRangePicker extends StatelessWidget {
           ),
         )
         .toList();
-    var preset = range;
+    var preset = initial;
     if (preset != null) {
       presets.add(
         MenuItemButton(
@@ -76,7 +78,7 @@ class DateRangePicker extends StatelessWidget {
         ),
         DateRangeInput(
           _callBack,
-          initial,
+          selected,
           isLargeScreen,
           showIcon: false,
           range:
@@ -95,20 +97,20 @@ class DateRangePicker extends StatelessWidget {
 
   void _nextPeriod() {
     var duration = _getDurationToMove();
-    var start = initial.start.add(duration);
-    var end = initial.end.add(duration);
+    var start = selected.start.add(duration);
+    var end = selected.end.add(duration);
     _callBack(DateTimeRange(start: start, end: end));
   }
 
   void _previousPeriod() {
     var duration = _getDurationToMove();
-    var start = initial.start.subtract(duration);
-    var end = initial.end.subtract(duration);
+    var start = selected.start.subtract(duration);
+    var end = selected.end.subtract(duration);
     _callBack(DateTimeRange(start: start, end: end));
   }
 
   Duration _getDurationToMove() {
-    return initial.end.difference(initial.start);
+    return selected.end.difference(selected.start);
   }
 
   void _callBack(DateTimeRange date) {
@@ -130,7 +132,7 @@ class DateRangePicker extends StatelessWidget {
     }
 
     var duration = Duration(seconds: _getDurationToMove().inSeconds * -1);
-    var end = initial.end.add(duration);
+    var end = selected.end.add(duration);
     return start == end || end.isBefore(start);
   }
 
@@ -141,7 +143,7 @@ class DateRangePicker extends StatelessWidget {
     }
 
     var duration = _getDurationToMove();
-    var start = initial.start.add(duration);
+    var start = selected.start.add(duration);
     return start == end || start.isAfter(end);
   }
 

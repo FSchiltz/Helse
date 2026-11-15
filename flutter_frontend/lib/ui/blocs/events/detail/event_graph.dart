@@ -14,6 +14,7 @@ import 'package:helse/ui/blocs/events/detail/stats_widgets/sessions_range.dart';
 import 'package:helse/ui/blocs/events/events_summary.dart';
 import 'package:helse/ui/blocs/events/events_timeline_graph.dart';
 import 'package:helse/ui/common/inputs/date_range_picker.dart';
+import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/navigator_chart.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
@@ -29,16 +30,12 @@ class EventsGraph extends StatefulWidget {
   final DateTimeRange range;
   final EventType type;
   final int? person;
-  final List<Event> events;
-  final void Function() reset;
 
   const EventsGraph({
     super.key,
     required this.range,
     required this.type,
     required this.person,
-    required this.events,
-    required this.reset,
   });
 
   @override
@@ -47,15 +44,24 @@ class EventsGraph extends StatefulWidget {
 
 class _EventsGraphState extends State<EventsGraph> {
   final _selection = SelectionController<Event>();
-  late List<Event> _filteredEvents;
+  List<Event> _filteredEvents = [];
+  late DateTimeRange _selectedDate;
   late DateTimeRange _subDate;
   late Color _color;
   late GroupStats _stats;
-  late List<Interval> _sessions;
-  late List<EventSummary> _groups;
+  List<Interval> _sessions = [];
+  List<Event> _events = [];
+  bool _withStats = true;
 
   void _setDate(DateTimeRange value) {
-    var filter = widget.events
+    setState(() {
+      _selectedDate = value;
+      _subDate = value;
+    });
+  }
+
+  void _setSubDate(DateTimeRange value) {
+    var filter = _events
         .where(
           (x) => x.stop.isAfter(value.start) && x.start.isBefore(value.end),
         )
@@ -72,94 +78,124 @@ class _EventsGraphState extends State<EventsGraph> {
     });
   }
 
+  Future<List<Event>> _getData(bool refresh) async {
+    var events =
+        await Dependencies.services.event.events(
+          widget.type.id,
+          _selectedDate.start,
+          _selectedDate.end,
+          person: widget.person,
+        ) ??
+        [];
+
+    if (events.length <= 10) {
+      _selection.selected.clear();
+      _selection.selected.addAll(events);
+      _withStats = false;
+      _sessions = [];
+      _stats = GroupStats([], {}, 0);
+    } else {
+      _withStats = true;
+      _stats = _group(events, _selectedDate);
+      _sessions = EventHelper.getSessions(events);
+    }
+
+    _filteredEvents = events;
+    _events = events;
+
+    return events;
+  }
+
   @override
   void initState() {
     super.initState();
+    _selectedDate = widget.range;
     _subDate = widget.range;
-    _filteredEvents = widget.events;
-    _stats = _group(widget.events, widget.range);
-    _groups = _stats.groups;
-    _sessions = EventHelper.getSessions(widget.events);
+
     _color = Dependencies.theme.stateColor(
       widget.type.id.toString(),
       StateType.events,
     );
-
-    if (widget.events.length == 1) {
-      _selection.select(widget.events);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final radius = 40.0;
-    final graphHeight = 4 * radius;
-    final height = graphHeight + UIConstants.formPad * 2 + 10;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: UIConstants.formPad,
-      children: [
-        DateRangePicker(
-          _setDate,
-          _subDate,
-          range: widget.range,
-          offset: widget.type.timeDifference,
-        ),
-        SizedBox(
-          child: NavigatorChart(
-            widget.range,
-            _subDate,
-            _setDate,
-            graph: EventsSummary(_groups, widget.range),
-          ),
-        ),
-        Flexible(
-          child: (_filteredEvents.length < 200)
-              ? EventsTimelineGraph(
-                  _filteredEvents,
-                  _subDate,
-                  onselect: _selection.select,
-                )
-              : EventsSummary(_stats.groups, _subDate),
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            child: Wrap(
-              children: [
-                SessionChart(
-                  sessions: _sessions,
-                  type: widget.type,
-                  graphHeight: graphHeight,
-                  radius: radius,
-                  stats: _stats,
-                ),
-                if (_selection.selected.isNotEmpty)
-                  SelectionWidget(
-                    selection: _selection,
-                    reset: () {
-                      widget.reset();
-                      _selection.clear();
-                    },
-                    person: widget.person,
-                    type: widget.type,
-                  ),
-                SessionList(
-                  height: height,
-                  color: _color,
-                  sessions: _sessions,
-                  type: widget.type,
-                ),
-                SessionsRange(
-                  height: height,
-                  color: _color,
-                  sessions: _sessions,
-                ),
-              ],
+    return LoadingBuilder(
+      _getData,
+      builder: (context, data, reset) {
+        final radius = 40.0;
+        final graphHeight = 4 * radius;
+        final height = graphHeight + UIConstants.formPad * 2 + 10;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: UIConstants.formPad,
+          children: [
+            DateRangePicker(
+              _setDate,
+              _selectedDate,
+              offset: widget.type.timeDifference,
+              initial: widget.range,
             ),
-          ),
-        ),
-      ],
+            SizedBox(
+              child: NavigatorChart(
+                _selectedDate,
+                _subDate,
+                _setSubDate,
+                graph: EventsSummary(_stats.groups, _selectedDate),
+              ),
+            ),
+            if (_withStats)
+              Flexible(
+                child: (_filteredEvents.length < 200)
+                    ? EventsTimelineGraph(
+                        _filteredEvents,
+                        _subDate,
+                        onselect: _selection.select,
+                      )
+                    : EventsSummary(_stats.groups, _subDate),
+              ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Wrap(
+                  children: [
+                    if (_selection.selected.isNotEmpty)
+                      SelectionWidget(
+                        selection: _selection,
+                        reset: () {
+                          reset();
+                          _selection.clear();
+                        },
+                        person: widget.person,
+                        type: widget.type,
+                      ),
+                    if (_withStats)
+                      SessionChart(
+                        sessions: _sessions,
+                        type: widget.type,
+                        graphHeight: graphHeight,
+                        radius: radius,
+                        stats: _stats,
+                      ),
+                    if (_withStats)
+                      SessionList(
+                        height: height,
+                        color: _color,
+                        sessions: _sessions,
+                        type: widget.type,
+                      ),
+                    if (_withStats)
+                      SessionsRange(
+                        height: height,
+                        color: _color,
+                        sessions: _sessions,
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -173,7 +209,7 @@ class _EventsGraphState extends State<EventsGraph> {
     final bucketLength = range.duration.inMilliseconds / buckets;
 
     logger.log(
-      'grouping with buckets: $buckets and bucket lenght: $bucketLength for $_subDate',
+      'grouping with buckets: $buckets and bucket lenght: $bucketLength for $_selectedDate',
       name: "Events",
     );
 

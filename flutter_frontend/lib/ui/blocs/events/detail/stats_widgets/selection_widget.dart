@@ -73,8 +73,6 @@ class EventTile extends StatelessWidget {
     return Wrap(
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        Text('Selected: '),
-        Text('(${event.id})'),
         Text(' ${event.description} '),
         Text(
           locale

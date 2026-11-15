@@ -1,6 +1,7 @@
 import 'dart:developer' as logger;
 
 import 'package:flutter/material.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/helpers/metrics/range_list.dart';
@@ -8,21 +9,18 @@ import 'package:helse/helpers/selection_controller.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/metrics/widget/widget_graph.dart';
 import 'package:helse/ui/common/inputs/date_range_picker.dart';
+import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/navigator_chart.dart';
 
 abstract class MetricDetails extends StatefulWidget {
-  final List<Metric> metrics;
-  final DateTimeRange date;
-  final void Function() reset;
+  final DateTimeRange initialDate;
   final int? person;
   final MetricType type;
   final GraphKind settings;
 
   const MetricDetails(
-    this.metrics,
-    this.date,
-    this.settings,
-    this.reset, {
+    this.initialDate,
+    this.settings, {
     super.key,
     this.person,
     required this.type,
@@ -31,45 +29,83 @@ abstract class MetricDetails extends StatefulWidget {
 
 abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
   RangeList filteredMetrics = RangeList.empty();
+  DateTimeRange selectedDate = DateHelper.now();
   DateTimeRange subDate = DateHelper.now();
+  List<Metric> metrics = [];
   final SelectionController<Metric> selection = SelectionController();
   late double maxY;
 
   @override
   void initState() {
     super.initState();
-    subDate = widget.date;
+    selectedDate = widget.initialDate;
+    subDate = widget.initialDate;
+  }
 
-    var initGroup = MetricHelper.group(
-      widget.metrics,
-      subDate,
-      500,
-      widget.type,
+  @override
+  Widget build(BuildContext context) {
+    return LoadingBuilder(
+      _getData,
+      builder: (ctx, data, reset) {
+        return buildContent(context, reset);
+      },
     );
-    maxY = initGroup.maxY;
-    filteredMetrics = initGroup;
-
-    if (initGroup.values.length == 1) {
-      selection.select(initGroup.values.first.metrics);
-    }
   }
 
   List<Metric> _filter(List<Metric> metrics, DateTimeRange<DateTime> value) {
     final stopwatch = Stopwatch()..start();
     logger.log('Filter for $value');
-    var metrics = widget.metrics
+    var result = metrics
         .where((x) => x.date.isAfter(value.start) && x.date.isBefore(value.end))
         .toList();
     logger.log(
       '_filter() executed in ${stopwatch.elapsed} with ${metrics.length} items',
       name: "Metrics",
     );
-    return metrics;
+    return result;
   }
+
+  Future<RangeList> _getData(bool refresh) async {
+    final loadedMetrics = await Dependencies.services.metric.metrics(
+      widget.type.id,
+      selectedDate.start,
+      selectedDate.end,
+      person: widget.person,
+    );
+
+    final grouped = MetricHelper.group(
+      loadedMetrics,
+      selectedDate,
+      500,
+      widget.type,
+    );
+    metrics = loadedMetrics;
+    filteredMetrics = grouped;
+    maxY = grouped.maxY;
+
+    return grouped;
+  }
+
+  void _resetMetric() {
+    setState(() {
+      _dummy = !_dummy;
+    });
+  }
+
+  bool _dummy = false;
 
   void _setDate(DateTimeRange value) {
     logger.log('set date with $value', name: "Metrics");
-    var filter = _filter(widget.metrics, value);
+    setState(() {
+      selectedDate = value;
+      subDate = value;
+    });
+    _resetMetric();
+  }
+
+  void _setSubDate(DateTimeRange value) {
+    logger.log('set subdate with $value', name: "Metrics");
+    var filter = _filter(metrics, value);
     var grouped = MetricHelper.group(filter, value, 500, widget.type);
     setState(() {
       subDate = value;
@@ -81,16 +117,16 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
     return [
       DateRangePicker(
         _setDate,
-        subDate,
-        range: widget.date,
+        selectedDate,
         offset: widget.type.timeDifference,
+        initial: widget.initialDate,
       ),
       NavigatorChart(
-        widget.date,
+        selectedDate,
         subDate,
-        _setDate,
+        _setSubDate,
         graph: WidgetGraph(
-          widget.metrics
+          metrics
               .map(
                 (e) => Metric(
                   id: 0,
@@ -102,14 +138,16 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
                 ),
               )
               .toList(),
-          widget.date,
+          selectedDate,
           widget.type,
           widget.settings,
-          tile: widget.metrics.length,
+          tile: metrics.length,
           width: 1,
           maxY: maxY,
         ),
       ),
     ];
   }
+
+  Widget buildContent(BuildContext context, void Function() reset);
 }

@@ -3,10 +3,8 @@ import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/events/event_add_button.dart';
 import 'package:helse/ui/blocs/events/detail/event_graph.dart';
 import 'package:helse/ui/blocs/events/event_search_button.dart';
-import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
-import '../../../../di/dependencies.dart';
 import '../../../../services/swagger/generated_code/helseapi.swagger.dart';
 
 class EventDetailPage extends StatefulWidget {
@@ -26,15 +24,7 @@ class EventDetailPage extends StatefulWidget {
 }
 
 class _EventDetailPageState extends State<EventDetailPage> {
-  Future<List<Event>> _getData(bool refresh) async {
-    return await Dependencies.services.event.events(
-          widget.type.id,
-          widget.date.start,
-          widget.date.end,
-          person: widget.person,
-        ) ??
-        [];
-  }
+  int _refreshVersion = 0;
 
   @override
   void initState() {
@@ -57,17 +47,11 @@ class _EventDetailPageState extends State<EventDetailPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(UIConstants.formPad),
-        child: LoadingBuilder(
-          _getData,
-          builder: (context, data, reset) {
-            return EventsGraph(
-              range: widget.date,
-              person: widget.person,
-              type: widget.type,
-              events: data,
-              reset: reset,
-            );
-          },
+        child: EventsGraph(
+          key: ValueKey(_refreshVersion),
+          range: widget.date,
+          person: widget.person,
+          type: widget.type,
         ),
       ),
     );
@@ -75,9 +59,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
 
   void _resetEvents() {
     setState(() {
-      _dummy = !_dummy;
+      _refreshVersion++;
     });
   }
-
-  bool _dummy = false;
 }

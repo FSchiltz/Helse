@@ -13,13 +13,11 @@ import 'package:helse/ui/common/ui_constants.dart';
 
 class MetricTextDisplay extends MetricDetails {
   const MetricTextDisplay(
-    List<Metric> metrics,
-    DateTimeRange date,
-    void Function() reset, {
+    DateTimeRange date, {
     super.key,
     super.person,
     required super.type,
-  }) : super(metrics, date, GraphKind.text, reset);
+  }) : super(date, GraphKind.text);
 
   @override
   State<MetricTextDisplay> createState() => _MetricTextDisplayState();
@@ -27,7 +25,7 @@ class MetricTextDisplay extends MetricDetails {
 
 class _MetricTextDisplayState extends MetricDetailsState<MetricTextDisplay> {
   @override
-  Widget build(BuildContext context) {
+  Widget buildContent(BuildContext context, void Function() reset) {
     final locale = Translation.of(context);
 
     return Column(
@@ -39,7 +37,7 @@ class _MetricTextDisplayState extends MetricDetailsState<MetricTextDisplay> {
           height: 120,
           child: MetricTimelineGraph(
             filteredMetrics.values,
-            widget.date,
+            widget.initialDate,
             widget.type,
             selection: selection,
           ),
@@ -73,7 +71,7 @@ class _MetricTextDisplayState extends MetricDetailsState<MetricTextDisplay> {
                 MetricSelected(
                   selection: selection,
                   type: widget.type,
-                  reset: widget.reset,
+                  reset: reset,
                 ),
               ],
             ),
