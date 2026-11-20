@@ -23,14 +23,10 @@ class _UserSessionsState extends State<UserSessions> {
   Timer? _timer;
   DateTime _now = DateTime.now();
   Key _sessionsKey = UniqueKey();
-  late bool _keepConnected;
 
   @override
   void initState() {
     super.initState();
-    _keepConnected = Dependencies.logics.authentication.account.isEnabled(
-      Account.keepConnected,
-    );
     _timer = Timer.periodic(const Duration(seconds: 30), (_) {
       if (!mounted) return;
       setState(() => _now = DateTime.now());
@@ -139,21 +135,7 @@ class _UserSessionsState extends State<UserSessions> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: UIConstants.formPad),
-                  CheckboxListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(locale.keepConnected),
-                    value: _keepConnected,
-                    onChanged: (value) async {
-                      if (value == null) return;
-                      await Dependencies.logics.authentication.account.setBool(
-                        Account.keepConnected,
-                        value,
-                      );
-                      if (!mounted) return;
-                      setState(() => _keepConnected = value);
-                    },
-                  ),
+                  SizedBox(height: UIConstants.formPad),                 
                   Expanded(
                     child: SingleChildScrollView(
                       child: ListView.builder(
