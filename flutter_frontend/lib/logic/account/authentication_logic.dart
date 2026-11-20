@@ -28,6 +28,11 @@ class AuthenticationLogic {
     var token = account.getToken()?.refreshToken;
     if (token != null && token.isNotEmpty) {
       await _load();
+      // the load call will force a new refresh token or set it to null if not valid
+      token = account.getToken()?.refreshToken;
+      if (token == null || token.isEmpty) {
+        return false;
+      }
       setAuth();
 
       return true;
@@ -241,7 +246,12 @@ class AuthenticationLogic {
     Dependencies.blocs.server.setStatus(isInit);
 
     setNoAuth();
-    var isConnected = await checkLogin();
+    var isConnected = false;
+    try {
+      isConnected = await checkLogin();
+    } catch (error, stackTrace) {
+      log('Failed to restore session', error: error, stackTrace: stackTrace);
+    }
     if (isInit != null && isInit.init == true && !isConnected) {
       var keepConnected = account.isEnabled(Account.keepConnected);
       if (isInit.oauths.isNotEmpty) {
