@@ -232,7 +232,7 @@ internal class UserContext(DataConnection db, SlowQueryLogInterceptor intercepto
 
     public Task<Sessions[]> GetSessions(long id)
     {
-        return Db.GetTable<Sessions>().Where(x => x.UserId == id).ToArrayAsync();
+        return Db.GetTable<Sessions>().Where(x => x.UserId == id && x.Stop >= DateTime.Now).ToArrayAsync();
     }
 
     public Task AddSession(Sessions session)
