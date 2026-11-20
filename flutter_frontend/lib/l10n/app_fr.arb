@@ -10,6 +10,24 @@
   "bulkMetric": "Edition de {count} metriques",
   "cancel": "Annuler",
   "cleanSessions": "Supprimer toutes les sessions",
+  "confirmCleanSessions": "Êtes-vous sûr de vouloir supprimer toutes les sessions ?",
+  "timeLeft": "Temps restant : {time}",
+  "@timeLeft": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "expired": "expirée",
+  "accessTokenExpires": "Temps restant du jeton d'accès : {time}",
+  "@accessTokenExpires": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "code": "Code",
   "color": "Couleur",
   "confirmpassword": "Confirmation du mot de passe",
@@ -73,6 +91,7 @@
   "searchItem": "Rechercher dans {item}",
   "serverurl": "url du serveur",
   "sessions": "Connexions",
+  "sessionCount": "{count} sessions",
   "settings": "Configuration",
   "share": "Partager",
   "showOnDashboard": "Afficher sur le tableau de bord",

@@ -56,6 +56,7 @@ builder.Services.AddSingleton((_) => new TokenConfig(issuer, audience, key)
 });
 
 builder.Services.AddTransient<SlowQueryLogInterceptor>();
+builder.Services.AddHybridCache();
 
 builder.Services.AddSingleton<TokenService>()
     .AddTransient<IUserContext, UserContext>()

@@ -277,7 +277,29 @@ class AppLocalizationsFr extends AppLocalizations {
   String get sessions => 'Connexions';
 
   @override
+  String sessionCount(int count) {
+    return '$count sessions';
+  }
+
+  @override
+  String timeLeft(String time) {
+    return 'Temps restant : $time';
+  }
+
+  @override
+  String get expired => 'expirée';
+
+  @override
+  String accessTokenExpires(String time) {
+    return 'Temps restant du jeton d\'accès : $time';
+  }
+
+  @override
   String get cleanSessions => 'Supprimer toutes les sessions';
+
+  @override
+  String get confirmCleanSessions =>
+      'Êtes-vous sûr de vouloir supprimer toutes les sessions ?';
 
   @override
   String get constants => 'Constantes';

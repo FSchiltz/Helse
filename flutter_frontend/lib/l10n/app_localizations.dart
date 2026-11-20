@@ -602,11 +602,41 @@ abstract class AppLocalizations {
   /// **'Connections'**
   String get sessions;
 
+  /// No description provided for @sessionCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} sessions'**
+  String sessionCount(int count);
+
+  /// No description provided for @timeLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Time left: {time}'**
+  String timeLeft(String time);
+
+  /// No description provided for @expired.
+  ///
+  /// In en, this message translates to:
+  /// **'expired'**
+  String get expired;
+
+  /// No description provided for @accessTokenExpires.
+  ///
+  /// In en, this message translates to:
+  /// **'Access token time left: {time}'**
+  String accessTokenExpires(String time);
+
   /// No description provided for @cleanSessions.
   ///
   /// In en, this message translates to:
   /// **'Remove all sessions'**
   String get cleanSessions;
+
+  /// No description provided for @confirmCleanSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove all sessions?'**
+  String get confirmCleanSessions;
 
   /// No description provided for @constants.
   ///

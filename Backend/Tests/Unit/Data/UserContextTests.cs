@@ -1,18 +1,33 @@
 using Helse.Api.Data;
 using Helse.Api.Data.Models.Persons;
 using LinqToDB;
+using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests.Unit.Data;
 
 [Collection("Database collection")]
-public class UserContextTests(DatabaseFixture fixture) : ContextTests(fixture)
+public class UserContextTests(DatabaseFixture fixture) : ContextTests(fixture), IDisposable
 {
+    private readonly ServiceProvider _services = CreateServices();
+
+    private HybridCache Cache => _services.GetRequiredService<HybridCache>();
+
+    public void Dispose() => _services.Dispose();
+
+    private static ServiceProvider CreateServices()
+    {
+        var services = new ServiceCollection();
+        services.AddHybridCache();
+        return services.BuildServiceProvider();
+    }
+
     [Fact]
     public async Task Count_ReturnsZero_WhenNoUsers()
     {
         // Arrange
         var db = await GetDb();
-        var context = new UserContext(db, _interceptor);
+        var context = new UserContext(db, _interceptor, Cache);
 
         // Act
         var count = await context.Count();
@@ -43,7 +58,7 @@ public class UserContextTests(DatabaseFixture fixture) : ContextTests(fixture)
             Created = DateTime.Now,
         }, token: TestContext.Current.CancellationToken);
 
-        var context = new UserContext(db, _interceptor);
+        var context = new UserContext(db, _interceptor, Cache);
 
         // Act
         var count = await context.Count();
@@ -57,7 +72,7 @@ public class UserContextTests(DatabaseFixture fixture) : ContextTests(fixture)
     {
         // Arrange
         var db = await GetDb();
-        var context = new UserContext(db, _interceptor);
+        var context = new UserContext(db, _interceptor, Cache);
 
         // Act
         var result = await context.Get("nonexistent");
@@ -89,7 +104,7 @@ public class UserContextTests(DatabaseFixture fixture) : ContextTests(fixture)
             Created = DateTime.Now,
         }, token: TestContext.Current.CancellationToken);
 
-        var context = new UserContext(db, _interceptor);
+        var context = new UserContext(db, _interceptor, Cache);
 
         // Act
         var result = await context.Get("john_user");
@@ -129,7 +144,7 @@ public class UserContextTests(DatabaseFixture fixture) : ContextTests(fixture)
             Created = DateTime.Now,
         }, token: TestContext.Current.CancellationToken);
 
-        var context = new UserContext(db, _interceptor);
+        var context = new UserContext(db, _interceptor, Cache);
         var now = DateTime.UtcNow;
 
         // Act
@@ -180,7 +195,7 @@ public class UserContextTests(DatabaseFixture fixture) : ContextTests(fixture)
             Created = DateTime.Now,
         }, token: TestContext.Current.CancellationToken);
 
-        var context = new UserContext(db, _interceptor);
+        var context = new UserContext(db, _interceptor, Cache);
 
         // Act
         var result = await context.HasRightAsync(userId, person2Id, Helse.Models.Persons.RightType.View, now);

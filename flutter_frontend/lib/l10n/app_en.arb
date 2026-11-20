@@ -219,8 +219,36 @@
     "@syncHistoryToggle": {},
     "sessions": "Connections",
     "@sessions": {},
+    "sessionCount": "{count} sessions",
+    "@sessionCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "timeLeft": "Time left: {time}",
+    "@timeLeft": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
+    "expired": "expired",
+    "@expired": {},
+    "accessTokenExpires": "Access token time left: {time}",
+    "@accessTokenExpires": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
     "cleanSessions": "Remove all sessions",
     "@cleanSessions": {},
+    "confirmCleanSessions": "Are you sure you want to remove all sessions?",
+    "@confirmCleanSessions": {},
     "constants": "Constants",
     "@constants": {},
     "id": "Id",
