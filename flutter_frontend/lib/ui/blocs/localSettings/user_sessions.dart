@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/services/account.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
@@ -22,10 +23,14 @@ class _UserSessionsState extends State<UserSessions> {
   Timer? _timer;
   DateTime _now = DateTime.now();
   Key _sessionsKey = UniqueKey();
+  late bool _keepConnected;
 
   @override
   void initState() {
     super.initState();
+    _keepConnected = Dependencies.logics.authentication.account.isEnabled(
+      Account.keepConnected,
+    );
     _timer = Timer.periodic(const Duration(seconds: 30), (_) {
       if (!mounted) return;
       setState(() => _now = DateTime.now());
@@ -135,6 +140,20 @@ class _UserSessionsState extends State<UserSessions> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: UIConstants.formPad),
+                  CheckboxListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(locale.keepConnected),
+                    value: _keepConnected,
+                    onChanged: (value) async {
+                      if (value == null) return;
+                      await Dependencies.logics.authentication.account.setBool(
+                        Account.keepConnected,
+                        value,
+                      );
+                      if (!mounted) return;
+                      setState(() => _keepConnected = value);
+                    },
+                  ),
                   Expanded(
                     child: SingleChildScrollView(
                       child: ListView.builder(

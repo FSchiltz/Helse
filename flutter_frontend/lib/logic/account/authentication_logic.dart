@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:helse/logic/account/authentication_bloc.dart';
 import 'package:helse/logic/account/settings_migration.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:helse/helpers/url_dummy.dart'
     if (dart.library.html) 'package:helse/helpers/url.dart';
 
@@ -27,7 +26,7 @@ class AuthenticationLogic {
 
     await SettingsMigration(account).migrate();
     var token = account.getToken()?.refreshToken;
-    if (token != null && token.isNotEmpty && !JwtDecoder.isExpired(token)) {
+    if (token != null && token.isNotEmpty) {
       await _load();
       setAuth();
 
@@ -68,6 +67,10 @@ class AuthenticationLogic {
         await account.remove(Account.grant);
       }
 
+      await account.setBool(
+        Account.keepConnected,
+        connection.keepConnected ?? false,
+      );
       await account.setToken(token);
 
       // todo add a bloc for the settings and load async
