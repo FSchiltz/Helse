@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="33.1.0" />
     <PackageReference Include="DbUp" Version="5.0.41" />
+    <PackageReference Include="dbup-postgresql" Version="7.0.1" />
     <PackageReference Include="linq2db.Extensions" Version="6.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.15" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.15" />
