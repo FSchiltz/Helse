@@ -35,6 +35,11 @@ analyzer:
     - '**/*.freezed.dart'
     - '**/generated_code/**'
     - 'lib/services/swagger/generated_code/**'
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - linux/**
   language:
     strict-casts: true
     strict-inference: true
