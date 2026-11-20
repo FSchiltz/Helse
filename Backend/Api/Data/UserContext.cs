@@ -6,12 +6,13 @@ using Helse.Models.Treatments;
 using LinqToDB;
 using LinqToDB.Async;
 using LinqToDB.Data;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace Helse.Api.Data;
 
 internal record PersonFromDb(User User, Models.Persons.Person Person);
 
-internal class UserContext(DataConnection db, SlowQueryLogInterceptor interceptor) : BaseContext(db, interceptor), IUserContext
+internal class UserContext(DataConnection db, SlowQueryLogInterceptor interceptor, HybridCache cache) : BaseContext(db, interceptor), IUserContext
 {
     /// <summary>
     /// Check that a user has the given right over someone
@@ -87,7 +88,11 @@ internal class UserContext(DataConnection db, SlowQueryLogInterceptor intercepto
         if (identifier is null)
             return null;
 
-        return await Db.GetTable<User>().FirstOrDefaultAsync(x => x.Identifier == identifier);
+        return await cache.GetOrCreateAsync(
+            $"UserContext:Identifier:{identifier}",
+            async cancellationToken => await Db.GetTable<User>()
+                .FirstOrDefaultAsync(x => x.Identifier == identifier, cancellationToken),
+            new HybridCacheEntryOptions { Expiration = TimeSpan.FromSeconds(1) });
     }
 
     public async Task<User?> Get(string? identifier, string issuer)
@@ -209,9 +214,9 @@ internal class UserContext(DataConnection db, SlowQueryLogInterceptor intercepto
     public Task<PersonFromDb?> Get(long id)
     {
         return (from u in Db.GetTable<User>()
-                join p in Db.GetTable<Models.Persons.Person>() on u.PersonId equals p.Id
-                where u.Id == id
-                select new PersonFromDb(u, p))
+                                               join p in Db.GetTable<Models.Persons.Person>() on u.PersonId equals p.Id
+                                               where u.Id == id
+                                               select new PersonFromDb(u, p))
                                  .FirstOrDefaultAsync();
     }
 
