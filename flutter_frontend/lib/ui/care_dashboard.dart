@@ -9,8 +9,6 @@ import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 import 'package:helse/ui/patient_settings.dart';
 
-import 'blocs/care/agenda.dart';
-
 class CareDashBoard extends StatelessWidget {
   const CareDashBoard({super.key});
 
@@ -22,63 +20,28 @@ class CareDashBoard extends StatelessWidget {
     return LoadingBuilder(
       _getData,
       builder: (context, data, reset) {
-        final isMobile = UIHelpers.isMobile(context);
-        final theme = Theme.of(context).colorScheme;
-
-        return isMobile
-            ? Column(
-                children: [
-                  Flexible(child: Agenda(data, compact: isMobile)),
-                  Divider(),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: UIConstants.formPad,
-                      right: UIConstants.formPad,
-                    ),
-                    child: _getHeader(context, reset, data),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        left: UIConstants.formPad,
-                        right: UIConstants.formPad,
-                      ),
-                      child: ListView(
-                        children: data
-                            .map((e) => PatientsCard(e, reset))
-                            .toList(),
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            : Row(
-                children: [
-                  Expanded(child: Agenda(data, compact: isMobile)),
-                  SizedBox(
-                    width: 300,
-                    child: Container(
-                      padding: EdgeInsets.only(
-                        left: UIConstants.formPad,
-                        right: UIConstants.formPad,
-                      ),
-                      color: theme.surfaceContainer,
-                      child: Column(
-                        children: [
-                          _getHeader(context, reset, data),
-                          Expanded(
-                            child: ListView(
-                              children: data
-                                  .map((e) => PatientsCard(e, reset))
-                                  .toList(),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              );
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                left: UIConstants.formPad,
+                right: UIConstants.formPad,
+              ),
+              child: _getHeader(context, reset, data),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: UIConstants.formPad,
+                  right: UIConstants.formPad,
+                ),
+                child: ListView(
+                  children: data.map((e) => PatientsCard(e, reset)).toList(),
+                ),
+              ),
+            ),
+          ],
+        );
       },
     );
   }
