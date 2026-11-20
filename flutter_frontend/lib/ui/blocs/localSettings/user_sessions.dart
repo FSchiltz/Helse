@@ -6,8 +6,8 @@ import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
+import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/loading_builder.dart';
-import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
@@ -72,53 +72,68 @@ class _UserSessionsState extends State<UserSessions> {
     var theme = Theme.of(context);
     final currentSessionId = _getCurrentSessionId();
     final accessTokenExpiration = _getAccessTokenExpiration();
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 10,
-        title: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Text(locale.sessions, style: theme.textTheme.displaySmall),
-        ),
-        actions: [
-          IconButton(
-            tooltip: MaterialLocalizations.of(
-              context,
-            ).refreshIndicatorSemanticLabel,
-            onPressed: () => setState(() => _sessionsKey = UniqueKey()),
-            icon: const Icon(Icons.refresh),
+    return LoadingBuilder(
+      key: _sessionsKey,
+      _getData,
+      builder: (context, data, reset) {
+        return Scaffold(
+          appBar: AppBar(
+            elevation: 10,
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(locale.sessions, style: theme.textTheme.displaySmall),
+                const SizedBox(width: 12),
+                Text(
+                  locale.sessionCount(data.length),
+                  style: theme.textTheme.headlineSmall,
+                ),
+              ],
+            ),
+            actions: [
+              IconButton(
+                tooltip: locale.cleanSessions,
+                onPressed: () async {
+                  final confirmed = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => SquareDialog(
+                      icon: const Icon(Icons.delete_sweep_outlined),
+                      title: Text(locale.cleanSessions),
+                      content: Text(locale.confirmCleanSessions),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: Text(locale.cancel),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          child: Text(locale.ok),
+                        ),
+                      ],
+                    ),
+                  );
+                  if (confirmed == true && context.mounted) {
+                    await Dependencies.logics.authentication.logOut(true);
+                  }
+                },
+                icon: const Icon(Icons.delete_sweep_outlined),
+              ),
+              IconButton(
+                tooltip: MaterialLocalizations.of(
+                  context,
+                ).refreshIndicatorSemanticLabel,
+                onPressed: () => setState(() => _sessionsKey = UniqueKey()),
+                icon: const Icon(Icons.refresh),
+              ),
+            ],
           ),
-        ],
-      ),
-      body: SafeArea(
-        child: LoadingBuilder(
-          key: _sessionsKey,
-          _getData,
-          builder: (context, data, reset) {
-            return Padding(
+          body: SafeArea(
+            child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Text(
-                          '${data.length} sessions',
-                          style: theme.textTheme.headlineLarge,
-                        ),
-                        Spacer(),
-                        SizedBox(
-                          width: 200,
-                          child: SquareButton(locale.cleanSessions, () async {
-                            await Dependencies.logics.authentication.logOut(
-                              true,
-                            );
-                          }),
-                        ),
-                      ],
-                    ),
-                  ),
                   SizedBox(height: UIConstants.formPad),
                   Expanded(
                     child: SingleChildScrollView(
@@ -202,10 +217,10 @@ class _UserSessionsState extends State<UserSessions> {
                   ),
                 ],
               ),
-            );
-          },
-        ),
-      ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

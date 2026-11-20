@@ -277,6 +277,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessions => 'Connections';
 
   @override
+  String sessionCount(int count) {
+    return '$count sessions';
+  }
+
+  @override
   String timeLeft(String time) {
     return 'Time left: $time';
   }
@@ -291,6 +296,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cleanSessions => 'Remove all sessions';
+
+  @override
+  String get confirmCleanSessions =>
+      'Are you sure you want to remove all sessions?';
 
   @override
   String get constants => 'Constants';
