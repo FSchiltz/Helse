@@ -53,11 +53,24 @@ class _UserSessionsState extends State<UserSessions> {
     }
   }
 
+  DateTime? _getAccessTokenExpiration() {
+    try {
+      final accessToken = Dependencies.logics.authentication.account
+          .getToken()
+          ?.accessToken;
+      if (accessToken == null || accessToken.isEmpty) return null;
+      return JwtDecoder.getExpirationDate(accessToken);
+    } catch (_) {
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var locale = Translation.of(context);
     var theme = Theme.of(context);
     final currentSessionId = _getCurrentSessionId();
+    final accessTokenExpiration = _getAccessTokenExpiration();
     return Scaffold(
       appBar: AppBar(
         elevation: 10,
@@ -131,18 +144,41 @@ class _UserSessionsState extends State<UserSessions> {
                                     alignment: Alignment.centerLeft,
                                     child: Padding(
                                       padding: const EdgeInsets.only(top: 8),
-                                      child: Text(
-                                        isActive == true
-                                            ? locale.timeLeft(
-                                                DateHelper.formatDuration(
-                                                  session.stop!.difference(
-                                                    _now,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            isActive == true
+                                                ? locale.timeLeft(
+                                                    DateHelper.formatDuration(
+                                                      session.stop!.difference(
+                                                        _now,
+                                                      ),
+                                                      locale,
+                                                    ),
+                                                  )
+                                                : locale.timeLeft(
+                                                    locale.expired,
                                                   ),
-                                                  locale,
-                                                ),
-                                              )
-                                            : locale.timeLeft(locale.expired),
-                                        style: theme.textTheme.titleMedium,
+                                            style: theme.textTheme.titleMedium,
+                                          ),
+                                          if (accessTokenExpiration != null)
+                                            Text(
+                                              locale.accessTokenExpires(
+                                                accessTokenExpiration.isAfter(
+                                                      _now,
+                                                    )
+                                                    ? DateHelper.formatDuration(
+                                                        accessTokenExpiration
+                                                            .difference(_now),
+                                                        locale,
+                                                      )
+                                                    : locale.expired,
+                                              ),
+                                              style: theme.textTheme.bodyMedium,
+                                            ),
+                                        ],
                                       ),
                                     ),
                                   ),

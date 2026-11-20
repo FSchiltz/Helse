@@ -285,6 +285,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expired => 'expired';
 
   @override
+  String accessTokenExpires(String time) {
+    return 'Access token time left: $time';
+  }
+
+  @override
   String get cleanSessions => 'Remove all sessions';
 
   @override

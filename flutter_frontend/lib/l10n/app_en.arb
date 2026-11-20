@@ -229,6 +229,14 @@
     },
     "expired": "expired",
     "@expired": {},
+    "accessTokenExpires": "Access token time left: {time}",
+    "@accessTokenExpires": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
     "cleanSessions": "Remove all sessions",
     "@cleanSessions": {},
     "constants": "Constants",

@@ -19,6 +19,14 @@
     }
   },
   "expired": "expirée",
+  "accessTokenExpires": "Temps restant du jeton d'accès : {time}",
+  "@accessTokenExpires": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "code": "Code",
   "color": "Couleur",
   "confirmpassword": "Confirmation du mot de passe",

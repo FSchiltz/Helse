@@ -285,6 +285,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get expired => 'expirée';
 
   @override
+  String accessTokenExpires(String time) {
+    return 'Temps restant du jeton d\'accès : $time';
+  }
+
+  @override
   String get cleanSessions => 'Supprimer toutes les sessions';
 
   @override

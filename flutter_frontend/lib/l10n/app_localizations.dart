@@ -614,6 +614,12 @@ abstract class AppLocalizations {
   /// **'expired'**
   String get expired;
 
+  /// No description provided for @accessTokenExpires.
+  ///
+  /// In en, this message translates to:
+  /// **'Access token time left: {time}'**
+  String accessTokenExpires(String time);
+
   /// No description provided for @cleanSessions.
   ///
   /// In en, this message translates to:
