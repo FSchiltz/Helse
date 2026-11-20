@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/common/inputs/files/file_list_widget.dart';
 import 'package:helse/ui/common/loader.dart';

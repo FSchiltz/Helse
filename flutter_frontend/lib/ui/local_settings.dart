@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/localSettings/metric_settings.dart';
 import 'package:helse/ui/blocs/localSettings/general_settings.dart';

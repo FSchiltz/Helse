@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/ui/blocs/metrics/metric_file_list.dart';
 import 'package:helse/ui/common/inputs/files/file_list_widget.dart';

@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:helse/ui/common/ui_constants.dart';
 
 class Pagination extends StatelessWidget {

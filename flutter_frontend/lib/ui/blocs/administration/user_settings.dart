@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/blocs/administration/users/users.dart';
 import 'package:helse/ui/common/ui_constants.dart';
