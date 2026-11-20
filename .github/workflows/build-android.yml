@@ -37,7 +37,7 @@ jobs:
       with:
         channel: stable
         cache: true
-        flutter-version: '3.44.8'
+        flutter-version: '3.50.1'
         
     - name: Create certificat
       if: ${{ inputs.sign }}
