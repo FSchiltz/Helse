@@ -17,6 +17,7 @@ jobs:
       push: true
       upload: false
       sign: true
+      all_abis: false
 
     secrets: inherit
 

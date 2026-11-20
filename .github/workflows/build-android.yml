@@ -12,6 +12,10 @@ on:
         required: false
         type: boolean
         default: false
+      all_abis:
+        required: false
+        type: boolean
+        default: true
       
 env:
   REGISTRY: ghcr.io
@@ -53,11 +57,18 @@ jobs:
       if: ${{ inputs.sign }}
       run: echo ${{ secrets.KEY_FILE }} | base64 --decode > flutter_frontend/android/app/key.jks
 
-    - name: Build release app bundle    
+    - name: Build release APKs
+      if: ${{ inputs.all_abis }}
       run: flutter build apk --release --split-per-abi --split-debug-info=build/symbols
       working-directory: 'flutter_frontend'   
 
+    - name: Build arm64 release APK
+      if: ${{ !inputs.all_abis }}
+      run: flutter build apk --release --target-platform android-arm64 --split-debug-info=build/symbols
+      working-directory: 'flutter_frontend'
+
     - name: Rename APK Artifacts
+      if: ${{ inputs.all_abis }}
       run: |        
           cd flutter_frontend/build/app/outputs/flutter-apk 
           ls -l         
@@ -66,6 +77,10 @@ jobs:
           mv app-arm64-v8a-release.apk helse-${{ github.event.release.tag_name }}-arm64-v8a.apk
           mv app-x86_64-release.apk helse-${{ github.event.release.tag_name }}-x86_64.apk   
           ls -l     
+
+    - name: Rename arm64 APK Artifact
+      if: ${{ !inputs.all_abis }}
+      run: mv flutter_frontend/build/app/outputs/flutter-apk/app-release.apk flutter_frontend/build/app/outputs/flutter-apk/helse-${{ github.event.release.tag_name }}-arm64-v8a.apk
 
     - name: Upload artefact
       if: ${{ inputs.push }}
