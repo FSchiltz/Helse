@@ -10,7 +10,7 @@
     <RootNamespace>Helse.Api</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="33.1.0" />
+    <PackageReference Include="CsvHelper" Version="34.1.0" />
     <PackageReference Include="DbUp" Version="5.0.41" />
     <PackageReference Include="dbup-postgresql" Version="7.0.1" />
     <PackageReference Include="linq2db.Extensions" Version="6.6.0" />
