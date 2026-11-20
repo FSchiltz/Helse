@@ -277,6 +277,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessions => 'Connections';
 
   @override
+  String timeLeft(String time) {
+    return 'Time left: $time';
+  }
+
+  @override
+  String get expired => 'expired';
+
+  @override
   String get cleanSessions => 'Remove all sessions';
 
   @override

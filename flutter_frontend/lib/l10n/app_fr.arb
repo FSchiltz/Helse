@@ -10,6 +10,15 @@
   "bulkMetric": "Edition de {count} metriques",
   "cancel": "Annuler",
   "cleanSessions": "Supprimer toutes les sessions",
+  "timeLeft": "Temps restant : {time}",
+  "@timeLeft": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "expired": "expirée",
   "code": "Code",
   "color": "Couleur",
   "confirmpassword": "Confirmation du mot de passe",

@@ -602,6 +602,18 @@ abstract class AppLocalizations {
   /// **'Connections'**
   String get sessions;
 
+  /// No description provided for @timeLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Time left: {time}'**
+  String timeLeft(String time);
+
+  /// No description provided for @expired.
+  ///
+  /// In en, this message translates to:
+  /// **'expired'**
+  String get expired;
+
   /// No description provided for @cleanSessions.
   ///
   /// In en, this message translates to:

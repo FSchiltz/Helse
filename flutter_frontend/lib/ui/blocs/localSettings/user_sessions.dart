@@ -1,23 +1,63 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/loading_builder.dart';
 import 'package:helse/ui/common/square_button.dart';
 import 'package:helse/ui/common/ui_constants.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
-class UserSessions extends StatelessWidget {
+class UserSessions extends StatefulWidget {
   const UserSessions({super.key});
+
+  @override
+  State<UserSessions> createState() => _UserSessionsState();
+}
+
+class _UserSessionsState extends State<UserSessions> {
+  Timer? _timer;
+  DateTime _now = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 30), (_) {
+      if (!mounted) return;
+      setState(() => _now = DateTime.now());
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   Future<List<Session>> _getData(bool refresh) async {
     return await Dependencies.services.user.getSessions();
+  }
+
+  String? _getCurrentSessionId() {
+    try {
+      final refreshToken = Dependencies.logics.authentication.account
+          .getToken()
+          ?.refreshToken;
+      if (refreshToken == null || refreshToken.isEmpty) return null;
+      return JwtDecoder.decode(refreshToken)['session'] as String?;
+    } catch (_) {
+      return null;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     var locale = Translation.of(context);
     var theme = Theme.of(context);
+    final currentSessionId = _getCurrentSessionId();
     return Scaffold(
       appBar: AppBar(
         elevation: 10,
@@ -63,7 +103,8 @@ class UserSessions extends StatelessWidget {
                         itemCount: data.length,
                         itemBuilder: (context, index) {
                           var session = data[index];
-                          var isActive = session.stop?.isAfter(DateTime.now());
+                          var isCurrent = session.sessionId == currentSessionId;
+                          var isActive = session.stop?.isAfter(_now);
                           Color color = isActive == true
                               ? theme.colorScheme.primaryContainer
                               : theme.colorScheme.errorContainer;
@@ -85,6 +126,26 @@ class UserSessions extends StatelessWidget {
                                     Text(session.stop?.toString() ?? ''),
                                   ],
                                 ),
+                                if (isCurrent && session.stop != null)
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 8),
+                                      child: Text(
+                                        isActive == true
+                                            ? locale.timeLeft(
+                                                DateHelper.formatDuration(
+                                                  session.stop!.difference(
+                                                    _now,
+                                                  ),
+                                                  locale,
+                                                ),
+                                              )
+                                            : locale.timeLeft(locale.expired),
+                                        style: theme.textTheme.titleMedium,
+                                      ),
+                                    ),
+                                  ),
                               ],
                             ),
                           );

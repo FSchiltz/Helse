@@ -219,6 +219,16 @@
     "@syncHistoryToggle": {},
     "sessions": "Connections",
     "@sessions": {},
+    "timeLeft": "Time left: {time}",
+    "@timeLeft": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
+    "expired": "expired",
+    "@expired": {},
     "cleanSessions": "Remove all sessions",
     "@cleanSessions": {},
     "constants": "Constants",
