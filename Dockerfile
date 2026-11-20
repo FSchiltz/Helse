@@ -25,7 +25,7 @@ RUN flutter doctor -v
 RUN mkdir /app/
 COPY ./flutter_frontend/ /app/
 WORKDIR /app/
-RUN flutter build web --release
+RUN flutter build web --release --web-content-hash
 
 # final stage/image
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine

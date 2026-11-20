@@ -160,7 +160,7 @@ internal static class AuthLogic
                 if (session != null && session.Stop >= DateTime.UtcNow)
                 {
                     var roles = GetRoles(fromDb.Type);
-                    var (access, refresh) = await GetToken(token, users, context, fromDb, keepConnected);
+                    var (access, refresh) = await GetToken(token, users, context, fromDb, keepConnected, userSession);
 
                     log.LogInformation("Refreshed access for user {User}", user);
 
@@ -214,12 +214,12 @@ internal static class AuthLogic
         log.LogDebug("Connexion validated");
         var roles = GetRoles(fromDb.Type);
 
-        var (access, refresh) = await GetToken(token, users, context, fromDb, user.KeepConnected);
+        var (access, refresh) = await GetToken(token, users, context, fromDb, user.KeepConnected, null);
 
         return TypedResults.Ok(new ConnectionResponse(fromDb.Identifier, access, refresh, roles));
     }
 
-    private static async Task<(string Access, string Refresh)> GetToken(TokenService token, IUserContext users, HttpContext context, User fromDb, bool keepConnected)
+    private static async Task<(string Access, string Refresh)> GetToken(TokenService token, IUserContext users, HttpContext context, User fromDb, bool keepConnected, string? oldToken)
     {
         var accessToken = token.GetAccessToken(fromDb);
         var sessionId = Guid.NewGuid();
@@ -240,7 +240,10 @@ internal static class AuthLogic
 
         // clean up old sessions
         // TODO, mark deleted if still valid so we can check for token reuse
-        await users.DeleteSession(fromDb.Id, DateTime.UtcNow.AddDays(-30));
+        if (oldToken is not null)
+        {
+            await users.DeleteSession(fromDb.Id, oldToken);
+        }
         await users.AddSession(userSession);
 
         return (accessToken, refreshToken);

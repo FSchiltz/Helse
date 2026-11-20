@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/ui/blocs/events/events_widget.dart';

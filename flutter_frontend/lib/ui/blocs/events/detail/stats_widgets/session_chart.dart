@@ -1,5 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart' hide Interval;
+import 'package:material_ui/material_ui.dart' hide Interval;
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/translation.dart';

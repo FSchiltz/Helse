@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:developer' as logger;
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:graphic/graphic.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';

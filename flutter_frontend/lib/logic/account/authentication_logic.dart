@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:helse/logic/account/authentication_bloc.dart';
 import 'package:helse/logic/account/settings_migration.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:helse/helpers/url_dummy.dart'
     if (dart.library.html) 'package:helse/helpers/url.dart';
 
@@ -27,8 +26,13 @@ class AuthenticationLogic {
 
     await SettingsMigration(account).migrate();
     var token = account.getToken()?.refreshToken;
-    if (token != null && token.isNotEmpty && !JwtDecoder.isExpired(token)) {
+    if (token != null && token.isNotEmpty) {
       await _load();
+      // the load call will force a new refresh token or set it to null if not valid
+      token = account.getToken()?.refreshToken;
+      if (token == null || token.isEmpty) {
+        return false;
+      }
       setAuth();
 
       return true;
@@ -68,6 +72,10 @@ class AuthenticationLogic {
         await account.remove(Account.grant);
       }
 
+      await account.setBool(
+        Account.keepConnected,
+        connection.keepConnected ?? false,
+      );
       await account.setToken(token);
 
       // todo add a bloc for the settings and load async
@@ -238,7 +246,12 @@ class AuthenticationLogic {
     Dependencies.blocs.server.setStatus(isInit);
 
     setNoAuth();
-    var isConnected = await checkLogin();
+    var isConnected = false;
+    try {
+      isConnected = await checkLogin();
+    } catch (error, stackTrace) {
+      log('Failed to restore session', error: error, stackTrace: stackTrace);
+    }
     if (isInit != null && isInit.init == true && !isConnected) {
       var keepConnected = account.isEnabled(Account.keepConnected);
       if (isInit.oauths.isNotEmpty) {

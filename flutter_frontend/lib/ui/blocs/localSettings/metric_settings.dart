@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart' hide TableRow;
+import 'package:material_ui/material_ui.dart' hide TableRow;
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/theme_helper.dart';

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:helse/helpers/metrics/range_list.dart';
 import 'package:helse/ui/common/key_value_list.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
