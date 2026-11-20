@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/logic/event.dart';
 import 'package:helse/ui/common/notification.dart';

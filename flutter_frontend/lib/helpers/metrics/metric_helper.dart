@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'dart:math' show max;
 
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/metrics/range_list.dart';
 import 'package:helse/logic/theme_helper.dart';

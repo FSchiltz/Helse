@@ -66,6 +66,7 @@ dependencies:
   drift: ^2.34.3
   drift_flutter: ^0.3.1
   path_provider: ^2.1.6
+  material_ui: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -87,6 +88,7 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
+  shared_preferences_platform_interface: any
 flutter:
 
   # The following line ensures that the Material Icons font is

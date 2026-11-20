@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:helse/ui/common/timeline/event_layout.dart';
 
 class EventTransitionPainter<T> extends CustomPainter {

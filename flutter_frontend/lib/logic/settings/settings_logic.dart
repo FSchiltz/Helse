@@ -3,7 +3,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/settings/base_settings_logic.dart';
 import 'package:helse/logic/settings/health_settings.dart';
