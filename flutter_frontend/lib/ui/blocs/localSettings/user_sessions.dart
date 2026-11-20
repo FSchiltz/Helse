@@ -21,6 +21,7 @@ class UserSessions extends StatefulWidget {
 class _UserSessionsState extends State<UserSessions> {
   Timer? _timer;
   DateTime _now = DateTime.now();
+  Key _sessionsKey = UniqueKey();
 
   @override
   void initState() {
@@ -78,9 +79,19 @@ class _UserSessionsState extends State<UserSessions> {
           padding: const EdgeInsets.all(32),
           child: Text(locale.sessions, style: theme.textTheme.displaySmall),
         ),
+        actions: [
+          IconButton(
+            tooltip: MaterialLocalizations.of(
+              context,
+            ).refreshIndicatorSemanticLabel,
+            onPressed: () => setState(() => _sessionsKey = UniqueKey()),
+            icon: const Icon(Icons.refresh),
+          ),
+        ],
       ),
       body: SafeArea(
         child: LoadingBuilder(
+          key: _sessionsKey,
           _getData,
           builder: (context, data, reset) {
             return Padding(
