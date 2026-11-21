@@ -1,68 +1,12 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:chopper/chopper.dart';
+import 'package:helse/services/api/refresh_authenticator.dart';
+import 'package:helse/services/api/service_error.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import '../../di/dependencies.dart';
 import '../account.dart';
-
-class ServiceError {
-  final String message;
-  final String? description;
-  final int code;
-
-  ServiceError(this.code, {required this.message, this.description});
-
-  bool _isClientError() {
-    return code < 500 && code >= 400;
-  }
-
-  @override
-  String toString() {
-    // TODO better manage the return values
-    if (_isClientError()) {
-      return "Invalid object state";
-    }
-
-    return "Server error";
-  }
-}
-
-class _RefreshAuthenticator extends Authenticator {
-  final ApiService _service;
-
-  _RefreshAuthenticator(this._service);
-
-  @override
-  Future<Request?> authenticate(
-    Request request,
-    Response<dynamic> response, [
-    Request? originalRequest,
-  ]) async {
-    if (response.statusCode != 401) {
-      return null;
-    }
-
-    final settings = _service.account.getToken();
-    if (settings == null || settings.refreshToken.isEmpty) {
-      return null;
-    }
-
-    final token = await _service._refreshToken(
-      settings,
-      request.baseUri,
-      _service.account.isEnabled(Account.keepConnected),
-    );
-    if (token == null || token.isEmpty) {
-      return null;
-    }
-
-    final headers = Map<String, String>.from(request.headers)
-      ..removeWhere((name, _) => name.toLowerCase() == 'authorization')
-      ..['Authorization'] = 'Bearer $token';
-    return request.copyWith(headers: headers);
-  }
-}
 
 abstract class ApiService {
   static Future<String?>? _refreshInProgress;
@@ -104,7 +48,7 @@ abstract class ApiService {
     return result;
   }
 
-  Future<String?> _refreshToken(
+  Future<String?> refreshToken(
     ConnectionResponse? settings,
     Uri url,
     bool keepConnected,
@@ -163,7 +107,7 @@ abstract class ApiService {
       interceptors: [
         HeadersInterceptor({'Authorization': 'Bearer $token'}),
       ],
-      authenticator: _RefreshAuthenticator(this),
+      authenticator: RefreshAuthenticator(this),
     );
   }
 
@@ -185,7 +129,7 @@ abstract class ApiService {
 
     String? token = settings?.accessToken;
     if (token == null || token.isEmpty || _isExpired(token)) {
-      token = await _refreshToken(
+      token = await refreshToken(
         settings,
         url,
         account.isEnabled(Account.keepConnected),
