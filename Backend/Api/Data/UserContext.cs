@@ -23,13 +23,16 @@ internal class UserContext(DataConnection db, SlowQueryLogInterceptor intercepto
     /// <param name="time"></param>
     /// <returns></returns>
     public async Task<Helse.Models.Persons.Right?> HasRightAsync(long user, long person, RightType type, DateTime time)
-     => (await Db.GetTable<Models.Persons.Right>()
-        .Where(x => x.UserId == user
-            && x.PersonId == person
-            && x.Type == (int)type
-            && x.Start <= time
-            && (x.Stop == null || x.Stop >= time))
-        .FirstOrDefaultAsync())?.FromDb();
+        => await cache.GetOrCreateAsync(
+            $"UserContext:Right:{user}:{person}:{type}:{time.Ticks / TimeSpan.TicksPerSecond}",
+            async cancellationToken => (await Db.GetTable<Models.Persons.Right>()
+                .Where(x => x.UserId == user
+                    && x.PersonId == person
+                    && x.Type == (int)type
+                    && x.Start <= time
+                    && (x.Stop == null || x.Stop >= time))
+                .FirstOrDefaultAsync(cancellationToken))?.FromDb(),
+            new HybridCacheEntryOptions { Expiration = TimeSpan.FromSeconds(1) });
 
     public async Task UpdatePatient(UpdatePatient update)
     {
