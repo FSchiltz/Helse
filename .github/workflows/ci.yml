@@ -3,6 +3,9 @@ name: CI
 on:
   pull_request:
     branches: [ "main" ]
+
+permissions:
+  contents: read
     
 env:
   REGISTRY: ghcr.io
