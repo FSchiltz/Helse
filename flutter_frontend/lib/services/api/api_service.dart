@@ -1,32 +1,13 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:chopper/chopper.dart';
+import 'package:flutter/foundation.dart';
+import 'package:helse/services/api/refresh_authenticator.dart';
+import 'package:helse/services/api/service_error.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import '../../di/dependencies.dart';
 import '../account.dart';
-
-class ServiceError {
-  final String message;
-  final String? description;
-  final int code;
-
-  ServiceError(this.code, {required this.message, this.description});
-
-  bool _isClientError() {
-    return code < 500 && code >= 400;
-  }
-
-  @override
-  String toString() {
-    // TODO better manage the return values
-    if (_isClientError()) {
-      return "Invalid object state";
-    }
-
-    return "Server error";
-  }
-}
 
 abstract class ApiService {
   static Future<String?>? _refreshInProgress;
@@ -46,33 +27,34 @@ abstract class ApiService {
       );
     }
 
-    T? result;
-
-    if (!response.isSuccessful) {
-      switch (response.statusCode) {
-        case 401:
-          // no auth, we remove the token and return null;
-          await Dependencies.logics.authentication.logOutLocal();
-          result = null;
-          break;
-        default:
-          throw ServiceError(
-            response.statusCode,
-            message: "Error during the call",
-            description: response.error?.toString(),
-          );
-      }
-    } else {
-      result = response.body;
+    if (response.isSuccessful) {
+      return response.body;
     }
-    return result;
+
+    if (response.statusCode == 401) {
+      debugPrint(
+        '[Authentication] API request remained unauthorized after refresh',
+      );
+      await Dependencies.logics.authentication.logOutLocal();
+      return null;
+    }
+
+    throw ServiceError(
+      response.statusCode,
+      message: "Error during the call",
+      description: response.error?.toString(),
+    );
   }
 
-  Future<String?> _refreshToken(
+  Future<String?> refreshToken(
     ConnectionResponse? settings,
     Uri url,
     bool keepConnected,
   ) async {
+    if (settings == null || settings.refreshToken.isEmpty) {
+      return null;
+    }
+
     final pendingRefresh = _refreshInProgress;
     if (pendingRefresh != null) {
       return pendingRefresh;
@@ -90,7 +72,7 @@ abstract class ApiService {
   }
 
   Future<String?> _requestTokenRefresh(
-    ConnectionResponse? settings,
+    ConnectionResponse settings,
     Uri url,
     bool keepConnected,
   ) async {
@@ -98,23 +80,27 @@ abstract class ApiService {
       baseUrl: url,
       interceptors: [
         HeadersInterceptor({
-          'Authorization': 'Bearer ${settings?.refreshToken}',
+          'Authorization': 'Bearer ${settings.refreshToken}',
         }),
       ],
     );
-    var response = await client.apiRefreshGet(keepConnected: keepConnected);
-    var connection = response.body;
-    if (connection != null) {
-      var token = ConnectionResponse(
-        id: connection.id,
-        accessToken: connection.accessToken,
-        roles: connection.roles,
-        refreshToken: connection.refreshToken,
+    final response = await client.apiRefreshGet(keepConnected: keepConnected);
+    if (!response.isSuccessful) {
+      debugPrint(
+        '[Authentication] Refresh failed with status ${response.statusCode}',
       );
-      await account.setToken(token);
-      return token.accessToken;
+      return null;
     }
-    return null;
+
+    final connection = response.body;
+    if (connection == null) {
+      debugPrint('[Authentication] Refresh returned no connection');
+      return null;
+    }
+
+    await account.setToken(connection);
+    debugPrint('[Authentication] Refresh succeeded');
+    return connection.accessToken;
   }
 
   Helseapi getApi(Uri url, String? token) {
@@ -127,24 +113,33 @@ abstract class ApiService {
       interceptors: [
         HeadersInterceptor({'Authorization': 'Bearer $token'}),
       ],
+      authenticator: RefreshAuthenticator(this),
     );
   }
 
   Future<Helseapi> getService({Uri? override, bool sendRefresh = false}) async {
     var url = override ?? Uri.parse(account.get(Account.url) ?? '');
-    var keepConnected = account.isEnabled(Account.keepConnected);
-
-    // first we try to get a new refresh token if needed
-    String? token;
-    var settings = account.getToken();
+    final settings = account.getToken();
 
     if (sendRefresh) {
-      token = settings?.refreshToken;
-    } else {
-      token = settings?.accessToken;
-      if (token == null || token.isEmpty || _isExpired(token)) {
-        token = await _refreshToken(settings, url, keepConnected);
-      }
+      final token = settings?.refreshToken;
+      return Helseapi.create(
+        baseUrl: url,
+        interceptors: token == null
+            ? []
+            : [
+                HeadersInterceptor({'Authorization': 'Bearer $token'}),
+              ],
+      );
+    }
+
+    String? token = settings?.accessToken;
+    if (token == null || token.isEmpty || _isExpired(token)) {
+      token = await refreshToken(
+        settings,
+        url,
+        account.isEnabled(Account.keepConnected),
+      );
     }
 
     return getApi(url, token);
@@ -154,8 +149,7 @@ abstract class ApiService {
     try {
       return JwtDecoder.isExpired(token);
     } catch (error) {
-      // if any error occurs, the token is considered expired
+      return true;
     }
-    return true;
   }
 }
