@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart' show compute;
 import 'package:helse/ui/common/loader.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:helse/di/dependencies.dart';
@@ -62,8 +63,11 @@ class _PatientAddState extends PopupSubmitState<PatientAdd> {
       final picture = await Dependencies.services.user.patientProfilePicture(
         patient,
       );
-      if (mounted && picture != null && _pictureData == null) {
-        setState(() => _pictureData = base64Decode(picture));
+      if (picture != null) {
+        final imageBytes = await compute(base64Decode, picture);
+        if (mounted && _pictureData == null) {
+          setState(() => _pictureData = imageBytes);
+        }
       }
     } finally {
       if (mounted) {

@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show compute;
 import 'package:material_ui/material_ui.dart';
 import 'package:helse/di/app_logger.dart';
 import 'package:helse/di/dependencies.dart';
@@ -20,7 +22,7 @@ class PatientsCard extends StatefulWidget {
 }
 
 class _PatientsCardState extends State<PatientsCard> {
-  String? _profilePicture;
+  Uint8List? _profilePicture;
   bool _isLoadingProfilePicture = true;
 
   @override
@@ -34,8 +36,11 @@ class _PatientsCardState extends State<PatientsCard> {
       final picture = await Dependencies.services.user
           .patientProfilePicture(widget.person.id)
           .timeout(const Duration(seconds: 10));
-      if (mounted) {
-        setState(() => _profilePicture = picture);
+      if (picture != null) {
+        final imageBytes = await compute(base64Decode, picture);
+        if (mounted) {
+          setState(() => _profilePicture = imageBytes);
+        }
       }
     } on TimeoutException catch (error, stackTrace) {
       appLogger.w(
@@ -78,7 +83,7 @@ class _PatientsCardState extends State<PatientsCard> {
                       height: 60,
                       child: _profilePicture != null
                           ? Image.memory(
-                              base64Decode(_profilePicture!),
+                              _profilePicture!,
                               fit: BoxFit.cover,
                             )
                           : _isLoadingProfilePicture
