@@ -28,6 +28,42 @@ class ServiceError {
   }
 }
 
+class _RefreshAuthenticator extends Authenticator {
+  final ApiService _service;
+
+  _RefreshAuthenticator(this._service);
+
+  @override
+  Future<Request?> authenticate(
+    Request request,
+    Response<dynamic> response, [
+    Request? originalRequest,
+  ]) async {
+    if (response.statusCode != 401) {
+      return null;
+    }
+
+    final settings = _service.account.getToken();
+    if (settings == null || settings.refreshToken.isEmpty) {
+      return null;
+    }
+
+    final token = await _service._refreshToken(
+      settings,
+      request.baseUri,
+      _service.account.isEnabled(Account.keepConnected),
+    );
+    if (token == null || token.isEmpty) {
+      return null;
+    }
+
+    final headers = Map<String, String>.from(request.headers)
+      ..removeWhere((name, _) => name.toLowerCase() == 'authorization')
+      ..['Authorization'] = 'Bearer $token';
+    return request.copyWith(headers: headers);
+  }
+}
+
 abstract class ApiService {
   static Future<String?>? _refreshInProgress;
 
@@ -127,24 +163,33 @@ abstract class ApiService {
       interceptors: [
         HeadersInterceptor({'Authorization': 'Bearer $token'}),
       ],
+      authenticator: _RefreshAuthenticator(this),
     );
   }
 
   Future<Helseapi> getService({Uri? override, bool sendRefresh = false}) async {
     var url = override ?? Uri.parse(account.get(Account.url) ?? '');
-    var keepConnected = account.isEnabled(Account.keepConnected);
-
-    // first we try to get a new refresh token if needed
-    String? token;
-    var settings = account.getToken();
+    final settings = account.getToken();
 
     if (sendRefresh) {
-      token = settings?.refreshToken;
-    } else {
-      token = settings?.accessToken;
-      if (token == null || token.isEmpty || _isExpired(token)) {
-        token = await _refreshToken(settings, url, keepConnected);
-      }
+      final token = settings?.refreshToken;
+      return Helseapi.create(
+        baseUrl: url,
+        interceptors: token == null
+            ? []
+            : [
+                HeadersInterceptor({'Authorization': 'Bearer $token'}),
+              ],
+      );
+    }
+
+    String? token = settings?.accessToken;
+    if (token == null || token.isEmpty || _isExpired(token)) {
+      token = await _refreshToken(
+        settings,
+        url,
+        account.isEnabled(Account.keepConnected),
+      );
     }
 
     return getApi(url, token);
@@ -154,8 +199,7 @@ abstract class ApiService {
     try {
       return JwtDecoder.isExpired(token);
     } catch (error) {
-      // if any error occurs, the token is considered expired
+      return true;
     }
-    return true;
   }
 }

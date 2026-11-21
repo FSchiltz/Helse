@@ -15,7 +15,8 @@ class ApiLoginService extends ApiService implements LoginService {
 
   @override
   Future<ConnectionResponse?> login(Connection connection) async {
-    var api = await getService();
+    final url = Uri.parse(account.get(Account.url) ?? '');
+    final api = Helseapi.create(baseUrl: url);
     var response = await api.apiAuthPost(body: connection);
 
     switch (response.statusCode) {
