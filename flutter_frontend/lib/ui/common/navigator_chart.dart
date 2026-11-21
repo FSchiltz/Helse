@@ -1,6 +1,5 @@
-import 'dart:developer' as logger;
-
 import 'package:material_ui/material_ui.dart';
+import 'package:helse/di/app_logger.dart';
 
 class NavigatorChart extends StatefulWidget {
   final DateTimeRange date;
@@ -109,7 +108,7 @@ class _NavigatorChartState extends State<NavigatorChart> {
         final left = width * _navigatorStart;
         final right = width * _navigatorEnd;
 
-        logger.log('created navigator for ${widget.date}');
+        appLogger.d('created navigator for ${widget.date}');
         return Column(
           children: [
             SizedBox(

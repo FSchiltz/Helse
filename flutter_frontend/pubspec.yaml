@@ -67,6 +67,7 @@ dependencies:
   drift_flutter: ^0.3.1
   path_provider: ^2.1.6
   material_ui: any
+  logger: ^2.8.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

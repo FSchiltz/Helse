@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:app_links/app_links.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:helse/di/app_logger.dart';
 import 'package:helse/logic/account/authentication_bloc.dart';
 import 'package:helse/logic/account/settings_migration.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
@@ -20,9 +20,9 @@ class AuthenticationLogic {
 
   /// Check if the user is logged in
   Future<bool> checkLogin() async {
-    debugPrint('[Authentication] Checking saved session');
+    appLogger.d('[Authentication] Checking saved session');
     if (getGrant() != null) {
-      debugPrint(
+      appLogger.d(
         '[Authentication] Skipping restoration because an OAuth grant is pending',
       );
       return false;
@@ -31,21 +31,21 @@ class AuthenticationLogic {
     await SettingsMigration(account).migrate();
     var token = account.getToken()?.refreshToken;
     if (token == null || token.isEmpty) {
-      debugPrint('[Authentication] No saved refresh token is available');
+      appLogger.d('[Authentication] No saved refresh token is available');
       return false;
     }
 
     await _load();
     token = account.getToken()?.refreshToken;
     if (token == null || token.isEmpty) {
-      debugPrint(
+      appLogger.d(
         '[Authentication] Restoration cleared the saved refresh token',
       );
       return false;
     }
 
     setAuth();
-    debugPrint('[Authentication] Saved session restored');
+    appLogger.i('[Authentication] Saved session restored');
     return true;
   }
 
@@ -73,7 +73,7 @@ class AuthenticationLogic {
       final oldUser = account.get(Account.id);
       if (token.id != oldUser) {
         // if the user is different than the last one clear the settings
-        debugPrint('Clear old user settings');
+        appLogger.d('Clear old user settings');
         await account.clear();
         await account.set(Account.id, token.id ?? '');
       } else {
@@ -90,7 +90,7 @@ class AuthenticationLogic {
       await _load();
       setAuth();
     } else {
-      debugPrint('Auth failed');
+      appLogger.e('Auth failed');
       setNoAuth();
       throw StateError('Auth failed');
     }
@@ -126,13 +126,13 @@ class AuthenticationLogic {
 
   /// Call the logout service
   Future<void> logOut(bool all) async {
-    debugPrint('Log out');
+    appLogger.d('Log out');
     await Dependencies.services.user.logout(all);
     await logOutLocal();
   }
 
   Future<void> clean() async {
-    debugPrint('Cleaned the settings');
+    appLogger.d('Cleaned the settings');
     await account.clean();
     Dependencies.logics.settings.init = false;
   }
@@ -188,7 +188,7 @@ class AuthenticationLogic {
 
     issuer = getClientId();
     redirect = getRedirect();
-    debugPrint('Auth with: $issuer - $redirect');
+    appLogger.d('Auth with: $issuer - $redirect');
 
     await logIn(
       url: url,
@@ -213,7 +213,7 @@ class AuthenticationLogic {
         if (code != null) {
           if (kIsWeb) {
             UrlHelper.removeParam();
-            debugPrint("Auth code found");
+            appLogger.d("Auth code found");
           }
 
           var url = account.get(Account.url);
@@ -262,8 +262,10 @@ class AuthenticationLogic {
     try {
       isConnected = await checkLogin();
     } catch (error, stackTrace) {
-      debugPrint(
+      appLogger.e(
         '[Authentication] Failed to restore session: $error\n$stackTrace',
+        error: error,
+        stackTrace: stackTrace,
       );
     }
     if (isInit != null && isInit.init == true && !isConnected) {
@@ -312,9 +314,10 @@ class AuthenticationLogic {
         try {
           await checkUrl(url);
         } catch (error, stackTrace) {
-          debugPrint(
-            '[Authentication] Failed to check saved server URL: '
-            '$error\n$stackTrace',
+          appLogger.e(
+            '[Authentication] Failed to check saved server URL',
+            error: error,
+            stackTrace: stackTrace,
           );
           setNoAuth();
         }

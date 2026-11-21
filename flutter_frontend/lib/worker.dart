@@ -1,7 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/di/app_logger.dart';
 import 'package:helse/logic/event.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:workmanager/workmanager.dart';
@@ -43,16 +42,16 @@ class WorkHelper {
 
   static Future<bool> syncDataWithServer() async {
     try {
-      log("Background sync started");
+      appLogger.d("Background sync started");
       await Dependencies.init();
       if (await Dependencies.logics.authentication.isOffline()) {
         Dependencies.blocs.server.setOffline();
       }
-      
+
       if (Dependencies.logics.health.isEnabled()) {
         var settings = Dependencies.logics.settings.getHealth();
         if (settings.background) {
-          log("Background sync enabled");
+          appLogger.d("Background sync enabled");
           final result = await Dependencies.logics.health.sync();
           if (result.state == SubmissionStatus.success) {
             Notify.showSystem(
@@ -64,7 +63,7 @@ class WorkHelper {
         }
       }
     } catch (ex) {
-      log("Background sync failed with $ex");
+      appLogger.e("Background sync failed", error: ex);
 
       Notify.showSystem(
         ex.toString(),

@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:developer' as logger;
 import 'package:collection/collection.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:graphic/graphic.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/di/app_logger.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
@@ -138,9 +138,8 @@ class _MetricGraphState extends MetricDetailsState<MetricNumberDisplay> {
       );
     }
 
-    logger.log(
-      'created graph for $selectedDate and ${filteredMetrics.values.length}',
-      name: "Metrics",
+    appLogger.d(
+      '[Metrics] created graph for $selectedDate and ${filteredMetrics.values.length}',
     );
     return filteredMetrics.values.isEmpty
         ? Text('No data')

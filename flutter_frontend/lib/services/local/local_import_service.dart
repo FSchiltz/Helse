@@ -1,9 +1,9 @@
-import 'dart:developer';
 import 'dart:isolate';
 
 import 'package:drift/drift.dart';
 import 'package:drift/isolate.dart';
 import 'package:file_selector/file_selector.dart';
+import 'package:helse/di/app_logger.dart';
 import 'package:helse/services/import_service.dart';
 import 'package:helse/services/local/database/database.dart';
 import 'package:helse/services/local/local_service.dart';
@@ -174,7 +174,7 @@ class LocalImportService extends LocalService implements ImportService {
 
       var text =
           "Metrics: $addedMetric added - $skippedMetric skipped of ${input.file.metrics?.length} \n Events: $addedEvent added - $skippedEvent skipped of ${input.file.events?.length}";
-      log(text);
+      appLogger.i(text);
 
       initial = initial.copyWith(
         progress: 100,

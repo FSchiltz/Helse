@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/di/app_logger.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/l10n/app_localizations.dart';
 import 'package:helse/logic/account/server_state.dart';
@@ -178,7 +178,7 @@ class _LoginState extends State<LoginPage> {
 
   /// Prefill the url from storage or other
   Future<void> _initUrl() async {
-    debugPrint('Init url');
+    appLogger.d('Init url');
     // We first try to get it from storage
     var url = Dependencies.logics.authentication.getUrl();
 
@@ -216,7 +216,7 @@ class _LoginState extends State<LoginPage> {
   }
 
   void _start() {
-    debugPrint('Login started');
+    appLogger.d('Login started');
     if (!mounted) return;
     setState(() {
       _loginError = null;
@@ -233,7 +233,7 @@ class _LoginState extends State<LoginPage> {
   }
 
   void _success() {
-    debugPrint('Login successful');
+    appLogger.i('Login successful');
     if (!mounted) return;
     setState(() {
       _status = SubmissionStatus.success;
@@ -308,11 +308,11 @@ class _LoginState extends State<LoginPage> {
       await action();
       _success();
     } catch (error, stackTrace) {
-      log('Login failed', error: error, stackTrace: stackTrace);
+      appLogger.e('Login failed', error: error, stackTrace: stackTrace);
       try {
         await Dependencies.logics.authentication.clean();
       } catch (cleanupError, cleanupStackTrace) {
-        log(
+        appLogger.e(
           'Failed to clear authentication state',
           error: cleanupError,
           stackTrace: cleanupStackTrace,

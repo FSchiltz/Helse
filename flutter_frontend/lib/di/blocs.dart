@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:helse/di/logics.dart';
+import 'package:helse/di/app_logger.dart';
 import 'package:helse/logic/account/authentication_bloc.dart';
 import 'package:helse/logic/account/server_state.dart';
 import 'package:helse/logic/fit/fit_helper.dart';
@@ -18,12 +17,12 @@ class Blocs {
     return Blocs.build(
       TaskBloc(
         () async {
-          log("Started sync");
+          appLogger.d("Started sync");
           final enabled = logic.health.isEnabled();
           if (enabled) {
             return await logic.health.sync();
           } else {
-            log("Skipped fit sync");
+            appLogger.d("Skipped fit sync");
             return Execution.empty();
           }
         },
