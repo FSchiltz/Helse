@@ -1,7 +1,6 @@
-import 'dart:developer';
-
 import 'package:material_ui/material_ui.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/di/app_logger.dart';
 import 'package:helse/logic/event.dart';
 import 'package:helse/ui/common/notification.dart';
 import 'package:helse/ui/common/progress_icon_button.dart';
@@ -50,7 +49,7 @@ abstract class PopupSubmitState<T extends StatefulWidget> extends State<T> {
         });
       }
     } catch (ex) {
-      log(ex.toString());
+      appLogger.e('Form submission failed', error: ex);
       setState(() {
         status = SubmissionStatus.failure;
       });

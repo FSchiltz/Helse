@@ -1,7 +1,6 @@
-import 'dart:developer' as logger;
-
 import 'package:material_ui/material_ui.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/di/app_logger.dart';
 import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/helpers/metrics/range_list.dart';
@@ -55,13 +54,12 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
 
   List<Metric> _filter(List<Metric> metrics, DateTimeRange<DateTime> value) {
     final stopwatch = Stopwatch()..start();
-    logger.log('Filter for $value');
+    appLogger.d('Filter for $value');
     var result = metrics
         .where((x) => x.date.isAfter(value.start) && x.date.isBefore(value.end))
         .toList();
-    logger.log(
-      '_filter() executed in ${stopwatch.elapsed} with ${metrics.length} items',
-      name: "Metrics",
+    appLogger.d(
+      '[Metrics] _filter() executed in ${stopwatch.elapsed} with ${metrics.length} items',
     );
     return result;
   }
@@ -74,7 +72,7 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
       person: widget.person,
     );
 
-    if(loadedMetrics.length <= 10){
+    if (loadedMetrics.length <= 10) {
       selection.selected.clear();
       selection.selected.addAll(loadedMetrics);
       withStats = false;
@@ -104,7 +102,7 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
   bool _dummy = false;
 
   void _setDate(DateTimeRange value) {
-    logger.log('set date with $value', name: "Metrics");
+    appLogger.d('[Metrics] set date with $value');
     setState(() {
       selectedDate = value;
       subDate = value;
@@ -113,7 +111,7 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
   }
 
   void _setSubDate(DateTimeRange value) {
-    logger.log('set subdate with $value', name: "Metrics");
+    appLogger.d('[Metrics] set subdate with $value');
     var filter = _filter(metrics, value);
     var grouped = MetricHelper.group(filter, value, 500, widget.type);
     setState(() {

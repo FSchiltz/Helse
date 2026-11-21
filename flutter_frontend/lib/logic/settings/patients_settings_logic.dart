@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/di/app_logger.dart';
 import 'package:helse/logic/settings/base_settings_logic.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
-import 'package:material_ui/material_ui.dart';
 
 class PatientsSettingsLogic extends BaseSettingsLogic {
   static const patientsName = 'patients';
@@ -111,7 +111,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
   Future<void> loadSettings() async {
     var serverSettings = await Dependencies.services.settings
         .getPatientsSettings();
-    debugPrint("[Settings] Patients settings loaded from server");
+    appLogger.d("[Settings] Patients settings loaded from server");
 
     await save(patientsName, serverSettings.toJson());
     init = true;

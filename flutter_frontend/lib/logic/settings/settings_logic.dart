@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/di/app_logger.dart';
 import 'package:helse/logic/settings/base_settings_logic.dart';
 import 'package:helse/logic/settings/health_settings.dart';
 import 'package:helse/logic/theme_helper.dart';
@@ -67,7 +67,7 @@ class SettingsLogic extends BaseSettingsLogic {
   Future<void> loadSettings() async {
     var serverSettings = await Dependencies.services.settings
         .getPersonSettings();
-    log("Settings loaded from server", name: "Settings");
+    appLogger.d("[Settings] Settings loaded from server");
     await saveSettings(serverSettings, false);
 
     init = true;
@@ -81,7 +81,7 @@ class SettingsLogic extends BaseSettingsLogic {
 
   UserSettings userSettings() {
     var encoded = getString(settingsName);
-    log("settings loaded", name: "Settings");
+    appLogger.d("[Settings] settings loaded");
     if (encoded == null) {
       return UserSettings(version: settingsVersion);
     }

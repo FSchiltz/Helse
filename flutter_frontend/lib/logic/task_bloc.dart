@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:helse/di/app_logger.dart';
 import 'event.dart';
 
 class Execution {
@@ -76,7 +76,7 @@ class TaskBloc extends Cubit<Execution> {
         ),
       );
       emit(Execution.failure());
-      log("$ex");
+      appLogger.e("Task execution failed", error: ex);
     }
   }
 }

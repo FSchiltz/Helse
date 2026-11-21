@@ -1,7 +1,6 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:chopper/chopper.dart';
-import 'package:flutter/foundation.dart';
+import 'package:helse/di/app_logger.dart';
 import 'package:helse/services/api/refresh_authenticator.dart';
 import 'package:helse/services/api/service_error.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
@@ -20,11 +19,12 @@ abstract class ApiService {
     final stopwatch = Stopwatch()..start();
     final response = await call();
     if (stopwatch.elapsedMilliseconds > 300) {
-      log(
-        'Service call executed in ${stopwatch.elapsed}',
-        level: stopwatch.elapsedMilliseconds > 1000 ? 2000 : 0,
-        name: 'ServiceCall',
-      );
+      final message = '[ServiceCall] executed in ${stopwatch.elapsed}';
+      if (stopwatch.elapsedMilliseconds > 1000) {
+        appLogger.w(message);
+      } else {
+        appLogger.d(message);
+      }
     }
 
     if (response.isSuccessful) {
@@ -32,7 +32,7 @@ abstract class ApiService {
     }
 
     if (response.statusCode == 401) {
-      debugPrint(
+      appLogger.w(
         '[Authentication] API request remained unauthorized after refresh',
       );
       await Dependencies.logics.authentication.logOutLocal();
@@ -86,7 +86,7 @@ abstract class ApiService {
     );
     final response = await client.apiRefreshGet(keepConnected: keepConnected);
     if (!response.isSuccessful) {
-      debugPrint(
+      appLogger.w(
         '[Authentication] Refresh failed with status ${response.statusCode}',
       );
       return null;
@@ -94,12 +94,12 @@ abstract class ApiService {
 
     final connection = response.body;
     if (connection == null) {
-      debugPrint('[Authentication] Refresh returned no connection');
+      appLogger.w('[Authentication] Refresh returned no connection');
       return null;
     }
 
     await account.setToken(connection);
-    debugPrint('[Authentication] Refresh succeeded');
+    appLogger.i('[Authentication] Refresh succeeded');
     return connection.accessToken;
   }
 

@@ -1,9 +1,9 @@
-import 'dart:developer' as logger;
 import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/di/app_logger.dart';
 import 'package:helse/ui/common/timeline/event_layout.dart';
 import 'package:helse/ui/common/timeline/event_transition_painter.dart';
 import 'package:helse/ui/common/timeline/time_line_labels.dart';
@@ -145,7 +145,7 @@ class _EventsTimelineGraphState<T> extends State<TimelineGraph<T>> {
       timeline.skipped.add(DateTimeRange(start: startSkipping, end: tempDate));
     }
 
-    logger.log('grouped in ${stopwatch.elapsed} with $viewRange bucket');
+    appLogger.d('grouped in ${stopwatch.elapsed} with $viewRange bucket');
     return timeline;
   }
 

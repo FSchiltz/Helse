@@ -1,7 +1,7 @@
 import 'dart:math';
-import 'dart:developer' as logger;
 import 'package:material_ui/material_ui.dart' hide Interval;
 import 'package:helse/helpers/date_helper.dart';
+import 'package:helse/di/app_logger.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/event_helper.dart';
 import 'package:helse/helpers/selection_controller.dart';
@@ -208,9 +208,8 @@ class _EventsGraphState extends State<EventsGraph> {
     // First create the buckets
     final bucketLength = range.duration.inMilliseconds / buckets;
 
-    logger.log(
-      'grouping with buckets: $buckets and bucket lenght: $bucketLength for $_selectedDate',
-      name: "Events",
+    appLogger.d(
+      '[Events] grouping with buckets: $buckets and bucket lenght: $bucketLength for $_selectedDate',
     );
 
     final groups = List<EventSummary>.generate(
@@ -250,7 +249,7 @@ class _EventsGraphState extends State<EventsGraph> {
       counts[event.description ?? ''] = seconds;
     }
 
-    logger.log('_group() executed in ${stopwatch.elapsed}', name: "Events");
+    appLogger.d('[Events] _group() executed in ${stopwatch.elapsed}');
     return GroupStats(groups.toList(), counts, total);
   }
 }

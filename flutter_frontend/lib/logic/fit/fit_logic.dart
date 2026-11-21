@@ -1,7 +1,7 @@
-import 'dart:developer';
 import 'package:health/health.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/logic/event.dart';
+import 'package:helse/di/app_logger.dart';
 import 'package:helse/logic/fit/fit_constants.dart';
 import 'package:helse/logic/fit/fit_helper.dart';
 import 'package:helse/logic/task_bloc.dart';
@@ -91,7 +91,7 @@ class HealthConnectLogic {
         : now.add(Duration(days: -5));
 
     var firstRun = run == null;
-    log("Syncing from $start");
+    appLogger.d("Syncing from $start");
 
     // don't sync if in the future
     if (start.compareTo(now) >= 0) return Execution.skipped();
@@ -115,7 +115,7 @@ class HealthConnectLogic {
     // convert to import data
     ImportData converted = FitHelper.convert(healthData);
 
-    log(
+    appLogger.d(
       "Sending ${converted.metrics?.length} metrics and ${converted.events?.length} events since $start",
     );
 

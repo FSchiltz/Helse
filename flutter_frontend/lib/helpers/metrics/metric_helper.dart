@@ -1,9 +1,9 @@
-import 'dart:developer';
 import 'dart:math' show max;
 
 import 'package:collection/collection.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/di/app_logger.dart';
 import 'package:helse/helpers/metrics/range_list.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
@@ -51,7 +51,7 @@ class MetricHelper {
 
     final bucketLength = range.duration.inMilliseconds / tile;
     final skipGroup = metrics.length <= tile * 2;
-    debugPrint(
+    appLogger.d(
       '[Metrics] - grouping with bucket lenght: $bucketLength for $range',
     );
     int graphCount = max(1, type.valueCount ?? 1);
@@ -143,7 +143,7 @@ class MetricHelper {
       );
     }
 
-    debugPrint('[Metrics] - _group() executed in ${stopwatch.elapsed}');
+    appLogger.d('[Metrics] - _group() executed in ${stopwatch.elapsed}');
     return RangeList(values: groups.values.toList(), maxY: maxY, stats: stats);
   }
 
