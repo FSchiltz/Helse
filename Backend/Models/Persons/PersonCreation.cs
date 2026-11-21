@@ -6,5 +6,7 @@ public class PersonCreation : PersonBase
 
     public string? Password { get; set; }
 
+    public byte[]? ProfilePicture { get; set; }
+
     public HashSet<UserType> Types { get; set; } = [];
 }

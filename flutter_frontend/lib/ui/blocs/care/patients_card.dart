@@ -1,14 +1,34 @@
 import 'dart:convert';
 import 'package:material_ui/material_ui.dart';
+import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/care/patient_menu.dart';
 import 'package:helse/ui/blocs/care/patients_dashboard.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
 
-class PatientsCard extends StatelessWidget {
+class PatientsCard extends StatefulWidget {
   final Person person;
   final void Function() callback;
   const PatientsCard(this.person, this.callback, {super.key});
+
+  @override
+  State<PatientsCard> createState() => _PatientsCardState();
+}
+
+class _PatientsCardState extends State<PatientsCard> {
+  String? _profilePicture;
+
+  @override
+  void initState() {
+    super.initState();
+    Dependencies.services.user
+        .patientProfilePicture(widget.person.id)
+        .then((picture) {
+      if (mounted) {
+        setState(() => _profilePicture = picture);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +43,7 @@ class PatientsCard extends StatelessWidget {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute<void>(
-                  builder: (context) => PatientsDashboard(person, 0),
+                  builder: (context) => PatientsDashboard(widget.person, 0),
                 ),
               ),
               child: Row(
@@ -36,9 +56,9 @@ class PatientsCard extends StatelessWidget {
                     child: SizedBox(
                       width: 60,
                       height: 60,
-                      child: person.profilePicture != null
+                      child: _profilePicture != null
                           ? Image.memory(
-                              base64Decode(person.profilePicture!),
+                              base64Decode(_profilePicture!),
                               fit: BoxFit.cover,
                             )
                           : Icon(
@@ -49,13 +69,13 @@ class PatientsCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    person.name ?? "",
+                    widget.person.name ?? "",
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   Text(
-                    person.surname ?? "",
+                    widget.person.surname ?? "",
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodyMedium,
@@ -64,7 +84,7 @@ class PatientsCard extends StatelessWidget {
               ),
             ),
           ),
-          PatientMenu(person, callback),
+          PatientMenu(widget.person, widget.callback),
         ],
       ),
     );

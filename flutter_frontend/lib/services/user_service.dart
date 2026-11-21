@@ -9,6 +9,8 @@ abstract interface class UserService {
 
   Future<List<Person>?> patients();
 
+  Future<String?> patientProfilePicture(int patient);
+
   Future<void> updatePerson(
     UpdatePerson update,
   );

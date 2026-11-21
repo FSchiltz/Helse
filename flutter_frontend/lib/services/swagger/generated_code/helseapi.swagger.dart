@@ -444,6 +444,38 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
+  ///@param patient
+  Future<chopper.Response<ProfilePicture>> apiPatientsPatientProfilePictureGet({
+    required int? patient,
+  }) {
+    generatedMapping.putIfAbsent(
+      ProfilePicture,
+      () => ProfilePicture.fromJsonFactory,
+    );
+
+    return _apiPatientsPatientProfilePictureGet(patient: patient);
+  }
+
+  ///
+  ///@param patient
+  @GET(path: '/api/patients/{patient}/profile-picture')
+  Future<chopper.Response<ProfilePicture>>
+  _apiPatientsPatientProfilePictureGet({
+    @Path('patient') required int? patient,
+    @chopper.Tag()
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["PatientsLogic"],
+      deprecated: false,
+    ),
+  });
+
+  ///
   ///@param start
   ///@param end
   Future<chopper.Response<List<Event>>> apiPatientsAgendaGet({
@@ -6428,7 +6460,6 @@ class Person {
     this.surname,
     this.identifier,
     this.birth,
-    this.profilePicture,
     this.email,
     this.phone,
   });
@@ -6460,8 +6491,6 @@ class Person {
   final String? identifier;
   @JsonKey(name: 'birth')
   final DateTime? birth;
-  @JsonKey(name: 'profilePicture')
-  final String? profilePicture;
   @JsonKey(name: 'email')
   final String? email;
   @JsonKey(name: 'phone')
@@ -6502,11 +6531,6 @@ class Person {
                 )) &&
             (identical(other.birth, birth) ||
                 const DeepCollectionEquality().equals(other.birth, birth)) &&
-            (identical(other.profilePicture, profilePicture) ||
-                const DeepCollectionEquality().equals(
-                  other.profilePicture,
-                  profilePicture,
-                )) &&
             (identical(other.email, email) ||
                 const DeepCollectionEquality().equals(other.email, email)) &&
             (identical(other.phone, phone) ||
@@ -6527,7 +6551,6 @@ class Person {
       const DeepCollectionEquality().hash(surname) ^
       const DeepCollectionEquality().hash(identifier) ^
       const DeepCollectionEquality().hash(birth) ^
-      const DeepCollectionEquality().hash(profilePicture) ^
       const DeepCollectionEquality().hash(email) ^
       const DeepCollectionEquality().hash(phone) ^
       runtimeType.hashCode;
@@ -6544,7 +6567,6 @@ extension $PersonExtension on Person {
     String? surname,
     String? identifier,
     DateTime? birth,
-    String? profilePicture,
     String? email,
     String? phone,
   }) {
@@ -6558,7 +6580,6 @@ extension $PersonExtension on Person {
       surname: surname ?? this.surname,
       identifier: identifier ?? this.identifier,
       birth: birth ?? this.birth,
-      profilePicture: profilePicture ?? this.profilePicture,
       email: email ?? this.email,
       phone: phone ?? this.phone,
     );
@@ -6574,7 +6595,6 @@ extension $PersonExtension on Person {
     Wrapped<String?>? surname,
     Wrapped<String?>? identifier,
     Wrapped<DateTime?>? birth,
-    Wrapped<String?>? profilePicture,
     Wrapped<String?>? email,
     Wrapped<String?>? phone,
   }) {
@@ -6588,9 +6608,6 @@ extension $PersonExtension on Person {
       surname: (surname != null ? surname.value : this.surname),
       identifier: (identifier != null ? identifier.value : this.identifier),
       birth: (birth != null ? birth.value : this.birth),
-      profilePicture: (profilePicture != null
-          ? profilePicture.value
-          : this.profilePicture),
       email: (email != null ? email.value : this.email),
       phone: (phone != null ? phone.value : this.phone),
     );
@@ -6602,12 +6619,12 @@ class PersonCreation {
   const PersonCreation({
     this.userName,
     this.password,
+    this.profilePicture,
     this.types,
     this.name,
     this.surname,
     this.identifier,
     this.birth,
-    this.profilePicture,
     this.email,
     this.phone,
   });
@@ -6622,6 +6639,8 @@ class PersonCreation {
   final String? userName;
   @JsonKey(name: 'password')
   final String? password;
+  @JsonKey(name: 'profilePicture')
+  final String? profilePicture;
   @JsonKey(
     name: 'types',
     toJson: userTypeListToJson,
@@ -6636,8 +6655,6 @@ class PersonCreation {
   final String? identifier;
   @JsonKey(name: 'birth')
   final DateTime? birth;
-  @JsonKey(name: 'profilePicture')
-  final String? profilePicture;
   @JsonKey(name: 'email')
   final String? email;
   @JsonKey(name: 'phone')
@@ -6658,6 +6675,11 @@ class PersonCreation {
                   other.password,
                   password,
                 )) &&
+            (identical(other.profilePicture, profilePicture) ||
+                const DeepCollectionEquality().equals(
+                  other.profilePicture,
+                  profilePicture,
+                )) &&
             (identical(other.types, types) ||
                 const DeepCollectionEquality().equals(other.types, types)) &&
             (identical(other.name, name) ||
@@ -6674,11 +6696,6 @@ class PersonCreation {
                 )) &&
             (identical(other.birth, birth) ||
                 const DeepCollectionEquality().equals(other.birth, birth)) &&
-            (identical(other.profilePicture, profilePicture) ||
-                const DeepCollectionEquality().equals(
-                  other.profilePicture,
-                  profilePicture,
-                )) &&
             (identical(other.email, email) ||
                 const DeepCollectionEquality().equals(other.email, email)) &&
             (identical(other.phone, phone) ||
@@ -6692,12 +6709,12 @@ class PersonCreation {
   int get hashCode =>
       const DeepCollectionEquality().hash(userName) ^
       const DeepCollectionEquality().hash(password) ^
+      const DeepCollectionEquality().hash(profilePicture) ^
       const DeepCollectionEquality().hash(types) ^
       const DeepCollectionEquality().hash(name) ^
       const DeepCollectionEquality().hash(surname) ^
       const DeepCollectionEquality().hash(identifier) ^
       const DeepCollectionEquality().hash(birth) ^
-      const DeepCollectionEquality().hash(profilePicture) ^
       const DeepCollectionEquality().hash(email) ^
       const DeepCollectionEquality().hash(phone) ^
       runtimeType.hashCode;
@@ -6707,24 +6724,24 @@ extension $PersonCreationExtension on PersonCreation {
   PersonCreation copyWith({
     String? userName,
     String? password,
+    String? profilePicture,
     List<enums.UserType>? types,
     String? name,
     String? surname,
     String? identifier,
     DateTime? birth,
-    String? profilePicture,
     String? email,
     String? phone,
   }) {
     return PersonCreation(
       userName: userName ?? this.userName,
       password: password ?? this.password,
+      profilePicture: profilePicture ?? this.profilePicture,
       types: types ?? this.types,
       name: name ?? this.name,
       surname: surname ?? this.surname,
       identifier: identifier ?? this.identifier,
       birth: birth ?? this.birth,
-      profilePicture: profilePicture ?? this.profilePicture,
       email: email ?? this.email,
       phone: phone ?? this.phone,
     );
@@ -6733,29 +6750,69 @@ extension $PersonCreationExtension on PersonCreation {
   PersonCreation copyWithWrapped({
     Wrapped<String?>? userName,
     Wrapped<String?>? password,
+    Wrapped<String?>? profilePicture,
     Wrapped<List<enums.UserType>?>? types,
     Wrapped<String?>? name,
     Wrapped<String?>? surname,
     Wrapped<String?>? identifier,
     Wrapped<DateTime?>? birth,
-    Wrapped<String?>? profilePicture,
     Wrapped<String?>? email,
     Wrapped<String?>? phone,
   }) {
     return PersonCreation(
       userName: (userName != null ? userName.value : this.userName),
       password: (password != null ? password.value : this.password),
+      profilePicture: (profilePicture != null
+          ? profilePicture.value
+          : this.profilePicture),
       types: (types != null ? types.value : this.types),
       name: (name != null ? name.value : this.name),
       surname: (surname != null ? surname.value : this.surname),
       identifier: (identifier != null ? identifier.value : this.identifier),
       birth: (birth != null ? birth.value : this.birth),
-      profilePicture: (profilePicture != null
-          ? profilePicture.value
-          : this.profilePicture),
       email: (email != null ? email.value : this.email),
       phone: (phone != null ? phone.value : this.phone),
     );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class ProfilePicture {
+  const ProfilePicture({this.data});
+
+  factory ProfilePicture.fromJson(Map<String, dynamic> json) =>
+      _$ProfilePictureFromJson(json);
+
+  static const toJsonFactory = _$ProfilePictureToJson;
+  Map<String, dynamic> toJson() => _$ProfilePictureToJson(this);
+
+  @JsonKey(name: 'data')
+  final String? data;
+  static const fromJsonFactory = _$ProfilePictureFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is ProfilePicture &&
+            (identical(other.data, data) ||
+                const DeepCollectionEquality().equals(other.data, data)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(data) ^ runtimeType.hashCode;
+}
+
+extension $ProfilePictureExtension on ProfilePicture {
+  ProfilePicture copyWith({String? data}) {
+    return ProfilePicture(data: data ?? this.data);
+  }
+
+  ProfilePicture copyWithWrapped({Wrapped<String?>? data}) {
+    return ProfilePicture(data: (data != null ? data.value : this.data));
   }
 }
 
@@ -8520,12 +8577,12 @@ extension $UpdatePatientExtension on UpdatePatient {
 class UpdatePerson {
   const UpdatePerson({
     this.id,
+    this.profilePicture,
     this.types,
     this.name,
     this.surname,
     this.identifier,
     this.birth,
-    this.profilePicture,
     this.email,
     this.phone,
   });
@@ -8538,6 +8595,8 @@ class UpdatePerson {
 
   @JsonKey(name: 'id')
   final int? id;
+  @JsonKey(name: 'profilePicture')
+  final String? profilePicture;
   @JsonKey(
     name: 'types',
     toJson: userTypeListToJson,
@@ -8552,8 +8611,6 @@ class UpdatePerson {
   final String? identifier;
   @JsonKey(name: 'birth')
   final DateTime? birth;
-  @JsonKey(name: 'profilePicture')
-  final String? profilePicture;
   @JsonKey(name: 'email')
   final String? email;
   @JsonKey(name: 'phone')
@@ -8566,6 +8623,11 @@ class UpdatePerson {
         (other is UpdatePerson &&
             (identical(other.id, id) ||
                 const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.profilePicture, profilePicture) ||
+                const DeepCollectionEquality().equals(
+                  other.profilePicture,
+                  profilePicture,
+                )) &&
             (identical(other.types, types) ||
                 const DeepCollectionEquality().equals(other.types, types)) &&
             (identical(other.name, name) ||
@@ -8582,11 +8644,6 @@ class UpdatePerson {
                 )) &&
             (identical(other.birth, birth) ||
                 const DeepCollectionEquality().equals(other.birth, birth)) &&
-            (identical(other.profilePicture, profilePicture) ||
-                const DeepCollectionEquality().equals(
-                  other.profilePicture,
-                  profilePicture,
-                )) &&
             (identical(other.email, email) ||
                 const DeepCollectionEquality().equals(other.email, email)) &&
             (identical(other.phone, phone) ||
@@ -8599,12 +8656,12 @@ class UpdatePerson {
   @override
   int get hashCode =>
       const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(profilePicture) ^
       const DeepCollectionEquality().hash(types) ^
       const DeepCollectionEquality().hash(name) ^
       const DeepCollectionEquality().hash(surname) ^
       const DeepCollectionEquality().hash(identifier) ^
       const DeepCollectionEquality().hash(birth) ^
-      const DeepCollectionEquality().hash(profilePicture) ^
       const DeepCollectionEquality().hash(email) ^
       const DeepCollectionEquality().hash(phone) ^
       runtimeType.hashCode;
@@ -8613,23 +8670,23 @@ class UpdatePerson {
 extension $UpdatePersonExtension on UpdatePerson {
   UpdatePerson copyWith({
     int? id,
+    String? profilePicture,
     List<enums.UserType>? types,
     String? name,
     String? surname,
     String? identifier,
     DateTime? birth,
-    String? profilePicture,
     String? email,
     String? phone,
   }) {
     return UpdatePerson(
       id: id ?? this.id,
+      profilePicture: profilePicture ?? this.profilePicture,
       types: types ?? this.types,
       name: name ?? this.name,
       surname: surname ?? this.surname,
       identifier: identifier ?? this.identifier,
       birth: birth ?? this.birth,
-      profilePicture: profilePicture ?? this.profilePicture,
       email: email ?? this.email,
       phone: phone ?? this.phone,
     );
@@ -8637,25 +8694,25 @@ extension $UpdatePersonExtension on UpdatePerson {
 
   UpdatePerson copyWithWrapped({
     Wrapped<int?>? id,
+    Wrapped<String?>? profilePicture,
     Wrapped<List<enums.UserType>?>? types,
     Wrapped<String?>? name,
     Wrapped<String?>? surname,
     Wrapped<String?>? identifier,
     Wrapped<DateTime?>? birth,
-    Wrapped<String?>? profilePicture,
     Wrapped<String?>? email,
     Wrapped<String?>? phone,
   }) {
     return UpdatePerson(
       id: (id != null ? id.value : this.id),
+      profilePicture: (profilePicture != null
+          ? profilePicture.value
+          : this.profilePicture),
       types: (types != null ? types.value : this.types),
       name: (name != null ? name.value : this.name),
       surname: (surname != null ? surname.value : this.surname),
       identifier: (identifier != null ? identifier.value : this.identifier),
       birth: (birth != null ? birth.value : this.birth),
-      profilePicture: (profilePicture != null
-          ? profilePicture.value
-          : this.profilePicture),
       email: (email != null ? email.value : this.email),
       phone: (phone != null ? phone.value : this.phone),
     );

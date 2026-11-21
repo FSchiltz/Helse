@@ -10,8 +10,6 @@ public abstract class PersonBase
 
     public DateTime? Birth { get; set; }
 
-    public byte[]? ProfilePicture { get; set; }
-
     public string? Email { get; set; }
 
     public string? Phone { get; set; }

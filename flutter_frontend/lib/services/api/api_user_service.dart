@@ -26,6 +26,15 @@ class ApiUserService extends ApiService implements UserService {
   }
 
   @override
+  Future<String?> patientProfilePicture(int patient) async {
+    final api = await getService();
+    final picture = await call(
+      () => api.apiPatientsPatientProfilePictureGet(patient: patient),
+    );
+    return picture?.data;
+  }
+
+  @override
   Future<void> updatePerson(UpdatePerson update) async {
     final api = await getService();
     await call(() => api.apiPersonPut(body: update));

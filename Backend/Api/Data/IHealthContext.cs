@@ -10,5 +10,7 @@ internal interface IHealthContext : IContext
 {
     Task<Models.Persons.Person[]> GetPatients(long id, DateTime now, RightType view);
 
+    Task<byte[]?> GetPatientProfilePicture(long patient);
+
     Task<Models.Persons.Person[]> GetAllPatients();
 }

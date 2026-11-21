@@ -412,6 +412,30 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
+  Future<Response<ProfilePicture>> _apiPatientsPatientProfilePictureGet({
+    required int? patient,
+    SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
+      description: '',
+      summary: '',
+      operationId: '',
+      consumes: [],
+      produces: [],
+      security: [],
+      tags: ["PatientsLogic"],
+      deprecated: false,
+    ),
+  }) {
+    final Uri $url = Uri.parse('/api/patients/${patient}/profile-picture');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      tag: swaggerMetaData,
+    );
+    return client.send<ProfilePicture, ProfilePicture>($request);
+  }
+
+  @override
   Future<Response<List<Event>>> _apiPatientsAgendaGet({
     required DateTime? start,
     required DateTime? end,

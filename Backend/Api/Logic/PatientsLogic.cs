@@ -17,6 +17,11 @@ internal static class PatientsLogic
         .Produces<List<Person>>((int)HttpStatusCode.OK)
         .Produces((int)HttpStatusCode.Unauthorized);
 
+        patients.MapGet("/{patient:long}/profile-picture", GetPatientProfilePictureAsync)
+        .Produces<ProfilePicture>((int)HttpStatusCode.OK)
+        .Produces((int)HttpStatusCode.Forbidden)
+        .Produces((int)HttpStatusCode.Unauthorized);
+
         patients.MapPut("/", UpdatePatient)
         .Produces((int)HttpStatusCode.NoContent)
         .Produces((int)HttpStatusCode.Unauthorized);
@@ -88,12 +93,31 @@ internal static class PatientsLogic
                 Name = x.Name,
                 Surname = x.Surname,
                 Identifier = x.Identifier,
-                ProfilePicture = x.ProfilePicture,
                 Types = [],
             };
         });
 
         return TypedResults.Ok(models);
+    }
+
+    /// <summary>
+    /// Get a patient's profile picture
+    /// </summary>
+    public static async Task<IResult> GetPatientProfilePictureAsync(
+        long patient,
+        IUserContext users,
+        IHealthContext db,
+        HttpContext context)
+    {
+        var (error, user) = await users.GetUser(context.User);
+        if (error is not null)
+            return error;
+
+        if (!await users.ValidateCaregiverAsync(user, patient, RightType.View))
+            return TypedResults.Forbid();
+
+        var picture = await db.GetPatientProfilePicture(patient);
+        return TypedResults.Ok(new ProfilePicture { Data = picture });
     }
 
     /// <summary>

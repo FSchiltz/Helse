@@ -53,6 +53,14 @@ class LocalUserService extends LocalService implements UserService {
   }
 
   @override
+  Future<String?> patientProfilePicture(int patient) async {
+    final result = await (database.select(
+      database.person,
+    )..where((e) => e.id.equals(patient))).getSingleOrNull();
+    return result?.profilePicture;
+  }
+
+  @override
   Future<List<Person>?> persons() async {
     final result = await database.select(database.person).get();
 
