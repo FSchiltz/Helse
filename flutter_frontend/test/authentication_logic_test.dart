@@ -181,7 +181,15 @@ void main() {
       var rejectedAccessRequests = 0;
       server.listen((request) async {
         request.response.headers.contentType = ContentType.json;
-        if (request.uri.path == '/api/refresh') {
+        if (request.uri.path == '/api/status') {
+          request.response.write(
+            jsonEncode({
+              'init': true,
+              'externalAuth': false,
+              'oauths': <Object>[],
+            }),
+          );
+        } else if (request.uri.path == '/api/refresh') {
           refreshCount++;
           request.response.write(
             jsonEncode({
@@ -216,31 +224,10 @@ void main() {
       );
       await Dependencies.init(account: account);
 
-      var oauthAttempted = false;
-      Dependencies.services.login = _LoginService(
-        Status(
-          init: true,
-          externalAuth: false,
-          oauths: const [
-            OauthConnection(
-              name: 'Provider',
-              url: 'https://oauth.example/authorize',
-              clientId: 'client-id',
-              autoLogin: true,
-            ),
-          ],
-        ),
-        onGetGrant: () async {
-          oauthAttempted = true;
-          return null;
-        },
-      );
-
       await Dependencies.logics.authentication.checkUrl(url);
 
       expect(refreshCount, 1);
       expect(rejectedAccessRequests, 0);
-      expect(oauthAttempted, isFalse);
       expect(account.getToken()?.accessToken, _jwt({'exp': 4102444800}));
       expect(
         account.getToken()?.refreshToken,

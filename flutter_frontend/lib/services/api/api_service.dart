@@ -31,6 +31,10 @@ abstract class ApiService {
     }
 
     if (response.statusCode == 401) {
+      log(
+        'API request remained unauthorized after authentication refresh',
+        name: 'Authentication',
+      );
       await Dependencies.logics.authentication.logOutLocal();
       return null;
     }
@@ -81,12 +85,27 @@ abstract class ApiService {
       ],
     );
     final response = await client.apiRefreshGet(keepConnected: keepConnected);
+    if (!response.isSuccessful) {
+      log(
+        'Authentication refresh failed with status ${response.statusCode}',
+        level: 900,
+        name: 'Authentication',
+      );
+      return null;
+    }
+
     final connection = response.body;
     if (connection == null) {
+      log(
+        'Authentication refresh returned no connection',
+        level: 900,
+        name: 'Authentication',
+      );
       return null;
     }
 
     await account.setToken(connection);
+    log('Authentication refresh succeeded', name: 'Authentication');
     return connection.accessToken;
   }
 

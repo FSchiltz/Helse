@@ -20,25 +20,35 @@ class AuthenticationLogic {
 
   /// Check if the user is logged in
   Future<bool> checkLogin() async {
+    log('Checking saved session', name: 'Authentication');
     if (getGrant() != null) {
+      log(
+        'Skipping session restoration because an OAuth grant is pending',
+        name: 'Authentication',
+      );
       return false;
     }
 
     await SettingsMigration(account).migrate();
     var token = account.getToken()?.refreshToken;
-    if (token != null && token.isNotEmpty) {
-      await _load();
-      // the load call will force a new refresh token or set it to null if not valid
-      token = account.getToken()?.refreshToken;
-      if (token == null || token.isEmpty) {
-        return false;
-      }
-      setAuth();
-
-      return true;
+    if (token == null || token.isEmpty) {
+      log('No saved refresh token is available', name: 'Authentication');
+      return false;
     }
 
-    return false;
+    await _load();
+    token = account.getToken()?.refreshToken;
+    if (token == null || token.isEmpty) {
+      log(
+        'Session restoration cleared the saved refresh token',
+        name: 'Authentication',
+      );
+      return false;
+    }
+
+    setAuth();
+    log('Saved session restored', name: 'Authentication');
+    return true;
   }
 
   void setAuth() {
@@ -98,7 +108,7 @@ class AuthenticationLogic {
   Future<void> initAccount({
     required String url,
     required PersonCreation person,
-    required bool keepOpen
+    required bool keepOpen,
   }) async {
     await account.set(Account.url, url);
     await Dependencies.services.user.addPerson(person);
@@ -170,7 +180,11 @@ class AuthenticationLogic {
     return url;
   }
 
-  Future<void> _submit({required String url, required String token, required bool keepOpen}) async {
+  Future<void> _submit({
+    required String url,
+    required String token,
+    required bool keepOpen,
+  }) async {
     String? issuer;
     String? redirect;
 
@@ -205,7 +219,7 @@ class AuthenticationLogic {
           }
 
           var url = account.get(Account.url);
-            var keepConnected = account.isEnabled(Account.keepConnected);
+          var keepConnected = account.isEnabled(Account.keepConnected);
 
           setNoAuth();
           await _submit(url: url ?? '', token: code, keepOpen: keepConnected);
@@ -262,7 +276,11 @@ class AuthenticationLogic {
         }
       } else if (isInit.externalAuth == true) {
         // directly start the login procedure
-        await _submit(url: uri.toString(), token: 'Header', keepOpen: keepConnected);
+        await _submit(
+          url: uri.toString(),
+          token: 'Header',
+          keepOpen: keepConnected,
+        );
       }
     }
 
@@ -273,7 +291,7 @@ class AuthenticationLogic {
     String url,
     OauthConnection oauth,
     Status isInit,
-    bool keepConnected
+    bool keepConnected,
   ) async {
     // Save the keep connected for the redirect
     await account.setBool(Account.keepConnected, keepConnected);
