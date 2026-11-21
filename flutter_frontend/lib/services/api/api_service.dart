@@ -26,26 +26,20 @@ abstract class ApiService {
       );
     }
 
-    T? result;
-
-    if (!response.isSuccessful) {
-      switch (response.statusCode) {
-        case 401:
-          // no auth, we remove the token and return null;
-          await Dependencies.logics.authentication.logOutLocal();
-          result = null;
-          break;
-        default:
-          throw ServiceError(
-            response.statusCode,
-            message: "Error during the call",
-            description: response.error?.toString(),
-          );
-      }
-    } else {
-      result = response.body;
+    if (response.isSuccessful) {
+      return response.body;
     }
-    return result;
+
+    if (response.statusCode == 401) {
+      await Dependencies.logics.authentication.logOutLocal();
+      return null;
+    }
+
+    throw ServiceError(
+      response.statusCode,
+      message: "Error during the call",
+      description: response.error?.toString(),
+    );
   }
 
   Future<String?> refreshToken(
@@ -53,6 +47,10 @@ abstract class ApiService {
     Uri url,
     bool keepConnected,
   ) async {
+    if (settings == null || settings.refreshToken.isEmpty) {
+      return null;
+    }
+
     final pendingRefresh = _refreshInProgress;
     if (pendingRefresh != null) {
       return pendingRefresh;
@@ -70,7 +68,7 @@ abstract class ApiService {
   }
 
   Future<String?> _requestTokenRefresh(
-    ConnectionResponse? settings,
+    ConnectionResponse settings,
     Uri url,
     bool keepConnected,
   ) async {
@@ -78,23 +76,18 @@ abstract class ApiService {
       baseUrl: url,
       interceptors: [
         HeadersInterceptor({
-          'Authorization': 'Bearer ${settings?.refreshToken}',
+          'Authorization': 'Bearer ${settings.refreshToken}',
         }),
       ],
     );
-    var response = await client.apiRefreshGet(keepConnected: keepConnected);
-    var connection = response.body;
-    if (connection != null) {
-      var token = ConnectionResponse(
-        id: connection.id,
-        accessToken: connection.accessToken,
-        roles: connection.roles,
-        refreshToken: connection.refreshToken,
-      );
-      await account.setToken(token);
-      return token.accessToken;
+    final response = await client.apiRefreshGet(keepConnected: keepConnected);
+    final connection = response.body;
+    if (connection == null) {
+      return null;
     }
-    return null;
+
+    await account.setToken(connection);
+    return connection.accessToken;
   }
 
   Helseapi getApi(Uri url, String? token) {
