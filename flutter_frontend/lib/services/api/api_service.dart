@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:chopper/chopper.dart';
+import 'package:flutter/foundation.dart';
 import 'package:helse/services/api/refresh_authenticator.dart';
 import 'package:helse/services/api/service_error.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
@@ -31,9 +32,8 @@ abstract class ApiService {
     }
 
     if (response.statusCode == 401) {
-      log(
-        'API request remained unauthorized after authentication refresh',
-        name: 'Authentication',
+      debugPrint(
+        '[Authentication] API request remained unauthorized after refresh',
       );
       await Dependencies.logics.authentication.logOutLocal();
       return null;
@@ -86,26 +86,20 @@ abstract class ApiService {
     );
     final response = await client.apiRefreshGet(keepConnected: keepConnected);
     if (!response.isSuccessful) {
-      log(
-        'Authentication refresh failed with status ${response.statusCode}',
-        level: 900,
-        name: 'Authentication',
+      debugPrint(
+        '[Authentication] Refresh failed with status ${response.statusCode}',
       );
       return null;
     }
 
     final connection = response.body;
     if (connection == null) {
-      log(
-        'Authentication refresh returned no connection',
-        level: 900,
-        name: 'Authentication',
-      );
+      debugPrint('[Authentication] Refresh returned no connection');
       return null;
     }
 
     await account.setToken(connection);
-    log('Authentication refresh succeeded', name: 'Authentication');
+    debugPrint('[Authentication] Refresh succeeded');
     return connection.accessToken;
   }
 

@@ -178,7 +178,7 @@ class _LoginState extends State<LoginPage> {
 
   /// Prefill the url from storage or other
   Future<void> _initUrl() async {
-    log('Init url');
+    debugPrint('Init url');
     // We first try to get it from storage
     var url = Dependencies.logics.authentication.getUrl();
 
@@ -216,7 +216,7 @@ class _LoginState extends State<LoginPage> {
   }
 
   void _start() {
-    log('Login started');
+    debugPrint('Login started');
     if (!mounted) return;
     setState(() {
       _loginError = null;
@@ -233,7 +233,7 @@ class _LoginState extends State<LoginPage> {
   }
 
   void _success() {
-    log('Login successful');
+    debugPrint('Login successful');
     if (!mounted) return;
     setState(() {
       _status = SubmissionStatus.success;

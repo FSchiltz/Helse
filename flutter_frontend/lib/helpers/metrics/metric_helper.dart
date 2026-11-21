@@ -51,9 +51,8 @@ class MetricHelper {
 
     final bucketLength = range.duration.inMilliseconds / tile;
     final skipGroup = metrics.length <= tile * 2;
-    log(
-      'grouping with bucket lenght: $bucketLength for $range',
-      name: "Metrics",
+    debugPrint(
+      '[Metrics] - grouping with bucket lenght: $bucketLength for $range',
     );
     int graphCount = max(1, type.valueCount ?? 1);
     Map<int, MetricGrouped> groups = {};
@@ -144,7 +143,7 @@ class MetricHelper {
       );
     }
 
-    log('_group() executed in ${stopwatch.elapsed}', name: "Metrics");
+    debugPrint('[Metrics] - _group() executed in ${stopwatch.elapsed}');
     return RangeList(values: groups.values.toList(), maxY: maxY, stats: stats);
   }
 

@@ -20,11 +20,10 @@ class AuthenticationLogic {
 
   /// Check if the user is logged in
   Future<bool> checkLogin() async {
-    log('Checking saved session', name: 'Authentication');
+    debugPrint('[Authentication] Checking saved session');
     if (getGrant() != null) {
-      log(
-        'Skipping session restoration because an OAuth grant is pending',
-        name: 'Authentication',
+      debugPrint(
+        '[Authentication] Skipping restoration because an OAuth grant is pending',
       );
       return false;
     }
@@ -32,22 +31,21 @@ class AuthenticationLogic {
     await SettingsMigration(account).migrate();
     var token = account.getToken()?.refreshToken;
     if (token == null || token.isEmpty) {
-      log('No saved refresh token is available', name: 'Authentication');
+      debugPrint('[Authentication] No saved refresh token is available');
       return false;
     }
 
     await _load();
     token = account.getToken()?.refreshToken;
     if (token == null || token.isEmpty) {
-      log(
-        'Session restoration cleared the saved refresh token',
-        name: 'Authentication',
+      debugPrint(
+        '[Authentication] Restoration cleared the saved refresh token',
       );
       return false;
     }
 
     setAuth();
-    log('Saved session restored', name: 'Authentication');
+    debugPrint('[Authentication] Saved session restored');
     return true;
   }
 
@@ -75,7 +73,7 @@ class AuthenticationLogic {
       final oldUser = account.get(Account.id);
       if (token.id != oldUser) {
         // if the user is different than the last one clear the settings
-        log('Clear old user settings');
+        debugPrint('Clear old user settings');
         await account.clear();
         await account.set(Account.id, token.id ?? '');
       } else {
@@ -92,7 +90,7 @@ class AuthenticationLogic {
       await _load();
       setAuth();
     } else {
-      log('Auth failed');
+      debugPrint('Auth failed');
       setNoAuth();
       throw StateError('Auth failed');
     }
@@ -128,13 +126,13 @@ class AuthenticationLogic {
 
   /// Call the logout service
   Future<void> logOut(bool all) async {
-    log('Log out');
+    debugPrint('Log out');
     await Dependencies.services.user.logout(all);
     await logOutLocal();
   }
 
   Future<void> clean() async {
-    log('Cleaned the settings');
+    debugPrint('Cleaned the settings');
     await account.clean();
     Dependencies.logics.settings.init = false;
   }
@@ -190,7 +188,7 @@ class AuthenticationLogic {
 
     issuer = getClientId();
     redirect = getRedirect();
-    log('Auth with: $issuer - $redirect');
+    debugPrint('Auth with: $issuer - $redirect');
 
     await logIn(
       url: url,
@@ -215,7 +213,7 @@ class AuthenticationLogic {
         if (code != null) {
           if (kIsWeb) {
             UrlHelper.removeParam();
-            log("Auth code found");
+            debugPrint("Auth code found");
           }
 
           var url = account.get(Account.url);
@@ -264,7 +262,9 @@ class AuthenticationLogic {
     try {
       isConnected = await checkLogin();
     } catch (error, stackTrace) {
-      log('Failed to restore session', error: error, stackTrace: stackTrace);
+      debugPrint(
+        '[Authentication] Failed to restore session: $error\n$stackTrace',
+      );
     }
     if (isInit != null && isInit.init == true && !isConnected) {
       var keepConnected = account.isEnabled(Account.keepConnected);
@@ -312,10 +312,9 @@ class AuthenticationLogic {
         try {
           await checkUrl(url);
         } catch (error, stackTrace) {
-          log(
-            'Failed to check saved server URL',
-            error: error,
-            stackTrace: stackTrace,
+          debugPrint(
+            '[Authentication] Failed to check saved server URL: '
+            '$error\n$stackTrace',
           );
           setNoAuth();
         }
