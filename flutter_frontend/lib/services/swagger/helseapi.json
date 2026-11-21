@@ -429,6 +429,43 @@
         }
       }
     },
+    "/api/patients/{patient}/profile-picture": {
+      "get": {
+        "tags": [
+          "PatientsLogic"
+        ],
+        "parameters": [
+          {
+            "name": "patient",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfilePicture"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/api/patients/agenda": {
       "get": {
         "tags": [
@@ -4609,13 +4646,6 @@
             ],
             "format": "date-time"
           },
-          "profilePicture": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "byte"
-          },
           "email": {
             "type": [
               "null",
@@ -4644,6 +4674,13 @@
               "null",
               "string"
             ]
+          },
+          "profilePicture": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "byte"
           },
           "types": {
             "type": "array",
@@ -4676,13 +4713,6 @@
             ],
             "format": "date-time"
           },
-          "profilePicture": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "byte"
-          },
           "email": {
             "type": [
               "null",
@@ -4694,6 +4724,18 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "ProfilePicture": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "byte"
           }
         }
       },
@@ -5382,6 +5424,13 @@
             ],
             "format": "int64"
           },
+          "profilePicture": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "byte"
+          },
           "types": {
             "type": [
               "null",
@@ -5415,13 +5464,6 @@
               "string"
             ],
             "format": "date-time"
-          },
-          "profilePicture": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "byte"
           },
           "email": {
             "type": [

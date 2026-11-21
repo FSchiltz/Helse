@@ -17,7 +17,25 @@ internal class HealthContext(DataConnection db, SlowQueryLogInterceptor intercep
                 where r.Stop == null || (r.Stop >= now && r.Start <= now)
                 where r.UserId == user
                 where r.Type == (int)right
-                select u).Distinct().ToArrayAsync();
+                select new Models.Persons.Person
+                {
+                    Id = u.Id,
+                    Birth = u.Birth,
+                    Name = u.Name,
+                    Surname = u.Surname,
+                    Identifier = u.Identifier,
+                    ProfilePicture = null,
+                    Created = u.Created,
+                }).Distinct().ToArrayAsync();
+    }
+
+    /// <inheritdoc/>
+    public Task<byte[]?> GetPatientProfilePicture(long patient)
+    {
+        return Db.GetTable<Models.Persons.Person>()
+            .Where(x => x.Id == patient)
+            .Select(x => x.ProfilePicture)
+            .FirstOrDefaultAsync();
     }
 
     /// <inheritdoc/>

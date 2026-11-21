@@ -17,6 +17,7 @@ class LocalUserService extends LocalService implements UserService {
             email: Value(person.email),
             phone: Value(person.phone),
             surname: Value(person.surname),
+            profilePicture: Value(person.profilePicture),
             types: Value(person.types?.join(';')),
             created: DateTime.now().toUtc(),
           ),
@@ -50,6 +51,14 @@ class LocalUserService extends LocalService implements UserService {
     )..where((e) => e.types.contains(UserType.patient.name))).get();
 
     return result.map(toModel).toList();
+  }
+
+  @override
+  Future<String?> patientProfilePicture(int patient) async {
+    final result = await (database.select(
+      database.person,
+    )..where((e) => e.id.equals(patient))).getSingleOrNull();
+    return result?.profilePicture;
   }
 
   @override
@@ -109,7 +118,6 @@ class LocalUserService extends LocalService implements UserService {
       identifier: e.identifier,
       name: e.name,
       phone: e.phone,
-      profilePicture: e.profilePicture,
       surname: e.surname,
     );
   }

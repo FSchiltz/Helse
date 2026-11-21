@@ -835,7 +835,6 @@ Person _$PersonFromJson(Map<String, dynamic> json) => Person(
   surname: json['surname'] as String?,
   identifier: json['identifier'] as String?,
   birth: json['birth'] == null ? null : DateTime.parse(json['birth'] as String),
-  profilePicture: json['profilePicture'] as String?,
   email: json['email'] as String?,
   phone: json['phone'] as String?,
 );
@@ -850,7 +849,6 @@ Map<String, dynamic> _$PersonToJson(Person instance) => <String, dynamic>{
   'surname': instance.surname,
   'identifier': instance.identifier,
   'birth': instance.birth?.toIso8601String(),
-  'profilePicture': instance.profilePicture,
   'email': instance.email,
   'phone': instance.phone,
 };
@@ -859,6 +857,7 @@ PersonCreation _$PersonCreationFromJson(Map<String, dynamic> json) =>
     PersonCreation(
       userName: json['userName'] as String?,
       password: json['password'] as String?,
+      profilePicture: json['profilePicture'] as String?,
       types: userTypeListFromJson(json['types'] as List?),
       name: json['name'] as String?,
       surname: json['surname'] as String?,
@@ -866,7 +865,6 @@ PersonCreation _$PersonCreationFromJson(Map<String, dynamic> json) =>
       birth: json['birth'] == null
           ? null
           : DateTime.parse(json['birth'] as String),
-      profilePicture: json['profilePicture'] as String?,
       email: json['email'] as String?,
       phone: json['phone'] as String?,
     );
@@ -875,15 +873,21 @@ Map<String, dynamic> _$PersonCreationToJson(PersonCreation instance) =>
     <String, dynamic>{
       'userName': instance.userName,
       'password': instance.password,
+      'profilePicture': instance.profilePicture,
       'types': userTypeListToJson(instance.types),
       'name': instance.name,
       'surname': instance.surname,
       'identifier': instance.identifier,
       'birth': instance.birth?.toIso8601String(),
-      'profilePicture': instance.profilePicture,
       'email': instance.email,
       'phone': instance.phone,
     };
+
+ProfilePicture _$ProfilePictureFromJson(Map<String, dynamic> json) =>
+    ProfilePicture(data: json['data'] as String?);
+
+Map<String, dynamic> _$ProfilePictureToJson(ProfilePicture instance) =>
+    <String, dynamic>{'data': instance.data};
 
 Proxy _$ProxyFromJson(Map<String, dynamic> json) => Proxy(
   proxyAuth: json['proxyAuth'] as bool?,
@@ -1193,12 +1197,12 @@ Map<String, dynamic> _$UpdatePatientToJson(UpdatePatient instance) =>
 
 UpdatePerson _$UpdatePersonFromJson(Map<String, dynamic> json) => UpdatePerson(
   id: (json['id'] as num?)?.toInt(),
+  profilePicture: json['profilePicture'] as String?,
   types: userTypeListFromJson(json['types'] as List?),
   name: json['name'] as String?,
   surname: json['surname'] as String?,
   identifier: json['identifier'] as String?,
   birth: json['birth'] == null ? null : DateTime.parse(json['birth'] as String),
-  profilePicture: json['profilePicture'] as String?,
   email: json['email'] as String?,
   phone: json['phone'] as String?,
 );
@@ -1206,12 +1210,12 @@ UpdatePerson _$UpdatePersonFromJson(Map<String, dynamic> json) => UpdatePerson(
 Map<String, dynamic> _$UpdatePersonToJson(UpdatePerson instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'profilePicture': instance.profilePicture,
       'types': userTypeListToJson(instance.types),
       'name': instance.name,
       'surname': instance.surname,
       'identifier': instance.identifier,
       'birth': instance.birth?.toIso8601String(),
-      'profilePicture': instance.profilePicture,
       'email': instance.email,
       'phone': instance.phone,
     };
