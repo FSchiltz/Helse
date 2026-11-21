@@ -1,10 +1,14 @@
+import 'dart:async';
 import 'dart:convert';
+
 import 'package:material_ui/material_ui.dart';
+import 'package:helse/di/app_logger.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/blocs/care/patient_menu.dart';
 import 'package:helse/ui/blocs/care/patients_dashboard.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
+import 'package:helse/ui/common/loader.dart';
 
 class PatientsCard extends StatefulWidget {
   final Person person;
@@ -17,17 +21,33 @@ class PatientsCard extends StatefulWidget {
 
 class _PatientsCardState extends State<PatientsCard> {
   String? _profilePicture;
+  bool _isLoadingProfilePicture = true;
 
   @override
   void initState() {
     super.initState();
-    Dependencies.services.user
-        .patientProfilePicture(widget.person.id)
-        .then((picture) {
+    _loadProfilePicture();
+  }
+
+  Future<void> _loadProfilePicture() async {
+    try {
+      final picture = await Dependencies.services.user
+          .patientProfilePicture(widget.person.id)
+          .timeout(const Duration(seconds: 10));
       if (mounted) {
         setState(() => _profilePicture = picture);
       }
-    });
+    } on TimeoutException catch (error, stackTrace) {
+      appLogger.w(
+        'Timed out loading patient profile picture',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isLoadingProfilePicture = false);
+      }
+    }
   }
 
   @override
@@ -61,6 +81,8 @@ class _PatientsCardState extends State<PatientsCard> {
                               base64Decode(_profilePicture!),
                               fit: BoxFit.cover,
                             )
+                          : _isLoadingProfilePicture
+                          ? const HelseLoader(size: 32)
                           : Icon(
                               Icons.person_sharp,
                               size: 40,
