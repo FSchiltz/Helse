@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
+import 'package:helse/ui/common/loader.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/ui/common/popup_submit_state.dart';
@@ -27,6 +28,7 @@ class _PatientAddState extends PopupSubmitState<PatientAdd> {
   final TextEditingController _controllerSurname = TextEditingController();
 
   Uint8List? _pictureData;
+  bool _isLoadingProfilePicture = false;
 
   Future<void> _selectPicture() async {
     final XFile? file = await openFile(
@@ -50,8 +52,22 @@ class _PatientAddState extends PopupSubmitState<PatientAdd> {
       _controllerSurname.text = edit.surname ?? '';
       _controllerNiss.text = edit.identifier ?? '';
 
-      if (edit.profilePicture != null) {
-        _pictureData = base64Decode(edit.profilePicture ?? '');
+      _isLoadingProfilePicture = true;
+      _loadProfilePicture(edit.id);
+    }
+  }
+
+  Future<void> _loadProfilePicture(int patient) async {
+    try {
+      final picture = await Dependencies.services.user.patientProfilePicture(
+        patient,
+      );
+      if (mounted && picture != null && _pictureData == null) {
+        setState(() => _pictureData = base64Decode(picture));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoadingProfilePicture = false);
       }
     }
   }
@@ -116,6 +132,8 @@ class _PatientAddState extends PopupSubmitState<PatientAdd> {
                                       _pictureData!,
                                       fit: BoxFit.cover,
                                     )
+                                  : _isLoadingProfilePicture
+                                  ? const HelseLoader()
                                   : Icon(
                                       Icons.image_sharp,
                                       size: 40,
