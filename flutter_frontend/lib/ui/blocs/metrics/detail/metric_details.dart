@@ -54,11 +54,11 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
 
   List<Metric> _filter(List<Metric> metrics, DateTimeRange<DateTime> value) {
     final stopwatch = Stopwatch()..start();
-    appLogger.d('Filter for $value');
+    appLogger.i('Filter for $value');
     var result = metrics
         .where((x) => x.date.isAfter(value.start) && x.date.isBefore(value.end))
         .toList();
-    appLogger.d(
+    appLogger.i(
       '[Metrics] _filter() executed in ${stopwatch.elapsed} with ${metrics.length} items',
     );
     return result;
@@ -102,7 +102,7 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
   bool _dummy = false;
 
   void _setDate(DateTimeRange value) {
-    appLogger.d('[Metrics] set date with $value');
+    appLogger.i('[Metrics] set date with $value');
     setState(() {
       selectedDate = value;
       subDate = value;
@@ -111,7 +111,7 @@ abstract class MetricDetailsState<T extends MetricDetails> extends State<T> {
   }
 
   void _setSubDate(DateTimeRange value) {
-    appLogger.d('[Metrics] set subdate with $value');
+    appLogger.i('[Metrics] set subdate with $value');
     var filter = _filter(metrics, value);
     var grouped = MetricHelper.group(filter, value, 500, widget.type);
     setState(() {
