@@ -84,6 +84,7 @@ builder.Services.AddAuthentication(options =>
           ValidateIssuer = true,
           ValidateAudience = true,
           ValidateLifetime = true,
+          LifetimeValidator = TokenHelper.ValidateLifetime,
           ValidateIssuerSigningKey = false,
           ClockSkew = TimeSpan.Zero
       };

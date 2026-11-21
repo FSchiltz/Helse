@@ -1,4 +1,7 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Helse.Api.Helpers.Auth;
 
@@ -6,6 +9,27 @@ internal static class TokenHelper
 {
     public const string Access = "access";
     public const string Refresh = "refresh";
+
+    public static bool ValidateLifetime(
+        DateTime? notBefore,
+        DateTime? expires,
+        SecurityToken securityToken,
+        TokenValidationParameters validationParameters)
+    {
+        if ((securityToken is JwtSecurityToken jwtToken
+            && jwtToken.Claims.Any(x => x.Type == "token" && x.Value == Refresh))
+            || (securityToken is JsonWebToken jsonToken
+            && jsonToken.TryGetClaim("token", out var refreshClaim)
+            && refreshClaim.Value == Refresh))
+        {
+            return true;
+        }
+
+        var lifetimeParameters = validationParameters.Clone();
+        lifetimeParameters.LifetimeValidator = null;
+        Validators.ValidateLifetime(notBefore, expires, securityToken, lifetimeParameters);
+        return true;
+    }
 
     public static bool IsRefresh(this ClaimsPrincipal claims)
     {

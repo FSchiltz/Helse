@@ -78,7 +78,10 @@ internal class TokenService(TokenConfig config)
             Audience = config.Audience,
             SigningCredentials = new SigningCredentials(config.Key, SecurityAlgorithms.HmacSha512Signature)
         };
-        var tokenHandler = new JwtSecurityTokenHandler();
+        var tokenHandler = new JwtSecurityTokenHandler
+        {
+            SetDefaultTimesOnTokenCreation = expires is not null,
+        };
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }

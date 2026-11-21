@@ -1,5 +1,8 @@
 using Helse.Api.Helpers.Auth;
 using Microsoft.AspNetCore.Identity;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Tests.Unit.Helpers.Auth;
@@ -83,6 +86,53 @@ public class TokenServiceTests
         // Assert
         Assert.NotNull(token);
         Assert.NotEmpty(token);
+        var handler = new JwtSecurityTokenHandler();
+        Assert.Null(handler.ReadJwtToken(token).Payload.Expiration);
+        var principal = handler.ValidateToken(
+            token,
+            new TokenValidationParameters
+            {
+                ValidIssuer = "issuer",
+                ValidAudience = "audience",
+                IssuerSigningKey = key,
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                LifetimeValidator = TokenHelper.ValidateLifetime,
+                ClockSkew = TimeSpan.Zero,
+            },
+            out _);
+        Assert.NotNull(principal);
+    }
+
+    [Fact]
+    public async Task GetRefreshToken_ValidatesWithJsonWebTokenHandler()
+    {
+        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(new string('a', 256)));
+        var service = new TokenService(new TokenConfig("issuer", "audience", key));
+        var tokenInfo = new Helse.Api.Data.Models.Persons.User()
+        {
+            Identifier = "id",
+            Password = "pppp",
+            Created = DateTime.Now,
+        };
+        var token = service.GetRefreshToken(tokenInfo, Guid.NewGuid());
+
+        var result = await new JsonWebTokenHandler().ValidateTokenAsync(
+            token,
+            new TokenValidationParameters
+            {
+                ValidIssuer = "issuer",
+                ValidAudience = "audience",
+                IssuerSigningKey = key,
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                LifetimeValidator = TokenHelper.ValidateLifetime,
+                ClockSkew = TimeSpan.Zero,
+            });
+
+        Assert.True(result.IsValid, result.Exception?.ToString());
     }
 
     [Fact]
@@ -112,6 +162,68 @@ public class TokenServiceTests
     }
 
     [Fact]
+    public void JwtValidation_RejectsExpiredToken_WhenExpirationIsNotRequired()
+    {
+        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(new string('a', 256)));
+        var handler = new JwtSecurityTokenHandler();
+        var expiredToken = new JwtSecurityToken(
+            issuer: "issuer",
+            audience: "audience",
+            claims: [new Claim("token", "access")],
+            notBefore: DateTime.UtcNow.AddMinutes(-2),
+            expires: DateTime.UtcNow.AddMinutes(-1),
+            signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature));
+        var token = handler.WriteToken(expiredToken);
+
+        Assert.Throws<SecurityTokenExpiredException>(() => handler.ValidateToken(
+            token,
+            new TokenValidationParameters
+            {
+                ValidIssuer = "issuer",
+                ValidAudience = "audience",
+                IssuerSigningKey = key,
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                LifetimeValidator = TokenHelper.ValidateLifetime,
+                ClockSkew = TimeSpan.Zero,
+            },
+            out _));
+    }
+
+    [Fact]
+    public void JwtValidation_AllowsExpiredRefreshToken_ForDatabaseSessionValidation()
+    {
+        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(new string('a', 256)));
+        var handler = new JwtSecurityTokenHandler();
+        var expiredToken = new JwtSecurityToken(
+            issuer: "issuer",
+            audience: "audience",
+            claims: [new Claim("token", "refresh")],
+            notBefore: DateTime.UtcNow.AddMinutes(-2),
+            expires: DateTime.UtcNow.AddMinutes(-1),
+            signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature));
+        var token = handler.WriteToken(expiredToken);
+
+        var principal = handler.ValidateToken(
+            token,
+            new TokenValidationParameters
+            {
+                ValidIssuer = "issuer",
+                ValidAudience = "audience",
+                IssuerSigningKey = key,
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                LifetimeValidator = TokenHelper.ValidateLifetime,
+                ClockSkew = TimeSpan.Zero,
+            },
+            out _);
+
+        Assert.NotNull(principal);
+    }
+
+    [Fact]
     public void GetRefreshToken_IncludesEmailClaim_WhenEmailIsNotNull()
     {
         // Arrange
@@ -127,7 +239,7 @@ public class TokenServiceTests
         };
 
         // Act
-        var token = service.GetRefreshToken(tokenInfo,  Guid.NewGuid());
+        var token = service.GetRefreshToken(tokenInfo, Guid.NewGuid());
 
         // Assert
         Assert.NotNull(token);
