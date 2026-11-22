@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:material_ui/material_ui.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';
+import 'package:helse/helpers/metrics/metric_validation.dart';
 import 'package:helse/ui/blocs/metrics/metric_file_list.dart';
 import 'package:helse/ui/common/inputs/files/file_list_widget.dart';
 import 'package:helse/ui/common/popup_submit_state.dart';
@@ -72,6 +73,7 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
       content: Container(
         constraints: const BoxConstraints(maxWidth: 500),
         child: Form(
+          key: formKey,
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,6 +85,20 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
                       icon: Icons.add_sharp,
                       label: locale.value,
                       controller: e,
+                      validator: identical(e, _values.first)
+                          ? (_) {
+                              final issue = validateMetricValue(
+                                MetricHelper().joinValue(
+                                  _values.map((value) => value.text),
+                                ),
+                                widget.type.type,
+                                valueCount: widget.type.valueCount,
+                              );
+                              return issue == null
+                                  ? null
+                                  : locale.invalid(locale.value);
+                            }
+                          : null,
                       type: (widget.type.type == MetricDataType.number)
                           ? TextInputType.numberWithOptions(decimal: true)
                           : null,

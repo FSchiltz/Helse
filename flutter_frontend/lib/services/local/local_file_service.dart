@@ -3,6 +3,7 @@ import 'dart:io' as io;
 
 import 'package:drift/drift.dart';
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart';
 import 'package:helse/services/file_service.dart';
 import 'package:helse/services/local/database/database.dart' as db;
 import 'package:helse/services/local/local_service.dart';
@@ -17,6 +18,15 @@ class LocalFileService extends LocalService implements FileService {
 
   @override
   Future<FileData?> getData(int id, int? person) async {
+    final row =
+        await (database.select(database.file)
+              ..where((file) => file.id.equals(id) | file.serverId.equals(id)))
+            .getSingleOrNull();
+    if (row?.content case final content?) {
+      return FileData(type: row!.dataType, data: base64.encode(content));
+    }
+    if (kIsWeb) return null;
+
     final dir = await getApplicationSupportDirectory();
     final fileDir = await io.Directory('${dir.path}/$path').create();
 
@@ -156,6 +166,13 @@ class LocalFileService extends LocalService implements FileService {
 
   @override
   Future<void> postFileData(int fileId, XFile file, int? person) async {
+    if (kIsWeb) {
+      final content = await file.readAsBytes();
+      await (database.file.update()..where((row) => row.id.equals(fileId)))
+          .write(db.FileCompanion(content: Value(content)));
+      return;
+    }
+
     final dir = await getApplicationSupportDirectory();
     final fileDir = await io.Directory('${dir.path}/$path').create();
     await file.saveTo('${fileDir.path}/$fileId');

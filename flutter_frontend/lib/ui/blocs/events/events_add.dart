@@ -140,6 +140,7 @@ class _EventAddState extends PopupSubmitState<EventAdd> {
       icon: const Icon(Icons.add_chart_sharp),
       actions: [submitButton(locale.submit, _submit)],
       content: Form(
+        key: formKey,
         child: SingleChildScrollView(
           child: Column(
             spacing: UIConstants.formPad,
@@ -169,6 +170,18 @@ class _EventAddState extends PopupSubmitState<EventAdd> {
                   _stop = date ?? DateTime.now();
                   _start = _start.isAfter(_stop) ? _stop : _start;
                 }),
+              ),
+              FormField<void>(
+                validator: (_) =>
+                    _stop.isBefore(_start) ? locale.invalid(locale.end) : null,
+                builder: (state) => state.errorText == null
+                    ? const SizedBox.shrink()
+                    : Text(
+                        state.errorText!,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
               ),
               HelseSwitch(
                 "Notify: ",

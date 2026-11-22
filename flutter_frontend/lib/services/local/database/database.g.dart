@@ -5530,6 +5530,17 @@ class $FileTable extends File with TableInfo<$FileTable, FileData> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _contentMeta = const VerificationMeta(
+    'content',
+  );
+  @override
+  late final GeneratedColumn<Uint8List> content = GeneratedColumn<Uint8List>(
+    'content',
+    aliasedName,
+    true,
+    type: DriftSqlType.blob,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _typeMeta = const VerificationMeta('type');
   @override
   late final GeneratedColumn<String> type = GeneratedColumn<String>(
@@ -5619,6 +5630,7 @@ class $FileTable extends File with TableInfo<$FileTable, FileData> {
     syncTime,
     serverId,
     created,
+    content,
     type,
     dataType,
     name,
@@ -5668,6 +5680,12 @@ class $FileTable extends File with TableInfo<$FileTable, FileData> {
       );
     } else if (isInserting) {
       context.missing(_createdMeta);
+    }
+    if (data.containsKey('content')) {
+      context.handle(
+        _contentMeta,
+        content.isAcceptableOrUnknown(data['content']!, _contentMeta),
+      );
     }
     if (data.containsKey('type')) {
       context.handle(
@@ -5763,6 +5781,10 @@ class $FileTable extends File with TableInfo<$FileTable, FileData> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}created'],
       )!,
+      content: attachedDatabase.typeMapping.read(
+        DriftSqlType.blob,
+        data['${effectivePrefix}content'],
+      ),
       type: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}type'],
@@ -5810,6 +5832,7 @@ class FileData extends DataClass implements Insertable<FileData> {
   final DateTime? syncTime;
   final int? serverId;
   final DateTime created;
+  final Uint8List? content;
   final String type;
   final String dataType;
   final String name;
@@ -5824,6 +5847,7 @@ class FileData extends DataClass implements Insertable<FileData> {
     this.syncTime,
     this.serverId,
     required this.created,
+    this.content,
     required this.type,
     required this.dataType,
     required this.name,
@@ -5845,6 +5869,9 @@ class FileData extends DataClass implements Insertable<FileData> {
       map['server_id'] = Variable<int>(serverId);
     }
     map['created'] = Variable<DateTime>(created);
+    if (!nullToAbsent || content != null) {
+      map['content'] = Variable<Uint8List>(content);
+    }
     map['type'] = Variable<String>(type);
     map['data_type'] = Variable<String>(dataType);
     map['name'] = Variable<String>(name);
@@ -5869,6 +5896,9 @@ class FileData extends DataClass implements Insertable<FileData> {
           ? const Value.absent()
           : Value(serverId),
       created: Value(created),
+      content: content == null && nullToAbsent
+          ? const Value.absent()
+          : Value(content),
       type: Value(type),
       dataType: Value(dataType),
       name: Value(name),
@@ -5891,6 +5921,7 @@ class FileData extends DataClass implements Insertable<FileData> {
       syncTime: serializer.fromJson<DateTime?>(json['syncTime']),
       serverId: serializer.fromJson<int?>(json['serverId']),
       created: serializer.fromJson<DateTime>(json['created']),
+      content: serializer.fromJson<Uint8List?>(json['content']),
       type: serializer.fromJson<String>(json['type']),
       dataType: serializer.fromJson<String>(json['dataType']),
       name: serializer.fromJson<String>(json['name']),
@@ -5910,6 +5941,7 @@ class FileData extends DataClass implements Insertable<FileData> {
       'syncTime': serializer.toJson<DateTime?>(syncTime),
       'serverId': serializer.toJson<int?>(serverId),
       'created': serializer.toJson<DateTime>(created),
+      'content': serializer.toJson<Uint8List?>(content),
       'type': serializer.toJson<String>(type),
       'dataType': serializer.toJson<String>(dataType),
       'name': serializer.toJson<String>(name),
@@ -5927,6 +5959,7 @@ class FileData extends DataClass implements Insertable<FileData> {
     Value<DateTime?> syncTime = const Value.absent(),
     Value<int?> serverId = const Value.absent(),
     DateTime? created,
+    Value<Uint8List?> content = const Value.absent(),
     String? type,
     String? dataType,
     String? name,
@@ -5941,6 +5974,7 @@ class FileData extends DataClass implements Insertable<FileData> {
     syncTime: syncTime.present ? syncTime.value : this.syncTime,
     serverId: serverId.present ? serverId.value : this.serverId,
     created: created ?? this.created,
+    content: content.present ? content.value : this.content,
     type: type ?? this.type,
     dataType: dataType ?? this.dataType,
     name: name ?? this.name,
@@ -5957,6 +5991,7 @@ class FileData extends DataClass implements Insertable<FileData> {
       syncTime: data.syncTime.present ? data.syncTime.value : this.syncTime,
       serverId: data.serverId.present ? data.serverId.value : this.serverId,
       created: data.created.present ? data.created.value : this.created,
+      content: data.content.present ? data.content.value : this.content,
       type: data.type.present ? data.type.value : this.type,
       dataType: data.dataType.present ? data.dataType.value : this.dataType,
       name: data.name.present ? data.name.value : this.name,
@@ -5978,6 +6013,7 @@ class FileData extends DataClass implements Insertable<FileData> {
           ..write('syncTime: $syncTime, ')
           ..write('serverId: $serverId, ')
           ..write('created: $created, ')
+          ..write('content: $content, ')
           ..write('type: $type, ')
           ..write('dataType: $dataType, ')
           ..write('name: $name, ')
@@ -5997,6 +6033,7 @@ class FileData extends DataClass implements Insertable<FileData> {
     syncTime,
     serverId,
     created,
+    $driftBlobEquality.hash(content),
     type,
     dataType,
     name,
@@ -6015,6 +6052,7 @@ class FileData extends DataClass implements Insertable<FileData> {
           other.syncTime == this.syncTime &&
           other.serverId == this.serverId &&
           other.created == this.created &&
+          $driftBlobEquality.equals(other.content, this.content) &&
           other.type == this.type &&
           other.dataType == this.dataType &&
           other.name == this.name &&
@@ -6031,6 +6069,7 @@ class FileCompanion extends UpdateCompanion<FileData> {
   final Value<DateTime?> syncTime;
   final Value<int?> serverId;
   final Value<DateTime> created;
+  final Value<Uint8List?> content;
   final Value<String> type;
   final Value<String> dataType;
   final Value<String> name;
@@ -6045,6 +6084,7 @@ class FileCompanion extends UpdateCompanion<FileData> {
     this.syncTime = const Value.absent(),
     this.serverId = const Value.absent(),
     this.created = const Value.absent(),
+    this.content = const Value.absent(),
     this.type = const Value.absent(),
     this.dataType = const Value.absent(),
     this.name = const Value.absent(),
@@ -6060,6 +6100,7 @@ class FileCompanion extends UpdateCompanion<FileData> {
     this.syncTime = const Value.absent(),
     this.serverId = const Value.absent(),
     required DateTime created,
+    this.content = const Value.absent(),
     required String type,
     required String dataType,
     required String name,
@@ -6082,6 +6123,7 @@ class FileCompanion extends UpdateCompanion<FileData> {
     Expression<DateTime>? syncTime,
     Expression<int>? serverId,
     Expression<DateTime>? created,
+    Expression<Uint8List>? content,
     Expression<String>? type,
     Expression<String>? dataType,
     Expression<String>? name,
@@ -6097,6 +6139,7 @@ class FileCompanion extends UpdateCompanion<FileData> {
       if (syncTime != null) 'sync_time': syncTime,
       if (serverId != null) 'server_id': serverId,
       if (created != null) 'created': created,
+      if (content != null) 'content': content,
       if (type != null) 'type': type,
       if (dataType != null) 'data_type': dataType,
       if (name != null) 'name': name,
@@ -6114,6 +6157,7 @@ class FileCompanion extends UpdateCompanion<FileData> {
     Value<DateTime?>? syncTime,
     Value<int?>? serverId,
     Value<DateTime>? created,
+    Value<Uint8List?>? content,
     Value<String>? type,
     Value<String>? dataType,
     Value<String>? name,
@@ -6129,6 +6173,7 @@ class FileCompanion extends UpdateCompanion<FileData> {
       syncTime: syncTime ?? this.syncTime,
       serverId: serverId ?? this.serverId,
       created: created ?? this.created,
+      content: content ?? this.content,
       type: type ?? this.type,
       dataType: dataType ?? this.dataType,
       name: name ?? this.name,
@@ -6157,6 +6202,9 @@ class FileCompanion extends UpdateCompanion<FileData> {
     }
     if (created.present) {
       map['created'] = Variable<DateTime>(created.value);
+    }
+    if (content.present) {
+      map['content'] = Variable<Uint8List>(content.value);
     }
     if (type.present) {
       map['type'] = Variable<String>(type.value);
@@ -6193,6 +6241,7 @@ class FileCompanion extends UpdateCompanion<FileData> {
           ..write('syncTime: $syncTime, ')
           ..write('serverId: $serverId, ')
           ..write('created: $created, ')
+          ..write('content: $content, ')
           ..write('type: $type, ')
           ..write('dataType: $dataType, ')
           ..write('name: $name, ')
@@ -12033,6 +12082,7 @@ typedef $$FileTableCreateCompanionBuilder =
       Value<DateTime?> syncTime,
       Value<int?> serverId,
       required DateTime created,
+      Value<Uint8List?> content,
       required String type,
       required String dataType,
       required String name,
@@ -12049,6 +12099,7 @@ typedef $$FileTableUpdateCompanionBuilder =
       Value<DateTime?> syncTime,
       Value<int?> serverId,
       Value<DateTime> created,
+      Value<Uint8List?> content,
       Value<String> type,
       Value<String> dataType,
       Value<String> name,
@@ -12147,6 +12198,11 @@ class $$FileTableFilterComposer extends Composer<_$Database, $FileTable> {
 
   ColumnFilters<DateTime> get created => $composableBuilder(
     column: $table.created,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<Uint8List> get content => $composableBuilder(
+    column: $table.content,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -12292,6 +12348,11 @@ class $$FileTableOrderingComposer extends Composer<_$Database, $FileTable> {
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<Uint8List> get content => $composableBuilder(
+    column: $table.content,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get type => $composableBuilder(
     column: $table.type,
     builder: (column) => ColumnOrderings(column),
@@ -12373,6 +12434,9 @@ class $$FileTableAnnotationComposer extends Composer<_$Database, $FileTable> {
 
   GeneratedColumn<DateTime> get created =>
       $composableBuilder(column: $table.created, builder: (column) => column);
+
+  GeneratedColumn<Uint8List> get content =>
+      $composableBuilder(column: $table.content, builder: (column) => column);
 
   GeneratedColumn<String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
@@ -12508,6 +12572,7 @@ class $$FileTableTableManager
                 Value<DateTime?> syncTime = const Value.absent(),
                 Value<int?> serverId = const Value.absent(),
                 Value<DateTime> created = const Value.absent(),
+                Value<Uint8List?> content = const Value.absent(),
                 Value<String> type = const Value.absent(),
                 Value<String> dataType = const Value.absent(),
                 Value<String> name = const Value.absent(),
@@ -12522,6 +12587,7 @@ class $$FileTableTableManager
                 syncTime: syncTime,
                 serverId: serverId,
                 created: created,
+                content: content,
                 type: type,
                 dataType: dataType,
                 name: name,
@@ -12538,6 +12604,7 @@ class $$FileTableTableManager
                 Value<DateTime?> syncTime = const Value.absent(),
                 Value<int?> serverId = const Value.absent(),
                 required DateTime created,
+                Value<Uint8List?> content = const Value.absent(),
                 required String type,
                 required String dataType,
                 required String name,
@@ -12552,6 +12619,7 @@ class $$FileTableTableManager
                 syncTime: syncTime,
                 serverId: serverId,
                 created: created,
+                content: content,
                 type: type,
                 dataType: dataType,
                 name: name,

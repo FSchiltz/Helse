@@ -39,7 +39,7 @@ class Database extends _$Database {
   static const cacheValidity = Duration(days: 30);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   Future<void> expireServerCache({DateTime? now}) async {
     final cutoff = (now ?? DateTime.now().toUtc()).toUtc().subtract(
@@ -220,6 +220,9 @@ class Database extends _$Database {
         }
         if (from >= 2 && from < 3) {
           await m.addColumn(pendingDeletion, pendingDeletion.relatedId);
+        }
+        if (from < 4) {
+          await m.addColumn(file, file.content);
         }
         if (from < 3) {
           await customStatement(

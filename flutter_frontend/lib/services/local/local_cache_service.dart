@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 import 'package:helse/di/app_logger.dart';
 import 'package:helse/services/local/database/database.dart';
 import 'package:helse/services/local/local_service.dart';
@@ -325,6 +326,12 @@ class LocalCacheService extends LocalService {
       database.file,
     )..where((row) => row.serverId.equals(id))).getSingleOrNull();
     final localId = existing?.id ?? id;
+    if (kIsWeb) {
+      await (database.file.update()..where((row) => row.id.equals(localId)))
+          .write(FileCompanion(content: Value(base64.decode(encoded))));
+      return;
+    }
+
     final directory = await getApplicationSupportDirectory();
     final files = await io.Directory('${directory.path}/files').create();
     await io.File(

@@ -5,6 +5,7 @@ import 'package:helse/services/local/database/models/metric.dart';
 import 'package:helse/services/local/database/models/person.dart';
 
 class File extends HelseTable {
+  BlobColumn get content => blob().nullable()();
   TextColumn get type => text()();
   TextColumn get dataType => text()();
   TextColumn get name => text()();

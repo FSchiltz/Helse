@@ -2,8 +2,10 @@ import 'dart:io' as io;
 
 import 'package:drift/drift.dart';
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart';
 import 'package:helse/di/app_logger.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/metrics/metric_validation.dart';
 import 'package:helse/logic/account/authentication_bloc.dart';
 import 'package:helse/services/account.dart';
 import 'package:helse/services/api/api_event_service.dart';
@@ -19,6 +21,8 @@ import 'package:path_provider/path_provider.dart';
 
 class OfflineSyncService extends LocalService {
   OfflineSyncService(super.account);
+
+  final List<String> _skippedRecords = [];
 
   Future<void> sync({
     void Function(String status, double progress)? reportProgress,
@@ -52,6 +56,7 @@ class OfflineSyncService extends LocalService {
 
   Future<void> syncPendingChanges() async {
     final jobs = Dependencies.blocs.jobs;
+    _skippedRecords.clear();
     jobs.startReport(
       title: 'Offline sync',
       status: 'Preparing synchronization',
@@ -134,11 +139,15 @@ class OfflineSyncService extends LocalService {
       }
     }
 
+    final skippedStatus = _skippedRecords.isEmpty
+        ? null
+        : 'Skipped invalid local records: ${_skippedRecords.join('; ')}';
+    final messages = [...failures, ?skippedStatus];
     jobs.finishReport(
       success: failures.isEmpty,
       status: failures.isNotEmpty
-          ? 'Synchronization completed with errors: ${failures.join('; ')}'
-          : 'Synchronization complete',
+          ? 'Synchronization completed with errors: ${messages.join('; ')}'
+          : skippedStatus ?? 'Synchronization complete',
     );
   }
 
@@ -420,6 +429,33 @@ class OfflineSyncService extends LocalService {
 
     for (var index = 0; index < pending.length; index++) {
       final row = pending[index];
+      final localType = await (database.select(
+        database.metricType,
+      )..where((type) => type.id.equals(row.type))).getSingleOrNull();
+      final metricDataType = localType == null
+          ? null
+          : MetricDataType.values.asNameMap()[localType.type];
+      final validationIssue = validateMetricValue(
+        row.value,
+        metricDataType,
+        valueCount: localType?.valueCount,
+      );
+      if (localType == null ||
+          metricDataType == null ||
+          metricDataType == MetricDataType.swaggerGeneratedUnknown ||
+          validationIssue != null) {
+        _skipInvalidRecord(
+          'metric ${row.id}',
+          localType == null
+              ? 'metric type not found'
+              : metricDataType == null ||
+                    metricDataType == MetricDataType.swaggerGeneratedUnknown
+              ? 'unknown metric type'
+              : validationIssue!.name,
+        );
+        reportProgress((index + 1) / pending.length);
+        continue;
+      }
       final source = ImportTypes.values.asNameMap()[row.source];
       final typeId = await _metricTypeServerId(row.type);
       final serverId = row.serverId;
@@ -483,6 +519,11 @@ class OfflineSyncService extends LocalService {
 
     for (var index = 0; index < pending.length; index++) {
       final row = pending[index];
+      if (row.end.isBefore(row.start)) {
+        _skipInvalidRecord('event ${row.id}', 'end date is before start date');
+        reportProgress((index + 1) / pending.length);
+        continue;
+      }
       final source = ImportTypes.values.asNameMap()[row.source];
       final typeId = await _eventTypeServerId(row.type);
       final serverId = row.serverId;
@@ -545,17 +586,36 @@ class OfflineSyncService extends LocalService {
     final rows = await (database.select(
       database.file,
     )..where((row) => row.synced.equals(false))).get();
-    final directory = await getApplicationSupportDirectory();
-    final fileDirectory = io.Directory(
-      '${directory.path}/${LocalFileService.path}',
-    );
+    if (rows.isEmpty) return;
+
+    io.Directory? fileDirectory;
+    if (!kIsWeb && rows.any((row) => row.content == null)) {
+      final directory = await getApplicationSupportDirectory();
+      fileDirectory = io.Directory(
+        '${directory.path}/${LocalFileService.path}',
+      );
+    }
 
     for (var index = 0; index < rows.length; index++) {
       final row = rows[index];
-      final filePath = '${fileDirectory.path}/${row.id}';
-      final localFile = XFile(filePath);
-      if (!await io.File(filePath).exists()) {
-        throw StateError('Offline file data is missing for file ${row.id}');
+      XFile? localFile;
+      if (row.content != null) {
+        localFile = XFile.fromData(
+          row.content!,
+          mimeType: row.dataType,
+          name: row.name,
+        );
+      } else if (fileDirectory != null) {
+        final filePath = '${fileDirectory.path}/${row.id}';
+        if (await io.File(filePath).exists()) {
+          localFile = XFile(filePath);
+        }
+      }
+
+      if (localFile == null) {
+        _skipInvalidRecord('file ${row.id}', 'offline file data is missing');
+        reportProgress((index + 1) / rows.length);
+        continue;
       }
 
       var serverId = row.serverId;
@@ -600,7 +660,23 @@ class OfflineSyncService extends LocalService {
     for (final link in metricLinks) {
       final metric = await (database.select(
         database.metric,
-      )..where((row) => row.id.equals(link.metric))).getSingle();
+      )..where((row) => row.id.equals(link.metric))).getSingleOrNull();
+      final file = await (database.select(
+        database.file,
+      )..where((row) => row.id.equals(link.file))).getSingleOrNull();
+      if (metric == null ||
+          metric.serverId == null ||
+          file == null ||
+          !file.synced ||
+          file.serverId == null) {
+        _skipInvalidRecord(
+          'metric file link ${link.id}',
+          'metric ${link.metric} or file ${link.file} was not synchronized',
+        );
+        completedLinks++;
+        reportProgress(completedLinks / totalLinks);
+        continue;
+      }
       await service.linkMetric(
         await _fileServerId(link.file),
         await _metricServerId(link.metric),
@@ -622,7 +698,23 @@ class OfflineSyncService extends LocalService {
     for (final link in eventLinks) {
       final event = await (database.select(
         database.event,
-      )..where((row) => row.id.equals(link.event))).getSingle();
+      )..where((row) => row.id.equals(link.event))).getSingleOrNull();
+      final file = await (database.select(
+        database.file,
+      )..where((row) => row.id.equals(link.file))).getSingleOrNull();
+      if (event == null ||
+          event.serverId == null ||
+          file == null ||
+          !file.synced ||
+          file.serverId == null) {
+        _skipInvalidRecord(
+          'event file link ${link.id}',
+          'event ${link.event} or file ${link.file} was not synchronized',
+        );
+        completedLinks++;
+        reportProgress(completedLinks / totalLinks);
+        continue;
+      }
       await service.linkEvent(
         await _fileServerId(link.file),
         await _eventServerId(link.event),
@@ -757,6 +849,12 @@ class OfflineSyncService extends LocalService {
     if (account.getToken()?.refreshToken.isNotEmpty != true) {
       throw StateError('Authentication ended during offline synchronization');
     }
+  }
+
+  void _skipInvalidRecord(String record, String reason) {
+    final message = '$record: $reason';
+    _skippedRecords.add(message);
+    appLogger.w('[OfflineSync] Skipped invalid local record: $message');
   }
 
   Future<int> _metricServerId(int id) async {
