@@ -3,7 +3,7 @@ import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 abstract interface class EventService {
   Future<List<EventType>?> eventsType(bool all);
 
-  Future<void> addEventsType(CreateEventType event);
+  Future<int?> addEventsType(CreateEventType event);
 
   Future<void> updateEventsType(UpdateEventType event);
 

@@ -68,6 +68,7 @@ dependencies:
   path_provider: ^2.1.6
   material_ui: any
   logger: ^2.8.0
+  connectivity_plus: ^7.3.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

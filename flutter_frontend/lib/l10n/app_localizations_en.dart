@@ -12,6 +12,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get administration => 'Administration';
 
   @override
+  String get administrationOnlineOnly =>
+      'Administration settings are only available online.';
+
+  @override
+  String get offlineLoginFailed =>
+      'Offline sign-in could not create a local session.';
+
+  @override
+  String get peopleWithCredentialsOnlineOnly =>
+      'People with account credentials can only be created online.';
+
+  @override
+  String get createdRecordIdMissing =>
+      'The server did not return an ID for the created item.';
+
+  @override
+  String get groupIdRequired => 'A group ID is required.';
+
+  @override
   String get logout => 'Logout';
 
   @override
@@ -387,6 +406,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get offline => 'Use the app offline';
+
+  @override
+  String get offlineBanner => 'Offline mode';
 
   @override
   String get export => 'Export';

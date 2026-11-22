@@ -1,21 +1,26 @@
-import 'package:helse/services/api/api_service.dart';
+import 'package:helse/services/api/cached_api_service.dart';
 import 'package:helse/services/event_service.dart';
 
 import '../swagger/generated_code/helseapi.swagger.dart';
 
-class ApiEventService extends ApiService implements EventService{
+class ApiEventService extends CachedApiService implements EventService {  
   ApiEventService(super.account);
 
   @override
   Future<List<EventType>?> eventsType(bool all) async {
     final api = await getService();
-    return await call(() => api.apiEventsTypeGet(all: all));
+    final result = await call(() => api.apiEventsTypeGet(all: all));
+    if (result != null) {
+      await cache.saveEventTypes(result);
+    }
+    return result;
   }
 
   @override
-  Future<void> addEventsType(CreateEventType event) async {
+  Future<int?> addEventsType(CreateEventType event) async {
     final api = await getService();
-    await call(() => api.apiEventsTypePost(body: event));
+    final id = await call(() => api.apiEventsTypePost(body: event));
+    return createdId(id);
   }
 
   @override
@@ -38,7 +43,7 @@ class ApiEventService extends ApiService implements EventService{
     int? person,
   }) async {
     final api = await getService();
-    return await call(
+    final result = await call(
       () => api.apiEventsGet(
         type: type,
         start: start.toUtc(),
@@ -46,6 +51,10 @@ class ApiEventService extends ApiService implements EventService{
         personId: person,
       ),
     );
+    if (result != null) {
+      await cache.saveEvents(result);
+    }
+    return result;
   }
 
   @override
@@ -56,7 +65,7 @@ class ApiEventService extends ApiService implements EventService{
     int? person,
   }) async {
     final api = await getService();
-    return await call(
+    final result = await call(
       () => api.apiEventsSummaryGet(
         type: type,
         start: start.toUtc(),
@@ -64,14 +73,23 @@ class ApiEventService extends ApiService implements EventService{
         personId: person,
       ),
     );
+    final events = result?.events;
+    if (events != null) {
+      await cache.saveEvents(events);
+    }
+    return result;
   }
 
   @override
   Future<List<Event>?> agenda(DateTime? start, DateTime? end) async {
     final api = await getService();
-    return await call(
+    final result = await call(
       () => api.apiPatientsAgendaGet(start: start?.toUtc(), end: end?.toUtc()),
     );
+    if (result != null) {
+      await cache.saveEvents(result);
+    }
+    return result;
   }
 
   @override
@@ -83,13 +101,30 @@ class ApiEventService extends ApiService implements EventService{
   @override
   Future<void> updateEvent(UpdateEvent event) async {
     final api = await getService();
-    await call(() => api.apiEventsPut(body: event));
+    final id = await cache.eventServerId(event.id);
+    await call(
+      () => api.apiEventsPut(
+        body: UpdateEvent(
+          id: id,
+          type: event.type,
+          description: event.description,
+          start: event.start,
+          stop: event.stop,
+          tag: event.tag,
+          notificationTime: event.notificationTime,
+          source: event.source,
+          sourceId: event.sourceId,
+        ),
+      ),
+    );
   }
 
   @override
   Future<void> deleteEvent(int event) async {
     final api = await getService();
-    await call(() => api.apiEventsIdDelete(id: event));
+    final serverId = await cache.eventServerId(event);
+    await call(() => api.apiEventsIdDelete(id: serverId));
+    await cache.removeEvent(serverId);
   }
 
   @override
@@ -100,7 +135,7 @@ class ApiEventService extends ApiService implements EventService{
     int pageSize,
   ) async {
     final api = await getService();
-    return await call(
+    final result = await call(
       () => api.apiEventsSearchPost(
         body: search,
         personId: person,
@@ -108,6 +143,10 @@ class ApiEventService extends ApiService implements EventService{
         pageSize: pageSize,
       ),
     );
+    if (result != null) {
+      await cache.saveEvents(result);
+    }
+    return result;
   }
 
   @override
@@ -121,12 +160,13 @@ class ApiEventService extends ApiService implements EventService{
   @override
   Future<void> deleteEvents(List<Event> events, {int? person}) async {
     final api = await getService();
-    await call(
-      () => api.apiEventsDeletePost(
-        body: events.map((e) => e.id).toList(),
-        person: person,
-      ),
+    final ids = await Future.wait(
+      events.map((event) => cache.eventServerId(event.id)),
     );
+    await call(() => api.apiEventsDeletePost(body: ids, person: person));
+    for (final id in ids) {
+      await cache.removeEvent(id);
+    }
   }
 
   @override

@@ -104,6 +104,36 @@ abstract class AppLocalizations {
   /// **'Administration'**
   String get administration;
 
+  /// No description provided for @administrationOnlineOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Administration settings are only available online.'**
+  String get administrationOnlineOnly;
+
+  /// No description provided for @offlineLoginFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline sign-in could not create a local session.'**
+  String get offlineLoginFailed;
+
+  /// No description provided for @peopleWithCredentialsOnlineOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'People with account credentials can only be created online.'**
+  String get peopleWithCredentialsOnlineOnly;
+
+  /// No description provided for @createdRecordIdMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'The server did not return an ID for the created item.'**
+  String get createdRecordIdMissing;
+
+  /// No description provided for @groupIdRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'A group ID is required.'**
+  String get groupIdRequired;
+
   /// No description provided for @logout.
   ///
   /// In en, this message translates to:
@@ -793,6 +823,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Use the app offline'**
   String get offline;
+
+  /// No description provided for @offlineBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline mode'**
+  String get offlineBanner;
 
   /// No description provided for @export.
   ///

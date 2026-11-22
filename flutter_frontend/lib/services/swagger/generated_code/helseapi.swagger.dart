@@ -5,15 +5,19 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:json_annotation/json_annotation.dart' as json;
 import 'package:collection/collection.dart';
+
 import 'dart:convert';
 
 import 'package:chopper/chopper.dart';
 
 import 'client_mapping.dart';
+
 import 'dart:async';
+
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart' show MultipartFile;
 import 'package:chopper/chopper.dart' as chopper;
+
 import 'helseapi.enums.swagger.dart' as enums;
 import 'helseapi.metadata.swagger.dart';
 export 'helseapi.enums.swagger.dart';
@@ -1336,7 +1340,7 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response> apiMetricsTypePost({
+  Future<chopper.Response<int>> apiMetricsTypePost({
     required CreateMetricType? body,
   }) {
     return _apiMetricsTypePost(body: body);
@@ -1344,7 +1348,7 @@ abstract class Helseapi extends ChopperService {
 
   ///
   @POST(path: '/api/metrics/type', optionalBody: true)
-  Future<chopper.Response> _apiMetricsTypePost({
+  Future<chopper.Response<int>> _apiMetricsTypePost({
     @Body() required CreateMetricType? body,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -1440,13 +1444,15 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response> apiMetricsGroupsPost({required CreateGroup? body}) {
+  Future<chopper.Response<int>> apiMetricsGroupsPost({
+    required CreateGroup? body,
+  }) {
     return _apiMetricsGroupsPost(body: body);
   }
 
   ///
   @POST(path: '/api/metrics/groups', optionalBody: true)
-  Future<chopper.Response> _apiMetricsGroupsPost({
+  Future<chopper.Response<int>> _apiMetricsGroupsPost({
     @Body() required CreateGroup? body,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -1822,13 +1828,15 @@ abstract class Helseapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response> apiEventsTypePost({required CreateEventType? body}) {
+  Future<chopper.Response<int>> apiEventsTypePost({
+    required CreateEventType? body,
+  }) {
     return _apiEventsTypePost(body: body);
   }
 
   ///
   @POST(path: '/api/events/type', optionalBody: true)
-  Future<chopper.Response> _apiEventsTypePost({
+  Future<chopper.Response<int>> _apiEventsTypePost({
     @Body() required CreateEventType? body,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
@@ -9842,9 +9850,9 @@ class $JsonSerializableConverter extends chopper.JsonConverter {
 
     if (ResultType == DateTime) {
       return response.copyWith(
-        body:
-            DateTime.parse((response.body as String).replaceAll('"', ''))
-                as ResultType,
+        body: DateTime.parse(
+          (response.body as String).replaceAll('"', ''),
+        ) as ResultType,
       );
     }
 

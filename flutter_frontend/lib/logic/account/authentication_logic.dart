@@ -1,11 +1,15 @@
 import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:collection/collection.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:helse/di/app_logger.dart';
 import 'package:helse/logic/account/authentication_bloc.dart';
 import 'package:helse/logic/account/settings_migration.dart';
+import 'package:helse/services/api/api_login_service.dart';
+import 'package:helse/services/local/offline_sync_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/helpers/url_dummy.dart'
     if (dart.library.html) 'package:helse/helpers/url.dart';
 
@@ -17,6 +21,10 @@ class AuthenticationLogic {
   final Account account;
 
   AuthenticationLogic(this.account);
+
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+  Timer? _connectivityPoll;
+  bool _checkingConnectivity = false;
 
   /// Check if the user is logged in
   Future<bool> checkLogin() async {
@@ -305,37 +313,159 @@ class AuthenticationLogic {
 
   Future<void> init() async {
     resetAuth();
-    final offline = await isOffline();
-    if (offline) {
+    if (await isOffline()) {
       await useOffline();
     } else {
-      final url = account.get(Account.url);
-      if (url != null && url.isNotEmpty) {
-        try {
-          await checkUrl(url);
-        } catch (error, stackTrace) {
-          appLogger.e(
-            '[Authentication] Failed to check saved server URL',
-            error: error,
-            stackTrace: stackTrace,
-          );
-          setNoAuth();
-        }
-      } else {
-        setNoAuth();
-      }
+      await _checkInitialConnection();
     }
 
+    _connectivitySubscription ??= Connectivity().onConnectivityChanged.listen(
+      (results) => unawaited(_handleConnectivity(results)),
+      onError: (Object error, StackTrace stackTrace) {
+        appLogger.e(
+          '[Network] Connectivity monitoring failed',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      },
+    );
+    _connectivityPoll ??= Timer.periodic(const Duration(minutes: 1), (_) async {
+      try {
+        await _handleConnectivity(await Connectivity().checkConnectivity());
+      } catch (error, stackTrace) {
+        appLogger.e(
+          '[Network] Connectivity check failed',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      }
+    });
     listen();
   }
 
-  Future<void> useOffline() async {
+  Future<void> _checkInitialConnection() async {
+    try {
+      final results = await Connectivity().checkConnectivity();
+      if (results.every((result) => result == ConnectivityResult.none)) {
+        _setOffline();
+        return;
+      }
+
+      final url = getUrl();
+      if (url == null || url.isEmpty) {
+        Dependencies.blocs.server.setStatus(null);
+        setNoAuth();
+        return;
+      }
+
+      final status = await checkUrl(url);
+      if (status == null) {
+        _setOffline();
+        return;
+      }
+
+      if (Dependencies.blocs.auth.state == AuthenticationStatus.authenticated) {
+        await OfflineSyncService(account).syncPendingChanges();
+      }
+    } catch (error, stackTrace) {
+      appLogger.e(
+        '[Authentication] Failed to check saved server URL',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      _setOffline();
+    }
+  }
+
+  Future<void> _handleConnectivity(List<ConnectivityResult> results) async {
+    if (account.isEnabled(Account.offline) || _checkingConnectivity) {
+      return;
+    }
+
+    _checkingConnectivity = true;
+    try {
+      if (results.every((result) => result == ConnectivityResult.none)) {
+        _setOffline();
+        return;
+      }
+
+      final url = getUrl();
+      if (url == null || url.isEmpty) {
+        Dependencies.blocs.server.setStatus(null);
+        setNoAuth();
+        return;
+      }
+
+      final wasOffline = Dependencies.blocs.server.isOffline;
+      final status = await ApiLoginService(account).isInit(Uri.parse(url));
+      if (status == null) {
+        _setOffline();
+        return;
+      }
+
+      Dependencies.blocs.server.setStatus(status);
+      var canSync =
+          Dependencies.blocs.auth.state == AuthenticationStatus.authenticated;
+      if (wasOffline ||
+          Dependencies.blocs.auth.state == AuthenticationStatus.unknown) {
+        final hasSavedSession =
+            account.getToken()?.refreshToken.isNotEmpty == true;
+        if (hasSavedSession) {
+          try {
+            canSync = await checkLogin();
+          } catch (error, stackTrace) {
+            appLogger.e(
+              '[Authentication] Failed to restore session after reconnect',
+              error: error,
+              stackTrace: stackTrace,
+            );
+            setNoAuth();
+            canSync = false;
+          }
+        } else {
+          setNoAuth();
+          canSync = false;
+        }
+      }
+
+      if (canSync) {
+        await OfflineSyncService(account).syncPendingChanges();
+      }
+    } catch (error, stackTrace) {
+      appLogger.w(
+        '[Network] Server is unreachable; using local data',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      _setOffline();
+    } finally {
+      _checkingConnectivity = false;
+    }
+  }
+
+  void _setOffline() {
     Dependencies.blocs.server.setOffline();
+    if (account.getToken() != null) {
+      setAuth();
+    } else {
+      setNoAuth();
+    }
+  }
+
+  Future<void> useOffline() async {
+    Dependencies.blocs.server.setOffline(userInitiated: true);
+    if (account.getToken() == null) {
+      final token = await Dependencies.services.login.login(
+        Connection(user: '', password: ''),
+      );
+      if (token == null) {
+        throw StateError(Translation.current.offlineLoginFailed);
+      }
+      await account.setToken(token);
+    }
+
     await account.setBool(Account.offline, true);
-    await logIn(
-      url: '',
-      connection: Connection(user: '', password: ''),
-    );
+    setAuth();
   }
 
   Future<bool> isOffline() async {

@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../di/dependencies.dart';
 import '../logic/task_bloc.dart';
+import '../logic/account/server_state.dart';
 import '../services/swagger/generated_code/helseapi.swagger.dart';
 import 'administration.dart';
 import 'blocs/imports/file_import.dart';
@@ -141,7 +142,9 @@ class _HomeState extends State<Home> {
                           title: Text(locale.export),
                         ),
                       ),
-                    if (types.contains(UserType.admin) == true)
+                    if (types.contains(UserType.admin) == true &&
+                        (!Dependencies.blocs.server.isOffline ||
+                            Dependencies.blocs.server.isUserInitiatedOffline))
                       PopupMenuItem<int>(
                         value: 2,
                         child: ListTile(
@@ -195,7 +198,7 @@ class _HomeState extends State<Home> {
                     case 3:
                       Dependencies.logics.authentication.logOut(false);
                       break;
-                      case 4:
+                    case 4:
                       Dependencies.logics.import.export();
                       break;
                   }
@@ -203,7 +206,29 @@ class _HomeState extends State<Home> {
               ),
             ],
           ),
-          body: Dashboard(types: types, key: _refreshKey),
+          body: BlocBuilder<ServerState, ServerStatus>(
+            bloc: Dependencies.blocs.server,
+            builder: (context, status) => Column(
+              children: [
+                if (status.offline)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    color: Theme.of(context).colorScheme.errorContainer,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.cloud_off),
+                        const SizedBox(width: 8),
+                        Text(Translation.of(context).offlineBanner),
+                      ],
+                    ),
+                  ),
+                Expanded(
+                  child: Dashboard(types: types, key: _refreshKey),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );

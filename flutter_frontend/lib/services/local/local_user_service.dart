@@ -1,12 +1,23 @@
 import 'package:drift/drift.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/local/database/database.dart';
 import 'package:helse/services/local/local_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/services/user_service.dart';
 
 class LocalUserService extends LocalService implements UserService {
+  LocalUserService(super.account);
+
   @override
   Future<UserId?> addPerson(PersonCreation person) async {
+    if (person.userName?.trim().isNotEmpty == true ||
+        person.password?.isNotEmpty == true ||
+        person.types?.any((type) => type != UserType.patient) == true) {
+      throw UnsupportedError(
+        Translation.current.peopleWithCredentialsOnlineOnly,
+      );
+    }
+
     final newRow = await database
         .into(database.person)
         .insertReturning(
@@ -31,9 +42,7 @@ class LocalUserService extends LocalService implements UserService {
 
   @override
   Future<void> deletePerson(int id) async {
-    await (database.delete(
-      database.person,
-    )..where((x) => x.id.equals(id))).go();
+    onlineOnly();
   }
 
   @override
@@ -77,36 +86,24 @@ class LocalUserService extends LocalService implements UserService {
 
   @override
   Future<void> updatePatient(UpdatePatient update) async {
-    await database
-        .update(database.person)
-        .replace(
-          PersonCompanion(
-            id: Value(update.id!),
-            identifier: Value(update.identifier!),
-            birth: Value(update.birth),
-            name: Value(update.name),
-            profilePicture: Value(update.profilePicture),
-            surname: Value(update.surname),
-          ),
-        );
+    await (database.update(
+      database.person,
+    )..where((person) => person.id.equals(update.id!))).write(
+      PersonCompanion(
+        id: Value(update.id!),
+        identifier: Value(update.identifier!),
+        birth: Value(update.birth),
+        name: Value(update.name),
+        profilePicture: Value(update.profilePicture),
+        surname: Value(update.surname),
+        synced: const Value(false),
+      ),
+    );
   }
 
   @override
   Future<void> updatePerson(UpdatePerson update) async {
-    await database
-        .update(database.person)
-        .write(
-          PersonCompanion(
-            id: Value(update.id!),
-            identifier: Value(update.identifier!),
-            birth: Value(update.birth),
-            email: Value(update.email),
-            name: Value(update.name),
-            phone: Value(update.phone),
-            profilePicture: Value(update.profilePicture),
-            surname: Value(update.surname),
-          ),
-        );
+    onlineOnly();
   }
 
   Person toModel(PersonData e) {
@@ -119,6 +116,11 @@ class LocalUserService extends LocalService implements UserService {
       name: e.name,
       phone: e.phone,
       surname: e.surname,
+      types: e.types
+          ?.split(';')
+          .map((type) => UserType.values.asNameMap()[type])
+          .whereType<UserType>()
+          .toList(),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/di/app_logger.dart';
 import 'package:helse/logic/settings/base_settings_logic.dart';
+import 'package:helse/services/account.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class PatientsSettingsLogic extends BaseSettingsLogic {
@@ -29,11 +30,21 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
       full = full.copyWith($default: full.$default, patients: patients);
     }
 
-    if (toServer) {
-      await Dependencies.services.settings.savePatientsSettings(full);
+    await save(patientsName, full.toJson());
+    if (!toServer) return;
+
+    if (Dependencies.blocs.server.isOffline) {
+      await account.setBool(Account.pendingPatientSettings, true);
+      return;
     }
 
-    await save(patientsName, full.toJson());
+    try {
+      await Dependencies.services.settings.savePatientsSettings(full);
+      await account.setBool(Account.pendingPatientSettings, false);
+    } catch (error) {
+      await account.setBool(Account.pendingPatientSettings, true);
+      rethrow;
+    }
   }
 
   Future<void> saveMetrics(
@@ -109,10 +120,14 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
   }
 
   Future<void> loadSettings() async {
+    if (account.isEnabled(Account.pendingPatientSettings)) {
+      init = true;
+      return;
+    }
+
     var serverSettings = await Dependencies.services.settings
         .getPatientsSettings();
     appLogger.d("[Settings] Patients settings loaded from server");
-
     await save(patientsName, serverSettings.toJson());
     init = true;
   }

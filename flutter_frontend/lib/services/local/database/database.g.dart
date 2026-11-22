@@ -7106,6 +7106,358 @@ class EventFilesCompanion extends UpdateCompanion<EventFile> {
   }
 }
 
+class $PendingDeletionTable extends PendingDeletion
+    with TableInfo<$PendingDeletionTable, PendingDeletionData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PendingDeletionTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _entityMeta = const VerificationMeta('entity');
+  @override
+  late final GeneratedColumn<String> entity = GeneratedColumn<String>(
+    'entity',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _serverIdMeta = const VerificationMeta(
+    'serverId',
+  );
+  @override
+  late final GeneratedColumn<int> serverId = GeneratedColumn<int>(
+    'server_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _relatedIdMeta = const VerificationMeta(
+    'relatedId',
+  );
+  @override
+  late final GeneratedColumn<int> relatedId = GeneratedColumn<int>(
+    'related_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdMeta = const VerificationMeta(
+    'created',
+  );
+  @override
+  late final GeneratedColumn<DateTime> created = GeneratedColumn<DateTime>(
+    'created',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    entity,
+    serverId,
+    relatedId,
+    created,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'pending_deletion';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<PendingDeletionData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('entity')) {
+      context.handle(
+        _entityMeta,
+        entity.isAcceptableOrUnknown(data['entity']!, _entityMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_entityMeta);
+    }
+    if (data.containsKey('server_id')) {
+      context.handle(
+        _serverIdMeta,
+        serverId.isAcceptableOrUnknown(data['server_id']!, _serverIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_serverIdMeta);
+    }
+    if (data.containsKey('related_id')) {
+      context.handle(
+        _relatedIdMeta,
+        relatedId.isAcceptableOrUnknown(data['related_id']!, _relatedIdMeta),
+      );
+    }
+    if (data.containsKey('created')) {
+      context.handle(
+        _createdMeta,
+        created.isAcceptableOrUnknown(data['created']!, _createdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  PendingDeletionData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PendingDeletionData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      entity: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entity'],
+      )!,
+      serverId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}server_id'],
+      )!,
+      relatedId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}related_id'],
+      ),
+      created: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created'],
+      )!,
+    );
+  }
+
+  @override
+  $PendingDeletionTable createAlias(String alias) {
+    return $PendingDeletionTable(attachedDatabase, alias);
+  }
+}
+
+class PendingDeletionData extends DataClass
+    implements Insertable<PendingDeletionData> {
+  final int id;
+  final String entity;
+  final int serverId;
+  final int? relatedId;
+  final DateTime created;
+  const PendingDeletionData({
+    required this.id,
+    required this.entity,
+    required this.serverId,
+    this.relatedId,
+    required this.created,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['entity'] = Variable<String>(entity);
+    map['server_id'] = Variable<int>(serverId);
+    if (!nullToAbsent || relatedId != null) {
+      map['related_id'] = Variable<int>(relatedId);
+    }
+    map['created'] = Variable<DateTime>(created);
+    return map;
+  }
+
+  PendingDeletionCompanion toCompanion(bool nullToAbsent) {
+    return PendingDeletionCompanion(
+      id: Value(id),
+      entity: Value(entity),
+      serverId: Value(serverId),
+      relatedId: relatedId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(relatedId),
+      created: Value(created),
+    );
+  }
+
+  factory PendingDeletionData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PendingDeletionData(
+      id: serializer.fromJson<int>(json['id']),
+      entity: serializer.fromJson<String>(json['entity']),
+      serverId: serializer.fromJson<int>(json['serverId']),
+      relatedId: serializer.fromJson<int?>(json['relatedId']),
+      created: serializer.fromJson<DateTime>(json['created']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'entity': serializer.toJson<String>(entity),
+      'serverId': serializer.toJson<int>(serverId),
+      'relatedId': serializer.toJson<int?>(relatedId),
+      'created': serializer.toJson<DateTime>(created),
+    };
+  }
+
+  PendingDeletionData copyWith({
+    int? id,
+    String? entity,
+    int? serverId,
+    Value<int?> relatedId = const Value.absent(),
+    DateTime? created,
+  }) => PendingDeletionData(
+    id: id ?? this.id,
+    entity: entity ?? this.entity,
+    serverId: serverId ?? this.serverId,
+    relatedId: relatedId.present ? relatedId.value : this.relatedId,
+    created: created ?? this.created,
+  );
+  PendingDeletionData copyWithCompanion(PendingDeletionCompanion data) {
+    return PendingDeletionData(
+      id: data.id.present ? data.id.value : this.id,
+      entity: data.entity.present ? data.entity.value : this.entity,
+      serverId: data.serverId.present ? data.serverId.value : this.serverId,
+      relatedId: data.relatedId.present ? data.relatedId.value : this.relatedId,
+      created: data.created.present ? data.created.value : this.created,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PendingDeletionData(')
+          ..write('id: $id, ')
+          ..write('entity: $entity, ')
+          ..write('serverId: $serverId, ')
+          ..write('relatedId: $relatedId, ')
+          ..write('created: $created')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, entity, serverId, relatedId, created);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PendingDeletionData &&
+          other.id == this.id &&
+          other.entity == this.entity &&
+          other.serverId == this.serverId &&
+          other.relatedId == this.relatedId &&
+          other.created == this.created);
+}
+
+class PendingDeletionCompanion extends UpdateCompanion<PendingDeletionData> {
+  final Value<int> id;
+  final Value<String> entity;
+  final Value<int> serverId;
+  final Value<int?> relatedId;
+  final Value<DateTime> created;
+  const PendingDeletionCompanion({
+    this.id = const Value.absent(),
+    this.entity = const Value.absent(),
+    this.serverId = const Value.absent(),
+    this.relatedId = const Value.absent(),
+    this.created = const Value.absent(),
+  });
+  PendingDeletionCompanion.insert({
+    this.id = const Value.absent(),
+    required String entity,
+    required int serverId,
+    this.relatedId = const Value.absent(),
+    required DateTime created,
+  }) : entity = Value(entity),
+       serverId = Value(serverId),
+       created = Value(created);
+  static Insertable<PendingDeletionData> custom({
+    Expression<int>? id,
+    Expression<String>? entity,
+    Expression<int>? serverId,
+    Expression<int>? relatedId,
+    Expression<DateTime>? created,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (entity != null) 'entity': entity,
+      if (serverId != null) 'server_id': serverId,
+      if (relatedId != null) 'related_id': relatedId,
+      if (created != null) 'created': created,
+    });
+  }
+
+  PendingDeletionCompanion copyWith({
+    Value<int>? id,
+    Value<String>? entity,
+    Value<int>? serverId,
+    Value<int?>? relatedId,
+    Value<DateTime>? created,
+  }) {
+    return PendingDeletionCompanion(
+      id: id ?? this.id,
+      entity: entity ?? this.entity,
+      serverId: serverId ?? this.serverId,
+      relatedId: relatedId ?? this.relatedId,
+      created: created ?? this.created,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (entity.present) {
+      map['entity'] = Variable<String>(entity.value);
+    }
+    if (serverId.present) {
+      map['server_id'] = Variable<int>(serverId.value);
+    }
+    if (relatedId.present) {
+      map['related_id'] = Variable<int>(relatedId.value);
+    }
+    if (created.present) {
+      map['created'] = Variable<DateTime>(created.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PendingDeletionCompanion(')
+          ..write('id: $id, ')
+          ..write('entity: $entity, ')
+          ..write('serverId: $serverId, ')
+          ..write('relatedId: $relatedId, ')
+          ..write('created: $created')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$Database extends GeneratedDatabase {
   _$Database(QueryExecutor e) : super(e);
   $DatabaseManager get managers => $DatabaseManager(this);
@@ -7120,6 +7472,9 @@ abstract class _$Database extends GeneratedDatabase {
   late final $FileTable file = $FileTable(this);
   late final $MetricFilesTable metricFiles = $MetricFilesTable(this);
   late final $EventFilesTable eventFiles = $EventFilesTable(this);
+  late final $PendingDeletionTable pendingDeletion = $PendingDeletionTable(
+    this,
+  );
   late final Index importMetric = Index(
     'import_metric',
     'CREATE INDEX import_metric ON metric (id, person, source_id, source, type)',
@@ -7144,6 +7499,7 @@ abstract class _$Database extends GeneratedDatabase {
     file,
     metricFiles,
     eventFiles,
+    pendingDeletion,
     importMetric,
     importEvent,
   ];
@@ -7535,8 +7891,10 @@ class $$GroupTableTableManager
               ),
           withReferenceMapper: (p0) => p0
               .map(
-                (e) =>
-                    (e.readTable(table), $$GroupTableReferences(db, table, e)),
+                (e) => (
+                  e.readTable<$GroupTable, GroupData>(table),
+                  $$GroupTableReferences(db, table, e),
+                ),
               )
               .toList(),
           prefetchHooksCallback:
@@ -7551,10 +7909,11 @@ class $$GroupTableTableManager
                   getPrefetchedDataCallback: (items) async {
                     return [
                       if (metricTypeRefs)
-                        await $_getPrefetchedData<
+                        await $_getPrefetchedDataByColumns<
                           GroupData,
                           $GroupTable,
-                          MetricTypeData
+                          MetricTypeData,
+                          $MetricTypeTable
                         >(
                           currentTable: table,
                           referencedTable: $$GroupTableReferences
@@ -7565,17 +7924,16 @@ class $$GroupTableTableManager
                                 table,
                                 p0,
                               ).metricTypeRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.groupId == item.id,
-                              ),
+                          currentColumn: 'id',
+                          referencedColumn: 'group_id',
                           typedResults: items,
                         ),
                       if (eventTypeRefs)
-                        await $_getPrefetchedData<
+                        await $_getPrefetchedDataByColumns<
                           GroupData,
                           $GroupTable,
-                          EventTypeData
+                          EventTypeData,
+                          $EventTypeTable
                         >(
                           currentTable: table,
                           referencedTable: $$GroupTableReferences
@@ -7586,10 +7944,8 @@ class $$GroupTableTableManager
                                 table,
                                 p0,
                               ).eventTypeRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.groupId == item.id,
-                              ),
+                          currentColumn: 'id',
+                          referencedColumn: 'group_id',
                           typedResults: items,
                         ),
                     ];
@@ -8097,8 +8453,10 @@ class $$UnitTableTableManager
               ),
           withReferenceMapper: (p0) => p0
               .map(
-                (e) =>
-                    (e.readTable(table), $$UnitTableReferences(db, table, e)),
+                (e) => (
+                  e.readTable<$UnitTable, UnitData>(table),
+                  $$UnitTableReferences(db, table, e),
+                ),
               )
               .toList(),
           prefetchHooksCallback:
@@ -8144,10 +8502,11 @@ class $$UnitTableTableManager
                   getPrefetchedDataCallback: (items) async {
                     return [
                       if (metricTypeRefs)
-                        await $_getPrefetchedData<
+                        await $_getPrefetchedDataByColumns<
                           UnitData,
                           $UnitTable,
-                          MetricTypeData
+                          MetricTypeData,
+                          $MetricTypeTable
                         >(
                           currentTable: table,
                           referencedTable: $$UnitTableReferences
@@ -8157,27 +8516,24 @@ class $$UnitTableTableManager
                             table,
                             p0,
                           ).metricTypeRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.unit == item.id,
-                              ),
+                          currentColumn: 'id',
+                          referencedColumn: 'unit',
                           typedResults: items,
                         ),
                       if (metricRefs)
-                        await $_getPrefetchedData<
+                        await $_getPrefetchedDataByColumns<
                           UnitData,
                           $UnitTable,
-                          MetricData
+                          MetricData,
+                          $MetricTable
                         >(
                           currentTable: table,
                           referencedTable: $$UnitTableReferences
                               ._metricRefsTable(db),
                           managerFromTypedResult: (p0) =>
                               $$UnitTableReferences(db, table, p0).metricRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.unit == item.id,
-                              ),
+                          currentColumn: 'id',
+                          referencedColumn: 'unit',
                           typedResults: items,
                         ),
                     ];
@@ -8816,7 +9172,7 @@ class $$MetricTypeTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$MetricTypeTable, MetricTypeData>(table),
                   $$MetricTypeTableReferences(db, table, e),
                 ),
               )
@@ -8876,10 +9232,11 @@ class $$MetricTypeTableTableManager
                   getPrefetchedDataCallback: (items) async {
                     return [
                       if (metricRefs)
-                        await $_getPrefetchedData<
+                        await $_getPrefetchedDataByColumns<
                           MetricTypeData,
                           $MetricTypeTable,
-                          MetricData
+                          MetricData,
+                          $MetricTable
                         >(
                           currentTable: table,
                           referencedTable: $$MetricTypeTableReferences
@@ -8890,10 +9247,8 @@ class $$MetricTypeTableTableManager
                                 table,
                                 p0,
                               ).metricRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.type == item.id,
-                              ),
+                          currentColumn: 'id',
+                          referencedColumn: 'type',
                           typedResults: items,
                         ),
                     ];
@@ -9456,8 +9811,10 @@ class $$PersonTableTableManager
               ),
           withReferenceMapper: (p0) => p0
               .map(
-                (e) =>
-                    (e.readTable(table), $$PersonTableReferences(db, table, e)),
+                (e) => (
+                  e.readTable<$PersonTable, PersonData>(table),
+                  $$PersonTableReferences(db, table, e),
+                ),
               )
               .toList(),
           prefetchHooksCallback:
@@ -9473,54 +9830,51 @@ class $$PersonTableTableManager
                   getPrefetchedDataCallback: (items) async {
                     return [
                       if (metricRefs)
-                        await $_getPrefetchedData<
+                        await $_getPrefetchedDataByColumns<
                           PersonData,
                           $PersonTable,
-                          MetricData
+                          MetricData,
+                          $MetricTable
                         >(
                           currentTable: table,
                           referencedTable: $$PersonTableReferences
                               ._metricRefsTable(db),
                           managerFromTypedResult: (p0) =>
                               $$PersonTableReferences(db, table, p0).metricRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.person == item.id,
-                              ),
+                          currentColumn: 'id',
+                          referencedColumn: 'person',
                           typedResults: items,
                         ),
                       if (eventRefs)
-                        await $_getPrefetchedData<
+                        await $_getPrefetchedDataByColumns<
                           PersonData,
                           $PersonTable,
-                          EventData
+                          EventData,
+                          $EventTable
                         >(
                           currentTable: table,
                           referencedTable: $$PersonTableReferences
                               ._eventRefsTable(db),
                           managerFromTypedResult: (p0) =>
                               $$PersonTableReferences(db, table, p0).eventRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.person == item.id,
-                              ),
+                          currentColumn: 'id',
+                          referencedColumn: 'person',
                           typedResults: items,
                         ),
                       if (fileRefs)
-                        await $_getPrefetchedData<
+                        await $_getPrefetchedDataByColumns<
                           PersonData,
                           $PersonTable,
-                          FileData
+                          FileData,
+                          $FileTable
                         >(
                           currentTable: table,
                           referencedTable: $$PersonTableReferences
                               ._fileRefsTable(db),
                           managerFromTypedResult: (p0) =>
                               $$PersonTableReferences(db, table, p0).fileRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.person == item.id,
-                              ),
+                          currentColumn: 'id',
+                          referencedColumn: 'person',
                           typedResults: items,
                         ),
                     ];
@@ -10160,8 +10514,10 @@ class $$MetricTableTableManager
               ),
           withReferenceMapper: (p0) => p0
               .map(
-                (e) =>
-                    (e.readTable(table), $$MetricTableReferences(db, table, e)),
+                (e) => (
+                  e.readTable<$MetricTable, MetricData>(table),
+                  $$MetricTableReferences(db, table, e),
+                ),
               )
               .toList(),
           prefetchHooksCallback:
@@ -10237,10 +10593,11 @@ class $$MetricTableTableManager
                   getPrefetchedDataCallback: (items) async {
                     return [
                       if (metricFilesRefs)
-                        await $_getPrefetchedData<
+                        await $_getPrefetchedDataByColumns<
                           MetricData,
                           $MetricTable,
-                          MetricFile
+                          MetricFile,
+                          $MetricFilesTable
                         >(
                           currentTable: table,
                           referencedTable: $$MetricTableReferences
@@ -10251,10 +10608,8 @@ class $$MetricTableTableManager
                                 table,
                                 p0,
                               ).metricFilesRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.metric == item.id,
-                              ),
+                          currentColumn: 'id',
+                          referencedColumn: 'metric',
                           typedResults: items,
                         ),
                     ];
@@ -10741,7 +11096,7 @@ class $$EventTypeTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$EventTypeTable, EventTypeData>(table),
                   $$EventTypeTableReferences(db, table, e),
                 ),
               )
@@ -10785,18 +11140,19 @@ class $$EventTypeTableTableManager
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (eventRefs)
-                    await $_getPrefetchedData<
+                    await $_getPrefetchedDataByColumns<
                       EventTypeData,
                       $EventTypeTable,
-                      EventData
+                      EventData,
+                      $EventTable
                     >(
                       currentTable: table,
                       referencedTable: $$EventTypeTableReferences
                           ._eventRefsTable(db),
                       managerFromTypedResult: (p0) =>
                           $$EventTypeTableReferences(db, table, p0).eventRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.type == item.id),
+                      currentColumn: 'id',
+                      referencedColumn: 'type',
                       typedResults: items,
                     ),
                 ];
@@ -11380,8 +11736,10 @@ class $$EventTableTableManager
               ),
           withReferenceMapper: (p0) => p0
               .map(
-                (e) =>
-                    (e.readTable(table), $$EventTableReferences(db, table, e)),
+                (e) => (
+                  e.readTable<$EventTable, EventData>(table),
+                  $$EventTableReferences(db, table, e),
+                ),
               )
               .toList(),
           prefetchHooksCallback:
@@ -11437,10 +11795,11 @@ class $$EventTableTableManager
                   getPrefetchedDataCallback: (items) async {
                     return [
                       if (eventFilesRefs)
-                        await $_getPrefetchedData<
+                        await $_getPrefetchedDataByColumns<
                           EventData,
                           $EventTable,
-                          EventFile
+                          EventFile,
+                          $EventFilesTable
                         >(
                           currentTable: table,
                           referencedTable: $$EventTableReferences
@@ -11451,10 +11810,8 @@ class $$EventTableTableManager
                                 table,
                                 p0,
                               ).eventFilesRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.event == item.id,
-                              ),
+                          currentColumn: 'id',
+                          referencedColumn: 'event',
                           typedResults: items,
                         ),
                     ];
@@ -11643,7 +12000,12 @@ class $$JobTableTableManager
                 created: created,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$JobTable, JobData>(table),
+                  BaseReferences<_$Database, $JobTable, JobData>(db, table, e),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),
@@ -12201,8 +12563,10 @@ class $$FileTableTableManager
               ),
           withReferenceMapper: (p0) => p0
               .map(
-                (e) =>
-                    (e.readTable(table), $$FileTableReferences(db, table, e)),
+                (e) => (
+                  e.readTable<$FileTable, FileData>(table),
+                  $$FileTableReferences(db, table, e),
+                ),
               )
               .toList(),
           prefetchHooksCallback:
@@ -12252,10 +12616,11 @@ class $$FileTableTableManager
                   getPrefetchedDataCallback: (items) async {
                     return [
                       if (metricFilesRefs)
-                        await $_getPrefetchedData<
+                        await $_getPrefetchedDataByColumns<
                           FileData,
                           $FileTable,
-                          MetricFile
+                          MetricFile,
+                          $MetricFilesTable
                         >(
                           currentTable: table,
                           referencedTable: $$FileTableReferences
@@ -12265,17 +12630,16 @@ class $$FileTableTableManager
                             table,
                             p0,
                           ).metricFilesRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.file == item.id,
-                              ),
+                          currentColumn: 'id',
+                          referencedColumn: 'file',
                           typedResults: items,
                         ),
                       if (eventFilesRefs)
-                        await $_getPrefetchedData<
+                        await $_getPrefetchedDataByColumns<
                           FileData,
                           $FileTable,
-                          EventFile
+                          EventFile,
+                          $EventFilesTable
                         >(
                           currentTable: table,
                           referencedTable: $$FileTableReferences
@@ -12285,10 +12649,8 @@ class $$FileTableTableManager
                             table,
                             p0,
                           ).eventFilesRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.file == item.id,
-                              ),
+                          currentColumn: 'id',
+                          referencedColumn: 'file',
                           typedResults: items,
                         ),
                     ];
@@ -12675,7 +13037,7 @@ class $$MetricFilesTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$MetricFilesTable, MetricFile>(table),
                   $$MetricFilesTableReferences(db, table, e),
                 ),
               )
@@ -13110,7 +13472,7 @@ class $$EventFilesTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$EventFilesTable, EventFile>(table),
                   $$EventFilesTableReferences(db, table, e),
                 ),
               )
@@ -13187,6 +13549,215 @@ typedef $$EventFilesTableProcessedTableManager =
       EventFile,
       PrefetchHooks Function({bool file, bool event})
     >;
+typedef $$PendingDeletionTableCreateCompanionBuilder =
+    PendingDeletionCompanion Function({
+      Value<int> id,
+      required String entity,
+      required int serverId,
+      Value<int?> relatedId,
+      required DateTime created,
+    });
+typedef $$PendingDeletionTableUpdateCompanionBuilder =
+    PendingDeletionCompanion Function({
+      Value<int> id,
+      Value<String> entity,
+      Value<int> serverId,
+      Value<int?> relatedId,
+      Value<DateTime> created,
+    });
+
+class $$PendingDeletionTableFilterComposer
+    extends Composer<_$Database, $PendingDeletionTable> {
+  $$PendingDeletionTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get entity => $composableBuilder(
+    column: $table.entity,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get serverId => $composableBuilder(
+    column: $table.serverId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get relatedId => $composableBuilder(
+    column: $table.relatedId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get created => $composableBuilder(
+    column: $table.created,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$PendingDeletionTableOrderingComposer
+    extends Composer<_$Database, $PendingDeletionTable> {
+  $$PendingDeletionTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get entity => $composableBuilder(
+    column: $table.entity,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get serverId => $composableBuilder(
+    column: $table.serverId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get relatedId => $composableBuilder(
+    column: $table.relatedId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get created => $composableBuilder(
+    column: $table.created,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$PendingDeletionTableAnnotationComposer
+    extends Composer<_$Database, $PendingDeletionTable> {
+  $$PendingDeletionTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get entity =>
+      $composableBuilder(column: $table.entity, builder: (column) => column);
+
+  GeneratedColumn<int> get serverId =>
+      $composableBuilder(column: $table.serverId, builder: (column) => column);
+
+  GeneratedColumn<int> get relatedId =>
+      $composableBuilder(column: $table.relatedId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get created =>
+      $composableBuilder(column: $table.created, builder: (column) => column);
+}
+
+class $$PendingDeletionTableTableManager
+    extends
+        RootTableManager<
+          _$Database,
+          $PendingDeletionTable,
+          PendingDeletionData,
+          $$PendingDeletionTableFilterComposer,
+          $$PendingDeletionTableOrderingComposer,
+          $$PendingDeletionTableAnnotationComposer,
+          $$PendingDeletionTableCreateCompanionBuilder,
+          $$PendingDeletionTableUpdateCompanionBuilder,
+          (
+            PendingDeletionData,
+            BaseReferences<
+              _$Database,
+              $PendingDeletionTable,
+              PendingDeletionData
+            >,
+          ),
+          PendingDeletionData,
+          PrefetchHooks Function()
+        > {
+  $$PendingDeletionTableTableManager(_$Database db, $PendingDeletionTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PendingDeletionTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PendingDeletionTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PendingDeletionTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> entity = const Value.absent(),
+                Value<int> serverId = const Value.absent(),
+                Value<int?> relatedId = const Value.absent(),
+                Value<DateTime> created = const Value.absent(),
+              }) => PendingDeletionCompanion(
+                id: id,
+                entity: entity,
+                serverId: serverId,
+                relatedId: relatedId,
+                created: created,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String entity,
+                required int serverId,
+                Value<int?> relatedId = const Value.absent(),
+                required DateTime created,
+              }) => PendingDeletionCompanion.insert(
+                id: id,
+                entity: entity,
+                serverId: serverId,
+                relatedId: relatedId,
+                created: created,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$PendingDeletionTable, PendingDeletionData>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$Database,
+                    $PendingDeletionTable,
+                    PendingDeletionData
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$PendingDeletionTableProcessedTableManager =
+    ProcessedTableManager<
+      _$Database,
+      $PendingDeletionTable,
+      PendingDeletionData,
+      $$PendingDeletionTableFilterComposer,
+      $$PendingDeletionTableOrderingComposer,
+      $$PendingDeletionTableAnnotationComposer,
+      $$PendingDeletionTableCreateCompanionBuilder,
+      $$PendingDeletionTableUpdateCompanionBuilder,
+      (
+        PendingDeletionData,
+        BaseReferences<_$Database, $PendingDeletionTable, PendingDeletionData>,
+      ),
+      PendingDeletionData,
+      PrefetchHooks Function()
+    >;
 
 class $DatabaseManager {
   final _$Database _db;
@@ -13210,4 +13781,6 @@ class $DatabaseManager {
       $$MetricFilesTableTableManager(_db, _db.metricFiles);
   $$EventFilesTableTableManager get eventFiles =>
       $$EventFilesTableTableManager(_db, _db.eventFiles);
+  $$PendingDeletionTableTableManager get pendingDeletion =>
+      $$PendingDeletionTableTableManager(_db, _db.pendingDeletion);
 }

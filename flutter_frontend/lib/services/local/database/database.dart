@@ -8,6 +8,7 @@ import 'package:helse/services/local/database/models/job.dart';
 import 'package:helse/services/local/database/models/metric.dart';
 import 'package:helse/services/local/database/models/metric_type.dart';
 import 'package:helse/services/local/database/models/person.dart';
+import 'package:helse/services/local/database/models/pending_deletion.dart';
 import 'package:helse/services/local/database/models/unit.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart'
     show MetricDataType, UnitType, MetricSummary;
@@ -28,13 +29,14 @@ part 'database.g.dart';
     File,
     MetricFiles,
     EventFiles,
+    PendingDeletion,
   ],
 )
 class Database extends _$Database {
   Database([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 3;
 
   static Future<String> databasePath() async {
     var baseDir = await getApplicationSupportDirectory();
@@ -45,6 +47,10 @@ class Database extends _$Database {
   static QueryExecutor _openConnection() {
     return driftDatabase(
       name: 'helse',
+      web: DriftWebOptions(
+        sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+        driftWorker: Uri.parse('drift_worker.js'),
+      ),
       native: const DriftNativeOptions(
         databaseDirectory: getApplicationSupportDirectory,
       ),
@@ -54,6 +60,28 @@ class Database extends _$Database {
   @override
   MigrationStrategy get migration {
     return MigrationStrategy(
+      onUpgrade: (m, from, to) async {
+        if (from < 2) {
+          await m.createTable(pendingDeletion);
+        }
+        if (from >= 2 && from < 3) {
+          await m.addColumn(pendingDeletion, pendingDeletion.relatedId);
+        }
+        if (from < 3) {
+          await customStatement(
+            'UPDATE "group" SET synced = 1 WHERE id BETWEEN 1 AND 6',
+          );
+          await customStatement(
+            'UPDATE metric_type SET synced = 1 WHERE id BETWEEN 1 AND 19',
+          );
+          await customStatement(
+            'UPDATE event_type SET synced = 1 WHERE id BETWEEN 1 AND 5',
+          );
+          await customStatement(
+            'UPDATE unit SET synced = 1 WHERE id BETWEEN 0 AND 11',
+          );
+        }
+      },
       beforeOpen: (details) async {
         await customStatement('PRAGMA foreign_keys = ON');
       },
@@ -541,5 +569,10 @@ class Database extends _$Database {
         ),
       ]);
     });
+
+    await customStatement('UPDATE "group" SET synced = 1');
+    await customStatement('UPDATE metric_type SET synced = 1');
+    await customStatement('UPDATE event_type SET synced = 1');
+    await customStatement('UPDATE unit SET synced = 1');
   }
 }
