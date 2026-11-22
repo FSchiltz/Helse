@@ -13,6 +13,8 @@ import 'package:path_provider/path_provider.dart';
 class LocalCacheService extends LocalService {
   LocalCacheService(super.account);
 
+  Future<void> expireServerCache() => database.expireServerCache();
+
   Future<int> metricServerId(int id) async {
     final byServerId = await (database.select(
       database.metric,

@@ -7,6 +7,7 @@ import 'package:helse/di/app_logger.dart';
 import 'package:helse/logic/account/authentication_bloc.dart';
 import 'package:helse/logic/account/settings_migration.dart';
 import 'package:helse/services/api/api_login_service.dart';
+import 'package:helse/services/local/local_cache_service.dart';
 import 'package:helse/services/local/offline_sync_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/helpers/translation.dart';
@@ -347,7 +348,7 @@ class AuthenticationLogic {
     try {
       final results = await Connectivity().checkConnectivity();
       if (results.every((result) => result == ConnectivityResult.none)) {
-        _setOffline();
+        await _setOffline();
         return;
       }
 
@@ -360,7 +361,7 @@ class AuthenticationLogic {
 
       final status = await checkUrl(url);
       if (status == null) {
-        _setOffline();
+        await _setOffline();
         return;
       }
 
@@ -373,7 +374,7 @@ class AuthenticationLogic {
         error: error,
         stackTrace: stackTrace,
       );
-      _setOffline();
+      await _setOffline();
     }
   }
 
@@ -385,7 +386,7 @@ class AuthenticationLogic {
     _checkingConnectivity = true;
     try {
       if (results.every((result) => result == ConnectivityResult.none)) {
-        _setOffline();
+        await _setOffline();
         return;
       }
 
@@ -399,7 +400,7 @@ class AuthenticationLogic {
       final wasOffline = Dependencies.blocs.server.isOffline;
       final status = await ApiLoginService(account).isInit(Uri.parse(url));
       if (status == null) {
-        _setOffline();
+        await _setOffline();
         return;
       }
 
@@ -437,13 +438,14 @@ class AuthenticationLogic {
         error: error,
         stackTrace: stackTrace,
       );
-      _setOffline();
+      await _setOffline();
     } finally {
       _checkingConnectivity = false;
     }
   }
 
-  void _setOffline() {
+  Future<void> _setOffline() async {
+    await _expireOfflineCache();
     Dependencies.blocs.server.setOffline();
     if (account.getToken() != null) {
       setAuth();
@@ -452,7 +454,20 @@ class AuthenticationLogic {
     }
   }
 
+  Future<void> _expireOfflineCache() async {
+    try {
+      await LocalCacheService(account).expireServerCache();
+    } catch (error, stackTrace) {
+      appLogger.e(
+        '[OfflineCache] Failed to expire stale server data',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
   Future<void> useOffline() async {
+    await _expireOfflineCache();
     Dependencies.blocs.server.setOffline(userInitiated: true);
     if (account.getToken() == null) {
       final token = await Dependencies.services.login.login(
