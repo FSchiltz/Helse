@@ -20,23 +20,53 @@ import 'package:path_provider/path_provider.dart';
 class OfflineSyncService extends LocalService {
   OfflineSyncService(super.account);
 
+  Future<void> sync({
+    void Function(String status, double progress)? reportProgress,
+  }) async {
+    final steps = <(String, Future<void> Function(void Function(double)))>[
+      ('groups', _syncGroups),
+      ('metric types', _syncMetricTypes),
+      ('event types', _syncEventTypes),
+      ('people', _syncPeople),
+      ('metrics', _syncMetrics),
+      ('events', _syncEvents),
+      ('files', _syncFiles),
+      ('file links', _syncFileLinks),
+      ('deletions', _syncDeletions),
+    ];
 
-  Future<void> sync() async {
-    await _syncGroups();
-    await _syncMetricTypes();
-    await _syncEventTypes();
-    await _syncPeople();
-    await _syncMetrics();
-    await _syncEvents();
-    await _syncFiles();
-    await _syncFileLinks();
-    await _syncDeletions();
+    for (var index = 0; index < steps.length; index++) {
+      final (name, action) = steps[index];
+      final startProgress = index / steps.length * 90;
+      final endProgress = (index + 1) / steps.length * 90;
+      reportProgress?.call('Syncing $name', startProgress);
+      await action(
+        (stepProgress) => reportProgress?.call(
+          'Syncing $name',
+          (index + stepProgress) / steps.length * 90,
+        ),
+      );
+      reportProgress?.call('Syncing $name', endProgress);
+    }
   }
 
   Future<void> syncPendingChanges() async {
+    final jobs = Dependencies.blocs.jobs;
+    jobs.startReport(
+      title: 'Offline sync',
+      status: 'Preparing synchronization',
+    );
+    final failures = <String>[];
+
     try {
-      await sync();
+      await sync(
+        reportProgress: (status, progress) =>
+            jobs.updateReport(status: status, progress: progress),
+      );
     } catch (error, stackTrace) {
+      final message = 'Offline data sync failed: $error';
+      failures.add(message);
+      jobs.updateReport(status: message, progress: jobs.state.progress ?? 0);
       appLogger.e(
         '[OfflineSync] Failed to synchronize local changes',
         error: error,
@@ -45,10 +75,18 @@ class OfflineSyncService extends LocalService {
     }
 
     if (Dependencies.blocs.auth.state != AuthenticationStatus.authenticated) {
+      jobs.finishReport(
+        success: false,
+        status: failures.isEmpty
+            ? 'Synchronization stopped because authentication ended'
+            : 'Synchronization stopped because authentication ended: '
+                  '${failures.join('; ')}',
+      );
       return;
     }
 
     if (account.isEnabled(Account.pendingUserSettings)) {
+      jobs.updateReport(status: 'Syncing user settings', progress: 90);
       try {
         await Dependencies.services.settings.savePersonSettings(
           Dependencies.logics.settings.userSettings(),
@@ -57,7 +95,11 @@ class OfflineSyncService extends LocalService {
             AuthenticationStatus.authenticated) {
           await account.setBool(Account.pendingUserSettings, false);
         }
+        jobs.updateReport(status: 'User settings synchronized', progress: 95);
       } catch (error, stackTrace) {
+        final message = 'User settings sync failed: $error';
+        failures.add(message);
+        jobs.updateReport(status: message, progress: jobs.state.progress ?? 90);
         appLogger.e(
           '[OfflineSync] Failed to synchronize user settings',
           error: error,
@@ -67,6 +109,7 @@ class OfflineSyncService extends LocalService {
     }
 
     if (account.isEnabled(Account.pendingPatientSettings)) {
+      jobs.updateReport(status: 'Syncing patient settings', progress: 95);
       try {
         await Dependencies.services.settings.savePatientsSettings(
           Dependencies.logics.patientsSettings.patientsSettings(),
@@ -75,7 +118,14 @@ class OfflineSyncService extends LocalService {
             AuthenticationStatus.authenticated) {
           await account.setBool(Account.pendingPatientSettings, false);
         }
+        jobs.updateReport(
+          status: 'Patient settings synchronized',
+          progress: 100,
+        );
       } catch (error, stackTrace) {
+        final message = 'Patient settings sync failed: $error';
+        failures.add(message);
+        jobs.updateReport(status: message, progress: jobs.state.progress ?? 95);
         appLogger.e(
           '[OfflineSync] Failed to synchronize patient settings',
           error: error,
@@ -83,15 +133,23 @@ class OfflineSyncService extends LocalService {
         );
       }
     }
+
+    jobs.finishReport(
+      success: failures.isEmpty,
+      status: failures.isNotEmpty
+          ? 'Synchronization completed with errors: ${failures.join('; ')}'
+          : 'Synchronization complete',
+    );
   }
 
-  Future<void> _syncGroups() async {
+  Future<void> _syncGroups(void Function(double) reportProgress) async {
     final service = ApiMetricService(account);
     final rows = await (database.select(
       database.group,
     )..where((row) => row.synced.equals(false))).get();
 
-    for (final row in rows) {
+    for (var index = 0; index < rows.length; index++) {
+      final row = rows[index];
       final serverId = row.serverId;
       if (serverId == null) {
         final id = await service.addGroup(
@@ -134,16 +192,18 @@ class OfflineSyncService extends LocalService {
               ),
             );
       }
+      reportProgress((index + 1) / rows.length);
     }
   }
 
-  Future<void> _syncMetricTypes() async {
+  Future<void> _syncMetricTypes(void Function(double) reportProgress) async {
     final service = ApiMetricService(account);
     final rows = await (database.select(
       database.metricType,
     )..where((row) => row.synced.equals(false))).get();
 
-    for (final row in rows) {
+    for (var index = 0; index < rows.length; index++) {
+      final row = rows[index];
       final groupId = await _groupServerId(row.groupId);
       final unitId = await _unitServerId(row.unit);
       final serverId = row.serverId;
@@ -202,16 +262,18 @@ class OfflineSyncService extends LocalService {
               ),
             );
       }
+      reportProgress((index + 1) / rows.length);
     }
   }
 
-  Future<void> _syncEventTypes() async {
+  Future<void> _syncEventTypes(void Function(double) reportProgress) async {
     final service = ApiEventService(account);
     final rows = await (database.select(
       database.eventType,
     )..where((row) => row.synced.equals(false))).get();
 
-    for (final row in rows) {
+    for (var index = 0; index < rows.length; index++) {
+      final row = rows[index];
       final groupId = await _groupServerId(row.groupId);
       final serverId = row.serverId;
       if (serverId == null) {
@@ -261,17 +323,22 @@ class OfflineSyncService extends LocalService {
               ),
             );
       }
+      reportProgress((index + 1) / rows.length);
     }
   }
 
-  Future<void> _syncPeople() async {
+  Future<void> _syncPeople(void Function(double) reportProgress) async {
     final service = ApiUserService(account);
     final rows = await (database.select(
       database.person,
     )..where((row) => row.synced.equals(false))).get();
 
-    for (final row in rows) {
-      if (row.id == 0) continue;
+    for (var index = 0; index < rows.length; index++) {
+      final row = rows[index];
+      if (row.id == 0) {
+        reportProgress((index + 1) / rows.length);
+        continue;
+      }
 
       final types =
           row.types
@@ -341,16 +408,18 @@ class OfflineSyncService extends LocalService {
         _ensureSession();
         await _markPersonSynced(row.id);
       }
+      reportProgress((index + 1) / rows.length);
     }
   }
 
-  Future<void> _syncMetrics() async {
+  Future<void> _syncMetrics(void Function(double) reportProgress) async {
     final service = ApiMetricService(account);
     final pending = await (database.select(
       database.metric,
     )..where((row) => row.synced.equals(false))).get();
 
-    for (final row in pending) {
+    for (var index = 0; index < pending.length; index++) {
+      final row = pending[index];
       final source = ImportTypes.values.asNameMap()[row.source];
       final typeId = await _metricTypeServerId(row.type);
       final serverId = row.serverId;
@@ -402,16 +471,18 @@ class OfflineSyncService extends LocalService {
               ),
             );
       }
+      reportProgress((index + 1) / pending.length);
     }
   }
 
-  Future<void> _syncEvents() async {
+  Future<void> _syncEvents(void Function(double) reportProgress) async {
     final service = ApiEventService(account);
     final pending = await (database.select(
       database.event,
     )..where((row) => row.synced.equals(false))).get();
 
-    for (final row in pending) {
+    for (var index = 0; index < pending.length; index++) {
+      final row = pending[index];
       final source = ImportTypes.values.asNameMap()[row.source];
       final typeId = await _eventTypeServerId(row.type);
       final serverId = row.serverId;
@@ -465,10 +536,11 @@ class OfflineSyncService extends LocalService {
               ),
             );
       }
+      reportProgress((index + 1) / pending.length);
     }
   }
 
-  Future<void> _syncFiles() async {
+  Future<void> _syncFiles(void Function(double) reportProgress) async {
     final service = ApiFileService(account);
     final rows = await (database.select(
       database.file,
@@ -478,7 +550,8 @@ class OfflineSyncService extends LocalService {
       '${directory.path}/${LocalFileService.path}',
     );
 
-    for (final row in rows) {
+    for (var index = 0; index < rows.length; index++) {
+      final row = rows[index];
       final filePath = '${fileDirectory.path}/${row.id}';
       final localFile = XFile(filePath);
       if (!await io.File(filePath).exists()) {
@@ -509,14 +582,21 @@ class OfflineSyncService extends LocalService {
               serverId: Value(serverId),
             ),
           );
+      reportProgress((index + 1) / rows.length);
     }
   }
 
-  Future<void> _syncFileLinks() async {
+  Future<void> _syncFileLinks(void Function(double) reportProgress) async {
     final service = ApiFileService(account);
     final metricLinks = await (database.select(
       database.metricFiles,
     )..where((row) => row.synced.equals(false))).get();
+    final eventLinks = await (database.select(
+      database.eventFiles,
+    )..where((row) => row.synced.equals(false))).get();
+    final totalLinks = metricLinks.length + eventLinks.length;
+    var completedLinks = 0;
+
     for (final link in metricLinks) {
       final metric = await (database.select(
         database.metric,
@@ -535,11 +615,10 @@ class OfflineSyncService extends LocalService {
               syncTime: Value(DateTime.now().toUtc()),
             ),
           );
+      completedLinks++;
+      reportProgress(completedLinks / totalLinks);
     }
 
-    final eventLinks = await (database.select(
-      database.eventFiles,
-    )..where((row) => row.synced.equals(false))).get();
     for (final link in eventLinks) {
       final event = await (database.select(
         database.event,
@@ -558,10 +637,12 @@ class OfflineSyncService extends LocalService {
               syncTime: Value(DateTime.now().toUtc()),
             ),
           );
+      completedLinks++;
+      reportProgress(completedLinks / totalLinks);
     }
   }
 
-  Future<void> _syncDeletions() async {
+  Future<void> _syncDeletions(void Function(double) reportProgress) async {
     final metricService = ApiMetricService(account);
     final eventService = ApiEventService(account);
     final userService = ApiUserService(account);
@@ -570,7 +651,8 @@ class OfflineSyncService extends LocalService {
       database.pendingDeletion,
     )..orderBy([(row) => OrderingTerm.asc(row.created)])).get();
 
-    for (final deletion in pending) {
+    for (var index = 0; index < pending.length; index++) {
+      final deletion = pending[index];
       switch (deletion.entity) {
         case 'metric':
           final api = await metricService.getService();
@@ -618,6 +700,7 @@ class OfflineSyncService extends LocalService {
       await (database.delete(
         database.pendingDeletion,
       )..where((row) => row.id.equals(deletion.id))).go();
+      reportProgress((index + 1) / pending.length);
     }
   }
 
