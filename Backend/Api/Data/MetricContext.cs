@@ -36,9 +36,9 @@ internal class MetricContext(DataConnection db, SlowQueryLogInterceptor intercep
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Task Insert(Helse.Models.Metrics.CreateMetricType metric)
+    public Task<long> Insert(Helse.Models.Metrics.CreateMetricType metric)
     {
-        return Db.GetTable<MetricType>().InsertAsync(() => new MetricType
+        return Db.GetTable<MetricType>().InsertWithInt64IdentityAsync(() => new MetricType
         {
             Name = metric.Name,
             Description = metric.Description,
@@ -179,9 +179,9 @@ internal class MetricContext(DataConnection db, SlowQueryLogInterceptor intercep
             .UpdateAsync();
     }
 
-    public Task Insert(Helse.Models.Metrics.CreateGroup metricGroup)
+    public Task<long> Insert(Helse.Models.Metrics.CreateGroup metricGroup)
     {
-        return Db.GetTable<MetricGroup>().InsertAsync(() => new MetricGroup
+        return Db.GetTable<MetricGroup>().InsertWithInt64IdentityAsync(() => new MetricGroup
         {
             Name = metricGroup.Name,
             Description = metricGroup.Description,

@@ -66,7 +66,7 @@ public class MetricLogicTests : LogicTests
     }
 
     [Fact]
-    public async Task MetricType_Text()
+    public async Task MetricType_Text_ReturnsCreatedId()
     {
         var type = new CreateMetricType()
         {
@@ -79,13 +79,14 @@ public class MetricLogicTests : LogicTests
 
         var users = SetupUser(Helse.Api.Data.Models.Persons.UserType.Admin);
         var context = SetupContext();
+        _db.Insert(type).Returns(42L);
 
         var result = await MetricsLogic.CreateTypeAsync(type, users, _db, context);
-        Assert.IsType<NoContent>(result);
+        Assert.Equal(42L, Assert.IsType<Created<long>>(result).Value);
     }
 
     [Fact]
-    public async Task MetricType_Number()
+    public async Task MetricType_Number_ReturnsCreatedId()
     {
         var type = new CreateMetricType()
         {
@@ -98,8 +99,9 @@ public class MetricLogicTests : LogicTests
 
         var users = SetupUser(Helse.Api.Data.Models.Persons.UserType.Admin);
         var context = SetupContext();
+        _db.Insert(type).Returns(43L);
 
         var result = await MetricsLogic.CreateTypeAsync(type, users, _db, context);
-        Assert.IsType<NoContent>(result);
+        Assert.Equal(43L, Assert.IsType<Created<long>>(result).Value);
     }
 }

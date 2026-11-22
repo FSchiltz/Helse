@@ -89,9 +89,9 @@ internal class EventContext(DataConnection db, SlowQueryLogInterceptor intercept
     }
 
     /// <inheritdoc/>
-    public Task Insert(Helse.Models.Events.CreateEventType eventType)
+    public Task<long> Insert(Helse.Models.Events.CreateEventType eventType)
     {
-        return Db.GetTable<EventType>().InsertAsync(() => new EventType
+        return Db.GetTable<EventType>().InsertWithInt64IdentityAsync(() => new EventType
         {
             Name = eventType.Name,
             Description = eventType.Description,
