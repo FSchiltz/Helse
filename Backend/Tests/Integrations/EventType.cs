@@ -22,7 +22,10 @@ public class EventType(WebApplicationFactory<Program> factory, DatabaseFixture f
             GroupId = 1,
         }, cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(response);
-        var text = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
-        Assert.True(response.IsSuccessStatusCode);
+        Assert.Equal(System.Net.HttpStatusCode.Created, response.StatusCode);
+        var id = await response.Content.ReadFromJsonAsync<long>(
+            cancellationToken: TestContext.Current.CancellationToken
+        );
+        Assert.True(id > 0);
     }
 }

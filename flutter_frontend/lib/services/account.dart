@@ -31,6 +31,8 @@ class Account {
   static const id = "id";
   static const offline = "offline";
   static const keepConnected = "keepConnected";
+  static const pendingUserSettings = "pendingUserSettings";
+  static const pendingPatientSettings = "pendingPatientSettings";
 
   String? get(String name) => storage.getString(name);
 

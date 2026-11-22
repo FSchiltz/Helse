@@ -46,7 +46,7 @@ class Dependencies {
     }
 
     _online = Services.online(account);
-    _offline = Services.offline();
+    _offline = Services.offline(account);
     _logics = Logics(account);
     _blocs = Blocs(logics);
   }

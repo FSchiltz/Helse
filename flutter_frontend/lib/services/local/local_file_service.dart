@@ -3,6 +3,7 @@ import 'dart:io' as io;
 
 import 'package:drift/drift.dart';
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart';
 import 'package:helse/services/file_service.dart';
 import 'package:helse/services/local/database/database.dart' as db;
 import 'package:helse/services/local/local_service.dart';
@@ -13,8 +14,19 @@ import 'package:path_provider/path_provider.dart';
 class LocalFileService extends LocalService implements FileService {
   static String path = 'files';
 
+  LocalFileService(super.account);
+
   @override
   Future<FileData?> getData(int id, int? person) async {
+    final row =
+        await (database.select(database.file)
+              ..where((file) => file.id.equals(id) | file.serverId.equals(id)))
+            .getSingleOrNull();
+    if (row?.content case final content?) {
+      return FileData(type: row!.dataType, data: base64.encode(content));
+    }
+    if (kIsWeb) return null;
+
     final dir = await getApplicationSupportDirectory();
     final fileDir = await io.Directory('${dir.path}/$path').create();
 
@@ -31,9 +43,7 @@ class LocalFileService extends LocalService implements FileService {
               ..join([
                 innerJoin(
                   database.eventFiles,
-                  database.eventFiles.id.equalsExp(
-                        database.file.id,
-                      ) &
+                  database.eventFiles.file.equalsExp(database.file.id) &
                       database.eventFiles.event.equals(id),
                   useColumns: false,
                 ),
@@ -90,9 +100,7 @@ class LocalFileService extends LocalService implements FileService {
               ..join([
                 innerJoin(
                   database.metricFiles,
-                  database.metricFiles.id.equalsExp(
-                        database.file.id,
-                      ) &
+                  database.metricFiles.file.equalsExp(database.file.id) &
                       database.metricFiles.metric.equals(id),
                   useColumns: false,
                 ),
@@ -158,6 +166,13 @@ class LocalFileService extends LocalService implements FileService {
 
   @override
   Future<void> postFileData(int fileId, XFile file, int? person) async {
+    if (kIsWeb) {
+      final content = await file.readAsBytes();
+      await (database.file.update()..where((row) => row.id.equals(fileId)))
+          .write(db.FileCompanion(content: Value(content)));
+      return;
+    }
+
     final dir = await getApplicationSupportDirectory();
     final fileDir = await io.Directory('${dir.path}/$path').create();
     await file.saveTo('${fileDir.path}/$fileId');
@@ -165,6 +180,28 @@ class LocalFileService extends LocalService implements FileService {
 
   @override
   Future<void> unlinkEvent(int fileId, int eventId, int? person) async {
+    final link =
+        await (database.select(database.eventFiles)..where(
+              (row) => row.file.equals(fileId) & row.event.equals(eventId),
+            ))
+            .getSingleOrNull();
+    if (link != null && link.synced) {
+      final file = await (database.select(
+        database.file,
+      )..where((row) => row.id.equals(fileId))).getSingleOrNull();
+      final event = await (database.select(
+        database.event,
+      )..where((row) => row.id.equals(eventId))).getSingleOrNull();
+      if (file?.serverId case final remoteFileId?) {
+        if (event?.serverId case final remoteEventId?) {
+          await queueDeletion(
+            'eventFile',
+            remoteFileId,
+            relatedId: remoteEventId,
+          );
+        }
+      }
+    }
     await database.eventFiles.deleteWhere(
       (x) => x.file.equals(fileId) & x.event.equals(eventId),
     );
@@ -172,6 +209,28 @@ class LocalFileService extends LocalService implements FileService {
 
   @override
   Future<void> unlinkMetric(int fileId, int metricId, int? person) async {
+    final link =
+        await (database.select(database.metricFiles)..where(
+              (row) => row.file.equals(fileId) & row.metric.equals(metricId),
+            ))
+            .getSingleOrNull();
+    if (link != null && link.synced) {
+      final file = await (database.select(
+        database.file,
+      )..where((row) => row.id.equals(fileId))).getSingleOrNull();
+      final metric = await (database.select(
+        database.metric,
+      )..where((row) => row.id.equals(metricId))).getSingleOrNull();
+      if (file?.serverId case final remoteFileId?) {
+        if (metric?.serverId case final remoteMetricId?) {
+          await queueDeletion(
+            'metricFile',
+            remoteFileId,
+            relatedId: remoteMetricId,
+          );
+        }
+      }
+    }
     await database.metricFiles.deleteWhere(
       (x) => x.file.equals(fileId) & x.metric.equals(metricId),
     );

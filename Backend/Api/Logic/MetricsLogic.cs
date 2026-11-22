@@ -59,7 +59,7 @@ internal static class MetricsLogic
 
         var metricsType = metrics.MapGroup("/type").RequireAuthorization();
         metricsType.MapPost("/", MetricsLogic.CreateTypeAsync)
-        .Produces((int)HttpStatusCode.NoContent)
+        .Produces<long>((int)HttpStatusCode.Created)
         .Produces((int)HttpStatusCode.Unauthorized);
 
         metricsType.MapPut("/", UpdateTypeAsync)
@@ -76,7 +76,7 @@ internal static class MetricsLogic
 
         var metricsGroup = metrics.MapGroup("/groups").RequireAuthorization();
         metricsGroup.MapPost("/", CreateGroupAsync)
-        .Produces((int)HttpStatusCode.NoContent)
+        .Produces<long>((int)HttpStatusCode.Created)
         .Produces((int)HttpStatusCode.Unauthorized);
 
         metricsGroup.MapPut("/", UpdateGroupAsync)
@@ -281,9 +281,9 @@ internal static class MetricsLogic
 
         Validate(metric);
 
-        await db.Insert(metric);
+        var id = await db.Insert(metric);
 
-        return TypedResults.NoContent();
+        return TypedResults.Created(default(Uri), id);
     }
 
     private static void Validate(CreateMetricType metric)
@@ -376,9 +376,9 @@ internal static class MetricsLogic
         if (admin is not null)
             return admin;
 
-        await db.Insert(metric);
+        var id = await db.Insert(metric);
 
-        return TypedResults.NoContent();
+        return TypedResults.Created(default(Uri), id);
     }
 
     public static async Task<IResult> UpdateGroupAsync(UpdateGroup metric, IUserContext users, IMetricContext db, HttpContext context)

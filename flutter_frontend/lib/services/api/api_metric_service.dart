@@ -1,38 +1,47 @@
+import 'package:helse/services/api/cached_api_service.dart';
 import 'package:helse/services/metric_service.dart';
-
-import 'api_service.dart';
 import '../swagger/generated_code/helseapi.swagger.dart';
 
-class ApiMetricService extends ApiService implements MetricService{
+class ApiMetricService extends CachedApiService implements MetricService {
   ApiMetricService(super.account);
 
   @override
   Future<List<MetricType>?> metricsType(bool all, int? group) async {
     final api = await getService();
-    return await call(() => api.apiMetricsTypeGet(all: all, group: group));
+    final result = await call(
+      () => api.apiMetricsTypeGet(all: all, group: group),
+    );
+    if (result != null) {
+      await cache.saveMetricTypes(result);
+    }
+    return result;
   }
 
   @override
   Future<void> deleteMetric(int id) async {
     final api = await getService();
-    await call(() => api.apiMetricsIdDelete(id: id));
+    final serverId = await cache.metricServerId(id);
+    await call(() => api.apiMetricsIdDelete(id: serverId));
+    await cache.removeMetric(serverId);
   }
 
   @override
   Future<void> deleteMetrics(List<Metric> metrics, {int? person}) async {
     final api = await getService();
-    await call(
-      () => api.apiMetricsDeletePost(
-        body: metrics.map((e) => e.id).toList(),
-        person: person,
-      ),
+    final ids = await Future.wait(
+      metrics.map((metric) => cache.metricServerId(metric.id)),
     );
+    await call(() => api.apiMetricsDeletePost(body: ids, person: person));
+    for (final id in ids) {
+      await cache.removeMetric(id);
+    }
   }
 
   @override
-  Future<void> addMetricsType(CreateMetricType metric) async {
+  Future<int?> addMetricsType(CreateMetricType metric) async {
     final api = await getService();
-    await call(() => api.apiMetricsTypePost(body: metric));
+    final id = await call(() => api.apiMetricsTypePost(body: metric));
+    return createdId(id);
   }
 
   @override
@@ -55,7 +64,7 @@ class ApiMetricService extends ApiService implements MetricService{
     int pageSize,
   ) async {
     final api = await getService();
-    return await call(
+    final result = await call(
       () => api.apiMetricsSearchPost(
         body: search,
         personId: person,
@@ -63,6 +72,10 @@ class ApiMetricService extends ApiService implements MetricService{
         pageSize: pageSize,
       ),
     );
+    if (result != null) {
+      await cache.saveMetrics(result);
+    }
+    return result;
   }
 
   @override
@@ -90,7 +103,9 @@ class ApiMetricService extends ApiService implements MetricService{
       ),
     );
 
-    return metrics ?? [];
+    final result = metrics ?? [];
+    await cache.saveMetrics(result);
+    return result;
   }
 
   @override
@@ -102,16 +117,18 @@ class ApiMetricService extends ApiService implements MetricService{
     int? tile,
   }) async {
     final api = await getService();
-    return await call(
-          () => api.apiMetricsSummaryGet(
-            tile: tile,
-            type: type,
-            start: start.toUtc(),
-            end: end.toUtc(),
-            personId: person,
-          ),
-        ) ??
-        MetricSummaries(metrics: []);
+    final result = await call(
+      () => api.apiMetricsSummaryGet(
+        tile: tile,
+        type: type,
+        start: start.toUtc(),
+        end: end.toUtc(),
+        personId: person,
+      ),
+    );
+    final summaries = result ?? MetricSummaries(metrics: []);
+    await cache.saveMetrics(summaries.metrics);
+    return summaries;
   }
 
   @override
@@ -123,7 +140,21 @@ class ApiMetricService extends ApiService implements MetricService{
   @override
   Future<void> updateMetric(UpdateMetric metric) async {
     final api = await getService();
-    await call(() => api.apiMetricsPut(body: metric));
+    final id = await cache.metricServerId(metric.id);
+    await call(
+      () => api.apiMetricsPut(
+        body: UpdateMetric(
+          id: id,
+          unit: metric.unit,
+          date: metric.date,
+          value: metric.value,
+          tag: metric.tag,
+          type: metric.type,
+          source: metric.source,
+          sourceId: metric.sourceId,
+        ),
+      ),
+    );
   }
 
   @override
@@ -133,9 +164,10 @@ class ApiMetricService extends ApiService implements MetricService{
   }
 
   @override
-  Future<void> addGroup(CreateGroup metric) async {
+  Future<int?> addGroup(CreateGroup metric) async {
     final api = await getService();
-    await call(() => api.apiMetricsGroupsPost(body: metric));
+    final id = await call(() => api.apiMetricsGroupsPost(body: metric));
+    return createdId(id);
   }
 
   @override
@@ -153,6 +185,10 @@ class ApiMetricService extends ApiService implements MetricService{
   @override
   Future<List<Group>?> metricsGroup() async {
     final api = await getService();
-    return await call(() => api.apiMetricsGroupsGet());
+    final result = await call(() => api.apiMetricsGroupsGet());
+    if (result != null) {
+      await cache.saveGroups(result);
+    }
+    return result;
   }
 }

@@ -15,10 +15,14 @@ class ServerJobDialog extends StatelessWidget {
     return BlocProvider<TaskBloc>.value(
       value: Dependencies.blocs.jobs,
       child: BlocBuilder<TaskBloc, Execution>(
-        builder: (context, state) => TaskStatusDialog(
-          Dependencies.logics.import.executions(),
-          Translation.of(context).importHistory,
-        ),
+        builder: (context, state) {
+          final jobs = Dependencies.blocs.jobs;
+          return TaskStatusDialog([
+            if (jobs.isReporting) state,
+            ...jobs.reportedExecutions,
+            ...Dependencies.logics.import.executions(),
+          ], Translation.of(context).importHistory);
+        },
       ),
     );
   }

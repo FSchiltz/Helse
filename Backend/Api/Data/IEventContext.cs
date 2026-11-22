@@ -57,7 +57,7 @@ internal interface IEventContext : IContext
 
     Task<EventType[]> GetEventTypes(bool? all, bool standalone = false);
 
-    Task Insert(Helse.Models.Events.CreateEventType metric);
+    Task<long> Insert(Helse.Models.Events.CreateEventType metric);
 
     Task Update(Helse.Models.Events.UpdateEventType type);
 

@@ -11,7 +11,7 @@ internal interface IMetricContext : IContext
 
     Task Update(Helse.Models.Metrics.UpdateMetricType metric);
 
-    Task Insert(Helse.Models.Metrics.CreateMetricType metric);
+    Task<long> Insert(Helse.Models.Metrics.CreateMetricType metric);
 
     Task DeleteMetric(long id, long personId);
 
@@ -48,7 +48,7 @@ internal interface IMetricContext : IContext
 
     Task Update(Helse.Models.Metrics.UpdateGroup metricGroup);
 
-    Task Insert(Helse.Models.Metrics.CreateGroup metricGroup);
+    Task<long> Insert(Helse.Models.Metrics.CreateGroup metricGroup);
 
     Task<MetricGroup[]> GetMetricGroups();
 

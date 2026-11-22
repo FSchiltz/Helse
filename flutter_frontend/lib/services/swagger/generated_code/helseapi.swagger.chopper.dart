@@ -1223,7 +1223,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<dynamic>> _apiMetricsTypePost({
+  Future<Response<int>> _apiMetricsTypePost({
     required CreateMetricType? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -1245,7 +1245,7 @@ final class _$Helseapi extends Helseapi {
       body: $body,
       tag: swaggerMetaData,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<int, int>($request);
   }
 
   @override
@@ -1329,7 +1329,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<dynamic>> _apiMetricsGroupsPost({
+  Future<Response<int>> _apiMetricsGroupsPost({
     required CreateGroup? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -1351,7 +1351,7 @@ final class _$Helseapi extends Helseapi {
       body: $body,
       tag: swaggerMetaData,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<int, int>($request);
   }
 
   @override
@@ -1703,7 +1703,7 @@ final class _$Helseapi extends Helseapi {
   }
 
   @override
-  Future<Response<dynamic>> _apiEventsTypePost({
+  Future<Response<int>> _apiEventsTypePost({
     required CreateEventType? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: '',
@@ -1725,7 +1725,7 @@ final class _$Helseapi extends Helseapi {
       body: $body,
       tag: swaggerMetaData,
     );
-    return client.send<dynamic, dynamic>($request);
+    return client.send<int, int>($request);
   }
 
   @override

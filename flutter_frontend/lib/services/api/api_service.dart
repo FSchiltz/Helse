@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:chopper/chopper.dart';
 import 'package:helse/di/app_logger.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/api/refresh_authenticator.dart';
 import 'package:helse/services/api/service_error.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
@@ -44,6 +45,13 @@ abstract class ApiService {
       message: "Error during the call",
       description: response.error?.toString(),
     );
+  }
+
+  int? createdId(Object? value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    throw StateError(Translation.current.createdRecordIdMissing);
   }
 
   Future<String?> refreshToken(

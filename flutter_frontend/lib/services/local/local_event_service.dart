@@ -5,6 +5,8 @@ import 'package:helse/services/local/local_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class LocalEventService extends LocalService implements EventService {
+  LocalEventService(super.account);
+
   @override
   Future<int?> addEvent(CreateEvent event, {int? person}) async {
     final newRow = await database.event.insertReturning(
@@ -26,42 +28,47 @@ class LocalEventService extends LocalService implements EventService {
   }
 
   @override
-  Future<void> addEventsType(CreateEventType event) async {
-    await database
-        .into(database.eventType)
-        .insert(
-          EventTypeCompanion.insert(
-            groupId: event.groupId,
-            name: event.name,
-            standAlone: event.standAlone ?? false,
-            visible: event.visible ?? false,
-            description: Value(event.description),
-            timeDifference: Value(event.timeDifference),
-            created: DateTime.now().toUtc(),
-            userEditable: false,
-          ),
-        );
+  Future<int?> addEventsType(CreateEventType event) async {
+    requireUserInitiatedOffline();
+    final row = await database.eventType.insertReturning(
+      EventTypeCompanion.insert(
+        name: event.name,
+        description: Value(event.description),
+        standAlone: event.standAlone ?? false,
+        visible: event.visible ?? false,
+        timeDifference: Value(event.timeDifference),
+        userEditable: true,
+        groupId: event.groupId,
+        created: DateTime.now().toUtc(),
+      ),
+    );
+    return row.id;
   }
 
   @override
   Future<List<Event>?> agenda(DateTime? start, DateTime? end) async {
-    return [];
+    final query = database.event.select();
+    if (start != null) {
+      query.where((event) => event.end.isBiggerOrEqualValue(start));
+    }
+    if (end != null) {
+      query.where((event) => event.start.isSmallerOrEqualValue(end));
+    }
+    final result = await query.get();
+    return result.map(_mapEvent).toList();
   }
 
   @override
   Future<int?> countEvents(int? person, SearchEvent search) async {
     var countExp = database.event.id.count();
 
-    final query = database.selectOnly(database.event)
-      ..addColumns([countExp]);
+    final query = database.selectOnly(database.event)..addColumns([countExp]);
 
     query.where(database.event.type.equals(search.type));
     query.where(database.event.person.equals(person ?? 0));
 
     if (search.from != null) {
-      query.where(
-        database.event.start.isBiggerOrEqualValue(search.from!),
-      );
+      query.where(database.event.start.isBiggerOrEqualValue(search.from!));
     }
 
     if (search.to != null) {
@@ -81,13 +88,28 @@ class LocalEventService extends LocalService implements EventService {
 
   @override
   Future<void> deleteEvent(int event) async {
-    await (database.event.delete()
-          ..where((tbl) => tbl.id.equals(event)))
-        .go();
+    final row = await (database.select(
+      database.event,
+    )..where((item) => item.id.equals(event))).getSingleOrNull();
+    if (row?.serverId case final serverId?) {
+      await queueDeletion('event', serverId);
+    }
+    await (database.event.delete()..where((tbl) => tbl.id.equals(event))).go();
   }
 
   @override
   Future<void> deleteEvents(List<Event> events, {int? person}) async {
+    for (final item in events) {
+      final row =
+          await (database.select(database.event)..where(
+                (event) =>
+                    event.person.equals(person ?? 0) & event.id.equals(item.id),
+              ))
+              .getSingleOrNull();
+      if (row?.serverId case final serverId?) {
+        await queueDeletion('event', serverId);
+      }
+    }
     await database.batch((batch) {
       for (var event in events) {
         batch.deleteWhere(
@@ -100,9 +122,18 @@ class LocalEventService extends LocalService implements EventService {
 
   @override
   Future<void> deleteEventsType(int event) async {
-    await (database.eventType.delete()
-          ..where((tbl) => tbl.id.equals(event)))
-        .go();
+    requireUserInitiatedOffline();
+    final row = await (database.select(
+      database.eventType,
+    )..where((type) => type.id.equals(event))).getSingleOrNull();
+    await database.transaction(() async {
+      await (database.eventType.delete()
+            ..where((type) => type.id.equals(event)))
+          .go();
+      if (row?.serverId case final serverId?) {
+        await queueDeletion('eventType', serverId);
+      }
+    });
   }
 
   @override
@@ -117,7 +148,6 @@ class LocalEventService extends LocalService implements EventService {
       ..where((x) => x.end.isBiggerOrEqualValue(start))
       ..where((x) => x.start.isSmallerOrEqualValue(end))
       ..where((x) => x.person.equals(person ?? 0));
-    
 
     final result = await query.get();
     return result.map(_mapEvent).toList();
@@ -137,9 +167,7 @@ class LocalEventService extends LocalService implements EventService {
 
   @override
   Future<List<EventType>?> eventsType(bool all) async {
-    final result = await database
-        .select(database.eventType)
-        .get();
+    final result = await database.select(database.eventType).get();
     return result
         .map(
           (e) => EventType(
@@ -191,19 +219,18 @@ class LocalEventService extends LocalService implements EventService {
 
   @override
   Future<void> updateEvent(UpdateEvent event) async {
-    await (database.event.update()
-          ..where((x) => x.id.equals(event.id)))
-        .write(
-          EventCompanion(
-            start: Value(event.start),
-            end: Value(event.stop),
-            description: Value(event.description),
-            tag: Value(event.tag),
-            notificationTime: Value(event.notificationTime),
-            source: Value(event.source?.name ?? ImportTypes.none.name),
-            sourceId: Value(event.sourceId),
-          ),
-        );
+    await (database.event.update()..where((x) => x.id.equals(event.id))).write(
+      EventCompanion(
+        start: Value(event.start),
+        end: Value(event.stop),
+        description: Value(event.description),
+        tag: Value(event.tag),
+        notificationTime: Value(event.notificationTime),
+        source: Value(event.source?.name ?? ImportTypes.none.name),
+        sourceId: Value(event.sourceId),
+        synced: const Value(false),
+      ),
+    );
   }
 
   @override
@@ -214,16 +241,18 @@ class LocalEventService extends LocalService implements EventService {
 
   @override
   Future<void> updateEventsType(UpdateEventType event) async {
+    requireUserInitiatedOffline();
     await (database.eventType.update()
-          ..where((x) => x.id.equals(event.id)))
+          ..where((type) => type.id.equals(event.id)))
         .write(
           EventTypeCompanion(
-            description: Value(event.description),
-            groupId: Value(event.groupId),
             name: Value(event.name),
+            description: Value(event.description),
             standAlone: Value(event.standAlone ?? false),
-            timeDifference: Value(event.timeDifference),
             visible: Value(event.visible ?? false),
+            timeDifference: Value(event.timeDifference),
+            groupId: Value(event.groupId),
+            synced: const Value(false),
           ),
         );
   }

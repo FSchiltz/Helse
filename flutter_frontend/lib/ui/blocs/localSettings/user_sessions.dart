@@ -4,7 +4,6 @@ import 'package:material_ui/material_ui.dart';
 import 'package:helse/di/dependencies.dart';
 import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/translation.dart';
-import 'package:helse/services/account.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/layout/common_card.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';

@@ -1,29 +1,35 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:helse/di/dependencies.dart';
-import 'package:helse/services/api/api_service.dart';
+import 'package:helse/services/api/cached_api_service.dart';
 import 'package:helse/services/file_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/inputs/files/file_list_widget.dart';
 
-class ApiFileService extends ApiService implements FileService {
+class ApiFileService extends CachedApiService implements FileService {
   ApiFileService(super.account);
 
   @override
   Future<List<File>> getMetricFiles(int id, int? person) async {
     final api = await getService();
-    return await call(
+    final result =
+        await call(
           () => api.apiFilesMetricsMetricidGet(metricid: id, personId: person),
         ) ??
         [];
+    await cache.saveFiles(result, person, metricId: id);
+    return result;
   }
 
   @override
   Future<List<File>> getEventFiles(int id, int? person) async {
     final api = await getService();
-    return await call(
+    final result =
+        await call(
           () => api.apiFilesEventsEventidGet(eventid: id, personId: person),
         ) ??
         [];
+    await cache.saveFiles(result, person, eventId: id);
+    return result;
   }
 
   @override
@@ -85,15 +91,23 @@ class ApiFileService extends ApiService implements FileService {
   @override
   Future<FileData?> getData(int id, int? person) async {
     final api = await getService();
-    return await call(() => api.apiFilesDataIdGet(id: id, personId: person));
+    final result = await call(
+      () => api.apiFilesDataIdGet(id: id, personId: person),
+    );
+    await cache.saveFileData(id, result?.data);
+    return result;
   }
 
   @override
   Future<PaginatedOfFile?> getFiles(int? person) async {
     final api = await getService();
-    return await call(
+    final result = await call(
       () => api.apiFilesGet(personId: person, page: 0, pageSize: 100),
     );
+    if (result != null) {
+      await cache.saveFiles(result.items, person);
+    }
+    return result;
   }
 
   @override

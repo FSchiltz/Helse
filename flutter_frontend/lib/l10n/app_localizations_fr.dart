@@ -12,6 +12,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String get administration => 'Administration';
 
   @override
+  String get administrationOnlineOnly =>
+      'Les paramètres d’administration sont uniquement disponibles en ligne.';
+
+  @override
+  String get offlineLoginFailed =>
+      'La connexion hors ligne n’a pas pu créer une session locale.';
+
+  @override
+  String get peopleWithCredentialsOnlineOnly =>
+      'Les personnes disposant d’identifiants de connexion ne peuvent être créées qu’en ligne.';
+
+  @override
+  String get createdRecordIdMissing =>
+      'Le serveur n’a pas renvoyé d’identifiant pour l’élément créé.';
+
+  @override
+  String get groupIdRequired => 'Un identifiant de groupe est requis.';
+
+  @override
   String get logout => 'Déconnexion';
 
   @override
@@ -386,7 +405,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get fromExisting => 'From existing';
 
   @override
-  String get offline => 'Use the app offline';
+  String get offline => 'Utiliser l’application hors ligne';
+
+  @override
+  String get offlineBanner => 'Mode hors ligne';
 
   @override
   String get export => 'Export';

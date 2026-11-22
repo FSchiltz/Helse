@@ -28,6 +28,8 @@ class ImportInput {
 class LocalImportService extends LocalService implements ImportService {
   static final Map<String, JobResult> _jobs = {};
 
+  LocalImportService(super.account);
+
   @override
   Future<List<ImportType>?> fileTypes() async {
     return [];

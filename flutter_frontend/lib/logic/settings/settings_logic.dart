@@ -8,6 +8,7 @@ import 'package:helse/di/app_logger.dart';
 import 'package:helse/logic/settings/base_settings_logic.dart';
 import 'package:helse/logic/settings/health_settings.dart';
 import 'package:helse/logic/theme_helper.dart';
+import 'package:helse/services/account.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class SettingsBloc<T> extends Cubit<T> {
@@ -58,24 +59,37 @@ class SettingsLogic extends BaseSettingsLogic {
   }
 
   Future<void> saveSettings(UserSettings settings, bool toServer) async {
-    if (toServer) {
-      await Dependencies.services.settings.savePersonSettings(settings);
-    }
     await save(settingsName, settings.toJson());
+    if (!toServer) return;
+
+    if (Dependencies.blocs.server.isOffline) {
+      await account.setBool(Account.pendingUserSettings, true);
+      return;
+    }
+
+    try {
+      await Dependencies.services.settings.savePersonSettings(settings);
+      await account.setBool(Account.pendingUserSettings, false);
+    } catch (error) {
+      await account.setBool(Account.pendingUserSettings, true);
+      rethrow;
+    }
   }
 
   Future<void> loadSettings() async {
-    var serverSettings = await Dependencies.services.settings
-        .getPersonSettings();
-    appLogger.d("[Settings] Settings loaded from server");
-    await saveSettings(serverSettings, false);
+    if (!account.isEnabled(Account.pendingUserSettings)) {
+      final serverSettings = await Dependencies.services.settings
+          .getPersonSettings();
+      appLogger.d("[Settings] Settings loaded from server");
+      await saveSettings(serverSettings, false);
+    }
 
     init = true;
     Dependencies.theme.loadColors(getColors());
     metrics.changed(true);
     events.changed(true);
     themebloc.changed(
-      ThemeHelper.toSystem(serverSettings.theme ?? InterfaceTheme.system),
+      ThemeHelper.toSystem(userSettings().theme ?? InterfaceTheme.system),
     );
   }
 

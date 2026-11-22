@@ -58,7 +58,7 @@ internal static class EventsLogic
 
         var eventsType = events.MapGroup("/type").RequireAuthorization();
         eventsType.MapPost("/", CreateTypeAsync)
-        .Produces((int)HttpStatusCode.NoContent)
+        .Produces<long>((int)HttpStatusCode.Created)
         .Produces((int)HttpStatusCode.Unauthorized);
 
         eventsType.MapPut("/", UpdateTypeAsync)
@@ -215,9 +215,9 @@ internal static class EventsLogic
         if (admin is not null)
             return admin;
 
-        await events.Insert(type);
+        var id = await events.Insert(type);
 
-        return TypedResults.NoContent();
+        return TypedResults.Created(default(Uri), id);
     }
 
     public static async Task<IResult> UpdateTypeAsync(UpdateEventType type, IUserContext users, IEventContext events, HttpContext context)

@@ -28,7 +28,7 @@ public class EventsLogicTests : LogicTests
     }
 
     [Fact]
-    public async Task EventType()
+    public async Task EventType_ReturnsCreatedId()
     {
         var type = new Helse.Models.Events.CreateEventType()
         {
@@ -39,8 +39,9 @@ public class EventsLogicTests : LogicTests
 
         var users = SetupUser(UserType.Admin);
         var context = SetupContext();
+        _db.Insert(type).Returns(42L);
 
         var result = await EventsLogic.CreateTypeAsync(type, users, _db, context);
-        Assert.IsType<NoContent>(result);
+        Assert.Equal(42L, Assert.IsType<Created<long>>(result).Value);
     }
 }

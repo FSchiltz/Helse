@@ -1,23 +1,26 @@
 import 'package:drift/drift.dart';
+import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/local/database/database.dart';
 import 'package:helse/services/local/local_service.dart';
 import 'package:helse/services/metric_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class LocalMetricService extends LocalService implements MetricService {
+  LocalMetricService(super.account);
+
   @override
-  Future<void> addGroup(CreateGroup group) async {
-    await database
-        .into(database.group)
-        .insert(
-          GroupCompanion.insert(
-            description: group.description,
-            name: group.name,
-            showOnDashboard: group.showOnDashboard ?? false,
-            showTitle: group.showTitle ?? false,
-            created: DateTime.now().toUtc(),
-          ),
-        );
+  Future<int?> addGroup(CreateGroup group) async {
+    requireUserInitiatedOffline();
+    final row = await database.group.insertReturning(
+      GroupCompanion.insert(
+        name: group.name,
+        description: group.description,
+        showOnDashboard: group.showOnDashboard ?? false,
+        showTitle: group.showTitle ?? false,
+        created: DateTime.now().toUtc(),
+      ),
+    );
+    return row.id;
   }
 
   @override
@@ -40,47 +43,42 @@ class LocalMetricService extends LocalService implements MetricService {
   }
 
   @override
-  Future<void> addMetricsType(CreateMetricType metric) async {
-    await database
-        .into(database.metricType)
-        .insert(
-          MetricTypeCompanion.insert(
-            groupId: metric.groupId,
-            name: metric.name,
-            description: Value(metric.description),
-            created: DateTime.now().toUtc(),
-            showOnDashboard: metric.showOnDashboard ?? false,
-            summaryType: metric.summaryType?.name ?? '',
-            timeDifference: Value(metric.timeDifference),
-            type: metric.type?.name ?? '',
-            unit: metric.unit,
-            userEditable: false,
-            visible: metric.visible ?? false,
-            valueCount: Value(metric.valueCount),
-          ),
-        );
+  Future<int?> addMetricsType(CreateMetricType metric) async {
+    requireUserInitiatedOffline();
+    final row = await database.metricType.insertReturning(
+      MetricTypeCompanion.insert(
+        name: metric.name,
+        description: Value(metric.description),
+        groupId: metric.groupId,
+        timeDifference: Value(metric.timeDifference),
+        visible: metric.visible ?? false,
+        valueCount: Value(metric.valueCount),
+        showOnDashboard: metric.showOnDashboard ?? false,
+        userEditable: true,
+        summaryType: metric.summaryType?.name ?? '',
+        type: metric.type?.name ?? '',
+        unit: metric.unit,
+        created: DateTime.now().toUtc(),
+      ),
+    );
+    return row.id;
   }
 
   @override
   Future<int?> countMetrics(int? person, SearchMetric search) async {
     var countExp = database.metric.id.count();
 
-    final query = database.selectOnly(database.metric)
-      ..addColumns([countExp]);
+    final query = database.selectOnly(database.metric)..addColumns([countExp]);
 
     query.where(database.metric.type.equals(search.type));
     query.where(database.metric.person.equals(person ?? 0));
 
     if (search.from != null) {
-      query.where(
-        database.metric.date.isBiggerOrEqualValue(search.from!),
-      );
+      query.where(database.metric.date.isBiggerOrEqualValue(search.from!));
     }
 
     if (search.to != null) {
-      query.where(
-        database.metric.date.isSmallerOrEqualValue(search.to!),
-      );
+      query.where(database.metric.date.isSmallerOrEqualValue(search.to!));
     }
 
     if (search.value != null) {
@@ -96,12 +94,29 @@ class LocalMetricService extends LocalService implements MetricService {
 
   @override
   Future<void> deleteMetric(int id) async {
-    await (database.metric.delete()..where((tbl) => tbl.id.equals(id)))
-        .go();
+    final row = await (database.select(
+      database.metric,
+    )..where((metric) => metric.id.equals(id))).getSingleOrNull();
+    if (row?.serverId case final serverId?) {
+      await queueDeletion('metric', serverId);
+    }
+    await (database.metric.delete()..where((tbl) => tbl.id.equals(id))).go();
   }
 
   @override
   Future<void> deleteMetrics(List<Metric> metrics, {int? person}) async {
+    for (final item in metrics) {
+      final row =
+          await (database.select(database.metric)..where(
+                (metric) =>
+                    metric.person.equals(person ?? 0) &
+                    metric.id.equals(item.id),
+              ))
+              .getSingleOrNull();
+      if (row?.serverId case final serverId?) {
+        await queueDeletion('metric', serverId);
+      }
+    }
     await database.batch((batch) {
       for (var event in metrics) {
         batch.deleteWhere(
@@ -114,16 +129,33 @@ class LocalMetricService extends LocalService implements MetricService {
 
   @override
   Future<void> deleteMetricsGroup(int metric) async {
-    await (database.group.delete()
-          ..where((tbl) => tbl.id.equals(metric)))
-        .go();
+    requireUserInitiatedOffline();
+    final row = await (database.select(
+      database.group,
+    )..where((group) => group.id.equals(metric))).getSingleOrNull();
+    await database.transaction(() async {
+      await (database.group.delete()..where((group) => group.id.equals(metric)))
+          .go();
+      if (row?.serverId case final serverId?) {
+        await queueDeletion('group', serverId);
+      }
+    });
   }
 
   @override
   Future<void> deleteMetricsType(int metric) async {
-    await (database.metricType.delete()
-          ..where((tbl) => tbl.id.equals(metric)))
-        .go();
+    requireUserInitiatedOffline();
+    final row = await (database.select(
+      database.metricType,
+    )..where((type) => type.id.equals(metric))).getSingleOrNull();
+    await database.transaction(() async {
+      await (database.metricType.delete()
+            ..where((type) => type.id.equals(metric)))
+          .go();
+      if (row?.serverId case final serverId?) {
+        await queueDeletion('metricType', serverId);
+      }
+    });
   }
 
   @override
@@ -174,15 +206,12 @@ class LocalMetricService extends LocalService implements MetricService {
 
   @override
   Future<List<MetricType>?> metricsType(bool all, int? group) async {
-    final result =
-        await database.select(database.metricType).join([
-          innerJoin(
-            database.unit,
-            database.unit.id.equalsExp(
-              database.metricType.unit,
-            ),
-          ),
-        ]).get();
+    final result = await database.select(database.metricType).join([
+      innerJoin(
+        database.unit,
+        database.unit.id.equalsExp(database.metricType.unit),
+      ),
+    ]).get();
 
     final summarymap = MetricSummary.values.asNameMap();
     final datamap = MetricDataType.values.asNameMap();
@@ -248,22 +277,30 @@ class LocalMetricService extends LocalService implements MetricService {
 
   @override
   Future<void> updateGroup(UpdateGroup metric) async {
-    await (database.group.update()
-          ..where((x) => x.id.equals(metric.id!)))
+    requireUserInitiatedOffline();
+    final id = metric.id;
+    if (id == null) {
+      throw ArgumentError.value(
+        metric.id,
+        'id',
+        Translation.current.groupIdRequired,
+      );
+    }
+    await (database.group.update()..where((group) => group.id.equals(id)))
         .write(
           GroupCompanion(
             name: Value(metric.name),
             description: Value(metric.description),
             showOnDashboard: Value(metric.showOnDashboard ?? false),
             showTitle: Value(metric.showTitle ?? false),
+            synced: const Value(false),
           ),
         );
   }
 
   @override
   Future<void> updateMetric(UpdateMetric metric) async {
-    await (database.metric.update()
-          ..where((x) => x.id.equals(metric.id)))
+    await (database.metric.update()..where((x) => x.id.equals(metric.id)))
         .write(
           MetricCompanion(
             date: Value(metric.date),
@@ -272,6 +309,7 @@ class LocalMetricService extends LocalService implements MetricService {
             unit: Value(metric.unit),
             source: Value(metric.source?.name ?? ImportTypes.none.name),
             sourceId: Value(metric.sourceId),
+            synced: const Value(false),
           ),
         );
   }
@@ -284,21 +322,22 @@ class LocalMetricService extends LocalService implements MetricService {
 
   @override
   Future<void> updateMetricsType(UpdateMetricType metric) async {
+    requireUserInitiatedOffline();
     await (database.metricType.update()
-          ..where((x) => x.id.equals(metric.id)))
+          ..where((type) => type.id.equals(metric.id)))
         .write(
           MetricTypeCompanion(
-            description: Value(metric.description),
             name: Value(metric.name),
-            unit: Value(metric.unit),
-            showOnDashboard: Value(metric.showOnDashboard ?? false),
+            description: Value(metric.description),
             groupId: Value(metric.groupId),
-            summaryType: Value(
-              metric.summaryType?.name ?? MetricSummary.latest.name,
-            ),
             timeDifference: Value(metric.timeDifference),
-            valueCount: Value(metric.valueCount),
             visible: Value(metric.visible ?? false),
+            valueCount: Value(metric.valueCount),
+            showOnDashboard: Value(metric.showOnDashboard ?? false),
+            summaryType: Value(metric.summaryType?.name ?? ''),
+            type: Value(metric.type?.name ?? ''),
+            unit: Value(metric.unit),
+            synced: const Value(false),
           ),
         );
   }
