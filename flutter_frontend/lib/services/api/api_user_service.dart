@@ -28,7 +28,7 @@ class ApiUserService extends CachedApiService implements UserService {
     final api = await getService();
     final result = await call(api.apiPatientsGet);
     if (result != null) {
-      await cache.savePersons(result);
+      await cache.savePersons(result, addPatientType: true);
     }
     return result;
   }

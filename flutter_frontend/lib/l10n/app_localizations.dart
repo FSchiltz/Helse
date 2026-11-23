@@ -830,6 +830,24 @@ abstract class AppLocalizations {
   /// **'Offline mode'**
   String get offlineBanner;
 
+  /// No description provided for @savedToServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to server'**
+  String get savedToServer;
+
+  /// No description provided for @localOnlyCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Local only copy'**
+  String get localOnlyCopy;
+
+  /// No description provided for @syncStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync status'**
+  String get syncStatus;
+
   /// No description provided for @export.
   ///
   /// In en, this message translates to:

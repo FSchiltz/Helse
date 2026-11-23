@@ -411,6 +411,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get offlineBanner => 'Mode hors ligne';
 
   @override
+  String get savedToServer => 'Sauvegardé sur le serveur';
+
+  @override
+  String get localOnlyCopy => 'Copie locale uniquement';
+
+  @override
+  String get syncStatus => 'Statut de synchronisation';
+
+  @override
   String get export => 'Export';
 
   @override

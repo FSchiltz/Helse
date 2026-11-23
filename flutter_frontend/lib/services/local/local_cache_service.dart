@@ -38,6 +38,28 @@ class LocalCacheService extends LocalService {
     return byId?.serverId ?? id;
   }
 
+  Future<bool> metricSynced(int id) async {
+    final byServerId = await (database.select(
+      database.metric,
+    )..where((metric) => metric.serverId.equals(id))).getSingleOrNull();
+    if (byServerId != null) return byServerId.synced;
+    final byId = await (database.select(
+      database.metric,
+    )..where((metric) => metric.id.equals(id))).getSingleOrNull();
+    return byId?.synced ?? true;
+  }
+
+  Future<bool> eventSynced(int id) async {
+    final byServerId = await (database.select(
+      database.event,
+    )..where((event) => event.serverId.equals(id))).getSingleOrNull();
+    if (byServerId != null) return byServerId.synced;
+    final byId = await (database.select(
+      database.event,
+    )..where((event) => event.id.equals(id))).getSingleOrNull();
+    return byId?.synced ?? true;
+  }
+
   Future<void> removeMetric(int id) async {
     final row = await (database.select(
       database.metric,
@@ -108,49 +130,51 @@ class LocalCacheService extends LocalService {
   }
 
   Future<void> saveMetricTypes(List<api.MetricType> values) async {
-    for (final value in values) {
-      final groupId = await _ensureGroup(value.groupId);
-      final unitId = await _saveUnit(value.unit);
-      final id = value.id;
-      final byServerId = await (database.select(
-        database.metricType,
-      )..where((row) => row.serverId.equals(id))).getSingleOrNull();
-      if (byServerId != null && !byServerId.synced) continue;
-      final byId = await (database.select(
-        database.metricType,
-      )..where((row) => row.id.equals(id))).getSingleOrNull();
-      final existing =
-          byServerId ??
-          (byId != null &&
-                  byId.synced &&
-                  (byId.serverId == null || byId.serverId == id)
-              ? byId
-              : null);
-      final localId = existing?.id ?? (byId == null ? id : null);
+    await database.transaction(() async {
+      for (final value in values) {
+        final groupId = await _ensureGroup(value.groupId);
+        final unitId = await _saveUnit(value.unit);
+        final id = value.id;
+        final byServerId = await (database.select(
+          database.metricType,
+        )..where((row) => row.serverId.equals(id))).getSingleOrNull();
+        if (byServerId != null && !byServerId.synced) continue;
+        final byId = await (database.select(
+          database.metricType,
+        )..where((row) => row.id.equals(id))).getSingleOrNull();
+        final existing =
+            byServerId ??
+            (byId != null &&
+                    byId.synced &&
+                    (byId.serverId == null || byId.serverId == id)
+                ? byId
+                : null);
+        final localId = existing?.id ?? (byId == null ? id : null);
 
-      await database
-          .into(database.metricType)
-          .insertOnConflictUpdate(
-            MetricTypeCompanion.insert(
-              id: localId == null ? const Value.absent() : Value(localId),
-              name: value.name,
-              description: Value(value.description),
-              groupId: groupId,
-              timeDifference: Value(value.timeDifference),
-              visible: value.visible ?? false,
-              valueCount: Value(value.valueCount),
-              showOnDashboard: value.showOnDashboard ?? false,
-              userEditable: value.userEditable,
-              summaryType: value.summaryType?.name ?? '',
-              type: value.type?.name ?? '',
-              unit: unitId,
-              created: DateTime.now().toUtc(),
-              synced: const Value(true),
-              serverId: Value(value.id),
-              syncTime: Value(DateTime.now().toUtc()),
-            ),
-          );
-    }
+        await database
+            .into(database.metricType)
+            .insertOnConflictUpdate(
+              MetricTypeCompanion.insert(
+                id: localId == null ? const Value.absent() : Value(localId),
+                name: value.name,
+                description: Value(value.description),
+                groupId: groupId,
+                timeDifference: Value(value.timeDifference),
+                visible: value.visible ?? false,
+                valueCount: Value(value.valueCount),
+                showOnDashboard: value.showOnDashboard ?? false,
+                userEditable: value.userEditable,
+                summaryType: value.summaryType?.name ?? '',
+                type: value.type?.name ?? '',
+                unit: unitId,
+                created: DateTime.now().toUtc(),
+                synced: const Value(true),
+                serverId: Value(value.id),
+                syncTime: Value(DateTime.now().toUtc()),
+              ),
+            );
+      }
+    });
   }
 
   Future<void> saveEventTypes(List<api.EventType> values) async {
@@ -194,7 +218,10 @@ class LocalCacheService extends LocalService {
     }
   }
 
-  Future<void> savePersons(List<api.Person> values) async {
+  Future<void> savePersons(
+    List<api.Person> values, {
+    bool addPatientType = false,
+  }) async {
     for (final value in values) {
       final id = value.id;
 
@@ -225,7 +252,11 @@ class LocalCacheService extends LocalService {
               email: Value(value.email),
               phone: Value(value.phone),
               surname: Value(value.surname),
-              types: Value(value.types?.map((type) => type.name).join(';')),
+              types: Value(
+                addPatientType
+                    ? UserType.patient.name
+                    : value.types?.map((type) => type.name).join(';'),
+              ),
               created: value.created ?? DateTime.now().toUtc(),
               synced: const Value(true),
               serverId: Value(value.id),
@@ -270,53 +301,59 @@ class LocalCacheService extends LocalService {
     int? metricId,
     int? eventId,
   }) async {
-    for (final value in values) {
-      final id = value.id;
-      if (id == null) continue;
+    await database.transaction(() async {
+      for (final value in values) {
+        final id = value.id;
+        if (id == null) continue;
+        if (id <= 0) {
+          appLogger.w('[OfflineCache] Skipped file with invalid server ID $id');
+          continue;
+        }
 
-      final localPerson = await _ensurePerson(person ?? 0);
-      final byServerId = await (database.select(
-        database.file,
-      )..where((row) => row.serverId.equals(id))).getSingleOrNull();
-      if (byServerId != null && !byServerId.synced) continue;
-      final byId = await (database.select(
-        database.file,
-      )..where((row) => row.id.equals(id))).getSingleOrNull();
-      final existing =
-          byServerId ??
-          (byId?.synced == true &&
-                  (byId?.serverId == null || byId?.serverId == id)
-              ? byId
-              : null);
-      final localId = existing?.id ?? (byId == null ? id : null);
+        final localPerson = await _ensurePerson(person ?? 0);
+        final byServerId = await (database.select(
+          database.file,
+        )..where((row) => row.serverId.equals(id))).getSingleOrNull();
+        if (byServerId != null && !byServerId.synced) continue;
+        final byId = await (database.select(
+          database.file,
+        )..where((row) => row.id.equals(id))).getSingleOrNull();
+        final existing =
+            byServerId ??
+            (byId?.synced == true &&
+                    (byId?.serverId == null || byId?.serverId == id)
+                ? byId
+                : null);
+        final localId = existing?.id ?? (byId == null ? id : null);
 
-      final localFileId = await database
-          .into(database.file)
-          .insertOnConflictUpdate(
-            FileCompanion.insert(
-              id: localId == null ? const Value.absent() : Value(localId),
-              type: value.type?.name ?? FileType.none.name,
-              dataType: '',
-              name: value.name,
-              description: value.description,
-              start: value.start ?? value.created ?? DateTime.now().toUtc(),
-              end: Value(value.stop),
-              valid: true,
-              person: localPerson,
-              created: value.created ?? DateTime.now().toUtc(),
-              synced: const Value(true),
-              serverId: Value(id),
-              syncTime: Value(DateTime.now().toUtc()),
-            ),
-          );
+        final localFileId = await database
+            .into(database.file)
+            .insertOnConflictUpdate(
+              FileCompanion.insert(
+                id: localId == null ? const Value.absent() : Value(localId),
+                type: value.type?.name ?? FileType.none.name,
+                dataType: '',
+                name: value.name,
+                description: value.description,
+                start: value.start ?? value.created ?? DateTime.now().toUtc(),
+                end: Value(value.stop),
+                valid: true,
+                person: localPerson,
+                created: value.created ?? DateTime.now().toUtc(),
+                synced: const Value(true),
+                serverId: Value(id),
+                syncTime: Value(DateTime.now().toUtc()),
+              ),
+            );
 
-      if (metricId != null) {
-        await _linkFile(localFileId, metricId, isEvent: false);
+        if (metricId != null) {
+          await _linkFile(localFileId, metricId, isEvent: false);
+        }
+        if (eventId != null) {
+          await _linkFile(localFileId, eventId, isEvent: true);
+        }
       }
-      if (eventId != null) {
-        await _linkFile(localFileId, eventId, isEvent: true);
-      }
-    }
+    });
   }
 
   Future<void> saveFileData(int id, String? encoded) async {
@@ -653,6 +690,14 @@ class LocalCacheService extends LocalService {
     int recordId, {
     required bool isEvent,
   }) async {
+    if (fileId <= 0 || recordId <= 0) {
+      appLogger.w(
+        '[OfflineCache] Skipped file link with invalid local ID '
+        '(file $fileId, record $recordId)',
+      );
+      return;
+    }
+
     if (isEvent) {
       final localEvent =
           await (database.select(database.event)
