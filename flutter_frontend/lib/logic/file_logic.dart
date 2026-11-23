@@ -25,6 +25,7 @@ class FileLogic {
     Future<void> Function(int fileId) unlink,
     void Function(double progress, String status) callback,
   ) async {
+    final service = Dependencies.services.files;
     var i = 0;
     final total = fileToAdd.length + toDelete.length;
     for (var file in fileToAdd) {
@@ -32,18 +33,16 @@ class FileLogic {
 
       var fileId = file.id;
 
-      if (fileId == null) {
-        fileId = await Dependencies.services.files.postFile(file, person) ?? 0;
-
+      if (fileId == null || fileId == 0) {
+        fileId = await service.postFile(file, person);
+        if (fileId == null || fileId == 0) {
+          throw StateError('File "${file.name}" could not be created');
+        }
         file.id = fileId;
       }
 
       if (file.file != null) {
-        await Dependencies.services.files.postFileData(
-          fileId,
-          file.file!,
-          person,
-        );
+        await service.postFileData(fileId, file.file!, person);
 
         file.file = null;
       }
