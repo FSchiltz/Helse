@@ -93,7 +93,7 @@ internal static class PatientsLogic
                 Name = x.Name,
                 Surname = x.Surname,
                 Identifier = x.Identifier,
-                Types = [],
+                Types = [UserType.Patient],
             };
         });
 

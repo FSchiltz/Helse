@@ -194,7 +194,10 @@ class LocalCacheService extends LocalService {
     }
   }
 
-  Future<void> savePersons(List<api.Person> values) async {
+  Future<void> savePersons(
+    List<api.Person> values, {
+    bool addPatientType = false,
+  }) async {
     for (final value in values) {
       final id = value.id;
 
@@ -225,7 +228,11 @@ class LocalCacheService extends LocalService {
               email: Value(value.email),
               phone: Value(value.phone),
               surname: Value(value.surname),
-              types: Value(value.types?.map((type) => type.name).join(';')),
+              types: Value(
+                addPatientType
+                    ? UserType.patient.name
+                    : value.types?.map((type) => type.name).join(';'),
+              ),
               created: value.created ?? DateTime.now().toUtc(),
               synced: const Value(true),
               serverId: Value(value.id),
