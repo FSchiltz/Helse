@@ -2,6 +2,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/event_helper.dart';
 import 'package:helse/helpers/translation.dart';
+import 'package:helse/services/account.dart';
+import 'package:helse/services/local/local_cache_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 import 'package:helse/ui/common/key_value_list.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
@@ -36,25 +38,37 @@ class EventMoreInfo extends StatelessWidget {
         locale.detailof(event.id.toString()),
         style: Theme.of(context).textTheme.titleLarge,
       ),
-      content: KeyValueList([
-        KeyValue(locale.id, value: event.id.toString()),
-        KeyValue(locale.description, value: event.description),
-        KeyValue(
-          locale.start,
-          value: DateHelper.format(event.start, context: context),
-        ),
-        KeyValue(
-          locale.stop,
-          value: DateHelper.format(event.stop, context: context),
-        ),
-        KeyValue(locale.tag, value: event.tag),
-        KeyValue(locale.source, value: event.source?.name),
-        KeyValue("Source id", value: event.sourceId),
-        KeyValue(
-          locale.notificationTime,
-          value: DateHelper.format(event.notificationTime, context: context),
-        ),
-      ]),
+      content: FutureBuilder<bool>(
+        future: LocalCacheService(Account()).eventSynced(event.id),
+        builder: (context, snapshot) {
+          final syncLabel = snapshot.data == false
+              ? locale.localOnlyCopy
+              : locale.savedToServer;
+          return KeyValueList([
+            KeyValue(locale.id, value: event.id.toString()),
+            KeyValue(locale.syncStatus, value: syncLabel),
+            KeyValue(locale.description, value: event.description),
+            KeyValue(
+              locale.start,
+              value: DateHelper.format(event.start, context: context),
+            ),
+            KeyValue(
+              locale.stop,
+              value: DateHelper.format(event.stop, context: context),
+            ),
+            KeyValue(locale.tag, value: event.tag),
+            KeyValue(locale.source, value: event.source?.name),
+            KeyValue("Source id", value: event.sourceId),
+            KeyValue(
+              locale.notificationTime,
+              value: DateHelper.format(
+                event.notificationTime,
+                context: context,
+              ),
+            ),
+          ]);
+        },
+      ),
     );
   }
 }

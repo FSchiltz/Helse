@@ -38,6 +38,28 @@ class LocalCacheService extends LocalService {
     return byId?.serverId ?? id;
   }
 
+  Future<bool> metricSynced(int id) async {
+    final byServerId = await (database.select(
+      database.metric,
+    )..where((metric) => metric.serverId.equals(id))).getSingleOrNull();
+    if (byServerId != null) return byServerId.synced;
+    final byId = await (database.select(
+      database.metric,
+    )..where((metric) => metric.id.equals(id))).getSingleOrNull();
+    return byId?.synced ?? true;
+  }
+
+  Future<bool> eventSynced(int id) async {
+    final byServerId = await (database.select(
+      database.event,
+    )..where((event) => event.serverId.equals(id))).getSingleOrNull();
+    if (byServerId != null) return byServerId.synced;
+    final byId = await (database.select(
+      database.event,
+    )..where((event) => event.id.equals(id))).getSingleOrNull();
+    return byId?.synced ?? true;
+  }
+
   Future<void> removeMetric(int id) async {
     final row = await (database.select(
       database.metric,

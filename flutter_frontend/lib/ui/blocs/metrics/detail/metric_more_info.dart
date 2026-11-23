@@ -3,6 +3,8 @@ import 'package:helse/helpers/date_helper.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
+import 'package:helse/services/account.dart';
+import 'package:helse/services/local/local_cache_service.dart';
 import 'package:helse/ui/blocs/metrics/metric_file_list.dart';
 import 'package:helse/ui/common/key_value_list.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
@@ -43,25 +45,34 @@ class MetricMoreInfo extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: UIConstants.formPad,
         children: [
-          KeyValueList([
-            KeyValue(locale.id, value: metric.id.toString()),
-            KeyValue(locale.value, value: metric.value),
-            KeyValue(
-              locale.unit,
-              value: '',
-              children: [
-                KeyValue('Description', value: unit.description),
-                KeyValue('Unit', value: unit.code),
-              ],
-            ),
-            KeyValue(
-              locale.date,
-              value: DateHelper.format(metric.date, context: context),
-            ),
-            KeyValue(locale.tag, value: metric.tag),
-            KeyValue(locale.source, value: metric.source?.name),
-            KeyValue("Source id", value: metric.sourceId),
-          ]),
+          FutureBuilder<bool>(
+            future: LocalCacheService(Account()).metricSynced(metric.id),
+            builder: (context, snapshot) {
+              final syncLabel = snapshot.data == false
+                  ? locale.localOnlyCopy
+                  : locale.savedToServer;
+              return KeyValueList([
+                KeyValue(locale.id, value: metric.id.toString()),
+                KeyValue(locale.syncStatus, value: syncLabel),
+                KeyValue(locale.value, value: metric.value),
+                KeyValue(
+                  locale.unit,
+                  value: '',
+                  children: [
+                    KeyValue('Description', value: unit.description),
+                    KeyValue('Unit', value: unit.code),
+                  ],
+                ),
+                KeyValue(
+                  locale.date,
+                  value: DateHelper.format(metric.date, context: context),
+                ),
+                KeyValue(locale.tag, value: metric.tag),
+                KeyValue(locale.source, value: metric.source?.name),
+                KeyValue("Source id", value: metric.sourceId),
+              ]);
+            },
+          ),
           MetricFileList(metric: metric.id, person: person, readonly: true),
         ],
       ),
