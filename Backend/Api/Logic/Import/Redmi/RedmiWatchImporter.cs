@@ -12,7 +12,7 @@ using Helse.Api.Jobs;
 
 namespace Helse.Api.Logic.Import.Redmi;
 
-internal class RedmiWatchImporter(Stream file, IEventContext eventDb,IMetricContext metricDb, long user, long patient) : FileImporter(file, eventDb, metricDb, user, patient)
+internal class RedmiWatchImporter(Stream file, IEventContext eventDb, IMetricContext metricDb, long user, long patient) : FileImporter(file, eventDb, metricDb, user, patient)
 {
     private const string MaxSpo = "max_spo2";
     private const string MinSpo = "min_spo2";
@@ -62,7 +62,10 @@ internal class RedmiWatchImporter(Stream file, IEventContext eventDb,IMetricCont
     {
         // Remdi fiel are csv, we first convert them
         using var reader = new StreamReader(File);
-        using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+        await using var csv = CsvReader.Create(reader, options: new()
+        {
+            FormatProvider = CultureInfo.InvariantCulture,
+        });
 
         long read = 0;
 
