@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:helse/di/services.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/helpers/metrics/metric_validation.dart';
@@ -9,7 +8,6 @@ import 'package:helse/ui/common/inputs/files/file_list_widget.dart';
 import 'package:helse/ui/common/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/ui_constants.dart';
-import 'package:helse/services/local/local_metric_service.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
