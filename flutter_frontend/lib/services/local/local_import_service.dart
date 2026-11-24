@@ -174,6 +174,10 @@ class LocalImportService extends LocalService implements ImportService {
         input.sendPort.send(initial);
       }
 
+      if (addedMetric > 0 || addedEvent > 0) {
+        await databaseForIsolate.markLocalChanges();
+      }
+
       var text =
           "Metrics: $addedMetric added - $skippedMetric skipped of ${input.file.metrics?.length} \n Events: $addedEvent added - $skippedEvent skipped of ${input.file.events?.length}";
       appLogger.i(text);

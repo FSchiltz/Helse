@@ -10,6 +10,7 @@ import 'package:helse/services/local/database/models/metric.dart';
 import 'package:helse/services/local/database/models/metric_type.dart';
 import 'package:helse/services/local/database/models/person.dart';
 import 'package:helse/services/local/database/models/pending_deletion.dart';
+import 'package:helse/services/local/database/models/sync_state.dart';
 import 'package:helse/services/local/database/models/unit.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.enums.swagger.dart'
     show MetricDataType, UnitType, MetricSummary;
@@ -31,6 +32,7 @@ part 'database.g.dart';
     MetricFiles,
     EventFiles,
     PendingDeletion,
+    SyncState,
   ],
 )
 class Database extends _$Database {
@@ -39,7 +41,26 @@ class Database extends _$Database {
   static const cacheValidity = Duration(days: 30);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
+
+  Future<bool> hasLocalChanges() async {
+    final state = await (select(
+      syncState,
+    )..where((row) => row.id.equals(1))).getSingleOrNull();
+    return state?.hasChanges ?? false;
+  }
+
+  Future<void> markLocalChanges() async {
+    await into(syncState).insertOnConflictUpdate(
+      SyncStateCompanion(id: const Value(1), hasChanges: const Value(true)),
+    );
+  }
+
+  Future<void> clearLocalChanges() async {
+    await (update(syncState)..where((row) => row.id.equals(1))).write(
+      const SyncStateCompanion(hasChanges: Value(false)),
+    );
+  }
 
   Future<void> expireServerCache({DateTime? now}) async {
     final cutoff = (now ?? DateTime.now().toUtc()).toUtc().subtract(
@@ -223,6 +244,24 @@ class Database extends _$Database {
         }
         if (from < 4) {
           await m.addColumn(file, file.content);
+        }
+        if (from < 5) {
+          await m.createTable(syncState);
+          await customStatement('''
+            INSERT INTO sync_state (id, has_changes)
+            SELECT 1, CASE WHEN
+              EXISTS (SELECT 1 FROM "group" WHERE synced = 0) OR
+              EXISTS (SELECT 1 FROM metric_type WHERE synced = 0) OR
+              EXISTS (SELECT 1 FROM event_type WHERE synced = 0) OR
+              EXISTS (SELECT 1 FROM person WHERE synced = 0) OR
+              EXISTS (SELECT 1 FROM metric WHERE synced = 0) OR
+              EXISTS (SELECT 1 FROM event WHERE synced = 0) OR
+              EXISTS (SELECT 1 FROM file WHERE synced = 0) OR
+              EXISTS (SELECT 1 FROM metric_files WHERE synced = 0) OR
+              EXISTS (SELECT 1 FROM event_files WHERE synced = 0) OR
+              EXISTS (SELECT 1 FROM pending_deletion)
+            THEN 1 ELSE 0 END
+          ''');
         }
         if (from < 3) {
           await customStatement(

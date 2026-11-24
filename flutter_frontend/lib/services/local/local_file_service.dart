@@ -133,6 +133,7 @@ class LocalFileService extends LocalService implements FileService {
         event: eventId,
       ),
     );
+    await markChanged();
   }
 
   @override
@@ -144,6 +145,7 @@ class LocalFileService extends LocalService implements FileService {
         metric: metricId,
       ),
     );
+    await markChanged();
   }
 
   @override
@@ -161,6 +163,9 @@ class LocalFileService extends LocalService implements FileService {
       ),
     ));
 
+    if (data != null) {
+      await markChanged();
+    }
     return data?.id;
   }
 
@@ -170,12 +175,14 @@ class LocalFileService extends LocalService implements FileService {
       final content = await file.readAsBytes();
       await (database.file.update()..where((row) => row.id.equals(fileId)))
           .write(db.FileCompanion(content: Value(content)));
+      await markChanged();
       return;
     }
 
     final dir = await getApplicationSupportDirectory();
     final fileDir = await io.Directory('${dir.path}/$path').create();
     await file.saveTo('${fileDir.path}/$fileId');
+    await markChanged();
   }
 
   @override
@@ -205,6 +212,7 @@ class LocalFileService extends LocalService implements FileService {
     await database.eventFiles.deleteWhere(
       (x) => x.file.equals(fileId) & x.event.equals(eventId),
     );
+    await markChanged();
   }
 
   @override
@@ -234,5 +242,6 @@ class LocalFileService extends LocalService implements FileService {
     await database.metricFiles.deleteWhere(
       (x) => x.file.equals(fileId) & x.metric.equals(metricId),
     );
+    await markChanged();
   }
 }

@@ -11,6 +11,8 @@ class LocalService {
   static Database? _database;
   Database get database => _database ??= Database();
 
+  Future<void> markChanged() => database.markLocalChanges();
+
   Never onlineOnly() =>
       throw UnsupportedError(Translation.current.administrationOnlineOnly);
 
@@ -35,5 +37,6 @@ class LocalService {
             created: DateTime.now().toUtc(),
           ),
         );
+    await markChanged();
   }
 }
