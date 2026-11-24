@@ -43,7 +43,7 @@ abstract class ApiService {
     throw ServiceError(
       response.statusCode,
       message: "Error during the call",
-      description: response.error?.toString(),
+      description: response.error,
     );
   }
 

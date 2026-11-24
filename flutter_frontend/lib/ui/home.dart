@@ -8,11 +8,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../di/dependencies.dart';
 import '../logic/task_bloc.dart';
-import '../logic/account/server_state.dart';
 import '../services/swagger/generated_code/helseapi.swagger.dart';
 import 'administration.dart';
 import 'blocs/imports/file_import.dart';
 import 'common/notification.dart';
+import 'common/offline_app_bar_title.dart';
 import 'dashboard.dart';
 import 'local_settings.dart';
 
@@ -83,6 +83,7 @@ class _HomeState extends State<Home> {
             scrolledUnderElevation: 10,
             elevation: 1,
             centerTitle: true,
+            title: OfflineAppBarTitle(server: Dependencies.blocs.server),
             actions: [
               IconButton(
                 onPressed: () {
@@ -206,29 +207,7 @@ class _HomeState extends State<Home> {
               ),
             ],
           ),
-          body: BlocBuilder<ServerState, ServerStatus>(
-            bloc: Dependencies.blocs.server,
-            builder: (context, status) => Column(
-              children: [
-                if (status.offline)
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    color: Theme.of(context).colorScheme.errorContainer,
-                    child: Row(
-                      children: [
-                        const Icon(Icons.cloud_off),
-                        const SizedBox(width: 8),
-                        Text(Translation.of(context).offlineBanner),
-                      ],
-                    ),
-                  ),
-                Expanded(
-                  child: Dashboard(types: types, key: _refreshKey),
-                ),
-              ],
-            ),
-          ),
+          body: Dashboard(types: types, key: _refreshKey),
         );
       },
     );

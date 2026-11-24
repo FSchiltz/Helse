@@ -241,9 +241,37 @@ class LocalEventService extends LocalService implements EventService {
   }
 
   @override
-  Future<void> updateEvents(PatchEvent patch, {int? person}) {
-    // TODO: implement updateEvents
-    throw UnimplementedError();
+  Future<void> updateEvents(PatchEvent patch, {int? person}) async {
+    final ids = patch.ids;
+    if (ids == null || ids.isEmpty) {
+      return;
+    }
+
+    final updated =
+        await (database.event.update()..where(
+              (event) => event.id.isIn(ids) & event.person.equals(person ?? 0),
+            ))
+            .write(
+              EventCompanion(
+                start: patch.updateStart == true
+                    ? Value(patch.start)
+                    : Value.absent(),
+                end: patch.updateStop == true
+                    ? Value(patch.stop)
+                    : Value.absent(),
+                description: patch.updateDescription == true
+                    ? Value(patch.description)
+                    : Value.absent(),
+                tag: patch.updateTag == true
+                    ? Value(patch.tag)
+                    : Value.absent(),
+                synced: const Value(false),
+              ),
+            );
+
+    if (updated > 0) {
+      await markChanged();
+    }
   }
 
   @override

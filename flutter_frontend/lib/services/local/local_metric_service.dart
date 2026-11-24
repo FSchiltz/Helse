@@ -325,9 +325,41 @@ class LocalMetricService extends LocalService implements MetricService {
   }
 
   @override
-  Future<void> updateMetrics(PatchMetric patch, {int? person}) {
-    // TODO: implement updateMetrics
-    throw UnimplementedError();
+  Future<void> updateMetrics(PatchMetric patch, {int? person}) async {
+    final ids = patch.ids;
+    if (ids == null || ids.isEmpty) {
+      return;
+    }
+
+    final updated =
+        await (database.metric.update()..where(
+              (metric) =>
+                  metric.id.isIn(ids) & metric.person.equals(person ?? 0),
+            ))
+            .write(
+              MetricCompanion(
+                date: patch.updateDate == true
+                    ? Value(patch.date)
+                    : const Value.absent(),
+                value: patch.updateValue == true
+                    ? Value(patch.value)
+                    : const Value.absent(),
+                tag: patch.updateTag == true
+                    ? Value(patch.tag)
+                    : const Value.absent(),
+                sourceId: patch.updateSourceId == true
+                    ? Value(patch.sourceId)
+                    : const Value.absent(),
+                source: patch.updateSourceId == true
+                    ? Value(patch.source?.name ?? ImportTypes.none.name)
+                    : const Value.absent(),
+                synced: const Value(false),
+              ),
+            );
+
+    if (updated > 0) {
+      await markChanged();
+    }
   }
 
   @override
