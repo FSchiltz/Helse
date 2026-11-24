@@ -424,4 +424,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get keepConnected => 'Keep Connected';
+
+  @override
+  String get repairLocalChanges => 'Repair local changes';
+
+  @override
+  String get noLocalChangesToRepair => 'No invalid local records need repair.';
+
+  @override
+  String get offlineFileDataMissing => 'The local file data is missing.';
+
+  @override
+  String get replaceMissingFile => 'Select replacement file';
+
+  @override
+  String get retrySync => 'Retry synchronization';
 }

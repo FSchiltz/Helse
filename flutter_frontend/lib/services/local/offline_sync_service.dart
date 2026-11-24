@@ -167,11 +167,14 @@ class OfflineSyncService extends LocalService {
       await database.clearLocalChanges();
     }
     final messages = [...failures, ?skippedStatus];
+    final incomplete = failures.isNotEmpty || skippedStatus != null;
     jobs.finishReport(
-      success: failures.isEmpty,
+      success: !incomplete,
       status: failures.isNotEmpty
           ? 'Synchronization completed with errors: ${messages.join('; ')}'
-          : skippedStatus ?? 'Synchronization complete',
+          : skippedStatus == null
+          ? 'Synchronization complete'
+          : 'Synchronization incomplete: $skippedStatus',
     );
   }
 
@@ -511,7 +514,7 @@ class OfflineSyncService extends LocalService {
       } else {
         await service.updateMetric(
           UpdateMetric(
-            id: row.id,
+            id: serverId,
             date: row.date,
             value: row.value,
             tag: row.tag,
@@ -580,7 +583,7 @@ class OfflineSyncService extends LocalService {
       } else {
         await service.updateEvent(
           UpdateEvent(
-            id: row.id,
+            id: serverId,
             type: typeId,
             description: row.description,
             start: row.start,

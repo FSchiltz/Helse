@@ -352,5 +352,15 @@
     "export": "Export",
     "@export": {},
     "keepConnected" : "Keep Connected",
-    "@keepConnected": {}
+    "@keepConnected": {},
+    "repairLocalChanges": "Repair local changes",
+    "@repairLocalChanges": {},
+    "noLocalChangesToRepair": "No invalid local records need repair.",
+    "@noLocalChangesToRepair": {},
+    "offlineFileDataMissing": "The local file data is missing.",
+    "@offlineFileDataMissing": {},
+    "replaceMissingFile": "Select replacement file",
+    "@replaceMissingFile": {},
+    "retrySync": "Retry synchronization",
+    "@retrySync": {}
 }

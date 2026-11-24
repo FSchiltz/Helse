@@ -5,6 +5,7 @@ import 'package:helse/logic/event.dart';
 import 'package:helse/logic/task_bloc.dart';
 import 'package:helse/ui/common/layout/square_dialog.dart';
 import 'package:helse/ui/common/ui_constants.dart';
+import 'package:helse/ui/local_change_repair_dialog.dart';
 
 class TaskStatusDialog extends StatelessWidget {
   final List<Execution> tasks;
@@ -71,6 +72,15 @@ class TaskStatusDialog extends StatelessWidget {
             style: theme.bodyMedium,
           ),
           Text(task.status ?? '', style: theme.bodySmall),
+          if (task.status?.contains('Skipped invalid local records') == true)
+            TextButton.icon(
+              onPressed: () => showDialog<void>(
+                context: context,
+                builder: (context) => const LocalChangeRepairDialog(),
+              ),
+              icon: const Icon(Icons.edit),
+              label: Text(Translation.of(context).repairLocalChanges),
+            ),
           if (hasProgress)
             Stack(
               children: [
