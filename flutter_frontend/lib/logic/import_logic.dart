@@ -119,9 +119,18 @@ class ImportLogic {
       return;
     }
 
-    final XFile textFile = XFile(path, mimeType: "application/vnd.sqlite3", name: "Helse.sqlite");
+    final XFile textFile = XFile(
+      path,
+      mimeType: "application/vnd.sqlite3",
+      name: "Helse.sqlite",
+    );
     await textFile.saveTo(dir);
-    // TODO: Notify the user
+    Notify.showSystem(
+      'Database exported',
+      description: 'Saved to $dir',
+      kind: NotificationKind.success,
+      channel: "Exports",
+    );
 
     Notify.showIcon(NotificationKind.success);
 
