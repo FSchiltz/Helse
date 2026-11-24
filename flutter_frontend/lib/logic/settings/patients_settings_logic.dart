@@ -5,6 +5,7 @@ import 'package:helse/di/dependencies.dart';
 import 'package:helse/di/app_logger.dart';
 import 'package:helse/logic/settings/base_settings_logic.dart';
 import 'package:helse/services/account.dart';
+import 'package:helse/services/local/local_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class PatientsSettingsLogic extends BaseSettingsLogic {
@@ -35,6 +36,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
 
     if (Dependencies.blocs.server.isOffline) {
       await account.setBool(Account.pendingPatientSettings, true);
+      await LocalService(account).markChanged();
       return;
     }
 
@@ -43,6 +45,7 @@ class PatientsSettingsLogic extends BaseSettingsLogic {
       await account.setBool(Account.pendingPatientSettings, false);
     } catch (error) {
       await account.setBool(Account.pendingPatientSettings, true);
+      await LocalService(account).markChanged();
       rethrow;
     }
   }

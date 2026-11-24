@@ -1,5 +1,7 @@
+import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:helse/services/account.dart';
+import 'package:helse/services/local/database/database.dart';
 import 'package:helse/services/local/local_event_service.dart';
 import 'package:helse/services/local/local_metric_service.dart';
 import 'package:helse/services/local/local_user_service.dart';
@@ -30,6 +32,20 @@ void main() {
     server.setStatus(null);
     expect(server.isUserInitiatedOffline, isFalse);
   });
+
+  test(
+    'local change flag is set and cleared by synchronization state',
+    () async {
+      final database = Database(NativeDatabase.memory());
+      addTearDown(database.close);
+
+      expect(await database.hasLocalChanges(), isFalse);
+      await database.markLocalChanges();
+      expect(await database.hasLocalChanges(), isTrue);
+      await database.clearLocalChanges();
+      expect(await database.hasLocalChanges(), isFalse);
+    },
+  );
 
   test('offline person creation rejects account credentials', () async {
     await expectLater(

@@ -9,6 +9,7 @@ import 'package:helse/logic/settings/base_settings_logic.dart';
 import 'package:helse/logic/settings/health_settings.dart';
 import 'package:helse/logic/theme_helper.dart';
 import 'package:helse/services/account.dart';
+import 'package:helse/services/local/local_service.dart';
 import 'package:helse/services/swagger/generated_code/helseapi.swagger.dart';
 
 class SettingsBloc<T> extends Cubit<T> {
@@ -64,6 +65,7 @@ class SettingsLogic extends BaseSettingsLogic {
 
     if (Dependencies.blocs.server.isOffline) {
       await account.setBool(Account.pendingUserSettings, true);
+      await LocalService(account).markChanged();
       return;
     }
 
@@ -72,6 +74,7 @@ class SettingsLogic extends BaseSettingsLogic {
       await account.setBool(Account.pendingUserSettings, false);
     } catch (error) {
       await account.setBool(Account.pendingUserSettings, true);
+      await LocalService(account).markChanged();
       rethrow;
     }
   }

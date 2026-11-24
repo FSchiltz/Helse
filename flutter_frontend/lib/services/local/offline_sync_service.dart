@@ -24,6 +24,20 @@ class OfflineSyncService extends LocalService {
 
   final List<String> _skippedRecords = [];
 
+  Future<bool> hasPendingChanges() async {
+    if (await database.hasLocalChanges()) {
+      return true;
+    }
+
+    final settingsPending =
+        account.isEnabled(Account.pendingUserSettings) ||
+        account.isEnabled(Account.pendingPatientSettings);
+    if (settingsPending) {
+      await database.markLocalChanges();
+    }
+    return settingsPending;
+  }
+
   Future<void> sync({
     void Function(String status, double progress)? reportProgress,
   }) async {
@@ -55,6 +69,11 @@ class OfflineSyncService extends LocalService {
   }
 
   Future<void> syncPendingChanges() async {
+    if (!await hasPendingChanges()) {
+      appLogger.d('[OfflineSync] No pending local changes');
+      return;
+    }
+
     final jobs = Dependencies.blocs.jobs;
     _skippedRecords.clear();
     jobs.startReport(
@@ -142,6 +161,11 @@ class OfflineSyncService extends LocalService {
     final skippedStatus = _skippedRecords.isEmpty
         ? null
         : 'Skipped invalid local records: ${_skippedRecords.join('; ')}';
+    if (failures.isEmpty &&
+        skippedStatus == null &&
+        Dependencies.blocs.auth.state == AuthenticationStatus.authenticated) {
+      await database.clearLocalChanges();
+    }
     final messages = [...failures, ?skippedStatus];
     jobs.finishReport(
       success: failures.isEmpty,

@@ -24,6 +24,7 @@ class LocalEventService extends LocalService implements EventService {
       ),
     );
 
+    await markChanged();
     return newRow.id;
   }
 
@@ -42,6 +43,7 @@ class LocalEventService extends LocalService implements EventService {
         created: DateTime.now().toUtc(),
       ),
     );
+    await markChanged();
     return row.id;
   }
 
@@ -95,6 +97,7 @@ class LocalEventService extends LocalService implements EventService {
       await queueDeletion('event', serverId);
     }
     await (database.event.delete()..where((tbl) => tbl.id.equals(event))).go();
+    await markChanged();
   }
 
   @override
@@ -118,6 +121,7 @@ class LocalEventService extends LocalService implements EventService {
         );
       }
     });
+    await markChanged();
   }
 
   @override
@@ -134,6 +138,7 @@ class LocalEventService extends LocalService implements EventService {
         await queueDeletion('eventType', serverId);
       }
     });
+    await markChanged();
   }
 
   @override
@@ -231,6 +236,7 @@ class LocalEventService extends LocalService implements EventService {
         synced: const Value(false),
       ),
     );
+    await markChanged();
   }
 
   @override
@@ -255,6 +261,7 @@ class LocalEventService extends LocalService implements EventService {
             synced: const Value(false),
           ),
         );
+    await markChanged();
   }
 
   Event _mapEvent(EventData e) {

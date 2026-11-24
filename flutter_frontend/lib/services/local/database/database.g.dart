@@ -7507,6 +7507,202 @@ class PendingDeletionCompanion extends UpdateCompanion<PendingDeletionData> {
   }
 }
 
+class $SyncStateTable extends SyncState
+    with TableInfo<$SyncStateTable, SyncStateData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SyncStateTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _hasChangesMeta = const VerificationMeta(
+    'hasChanges',
+  );
+  @override
+  late final GeneratedColumn<bool> hasChanges = GeneratedColumn<bool>(
+    'has_changes',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("has_changes" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, hasChanges];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sync_state';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SyncStateData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('has_changes')) {
+      context.handle(
+        _hasChangesMeta,
+        hasChanges.isAcceptableOrUnknown(data['has_changes']!, _hasChangesMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SyncStateData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SyncStateData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      hasChanges: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}has_changes'],
+      )!,
+    );
+  }
+
+  @override
+  $SyncStateTable createAlias(String alias) {
+    return $SyncStateTable(attachedDatabase, alias);
+  }
+}
+
+class SyncStateData extends DataClass implements Insertable<SyncStateData> {
+  final int id;
+  final bool hasChanges;
+  const SyncStateData({required this.id, required this.hasChanges});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['has_changes'] = Variable<bool>(hasChanges);
+    return map;
+  }
+
+  SyncStateCompanion toCompanion(bool nullToAbsent) {
+    return SyncStateCompanion(id: Value(id), hasChanges: Value(hasChanges));
+  }
+
+  factory SyncStateData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SyncStateData(
+      id: serializer.fromJson<int>(json['id']),
+      hasChanges: serializer.fromJson<bool>(json['hasChanges']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'hasChanges': serializer.toJson<bool>(hasChanges),
+    };
+  }
+
+  SyncStateData copyWith({int? id, bool? hasChanges}) => SyncStateData(
+    id: id ?? this.id,
+    hasChanges: hasChanges ?? this.hasChanges,
+  );
+  SyncStateData copyWithCompanion(SyncStateCompanion data) {
+    return SyncStateData(
+      id: data.id.present ? data.id.value : this.id,
+      hasChanges: data.hasChanges.present
+          ? data.hasChanges.value
+          : this.hasChanges,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncStateData(')
+          ..write('id: $id, ')
+          ..write('hasChanges: $hasChanges')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, hasChanges);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SyncStateData &&
+          other.id == this.id &&
+          other.hasChanges == this.hasChanges);
+}
+
+class SyncStateCompanion extends UpdateCompanion<SyncStateData> {
+  final Value<int> id;
+  final Value<bool> hasChanges;
+  const SyncStateCompanion({
+    this.id = const Value.absent(),
+    this.hasChanges = const Value.absent(),
+  });
+  SyncStateCompanion.insert({
+    this.id = const Value.absent(),
+    this.hasChanges = const Value.absent(),
+  });
+  static Insertable<SyncStateData> custom({
+    Expression<int>? id,
+    Expression<bool>? hasChanges,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (hasChanges != null) 'has_changes': hasChanges,
+    });
+  }
+
+  SyncStateCompanion copyWith({Value<int>? id, Value<bool>? hasChanges}) {
+    return SyncStateCompanion(
+      id: id ?? this.id,
+      hasChanges: hasChanges ?? this.hasChanges,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (hasChanges.present) {
+      map['has_changes'] = Variable<bool>(hasChanges.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncStateCompanion(')
+          ..write('id: $id, ')
+          ..write('hasChanges: $hasChanges')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$Database extends GeneratedDatabase {
   _$Database(QueryExecutor e) : super(e);
   $DatabaseManager get managers => $DatabaseManager(this);
@@ -7524,6 +7720,7 @@ abstract class _$Database extends GeneratedDatabase {
   late final $PendingDeletionTable pendingDeletion = $PendingDeletionTable(
     this,
   );
+  late final $SyncStateTable syncState = $SyncStateTable(this);
   late final Index importMetric = Index(
     'import_metric',
     'CREATE INDEX import_metric ON metric (id, person, source_id, source, type)',
@@ -7549,6 +7746,7 @@ abstract class _$Database extends GeneratedDatabase {
     metricFiles,
     eventFiles,
     pendingDeletion,
+    syncState,
     importMetric,
     importEvent,
   ];
@@ -13826,6 +14024,142 @@ typedef $$PendingDeletionTableProcessedTableManager =
       PendingDeletionData,
       PrefetchHooks Function()
     >;
+typedef $$SyncStateTableCreateCompanionBuilder =
+    SyncStateCompanion Function({Value<int> id, Value<bool> hasChanges});
+typedef $$SyncStateTableUpdateCompanionBuilder =
+    SyncStateCompanion Function({Value<int> id, Value<bool> hasChanges});
+
+class $$SyncStateTableFilterComposer
+    extends Composer<_$Database, $SyncStateTable> {
+  $$SyncStateTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get hasChanges => $composableBuilder(
+    column: $table.hasChanges,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SyncStateTableOrderingComposer
+    extends Composer<_$Database, $SyncStateTable> {
+  $$SyncStateTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get hasChanges => $composableBuilder(
+    column: $table.hasChanges,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SyncStateTableAnnotationComposer
+    extends Composer<_$Database, $SyncStateTable> {
+  $$SyncStateTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<bool> get hasChanges => $composableBuilder(
+    column: $table.hasChanges,
+    builder: (column) => column,
+  );
+}
+
+class $$SyncStateTableTableManager
+    extends
+        RootTableManager<
+          _$Database,
+          $SyncStateTable,
+          SyncStateData,
+          $$SyncStateTableFilterComposer,
+          $$SyncStateTableOrderingComposer,
+          $$SyncStateTableAnnotationComposer,
+          $$SyncStateTableCreateCompanionBuilder,
+          $$SyncStateTableUpdateCompanionBuilder,
+          (
+            SyncStateData,
+            BaseReferences<_$Database, $SyncStateTable, SyncStateData>,
+          ),
+          SyncStateData,
+          PrefetchHooks Function()
+        > {
+  $$SyncStateTableTableManager(_$Database db, $SyncStateTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SyncStateTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SyncStateTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SyncStateTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<bool> hasChanges = const Value.absent(),
+              }) => SyncStateCompanion(id: id, hasChanges: hasChanges),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<bool> hasChanges = const Value.absent(),
+              }) => SyncStateCompanion.insert(id: id, hasChanges: hasChanges),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$SyncStateTable, SyncStateData>(table),
+                  BaseReferences<_$Database, $SyncStateTable, SyncStateData>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SyncStateTableProcessedTableManager =
+    ProcessedTableManager<
+      _$Database,
+      $SyncStateTable,
+      SyncStateData,
+      $$SyncStateTableFilterComposer,
+      $$SyncStateTableOrderingComposer,
+      $$SyncStateTableAnnotationComposer,
+      $$SyncStateTableCreateCompanionBuilder,
+      $$SyncStateTableUpdateCompanionBuilder,
+      (
+        SyncStateData,
+        BaseReferences<_$Database, $SyncStateTable, SyncStateData>,
+      ),
+      SyncStateData,
+      PrefetchHooks Function()
+    >;
 
 class $DatabaseManager {
   final _$Database _db;
@@ -13851,4 +14185,6 @@ class $DatabaseManager {
       $$EventFilesTableTableManager(_db, _db.eventFiles);
   $$PendingDeletionTableTableManager get pendingDeletion =>
       $$PendingDeletionTableTableManager(_db, _db.pendingDeletion);
+  $$SyncStateTableTableManager get syncState =>
+      $$SyncStateTableTableManager(_db, _db.syncState);
 }

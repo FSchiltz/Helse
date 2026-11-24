@@ -34,6 +34,7 @@ class LocalUserService extends LocalService implements UserService {
           ),
         );
 
+    await markChanged();
     return UserId(person: newRow.id);
   }
 
@@ -99,6 +100,7 @@ class LocalUserService extends LocalService implements UserService {
         synced: const Value(false),
       ),
     );
+    await markChanged();
   }
 
   @override

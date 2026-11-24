@@ -20,6 +20,7 @@ class LocalMetricService extends LocalService implements MetricService {
         created: DateTime.now().toUtc(),
       ),
     );
+    await markChanged();
     return row.id;
   }
 
@@ -39,6 +40,7 @@ class LocalMetricService extends LocalService implements MetricService {
           ),
         );
 
+    await markChanged();
     return newRow.id;
   }
 
@@ -61,6 +63,7 @@ class LocalMetricService extends LocalService implements MetricService {
         created: DateTime.now().toUtc(),
       ),
     );
+    await markChanged();
     return row.id;
   }
 
@@ -101,6 +104,7 @@ class LocalMetricService extends LocalService implements MetricService {
       await queueDeletion('metric', serverId);
     }
     await (database.metric.delete()..where((tbl) => tbl.id.equals(id))).go();
+    await markChanged();
   }
 
   @override
@@ -125,6 +129,7 @@ class LocalMetricService extends LocalService implements MetricService {
         );
       }
     });
+    await markChanged();
   }
 
   @override
@@ -140,6 +145,7 @@ class LocalMetricService extends LocalService implements MetricService {
         await queueDeletion('group', serverId);
       }
     });
+    await markChanged();
   }
 
   @override
@@ -156,6 +162,7 @@ class LocalMetricService extends LocalService implements MetricService {
         await queueDeletion('metricType', serverId);
       }
     });
+    await markChanged();
   }
 
   @override
@@ -296,6 +303,7 @@ class LocalMetricService extends LocalService implements MetricService {
             synced: const Value(false),
           ),
         );
+    await markChanged();
   }
 
   @override
@@ -312,6 +320,7 @@ class LocalMetricService extends LocalService implements MetricService {
             synced: const Value(false),
           ),
         );
+    await markChanged();
   }
 
   @override
@@ -340,6 +349,7 @@ class LocalMetricService extends LocalService implements MetricService {
             synced: const Value(false),
           ),
         );
+    await markChanged();
   }
 
   Metric _mapMetric(MetricData e) {
