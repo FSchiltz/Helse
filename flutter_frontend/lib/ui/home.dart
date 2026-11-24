@@ -83,6 +83,38 @@ class _HomeState extends State<Home> {
             scrolledUnderElevation: 10,
             elevation: 1,
             centerTitle: true,
+            title: BlocBuilder<ServerState, ServerStatus>(
+              bloc: Dependencies.blocs.server,
+              builder: (context, status) => status.offline
+                  ? Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.secondaryContainer,
+                        borderRadius: BorderRadius.circular(0),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.cloud_off,
+                            size: 18,
+                            color: theme.colorScheme.onSecondaryContainer,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            Translation.of(context).offlineBanner,
+                            style: TextStyle(
+                              color: theme.colorScheme.onSecondaryContainer,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
             actions: [
               IconButton(
                 onPressed: () {
@@ -206,29 +238,7 @@ class _HomeState extends State<Home> {
               ),
             ],
           ),
-          body: BlocBuilder<ServerState, ServerStatus>(
-            bloc: Dependencies.blocs.server,
-            builder: (context, status) => Column(
-              children: [
-                if (status.offline)
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    color: Theme.of(context).colorScheme.errorContainer,
-                    child: Row(
-                      children: [
-                        const Icon(Icons.cloud_off),
-                        const SizedBox(width: 8),
-                        Text(Translation.of(context).offlineBanner),
-                      ],
-                    ),
-                  ),
-                Expanded(
-                  child: Dashboard(types: types, key: _refreshKey),
-                ),
-              ],
-            ),
-          ),
+          body: Dashboard(types: types, key: _refreshKey),
         );
       },
     );
