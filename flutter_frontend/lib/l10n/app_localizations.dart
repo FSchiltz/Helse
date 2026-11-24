@@ -859,6 +859,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Keep Connected'**
   String get keepConnected;
+
+  /// No description provided for @repairLocalChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Repair local changes'**
+  String get repairLocalChanges;
+
+  /// No description provided for @noLocalChangesToRepair.
+  ///
+  /// In en, this message translates to:
+  /// **'No invalid local records need repair.'**
+  String get noLocalChangesToRepair;
+
+  /// No description provided for @offlineFileDataMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'The local file data is missing.'**
+  String get offlineFileDataMissing;
+
+  /// No description provided for @replaceMissingFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Select replacement file'**
+  String get replaceMissingFile;
+
+  /// No description provided for @retrySync.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry synchronization'**
+  String get retrySync;
 }
 
 class _AppLocalizationsDelegate

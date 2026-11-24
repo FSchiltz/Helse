@@ -134,5 +134,10 @@
   "welcomenew": "Utilisateur créé, bienvenue",
   "widgetType": "Type de widget",
   "years": "années",
-  "yeartodate": "Année en cours"
+  "yeartodate": "Année en cours",
+  "repairLocalChanges": "Réparer les modifications locales",
+  "noLocalChangesToRepair": "Aucun enregistrement local invalide à réparer.",
+  "offlineFileDataMissing": "Les données locales du fichier sont manquantes.",
+  "replaceMissingFile": "Sélectionner un fichier de remplacement",
+  "retrySync": "Relancer la synchronisation"
 }

@@ -312,6 +312,7 @@ class LocalMetricService extends LocalService implements MetricService {
         .write(
           MetricCompanion(
             date: Value(metric.date),
+            type: Value(metric.type),
             value: Value(metric.value),
             tag: Value(metric.tag),
             unit: Value(metric.unit),

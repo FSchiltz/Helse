@@ -226,6 +226,7 @@ class LocalEventService extends LocalService implements EventService {
   Future<void> updateEvent(UpdateEvent event) async {
     await (database.event.update()..where((x) => x.id.equals(event.id))).write(
       EventCompanion(
+        type: Value(event.type),
         start: Value(event.start),
         end: Value(event.stop),
         description: Value(event.description),

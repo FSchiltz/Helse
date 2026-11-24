@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:helse/di/services.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:helse/helpers/metrics/metric_helper.dart';
 import 'package:helse/helpers/metrics/metric_validation.dart';
@@ -8,6 +9,7 @@ import 'package:helse/ui/common/inputs/files/file_list_widget.dart';
 import 'package:helse/ui/common/popup_submit_state.dart';
 import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/ui_constants.dart';
+import 'package:helse/services/local/local_metric_service.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -20,6 +22,7 @@ class MetricAdd extends StatefulWidget {
   final void Function() callback;
   final int? person;
   final Metric? edit;
+  final bool localRepair;
 
   const MetricAdd(
     this.type,
@@ -27,6 +30,7 @@ class MetricAdd extends StatefulWidget {
     super.key,
     this.person,
     this.edit,
+    this.localRepair = false,
   });
 
   @override
@@ -117,14 +121,15 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
                     _date = value ?? DateTime.now();
                   }),
                 ),
-                MetricFileList(
-                  metric: widget.edit?.id,
-                  person: widget.person,
-                  onChange: (x) {
-                    _oldFiles ??= x.toList();
-                    _files = x;
-                  },
-                ),
+                if (!widget.localRepair)
+                  MetricFileList(
+                    metric: widget.edit?.id,
+                    person: widget.person,
+                    onChange: (x) {
+                      _oldFiles ??= x.toList();
+                      _files = x;
+                    },
+                  ),
               ],
             ),
           ),
@@ -148,7 +153,11 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
         sourceId: "",
       );
 
-      await Dependencies.services.metric.updateMetric(metric);
+      if (widget.localRepair) {
+        await Dependencies.offlineServices.metric.updateMetric(metric);
+      } else {
+        await Dependencies.services.metric.updateMetric(metric);
+      }
       metricId = widget.edit?.id;
     } else {
       final metric = CreateMetric(
@@ -166,7 +175,7 @@ class _MetricAddState extends PopupSubmitState<MetricAdd> {
       );
     }
 
-    if (metricId != null) {
+    if (metricId != null && !widget.localRepair) {
       // find the files to add
       List<UIFile> fileToAdd = [];
       List<UIFile> fileToDelete = [];

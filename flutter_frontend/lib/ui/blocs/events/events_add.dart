@@ -6,6 +6,7 @@ import 'package:helse/helpers/translation.dart';
 import 'package:helse/ui/common/inputs/custom_switch.dart';
 import 'package:helse/ui/common/inputs/square_text_field.dart';
 import 'package:helse/ui/common/ui_constants.dart';
+import 'package:helse/services/local/local_event_service.dart';
 
 import '../../../di/dependencies.dart';
 import '../../../services/swagger/generated_code/helseapi.swagger.dart';
@@ -17,8 +18,16 @@ class EventAdd extends StatefulWidget {
   final EventType type;
   final int? person;
   final Event? edit;
+  final bool localRepair;
 
-  const EventAdd(this.type, this.callback, {super.key, this.person, this.edit});
+  const EventAdd(
+    this.type,
+    this.callback, {
+    super.key,
+    this.person,
+    this.edit,
+    this.localRepair = false,
+  });
 
   @override
   State<EventAdd> createState() => _EventAddState();
@@ -48,7 +57,11 @@ class _EventAddState extends PopupSubmitState<EventAdd> {
         sourceId: widget.edit?.sourceId ?? '',
         tag: _tag.text,
       );
-      await Dependencies.services.event.updateEvent(event);
+      if (widget.localRepair) {
+        Dependencies.offlineServices.event.updateEvent(event);
+      } else {
+        await Dependencies.services.event.updateEvent(event);
+      }
       eventId = widget.edit?.id;
     } else {
       var event = CreateEvent(
@@ -67,7 +80,7 @@ class _EventAddState extends PopupSubmitState<EventAdd> {
       );
     }
 
-    if (eventId != null) {
+    if (eventId != null && !widget.localRepair) {
       // find the files to add
       List<UIFile> fileToAdd = [];
       List<UIFile> fileToDelete = [];
@@ -198,14 +211,15 @@ class _EventAddState extends PopupSubmitState<EventAdd> {
                     _notification = date;
                   }),
                 ),
-              EventFileList(
-                event: widget.edit?.id,
-                person: widget.person,
-                onChange: (x) {
-                  _oldFiles ??= x.toList();
-                  _files = x;
-                },
-              ),
+              if (!widget.localRepair)
+                EventFileList(
+                  event: widget.edit?.id,
+                  person: widget.person,
+                  onChange: (x) {
+                    _oldFiles ??= x.toList();
+                    _files = x;
+                  },
+                ),
             ],
           ),
         ),

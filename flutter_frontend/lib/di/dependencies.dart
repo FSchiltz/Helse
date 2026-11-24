@@ -25,6 +25,14 @@ class Dependencies {
     return a;
   }
 
+  static Services get offlineServices {
+    var a = _offline;
+     if (a == null) {
+      throw Exception("Invalid access");
+    }
+    return a;
+  }
+
   static Logics? _logics;
   static Logics get logics {
     var a = _logics;
