@@ -8,11 +8,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../di/dependencies.dart';
 import '../logic/task_bloc.dart';
-import '../logic/account/server_state.dart';
 import '../services/swagger/generated_code/helseapi.swagger.dart';
 import 'administration.dart';
 import 'blocs/imports/file_import.dart';
 import 'common/notification.dart';
+import 'common/offline_app_bar_title.dart';
 import 'dashboard.dart';
 import 'local_settings.dart';
 
@@ -83,38 +83,7 @@ class _HomeState extends State<Home> {
             scrolledUnderElevation: 10,
             elevation: 1,
             centerTitle: true,
-            title: BlocBuilder<ServerState, ServerStatus>(
-              bloc: Dependencies.blocs.server,
-              builder: (context, status) => status.offline
-                  ? Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.secondaryContainer,
-                        borderRadius: BorderRadius.circular(0),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.cloud_off,
-                            size: 18,
-                            color: theme.colorScheme.onSecondaryContainer,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            Translation.of(context).offlineBanner,
-                            style: TextStyle(
-                              color: theme.colorScheme.onSecondaryContainer,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : const SizedBox.shrink(),
-            ),
+            title: OfflineAppBarTitle(server: Dependencies.blocs.server),
             actions: [
               IconButton(
                 onPressed: () {
