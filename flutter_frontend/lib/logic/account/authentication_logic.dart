@@ -236,9 +236,6 @@ class AuthenticationLogic {
         uri.queryParameters,
       );
       if (code == null) {
-        appLogger.w(
-          '[Authentication] OAuth callback did not contain an authorization code',
-        );
         setNoAuth();
         return true;
       }
@@ -247,19 +244,9 @@ class AuthenticationLogic {
         UrlHelper.removeParam();
       }
 
-      final url = account.get(Account.url);
-      if (url == null || url.isEmpty) {
-        appLogger.e(
-          '[Authentication] OAuth callback received without a saved server URL',
-        );
-        setNoAuth();
-        return true;
-      }
-
-      appLogger.d('[Authentication] OAuth authorization code received');
       setNoAuth();
       await _submit(
-        url: url,
+        url: account.get(Account.url) ?? '',
         token: code,
         keepOpen: account.isEnabled(Account.keepConnected),
       );

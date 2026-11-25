@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:helse/di/dependencies.dart';
-import 'package:helse/helpers/startup_oauth_uri.dart';
+import 'package:helse/helpers/startup_oauth_uri_io.dart';
 import 'package:helse/logic/account/authentication_bloc.dart';
 import 'package:helse/logic/account/authentication_logic.dart';
 import 'package:helse/services/account.dart';
