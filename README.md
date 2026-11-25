@@ -117,7 +117,14 @@ services:
 
 ```
 
+Start Helse with `docker compose up -d`, then open `http://localhost:8080`.
+
 ## Local debugging
 
 The best editor to debug is to use VS code with the c# and flutter extensions.
 Launching the debug target 'Launch' should automatically open the swagger API and the flutter web app.
+
+For prerequisites, use .NET SDK 10.0, Flutter stable, PostgreSQL 15, and Docker.
+Run `dotnet run --project Backend/Api/Api.csproj --launch-profile http` for the API and
+`cd flutter_frontend && flutter pub get && flutter run -d chrome --web-port=8000` for the web app.
+The API Swagger UI is at `http://localhost:5059/swagger`.
