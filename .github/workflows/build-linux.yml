@@ -37,15 +37,17 @@ jobs:
       - name: Package Linux release
         id: package
         run: |
-          archive="$RUNNER_TEMP/helse-${GITHUB_REF_NAME}-linux-x64.tar.gz"
+          ref_name="${GITHUB_REF_NAME//\//-}"
+          archive="$RUNNER_TEMP/helse-${ref_name}-linux-x64.tar.gz"
           tar -C flutter_frontend/build/linux/x64/release/bundle -czf "$archive" .
           echo "archive=$archive" >> "$GITHUB_OUTPUT"
+          echo "ref_name=$ref_name" >> "$GITHUB_OUTPUT"
 
       - name: Upload workflow artifact
         if: ${{ inputs.artifact }}
         uses: actions/upload-artifact@v7.0.2
         with:
-          name: helse-${{ github.ref_name }}-linux-x64
+          name: helse-${{ steps.package.outputs.ref_name }}-linux-x64
           path: ${{ steps.package.outputs.archive }}
           if-no-files-found: error
 
