@@ -14,3 +14,10 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## Linux OAuth callback setup
+
+Linux release bundles are attached to GitHub releases as
+`helse-<version>-linux-x64.tar.gz`. Extract the archive and follow the included
+`README.md` to launch the app and register the `com.helse://` callback scheme
+for the current user.

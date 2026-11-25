@@ -15,6 +15,14 @@ jobs:
         sign: true
     secrets: inherit
 
+  build-linux:
+    permissions:
+      contents: write
+    uses: ./.github/workflows/build-linux.yml
+    with:
+      upload: true
+      artifact: false
+
   build-docker:
     permissions:
       contents: read 

@@ -4,6 +4,8 @@ import 'package:collection/collection.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:helse/di/app_logger.dart';
+import 'package:helse/helpers/startup_oauth_uri_stub.dart'
+    if (dart.library.io) 'package:helse/helpers/startup_oauth_uri_io.dart';
 import 'package:helse/logic/account/authentication_bloc.dart';
 import 'package:helse/logic/account/settings_migration.dart';
 import 'package:helse/services/api/api_login_service.dart';
@@ -211,28 +213,53 @@ class AuthenticationLogic {
     );
   }
 
-  void listen() async {
-    var links = AppLinks();
-    var redirect = Dependencies.services.login.redirectUrl.toString();
-    links.uriLinkStream.listen((uri) async {
-      if (uri.toString().startsWith(redirect)) {
-        var code = await Dependencies.services.login.getCode(
-          uri.queryParameters,
+  void listen() {
+    AppLinks().uriLinkStream.listen(
+      (uri) => unawaited(_handleOAuthLink(uri)),
+      onError: (Object error, StackTrace stackTrace) {
+        appLogger.e(
+          '[Authentication] Failed to receive OAuth callback',
+          error: error,
+          stackTrace: stackTrace,
         );
-        if (code != null) {
-          if (kIsWeb) {
-            UrlHelper.removeParam();
-            appLogger.d("Auth code found");
-          }
+        setNoAuth();
+      },
+    );
+  }
 
-          var url = account.get(Account.url);
-          var keepConnected = account.isEnabled(Account.keepConnected);
+  Future<bool> _handleOAuthLink(Uri uri) async {
+    final redirect = Dependencies.services.login.redirectUrl.toString();
+    if (!uri.toString().startsWith(redirect)) return false;
 
-          setNoAuth();
-          await _submit(url: url ?? '', token: code, keepOpen: keepConnected);
-        }
+    try {
+      final code = await Dependencies.services.login.getCode(
+        uri.queryParameters,
+      );
+      if (code == null) {
+        setNoAuth();
+        return true;
       }
-    });
+
+      if (kIsWeb) {
+        UrlHelper.removeParam();
+      }
+
+      setNoAuth();
+      await _submit(
+        url: account.get(Account.url) ?? '',
+        token: code,
+        keepOpen: account.isEnabled(Account.keepConnected),
+      );
+    } catch (error, stackTrace) {
+      appLogger.e(
+        '[Authentication] OAuth callback processing failed',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      setNoAuth();
+    }
+
+    return true;
   }
 
   Future<void> _load() async {
@@ -314,10 +341,17 @@ class AuthenticationLogic {
 
   Future<void> init() async {
     resetAuth();
-    if (await isOffline()) {
-      await useOffline();
-    } else {
-      await _checkInitialConnection();
+    listen();
+
+    final startupUri = getStartupOAuthUri();
+    final handledStartupUri =
+        startupUri != null && await _handleOAuthLink(startupUri);
+    if (!handledStartupUri) {
+      if (await isOffline()) {
+        await useOffline();
+      } else {
+        await _checkInitialConnection();
+      }
     }
 
     _connectivitySubscription ??= Connectivity().onConnectivityChanged.listen(
@@ -341,7 +375,6 @@ class AuthenticationLogic {
         );
       }
     });
-    listen();
   }
 
   Future<void> _checkInitialConnection() async {
