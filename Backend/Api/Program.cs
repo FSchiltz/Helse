@@ -102,11 +102,7 @@ builder.Services.AddHostedService<ImporterService>()
     .AddSingleton<IImportQueue, ImportQueue>();
 
 builder.Services.AddHttpClient();
-
-builder.Services.AddHttpLogging(o =>
-{
-    o.LoggingFields = HttpLoggingFields.Request;
-});
+builder.Services.AddHttpLogging(o => o.LoggingFields = HttpLoggingFields.Request);
 
 var app = builder.Build();
 
