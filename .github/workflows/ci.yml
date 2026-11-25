@@ -22,6 +22,14 @@ jobs:
       sign: false
     secrets: inherit
 
+  build-linux:
+    permissions:
+      contents: read
+    uses: ./.github/workflows/build-linux.yml
+    with:
+      upload: false
+      artifact: false
+
   build-net:
     runs-on: ubuntu-latest
     steps:
