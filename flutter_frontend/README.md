@@ -17,7 +17,7 @@ samples, guidance on mobile development, and a full API reference.
 
 ## Linux OAuth callback setup
 
-For a directly distributed Linux build bundle, run
-`register_oauth_handler.sh` from the bundle after extracting it. This registers
-the `com.helse://` callback scheme for the current user. If the bundle is
-elsewhere, pass its directory as an argument to the script.
+Linux release bundles are attached to GitHub releases as
+`helse-<version>-linux-x64.tar.gz`. Extract the archive and follow the included
+`README.md` to launch the app and register the `com.helse://` callback scheme
+for the current user.
