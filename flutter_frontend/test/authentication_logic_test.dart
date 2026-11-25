@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:helse/di/dependencies.dart';
+import 'package:helse/helpers/startup_oauth_uri.dart';
 import 'package:helse/logic/account/authentication_bloc.dart';
 import 'package:helse/logic/account/authentication_logic.dart';
 import 'package:helse/services/account.dart';
@@ -15,6 +16,30 @@ import 'package:shared_preferences_platform_interface/shared_preferences_async_p
 
 void main() {
   final logic = AuthenticationLogic(Account());
+
+  group('startupOAuthUri', () {
+    test('finds the OAuth callback among startup arguments', () {
+      final callback = Uri.parse(
+        'com.helse://login-callback?code=authorization-code',
+      );
+
+      expect(
+        startupOAuthUri(['--verbose', callback.toString()]),
+        callback,
+      );
+    });
+
+    test('ignores arguments that are not OAuth callbacks', () {
+      expect(
+        startupOAuthUri([
+          '--verbose',
+          'https://example.com/',
+          'com.helse://other-path?code=ignored',
+        ]),
+        isNull,
+      );
+    });
+  });
 
   group('normalizeServerUrl', () {
     test('trims whitespace and adds https to a host', () {
